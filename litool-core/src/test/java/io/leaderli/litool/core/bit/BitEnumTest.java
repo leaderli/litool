@@ -16,9 +16,10 @@ class BitEnumTest {
         assert BitStatusEnum.valueOf("B1").value == 1;
         assert BitStatusEnum.valueOf("B32").value == Integer.MIN_VALUE;
 
-        Assertions.assertEquals("0001",LiStr.ljust(BitStatusEnum.B1.toBinary(),4,"0"));
-        Assertions.assertEquals("00010000",LiStr.ljust(BitStatusEnum.B5.toBinary(),8,"0"));
+        Assertions.assertEquals("0001", LiStr.ljust(Integer.toBinaryString(BitStatusEnum.B1.value), 4, "0"));
+        Assertions.assertEquals("00010000", LiStr.ljust(Integer.toBinaryString(BitStatusEnum.B5.value), 8, "0"));
 
-
+        assert  BitStatusEnum.B1.match(0b111);
+        assert  !BitStatusEnum.B1.match(0b100);
     }
 }
