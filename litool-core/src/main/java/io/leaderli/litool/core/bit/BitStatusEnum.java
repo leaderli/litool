@@ -8,7 +8,7 @@ import io.leaderli.litool.core.util.LiStr;
  * @since 2022/6/14
  * <p>
  * 用于使用int来表示位状态时使用，每个枚举值代表着指定位置上的状态是否匹配，
- * 当状态值  state & BX == BX,表示状态BX 匹配
+ * 当状态值  {@code state & BX == BX },表示状态 BX 匹配
  */
 
 public enum BitStatusEnum {
@@ -61,9 +61,9 @@ public enum BitStatusEnum {
     }
 
 
-
     /**
-     * 该枚举值代表的状态位匹配
+     * @param status 状态
+     * @return 该枚举值代表的状态位匹配
      */
     public boolean match(int status) {
         return (status & this.value) == this.value;

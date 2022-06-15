@@ -6,6 +6,9 @@ package io.leaderli.litool.core.util;
  */
 public class LiStr {
     /**
+     * @param origin     -
+     * @param min_length -
+     * @return -
      * @see #ljust(String, int, String)
      */
     public static String ljust(String origin, int min_length) {
@@ -14,11 +17,10 @@ public class LiStr {
 
 
     /**
-     * 当位数达不到最小长度时，在左侧补充占位符，默认占位符为空格
-     *
      * @param origin     原字符串
      * @param min_length 最小长度
      * @param padding    占位符
+     * @return 当位数达不到最小长度时，在左侧补充占位符，默认占位符为空格
      */
     public static String ljust(String origin, int min_length, String padding) {
 
@@ -38,6 +40,9 @@ public class LiStr {
     }
 
     /**
+     * @param origin     -
+     * @param min_length -
+     * @return -
      * @see #rjust(String, int, String)
      */
     public static String rjust(String origin, int min_length) {
@@ -45,11 +50,10 @@ public class LiStr {
     }
 
     /**
-     * 当位数达不到最小长度时，在右侧补充占位符，默认占位符为空格
-     *
      * @param origin     原字符串
      * @param min_length 最小长度
      * @param padding    占位符
+     * @return 当位数达不到最小长度时，在右侧补充占位符，默认占位符为空格
      */
     public static String rjust(String origin, int min_length, String padding) {
 
