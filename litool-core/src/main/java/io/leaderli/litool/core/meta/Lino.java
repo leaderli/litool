@@ -55,12 +55,13 @@ public interface Lino<T> extends LiValue {
 
     }
 
+    T get();
+
     default T getOrElse(T other) {
 
         return isPresent() ? get() : other;
     }
 
-    T get();
 
     default T getOrElse(Supplier<? extends T> supplier) {
 
