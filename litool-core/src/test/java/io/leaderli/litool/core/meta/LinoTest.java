@@ -84,4 +84,15 @@ class LinoTest {
     void notPresent() {
         Lino.of(1).ifNotPresent(Assertions::fail);
     }
+
+    @Test
+    public void equals() {
+
+        Assertions.assertEquals(Lino.of(1), Lino.of(1));
+        Assertions.assertNotEquals(Lino.of(2), Lino.of(1));
+        Assertions.assertNotEquals(Lino.of(2), null);
+        Assertions.assertNotEquals(Lino.of(2), 2);
+        Assertions.assertSame(Lino.of(null), Lino.none());
+
+    }
 }

@@ -3,6 +3,7 @@ package io.leaderli.litool.core.meta;
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -20,6 +21,20 @@ public interface Lino<T> extends LiValue {
     /**
      * @param value 值
      * @param <T>   泛型
+     * @return 返回一个实例，
+     * 当 {@code value == null} 时返回 {@link #none()}
+     * 否则返回 {@link Some}
+     */
+    static <T> Lino<T> of(T value) {
+        if (value == null) {
+            return none();
+        }
+        return new Some<>(value);
+    }
+
+    /**
+     * @param value 值
+     * @param <T>   泛型
      * @return 窄化一个宽泛的泛型， {@code <? extends T> } 转换为  {@code  <T> }
      */
     @SuppressWarnings("unchecked")
@@ -33,32 +48,19 @@ public interface Lino<T> extends LiValue {
      * @param <T> 泛型
      * @return {@link None#INSTANCE}
      */
+
     static <T> Lino<T> none() {
-        @SuppressWarnings("unchecked") final None<T> none = (None<T>) None.INSTANCE;
-        return none;
+        //noinspection unchecked
+        return (Lino<T>) None.INSTANCE;
+
     }
-
-    /**
-     * @param value 值
-     * @param <T>   泛型
-     * @return 返回一个实例，
-     * 当 {@code value == null} 时返回 {@link #none()}
-     * 否则返回 {@link Some}
-     */
-    static <T> Lino<T> of(T value) {
-        if (value == null) {
-            return none();
-        }
-        return new Some<>(value);
-    }
-
-
-    T get();
 
     default T getOrElse(T other) {
 
         return isPresent() ? get() : other;
     }
+
+    T get();
 
     default T getOrElse(Supplier<? extends T> supplier) {
 
@@ -105,11 +107,6 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public String toString() {
-            return name() + "(" + value + ")";
-        }
-
-        @Override
         public T get() {
             return value;
         }
@@ -126,10 +123,27 @@ public interface Lino<T> extends LiValue {
             return this;
         }
 
-
         @Override
         public Lino<T> ifNotPresent(Runnable runnable) {
             return this;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(value);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Some<?> some = (Some<?>) o;
+            return Objects.equals(value, some.value);
+        }
+
+        @Override
+        public String toString() {
+            return name() + "(" + value + ")";
         }
     }
 
