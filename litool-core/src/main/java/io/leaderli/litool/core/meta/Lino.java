@@ -1,5 +1,11 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.exception.LiThrowableConsumer;
+import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 /**
  * @author leaderli
  * @since 2022/6/16
@@ -47,6 +53,39 @@ public interface Lino<T> extends LiValue {
     }
 
 
+    T get();
+
+    default T getOrElse(T other) {
+
+        return isPresent() ? get() : other;
+    }
+
+    default T getOrElse(Supplier<? extends T> supplier) {
+
+        return notPresent() && supplier != null ? supplier.get() : get();
+    }
+
+    /**
+     * @param consumer 当 {@link #isPresent()}  时消费
+     * @return this
+     */
+    Lino<T> ifPresent(Consumer<T> consumer);
+
+
+    /**
+     * @param consumer 当 {@link #isPresent()}  时消费，可能会抛出 {@link RuntimeException}
+     * @return this
+     * @see RuntimeExceptionTransfer
+     */
+    Lino<T> ifThrowablePresent(LiThrowableConsumer<T> consumer);
+
+
+    /**
+     * @param runnable 当 {@link #notPresent()}   时执行
+     * @return this
+     */
+    Lino<T> ifNotPresent(Runnable runnable);
+
     class Some<T> implements Lino<T> {
 
         private final T value;
@@ -68,6 +107,29 @@ public interface Lino<T> extends LiValue {
         @Override
         public String toString() {
             return name() + "(" + value + ")";
+        }
+
+        @Override
+        public T get() {
+            return value;
+        }
+
+        @Override
+        public Lino<T> ifPresent(Consumer<T> consumer) {
+            consumer.accept(this.value);
+            return this;
+        }
+
+        @Override
+        public Lino<T> ifThrowablePresent(LiThrowableConsumer<T> consumer) {
+            RuntimeExceptionTransfer.accept(consumer, this.value);
+            return this;
+        }
+
+
+        @Override
+        public Lino<T> ifNotPresent(Runnable runnable) {
+            return this;
         }
     }
 
@@ -91,6 +153,27 @@ public interface Lino<T> extends LiValue {
         @Override
         public String toString() {
             return name() + "()";
+        }
+
+        @Override
+        public T get() {
+            return null;
+        }
+
+        @Override
+        public Lino<T> ifPresent(Consumer<T> consumer) {
+            return this;
+        }
+
+        @Override
+        public Lino<T> ifThrowablePresent(LiThrowableConsumer<T> consumer) {
+            return this;
+        }
+
+        @Override
+        public Lino<T> ifNotPresent(Runnable runnable) {
+            runnable.run();
+            return this;
         }
     }
 }

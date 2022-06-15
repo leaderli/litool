@@ -6,5 +6,5 @@ package io.leaderli.litool.core.exception;
  */
 public interface LiThrowableConsumer<T> {
 
-    void accept(T t);
+    void accept(T t) throws  Throwable;
 }

@@ -7,6 +7,6 @@ package io.leaderli.litool.core.exception;
 public interface LiThrowableFunction<T,R> {
 
 
-    R apply(T t);
+    R apply(T t) throws Throwable;
 
 }
