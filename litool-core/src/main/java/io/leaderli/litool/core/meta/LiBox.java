@@ -13,8 +13,16 @@ public class LiBox<T> {
     private T value;
 
 
-    public LiBox() {
+    private LiBox() {
 
+    }
+
+    /**
+     * @param <T> 泛型
+     * @return 返回一个  {@code value = null } 的实例
+     */
+    public static <T> LiBox<T> None() {
+        return new LiBox<>();
     }
 
     public LiBox(T value) {
@@ -27,6 +35,10 @@ public class LiBox<T> {
 
     public T value() {
         return this.value;
+    }
+
+    public Lino<T> lino() {
+        return Lino.of(this.value);
     }
 
     @Override
