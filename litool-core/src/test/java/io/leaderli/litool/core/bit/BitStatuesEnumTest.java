@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
  * @author leaderli
  * @since 2022/6/14
  */
-class BitEnumTest {
+class BitStatuesEnumTest {
 
     @Test
     public void test() {

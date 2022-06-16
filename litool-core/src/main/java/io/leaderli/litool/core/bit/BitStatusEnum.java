@@ -48,11 +48,14 @@ public enum BitStatusEnum {
 
 
     final int value;
-    final int length;
+    /**
+     * 角标位置从0开始
+     */
+    final int index;
 
     BitStatusEnum() {
-        this.length = Integer.parseInt(this.name().replace("B", "")) - 1;
-        this.value = 1 << length;
+        this.index = Integer.parseInt(this.name().replace("B", "")) - 1;
+        this.value = 1 << index;
     }
 
     @Override
