@@ -4,6 +4,8 @@ import io.leaderli.litool.core.util.LiStrUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -34,5 +36,15 @@ class BitStatuesEnumTest {
             assert   BitUtil.onlyOneBit(value);
 
         }
+    }
+
+    @Test
+    public void test1() {
+        Map<BitStatusEnum, String> status = new EnumMap<>(BitStatusEnum.class);
+
+        status.put(BitStatusEnum.B2,"B2");
+        status.put(BitStatusEnum.B1,"B1");
+        System.out.println(status.keySet());
+
     }
 }

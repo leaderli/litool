@@ -89,6 +89,18 @@ public interface Lino<T> extends LiValue {
      */
     Lino<T> ifNotPresent(Runnable runnable);
 
+    /**
+     * @param other 值
+     * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(other)}
+     */
+    Lino<T> or(T other);
+
+    /**
+     * @param supplier 提供值的函数
+     * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(supplier.get())}
+     */
+    Lino<T> or(Supplier<T> supplier);
+
     class Some<T> implements Lino<T> {
 
         private final T value;
@@ -126,6 +138,16 @@ public interface Lino<T> extends LiValue {
 
         @Override
         public Lino<T> ifNotPresent(Runnable runnable) {
+            return this;
+        }
+
+        @Override
+        public Lino<T> or(T other) {
+            return this;
+        }
+
+        @Override
+        public Lino<T> or(Supplier<T> supplier) {
             return this;
         }
 
@@ -189,6 +211,16 @@ public interface Lino<T> extends LiValue {
         public Lino<T> ifNotPresent(Runnable runnable) {
             runnable.run();
             return this;
+        }
+
+        @Override
+        public Lino<T> or(T other) {
+            return of(other);
+        }
+
+        @Override
+        public Lino<T> or(Supplier<T> supplier) {
+            return of(supplier.get());
         }
     }
 }

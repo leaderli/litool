@@ -3,11 +3,6 @@ package io.leaderli.litool.core.bit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.EnumMap;
-
 /**
  * @author leaderli
  * @since 2022/6/16 8:45 AM
@@ -40,12 +35,8 @@ class BitStatusTest {
     @Test
     public void test() throws Throwable {
         BitStatus bitStatus = BitStatus.of(TestMask.class);
-        for (Field field : TestMask.class.getFields()) {
-            System.out.println(field);
-            System.out.println(field.isAccessible());
-            System.out.println(Modifier.isStatic(field.getModifiers()));
-        }
 
+        System.out.println(bitStatus.beauty(0b001 | 0b100));
 
     }
 }

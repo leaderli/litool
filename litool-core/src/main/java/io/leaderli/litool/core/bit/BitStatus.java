@@ -5,6 +5,7 @@ import io.leaderli.litool.core.util.LiObjUtil;
 import java.lang.reflect.Modifier;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -13,38 +14,51 @@ import java.util.stream.Stream;
  */
 public class BitStatus {
 
-    private final Map<BitStatusEnum, String> status = new EnumMap<BitStatusEnum, String>(BitStatusEnum.class);
+    private final Map<BitStatusEnum, String> statuses = new EnumMap<>(BitStatusEnum.class);
 
     private BitStatus() {
 
 
     }
 
+    /**
+     * @param stateClass 有状态标记的类
+     * @return 根据 class 中的 int 静态常量属性标记状态 ，int 的值 需要满足 {@link BitUtil#onlyOneBit(int)}
+     */
     public static BitStatus of(Class<?> stateClass) {
         Map<Integer, BitStatusEnum> bitStatusMap = BitStatusEnum.getBitStatusMap();
         BitStatus bitStatus = new BitStatus();
         Stream.of(stateClass.getFields())
                 .filter(field -> Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers()))
-                .filter(field -> LiObjUtil.sameAny(field.getType() ,int.class , Integer.class))
+                .filter(field -> LiObjUtil.sameAny(field.getType(), int.class, Integer.class))
                 .forEach(field -> {
                     try {
                         Integer value = (Integer) field.get(null);
 
                         BitStatusEnum statusEnum = bitStatusMap.get(value);
                         if (statusEnum != null) {
-                            bitStatus.status.put(statusEnum, field.getName());
+                            bitStatus.statuses.put(statusEnum, field.getName());
                         }
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
                 });
-        System.out.println(bitStatus.status);
         return bitStatus;
     }
 
+    /**
+     *
+     * @param status 实际的状态值
+     * @return 根据状态值，输出各状态的属性名称，状态属性名称根据其位置从右向左输出，使用竖线分割
+     */
     public String beauty(int status) {
 
-        return "";
+
+        return this.statuses.keySet().stream()
+                .filter(bit -> bit.match(status))
+                .map(this.statuses::get)
+                .collect(Collectors.joining("|"));
+
 
     }
 }
