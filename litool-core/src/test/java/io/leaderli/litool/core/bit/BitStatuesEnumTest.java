@@ -1,8 +1,10 @@
 package io.leaderli.litool.core.bit;
 
-import io.leaderli.litool.core.util.LiStr;
+import io.leaderli.litool.core.util.LiStrUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 /**
  * @author leaderli
@@ -16,10 +18,21 @@ class BitStatuesEnumTest {
         assert BitStatusEnum.valueOf("B1").value == 1;
         assert BitStatusEnum.valueOf("B32").value == Integer.MIN_VALUE;
 
-        Assertions.assertEquals("0001", LiStr.ljust(Integer.toBinaryString(BitStatusEnum.B1.value), 4, "0"));
-        Assertions.assertEquals("00010000", LiStr.ljust(Integer.toBinaryString(BitStatusEnum.B5.value), 8, "0"));
+        Assertions.assertEquals("0001", LiStrUtil.ljust(Integer.toBinaryString(BitStatusEnum.B1.value), 4, "0"));
+        Assertions.assertEquals("00010000", LiStrUtil.ljust(Integer.toBinaryString(BitStatusEnum.B5.value), 8, "0"));
 
         assert  BitStatusEnum.B1.match(0b111);
         assert  !BitStatusEnum.B1.match(0b100);
+
+    }
+
+    @Test
+    public void getBitStatusMap(){
+        Set<Integer> integers = BitStatusEnum.getBitStatusMap().keySet();
+        assert integers.size() == 32;
+        for (Integer value: integers) {
+            assert   BitUtil.onlyOneBit(value);
+
+        }
     }
 }

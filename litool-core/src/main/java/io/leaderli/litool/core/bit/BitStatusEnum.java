@@ -1,7 +1,11 @@
 package io.leaderli.litool.core.bit;
 
 
-import io.leaderli.litool.core.util.LiStr;
+import io.leaderli.litool.core.util.LiStrUtil;
+
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author leaderli
@@ -60,7 +64,7 @@ public enum BitStatusEnum {
 
     @Override
     public String toString() {
-        return LiStr.ljust(Integer.toBinaryString(value), 32);
+        return LiStrUtil.ljust(Integer.toBinaryString(value), 32,"0");
     }
 
 
@@ -70,5 +74,9 @@ public enum BitStatusEnum {
      */
     public boolean match(int status) {
         return (status & this.value) == this.value;
+    }
+
+    public static Map<Integer, BitStatusEnum> getBitStatusMap() {
+        return Arrays.stream(values()).collect(Collectors.toMap(bit -> bit.value, bit -> bit));
     }
 }

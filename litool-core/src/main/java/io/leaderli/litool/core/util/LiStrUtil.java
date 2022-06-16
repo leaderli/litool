@@ -4,7 +4,7 @@ package io.leaderli.litool.core.util;
  * @author leaderli
  * @since 2022/6/15
  */
-public class LiStr {
+public class LiStrUtil {
     /**
      * @param origin     -
      * @param min_length -
