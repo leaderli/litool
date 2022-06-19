@@ -7,7 +7,7 @@
     <packaging>jar</packaging>
 
     <parent>
-        <groupId>io.leaderli</groupId>
+        <groupId>io.leaderli.litool</groupId>
         <artifactId>litool-parent</artifactId>
         <version>1.0</version>
     </parent>

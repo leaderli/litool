@@ -14,10 +14,7 @@ class RuntimeExceptionTransferTest {
     @Test
     public void run() {
 
-        long begin = System.currentTimeMillis();
-        RuntimeExceptionTransfer.run(() -> TimeUnit.SECONDS.sleep(1));
-        long end = System.currentTimeMillis();
-        assert end - begin > 1000;
+
         Throwable thrown = Assertions.assertThrows(RuntimeException.class, () -> RuntimeExceptionTransfer.run(() -> {
             throw new RuntimeException("hello");
         })).getCause();

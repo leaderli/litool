@@ -36,7 +36,7 @@ class BitStatusTest {
     public void test() throws Throwable {
         BitStatus bitStatus = BitStatus.of(TestMask.class);
 
-        System.out.println(bitStatus.beauty(0b001 | 0b100));
+        Assertions.assertEquals("A",bitStatus.beauty(0b001 | 0b100));
 
     }
 }

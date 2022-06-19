@@ -7,15 +7,14 @@ package io.leaderli.litool.core.type;
 public class LiPrimitive {
 
 
-
-    public static final int INT = Primitive.INT;
-    public static final char CHAR = Primitive.CHAR;
-    public static final byte BYTE = Primitive.BYTE;
-    public static final long LONG = Primitive.LONG;
-    public static final boolean BOOLEAN = Primitive.BOOLEAN;
-    public static final double DOUBLE = Primitive.DOUBLE;
-    public static final float FLOAT = Primitive.FLOAT;
-    public static final short SHORT = Primitive.SHORT;
+    public static final int INT = PrimitiveValue.INT;
+    public static final char CHAR = PrimitiveValue.CHAR;
+    public static final byte BYTE = PrimitiveValue.BYTE;
+    public static final long LONG = PrimitiveValue.LONG;
+    public static final boolean BOOLEAN = PrimitiveValue.BOOLEAN;
+    public static final double DOUBLE = PrimitiveValue.DOUBLE;
+    public static final float FLOAT = PrimitiveValue.FLOAT;
+    public static final short SHORT = PrimitiveValue.SHORT;
     private static final LiTypeMap ZERO_VALUE = new LiTypeMap();
 
     static {
@@ -38,9 +37,8 @@ public class LiPrimitive {
 
 
     @SuppressWarnings("all")
-    private static class Primitive {
+    private static class PrimitiveValue {
         public static int INT;
-
         public static char CHAR;
         public static byte BYTE;
         public static long LONG;

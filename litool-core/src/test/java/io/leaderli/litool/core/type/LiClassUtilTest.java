@@ -107,6 +107,8 @@ class LiClassUtilTest {
         Assertions.assertTrue(LiClassUtil.isAssignableFromOrIsWrapper(CharSequence[].class, LiClassUtil.newArray(String.class, 0).getClass()));
     }
 
+
+
     @Test
     public void cast() {
 
@@ -139,9 +141,6 @@ class LiClassUtilTest {
         Object[] cast = LiClassUtil.cast(a, Object[].class);
         Assertions.assertEquals("1", cast[0]);
     }
-
-
-
 
 
     @Test

@@ -8,7 +8,7 @@ package io.leaderli.litool.core.type;
 public interface ComponentType<T> {
 
     /**
-     * 返回你将要使用的泛型
+     * @return 返回你将要使用的泛型
      */
     Class<T> componentType();
 

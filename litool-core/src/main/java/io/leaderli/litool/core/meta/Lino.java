@@ -2,9 +2,14 @@ package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
+import io.leaderli.litool.core.type.LiClassUtil;
+import io.leaderli.litool.core.util.LiBoolUtil;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -46,27 +51,55 @@ public interface Lino<T> extends LiValue {
 
     /**
      * @param <T> 泛型
-     * @return {@link None#INSTANCE}
+     * @return 返回全局唯一的空 Lino
      */
-
     static <T> Lino<T> none() {
         //noinspection unchecked
         return (Lino<T>) None.INSTANCE;
 
     }
 
+    /**
+     * @param type 可转换的类型
+     * @param <R>  可转换的类型的泛型
+     * @return 若 value 可以转换为 type 类型 ，则返回 转换后的类型，否则返回 {@link #none()}
+     */
+    <R> Lino<R> cast(Class<R> type);
+
+    /**
+     * @param keyType   map 的 key 的类型
+     * @param valueType map 的 value 的类型
+     * @param <K>       key 的泛型
+     * @param <V>       value 的泛型
+     * @return 当 {@link Lino#get()} 的值为 map 时，且其 key 和 value 的类型可以转换为 keyType valueType 时，
+     * 则返回泛型 {@code Lino<Map<K,V>>} 的 Lino，否则返回 {@link #none()}
+     */
+    <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType);
+
+
+    /**
+     * @return 通过 {@link LiBoolUtil#parse(Object)} 对 实际值 进行过滤
+     * @see LiBoolUtil
+     * @see #filter(boolean)
+     */
+    Lino<T> filter();
+
+    /**
+     * @param remain 是否保留
+     * @return 当 {@code remain == true} 则返回 this ， 否则 返回 {@link #none()}
+     */
+    Lino<T> filter(boolean remain);
+
+    /**
+     * @param function 转换函数
+     * @return lino 实际值经过转换函数转换后，通过 {@link io.leaderli.litool.core.util.LiBoolUtil#parse(Object)} 后，调用 {@link #filter(boolean)}
+     * @see #filter(boolean)
+     * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
+     */
+    Lino<T> filter(Function<? super T, Object> function);
+
     T get();
 
-    default T getOrElse(T other) {
-
-        return isPresent() ? get() : other;
-    }
-
-
-    default T getOrElse(Supplier<? extends T> supplier) {
-
-        return notPresent() && supplier != null ? supplier.get() : get();
-    }
 
     /**
      * @param consumer 当 {@link #isPresent()}  时消费
@@ -90,6 +123,31 @@ public interface Lino<T> extends LiValue {
     Lino<T> ifNotPresent(Runnable runnable);
 
     /**
+     * @param mapping 转换函数
+     * @param <R>     转换后的泛型
+     * @return 转换后的 Lino
+     */
+    <R> Lino<R> map(Function<? super T, ? extends R> mapping);
+
+    /**
+     * 实际调用 {@link #throwable_map(Function, Consumer)}, 第二个参数传 null
+     *
+     * @param mapping 转换函数
+     * @param <R>     转换后的泛型
+     * @return 转换后的 Lino
+     */
+    <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapping);
+
+    /**
+     * @param mapping   转换函数
+     * @param whenThrow 当转换函数抛出异常时执行的函数
+     * @param <R>       转换后的泛型
+     * @return 转换后的 Lino
+     */
+    <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
+
+
+    /**
      * @param other 值
      * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(other)}
      */
@@ -101,7 +159,28 @@ public interface Lino<T> extends LiValue {
      */
     Lino<T> or(Supplier<T> supplier);
 
-    class Some<T> implements Lino<T> {
+
+    /**
+     * @param other 实例
+     * @return 当 other 与 lino 实际值 equals 时，返回 this，否则返回 {@link #none()}
+     */
+    Lino<T> same(T other);
+
+    /**
+     * @param <R> 泛型
+     * @return 返回 LiCase 实例
+     */
+    <R> LiCase<T, R> toLiCase();
+
+    /**
+     * @param type 类型
+     * @param <R>  泛型
+     * @return 根据实际值的类型，将数组或集合转换为 {@link Lira}
+     */
+    <R> Lira<R> toLira(Class<R> type);
+
+
+    final class Some<T> implements Lino<T> {
 
         private final T value;
 
@@ -117,6 +196,38 @@ public interface Lino<T> extends LiValue {
         @Override
         public String name() {
             return "Some";
+        }
+
+        @Override
+        public <R> Lino<R> cast(Class<R> type) {
+            return of(LiClassUtil.cast(this.value, type));
+        }
+
+        @Override
+        public <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType) {
+            Map<K, V> kvMap = LiClassUtil.filterCanCast((Map<?, ?>) cast(Map.class), keyType, valueType);
+            if (kvMap.isEmpty()) {
+                return none();
+            }
+            return of(kvMap);
+        }
+
+        @Override
+        public Lino<T> filter() {
+            return filter(LiBoolUtil.parse(this.value));
+        }
+
+        @Override
+        public Lino<T> filter(boolean remain) {
+            return remain ? this : none();
+        }
+
+        @Override
+        public Lino<T> filter(Function<? super T, Object> function) {
+            if (function == null) {
+                return this;
+            }
+            return filter(LiBoolUtil.parse(function.apply(this.value)));
         }
 
         @Override
@@ -142,6 +253,29 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
+        public <R> Lino<R> map(Function<? super T, ? extends R> mapping) {
+            return of(mapping.apply(this.value));
+        }
+
+        @Override
+        public <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapping) {
+            return throwable_map(mapping, null);
+        }
+
+        @Override
+        public <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
+            try {
+
+                return of(mapping.apply(this.value));
+            } catch (Throwable throwable) {
+                if (whenThrow != null) {
+                    whenThrow.accept(throwable);
+                }
+            }
+            return none();
+        }
+
+        @Override
         public Lino<T> or(T other) {
             return this;
         }
@@ -149,6 +283,36 @@ public interface Lino<T> extends LiValue {
         @Override
         public Lino<T> or(Supplier<T> supplier) {
             return this;
+        }
+
+        @Override
+        public Lino<T> same(T other) {
+            if (this.value.equals(other)) {
+                return this;
+            }
+            return none();
+        }
+
+        @Override
+        public <R> LiCase<T, R> toLiCase() {
+            return LiCase.of(this);
+        }
+
+        @Override
+        public <R> Lira<R> toLira(Class<R> type) {
+            if (this.value.getClass().isArray()) {
+                Object[] arr = (Object[]) this.value;
+                return Lira.of(arr).cast(type);
+            }
+
+            if (this.value instanceof Iterable) {
+                return Lira.of((Iterable<?>) this.value).cast(type);
+            }
+            if (this.value instanceof Iterator) {
+                return Lira.of((Iterator<?>) this.value).cast(type);
+            }
+
+            return Lira.of(this.value).cast(type);
         }
 
         @Override
@@ -170,7 +334,8 @@ public interface Lino<T> extends LiValue {
         }
     }
 
-    class None<T> implements Lino<T> {
+
+    final class None<T> implements Lino<T> {
         private static final None<?> INSTANCE = new None<>();
 
         private None() {
@@ -190,6 +355,31 @@ public interface Lino<T> extends LiValue {
         @Override
         public String toString() {
             return name() + "()";
+        }
+
+        @Override
+        public <R> Lino<R> cast(Class<R> type) {
+            return none();
+        }
+
+        @Override
+        public <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType) {
+            return none();
+        }
+
+        @Override
+        public Lino<T> filter() {
+            return this;
+        }
+
+        @Override
+        public Lino<T> filter(boolean remain) {
+            return this;
+        }
+
+        @Override
+        public Lino<T> filter(Function<? super T, Object> function) {
+            return this;
         }
 
         @Override
@@ -214,6 +404,21 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
+        public <R> Lino<R> map(Function<? super T, ? extends R> mapping) {
+            return none();
+        }
+
+        @Override
+        public <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapping) {
+            return none();
+        }
+
+        @Override
+        public <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
+            return none();
+        }
+
+        @Override
         public Lino<T> or(T other) {
             return of(other);
         }
@@ -221,6 +426,21 @@ public interface Lino<T> extends LiValue {
         @Override
         public Lino<T> or(Supplier<T> supplier) {
             return of(supplier.get());
+        }
+
+        @Override
+        public Lino<T> same(T other) {
+            return this;
+        }
+
+        @Override
+        public <R> LiCase<T, R> toLiCase() {
+            return LiCase.none();
+        }
+
+        @Override
+        public <R> Lira<R> toLira(Class<R> type) {
+            return Lira.none();
         }
     }
 }

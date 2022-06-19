@@ -24,7 +24,7 @@ class LiBoxTest {
         }).start();
 
         Assertions.assertEquals(str.value(), "hello");
-        RuntimeExceptionTransfer.run(() -> TimeUnit.MICROSECONDS.sleep(200));
+        RuntimeExceptionTransfer.run(() -> TimeUnit.MICROSECONDS.sleep(3000));
         Assertions.assertEquals(str.value(), "fuck");
 
 
