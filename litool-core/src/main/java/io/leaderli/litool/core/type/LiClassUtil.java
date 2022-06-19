@@ -127,7 +127,7 @@ public class LiClassUtil {
             e.printStackTrace();
         }
 
-        return Collections.emptyList();
+        return new ArrayList<>();
 
     }
 
@@ -141,8 +141,6 @@ public class LiClassUtil {
     public static <T> T[] newArray(Class<? extends T> componentType, int length) {
         return (T[]) Array.newInstance(primitiveToWrapper(componentType), length);
     }
-
-
 
 
     /**

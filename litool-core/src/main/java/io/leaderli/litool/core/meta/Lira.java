@@ -114,6 +114,15 @@ public interface Lira<T> extends LiValue {
     Lino<T> first();
 
     /**
+     * @param filter 过滤函数
+     * @return 过滤后返回第一个元素 , 当无元素时返回 {@link Lino#none()}
+     * @see #filter(Function)
+     */
+
+    Lino<T> first(Function<? super T, Object> filter);
+
+
+    /**
      * @return 返回 底层元素的一份拷贝
      */
     List<Lino<T>> get();
@@ -260,6 +269,11 @@ public interface Lira<T> extends LiValue {
         }
 
         @Override
+        public Lino<T> first(Function<? super T, Object> filter) {
+            return filter(filter).first();
+        }
+
+        @Override
         public List<Lino<T>> get() {
             return new ArrayList<>(this.linos);
         }
@@ -375,6 +389,11 @@ public interface Lira<T> extends LiValue {
 
         @Override
         public Lino<T> first() {
+            return Lino.none();
+        }
+
+        @Override
+        public Lino<T> first(Function<? super T, Object> filter) {
             return Lino.none();
         }
 

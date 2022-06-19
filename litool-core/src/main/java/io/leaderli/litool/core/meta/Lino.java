@@ -53,8 +53,8 @@ public interface Lino<T> extends LiValue {
      * @param <T> 泛型
      * @return 返回全局唯一的空 Lino
      */
+    @SuppressWarnings("unchecked")
     static <T> Lino<T> none() {
-        //noinspection unchecked
         return (Lino<T>) None.INSTANCE;
 
     }

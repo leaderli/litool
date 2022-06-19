@@ -6,13 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author leaderli
  * @since 2022/6/16 1:26 PM
  */
 class LiBoolUtilTest {
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
     public void test() {
 
@@ -41,7 +40,6 @@ class LiBoolUtilTest {
 
         a = new HashMap<>();
         Assertions.assertFalse(LiBoolUtil.parse(a));
-        //noinspection unchecked,rawtypes
         ((Map) a).put("1", "1");
         Assertions.assertTrue(LiBoolUtil.parse(a));
 
