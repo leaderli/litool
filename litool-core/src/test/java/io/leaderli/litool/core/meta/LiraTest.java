@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author leaderli
@@ -12,6 +14,25 @@ import java.util.Collections;
  */
 class LiraTest {
 
+
+    @Test
+    void cast() {
+        Map<Object, Object> map = new HashMap<>();
+        map.put("1", "1");
+        map.put("2", 2);
+
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        Object obj = map;
+
+
+        Assertions.assertEquals(1, Lira.of(map).cast(Map.class).size());
+        Assertions.assertEquals(0, Lira.of(map).cast(Integer.class).size());
+
+        Assertions.assertEquals("{1=1}", Lira.of(obj).cast(String.class, String.class).first().get().toString());
+        Assertions.assertSame(Lino.none(), Lira.of(obj).cast(Integer.class, String.class).first());
+
+
+    }
 
     @Test
     void of() {
@@ -34,8 +55,9 @@ class LiraTest {
 
 
     }
+
     @Test
-    public void filter() {
+    void filter() {
 
         Assertions.assertTrue(Lira.of(1, 2, 3).filter(i -> i > 4).notPresent());
         Assertions.assertSame(2, Lira.of(1, 2, 3).filter(i -> i > 1).size());
@@ -45,6 +67,7 @@ class LiraTest {
         Assertions.assertEquals(2, Lira.of(1, null, 3).filter().size());
         Assertions.assertEquals(0, Lira.of((Object) null).filter().size());
     }
+
     @Test
     void get() {
 
@@ -65,8 +88,8 @@ class LiraTest {
     }
 
     @Test
-    void equals(){
-        Assertions.assertEquals(Lira.of(1,2),Lira.of(1,2));
-        Assertions.assertNotEquals(Lira.of(2),Lira.of(1,2));
+    void equals() {
+        Assertions.assertEquals(Lira.of(1, 2), Lira.of(1, 2));
+        Assertions.assertNotEquals(Lira.of(2), Lira.of(1, 2));
     }
 }

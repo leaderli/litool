@@ -206,11 +206,8 @@ public interface Lino<T> extends LiValue {
 
         @Override
         public <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType) {
-            Map<K, V> kvMap = LiClassUtil.filterCanCast((Map<?, ?>) cast(Map.class), keyType, valueType);
-            if (kvMap.isEmpty()) {
-                return none();
-            }
-            return of(kvMap);
+
+            return cast(Map.class).map(m -> LiClassUtil.filterCanCast(m, keyType, valueType)).filter();
         }
 
         @Override

@@ -35,6 +35,13 @@ class LinoTest {
 
         Assertions.assertEquals("[1]", Arrays.toString(Lino.of(new String[]{"1"}).cast(Object[].class).get()));
 
+        Map<Object,Object> map = new HashMap<>();
+        map.put("1","1");
+        map.put("2",2);
+
+        a = map;
+        Assertions.assertEquals("{1=1}",Lino.of(a).cast(String.class, String.class).get().toString());
+        Assertions.assertSame(Lino.none(),Lino.of(a).cast(Integer.class, String.class));
     }
 
     @Test
