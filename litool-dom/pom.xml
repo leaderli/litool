@@ -13,7 +13,7 @@
 
     <artifactId>litool-dom</artifactId>
     <version>1.0</version>
-
+    <name>${project.artifactId}</name>
 
     <dependencies>
 
