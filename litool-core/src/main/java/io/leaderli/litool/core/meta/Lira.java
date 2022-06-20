@@ -2,6 +2,7 @@ package io.leaderli.litool.core.meta;
 
 import com.sun.javafx.UnmodifiableArrayList;
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.type.LiClassUtil;
 
 import java.util.*;
@@ -140,13 +141,13 @@ public interface Lira<T> extends LiValue {
     <R> Lira<R> map(Function<? super T, ? extends R> mapping);
 
     /**
-     * 实际调用 {@link #throwable_map(Function, Consumer)}, 第二个参数传 null
+     * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)}, 第二个参数传 null
      *
      * @param mapping 转换函数
      * @param <R>     转换后的泛型
      * @return 转换后的 Lira
      */
-    <R> Lira<R> throwable_map(Function<? super T, ? extends R> mapping);
+    <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping);
 
     /**
      * @param mapping   转换函数
@@ -154,7 +155,7 @@ public interface Lira<T> extends LiValue {
      * @param <R>       转换后的泛型
      * @return 转换后的 Lira
      */
-    <R> Lira<R> throwable_map(Function<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
+    <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
 
     /**
      * @param others 数组
@@ -293,7 +294,7 @@ public interface Lira<T> extends LiValue {
         }
 
         @Override
-        public <R> Lira<R> throwable_map(Function<? super T, ? extends R> mapping) {
+        public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
             return of(this.linos.stream()
                     .map(lino -> lino.throwable_map(mapping).get())
                     .filter(Objects::nonNull)
@@ -301,7 +302,7 @@ public interface Lira<T> extends LiValue {
         }
 
         @Override
-        public <R> Lira<R> throwable_map(Function<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
+        public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
             return of(this.linos.stream()
                     .map(lino -> lino.throwable_map(mapping, whenThrow).get())
                     .filter(Objects::nonNull)
@@ -413,12 +414,12 @@ public interface Lira<T> extends LiValue {
         }
 
         @Override
-        public <R> Lira<R> throwable_map(Function<? super T, ? extends R> mapping) {
+        public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
             return none();
         }
 
         @Override
-        public <R> Lira<R> throwable_map(Function<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
+        public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
             return none();
         }
 
