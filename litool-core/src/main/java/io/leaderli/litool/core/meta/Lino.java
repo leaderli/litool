@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
+import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.type.LiClassUtil;
 import io.leaderli.litool.core.util.LiBoolUtil;
@@ -130,13 +131,13 @@ public interface Lino<T> extends LiValue {
     <R> Lino<R> map(Function<? super T, ? extends R> mapping);
 
     /**
-     * 实际调用 {@link #throwable_map(Function, Consumer)}, 第二个参数传 null
+     * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)}, 第二个参数传 null
      *
      * @param mapping 转换函数
      * @param <R>     转换后的泛型
      * @return 转换后的 Lino
      */
-    <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapping);
+    <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping);
 
     /**
      * @param mapping   转换函数
@@ -144,7 +145,7 @@ public interface Lino<T> extends LiValue {
      * @param <R>       转换后的泛型
      * @return 转换后的 Lino
      */
-    <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
+    <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
 
 
     /**
@@ -258,12 +259,12 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapping) {
+        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
             return throwable_map(mapping, null);
         }
 
         @Override
-        public <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
+        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
             try {
 
                 return of(mapping.apply(this.value));
@@ -409,12 +410,12 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapping) {
+        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
             return none();
         }
 
         @Override
-        public <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
+        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
             return none();
         }
 
