@@ -5,12 +5,17 @@ import io.leaderli.litool.core.util.LiBoolUtil;
 import java.util.function.Function;
 
 /**
- * @author leaderli
- * @since 2022/6/23
+ * 该类与前一个节点配合使用
+ *
+ * @see LiIf
  */
 public interface LiThen<T, R> extends IfPublisher<T, R> {
 
 
+    /**
+     * @param mapping 转换函数
+     * @return 返回一个新的 LiIf ,  以方便链式调用
+     */
     default LiIf<T, R> then(Function<? super T, ? extends R> mapping) {
 
         return new Then<>(this, mapping);
@@ -33,7 +38,6 @@ public interface LiThen<T, R> extends IfPublisher<T, R> {
 
         }
 
-
     }
 
     class ThenSubscriber<T, R> extends IfMiddleSubscriber<T, R> {
@@ -46,6 +50,13 @@ public interface LiThen<T, R> extends IfPublisher<T, R> {
         }
 
 
+        /**
+         * 对实际值进行断言，如果满足，值执行转换函数，并将结果保存，并终止执行，
+         *
+         * @param t         实际值
+         * @param predicate 断言函数
+         * @see #mapper
+         */
         @Override
         public void next(T t, Function<? super T, Object> predicate) {
 

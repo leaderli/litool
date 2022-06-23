@@ -2,6 +2,7 @@ package io.leaderli.litool.core.condition;
 
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.type.LiClassUtil;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -12,6 +13,9 @@ import java.util.function.Supplier;
  */
 public interface LiIf<T, R> extends IfPublisher<T, R> {
 
+    static <T, R> LiIf<T, R> of() {
+        return of(null);
+    }
 
     static <T, R> LiIf<T, R> of(T value) {
         return of(Lino.of(value));
@@ -24,15 +28,85 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
         return new Begin<>(lino);
     }
 
-    default LiThen<T, R> _if(Function<? super T, Object> filter) {
+    /**
+     * @param predicate 断言函数
+     * @return 返回一个可以提供 {@link LiThen#then(Function)} 转换函数的接口类，以方便链式调用。只有当 断言函数返回为true时，才会实际调用 转换函数
+     * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
+     */
+    default LiThen<T, R> _if(Function<? super T, Object> predicate) {
 
-        return new When<>(this, filter);
+        return new When<>(this, predicate);
     }
 
+    /**
+     * @param compare 当值 equals 时执行
+     * @return {@link #_if(Function)}
+     */
+    default LiThen<T, R> _case(T compare) {
+        return new When<>(this, v -> v.equals(compare));
+    }
+
+    /**
+     * @param type 当  值 instanceof type 时执行
+     * @return {@link #_if(Function)}
+     */
+    default LiThen<T, R> _instanceof(Class<?> type) {
+        return new When<>(this, v -> LiClassUtil.isAssignableFromOrIsWrapper(type, v.getClass()));
+    }
+
+    /**
+     * @param predicate 断言函数
+     * @param mapping   转换函数
+     * @return {@code _if(predicate).then(mapper)}
+     * @see #_if(Function)
+     * @see LiThen#then(Function)
+     */
+    default LiIf<T, R> _if(Function<? super T, Object> predicate, Function<? super T, ? extends R> mapping) {
+
+        return _if(predicate).then(mapping);
+    }
+
+    /**
+     * @param compare 当值 equals 时执行
+     * @param mapping 转换函数
+     * @return {@code _if(predicate).then(mapper)}
+     * @see #_case(Object)
+     * @see LiThen#then(Function)
+     */
+    default LiIf<T, R> _case(T compare, Function<? super T, ? extends R> mapping) {
+        return _case(compare).then(mapping);
+    }
+
+    /**
+     * @param type    当  值 instanceof type 时执行
+     * @param mapping 转换函数
+     * @return {@code _if(predicate).then(mapper)}
+     * @see #_instanceof(Class)
+     * @see LiThen#then(Function)
+     */
+    default LiIf<T, R> _instanceof(Class<?> type, Function<? super T, ? extends R> mapping) {
+        return _instanceof(type).then(mapping);
+
+    }
+
+    /**
+     * 当原数据为 null 时，则所有前置条件都不执行断言，直接使用默认值提供者
+     *
+     * @param supplier 当所有前置断言全部失败时的默认值提供者
+     * @return 触发实际链条执行的函数
+     */
     default Lino<R> _else(Supplier<? extends R> supplier) {
         Other<T, R> other = new Other<>(this, supplier);
         End<T, R> end = new End<>();
         return end.request(other);
+    }
+
+    /**
+     * @param value 当所有前置断言全部失败时的默认值
+     * @return {@link #_else(Supplier)}
+     */
+    default Lino<R> _else(R value) {
+        return _else(() -> value);
     }
 
     class When<T, R> implements LiThen<T, R> {
@@ -104,6 +178,12 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
 
     }
 
+    /**
+     * 用于开始响应式调用，并保存最终结果
+     *
+     * @param <T> 源数据泛型
+     * @param <R> 结果数据泛型
+     */
     class Begin<T, R> implements LiIf<T, R> {
         private final Lino<T> lino;
 

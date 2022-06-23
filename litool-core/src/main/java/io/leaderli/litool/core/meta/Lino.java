@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.condition.LiIf;
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
@@ -186,7 +187,7 @@ public interface Lino<T> extends LiValue {
      * @param <R> 泛型
      * @return 返回 LiCase 实例
      */
-    <R> LiCase<T, R> toLiCase();
+    <R> LiIf<T, R> toIf();
 
     /**
      * @param type 类型
@@ -307,8 +308,8 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> LiCase<T, R> toLiCase() {
-            return LiCase.of(this);
+        public <R> LiIf<T, R> toIf() {
+            return LiIf.of(this);
         }
 
         @Override
@@ -447,8 +448,8 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> LiCase<T, R> toLiCase() {
-            return LiCase.none();
+        public <R> LiIf<T, R> toIf() {
+            return LiIf.of();
         }
 
         @Override
