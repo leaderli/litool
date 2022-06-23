@@ -35,13 +35,13 @@ class LinoTest {
 
         Assertions.assertEquals("[1]", Arrays.toString(Lino.of(new String[]{"1"}).cast(Object[].class).get()));
 
-        Map<Object,Object> map = new HashMap<>();
-        map.put("1","1");
-        map.put("2",2);
+        Map<Object, Object> map = new HashMap<>();
+        map.put("1", "1");
+        map.put("2", 2);
 
         a = map;
-        Assertions.assertEquals("{1=1}",Lino.of(a).cast(String.class, String.class).get().toString());
-        Assertions.assertSame(Lino.none(),Lino.of(a).cast(Integer.class, String.class));
+        Assertions.assertEquals("{1=1}", Lino.of(a).cast(String.class, String.class).get().toString());
+        Assertions.assertSame(Lino.none(), Lino.of(a).cast(Integer.class, String.class));
     }
 
     @Test
@@ -94,6 +94,8 @@ class LinoTest {
     void of() {
         Assertions.assertTrue(Lino.of(null).notPresent());
         Assertions.assertFalse(Lino.of(1).notPresent());
+        Assertions.assertTrue(Lino.of(()->null).notPresent());
+        Assertions.assertFalse(Lino.of(()->1).notPresent());
     }
 
     @Test
@@ -171,7 +173,7 @@ class LinoTest {
 
     @Test
     void throwable_map() {
-        LiBox<Integer> box = LiBox.None();
+        LiBox<Integer> box = LiBox.none();
         Assertions.assertSame(Lino.of(0).throwable_map(i -> 5 / i), Lino.none());
         Assertions.assertNull(box.value());
         Lino.of(0).throwable_map(i -> 5 / i, t -> box.value(2));
@@ -200,4 +202,6 @@ class LinoTest {
         Assertions.assertEquals("List[Some(1), Some(2)]", Lino.of(Arrays.asList(1, 2)).toLira(Integer.class).toString());
         Assertions.assertEquals("Empty[]", Lino.of(Arrays.asList(1, 2)).toLira(String.class).toString());
     }
+
+
 }

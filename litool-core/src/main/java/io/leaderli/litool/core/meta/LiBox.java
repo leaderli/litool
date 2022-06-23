@@ -21,7 +21,7 @@ public class LiBox<T> {
      * @param <T> 泛型
      * @return 返回一个  {@code value = null } 的实例
      */
-    public static <T> LiBox<T> None() {
+    public static <T> LiBox<T> none() {
         return new LiBox<>();
     }
 

@@ -3,6 +3,7 @@ package io.leaderli.litool.core.meta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface LiCase<T, E> {
 
@@ -37,6 +38,12 @@ public interface LiCase<T, E> {
      * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
      */
     LiCase<T, E> if_map(Function<? super T, Object> filter, Function<? super T, ? extends E> mapping);
+
+    /**
+     * @param mapping 转换函数
+     * @return 当前面没有任意条件满足时执行
+     */
+    Lino<E> else_supplier(Supplier<? extends E> mapping);
 
 
     /**
@@ -83,6 +90,12 @@ public interface LiCase<T, E> {
             return this;
         }
 
+        @Override
+        @SuppressWarnings("unchecked")
+        public Lino<E> else_supplier(Supplier<? extends E> supplier) {
+            return lino().or((Supplier<E>) supplier);
+        }
+
 
         public <R> LiCase<T, E> case_map(Class<R> keyType, Function<? super R, ? extends E> mapping) {
 
@@ -120,6 +133,11 @@ public interface LiCase<T, E> {
         @Override
         public LiCase<T, E> if_map(Function<? super T, Object> filter, Function<? super T, ? extends E> mapping) {
             return this;
+        }
+
+        @Override
+        public Lino<E> else_supplier(Supplier<? extends E> supplier) {
+            return Lino.of(supplier.get());
         }
 
         @Override

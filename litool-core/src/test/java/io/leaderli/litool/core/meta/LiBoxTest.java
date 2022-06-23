@@ -28,7 +28,7 @@ class LiBoxTest {
         Assertions.assertEquals(str.value(), "fuck");
 
 
-        LiBox<String> none = LiBox.None();
+        LiBox<String> none = LiBox.none();
         assert none.lino().notPresent();
         none.value("123");
         assert none.lino().isPresent();

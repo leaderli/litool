@@ -39,6 +39,21 @@ public interface Lino<T> extends LiValue {
     }
 
     /**
+     * @param supplier 获取值的提供者函数
+     * @param <T>      泛型
+     * @return 返回一个实例，
+     * 当 {@code supplier == null} 时返回 {@link #none()}
+     * 否则返回 {@link #of(Object)}
+     * @see #of(Object)
+     */
+    static <T> Lino<T> of(Supplier<T> supplier) {
+        if (supplier == null) {
+            return none();
+        }
+        return of(supplier.get());
+    }
+
+    /**
      * @param value 值
      * @param <T>   泛型
      * @return 窄化一个宽泛的泛型， {@code <? extends T> } 转换为  {@code  <T> }

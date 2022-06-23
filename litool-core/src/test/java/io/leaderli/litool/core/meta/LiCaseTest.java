@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 public class LiCaseTest {
 
     @Test
-    public void test() {
+    public void case_map() {
 
         Object a = "1";
         LiCase<Object, Integer> liCase = LiCase.of(Lino.of(a));
@@ -38,11 +38,25 @@ public class LiCaseTest {
         of = liCase.lino();
         Assertions.assertEquals(3, of.get().intValue());
 
-        liCase = LiCase.of(Lino.of(123));
 
+    }
+
+    @Test
+    public void if_map() {
+        LiCase<Object, Integer> liCase = LiCase.of(Lino.of(123));
         Assertions.assertEquals(Lino.none(), liCase.if_map(String.class::isInstance, ln -> ((String) ln).length()).lino());
         liCase = LiCase.of(Lino.of("123"));
         Assertions.assertEquals(3, liCase.if_map(String.class::isInstance, ln -> ((String) ln).length()).lino().get().intValue());
+
+
+    }
+
+    @Test
+    public void else_map() {
+        LiCase<Object, Integer> liCase = LiCase.of(Lino.of(123));
+        Assertions.assertEquals(Lino.of(10), liCase.if_map(String.class::isInstance, ln -> ((String) ln).length()).else_supplier(() -> 10));
+        liCase = LiCase.of(Lino.of("123"));
+        Assertions.assertEquals(3, liCase.if_map(String.class::isInstance, ln -> ((String) ln).length()).else_supplier(() -> 5).get().intValue());
 
 
     }
