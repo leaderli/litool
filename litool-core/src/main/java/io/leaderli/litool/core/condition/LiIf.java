@@ -18,6 +18,9 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
     }
 
     static <T, R> LiIf<T, R> of(Lino<T> lino) {
+        if (lino == null) {
+            lino = Lino.none();
+        }
         return new Begin<>(lino);
     }
 
