@@ -11,7 +11,7 @@ import java.util.function.Function;
 public interface LiThen<T, R> extends IfPublisher<T, R> {
 
 
-    default LiIf<T, R> then(Function<T, R> mapping) {
+    default LiIf<T, R> then(Function<? super T, ? extends R> mapping) {
 
         return new Then<>(this, mapping);
     }
@@ -19,10 +19,10 @@ public interface LiThen<T, R> extends IfPublisher<T, R> {
     class Then<T, R> implements LiIf<T, R> {
 
         private final IfPublisher<T, R> prevPublisher;
-        private final Function<T, R> mapper;
+        private final Function<? super T, ? extends R> mapper;
 
 
-        public Then(IfPublisher<T, R> prevPublisher, Function<T, R> mapper) {
+        public Then(IfPublisher<T, R> prevPublisher, Function<? super T, ? extends R> mapper) {
             this.prevPublisher = prevPublisher;
             this.mapper = mapper;
         }
@@ -37,9 +37,9 @@ public interface LiThen<T, R> extends IfPublisher<T, R> {
     }
 
     class ThenSubscriber<T, R> extends IfMiddleSubscriber<T, R> {
-        private final Function<T, R> mapper;
+        private final Function<? super T, ? extends R> mapper;
 
-        public ThenSubscriber(Function<T, R> mapper, IfSubscriber<T, R> actualSubscriber) {
+        public ThenSubscriber(Function<? super T, ? extends R> mapper, IfSubscriber<T, R> actualSubscriber) {
             super(actualSubscriber);
             this.mapper = mapper;
 
@@ -47,7 +47,7 @@ public interface LiThen<T, R> extends IfPublisher<T, R> {
 
 
         @Override
-        public void next(T t, Function<T, Object> predicate) {
+        public void next(T t, Function<? super T, Object> predicate) {
 
             if (t != null && LiBoolUtil.parse(predicate.apply(t))) {
                 this.onComplete(this.mapper.apply(t));

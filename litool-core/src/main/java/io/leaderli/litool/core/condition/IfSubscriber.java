@@ -20,7 +20,7 @@ public interface IfSubscriber<T, R> {
     /**
      * 发布者推送了一个消息
      */
-    void next(T t, Function<T, Object> predicate);
+    void next(T t, Function<? super T, Object> predicate);
 
 
 }

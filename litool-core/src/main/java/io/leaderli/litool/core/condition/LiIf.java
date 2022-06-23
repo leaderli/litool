@@ -24,12 +24,12 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
         return new Begin<>(lino);
     }
 
-    default LiThen<T, R> _if(Function<T, Object> filter) {
+    default LiThen<T, R> _if(Function<? super T, Object> filter) {
 
         return new When<>(this, filter);
     }
 
-    default Lino<R> _else(Supplier<R> supplier) {
+    default Lino<R> _else(Supplier<? extends R> supplier) {
         Other<T, R> other = new Other<>(this, supplier);
         End<T, R> end = new End<>();
         return end.request(other);
@@ -37,9 +37,9 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
 
     class When<T, R> implements LiThen<T, R> {
         private final IfPublisher<T, R> prevPublisher;
-        private final Function<T, Object> filter;
+        private final Function<? super T, Object> filter;
 
-        public When(IfPublisher<T, R> prevPublisher, Function<T, Object> filter) {
+        public When(IfPublisher<T, R> prevPublisher, Function<? super T, Object> filter) {
             this.prevPublisher = prevPublisher;
             this.filter = filter;
         }
@@ -54,28 +54,28 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
     }
 
     class WhenSubscriber<T, R> extends IfMiddleSubscriber<T, R> {
-        private final Function<T, Object> filter;
+        private final Function<? super T, Object> predicate;
 
-        public WhenSubscriber(Function<T, Object> filter, IfSubscriber<T, R> actualSubscriber) {
+        public WhenSubscriber(Function<? super T, Object> predicate, IfSubscriber<T, R> actualSubscriber) {
             super(actualSubscriber);
-            this.filter = filter;
+            this.predicate = predicate;
 
         }
 
 
         @Override
-        public void next(T t, Function<T, Object> predicate) {
+        public void next(T t, Function<? super T, Object> predicate) {
 
-            this.actualSubscriber.next(t, this.filter);
+            this.actualSubscriber.next(t, this.predicate);
         }
 
     }
 
     class Other<T, R> implements LiThen<T, R> {
         private final IfPublisher<T, R> prevPublisher;
-        private final Supplier<R> supplier;
+        private final Supplier<? extends R> supplier;
 
-        public Other(IfPublisher<T, R> prevPublisher, Supplier<R> supplier) {
+        public Other(IfPublisher<T, R> prevPublisher, Supplier<? extends R> supplier) {
             this.prevPublisher = prevPublisher;
             this.supplier = supplier;
         }
@@ -88,9 +88,9 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
     }
 
     class OtherSubscriber<T, R> extends IfMiddleSubscriber<T, R> {
-        private final Supplier<R> supplier;
+        private final Supplier<? extends R> supplier;
 
-        public OtherSubscriber(Supplier<R> supplier, IfSubscriber<T, R> actualSubscriber) {
+        public OtherSubscriber(Supplier<? extends R> supplier, IfSubscriber<T, R> actualSubscriber) {
             super(actualSubscriber);
             this.supplier = supplier;
 
@@ -98,7 +98,7 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
 
 
         @Override
-        public void next(T t, Function<T, Object> predicate) {
+        public void next(T t, Function<? super T, Object> predicate) {
             onComplete(supplier.get());
         }
 
@@ -150,7 +150,7 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
         }
 
         @Override
-        public void next(T t, Function<T, Object> predicate) {
+        public void next(T t, Function<? super T, Object> predicate) {
 
             throw new UnsupportedOperationException();
         }
