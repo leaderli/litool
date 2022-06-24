@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.condition;
 
-import io.leaderli.litool.core.meta.LiBox;
+import java.util.function.Consumer;
 
 /**
  * @author leaderli
@@ -22,8 +22,8 @@ public abstract class IfMiddleSubscriber<T, R> implements IfSubscriber<T, R>, If
 
 
     @Override
-    public void request(LiBox<R> box) {
-        this.prevSubscription.request(box);
+    public void request(Consumer<R> completeConsumer) {
+        this.prevSubscription.request(completeConsumer);
 
     }
 

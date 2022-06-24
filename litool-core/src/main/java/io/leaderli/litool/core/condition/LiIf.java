@@ -4,6 +4,7 @@ import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.type.LiClassUtil;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -47,11 +48,73 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
     }
 
     /**
+     * @param compares 当存在 equals 的值时执行
+     * @return {@link #_if(Function)}
+     */
+    @SuppressWarnings("unchecked")
+    default LiThen<T, R> _case(T... compares) {
+
+        return new When<>(this, v -> {
+
+            if (compares != null) {
+                for (T compare : compares) {
+                    if (v.equals(compare)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        });
+    }
+    /**
+     * @param compare 当值 equals 时执行
+     * @param mapping 转换函数
+     * @return {@code _if(predicate).then(mapper)}
+     * @see #_case(Object)
+     * @see LiThen#then(Function)
+     */
+    default LiIf<T, R> _case(T compare, Function<? super T, ? extends R> mapping) {
+        return _case(compare).then(mapping);
+    }
+
+
+    /**
      * @param type 当  值 instanceof type 时执行
      * @return {@link #_if(Function)}
      */
     default LiThen<T, R> _instanceof(Class<?> type) {
         return new When<>(this, v -> LiClassUtil.isAssignableFromOrIsWrapper(type, v.getClass()));
+    }
+
+    /**
+     * @param types 当  存在 instanceof types 的值时执行
+     * @return {@link #_if(Function)}
+     */
+    default LiThen<T, R> _instanceof(Class<?>... types) {
+        return new When<>(this, v -> {
+            if (types != null) {
+
+                for (Class<?> type : types) {
+
+                    if (LiClassUtil.isAssignableFromOrIsWrapper(type, v.getClass())) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        });
+    }
+    /**
+     * @param type    当  值 instanceof type 时执行
+     * @param mapping 转换函数
+     * @return {@code _if(predicate).then(mapper)}
+     * @see #_instanceof(Class)
+     * @see LiThen#then(Function)
+     */
+    default LiIf<T, R> _instanceof(Class<?> type, Function<? super T, ? extends R> mapping) {
+        return _instanceof(type).then(mapping);
+
     }
 
     /**
@@ -66,28 +129,8 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
         return _if(predicate).then(mapping);
     }
 
-    /**
-     * @param compare 当值 equals 时执行
-     * @param mapping 转换函数
-     * @return {@code _if(predicate).then(mapper)}
-     * @see #_case(Object)
-     * @see LiThen#then(Function)
-     */
-    default LiIf<T, R> _case(T compare, Function<? super T, ? extends R> mapping) {
-        return _case(compare).then(mapping);
-    }
 
-    /**
-     * @param type    当  值 instanceof type 时执行
-     * @param mapping 转换函数
-     * @return {@code _if(predicate).then(mapper)}
-     * @see #_instanceof(Class)
-     * @see LiThen#then(Function)
-     */
-    default LiIf<T, R> _instanceof(Class<?> type, Function<? super T, ? extends R> mapping) {
-        return _instanceof(type).then(mapping);
 
-    }
 
     /**
      * 当原数据为 null 时，则所有前置条件都不执行断言，直接使用默认值提供者
@@ -97,8 +140,10 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
      */
     default Lino<R> _else(Supplier<? extends R> supplier) {
         Other<T, R> other = new Other<>(this, supplier);
-        End<T, R> end = new End<>();
-        return end.request(other);
+        LiBox<R> result = LiBox.none();
+        End<T, R> end = new End<>(result::value);
+        end.request(other);
+        return result.lino();
     }
 
     /**
@@ -107,6 +152,15 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
      */
     default Lino<R> _else(R value) {
         return _else(() -> value);
+    }
+
+    /**
+     * else 不做任何动作，仅用于触发函数调用
+     *
+     * @return {@link #_else(Supplier)} 传递参数为 null
+     */
+    default Lino<R> _else() {
+        return _else((Supplier<? extends R>) null);
     }
 
     class When<T, R> implements LiThen<T, R> {
@@ -173,7 +227,9 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
 
         @Override
         public void next(T t, Function<? super T, Object> predicate) {
-            onComplete(supplier.get());
+            if (supplier != null) {
+                onComplete(supplier.get());
+            }
         }
 
     }
@@ -197,19 +253,18 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
             subscriber.onSubscribe(new IfSubscription<R>() {
 
 
-                private LiBox<R> box;
+                private Consumer<R> completeConsumer;
 
                 @Override
-                public void request(LiBox<R> box) {
+                public void request(Consumer<R> completeConsumer) {
 
-                    this.box = box;
+                    this.completeConsumer = completeConsumer;
                     subscriber.next(lino.get(), null);
                 }
 
                 @Override
                 public void onComplete(R value) {
-
-                    this.box.value(value);
+                    this.completeConsumer.accept(value);
                 }
             });
         }
@@ -218,15 +273,16 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
 
     class End<T, R> implements IfSubscriber<T, R> {
 
-        private final LiBox<R> box = LiBox.none();
+        private final Consumer<R> completeConsumer;
 
-        private End() {
+        private End(Consumer<R> completeConsumer) {
+            this.completeConsumer = completeConsumer;
         }
 
         @Override
         public void onSubscribe(IfSubscription<R> subscription) {
 
-            subscription.request(box);
+            subscription.request(completeConsumer);
         }
 
         @Override
@@ -235,9 +291,8 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
             throw new UnsupportedOperationException();
         }
 
-        public Lino<R> request(Other<T, R> other) {
+        public void request(Other<T, R> other) {
             other.subscribe(this);
-            return box.lino();
         }
     }
 }

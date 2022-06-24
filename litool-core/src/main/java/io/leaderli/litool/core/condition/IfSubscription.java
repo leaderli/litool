@@ -1,16 +1,18 @@
 package io.leaderli.litool.core.condition;
 
-import io.leaderli.litool.core.meta.LiBox;
+import java.util.function.Consumer;
 
 public interface IfSubscription<T> {
 
     /**
      * 请求数据
+     *
+     * @param completeConsumer 调用链结束时调用的消费者
      */
-    void request(LiBox<T> box);
+    void request(Consumer<T> completeConsumer);
 
     /**
-     * 取消操作
+     * @param value 调用链结束时调用的最终结果
      */
     void onComplete(T value);
 }
