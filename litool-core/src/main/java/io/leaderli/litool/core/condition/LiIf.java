@@ -66,6 +66,7 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
             return false;
         });
     }
+
     /**
      * @param compare 当值 equals 时执行
      * @param mapping 转换函数
@@ -105,6 +106,7 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
             return false;
         });
     }
+
     /**
      * @param type    当  值 instanceof type 时执行
      * @param mapping 转换函数
@@ -130,7 +132,22 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
     }
 
 
-
+    /**
+     * 当原数据为 null 时，则所有前置条件都不执行断言，直接执行 runnable
+     *
+     * @param runnable 当所有前置断言全部失败时的时执行，该出恒返回 {@link Lino#none()}
+     * @return 触发实际链条执行的函数
+     */
+    default Lino<R> _else(Runnable runnable) {
+        Other<T, R> other = new Other<>(this, () -> {
+            runnable.run();
+            return null;
+        });
+        LiBox<R> result = LiBox.none();
+        End<T, R> end = new End<>(result::value);
+        end.request(other);
+        return result.lino();
+    }
 
     /**
      * 当原数据为 null 时，则所有前置条件都不执行断言，直接使用默认值提供者
