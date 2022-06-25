@@ -53,6 +53,8 @@ class LiraTest {
         Assertions.assertNotSame(Lira.none(), Lira.of(1));
         Assertions.assertNotSame(Lira.of(1), Lira.of(1));
 
+        Assertions.assertEquals("[1, null, 2]", Lira.of("1", null, "2").getRaw().toString());
+
 
     }
 
