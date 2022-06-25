@@ -52,8 +52,7 @@
                                     <artifact>*:*</artifact>
 
                                     <excludes>
-                                        <exclude>META-INF/maven/**/litool-core/**</exclude>
-                                        <exclude>META-INF/maven/**/litool-dom/**</exclude>
+                                        <exclude>META-INF/maven/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

@@ -102,6 +102,9 @@ class LinoTest {
     void get() {
         Assertions.assertNotNull(Lino.of(1).get());
         Assertions.assertNull(Lino.of(null).get());
+
+        Assertions.assertEquals(1,Lino.of(1).get(2));
+        Assertions.assertEquals(2,Lino.of(null).get(2));
     }
 
     @Test

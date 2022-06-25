@@ -117,6 +117,8 @@ public interface Lino<T> extends LiValue {
 
     T get();
 
+    T get(T other);
+
 
     /**
      * @param consumer 当 {@link #isPresent()}  时消费
@@ -246,6 +248,11 @@ public interface Lino<T> extends LiValue {
 
         @Override
         public T get() {
+            return value;
+        }
+
+        @Override
+        public T get(T other) {
             return value;
         }
 
@@ -399,6 +406,11 @@ public interface Lino<T> extends LiValue {
         @Override
         public T get() {
             return null;
+        }
+
+        @Override
+        public T get(T other) {
+            return other;
         }
 
         @Override
