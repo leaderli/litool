@@ -81,40 +81,25 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
 
     /**
      * @param type 当  值 instanceof type 时执行
-     * @return {@link #_if(Function)}
+     * @param <M>  type 的泛型
+     * @return {@code  LiCaseThen<T, M, R>}
+     * @see LiCaseThen
      */
-    default LiThen<T, R> _instanceof(Class<?> type) {
-        return new When<>(this, v -> LiClassUtil.isAssignableFromOrIsWrapper(type, v.getClass()));
+    default <M> LiCaseThen<T, M, R> _instanceof(Class<M> type) {
+        return new CaseWhen<>(this, type);
     }
 
-    /**
-     * @param types 当  存在 instanceof types 的值时执行
-     * @return {@link #_if(Function)}
-     */
-    default LiThen<T, R> _instanceof(Class<?>... types) {
-        return new When<>(this, v -> {
-            if (types != null) {
-
-                for (Class<?> type : types) {
-
-                    if (LiClassUtil.isAssignableFromOrIsWrapper(type, v.getClass())) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        });
-    }
 
     /**
      * @param type    当  值 instanceof type 时执行
+     * @param <M>     type 的泛型
      * @param mapping 转换函数
      * @return {@code _if(predicate).then(mapper)}
      * @see #_instanceof(Class)
-     * @see LiThen#then(Function)
+     * @see LiCaseThen#then(Function)
      */
-    default LiIf<T, R> _instanceof(Class<?> type, Function<? super T, ? extends R> mapping) {
+
+    default <M> LiIf<T, R> _instanceof(Class<M> type, Function<? super M, ? extends R> mapping) {
         return _instanceof(type).then(mapping);
 
     }
@@ -179,6 +164,43 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
     default Lino<R> _else() {
         return _else((Supplier<? extends R>) null);
     }
+
+    class CaseWhen<T, M, R> implements LiCaseThen<T, M, R> {
+        private final IfPublisher<T, R> prevPublisher;
+        private final Class<M> middleType;
+
+        public CaseWhen(IfPublisher<T, R> prevPublisher, Class<M> middleType) {
+            this.prevPublisher = prevPublisher;
+            this.middleType = middleType;
+        }
+
+        @Override
+        public void subscribe(IfSubscriber<T, R> actualSubscriber) {
+            prevPublisher.subscribe(new CaseWhenSubscriber<>(middleType, actualSubscriber));
+
+        }
+
+
+    }
+
+    class CaseWhenSubscriber<T, M, R> extends IfMiddleSubscriber<T, R> {
+        private final Class<M> middleType;
+
+        public CaseWhenSubscriber(Class<M> middleType, IfSubscriber<T, R> actualSubscriber) {
+            super(actualSubscriber);
+            this.middleType = middleType;
+
+        }
+
+
+        @Override
+        public void next(T t, Function<? super T, Object> predicate) {
+
+            this.actualSubscriber.next(t, v -> LiClassUtil.isAssignableFromOrIsWrapper(middleType, v.getClass()));
+        }
+
+    }
+
 
     class When<T, R> implements LiThen<T, R> {
         private final IfPublisher<T, R> prevPublisher;

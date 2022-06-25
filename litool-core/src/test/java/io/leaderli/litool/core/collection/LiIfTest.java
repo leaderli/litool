@@ -36,12 +36,8 @@ class LiIfTest {
         Assertions.assertEquals(Lino.of(456), LiIf.<Integer, Integer>of(123)._instanceof(Integer.class, i -> 456)._else(() -> 789));
         Assertions.assertEquals(Lino.of(789), LiIf.<Integer, Integer>of(1)._instanceof(String.class, i -> 456)._else(() -> 789));
 
-        Assertions.assertEquals(Lino.of(789), LiIf.<Integer, Integer>of(null)._instanceof(Integer.class, String.class).then(i -> 456)._else(() -> 789));
-        Assertions.assertEquals(Lino.of(456), LiIf.<Integer, Integer>of(123)._instanceof(Integer.class, String.class).then(i -> 456)._else(() -> 789));
-        Assertions.assertEquals(Lino.of(789), LiIf.<Integer, Integer>of(1)._instanceof(String.class, Double.class).then(i -> 456)._else(() -> 789));
 
         Assertions.assertEquals(Lino.of(789), LiIf.<Integer, Integer>of(1)._instanceof((Class<?>) null).then(i -> 456)._else(() -> 789));
-        Assertions.assertEquals(Lino.of(789), LiIf.<Integer, Integer>of(1)._instanceof((Class<?>[] ) null).then(i -> 456)._else(() -> 789));
 
     }
 
@@ -74,10 +70,10 @@ class LiIfTest {
         Assertions.assertThrows(RuntimeException.class, () ->
                 LiIf.of(1)
                         ._case(1).then(i -> {
-                    if (i == 1)
-                        throw new RuntimeException();
-                    return "1";
-                })
+                            if (i == 1)
+                                throw new RuntimeException();
+                            return "1";
+                        })
                         ._else(() -> 2)
         );
     }
