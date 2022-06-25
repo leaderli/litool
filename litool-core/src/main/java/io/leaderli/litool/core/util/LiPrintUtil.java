@@ -11,11 +11,6 @@ import java.util.stream.Collectors;
 public class LiPrintUtil {
 
 
-//    public static void print(String... args) {
-//
-//        System.out.println(String.join(" ,", args));
-//    }
-
     /**
      * 快速打印多个参数值，默认使用空格，分割
      *

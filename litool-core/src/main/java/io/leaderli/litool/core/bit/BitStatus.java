@@ -47,7 +47,6 @@ public class BitStatus {
     }
 
     /**
-     *
      * @param status 实际的状态值
      * @return 根据状态值，输出各状态的属性名称，状态属性名称根据其位置从右向左输出，使用竖线分割
      */
@@ -60,5 +59,11 @@ public class BitStatus {
                 .collect(Collectors.joining("|"));
 
 
+    }
+
+    @Override
+    public String toString() {
+
+        return statuses.toString();
     }
 }

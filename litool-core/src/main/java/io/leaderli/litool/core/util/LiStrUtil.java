@@ -71,4 +71,26 @@ public class LiStrUtil {
         return origin + (new String(new char[min_length - origin.length()]).replace("\0", padding));
 
     }
+
+    /**
+     * @param str 字符串
+     * @return 获取字符串的长度
+     */
+    public static int length(String str) {
+
+        return str == null ? 0 : str.length();
+    }
+
+    public static String split(String origin, int chunkSize) {
+
+        if (length(origin) < chunkSize) {
+            return origin;
+        }
+        return String.join(" ", origin.split(String.format("(?<=\\G.{%d})", chunkSize)));
+
+    }
+
+
+
+
 }
