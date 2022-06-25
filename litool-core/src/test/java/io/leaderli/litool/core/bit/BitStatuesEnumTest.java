@@ -45,7 +45,7 @@ class BitStatuesEnumTest {
         status.put(BitStatusEnum.B2, "B2");
         status.put(BitStatusEnum.B1, "B1");
 
-        Assertions.assertEquals("[00000000000000000000000000000001, 00000000000000000000000000000010]", status.keySet().toString());
+        Assertions.assertEquals("[0000 0000 0000 0000 0000 0000 0000 0001, 0000 0000 0000 0000 0000 0000 0000 0010]", status.keySet().toString());
 
     }
 }

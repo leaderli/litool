@@ -64,7 +64,7 @@ public enum BitStatusEnum {
 
     @Override
     public String toString() {
-        return LiStrUtil.ljust(Integer.toBinaryString(value), 32,"0");
+        return LiStrUtil.split(LiStrUtil.ljust(Integer.toBinaryString(value), 32, "0"), 4);
     }
 
 
