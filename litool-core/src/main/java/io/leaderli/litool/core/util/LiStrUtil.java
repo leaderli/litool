@@ -1,8 +1,9 @@
 package io.leaderli.litool.core.util;
 
-import java.lang.reflect.Array;
+import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.Lira;
+
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
@@ -100,6 +101,14 @@ public class LiStrUtil {
 
     }
 
+    public static String join(String delimiter, Iterable<?> elements) {
+
+
+        StringJoiner joiner = new StringJoiner(Lino.of(delimiter).get(" "));
+        Lira.of(elements).getRaw().stream().map(String::valueOf).forEach(joiner::add);
+        return joiner.toString();
+    }
+
     /**
      * @param delimiter 分割符
      * @param elements  数组
@@ -107,17 +116,7 @@ public class LiStrUtil {
      */
     public static String join(String delimiter, Object... elements) {
 
-        if (delimiter == null) {
-            delimiter = " ";
-        }
-        if(elements ==null){
-            elements = (Object[]) Array.newInstance(Object.class,0);
-        }
-        StringJoiner joiner = new StringJoiner(delimiter);
-        for (Object e : elements) {
-            joiner.add(String.valueOf(e));
-        }
-        return joiner.toString();
+        return join(delimiter, Lino.of(elements).map(Arrays::asList).get());
     }
 
 

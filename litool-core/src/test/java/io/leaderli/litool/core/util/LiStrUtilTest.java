@@ -3,6 +3,9 @@ package io.leaderli.litool.core.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 /**
  * @author leaderli
  * @since 2022/6/15
@@ -48,6 +51,8 @@ class LiStrUtilTest {
         Assertions.assertEquals("1 2 3", LiStrUtil.join(" ", 1, 2, 3));
         Assertions.assertEquals("", LiStrUtil.join(" ", (Object[]) null));
         Assertions.assertEquals("null", LiStrUtil.join(" ", (Object) null));
-        Assertions.assertEquals("1 2", LiStrUtil.join(null, 1,2));
+        Assertions.assertEquals("1 2", LiStrUtil.join(null, 1, 2));
+        Assertions.assertEquals("null", LiStrUtil.join(null, Collections.singletonList(null)));
+        Assertions.assertEquals("1 2", LiStrUtil.join(null, Arrays.asList(1,2)));
     }
 }

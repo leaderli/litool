@@ -4,7 +4,6 @@ import io.leaderli.litool.core.meta.LiBox;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author leaderli
@@ -24,7 +23,13 @@ class LiPrintUtilTest {
         LiPrintUtil.print_format("a {0}",2,3);
 
 
+        LiPrintUtil.print("_","1","2");
 
+
+
+        LiPrintUtil.print(1,2,3);
+        LiPrintUtil.println(1,2,3);
+        LiPrintUtil.println(Arrays.asList(1,2,3));
 
 
 

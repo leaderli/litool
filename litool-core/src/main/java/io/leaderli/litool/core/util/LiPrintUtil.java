@@ -1,9 +1,9 @@
 package io.leaderli.litool.core.util;
 
-import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.Lino;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 /**
  * @author leaderli
@@ -13,15 +13,62 @@ public class LiPrintUtil {
 
 
     /**
-     * 快速打印多个参数值，默认使用空格，分割
+     * 快速打印多个参数值，使用空格分割
+     *
+     * @param args 参数
+     */
+    public static void print(Iterable<?> args) {
+
+
+        print0(null, args);
+
+    }
+
+    /**
+     * 快速打印多个参数值，使用空格分割
      *
      * @param args 参数
      */
     public static void print(Object... args) {
 
 
-        print(null, args);
+        print0(null, Arrays.asList(args));
 
+    }
+
+    /**
+     * 快速打印多个参数值，默认使用空格分割
+     *
+     * @param delimiter 分割符
+     * @param args      参数
+     */
+    public static void print(String delimiter, Object... args) {
+
+
+        print0(delimiter, Arrays.asList(args));
+
+    }
+
+    /**
+     * 快速打印多个参数值，使用换行分割
+     *
+     * @param args 参数
+     */
+    public static void println(Iterable<?> args) {
+
+
+        print0("\n", args);
+
+    }
+
+    /**
+     * 快速打印多个参数值，使用换行符作为分割
+     *
+     * @param args 参数
+     */
+    public static void println(Object... args) {
+
+        print0("\n", Arrays.asList(args));
     }
 
     /**
@@ -30,9 +77,9 @@ public class LiPrintUtil {
      * @param delimiter 分隔符
      * @param args      参数
      */
-    public static void print(LiBox<String> delimiter, Object... args) {
+    private static void print0(String delimiter, Iterable<?> args) {
 
-        System.out.println(LiStrUtil.join(Lino.of(delimiter).map(LiBox::value).get(), args));
+        System.out.println(LiStrUtil.join(Lino.of(delimiter).get(" "), args));
     }
 
     /**
