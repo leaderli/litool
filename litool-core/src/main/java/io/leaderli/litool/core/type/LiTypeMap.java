@@ -27,7 +27,7 @@ public class LiTypeMap {
 
     @SuppressWarnings("unchecked")
     public <T> Lino<T> get(Class<T> type) {
-        // 基本类型在 LiTypeMap 会被装箱，所有需要使用其包装类去查找
+        // 基本类型在 LiTypeMap 会被装箱，因此需要使用其包装类去查找
         return Lino.of((T) proxy.get(LiClassUtil.primitiveToWrapper(type)));
     }
 
