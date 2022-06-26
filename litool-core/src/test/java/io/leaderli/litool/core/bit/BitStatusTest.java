@@ -3,6 +3,9 @@ package io.leaderli.litool.core.bit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+
 /**
  * @author leaderli
  * @since 2022/6/16 8:45 AM
@@ -30,13 +33,18 @@ class BitStatusTest {
         Assertions.assertEquals("A", bitStatus.beauty(1));
         Assertions.assertEquals("", bitStatus.beauty(0));
 
+        Assertions.assertEquals("A",bitStatus.beauty(0b001 | 0b100));
     }
 
     @Test
     public void test() throws Throwable {
-        BitStatus bitStatus = BitStatus.of(TestMask.class);
 
-        Assertions.assertEquals("A",bitStatus.beauty(0b001 | 0b100));
+        BitStatus bitStatus = BitStatus.of(Modifier.class);
+        System.out.println(bitStatus);
+
+
+//        System.out.println(Modifier.class.getDeclaredField("BRIDGE").get(null));
 
     }
+
 }

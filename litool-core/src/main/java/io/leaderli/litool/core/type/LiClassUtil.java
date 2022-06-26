@@ -1,10 +1,13 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.bit.BitStatus;
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.core.util.LiStrUtil;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.lang.reflect.*;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -203,4 +206,27 @@ public class LiClassUtil {
     }
 
 
+    /**
+     * @param _interface 一个不含泛型的接口
+     * @param aop        代理类
+     * @param <T>        接口泛型
+     * @return 返回一个使用了  _interface 接口的代理类，其实际接口的方法调用是通过 proxy 调用具有相同 signature 的方法使用的
+     * @see LiMethodUtil#getSameSignatureMethod(Method, Object)
+     * <p>
+     * 可能会抛出 io.leaderli.litool.core.exception.LiAssertException
+     */
+    public static <T> T addInterface(Class<T> _interface, Object aop) {
+
+        BitStatus bitStatus = BitStatus.of(Modifier.class);
+
+        LiAssertUtil.assertTrue(_interface.isInterface(), "only support interface");
+        LiAssertUtil.assertTrue(_interface.getTypeParameters().length == 0, "not support interface with generic of :  " + _interface.toGenericString());
+        LiAssertUtil.assertTrue(_interface.getInterfaces().length == 0, "not support interface extends other interface:  " + LiStrUtil.join(",", (Object[]) _interface.getInterfaces()));
+
+        InvocationHandler invocationHandler = (proxy, method, params) ->
+                LiMethodUtil.getSameSignatureMethod(method, aop)
+                        .throwable_map(m -> m.invoke(aop, params), Throwable::printStackTrace)
+                        .get();
+        return _interface.cast(Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{_interface}, invocationHandler));
+    }
 }

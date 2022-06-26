@@ -1,5 +1,10 @@
 package io.leaderli.litool.core.util;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.StringJoiner;
+
 /**
  * @author leaderli
  * @since 2022/6/15
@@ -81,16 +86,39 @@ public class LiStrUtil {
         return str == null ? 0 : str.length();
     }
 
-    public static String split(String origin, int chunkSize) {
+    /**
+     * @param str       字符串
+     * @param chunkSize 切割子字符串的长度
+     * @return 将字符串每隔  chunkSize 位 插入一个空格
+     */
+    public static String split(String str, int chunkSize) {
 
-        if (length(origin) < chunkSize) {
-            return origin;
+        if (length(str) < chunkSize) {
+            return str;
         }
-        return String.join(" ", origin.split(String.format("(?<=\\G.{%d})", chunkSize)));
+        return String.join(" ", str.split(String.format("(?<=\\G.{%d})", chunkSize)));
 
     }
 
+    /**
+     * @param delimiter 分割符
+     * @param elements  数组
+     * @return 将数组转换为字符串并通过 delimiter 连接起来
+     */
+    public static String join(String delimiter, Object... elements) {
 
+        if (delimiter == null) {
+            delimiter = " ";
+        }
+        if(elements ==null){
+            elements = (Object[]) Array.newInstance(Object.class,0);
+        }
+        StringJoiner joiner = new StringJoiner(delimiter);
+        for (Object e : elements) {
+            joiner.add(String.valueOf(e));
+        }
+        return joiner.toString();
+    }
 
 
 }

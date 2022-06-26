@@ -1,8 +1,9 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.meta.LiBox;
+import io.leaderli.litool.core.meta.Lino;
+
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * @author leaderli
@@ -19,22 +20,19 @@ public class LiPrintUtil {
     public static void print(Object... args) {
 
 
-        print(" ", args);
+        print(null, args);
 
     }
 
     /**
-     * 快速打印多个参数值，使用 delimiter 分割
+     * 快速打印多个参数值，使用 delimiter 分割，为了避免和 {@link #print(Object...)} 冲突，第一个参数使用 box 包装一下
      *
      * @param delimiter 分隔符
      * @param args      参数
      */
-    public static void print(String delimiter, Object... args) {
+    public static void print(LiBox<String> delimiter, Object... args) {
 
-
-        if (args != null) {
-            System.out.println(Arrays.stream(args).map(String::valueOf).collect(Collectors.joining(delimiter)));
-        }
+        System.out.println(LiStrUtil.join(Lino.of(delimiter).map(LiBox::value).get(), args));
     }
 
     /**

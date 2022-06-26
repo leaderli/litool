@@ -28,12 +28,14 @@ public class BitStatus {
     public static BitStatus of(Class<?> stateClass) {
         Map<Integer, BitStatusEnum> bitStatusMap = BitStatusEnum.getBitStatusMap();
         BitStatus bitStatus = new BitStatus();
-        Stream.of(stateClass.getFields())
-                .filter(field -> Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers()))
+        Stream.of(stateClass.getDeclaredFields())
+                .filter(field -> Modifier.isStatic(field.getModifiers()) && Modifier.isFinal(field.getModifiers()))
                 .filter(field -> LiObjUtil.sameAny(field.getType(), int.class, Integer.class))
                 .forEach(field -> {
                     try {
+                        field.setAccessible(true);
                         Integer value = (Integer) field.get(null);
+                        field.setAccessible(false);
 
                         BitStatusEnum statusEnum = bitStatusMap.get(value);
                         if (statusEnum != null) {
@@ -64,6 +66,6 @@ public class BitStatus {
     @Override
     public String toString() {
 
-        return statuses.toString();
+        return statuses.entrySet().stream().map(e -> e.getKey() + " " + e.getValue()).collect(Collectors.joining(System.lineSeparator()));
     }
 }

@@ -1,9 +1,13 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.exception.LiAssertException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -108,7 +112,6 @@ class LiClassUtilTest {
     }
 
 
-
     @Test
     public void cast() {
 
@@ -154,5 +157,34 @@ class LiClassUtilTest {
         Assertions.assertEquals(0, LiClassUtil.filterCanCast(map, String.class, int.class).size());
     }
 
+    public interface Fuck extends Function<String, Integer> {
+        @Override
+        Integer apply(String s);
+    }
+    public static class Proxy {
+
+        public Integer apply(String s) {
+            return Integer.valueOf(s);
+        }
+    }
+
+    @Test
+    void addInterface() throws NoSuchMethodException {
+
+        Assertions.assertThrows(LiAssertException.class, () -> LiClassUtil.addInterface(Consumer.class, 1));
+
+        LiClassUtil.addInterface(Runnable.class, 1);
+        for (Method method : Fuck.class.getMethods()) {
+            System.out.println(method);
+        }
+        System.out.println(Fuck.class.getMethod("apply", String.class));
+        System.out.println(Proxy.class.getMethod("apply", String.class));
+        Fuck fuck = LiClassUtil.addInterface(Fuck.class, new Proxy());
+
+        Assertions.assertSame(123,fuck.apply("123"));
+
+        fuck.andThen(null);
+
+    }
 
 }

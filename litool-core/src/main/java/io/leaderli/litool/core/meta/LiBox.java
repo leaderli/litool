@@ -25,6 +25,10 @@ public class LiBox<T> {
         return new LiBox<>();
     }
 
+    public static <T> LiBox<T> of(T value) {
+        return new LiBox<>(value);
+    }
+
     public LiBox(T value) {
         this.value = value;
     }
