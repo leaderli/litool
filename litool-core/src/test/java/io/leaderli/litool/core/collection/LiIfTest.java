@@ -89,6 +89,16 @@ class LiIfTest {
 
         Assertions.assertEquals(Lino.of(2), LiIf.of(1)._case(1).then(2)._else(3));
         Assertions.assertEquals(Lino.of(2), LiIf.of(1)._case(1).then(() -> 2)._else(3));
+
+
+        Lino<String[]> strs = Lino.of(new String[]{});
+
+        Object o = strs.map(a -> a.length).toIf()
+                ._case(1).then(1)
+                ._case(2).then(2)
+                ._else(3).get();
+        System.out.println(o);
+
     }
 
 }
