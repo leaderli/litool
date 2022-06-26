@@ -4,9 +4,7 @@ import io.leaderli.litool.core.exception.LiAssertException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -161,29 +159,37 @@ class LiClassUtilTest {
         @Override
         Integer apply(String s);
     }
+
     public static class Proxy {
 
         public Integer apply(String s) {
             return Integer.valueOf(s);
         }
+
+        public Object apply(Object s) {
+            return s;
+        }
+
+    }
+
+    interface MyFunction {
+
+        Integer apply(String value);
     }
 
     @Test
-    void addInterface() throws NoSuchMethodException {
+    void addInterface() {
 
-        Assertions.assertThrows(LiAssertException.class, () -> LiClassUtil.addInterface(Consumer.class, 1));
+        Assertions.assertThrows(LiAssertException.class, () -> LiClassUtil.addInterface(Fuck.class, new Proxy()));
+        Assertions.assertThrows(LiAssertException.class, () -> LiClassUtil.addInterface(Proxy.class, new Proxy()));
+        Assertions.assertThrows(LiAssertException.class, () -> LiClassUtil.addInterface(Function.class, new Proxy()));
+
 
         LiClassUtil.addInterface(Runnable.class, 1);
-        for (Method method : Fuck.class.getMethods()) {
-            System.out.println(method);
-        }
-        System.out.println(Fuck.class.getMethod("apply", String.class));
-        System.out.println(Proxy.class.getMethod("apply", String.class));
-        Fuck fuck = LiClassUtil.addInterface(Fuck.class, new Proxy());
 
-        Assertions.assertSame(123,fuck.apply("123"));
+        MyFunction function = LiClassUtil.addInterface(MyFunction.class, new Proxy());
 
-        fuck.andThen(null);
+        Assertions.assertSame(123, function.apply("123"));
 
     }
 
