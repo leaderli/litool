@@ -53,7 +53,7 @@ public class LiMapUtil {
     public static <T> List<T> getTypeList(Map<String, ?> map, String key, Class<T> listItemType) {
 
         if (map == null) {
-            return new ArrayList<>();
+            return LiListUtil.emptyList();
         }
         Object value = map.get(key);
 

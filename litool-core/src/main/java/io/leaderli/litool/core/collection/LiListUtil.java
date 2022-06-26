@@ -18,7 +18,7 @@ public class LiListUtil {
     public static <T> List<T> getDuplicateElement(Collection<T> list) {
 
         if (list == null || list.isEmpty()) {
-            return new ArrayList<>();
+            return emptyList();
         }
 
         List<T> duplicate = new ArrayList<>();
@@ -40,7 +40,7 @@ public class LiListUtil {
     public static List<List<Object>> cartesianProduct(List<Object>... elements) {
 
         if (elements == null || elements.length == 0) {
-            return new ArrayList<>();
+            return emptyList();
         }
         List<List<Object>> x = Lira.of(elements[0]).map(Arrays::asList).getRaw();
 
@@ -88,5 +88,15 @@ public class LiListUtil {
         }
 
         return array;
+    }
+
+
+    /**
+     * @param <T> 泛型
+     * @return 返回一个空的 ArrayList
+     */
+    public static <T> List<T> emptyList() {
+
+        return new ArrayList<>();
     }
 }

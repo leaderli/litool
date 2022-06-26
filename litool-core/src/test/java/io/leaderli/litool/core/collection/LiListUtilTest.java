@@ -44,4 +44,14 @@ public class LiListUtilTest {
         Assertions.assertEquals(Arrays.toString(ss), Arrays.toString(LiListUtil.toWrapperArray(ss)));
 
     }
+
+    void emptyList() {
+        List<Object> actual = LiListUtil.emptyList();
+        Assertions.assertEquals(0, actual.size());
+        actual.add(0);
+        Assertions.assertEquals(1, actual.size());
+        actual.remove(0);
+        Assertions.assertEquals(0, actual.size());
+
+    }
 }

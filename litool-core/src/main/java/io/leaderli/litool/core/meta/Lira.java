@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.meta;
 
 import com.sun.javafx.UnmodifiableArrayList;
+import io.leaderli.litool.core.collection.LiListUtil;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.type.LiClassUtil;
@@ -400,12 +401,13 @@ public interface Lira<T> extends LiValue {
 
         @Override
         public List<Lino<T>> get() {
-            return new ArrayList<>();
+            return LiListUtil.emptyList();
+
         }
 
         @Override
         public List<T> getRaw() {
-            return new ArrayList<>();
+            return LiListUtil.emptyList();
         }
 
         @Override

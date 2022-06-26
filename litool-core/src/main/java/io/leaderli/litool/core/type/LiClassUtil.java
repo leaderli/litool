@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.bit.BitStatus;
+import io.leaderli.litool.core.collection.LiListUtil;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.LiTuple2;
@@ -130,7 +131,7 @@ public class LiClassUtil {
             e.printStackTrace();
         }
 
-        return new ArrayList<>();
+        return LiListUtil.emptyList();
 
     }
 
