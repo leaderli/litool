@@ -168,6 +168,8 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
      */
     <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
 
+    Lira<T> eager();
+
     /**
      * @param others 数组
      * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(other)}
@@ -358,6 +360,11 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
         @Override
         public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
             return none();
+        }
+
+        @Override
+        public Lira<T> eager() {
+            return this;
         }
 
         @SafeVarargs

@@ -23,6 +23,8 @@ public class RaFilter<T> extends RaSome<T> {
 
     }
 
+
+
     private static class FilterRaSubscriber<T> extends IntermediateRaSubscriber<T, T> {
         private final Function<? super T, Object> filter;
 

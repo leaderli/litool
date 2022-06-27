@@ -13,7 +13,11 @@ import java.util.Map;
  * @since 2022/6/19
  */
 class LiraTest {
+    @Test
+    void none() {
 
+        Assertions.assertSame(Lira.none(), Lira.of(1, 2, 3).filter(i -> i > 4).eager());
+    }
 
     @Test
     void cast() {

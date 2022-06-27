@@ -125,7 +125,10 @@ public abstract class RaSome<T> implements Lira<T> {
 
     }
 
-
+    @Override
+    public Lira<T> eager() {
+        return Lira.of(getRaw());
+    }
     @SafeVarargs
     @Override
     public final Lira<T> or(T... others) {
