@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.meta.LiBox;
-import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
@@ -12,7 +11,7 @@ import java.util.Arrays;
 class LiPrintUtilTest {
 
 
-    @Test
+//    @Test
     public void print() {
 
         LiPrintUtil.print("123", 4565);

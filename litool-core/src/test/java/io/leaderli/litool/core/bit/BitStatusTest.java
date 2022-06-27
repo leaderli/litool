@@ -40,7 +40,6 @@ class BitStatusTest {
     public void test() throws Throwable {
 
         BitStatus bitStatus = BitStatus.of(Modifier.class);
-        System.out.println(bitStatus);
 
 
 //        System.out.println(Modifier.class.getDeclaredField("BRIDGE").get(null));

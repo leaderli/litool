@@ -168,6 +168,9 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
      */
     <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
 
+    /**
+     * @return 提前触发短路操作, 返回一个新的 Lira ， 当为 {@link #none()} 则返回 {@link #none()}
+     */
     Lira<T> eager();
 
     /**

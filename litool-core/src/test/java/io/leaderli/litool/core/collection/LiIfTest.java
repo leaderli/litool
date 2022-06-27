@@ -97,7 +97,6 @@ class LiIfTest {
                 ._case(1).then(1)
                 ._case(2).then(2)
                 ._else(3).get();
-        System.out.println(o);
 
     }
 
