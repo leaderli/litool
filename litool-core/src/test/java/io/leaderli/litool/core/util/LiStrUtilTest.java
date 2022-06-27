@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.meta.Lino;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -50,9 +51,16 @@ class LiStrUtilTest {
 
         Assertions.assertEquals("1 2 3", LiStrUtil.join(" ", 1, 2, 3));
         Assertions.assertEquals("", LiStrUtil.join(" ", (Object[]) null));
-        Assertions.assertEquals("null", LiStrUtil.join(" ", (Object) null));
+        Assertions.assertEquals("", LiStrUtil.join(" ", (Object) null));
         Assertions.assertEquals("1 2", LiStrUtil.join(null, 1, 2));
-        Assertions.assertEquals("null", LiStrUtil.join(null, Collections.singletonList(null)));
-        Assertions.assertEquals("1 2", LiStrUtil.join(null, Arrays.asList(1,2)));
+        Assertions.assertEquals("", LiStrUtil.join(null, Collections.singletonList(null)));
+        Assertions.assertEquals("1 2", LiStrUtil.join(null, Arrays.asList(1, 2)));
+    }
+
+    @Test
+    void line() {
+
+        Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertEquals("java.lang.ArithmeticException: / by zero\tat\tio.leaderli.litool.core.meta.Lino$Some.throwable_map(Lino.java:307)", LiStrUtil.localMessageAtLineOfClass(e, Lino.class)));
+        Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertEquals("java.lang.ArithmeticException: / by zero\tat\tio.leaderli.litool.core.meta.Lino$Some.throwable_map(Lino.java:307)", LiStrUtil.localMessageAtLineOfPackage(e, Lino.class.getPackage())));
     }
 }

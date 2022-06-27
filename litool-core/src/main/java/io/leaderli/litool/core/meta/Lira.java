@@ -1,22 +1,19 @@
 package io.leaderli.litool.core.meta;
 
-import com.sun.javafx.UnmodifiableArrayList;
 import io.leaderli.litool.core.collection.LiListUtil;
-import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.type.LiClassUtil;
 
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * @author leaderli
  * @since 2022/6/19
  */
-public interface Lira<T> extends LiValue {
+public interface Lira<T> extends LiValue, RaPublisher<T> {
 
 
     /**
@@ -52,11 +49,11 @@ public interface Lira<T> extends LiValue {
      * @param <T>      迭代器泛型
      * @return 返回一个新的实例
      */
-    static <T> Lira<T> of(Iterator<T> iterator) {
+    static <T> Lira<T> of(Iterator<? extends T> iterator) {
         if (iterator == null || !iterator.hasNext()) {
             return none();
         }
-        return new Some<>(iterator);
+        return new RaArray<>(iterator);
     }
 
     /**
@@ -130,6 +127,12 @@ public interface Lira<T> extends LiValue {
     List<Lino<T>> get();
 
     /**
+     * @param n 最多保留的元素
+     * @return 仅保留几位元素
+     */
+    Lira<T> limit(int n);
+
+    /**
      * @return 返回被 lino 包裹的实际元素的一个新的 list
      */
     List<T> getRaw();
@@ -140,6 +143,13 @@ public interface Lira<T> extends LiValue {
      * @return 转换后的 Lira
      */
     <R> Lira<R> map(Function<? super T, ? extends R> mapping);
+
+
+    /**
+     * @param n 跳过多少个元素
+     * @return 截掉前 n 位元素
+     */
+    Lira<T> skip(int n);
 
     /**
      * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)}, 第二个参数传 null
@@ -184,13 +194,9 @@ public interface Lira<T> extends LiValue {
      */
     int size();
 
-    default void forEachLino(Consumer<Lino<T>> consumer) {
-        get().forEach(consumer);
-    }
+    void forEachLino(Consumer<Lino<T>> consumer);
 
-    default void forEach(Consumer<T> consumer) {
-        getRaw().forEach(consumer);
-    }
+    void forEach(Consumer<T> consumer);
 
     default Stream<T> stream() {
         return getRaw().stream();
@@ -201,148 +207,66 @@ public interface Lira<T> extends LiValue {
     }
 
 
-    final class Some<T> implements Lira<T> {
+    final class RaArray<T> extends RaSome<T> {
 
-        private final List<Lino<T>> linos;
+        private final T[] arr;
 
-        private Some(Iterator<T> values) {
+        @SuppressWarnings("unchecked")
+        private RaArray(Iterator<? extends T> values) {
 
             List<T> list = new ArrayList<>();
             values.forEachRemaining(list::add);
-            List<Lino<T>> collect = list.stream().map(Lino::of).collect(Collectors.toList());
-
-            @SuppressWarnings("unchecked")
-            Lino<T>[] linos = collect.toArray(LiClassUtil.newArray(Lino.class, collect.size()));
-            this.linos = new UnmodifiableArrayList<>(linos, linos.length);
-            LiAssertUtil.assertTrue(this.linos.size() > 0);
-
-        }
-
-        @Override
-        public boolean isPresent() {
-            return true;
-        }
-
-        @Override
-        public String name() {
-            return "List";
-        }
-
-        @Override
-        public String toString() {
-            return name() + this.linos;
-        }
-
-        @Override
-        public <R> Lira<R> cast(Class<R> type) {
-            return of(this.linos.stream()
-                    .map(lino -> lino.cast(type).get())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList())
-            );
-        }
-
-        @Override
-        public <K, V> Lira<Map<K, V>> cast(Class<K> keyType, Class<V> valueType) {
-            return of(this.linos.stream()
-                    .map(lino -> lino.cast(keyType, valueType).get())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList())
-            );
-        }
-
-        @Override
-        public Lira<T> filter(Function<? super T, Object> filter) {
-            return of(this.linos.stream()
-                    .map(lino -> lino.filter(filter).get())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList())
-            );
-        }
-
-        @Override
-        public Lira<T> filter() {
-            return filter(null);
-        }
-
-        @Override
-        public Lino<T> first() {
-            return linos.get(0);
-        }
-
-        @Override
-        public Lino<T> first(Function<? super T, Object> filter) {
-            return filter(filter).first();
-        }
-
-        @Override
-        public List<Lino<T>> get() {
-            return new ArrayList<>(this.linos);
-        }
-
-        @Override
-        public List<T> getRaw() {
-            return linos.stream().map(Lino::get).collect(Collectors.toList());
-        }
-
-        @Override
-        public <R> Lira<R> map(Function<? super T, ? extends R> mapping) {
-
-            return of(this.linos.stream()
-                    .map(lino -> lino.map(mapping).get())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()));
-        }
-
-        @Override
-        public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
-            return of(this.linos.stream()
-                    .map(lino -> lino.throwable_map(mapping).get())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()));
-        }
-
-        @Override
-        public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
-            return of(this.linos.stream()
-                    .map(lino -> lino.throwable_map(mapping, whenThrow).get())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()));
-        }
-
-        @SafeVarargs
-        @Override
-        public final Lira<T> or(T... others) {
-            return this;
-        }
-
-        @Override
-        public Lira<T> or(Iterator<T> others) {
-            return this;
-        }
-
-        @Override
-        public Lira<T> or(Iterable<T> others) {
-            return this;
+            this.arr = (T[]) list.toArray();
         }
 
 
         @Override
-        public int size() {
-            return this.linos.size();
+        public void subscribe(RaSubscriber<? super T> actualSubscriber) {
+            actualSubscriber.onSubscribe(new ArrayRaSubscription<>(actualSubscriber, arr));
+        }
+
+
+    }
+
+    final class ArrayRaSubscription<T> implements RaSubscription {
+
+        private final T[] arr;
+        private final RaSubscriber<? super T> actualSubscriber;
+
+
+        private boolean canceled;
+
+        public ArrayRaSubscription(RaSubscriber<? super T> actualSubscriber, T[] arr) {
+            this.actualSubscriber = actualSubscriber;
+            this.arr = arr;
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Some<?> some = (Some<?>) o;
-            return Objects.equals(linos, some.linos);
+        public void request(int n) {
+            if (canceled) {
+                return;
+            }
+
+            if (n < 0 || n > arr.length) {
+                n = arr.length;
+            }
+            for (int i = 0; i < n; i++) {
+
+
+                Lino.of(arr[i]).nest(l -> actualSubscriber.next(Lino.narrow(l)));
+                // 通过 onSubscribe 将 Subscription 传递给订阅者，由订阅者来调用 cancel方法从而实现提前结束循环
+                if (canceled) {
+                    return;
+                }
+
+            }
+
+            actualSubscriber.onComplete();
         }
 
         @Override
-        public int hashCode() {
-            return Objects.hash(linos);
+        public void cancel() {
+            canceled = true;
         }
     }
 
@@ -405,6 +329,7 @@ public interface Lira<T> extends LiValue {
 
         }
 
+
         @Override
         public List<T> getRaw() {
             return LiListUtil.emptyList();
@@ -413,6 +338,16 @@ public interface Lira<T> extends LiValue {
         @Override
         public <R> Lira<R> map(Function<? super T, ? extends R> mapping) {
             return none();
+        }
+
+        @Override
+        public Lira<T> skip(int n) {
+            return this;
+        }
+
+        @Override
+        public Lira<T> limit(int n) {
+            return this;
         }
 
         @Override
@@ -445,6 +380,22 @@ public interface Lira<T> extends LiValue {
         @Override
         public int size() {
             return 0;
+        }
+
+        @Override
+        public void forEachLino(Consumer<Lino<T>> consumer) {
+
+        }
+
+        @Override
+        public void forEach(Consumer<T> consumer) {
+
+        }
+
+        @Override
+        public void subscribe(RaSubscriber<? super T> subscriber) {
+
+
         }
     }
 }

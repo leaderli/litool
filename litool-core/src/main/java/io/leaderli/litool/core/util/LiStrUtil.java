@@ -120,4 +120,15 @@ public class LiStrUtil {
     }
 
 
+    public static String localMessageAtLineOfClass(Throwable throwable, Class<?> threwClass) {
+
+        return throwable +"\tat\t" + Lino.of(throwable).map(Throwable::getStackTrace).toLira(StackTraceElement.class).map(StackTraceElement::toString)
+                .filter(s -> s.startsWith(threwClass.getName())).first().get();
+    }
+
+    public static String localMessageAtLineOfPackage(Throwable throwable, Package name) {
+
+        return throwable + "\tat\t" + Lino.of(throwable).map(Throwable::getStackTrace).toLira(StackTraceElement.class).map(StackTraceElement::toString)
+                .filter(s -> s.startsWith(name.getName())).first().get();
+    }
 }

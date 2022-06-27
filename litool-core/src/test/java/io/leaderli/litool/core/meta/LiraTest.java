@@ -42,7 +42,7 @@ class LiraTest {
 
         Assertions.assertSame(1, Lira.of("1").size());
         Assertions.assertSame(3, Lira.of(Arrays.asList(1, 2, 3)).size());
-        Assertions.assertSame(2, Lira.of("1", null).size());
+        Assertions.assertSame(1, Lira.of("1", null).size());
         Assertions.assertSame(Lira.none(), Lira.of());
 
 
@@ -53,7 +53,7 @@ class LiraTest {
         Assertions.assertNotSame(Lira.none(), Lira.of(1));
         Assertions.assertNotSame(Lira.of(1), Lira.of(1));
 
-        Assertions.assertEquals("[1, null, 2]", Lira.of("1", null, "2").getRaw().toString());
+        Assertions.assertEquals("[1, 2]", Lira.of("1", null, "2").getRaw().toString());
 
 
     }
@@ -65,6 +65,7 @@ class LiraTest {
         Assertions.assertSame(2, Lira.of(1, 2, 3).filter(i -> i > 1).size());
         Assertions.assertSame(2, Lira.of(1, 2, 3).filter(i -> i > 1).get().get(0).get());
 
+        Lira.of(1, 2, 3).filter();
         Assertions.assertEquals(3, Lira.of(1, 2, 3).filter().size());
         Assertions.assertEquals(2, Lira.of(1, null, 3).filter().size());
         Assertions.assertEquals(0, Lira.of((Object) null).filter().size());
@@ -87,11 +88,31 @@ class LiraTest {
         Assertions.assertEquals("1", none.or("1").getRaw().get(0));
         Assertions.assertEquals("1", Lira.of("1", "2").or(Arrays.asList("5", "4")).getRaw().get(0));
 
+
+        Assertions.assertSame(0, Lira.of(1, 2).filter(i -> i > 3).size());
+        Assertions.assertSame(4, Lira.of(1, 2).filter(i -> i > 3).or(1, 2, 3, 4).size());
     }
 
+
     @Test
-    void equals() {
-        Assertions.assertEquals(Lira.of(1, 2), Lira.of(1, 2));
-        Assertions.assertNotEquals(Lira.of(2), Lira.of(1, 2));
+    void skip() {
+
+        Assertions.assertSame(0, Lira.of(1).skip(1).size());
+        Assertions.assertSame(0, Lira.of().skip(1).size());
+        Assertions.assertSame(1, Lira.of(1).skip(0).size());
+        Assertions.assertSame(1, Lira.of(1, 2).skip(1).size());
+        Assertions.assertSame(2, Lira.of(1, 2).skip(-1).size());
     }
+
+
+    @Test
+    void limit() {
+
+        Assertions.assertSame(1, Lira.of(1).limit(1).size());
+        Assertions.assertSame(0, Lira.of().limit(1).size());
+        Assertions.assertSame(1, Lira.of(1, 2).limit(1).size());
+        Assertions.assertSame(2, Lira.of(1, 2).limit(-1).size());
+        Assertions.assertSame(0, Lira.of(1, 2).limit(0).size());
+    }
+
 }

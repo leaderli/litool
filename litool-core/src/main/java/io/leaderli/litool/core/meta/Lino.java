@@ -66,6 +66,10 @@ public interface Lino<T> extends LiValue {
 
     }
 
+    default Lino<? super T> wide() {
+        return this;
+    }
+
     /**
      * @param <T> 泛型
      * @return 返回全局唯一的空 Lino
@@ -125,6 +129,13 @@ public interface Lino<T> extends LiValue {
      * @return this
      */
     Lino<T> ifPresent(Consumer<T> consumer);
+
+
+    /**
+     * @param consumer 消费者
+     * @return this
+     */
+    Lino<T> nest(Consumer<Lino<T>> consumer);
 
 
     /**
@@ -259,6 +270,12 @@ public interface Lino<T> extends LiValue {
         @Override
         public Lino<T> ifPresent(Consumer<T> consumer) {
             consumer.accept(this.value);
+            return this;
+        }
+
+        @Override
+        public Lino<T> nest(Consumer<Lino<T>> consumer) {
+            consumer.accept(this);
             return this;
         }
 
@@ -415,6 +432,11 @@ public interface Lino<T> extends LiValue {
 
         @Override
         public Lino<T> ifPresent(Consumer<T> consumer) {
+            return this;
+        }
+
+        @Override
+        public Lino<T> nest(Consumer<Lino<T>> consumer) {
             return this;
         }
 
