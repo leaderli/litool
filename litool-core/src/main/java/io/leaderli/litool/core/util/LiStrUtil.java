@@ -119,16 +119,38 @@ public class LiStrUtil {
         return join(delimiter, Lino.of(elements).map(Arrays::asList).get());
     }
 
+    public static String localMessageStartWith(Throwable throwable, String prefix) {
+
+
+        while (throwable != null) {
+
+            Throwable cause = throwable.getCause();
+            if (cause == null) {
+                break;
+            }
+            throwable = cause;
+        }
+
+        if (throwable != null) {
+
+            if (prefix == null) {
+                prefix = "";
+            }
+            StackTraceElement[] stackTrace = throwable.getStackTrace();
+            String finalPrefix = prefix;
+            return Lira.of(stackTrace).map(StackTraceElement::toString)
+                    .filter(s -> s.startsWith(finalPrefix)).limit(5).first().get(stackTrace[0].toString());
+        }
+        return "";
+    }
 
     public static String localMessageAtLineOfClass(Throwable throwable, Class<?> threwClass) {
 
-        return throwable +"\tat\t" + Lino.of(throwable).map(Throwable::getStackTrace).toLira(StackTraceElement.class).map(StackTraceElement::toString)
-                .filter(s -> s.startsWith(threwClass.getName())).first().get();
+        return localMessageStartWith(throwable, threwClass.getName());
+
     }
 
     public static String localMessageAtLineOfPackage(Throwable throwable, Package name) {
-
-        return throwable + "\tat\t" + Lino.of(throwable).map(Throwable::getStackTrace).toLira(StackTraceElement.class).map(StackTraceElement::toString)
-                .filter(s -> s.startsWith(name.getName())).first().get();
+        return localMessageStartWith(throwable, name.getName());
     }
 }

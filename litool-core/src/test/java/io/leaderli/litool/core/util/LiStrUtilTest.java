@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Random;
 
 /**
  * @author leaderli
@@ -57,10 +58,39 @@ class LiStrUtilTest {
         Assertions.assertEquals("1 2", LiStrUtil.join(null, Arrays.asList(1, 2)));
     }
 
+
+    private void outmock() {
+        try {
+
+            mock();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void mock() {
+
+        try {
+
+            Lino.of(0).map(i -> new Random().nextInt(i));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Test
     void line() {
 
-        Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertEquals("java.lang.ArithmeticException: / by zero\tat\tio.leaderli.litool.core.meta.Lino$Some.throwable_map(Lino.java:307)", LiStrUtil.localMessageAtLineOfClass(e, Lino.class)));
-        Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertEquals("java.lang.ArithmeticException: / by zero\tat\tio.leaderli.litool.core.meta.Lino$Some.throwable_map(Lino.java:307)", LiStrUtil.localMessageAtLineOfPackage(e, Lino.class.getPackage())));
+        try {
+
+            outmock();
+        } catch (Exception e) {
+            System.out.println();
+            Assertions.assertTrue(LiStrUtil.localMessageAtLineOfClass(e, Lino.class).contains("Some.map("));
+            Assertions.assertTrue(LiStrUtil.localMessageAtLineOfClass(e, LiStrUtilTest.class).contains("mock$0"));
+        }
+        Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertTrue(LiStrUtil.localMessageAtLineOfClass(e, Lino.class).contains("Some.throwable_map(")));
+        Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertTrue(LiStrUtil.localMessageAtLineOfPackage(e, Lino.class.getPackage()).contains("Some.throwable_map(")));
+        Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertTrue(LiStrUtil.localMessageAtLineOfPackage(e, LiStrUtil.class.getPackage()).contains("line$")));
     }
 }
