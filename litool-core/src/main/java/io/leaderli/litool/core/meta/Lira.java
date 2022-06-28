@@ -22,7 +22,7 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
      * @return 窄化一个宽泛的泛型， {@code <? extends T> } 转换为  {@code  <T> }
      */
     @SuppressWarnings("unchecked")
-    static <T> Lira<T> narrow(Lino<? extends T> value) {
+    static <T> Lira<T> narrow(Lira<? extends T> value) {
 
         return (Lira<T>) value;
 

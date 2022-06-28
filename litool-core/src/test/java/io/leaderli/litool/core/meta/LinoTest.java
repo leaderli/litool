@@ -14,11 +14,19 @@ class LinoTest {
 
     @Test
     void narrow() {
-        Lino.none().ifPresent(r -> System.out.println());
         Lino<CharSequence> narrow = Lino.narrow(Lino.<String>of(null));
         Assertions.assertSame(narrow, Lino.none());
 
+        Lino<CharSequence> narrow1 = Lino.narrow(Lino.of("123"));
+        Assertions.assertSame(narrow1.get(), "123");
+
+        Lino<String> cast = narrow1.cast(String.class);
+
+        Assertions.assertSame(cast.get(), "123");
+        Lino<Integer> integerLino = narrow1.cast(Integer.class);
+        Assertions.assertSame(integerLino, Lino.none());
     }
+
 
     @Test
     void none() {
@@ -94,8 +102,8 @@ class LinoTest {
     void of() {
         Assertions.assertTrue(Lino.of(null).notPresent());
         Assertions.assertFalse(Lino.of(1).notPresent());
-        Assertions.assertTrue(Lino.of(()->null).notPresent());
-        Assertions.assertFalse(Lino.of(()->1).notPresent());
+        Assertions.assertTrue(Lino.of(() -> null).notPresent());
+        Assertions.assertFalse(Lino.of(() -> 1).notPresent());
     }
 
     @Test
@@ -103,8 +111,8 @@ class LinoTest {
         Assertions.assertNotNull(Lino.of(1).get());
         Assertions.assertNull(Lino.of(null).get());
 
-        Assertions.assertEquals(1,Lino.of(1).get(2));
-        Assertions.assertEquals(2,Lino.of(null).get(2));
+        Assertions.assertEquals(1, Lino.of(1).get(2));
+        Assertions.assertEquals(2, Lino.of(null).get(2));
     }
 
     @Test
@@ -204,6 +212,15 @@ class LinoTest {
 
         Assertions.assertEquals("[Some(1), Some(2)]", Lino.of(Arrays.asList(1, 2)).toLira(Integer.class).get().toString());
         Assertions.assertEquals("[]", Lino.of(Arrays.asList(1, 2)).toLira(String.class).get().toString());
+    }
+
+    @Test
+    void assertNotNone() {
+
+        Lino.of(1).assertNotNone("123");
+
+        IllegalStateException assertThrows = Assertions.assertThrows(IllegalStateException.class, () -> Lino.of(null).assertNotNone("haha"));
+        Assertions.assertEquals("haha", assertThrows.getMessage());
     }
 
 

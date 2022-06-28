@@ -13,6 +13,21 @@ import java.util.Map;
  * @since 2022/6/19
  */
 class LiraTest {
+
+
+    @Test
+    void narrow() {
+
+        Lira<CharSequence> narrow1 = Lira.narrow(Lira.of("123","456"));
+        Assertions.assertEquals(narrow1.getRaw().toString(), "[123, 456]");
+
+        Lira<String> cast = narrow1.cast(String.class);
+        Assertions.assertEquals(cast.getRaw().toString(), "[123, 456]");
+
+        Lira<Integer> integerLino = narrow1.cast(Integer.class).eager();
+        Assertions.assertSame(integerLino, Lira.none());
+    }
+
     @Test
     void none() {
 

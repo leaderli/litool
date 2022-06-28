@@ -55,6 +55,8 @@ public interface Lino<T> extends LiValue {
     }
 
     /**
+     * 需要注意的是，所有窄化 extend 的操作，是只需要读取操作，不允许写操作的，因为 Lino 不涉及更新值，所以此处是安全的，也因此我们是无法窄化 super
+     *
      * @param value 值
      * @param <T>   泛型
      * @return 窄化一个宽泛的泛型， {@code <? extends T> } 转换为  {@code  <T> }
@@ -97,6 +99,13 @@ public interface Lino<T> extends LiValue {
      */
     <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType);
 
+    /**
+     * 当为 none 时 直接抛出异常
+     *
+     * @param msg 断言信息
+     * @return this
+     */
+    Lino<T> assertNotNone(String msg);
 
     /**
      * @return 通过 {@link LiBoolUtil#parse(Object)} 对 实际值 进行过滤
@@ -237,6 +246,11 @@ public interface Lino<T> extends LiValue {
         public <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType) {
 
             return cast(Map.class).map(m -> LiClassUtil.filterCanCast(m, keyType, valueType)).filter();
+        }
+
+        @Override
+        public Lino<T> assertNotNone(String msg) {
+            return this;
         }
 
         @Override
@@ -403,6 +417,11 @@ public interface Lino<T> extends LiValue {
         @Override
         public <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType) {
             return none();
+        }
+
+        @Override
+        public Lino<T> assertNotNone(String msg) {
+            throw new IllegalStateException(msg);
         }
 
         @Override
