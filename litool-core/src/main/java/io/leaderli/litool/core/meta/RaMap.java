@@ -3,6 +3,8 @@ package io.leaderli.litool.core.meta;
 import java.util.function.Function;
 
 /**
+ * 将元素类型转换为另外一个类型
+ *
  * @author leaderli
  * @since 2022/6/27
  */

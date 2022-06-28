@@ -4,7 +4,7 @@ package io.leaderli.litool.core.meta;
  * @author leaderli
  * @since 2022/6/27
  */
-public interface RaSubscription {
+public interface RaSubscription extends RaCancelSubscription {
 
     /**
      * 请求数据
@@ -13,8 +13,4 @@ public interface RaSubscription {
      */
     void request(int n);
 
-    /**
-     * 取消操作
-     */
-    void cancel();
 }

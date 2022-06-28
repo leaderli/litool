@@ -3,7 +3,11 @@ package io.leaderli.litool.core.meta;
 import java.util.function.Function;
 
 /**
+ * 过滤不符合断言的元素
+ *
  * @author leaderli
+ * @see Lino#filter(Function)
+ * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
  * @since 2022/6/27
  */
 public class RaFilter<T> extends RaSome<T> {
@@ -22,7 +26,6 @@ public class RaFilter<T> extends RaSome<T> {
         prevPublisher.subscribe(new FilterRaSubscriber<>(actualSubscriber, filter));
 
     }
-
 
 
     private static class FilterRaSubscriber<T> extends IntermediateRaSubscriber<T, T> {

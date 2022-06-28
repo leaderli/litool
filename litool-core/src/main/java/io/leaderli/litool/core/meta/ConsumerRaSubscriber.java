@@ -3,6 +3,8 @@ package io.leaderli.litool.core.meta;
 import java.util.function.Consumer;
 
 /**
+ * 尾结点消费者
+ *
  * @author leaderli
  * @since 2022/6/27
  */
@@ -10,7 +12,7 @@ public class ConsumerRaSubscriber<T> implements RaSubscriber<T> {
     private final Consumer<? super Lino<T>> consumer;
 
     public ConsumerRaSubscriber(Consumer<? super Lino<T>> consumer) {
-        if(consumer==null){
+        if (consumer == null) {
             consumer = (Consumer<Lino<T>>) lino -> {
 
             };

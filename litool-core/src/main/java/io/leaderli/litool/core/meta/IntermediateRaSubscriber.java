@@ -1,6 +1,8 @@
 package io.leaderli.litool.core.meta;
 
 /**
+ * 一个用于连接前后节点的中间 消费者，消费操作的抽象类
+ *
  * @author leaderli
  * @since 2022/6/22
  */

@@ -5,7 +5,10 @@ import io.leaderli.litool.core.exception.LiThrowableFunction;
 import java.util.function.Consumer;
 
 /**
+ * 忽视异常的 转换操作
+ *
  * @author leaderli
+ * @see Lino#throwable_map(LiThrowableFunction)
  * @since 2022/6/27
  */
 public class RaThrowableMap<T, R> extends RaSome<R> {
@@ -39,7 +42,7 @@ public class RaThrowableMap<T, R> extends RaSome<R> {
 
         @Override
         public void next(Lino<T> t) {
-            t.throwable_map(mapper,whenThrow).nest(f -> this.actualSubscriber.next(Lino.narrow(f)));
+            t.throwable_map(mapper, whenThrow).nest(f -> this.actualSubscriber.next(Lino.narrow(f)));
         }
 
     }

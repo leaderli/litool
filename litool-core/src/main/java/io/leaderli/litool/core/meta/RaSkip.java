@@ -1,6 +1,8 @@
 package io.leaderli.litool.core.meta;
 
 /**
+ * 跳过前几个元素
+ *
  * @author leaderli
  * @since 2022/6/27
  */
