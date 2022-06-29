@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  * <p>
  * 基于函数式编程思维，所有对其包含的value的值的操作，都是类型安全的。
  * <p>
- * 当且仅当value的值 {@link #isPresent()} 时，才会实际对其进行方法调用
+ * 当且仅当value的值 {@link #present()} 时，才会实际对其进行方法调用
  */
 public interface Lino<T> extends LiValue {
 
@@ -134,21 +134,21 @@ public interface Lino<T> extends LiValue {
 
 
     /**
-     * @param consumer 当 {@link #isPresent()}  时消费
+     * @param consumer 当 {@link #present()}  时消费
      * @return this
      */
     Lino<T> ifPresent(Consumer<T> consumer);
 
 
     /**
-     * @param consumer 消费者
+     * @param consumer 以 Lino 作为参数的消费者
      * @return this
      */
     Lino<T> nest(Consumer<Lino<T>> consumer);
 
 
     /**
-     * @param consumer 当 {@link #isPresent()}  时消费，可能会抛出 {@link RuntimeException}
+     * @param consumer 当 {@link #present()}  时消费，可能会抛出 {@link RuntimeException}
      * @return this
      * @see RuntimeExceptionTransfer
      */
@@ -156,10 +156,10 @@ public interface Lino<T> extends LiValue {
 
 
     /**
-     * @param runnable 当 {@link #notPresent()}   时执行
+     * @param runnable 当 {@link #absent()}   时执行
      * @return this
      */
-    Lino<T> ifNotPresent(Runnable runnable);
+    Lino<T> ifAbsent(Runnable runnable);
 
     /**
      * @param mapping 转换函数
@@ -228,7 +228,7 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public boolean isPresent() {
+        public boolean present() {
             return true;
         }
 
@@ -300,7 +300,7 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> ifNotPresent(Runnable runnable) {
+        public Lino<T> ifAbsent(Runnable runnable) {
             return this;
         }
 
@@ -395,7 +395,7 @@ public interface Lino<T> extends LiValue {
 
 
         @Override
-        public boolean isPresent() {
+        public boolean present() {
             return false;
         }
 
@@ -465,7 +465,7 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> ifNotPresent(Runnable runnable) {
+        public Lino<T> ifAbsent(Runnable runnable) {
             runnable.run();
             return this;
         }

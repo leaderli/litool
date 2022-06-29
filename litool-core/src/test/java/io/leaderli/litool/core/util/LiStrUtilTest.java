@@ -85,7 +85,6 @@ class LiStrUtilTest {
 
             outmock();
         } catch (Exception e) {
-            System.out.println();
             Assertions.assertTrue(LiStrUtil.localMessageAtLineOfClass(e, Lino.class).contains("Some.map("));
             Assertions.assertTrue(LiStrUtil.localMessageAtLineOfClass(e, LiStrUtilTest.class).contains("mock$0"));
         }

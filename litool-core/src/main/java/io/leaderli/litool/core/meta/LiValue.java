@@ -9,14 +9,14 @@ public interface LiValue {
     /**
      * @return 值是否存在
      */
-    boolean isPresent();
+    boolean present();
 
     /**
      * @return 值是否不存在
-     * @see #isPresent()
+     * @see #present()
      */
-    default boolean notPresent() {
-        return !isPresent();
+    default boolean absent() {
+        return !present();
     }
 
     /**

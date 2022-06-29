@@ -19,7 +19,7 @@ public class LiBoolUtil {
      * <li>当 {@code obj == null} 返回 false</li>
      * <li> 当 obj 为集合类时，返回其是否包含元素</li>
      * <li>当 obj 为 boolean 时，返回 obj 即可</li>
-     * <li>当 为 {@link LiValue} 时 返回 {@link LiValue#isPresent()}</li>
+     * <li>当 为 {@link LiValue} 时 返回 {@link LiValue#present()}</li>
      * <li>其他情况返回 true</li>
      *     </ul>
      */
@@ -49,7 +49,7 @@ public class LiBoolUtil {
 
 
     private static boolean parse(LiValue value) {
-        return value.isPresent();
+        return value.present();
     }
 
     private static boolean parse(Boolean value) {

@@ -18,7 +18,7 @@ public class LiSinkTest {
                 public Boolean apply(String request, Boolean last) {
 
 
-                    if (this.nextSink.isPresent()) {
+                    if (this.nextSink.present()) {
 
                         return this.nextSink.get().apply(request, last);
                     }

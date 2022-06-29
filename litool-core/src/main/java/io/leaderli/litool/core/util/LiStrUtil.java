@@ -138,7 +138,7 @@ public class LiStrUtil {
             }
             StackTraceElement[] stackTrace = throwable.getStackTrace();
             String finalPrefix = prefix;
-            return Lira.of(stackTrace).map(StackTraceElement::toString)
+            return throwable + " at " + Lira.of(stackTrace).map(StackTraceElement::toString)
                     .filter(s -> s.startsWith(finalPrefix)).limit(5).first().get(stackTrace[0].toString());
         }
         return "";
@@ -150,7 +150,7 @@ public class LiStrUtil {
 
     }
 
-    public static String localMessageAtLineOfPackage(Throwable throwable, Package name) {
-        return localMessageStartWith(throwable, name.getName());
+    public static String localMessageAtLineOfPackage(Throwable throwable, Package _package) {
+        return localMessageStartWith(throwable, _package.getName());
     }
 }

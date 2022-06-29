@@ -15,9 +15,9 @@ class LiBoxTest {
 
 
         LiBox<String> none = LiBox.none();
-        assert none.lino().notPresent();
+        assert none.lino().absent();
         none.value("123");
-        assert none.lino().isPresent();
+        assert none.lino().present();
 
     }
 
