@@ -10,7 +10,7 @@ public class LiEventObjectTest {
     @Test
     public void test() {
 
-        Assertions.assertTrue(new LiEventObject<>(null).getSource().notPresent());
+        Assertions.assertTrue(new LiEventObject<>(null).getSource().absent());
 
     }
 

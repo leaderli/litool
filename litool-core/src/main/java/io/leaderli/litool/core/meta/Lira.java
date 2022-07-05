@@ -295,7 +295,7 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
         }
 
         @Override
-        public boolean isPresent() {
+        public boolean present() {
             return false;
         }
 

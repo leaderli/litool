@@ -30,8 +30,8 @@ class LinoTest {
 
     @Test
     void none() {
-        Assertions.assertTrue(Lino.of(null).notPresent());
-        Assertions.assertFalse(Lino.of(1).notPresent());
+        Assertions.assertTrue(Lino.of(null).absent());
+        Assertions.assertFalse(Lino.of(1).absent());
     }
 
     @Test
@@ -57,9 +57,9 @@ class LinoTest {
 
         Lino<Boolean> simple = Lino.of(false);
 
-        Assertions.assertTrue(simple.isPresent());
+        Assertions.assertTrue(simple.present());
         simple = simple.filter();
-        Assertions.assertTrue(simple.notPresent());
+        Assertions.assertTrue(simple.absent());
         Lino<String> mono = Lino.of(null);
 
         Assertions.assertNull(mono.filter(Objects::nonNull).get());
@@ -93,17 +93,17 @@ class LinoTest {
 
     @Test
     void same() {
-        Assertions.assertTrue(Lino.of("1").same("1").isPresent());
-        Assertions.assertTrue(Lino.of("2").same("1").notPresent());
-        Assertions.assertTrue(Lino.of(null).same("1").notPresent());
+        Assertions.assertTrue(Lino.of("1").same("1").present());
+        Assertions.assertTrue(Lino.of("2").same("1").absent());
+        Assertions.assertTrue(Lino.of(null).same("1").absent());
     }
 
     @Test
     void of() {
-        Assertions.assertTrue(Lino.of(null).notPresent());
-        Assertions.assertFalse(Lino.of(1).notPresent());
-        Assertions.assertTrue(Lino.of(() -> null).notPresent());
-        Assertions.assertFalse(Lino.of(() -> 1).notPresent());
+        Assertions.assertTrue(Lino.of(null).absent());
+        Assertions.assertFalse(Lino.of(1).absent());
+        Assertions.assertTrue(Lino.of(() -> null).absent());
+        Assertions.assertFalse(Lino.of(() -> 1).absent());
     }
 
     @Test
@@ -135,8 +135,8 @@ class LinoTest {
         Lino.of(null).ifPresent(e -> Assertions.fail());
 
         Lino.of(null).ifPresent(e -> {
-        }).ifNotPresent(() -> {
-        }).notPresent();
+        }).ifAbsent(() -> {
+        }).absent();
 
         Throwable cause = Assertions.assertThrows(RuntimeException.class, () -> Lino.of(0).ifPresent(in -> {
             @SuppressWarnings("unused") int i = 1 / in;
@@ -160,7 +160,7 @@ class LinoTest {
 
     @Test
     void notPresent() {
-        Lino.of(1).ifNotPresent(Assertions::fail);
+        Lino.of(1).ifAbsent(Assertions::fail);
     }
 
     @Test

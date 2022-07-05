@@ -16,8 +16,8 @@ public abstract class RaSome<T> implements Lira<T> {
 
 
     @Override
-    public boolean isPresent() {
-        return first().isPresent();
+    public boolean present() {
+        return first().present();
     }
 
     @Override

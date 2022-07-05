@@ -54,11 +54,11 @@ public class LiMapUtilTest {
     @Test
     public void getTypeObject() {
         Map<String, Object> map = new HashMap<>();
-        assertFalse(LiMapUtil.getTypeObject(map, "k1", String.class).isPresent());
+        assertFalse(LiMapUtil.getTypeObject(map, "k1", String.class).present());
         Map<String, String> map2 = new HashMap<>();
-        assertFalse(LiMapUtil.getTypeObject(map2, "k1").isPresent());
+        assertFalse(LiMapUtil.getTypeObject(map2, "k1").present());
 
-        assertFalse(LiMapUtil.getTypeObject(null, "k1").isPresent());
+        assertFalse(LiMapUtil.getTypeObject(null, "k1").present());
     }
 
     @Test
