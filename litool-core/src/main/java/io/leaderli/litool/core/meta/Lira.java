@@ -211,6 +211,17 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
         return getRaw().toArray(LiClassUtil.newArray(type, 0));
     }
 
+    /**
+     * key 为 null 的值 会被忽略掉，value 为 null 不会
+     *
+     * @param keyMapping   转换 key 的函数
+     * @param valueMapping 转换 value 的函数
+     * @param <K>          key 泛型
+     * @param <V>          value 泛型
+     * @return 返回 map
+     */
+    <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapping, Function<? super T, ? extends V> valueMapping);
+
 
     final class RaArray<T> extends RaSome<T> {
 
@@ -401,6 +412,12 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
         public void forEach(Consumer<T> consumer) {
 
         }
+
+        @Override
+        public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapping, Function<? super T, ? extends V> valueMapping) {
+            return new HashMap<>();
+        }
+
 
         @Override
         public void subscribe(RaSubscriber<? super T> subscriber) {

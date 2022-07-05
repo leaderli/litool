@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<test name="scanner">
+    <t1>1</t1>
+    <t2>1</t2>
+    <t3 level="1">
+        <t3_1 level="2">31</t3_1>
+    </t3>
+    hello
+</test>

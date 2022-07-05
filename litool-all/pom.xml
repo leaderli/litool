@@ -26,6 +26,12 @@
             <artifactId>litool-dom</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.leaderli.litool</groupId>
+            <artifactId>litool-runner</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

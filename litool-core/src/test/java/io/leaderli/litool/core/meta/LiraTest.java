@@ -18,7 +18,7 @@ class LiraTest {
     @Test
     void narrow() {
 
-        Lira<CharSequence> narrow1 = Lira.narrow(Lira.of("123","456"));
+        Lira<CharSequence> narrow1 = Lira.narrow(Lira.of("123", "456"));
         Assertions.assertEquals(narrow1.getRaw().toString(), "[123, 456]");
 
         Lira<String> cast = narrow1.cast(String.class);
@@ -134,4 +134,13 @@ class LiraTest {
         Assertions.assertSame(0, Lira.of(1, 2).limit(0).size());
     }
 
+    @Test
+    void toMap() {
+
+
+        Assertions.assertEquals("{1=2}", Lira.of(LiTuple.of(1, 2)).toMap(LiTuple2::_1, LiTuple2::_2).toString());
+        Assertions.assertNull(Lira.of(LiTuple.of(1, null)).toMap(LiTuple2::_1, LiTuple2::_2).get(1));
+        Assertions.assertEquals("{}", Lira.of(LiTuple.of(null, null)).toMap(LiTuple2::_1, LiTuple2::_2).toString());
+
+    }
 }

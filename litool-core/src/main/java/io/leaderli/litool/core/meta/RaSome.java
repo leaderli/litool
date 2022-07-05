@@ -84,6 +84,16 @@ public abstract class RaSome<T> implements Lira<T> {
     }
 
     @Override
+    public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapping, Function<? super T, ? extends V> valueMapping) {
+
+        Map<K, V> result = new HashMap<>();
+
+        this.subscribe(new ConsumerRaSubscriber<>(e -> e.map(keyMapping).ifPresent(key -> result.put(key, e.map(valueMapping).get()))));
+
+        return result;
+    }
+
+    @Override
     public Lira<T> limit(int n) {
         if (n >= 0) {
             return new RaLimit<>(this, n);
