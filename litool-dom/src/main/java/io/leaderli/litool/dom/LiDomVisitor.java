@@ -1,5 +1,6 @@
 package io.leaderli.litool.dom;
 
+import io.leaderli.litool.dom.parser.LiDomDFSContext;
 import org.dom4j.dom.DOMElement;
 
 /**
@@ -14,7 +15,7 @@ public interface LiDomVisitor {
      * @param element 节点
      * @param index   节点在父节点的位置
      */
-    default void visit(DOMElement element, int index) {
+    default void visit(LiDomDFSContext context, DOMElement element, int index) {
 
     }
 //
@@ -33,14 +34,14 @@ public interface LiDomVisitor {
      *
      * @param content 文本
      */
-    default void visit(String content) {
+    default void visit(LiDomDFSContext context,String content) {
 
     }
 
     /**
      * 访问节点结束
      */
-    default void visit() {
+    default void visit(LiDomDFSContext context) {
 
     }
 }
