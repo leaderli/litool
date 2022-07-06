@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<test name="scanner">
+<test name="scanner" version="1">
     <t1>1</t1>
     <t2>1</t2>
     <t3 level="1">

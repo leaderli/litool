@@ -1,39 +1,37 @@
 package io.leaderli.litool.dom;
 
-import org.dom4j.Attribute;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.VisitorSupport;
+import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.util.LiPrintUtil;
+import org.dom4j.*;
 import org.dom4j.dom.DOMElement;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 /**
  * @author leaderli
  * @since 2022/7/5
  */
-class LiDomScannerTest {
+class LiDomDFSTest {
 
     @Test
     void accept() throws DocumentException {
 
-        LiDomScanner liDomScanner = new LiDomScanner(LiDomUtil.getDOMRootByPath("/scanner.xml"));
+        LiDomDFS liDomDFS = new LiDomDFS(LiDomUtil.getDOMRootByPath("/scanner.xml"));
 
-        liDomScanner.accept(new LiDomVisitor() {
+        liDomDFS.accept(new LiDomVisitor() {
             @Override
-            public void visit(Map<String, String> attributes) {
-                System.out.println(attributes);
+            public void visit(DOMElement element, int index) {
+                LiPrintUtil.print("begin:", element.getTagName(), index, Lira.of(element.attributes()).map(Node::asXML).getRaw());
             }
 
-            @Override
-            public void visit(DOMElement child, int index) {
-                System.out.println(child.asXML());
-            }
+//            @Override
+//            public void visit(DOMElement child, int index) {
+////                System.out.println(child.asXML());
+//                LiPrintUtil.print("child:", index, child.asXML());
+//            }
 
             @Override
             public void visit(String content) {
-                System.out.println(content);
+                LiPrintUtil.print("body:", content);
             }
 
             @Override

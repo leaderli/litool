@@ -1,8 +1,6 @@
 package io.leaderli.litool.dom;
 
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
-import io.leaderli.litool.core.meta.Lira;
-import org.dom4j.Node;
 import org.dom4j.dom.DOMElement;
 
 import java.io.InputStream;
@@ -15,33 +13,45 @@ import java.util.Objects;
  * @author leaderli
  * @since 2022/7/5
  */
-public class LiDomScanner {
+public class LiDomDFS {
 
     private final DOMElement element;
+    /**
+     * {@link #element} 在 父节点的位置，-1 表示未知，或无父节点
+     */
+    private final int index;
 
-    public LiDomScanner(DOMElement element) {
+    public LiDomDFS(DOMElement element, int index) {
         Objects.requireNonNull(element, " element is null ");
         this.element = element;
+        this.index = index;
     }
 
-    public LiDomScanner(String content) {
+    public LiDomDFS(DOMElement element) {
+        this(element, -1);
+    }
+
+    public LiDomDFS(String content) {
         this(RuntimeExceptionTransfer.apply(LiDomUtil::getDOMRootByString, content));
     }
 
-    public LiDomScanner(InputStream inputStream) {
+    public LiDomDFS(InputStream inputStream) {
         this(RuntimeExceptionTransfer.apply(LiDomUtil::getDOMRootByInputStream, inputStream));
     }
 
     public void accept(LiDomVisitor visitor) {
 
         Map<String, String> attributes = new HashMap<>();
-        Map<String, String> map = Lira.of(this.element.attributeIterator()).toMap(Node::getName, Node::getStringValue);
-        visitor.visit(map);
+        visitor.visit(this.element, index);
         List<DOMElement> children = LiDomUtil.selectNodes(this.element);
         for (int i = 0; i < children.size(); i++) {
-            visitor.visit(children.get(i),i);
+
+
+            DOMElement child = children.get(i);
+            new LiDomDFS(child, i).accept(visitor);
+//            visitor.visit(child, i);
         }
-        visitor.visit(this.element.getText().trim());
+        visitor.visit(this.element.getTextTrim());
         visitor.visit();
     }
 }

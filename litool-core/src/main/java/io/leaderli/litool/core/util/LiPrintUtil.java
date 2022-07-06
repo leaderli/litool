@@ -42,11 +42,8 @@ public class LiPrintUtil {
      * @param delimiter 分割符
      * @param args      参数
      */
-    public static void print(String delimiter, Object... args) {
-
-
-        print0(delimiter, Arrays.asList(args));
-
+    public static void print0(String delimiter, Object... args) {
+        System.out.println(LiStrUtil.join(Lino.of(delimiter).get(" "), args));
     }
 
     /**
@@ -68,7 +65,7 @@ public class LiPrintUtil {
      */
     public static void println(Object... args) {
 
-        print0("\n", Arrays.asList(args));
+        print0("\n", args);
     }
 
     /**
