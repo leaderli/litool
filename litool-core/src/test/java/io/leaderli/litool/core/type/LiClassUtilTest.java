@@ -12,7 +12,30 @@ import java.util.function.Function;
  * @since 2022/6/17
  */
 class LiClassUtilTest {
+    @Test
+    public void test() throws Throwable {
 
+
+        Assertions.assertDoesNotThrow(() -> {
+            Class<CharSequence> narrow = LiClassUtil.getClass("123");
+        });
+        Assertions.assertThrows(NullPointerException.class, () -> {
+
+            Class<CharSequence> narrow = LiClassUtil.getClass(null);
+        });
+
+
+    }
+
+    @Test
+    public void narrow() throws Throwable {
+
+
+        Assertions.assertDoesNotThrow(() -> {
+            Class<CharSequence> narrow = LiClassUtil.narrow(CharSequence.class);
+            narrow = LiClassUtil.narrow(null);
+        });
+    }
 
     @Test
     public void primitiveToWrapper() {

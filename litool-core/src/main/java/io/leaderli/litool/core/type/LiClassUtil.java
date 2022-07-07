@@ -41,6 +41,29 @@ public class LiClassUtil {
 
 
     /**
+     * @param def 实例
+     * @param <T> 实例泛型
+     * @return 实例类型的父类
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, E extends T> Class<T> getClass(E def) {
+        Objects.requireNonNull(def, "default value should can not be null");
+
+        return (Class<T>) def.getClass();
+    }
+
+    /**
+     * @param cls 实际类型
+     * @param <T> 泛型，其为实际类型的父类或实际类型
+     * @return 返回 {@code Class<T>}
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> narrow(final Class<? extends T> cls) {
+
+        return (Class<T>) cls;
+    }
+
+    /**
      * @param cls 需要转换的 class
      * @return 返回其包装类 class ，当类是数组 class 时，返回其包装数组 class ，例如 {@code int[].class --> Integer.class }
      */

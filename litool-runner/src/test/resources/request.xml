@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <request>
+    123
     <variable>
-
+        abc
     </variable>
+    456
 </request>

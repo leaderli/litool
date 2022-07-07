@@ -153,4 +153,10 @@ public class LiStrUtil {
     public static String localMessageAtLineOfPackage(Throwable throwable, Package _package) {
         return localMessageStartWith(throwable, _package.getName());
     }
+
+
+    public static boolean isEmpty(final CharSequence cs) {
+        return cs == null || cs.length() == 0;
+    }
+
 }

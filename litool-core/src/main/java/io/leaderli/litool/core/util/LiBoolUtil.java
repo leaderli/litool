@@ -18,6 +18,7 @@ public class LiBoolUtil {
      *
      * <li>当 {@code obj == null} 返回 false</li>
      * <li> 当 obj 为集合类时，返回其是否包含元素</li>
+     * <li> 当 obj 为数值时，返回其是否不为0</li>
      * <li>当 obj 为 boolean 时，返回 obj 即可</li>
      * <li>当 为 {@link LiValue} 时 返回 {@link LiValue#present()}</li>
      * <li>其他情况返回 true</li>
@@ -44,30 +45,60 @@ public class LiBoolUtil {
             return parse((Map<?, ?>) obj);
         }
 
+        if (obj instanceof Number) {
+            return parse((Number) obj);
+        }
+
         return true;
     }
 
+    /**
+     * @param value 数值
+     * @return 返回数值不为0
+     */
+    public static boolean parse(Number value) {
+        return value.byteValue() != 0;
+    }
 
-    private static boolean parse(LiValue value) {
+    /**
+     * @param value {@link LiValue}
+     * @return {@link LiValue#present()}
+     */
+    public static boolean parse(LiValue value) {
         return value.present();
     }
 
-    private static boolean parse(Boolean value) {
+    /**
+     * @param value {@link Boolean}
+     * @return {@link Boolean#valueOf(String)}
+     */
+    public static boolean parse(Boolean value) {
         return value;
     }
 
 
-    private static boolean parse(Iterable<?> iterable) {
+    /**
+     * @param iterable {@link Iterable#iterator()}
+     * @return 迭代器中包含元素
+     */
+    public static boolean parse(Iterable<?> iterable) {
         return iterable.iterator().hasNext();
     }
 
-
-    private static boolean parse(Iterator<?> iterator) {
+    /**
+     * @param iterator {@link Iterator}
+     * @return 迭代器中包含元素
+     */
+    public static boolean parse(Iterator<?> iterator) {
         return iterator.hasNext();
     }
 
 
-    private static boolean parse(Map<?, ?> map) {
+    /**
+     * @param map {@link Map}
+     * @return map 的 集合不为空
+     */
+    public static boolean parse(Map<?, ?> map) {
         return !map.isEmpty();
     }
 }

@@ -16,11 +16,11 @@
     <name>${project.artifactId}</name>
 
     <dependencies>
-        <dependency>
-            <groupId>io.leaderli.litool</groupId>
-            <artifactId>litool-dom</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.leaderli.litool</groupId>-->
+<!--            <artifactId>litool-dom</artifactId>-->
+<!--            <version>${project.parent.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.leaderli.litool</groupId>
             <artifactId>litool-core</artifactId>

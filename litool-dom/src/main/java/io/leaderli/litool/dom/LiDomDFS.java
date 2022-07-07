@@ -12,31 +12,31 @@ import java.util.Objects;
  * @author leaderli
  * @since 2022/7/5
  */
-public class LiDomDFS {
+public class LiDomDFS<Child, Parent> {
 
     private final DOMElement element;
-    private final LiDomDFSContext context;
+    private final LiDomDFSContext<Child, Parent> context;
     /**
      * {@link #element} 在 父节点的位置，-1 表示未知，或无父节点
      */
     private final int index;
 
-    public LiDomDFS(LiDomDFSContext context, DOMElement element, int index) {
+    public LiDomDFS(LiDomDFSContext<Parent, ?> context, DOMElement element, int index) {
         Objects.requireNonNull(element, " element is null ");
-        this.context = context;
+        this.context = new LiDomDFSContext<>(context);
         this.element = element;
         this.index = index;
     }
 
-    public LiDomDFS(LiDomDFSContext context, DOMElement element) {
+    public LiDomDFS(LiDomDFSContext<Parent, ?> context, DOMElement element) {
         this(context, element, -1);
     }
 
-    public LiDomDFS(LiDomDFSContext context, String content) {
+    public LiDomDFS(LiDomDFSContext<Parent, ?> context, String content) {
         this(context, RuntimeExceptionTransfer.apply(LiDomUtil::getDOMRootByString, content));
     }
 
-    public LiDomDFS(LiDomDFSContext context, InputStream inputStream) {
+    public LiDomDFS(LiDomDFSContext<Parent, ?> context, InputStream inputStream) {
         this(context, RuntimeExceptionTransfer.apply(LiDomUtil::getDOMRootByInputStream, inputStream));
     }
 
@@ -48,10 +48,14 @@ public class LiDomDFS {
 
 
             DOMElement child = children.get(i);
-            new LiDomDFS(new LiDomDFSContext(this.context), child, i).accept(visitor);
+            new LiDomDFS<>(this.context, child, i).accept(visitor);
 //            visitor.visit(child, i);
         }
         visitor.visit(this.context, this.element.getTextTrim());
         visitor.visit(this.context);
+    }
+
+    public Child getBean() {
+        return this.context.bean;
     }
 }

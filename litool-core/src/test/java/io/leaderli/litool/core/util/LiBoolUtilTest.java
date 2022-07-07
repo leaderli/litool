@@ -48,5 +48,9 @@ class LiBoolUtilTest {
         a = "1";
         Assertions.assertTrue(LiBoolUtil.parse(a));
 
+
+        a = 0;
+        Assertions.assertFalse(LiBoolUtil.parse(a));
+
     }
 }
