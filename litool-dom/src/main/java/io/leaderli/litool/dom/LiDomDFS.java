@@ -22,8 +22,8 @@ public class LiDomDFS {
     private final int index;
 
     public LiDomDFS(LiDomDFSContext context, DOMElement element, int index) {
-        this.context = context;
         Objects.requireNonNull(element, " element is null ");
+        this.context = context;
         this.element = element;
         this.index = index;
     }

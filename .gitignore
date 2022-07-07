@@ -1,6 +1,9 @@
 
 dependency-reduced-pom.xml
 
+pom.xml.versionsBackup
+
+*/pom.xml.versionsBackup
 *.iml
 .idea/*
 target/

@@ -1,6 +1,7 @@
 package io.leaderli.litool.dom.parser;
 
 import io.leaderli.litool.dom.LiDomParser;
+import org.dom4j.Node;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,8 +16,8 @@ public class LiDomParserFactory {
     private static final Map<Class<?>, LiDomParser> parserMap = new HashMap<>();
 
 
-    public static <T> LiDomParser<T> get(Class<T> type) {
-        return parserMap.get(type);
+    public static <T, E extends Node> LiDomParser<T, E> get(Class<T> targetType, Class<E> nodeType) {
+        return parserMap.get(targetType);
     }
 
 }
