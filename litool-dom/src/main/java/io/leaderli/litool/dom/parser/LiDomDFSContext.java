@@ -1,6 +1,10 @@
 package io.leaderli.litool.dom.parser;
 
+import io.leaderli.litool.core.meta.LiBox;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,9 +15,12 @@ public class LiDomDFSContext {
 
     public final LiDomDFSContext parent;
 
-    public final Map<String, Object> objectMap = new HashMap<>();
+    public final LiBox<Class<?>> tag = LiBox.none();
+    public final Map<String, String> attributes = new HashMap<>();
+    public final List<Object> children = new ArrayList<>();
 
     public LiDomDFSContext(LiDomDFSContext parent) {
         this.parent = parent;
     }
+
 }

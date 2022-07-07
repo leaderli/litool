@@ -8,7 +8,7 @@ import org.dom4j.dom.DOMElement;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
+import java.util.Arrays;
 
 /**
  * @author leaderli
@@ -19,19 +19,14 @@ class LiDomDFSTest {
     @Test
     void accept() throws DocumentException {
 
-        LiDomDFS liDomDFS = new LiDomDFS(new LiDomDFSContext(null), LiDomUtil.getDOMRootByPath("/scanner.xml"));
+        DOMElement domRootByPath = LiDomUtil.getDOMRootByPath("/scanner.xml");
+        LiDomDFS liDomDFS = new LiDomDFS(new LiDomDFSContext(null), domRootByPath);
 
         liDomDFS.accept(new LiDomVisitor() {
             @Override
             public void visit(LiDomDFSContext context, DOMElement element, int index) {
                 LiPrintUtil.print("begin:", element.getTagName(), index, Lira.of(element.attributes()).map(Node::asXML).getRaw());
             }
-
-//            @Override
-//            public void visit(DOMElement child, int index) {
-////                System.out.println(child.asXML());
-//                LiPrintUtil.print("child:", index, child.asXML());
-//            }
 
             @Override
             public void visit(LiDomDFSContext context, String content) {
@@ -72,12 +67,12 @@ class LiDomDFSTest {
     public static class Bean {
         public final String name;
         public final String version;
-        public final Bean bean;
+        public final Object[] children;
 
-        public Bean(Map<String, Object> context) {
-            this.name = (String) context.get("@name");
-            this.version = (String) context.get("@version");
-            this.bean = (Bean) context.get("#bean");
+        public Bean(LiDomDFSContext context) {
+            this.name = context.attributes.get("name");
+            this.version = context.attributes.get("version");
+            this.children = context.children.toArray();
         }
 
         @Override
@@ -85,7 +80,7 @@ class LiDomDFSTest {
             return "Bean{" +
                     "name='" + name + '\'' +
                     ", version='" + version + '\'' +
-                    ", bean=" + bean +
+                    ", children=" + Arrays.toString(children) +
                     '}';
         }
     }
@@ -108,8 +103,12 @@ class LiDomDFSTest {
         @Override
         public void visit(LiDomDFSContext context, DOMElement element, int index) {
 
-            context.objectMap.put("$class", Bean.class);
-            element.attributeIterator().forEachRemaining(a -> context.objectMap.put("@" + a.getName(), a.getStringValue()));
+
+            context.tag.value(Bean.class);
+            element.attributeIterator()
+                    .forEachRemaining(a ->
+                            context.attributes.put(a.getName(), a.getStringValue())
+                    );
         }
 
         @Override
@@ -119,13 +118,13 @@ class LiDomDFSTest {
         @Override
         public void visit(LiDomDFSContext context) {
 
-            Class type = (Class) context.objectMap.get("$class");
+            Class type = context.tag.value();
 
             try {
-                Bean instance = (Bean) type.getConstructor(Map.class).newInstance(context.objectMap);
+                Bean instance = (Bean) type.getConstructor(LiDomDFSContext.class).newInstance(context);
 
                 if (context.parent != null) {
-                    context.parent.objectMap.put("#bean", instance);
+                    context.parent.children.add(instance);
                 } else {
 
                     LiPrintUtil.print(instance);
