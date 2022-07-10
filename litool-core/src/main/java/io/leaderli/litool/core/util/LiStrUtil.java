@@ -1,5 +1,8 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.lang3.LiArrayUtils;
+import io.leaderli.litool.core.lang3.LiCharSequenceUtils;
+import io.leaderli.litool.core.lang3.LiStringUtils;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
@@ -155,8 +158,34 @@ public class LiStrUtil {
     }
 
 
-    public static boolean isEmpty(final CharSequence cs) {
-        return cs == null || cs.length() == 0;
+    private static boolean endsWith(final CharSequence str, final CharSequence suffix, final boolean ignoreCase) {
+        if (str == null || suffix == null) {
+            return str == null && suffix == null;
+        }
+        if (suffix.length() > str.length()) {
+            return false;
+        }
+        final int strOffset = str.length() - suffix.length();
+
+
+        return LiCharSequenceUtils.regionMatches(str, ignoreCase, strOffset, suffix, 0, suffix.length());
     }
+
+    public static boolean endsWith(final CharSequence str, final CharSequence suffix) {
+        return endsWith(str, suffix, false);
+    }
+
+    public static boolean endsWithAny(final CharSequence sequence, final CharSequence... searchStrings) {
+        if (LiStringUtils.isEmpty(sequence) || LiArrayUtils.isEmpty(searchStrings)) {
+            return false;
+        }
+        for (final CharSequence searchString : searchStrings) {
+            if (endsWith(sequence, searchString)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }
