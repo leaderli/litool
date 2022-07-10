@@ -12,6 +12,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class LiMapUtilTest {
 
     @Test
@@ -75,7 +76,7 @@ public class LiMapUtilTest {
         Assertions.assertNotEquals(map1, override);
 
         map1.put("1", 1);
-        LiMapUtil.override(map1, map2);
+        LiMapUtil.merge(map1, map2);
 
         map1 = new HashMap<>();
         Map<String, String> map11 = new HashMap<>();
@@ -90,6 +91,19 @@ public class LiMapUtilTest {
 
 
         assertEquals("{m={1-1=22, 1-2=11, 2-2=22}}", LiMapUtil.merge(map1, map2).toString());
+
+
+        map1 = new HashMap<>();
+
+        Map map311 = new HashMap();
+        map311.put(1,1);
+        map1.put("map",map311);
+        map2 =  new HashMap<>();
+        Map map321 = new HashMap();
+        map321.put(1,4);
+        map2.put("map",map321);
+
+        System.out.println(LiMapUtil.merge(map1, map2));
 
     }
 

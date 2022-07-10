@@ -11,80 +11,80 @@ public class LiMapUtil {
     /**
      * @param low  低优先级 map
      * @param high 高优先级 map
-     * @param <K>  map 的键的泛型
-     * @param <V>  map 的值的泛型
      * @return 一个新的 map，  他包包含 low 和 high 所有的 key， 其对应的 value
      * 当 high 和 low 都有对应的值且不为 null 时， 使用 high 的， 当有 null 时，优先使用非 null的，
      * 当值的类型都会 map 时，则 使用 两个 map  merge 后的新 map，
      * 使用
      */
-    public static <K, V> void merge(Map<K, V> low, Map<K, V> high) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static Map<String, Object> merge(Map low, Map high) {
 
 
+        Map result = new HashMap<>(low);
         high.forEach((k, v) -> {
-
             if (v != null) {
-
                 if (v instanceof Map) {
 
-                    V lv = low.get(k);
+                    Object exist = result.get(k);
 
-                    if (lv instanceof Map) {
+                    if (exist instanceof Map) {
 
-                        merge((Map) lv, (Map) v);
+
+                        result.put(k, merge((Map) exist, (Map) v));
+                        return;
+
                     }
+
                 }
 
+                result.put(k, v);
             }
         });
 
-        Set keys = new HashSet();
-        ((Map<?, ?>) low).keySet().forEach(keys::add);
-        ((Map<?, ?>) high).keySet().forEach(keys::add);
-
-
-        Map result = new HashMap((Map) low);
-        keys.forEach(k -> {
-            result.put(k, _merge(((Map<?, ?>) low).get(k), ((Map<?, ?>) high).get(k)));
-        });
-        return (T) result;
-
-        return high;
-
+        Map<String, Object> stringObjectMap = new HashMap<>();
+        result.forEach((k, v) -> stringObjectMap.put(String.valueOf(k), v));
+        return stringObjectMap;
     }
 
     /**
      * @param origin   源 map
      * @param override 覆盖 map
-     * @param <K>      map 的键的泛型
-     * @param <V>      map 的值的泛型
      * @return 一个新的 map，  使用 override 覆盖 origin 的 同名 key 的值，不会覆盖 origin 不存在的 key 的值，不会使用 null 去覆盖，
      * 对于 key 对应的 value 都为 map 类型，则替换位 override 两个 map 后的新 map
      */
-    public static <K, V> Map<K, V> override(Map<K, V> origin, Map<K, V> override) {
 
-        return _override(origin, override);
-    }
+    @SuppressWarnings({"unchecked", "rawtypes"})
 
-    @SuppressWarnings("all")
-    private static <T> T _override(T origin, T override) {
+    public static <K, V> Map<String, Object> override(Map origin, Map override) {
 
-        if (origin == null) {
-            return override;
-        }
 
-        if (override == null) {
-            return origin;
-        }
+        Map result = new HashMap<>(origin);
+        origin.forEach((k, ori) -> {
 
-        if (origin instanceof Map && override instanceof Map) {
+            Object over = override.get(k);
 
-            Map result = new HashMap((Map) origin);
-            result.forEach((k, v) -> result.put(k, _override(v, ((Map) override).get(k))));
-            return (T) result;
-        }
+            if (over != null) {
 
-        return override;
+                if (over instanceof Map) {
+
+
+                    if (ori instanceof Map) {
+
+                        result.put(k, override((Map) ori, (Map) over));
+                        return;
+
+                    }
+
+                }
+
+                result.put(k, over);
+            }
+        });
+
+        Map<String, Object> stringObjectMap = new HashMap<>();
+        result.forEach((k, v) -> stringObjectMap.put(String.valueOf(k), v));
+        return stringObjectMap;
+
 
     }
 
