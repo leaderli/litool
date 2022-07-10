@@ -18,6 +18,11 @@
     <dependencies>
         <dependency>
             <groupId>io.leaderli.litool</groupId>
+            <artifactId>litool-config</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.leaderli.litool</groupId>
             <artifactId>litool-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>

@@ -15,22 +15,82 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LiMapUtilTest {
 
     @Test
-    public void test() {
+    public void override() {
         Map<String, Object> map1 = new HashMap<>();
         map1.put("1", "1");
         map1.put("2", "1");
+        List<String> value = new ArrayList<>();
+        value.add("l1");
+        value.add("l2");
+        map1.put("l", value);
 
         Map<String, Object> map2 = new HashMap<>();
         map2.put("1", "10");
         map2.put("3", "3");
 
-        assertEquals("{1=1, 2=1}", map1.toString());
+        assertEquals("{1=1, 2=1, l=[l1, l2]}", map1.toString());
         Map<String, Object> override = LiMapUtil.override(map1, map2);
-        assertEquals("{1=10, 2=1}", override.toString());
+        assertEquals("{1=10, 2=1, l=[l1, l2]}", override.toString());
         Assertions.assertNotEquals(map1, override);
 
         map1.put("1", 1);
         LiMapUtil.override(map1, map2);
+
+        map1 = new HashMap<>();
+        Map<String, String> map11 = new HashMap<>();
+        map11.put("1-1", "11");
+        map11.put("1-2", "11");
+        map1.put("m", map11);
+        map2 = new HashMap<>();
+        Map<String, String> map12 = new HashMap<>();
+        map12.put("1-1", "22");
+        map12.put("2-2", "22");
+        map2.put("m", map12);
+
+
+        assertEquals("{m={1-1=22, 1-2=11}}", LiMapUtil.override(map1, map2).toString());
+
+
+    }
+
+
+    @Test
+    public void merge() {
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("1", "1");
+        map1.put("2", "1");
+        List<String> value = new ArrayList<>();
+        value.add("l1");
+        value.add("l2");
+        map1.put("l", value);
+
+        Map<String, Object> map2 = new HashMap<>();
+        map2.put("1", "10");
+        map2.put("3", "3");
+
+        assertEquals("{1=1, 2=1, l=[l1, l2]}", map1.toString());
+        Map<String, Object> override = LiMapUtil.merge(map1, map2);
+        assertEquals("{1=10, 2=1, 3=3, l=[l1, l2]}", override.toString());
+
+        Assertions.assertNotEquals(map1, override);
+
+        map1.put("1", 1);
+        LiMapUtil.override(map1, map2);
+
+        map1 = new HashMap<>();
+        Map<String, String> map11 = new HashMap<>();
+        map11.put("1-1", "11");
+        map11.put("1-2", "11");
+        map1.put("m", map11);
+        map2 = new HashMap<>();
+        Map<String, String> map12 = new HashMap<>();
+        map12.put("1-1", "22");
+        map12.put("2-2", "22");
+        map2.put("m", map12);
+
+
+        assertEquals("{m={1-1=22, 1-2=11, 2-2=22}}", LiMapUtil.merge(map1, map2).toString());
+
     }
 
 

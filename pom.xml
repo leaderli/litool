@@ -16,6 +16,7 @@
         <module>litool-core</module>
         <module>litool-dom</module>
         <module>litool-runner</module>
+        <module>litool-config</module>
     </modules>
 
 
