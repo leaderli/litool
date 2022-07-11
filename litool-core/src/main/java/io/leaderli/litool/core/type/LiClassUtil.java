@@ -253,4 +253,12 @@ public class LiClassUtil {
                         .get();
         return _interface.cast(Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{_interface}, invocationHandler));
     }
+
+
+    //TODO
+    public static <T> T getFieldValue(Objects o, String name) {
+
+        return null;
+
+    }
 }

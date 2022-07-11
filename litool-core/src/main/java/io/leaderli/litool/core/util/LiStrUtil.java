@@ -18,6 +18,47 @@ public class LiStrUtil {
      * @param origin     -
      * @param min_length -
      * @return -
+     * @see #just(String, int, String)
+     */
+    public static String just(String origin, int min_length) {
+        return just(origin, min_length, null);
+    }
+
+
+    /**
+     * @param origin     原字符串
+     * @param min_length 最小长度
+     * @param padding    占位符
+     * @return 当位数达不到最小长度时，在左右两侧补充占位符，默认占位符 -
+     */
+    public static String just(String origin, int min_length, String padding) {
+
+        if (origin == null) {
+            origin = "";
+        }
+        if (padding == null) {
+            padding = "-";
+        }
+
+        if (origin.length() >= min_length) {
+            return origin;
+        }
+
+        int gap = min_length - origin.length();
+        if ((gap & 1) == 1) { // 奇数
+            gap = gap / 2 + 1;
+        } else {
+            gap = gap / 2;
+        }
+        String replace = new String(new char[gap]).replace("\0", padding);
+        return replace + origin + replace;
+
+    }
+
+    /**
+     * @param origin     -
+     * @param min_length -
+     * @return -
      * @see #ljust(String, int, String)
      */
     public static String ljust(String origin, int min_length) {

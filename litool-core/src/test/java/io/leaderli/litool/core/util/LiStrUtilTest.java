@@ -15,8 +15,11 @@ import java.util.Random;
 class LiStrUtilTest {
 
     @Test
-    public void test() {
-
+    public void just() {
+        Assertions.assertEquals("**1**", LiStrUtil.just("1", 4, "*"));
+        Assertions.assertEquals("--1--", LiStrUtil.just("1", 4));
+        Assertions.assertEquals("----", LiStrUtil.just(null, 4));
+        Assertions.assertEquals("12345", LiStrUtil.just("12345", 4));
     }
 
     @Test
