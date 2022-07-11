@@ -169,11 +169,12 @@ public interface Lino<T> extends LiValue {
     <R> Lino<R> map(Function<? super T, ? extends R> mapping);
 
     /**
-     * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)}, 第二个参数传 null
+     * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)}, 第二个参数传  {@link LiConstant#whenThrow}
      *
      * @param mapping 转换函数
      * @param <R>     转换后的泛型
      * @return 转换后的 Lino
+     * @see LiConstant#whenThrow
      */
     <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping);
 
@@ -311,7 +312,7 @@ public interface Lino<T> extends LiValue {
 
         @Override
         public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
-            return throwable_map(mapping, null);
+            return throwable_map(mapping, LiConstant.whenThrow);
         }
 
         @Override

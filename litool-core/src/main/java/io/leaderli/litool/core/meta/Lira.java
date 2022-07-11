@@ -152,11 +152,12 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
     Lira<T> skip(int n);
 
     /**
-     * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)}, 第二个参数传 null
+     * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)},  第二个参数传  {@link LiConstant#whenThrow}
      *
      * @param mapping 转换函数
      * @param <R>     转换后的泛型
      * @return 转换后的 Lira
+     * @see LiConstant#whenThrow
      */
     <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping);
 

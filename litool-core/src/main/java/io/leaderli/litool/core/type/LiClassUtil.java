@@ -255,10 +255,5 @@ public class LiClassUtil {
     }
 
 
-    //TODO
-    public static <T> T getFieldValue(Objects o, String name) {
 
-        return null;
-
-    }
 }

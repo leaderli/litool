@@ -126,7 +126,7 @@ public abstract class RaSome<T> implements Lira<T> {
 
     @Override
     public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
-        return new RaThrowableMap<>(this, mapping, null);
+        return new RaThrowableMap<>(this, mapping, LiConstant.whenThrow);
 
 
     }
