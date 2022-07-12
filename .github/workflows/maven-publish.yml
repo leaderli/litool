@@ -21,7 +21,8 @@ jobs:
 
     steps:
     - uses: actions/delete-package-versions@v3
-      with:                       
+      with:   
+        package-name: 'litool'
         ignore-versions: '^\\d+\\.\\d+\\.0$'
         min-versions-to-keep: 0
     - uses: actions/checkout@v3
