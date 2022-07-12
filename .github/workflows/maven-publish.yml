@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: actions/delete-package-versions@v3
       with:   
-        package-name: 'litool'
+        package-name: 'litool-parent'
         ignore-versions: '^\\d+\\.\\d+\\.0$'
         min-versions-to-keep: 0
     - uses: actions/checkout@v3
