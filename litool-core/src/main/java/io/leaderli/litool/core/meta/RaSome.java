@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 
 import java.util.*;
@@ -73,6 +74,42 @@ public abstract class RaSome<T> implements Lira<T> {
     @Override
     public void forEach(Consumer<T> consumer) {
         this.subscribe(new ConsumerRaSubscriber<>((v) -> consumer.accept(v.get())));
+    }
+
+
+    @Override
+    public void forThrowableEach(LiThrowableConsumer<T> consumer) {
+        forThrowableEach(consumer, Throwable::printStackTrace);
+    }
+
+    @Override
+    public void forThrowableEach(LiThrowableConsumer<T> consumer, Consumer<Throwable> whenThrow) {
+
+        LiThrowableConsumer<T> finalConsumer = consumer == null ? t -> {
+        } : consumer;
+        this.subscribe(new RaSubscriber<T>() {
+
+            @Override
+            public void onSubscribe(RaSubscription prevSubscription) {
+                prevSubscription.request(-1);
+
+            }
+
+            @Override
+            public void next(Lino<T> t) {
+                try {
+                    finalConsumer.accept(t.get());
+                } catch (Throwable e) {
+                    whenThrow.accept(e);
+                }
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     @Override

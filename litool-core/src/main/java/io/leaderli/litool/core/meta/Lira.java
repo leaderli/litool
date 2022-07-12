@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.LiListUtil;
+import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.type.LiClassUtil;
 
@@ -204,6 +205,9 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
 
     void forEach(Consumer<T> consumer);
 
+    void forThrowableEach(LiThrowableConsumer<T> consumer);
+    void forThrowableEach(LiThrowableConsumer<T> consumer,Consumer<Throwable> whenThrow);
+
     default Stream<T> stream() {
         return getRaw().stream();
     }
@@ -241,6 +245,9 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
         public void subscribe(RaSubscriber<? super T> actualSubscriber) {
             actualSubscriber.onSubscribe(new ArrayRaSubscription<>(actualSubscriber, arr));
         }
+
+
+
 
 
     }
@@ -411,6 +418,16 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
 
         @Override
         public void forEach(Consumer<T> consumer) {
+
+        }
+
+        @Override
+        public void forThrowableEach(LiThrowableConsumer<T> consumer) {
+
+        }
+
+        @Override
+        public void forThrowableEach(LiThrowableConsumer<T> consumer, Consumer<Throwable> whenThrow) {
 
         }
 

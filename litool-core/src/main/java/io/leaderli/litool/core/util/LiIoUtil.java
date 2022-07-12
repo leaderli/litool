@@ -1,12 +1,15 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.Lira;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 
 public class LiIoUtil {
@@ -25,9 +28,13 @@ public class LiIoUtil {
     }
 
 
-    public static List<File>  getResourcesFile(FileFilter fileFilter){
+    public static Lira<File> getResourcesFile(FileFilter fileFilter) {
 
-//        LiIoUtil.class.getResource("/").getFile()
-        return null;
+        return Lino.of(LiIoUtil.class.getResource("/"))
+                .map(URL::getFile)
+                .map(File::new)
+                .map(f -> f.listFiles(fileFilter))
+                .toLira(File.class);
+
     }
 }

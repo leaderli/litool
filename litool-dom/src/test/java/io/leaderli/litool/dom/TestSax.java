@@ -5,9 +5,9 @@ import io.leaderli.litool.core.lang3.LiStringUtils;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.util.LiPrintUtil;
+import org.dom4j.dom.DOMElement;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
@@ -22,6 +22,7 @@ public class TestSax {
 
     @Test
     public void test() throws Throwable {
+
 
         SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
         SAXParser saxParser = saxParserFactory.newSAXParser();

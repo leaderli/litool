@@ -1,14 +1,13 @@
 package io.leaderli.litool.config;
 
-import io.leaderli.litool.core.collection.LiMapUtil;
-import io.leaderli.litool.core.util.LiPrintUtil;
+import io.leaderli.litool.core.util.LiIoUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Map;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author leaderli
@@ -17,26 +16,16 @@ import java.util.Map;
 public class YamlLoaderTest {
 
     @Test
-    public void test() {
+    public void checkYamlFormat() {
 
         Yaml yaml = new Yaml();
-        InputStream resourceAsStream = YamlLoaderTest.class.getResourceAsStream("/a.yml");
-        Map<String, Object> load1 = yaml.load(resourceAsStream);
-        System.out.println(load1);
-        resourceAsStream = YamlLoaderTest.class.getResourceAsStream("/b.yml");
-        Map<String, Object> load2 = yaml.load(resourceAsStream);
-        System.out.println(load2);
+        List<Throwable> error = new ArrayList<>();
+        LiIoUtil.getResourcesFile(f -> f.getName().endsWith(".yml")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), error::add);
 
-        System.out.println(LiMapUtil.merge(load1, load2));
-
-
-        URL resource = YamlLoaderTest.class.getResource("/");
-        System.out.println(resource);
-
-        assert resource != null;
-        File[] files = new File(resource.getFile()).listFiles(pathname -> pathname.getName().endsWith(".yml"));
-
-        LiPrintUtil.println((Object[]) files);
+        Assertions.assertSame(error.size(), 0);
+        LiIoUtil.getResourcesFile(f -> f.getName().endsWith(".txt")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), error::add);
+        Assertions.assertSame(error.size(), 1);
 
     }
+
 }
