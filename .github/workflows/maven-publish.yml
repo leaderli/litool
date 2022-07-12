@@ -22,9 +22,35 @@ jobs:
     steps:
     - uses: actions/delete-package-versions@v3
       with:   
+        package-name: 'io.leaderli.litool.litool-all'
+        ignore-versions: '^\\d+\\.\\d+\\.0$'
+        min-versions-to-keep: 0
+    - uses: actions/delete-package-versions@v3
+      with:   
+        package-name: 'io.leaderli.litool.litool-config'
+        ignore-versions: '^\\d+\\.\\d+\\.0$'
+        min-versions-to-keep: 0
+    - uses: actions/delete-package-versions@v3
+      with:   
+        package-name: 'io.leaderli.litool.litool-core'
+        ignore-versions: '^\\d+\\.\\d+\\.0$'
+        min-versions-to-keep: 0
+    - uses: actions/delete-package-versions@v3
+      with:   
+        package-name: 'io.leaderli.litool.litool-dom'
+        ignore-versions: '^\\d+\\.\\d+\\.0$'
+        min-versions-to-keep: 0
+    - uses: actions/delete-package-versions@v3
+      with:   
+        package-name: 'io.leaderli.litool.litool-runner'
+        ignore-versions: '^\\d+\\.\\d+\\.0$'
+        min-versions-to-keep: 0
+    - uses: actions/delete-package-versions@v3
+      with:   
         package-name: 'io.leaderli.litool.litool-parent'
         ignore-versions: '^\\d+\\.\\d+\\.0$'
         min-versions-to-keep: 0
+        
     - uses: actions/checkout@v3
     - name: Set up JDK 8
       uses: actions/setup-java@v3
