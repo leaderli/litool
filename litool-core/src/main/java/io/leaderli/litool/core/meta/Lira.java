@@ -201,12 +201,17 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
      */
     int size();
 
+    Lira<T> sort();
+
+    Lira<T> sort(Comparator<? super T> comparator);
+
     void forEachLino(Consumer<Lino<T>> consumer);
 
     void forEach(Consumer<T> consumer);
 
     void forThrowableEach(LiThrowableConsumer<T> consumer);
-    void forThrowableEach(LiThrowableConsumer<T> consumer,Consumer<Throwable> whenThrow);
+
+    void forThrowableEach(LiThrowableConsumer<T> consumer, Consumer<Throwable> whenThrow);
 
     default Stream<T> stream() {
         return getRaw().stream();
@@ -245,8 +250,6 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
         public void subscribe(RaSubscriber<? super T> actualSubscriber) {
             actualSubscriber.onSubscribe(new ArrayRaSubscription<>(actualSubscriber, arr));
         }
-
-
 
 
 
@@ -409,6 +412,16 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
         @Override
         public int size() {
             return 0;
+        }
+
+        @Override
+        public Lira<T> sort() {
+            return this;
+        }
+
+        @Override
+        public Lira<T> sort(Comparator<? super T> comparator) {
+            return this;
         }
 
         @Override

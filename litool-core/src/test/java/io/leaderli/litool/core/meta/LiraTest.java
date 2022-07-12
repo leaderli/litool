@@ -125,6 +125,14 @@ class LiraTest {
 
 
     @Test
+    void sort() {
+
+        Assertions.assertSame(1, Lira.of(2, 1).sort().first().get());
+        Assertions.assertSame(3, Lira.of(2, 1, 3).sort((o1, o2) -> o2 - o1).first().get());
+
+    }
+
+    @Test
     void limit() {
 
         Assertions.assertSame(1, Lira.of(1).limit(1).size());

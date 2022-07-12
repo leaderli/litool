@@ -13,7 +13,7 @@ import java.util.List;
  * @author leaderli
  * @since 2022/7/9 9:00 AM
  */
-public class YamlLoaderTest {
+public class LiYamlLoaderTest {
 
     @Test
     public void checkYamlFormat() {
@@ -25,6 +25,19 @@ public class YamlLoaderTest {
         Assertions.assertSame(error.size(), 0);
         LiIoUtil.getResourcesFile(f -> f.getName().endsWith(".txt")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), error::add);
         Assertions.assertSame(error.size(), 1);
+
+    }
+
+    @Test
+    public void loadResourcesYmlFiles() {
+
+
+        System.out.println();
+
+        Assertions.assertEquals(7, LiYamlConfig.loadResourcesYmlFiles("b.yml", "a.yml").size());
+        Assertions.assertEquals("a", LiYamlConfig.loadResourcesYmlFiles("b.yml", "a.yml").get("value"));
+        Assertions.assertEquals("b", LiYamlConfig.loadResourcesYmlFiles("a.yml", "b.yml").get("value"));
+
 
     }
 

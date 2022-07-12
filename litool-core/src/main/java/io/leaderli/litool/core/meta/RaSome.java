@@ -162,6 +162,19 @@ public abstract class RaSome<T> implements Lira<T> {
     }
 
     @Override
+    public Lira<T> sort() {
+        return sort(null);
+    }
+
+    @Override
+    public Lira<T> sort(Comparator<? super T> comparator) {
+
+        List<T> raw = getRaw();
+        raw.sort(comparator);
+        return Lira.of(raw);
+    }
+
+    @Override
     public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
         return new RaThrowableMap<>(this, mapping, LiConstant.whenThrow);
 
