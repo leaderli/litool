@@ -1,9 +1,12 @@
 package io.leaderli.litool.core.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileFilter;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 
 public class LiIoUtil {
@@ -19,5 +22,12 @@ public class LiIoUtil {
             string = "";
         }
         return (new ByteArrayInputStream(string.getBytes(DEFAULT_CHARACTER_ENCODING)));
+    }
+
+
+    public static List<File>  getResourcesFile(FileFilter fileFilter){
+
+//        LiIoUtil.class.getResource("/").getFile()
+        return null;
     }
 }
