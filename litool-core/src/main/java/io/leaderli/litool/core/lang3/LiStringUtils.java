@@ -6789,7 +6789,7 @@ public class LiStringUtils {
      * <p>Capitalizes a String changing the first character to title case as
      * per {@link Character#toTitleCase(int)}. No other characters are changed.</p>
      *
-     * A {@code null} input String returns {@code null}.</p>
+     * A {@code null} input String returns {@code null}
      *
      * <pre>
      * StringUtils.capitalize(null)  = null
@@ -6832,7 +6832,7 @@ public class LiStringUtils {
      * <p>Uncapitalizes a String, changing the first character to lower case as
      * per {@link Character#toLowerCase(int)}. No other characters are changed.</p>
      *
-     * A {@code null} input String returns {@code null}.</p>
+     * A {@code null} input String returns {@code null}
      *
      * <pre>
      * StringUtils.uncapitalize(null)  = null
@@ -6881,7 +6881,7 @@ public class LiStringUtils {
      *  <li>Lower case character converts to Upper case</li>
      * </ul>
      *
-     * A {@code null} input String returns {@code null}.</p>
+     * A {@code null} input String returns {@code null}
      *
      * <pre>
      * StringUtils.swapCase(null)                 = null

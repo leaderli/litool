@@ -42,7 +42,8 @@ public class LiClassUtil {
 
     /**
      * @param def 实例
-     * @param <T> 实例泛型
+     * @param <T> 实例父类泛型
+     * @param <E> 实例泛型
      * @return 实例类型的父类
      */
     @SuppressWarnings("unchecked")
@@ -253,7 +254,6 @@ public class LiClassUtil {
                         .get();
         return _interface.cast(Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{_interface}, invocationHandler));
     }
-
 
 
 }

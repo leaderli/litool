@@ -14,6 +14,7 @@ public interface LiDomVisitor {
      *
      * @param element 节点
      * @param index   节点在父节点的位置
+     * @param context  -
      */
     default void visit(LiDomDFSContext<?,?> context, DOMElement element, int index) {
 
@@ -32,6 +33,7 @@ public interface LiDomVisitor {
     /**
      * 节点的文本
      *
+     * @param context  -
      * @param content 文本
      */
     default void visit(LiDomDFSContext<?,?> context,String content) {
@@ -40,6 +42,7 @@ public interface LiDomVisitor {
 
     /**
      * 访问节点结束
+     * @param context  -
      */
     default void visit(LiDomDFSContext<?,?> context) {
 

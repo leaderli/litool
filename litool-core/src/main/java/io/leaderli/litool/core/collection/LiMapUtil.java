@@ -55,7 +55,7 @@ public class LiMapUtil {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
 
-    public static <K, V> Map<String, Object> override(Map origin, Map override) {
+    public static Map<String, Object> override(Map origin, Map override) {
 
 
         Map result = new HashMap<>(origin);

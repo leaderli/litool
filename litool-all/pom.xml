@@ -77,7 +77,7 @@
         <repository>
             <id>github</id>
             <name>GitHub OWNER Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/leaderli/litil</url>
+            <url>https://maven.pkg.github.com/leaderli/litool</url>
         </repository>
     </distributionManagement>
 
