@@ -1,10 +1,10 @@
 package io.leaderli.litool.dom;
 
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
+import io.leaderli.litool.core.lang3.LiStringUtils;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.util.LiPrintUtil;
-import io.leaderli.litool.core.util.LiStrUtil;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -31,9 +31,8 @@ public class TestSax {
         saxParser.parse(TestSax.class.getResourceAsStream("/bean.xml"), new DefaultHandler() {
 
 
-            @SuppressWarnings("rawtypes")
             @Override
-            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            public void startElement(String uri, String localName, String qName, Attributes attributes) {
 
 
                 SaxBean<?> peek = null;
@@ -55,9 +54,7 @@ public class TestSax {
                     LiPrintUtil.print(name, value + "");
                     if (value != null) {
 
-                        RuntimeExceptionTransfer.run(() -> {
-                            field.set(o, value);
-                        });
+                        RuntimeExceptionTransfer.run(() -> field.set(o, value));
                     }
                 });
 
@@ -67,9 +64,9 @@ public class TestSax {
             }
 
             @Override
-            public void characters(char[] ch, int start, int length) throws SAXException {
+            public void characters(char[] ch, int start, int length) {
                 String trim = new String(ch, start, length).trim();
-                if (LiStrUtil.isEmpty(trim)) {
+                if (LiStringUtils.isEmpty(trim)) {
                     return;
                 }
                 LiPrintUtil.print("----", stack, trim);
@@ -77,7 +74,7 @@ public class TestSax {
             }
 
             @Override
-            public void endElement(String uri, String localName, String qName) throws SAXException {
+            public void endElement(String uri, String localName, String qName) {
                 LiPrintUtil.print("<---", stack);
 
                 Object peek = stack.peek();
