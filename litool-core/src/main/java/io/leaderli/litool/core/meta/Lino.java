@@ -163,6 +163,12 @@ public interface Lino<T> extends LiValue {
     Lino<T> ifAbsent(Runnable runnable);
 
     /**
+     * @return 当实际值为数组或者集合时保留，否则返回 {@link #none()}
+     * @see #filter(boolean)
+     */
+    Lino<T> isArray();
+
+    /**
      * @param mapping 转换函数
      * @param <R>     转换后的泛型
      * @return 转换后的 Lino
@@ -304,6 +310,21 @@ public interface Lino<T> extends LiValue {
         @Override
         public Lino<T> ifAbsent(Runnable runnable) {
             return this;
+        }
+
+        @Override
+        public Lino<T> isArray() {
+            if (this.value.getClass().isArray()) {
+                return this;
+            }
+
+            if (this.value instanceof Iterable) {
+                return this;
+            }
+            if (this.value instanceof Iterator) {
+                return this;
+            }
+            return Lino.none();
         }
 
         @Override
@@ -499,6 +520,11 @@ public interface Lino<T> extends LiValue {
         @Override
         public Lino<T> ifAbsent(Runnable runnable) {
             runnable.run();
+            return this;
+        }
+
+        @Override
+        public Lino<T> isArray() {
             return this;
         }
 

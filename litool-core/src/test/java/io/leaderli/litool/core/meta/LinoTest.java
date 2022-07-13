@@ -191,7 +191,7 @@ class LinoTest {
     @Test
     void throwable_map() {
         LiBox<Integer> box = LiBox.none();
-        Assertions.assertSame(Lino.of(0).throwable_map(i -> 5 / i), Lino.none());
+        Assertions.assertSame(Lino.of(0).throwable_map(i -> 5 / i, null), Lino.none());
         Assertions.assertNull(box.value());
         Lino.of(0).throwable_map(i -> 5 / i, t -> box.value(2));
         Assertions.assertSame(2, box.value());
@@ -218,6 +218,10 @@ class LinoTest {
 
         Assertions.assertEquals("[Some(1), Some(2)]", Lino.of(Arrays.asList(1, 2)).toLira(Integer.class).get().toString());
         Assertions.assertEquals("[]", Lino.of(Arrays.asList(1, 2)).toLira(String.class).get().toString());
+
+
+        Assertions.assertEquals(1, Lino.of(new int[]{1, 2}).toLira(Object.class).getRaw().get(0));
+        Assertions.assertEquals(1, Lino.of(1).toLira(Object.class).getRaw().get(0));
     }
 
     @Test

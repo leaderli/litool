@@ -5,7 +5,10 @@ import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.LiClassUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class LiMapUtil {
     /**
@@ -184,34 +187,6 @@ public class LiMapUtil {
      */
     public static Lino<String> getTypeObject(Map<String, String> map, String key) {
         return getTypeObject(map, key, String.class);
-    }
-
-
-    /**
-     * @param origin 对象
-     * @param keys   嵌套 key
-     * @return 多次嵌套的元素
-     */
-    public static Lino<?> deepGet(Object origin, String... keys) {
-
-
-        if (keys == null || keys.length == 0) {
-            return Lino.none();
-        }
-
-        String key = keys[0];
-
-        Lino<Object> value = Lino.of(origin)
-                .cast(Map.class)
-                .map(m -> m.get(key));
-
-        keys = Arrays.copyOfRange(keys, 1, keys.length);
-
-        if (keys.length == 0) {
-            return value;
-        }
-        return deepGet(value.get(), keys);
-
     }
 
 

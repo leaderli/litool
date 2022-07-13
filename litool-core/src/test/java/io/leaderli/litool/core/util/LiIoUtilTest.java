@@ -11,7 +11,7 @@ class LiIoUtilTest {
     @Test
     void getResourcesFile() {
 
-        System.out.println(LiIoUtil.getResourcesFile(null));
+//        System.out.println(LiIoUtil.getResourcesFile(null));
 
 //        ClassLoader loader = Thread.currentThread().getContextClassLoader();
 //

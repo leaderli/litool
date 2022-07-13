@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.meta.LiConstant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,7 @@ class LiStringConvertTest {
     @Test
     void parserInt() {
 
+        LiConstant.whenThrow = null;
         Assertions.assertSame(0, LiStringConvert.parser(null, 0));
         Assertions.assertSame(1, LiStringConvert.parser("1", 0));
         Assertions.assertSame(true, LiStringConvert.parser("true", false));
