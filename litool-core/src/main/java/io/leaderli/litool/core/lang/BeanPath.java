@@ -93,12 +93,31 @@ public class BeanPath {
 
             }
 
+
         }
 
+        if (state == KEY) {
+
+            beanPath.setKeyFunction(temp);
+            state = BEGIN;
+        }
+
+        LiAssertUtil.assertTrue(state == BEGIN, "expression is not complete");
         return beanPath;
     }
 
     private void setKeyFunction(StringBuilder key) {
         path.add(map -> map.cast(Map.class).map(m -> m.get(key.toString())));
+    }
+
+    public Lino<Object> parser(Object obj) {
+        Lino<Object> of = Lino.of(obj);
+
+        for (Function<Lino<Object>, Lino<Object>> linoLinoFunction : path) {
+
+            of = linoLinoFunction.apply(of);
+        }
+
+        return of;
     }
 }
