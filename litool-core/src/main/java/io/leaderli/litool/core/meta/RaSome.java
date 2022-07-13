@@ -120,6 +120,40 @@ public abstract class RaSome<T> implements Lira<T> {
         return result;
     }
 
+
+    @Override
+    public Lino<T> get(int index) {
+
+        if (index < 0) {
+            return Lino.none();
+        }
+        LiBox<Integer> count = LiBox.of(0);
+        LiBox<T> result = LiBox.none();
+        this.subscribe(new RaSubscriber<T>() {
+            private RaSubscription prevSubscription;
+
+            @Override
+            public void onSubscribe(RaSubscription prevSubscription) {
+                this.prevSubscription = prevSubscription;
+                prevSubscription.request(-1);
+            }
+
+            @Override
+            public void next(Lino<T> t) {
+
+                if (count.value() == index) {
+                    result.value(t.get());
+                    prevSubscription.cancel();
+                }
+                count.value(count.value() + 1);
+
+            }
+
+        });
+
+        return result.lino();
+    }
+
     @Override
     public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapping, Function<? super T, ? extends V> valueMapping) {
 

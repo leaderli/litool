@@ -14,6 +14,14 @@ import java.util.Map;
  */
 class LiraTest {
 
+    @Test
+    public void getIndex() {
+
+        Assertions.assertEquals(1, Lira.of(1, 2, 3).get(0).get());
+        Assertions.assertEquals(2, Lira.of(1, 2, 3).get(1).get());
+        Assertions.assertEquals(3, Lira.of(1, 2, 3).get(2).get());
+        Assertions.assertEquals(Lino.none(), Lira.of(1, 2, 3).get(4));
+    }
 
     @Test
     void narrow() {

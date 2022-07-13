@@ -19,5 +19,7 @@ public interface RaSubscriber<T> {
     /**
      * 发布者提交一个完成事件
      */
-    void onComplete();
+    default void onComplete() {
+
+    }
 }

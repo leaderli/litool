@@ -128,6 +128,12 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
     List<Lino<T>> get();
 
     /**
+     * @param index 角标
+     * @return 返回指定角标的位置的元素，当元素不存在时返回 {@link Lino#none()}
+     */
+    Lino<T> get(int index);
+
+    /**
      * @param n 最多保留的元素
      * @return 仅保留几位元素
      */
@@ -252,7 +258,6 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
         }
 
 
-
     }
 
     final class ArrayRaSubscription<T> implements RaSubscription {
@@ -354,6 +359,11 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
         public List<Lino<T>> get() {
             return LiListUtil.emptyList();
 
+        }
+
+        @Override
+        public Lino<T> get(int index) {
+            return Lino.none();
         }
 
 
