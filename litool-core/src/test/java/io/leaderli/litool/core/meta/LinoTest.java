@@ -50,6 +50,12 @@ class LinoTest {
         a = map;
         Assertions.assertEquals("{1=1}", Lino.of(a).cast(String.class, String.class).get().toString());
         Assertions.assertSame(Lino.none(), Lino.of(a).cast(Integer.class, String.class));
+
+
+        Assertions.assertEquals(2, Lino.of(Arrays.asList(1, 2, 3)).cast(List.class).toLira(Object.class).get(1).get());
+
+
+        Assertions.assertEquals(1, Lino.of(new int[]{1, 2}).toLira(Object.class).first().get());
     }
 
     @Test

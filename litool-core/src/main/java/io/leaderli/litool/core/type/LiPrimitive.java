@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.type;
 
+import java.lang.reflect.Array;
+
 /**
  * @author leaderli
  * @since 2022/6/17
@@ -38,15 +40,95 @@ public class LiPrimitive {
 
     @SuppressWarnings("all")
     private static class PrimitiveValue {
-        public static int INT;
-        public static char CHAR;
         public static byte BYTE;
-        public static long LONG;
         public static boolean BOOLEAN;
+        public static char CHAR;
         public static double DOUBLE;
         public static float FLOAT;
+        public static long LONG;
+        public static int INT;
         public static short SHORT;
     }
 
+
+    public static Byte[] toWrapperArray(byte[] arr) {
+
+        Byte[] result = (Byte[]) Array.newInstance(Byte.class, arr.length);
+
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    public static Boolean[] toWrapperArray(boolean[] arr) {
+
+        Boolean[] result = (Boolean[]) Array.newInstance(Boolean.class, arr.length);
+
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    public static Character[] toWrapperArray(char[] arr) {
+
+        Character[] result = (Character[]) Array.newInstance(Character.class, arr.length);
+
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    public static Double[] toWrapperArray(double[] arr) {
+
+        Double[] result = (Double[]) Array.newInstance(Double.class, arr.length);
+
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    public static Float[] toWrapperArray(float[] arr) {
+
+        Float[] result = (Float[]) Array.newInstance(Float.class, arr.length);
+
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    public static Long[] toWrapperArray(long[] arr) {
+
+        Long[] result = (Long[]) Array.newInstance(Long.class, arr.length);
+
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    public static Integer[] toWrapperArray(int[] arr) {
+
+        Integer[] result = (Integer[]) Array.newInstance(Integer.class, arr.length);
+
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    public static Short[] toWrapperArray(short[] arr) {
+
+        Short[] result = (Short[]) Array.newInstance(Short.class, arr.length);
+
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
 
 }

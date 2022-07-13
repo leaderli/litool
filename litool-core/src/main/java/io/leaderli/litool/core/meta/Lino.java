@@ -5,6 +5,7 @@ import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.type.LiClassUtil;
+import io.leaderli.litool.core.type.LiPrimitive;
 import io.leaderli.litool.core.util.LiBoolUtil;
 
 import java.util.Iterator;
@@ -353,9 +354,39 @@ public interface Lino<T> extends LiValue {
 
         @Override
         public <R> Lira<R> toLira(Class<R> type) {
-            if (this.value.getClass().isArray()) {
-                Object[] arr = (Object[]) this.value;
-                return Lira.of(arr).cast(type);
+            Class<?> valueClass = this.value.getClass();
+            if (valueClass.isArray()) {
+                Class<?> componentType = valueClass.getComponentType();
+
+                if (!componentType.isPrimitive()) {
+                    return Lira.of(((Object[]) this.value)).cast(type);
+                }
+
+                if (componentType == boolean.class) {
+                    return Lira.of(LiPrimitive.toWrapperArray((boolean[]) this.value)).cast(type);
+                }
+                if (componentType == byte.class) {
+                    return Lira.of(LiPrimitive.toWrapperArray((byte[]) this.value)).cast(type);
+                }
+                if (componentType == char.class) {
+                    return Lira.of(LiPrimitive.toWrapperArray((char[]) this.value)).cast(type);
+                }
+                if (componentType == double.class) {
+                    return Lira.of(LiPrimitive.toWrapperArray((double[]) this.value)).cast(type);
+                }
+                if (componentType == float.class) {
+                    return Lira.of(LiPrimitive.toWrapperArray((float[]) this.value)).cast(type);
+                }
+                if (componentType == int.class) {
+
+                    return Lira.of(LiPrimitive.toWrapperArray((int[]) this.value)).cast(type);
+                }
+                if (componentType == long.class) {
+                    return Lira.of(LiPrimitive.toWrapperArray((long[]) this.value)).cast(type);
+                }
+                if (componentType == short.class) {
+                    return Lira.of(LiPrimitive.toWrapperArray((short[]) this.value)).cast(type);
+                }
             }
 
             if (this.value instanceof Iterable) {
