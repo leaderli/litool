@@ -7,6 +7,7 @@ import io.leaderli.litool.core.meta.Lino;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * @author leaderli
@@ -67,4 +68,7 @@ public class LiTupleMap<K, V> {
         paris.clear();
     }
 
+    public void removeIf(Predicate<LiTuple2<K, V>> predicate) {
+        paris.removeIf(predicate);
+    }
 }
