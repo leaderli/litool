@@ -81,7 +81,7 @@ public class LiReflectUtil {
     /**
      * @param obj   查找的实例
      * @param field 查找的属性
-     * @return 返回属性值
+     * @return 包含属性实际值的 {@link Lino}, 当类不存在或者属性不存在时返回 {@link Lino#none()}
      */
     public static Lino<?> getFieldValue(Object obj, Field field) {
 
@@ -136,7 +136,7 @@ public class LiReflectUtil {
      * @param obj   查找的实例
      * @param name  查找的属性名
      * @param value 设置的值
-     * @return #getFieldValue(Object, String, boolean)
+     * @return {@link #setFieldValue(Object, String, Object, boolean)}
      */
     public static boolean setFieldValue(Object obj, String name, Object value) {
 
@@ -149,7 +149,7 @@ public class LiReflectUtil {
      * @param name             查找的属性名
      * @param value            设置的值
      * @param onlyCurrentClass 是否只查找当前类
-     * @return #getFieldValue(Object, String, boolean)
+     * @return 返回是否成功修改值
      */
 
     public static boolean setFieldValue(Object obj, String name, Object value, boolean onlyCurrentClass) {
