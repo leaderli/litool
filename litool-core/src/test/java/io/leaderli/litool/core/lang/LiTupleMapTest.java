@@ -37,6 +37,12 @@ class LiTupleMapTest {
         tupleMap.clear();
         Assertions.assertEquals(Lino.none(), tupleMap.getValueByKey("k1"));
         Assertions.assertEquals(Lino.none(), tupleMap.getKeyByValue("v1"));
+
+
+        LiTupleMap<String, Integer> of = LiTupleMap.of("1", 2);
+        Assertions.assertEquals(2, of.getValueByKey("1").get());
+        Assertions.assertEquals("1", of.getKeyByValue(2).get());
+
     }
 
 }

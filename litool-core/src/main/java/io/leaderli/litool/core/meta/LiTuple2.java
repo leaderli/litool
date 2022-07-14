@@ -23,6 +23,8 @@ package io.leaderli.litool.core.meta;
    G E N E R A T O R   C R A F T E D
 \*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*/
 
+import io.leaderli.litool.core.lang.LiTupleMap;
+
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Comparator;
@@ -234,6 +236,9 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     }
 
 
+    public LiTupleMap<T1, T2> toLiTupleMap() {
+        return LiTupleMap.of(this._1, this._2);
+    }
     // -- Object
 
     @Override

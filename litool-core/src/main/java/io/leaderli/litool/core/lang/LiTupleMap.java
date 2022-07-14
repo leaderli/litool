@@ -17,8 +17,18 @@ import java.util.function.Predicate;
  */
 public class LiTupleMap<K, V> {
 
-    List<LiTuple2<K, V>> paris = new ArrayList<>();
+    private final List<LiTuple2<K, V>> paris = new ArrayList<>();
 
+
+    public static <K, V> LiTupleMap<K, V> of() {
+
+        return new LiTupleMap<>();
+    }
+
+    public static <K, V> LiTupleMap<K, V> of(K k, V v) {
+        LiTupleMap<K, V> of = of();
+        return of.putKeyValue(k, v);
+    }
 
     public Lino<V> getValueByKey(K key) {
 
@@ -32,10 +42,11 @@ public class LiTupleMap<K, V> {
         return Lino.none();
     }
 
-    public void putKeyValue(K key, V value) {
+    public LiTupleMap<K, V> putKeyValue(K key, V value) {
 
         removeByKey(key);
         paris.add(LiTuple.of(key, value));
+        return this;
 
     }
 
@@ -54,9 +65,12 @@ public class LiTupleMap<K, V> {
         return Lino.none();
     }
 
-    public void putValueKey(V value, K key) {
+    public LiTupleMap<K, V> putValueKey(V value, K key) {
         removeByValue(value);
         paris.add(LiTuple.of(key, value));
+
+        return this;
+
     }
 
     public void removeByValue(V value) {

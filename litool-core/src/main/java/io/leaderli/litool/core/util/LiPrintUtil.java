@@ -1,7 +1,9 @@
 package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.type.LiReflectUtil;
 
+import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
@@ -89,5 +91,17 @@ public class LiPrintUtil {
     public static void print_format(String pattern, Object... arguments) {
 
         System.out.println(MessageFormat.format(pattern, arguments));
+    }
+
+
+    public static String getFieldsToString(Object o) {
+
+        return LiStrUtil.join(",", Lino.of(o).map(l -> l.getClass().getFields())
+
+                .toLira(Field.class)
+                .map(f -> f.getName() + " = " + LiReflectUtil.getFieldValue(o, f).get())
+                .getRaw());
+
+
     }
 }

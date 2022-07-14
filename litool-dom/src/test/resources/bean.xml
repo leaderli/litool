@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<bean name="scanner" version="1">
-    <bean name="inner" version="1.1">
+<root>
+
+    <bean name="scanner" version="1">
+        <bean name="inner" version="1.1">
+
+        </bean>
+        <bean name="inner2">
+
+        </bean>
 
     </bean>
-    <bean name="inner2">
-
-    </bean>
-
-</bean>
+    <nobean name="no">
+        123<bean>123</bean>
+    </nobean>
+</root>

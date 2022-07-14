@@ -1,28 +1,22 @@
 package io.leaderli.litool.dom;
 
+import io.leaderli.litool.core.lang.LiTupleMap;
+
 /**
  * @author leaderli
  * @since 2022/7/8 9:55 PM
  */
-public class Bean extends SaxBean<Bean> {
+public class Bean extends SaxBean {
     public String name;
-    public String version;
-
-    public Bean() {
-    }
+    public String version = "0";
 
 
-    @Override
-    public Class<Bean> componentType() {
-        return Bean.class;
-    }
+
+
+
 
     @Override
-    public String toString() {
-        return "Bean{" +
-                "name='" + name + '\'' +
-                ", version='" + version + '\'' +
-                ", children=" + children +
-                '}';
+    public LiTupleMap<String, Class<SaxBean>> support() {
+        return SupportTagBuilder.build(LiTupleMap.of(), Bean.class);
     }
 }
