@@ -26,6 +26,20 @@ public class BeanPath {
     private static final char VARIABLE_SPLIT = '.';
 
 
+    private final int start_state;
+
+    public BeanPath() {
+
+        this.start_state = STATE_BEGIN;
+
+    }
+
+    public BeanPath(int state) {
+
+        this.start_state = state;
+
+    }
+
     public static class BeginIllegalStateException extends IllegalStateException {
 
         public BeginIllegalStateException() {
@@ -58,12 +72,11 @@ public class BeanPath {
 
     /**
      * @param expression key 的表达式
-     * @return {{@link #of(String, Function[])}}
      */
-    public static BeanPath of(String expression) {
+    private void build(String expression) {
 
         //noinspection unchecked
-        return of(expression, new Function[]{});
+        build(expression, new Function[]{});
     }
 
     /**
@@ -81,18 +94,15 @@ public class BeanPath {
      *
      * @param expression key的表达式
      * @param filters    针对 [index] list的过滤器，每个filter 对应一个 [index]
-     * @return 指定位置的值
      */
     @SuppressWarnings({"unchecked"})
-    public static BeanPath of(String expression, Function<Lino<?>, Lino<?>>... filters) {
+    private void build(String expression, Function<Lino<?>, Lino<?>>... filters) {
 
         Objects.requireNonNull(expression, " expression is null");
 
-        BeanPath beanPath = new BeanPath();
-
 
         int filter_index = 0;
-        int state = STATE_BEGIN;
+        int state = this.start_state;
 
         StringBuilder temp = new StringBuilder();
         for (char ch : expression.toCharArray()) {
@@ -111,11 +121,11 @@ public class BeanPath {
 
 
                     if (ch == VARIABLE_SPLIT) {
-                        beanPath.setKeyFunction(temp);
+                        this.setKeyFunction(temp);
                         temp = new StringBuilder();
                         state = STATE_KEY_END;
                     } else if (ch == ARR_BEGIN) {
-                        beanPath.setKeyFunction(temp);
+                        this.setKeyFunction(temp);
                         temp = new StringBuilder();
                         state = STATE_ARRAY;
                     } else if (ch == ARR_END) {
@@ -149,7 +159,7 @@ public class BeanPath {
 
                         }
 
-                        beanPath.setArrFunction(index, filter);
+                        this.setArrFunction(index, filter);
 
                         temp = new StringBuilder();
                         state = STATE_ARRAY_END;
@@ -180,14 +190,13 @@ public class BeanPath {
 
         if (state == STATE_KEY && temp.length() > 0) {
 
-            beanPath.setKeyFunction(temp);
+            setKeyFunction(temp);
             state = STATE_BEGIN;
         }
 
         if (state != STATE_BEGIN && state != STATE_ARRAY_END) {
             throw new NotCompleteIllegalStateException();
         }
-        return beanPath;
     }
 
     private void setKeyFunction(StringBuilder key) {
@@ -228,11 +237,16 @@ public class BeanPath {
 
     public static Lino<Object> parse(Map<String, ?> obj, String expression) {
 
-        return of(expression).parse(obj);
+        BeanPath beanPath = new BeanPath();
+        beanPath.build(expression);
+        return beanPath.parse(obj);
     }
 
     @SafeVarargs
     public static Lino<Object> parse(Map<String, ?> obj, String expression, Function<Lino<?>, Lino<?>>... filters) {
-        return of(expression, filters).parse(obj);
+
+        BeanPath beanPath = new BeanPath();
+        beanPath.build(expression, filters);
+        return beanPath.parse(obj);
     }
 }
