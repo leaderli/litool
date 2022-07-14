@@ -52,43 +52,112 @@ public class LiReflectUtil {
     /**
      * onlyCurrentClass = false
      *
-     * @param o    查找的实例
+     * @param obj  查找的实例
      * @param name 查找的属性名
      * @return #getFieldValue(Object, String, boolean)
      */
-    public static Lino<?> getFieldValue(Object o, String name) {
+    public static Lino<?> getFieldValue(Object obj, String name) {
 
 
-        return getFieldValue(o, name, false);
+        return getFieldValue(obj, name, false);
     }
 
     /**
-     * @param o                查找的实例
+     * @param obj              查找的实例
      * @param name             查找的属性名
-     * @param onlyCurrentClass 是否值查找当前类
+     * @param onlyCurrentClass 是否只查找当前类
      * @return 包含属性实际值的 {@link Lino}, 当类不存在或者属性不存在时返回 {@link Lino#none()}
      * @see #getField(Class, String, boolean)
      */
-    public static Lino<?> getFieldValue(Object o, String name, boolean onlyCurrentClass) {
+    public static Lino<?> getFieldValue(Object obj, String name, boolean onlyCurrentClass) {
 
 
-        return Lino.of(o)
-                .map(Object::getClass)
-                .map(c -> getField(c, name, onlyCurrentClass))
-                .map(Lino::get)
-                .throwable_map(f -> {
+        return Lino.of(obj)
+                .map(o -> getField(obj.getClass(), name, onlyCurrentClass).get())
+                .map(f -> getFieldValue(obj, f).get());
+
+    }
+
+    /**
+     * @param obj   查找的实例
+     * @param field 查找的属性
+     * @return 返回属性值
+     */
+    public static Lino<?> getFieldValue(Object obj, Field field) {
+
+        if (obj == null) {
+            return Lino.none();
+        }
+        return Lino.of(field).throwable_map(f -> {
+
                     Object result;
                     if (!f.isAccessible()) {
                         f.setAccessible(true);
-                        result = f.get(o);
+                        result = f.get(obj);
                         f.setAccessible(false);
                     } else {
-                        result = f.get(0);
+                        result = f.get(obj);
                     }
                     return result;
-                })
-                ;
+                }
 
+        );
+    }
+
+    /**
+     * @param obj   查找的实例
+     * @param field 查找的属性
+     * @param value 设置的值
+     * @return 返回是否成功修改值
+     */
+    public static boolean setFieldValue(Object obj, Field field, Object value) {
+
+        if (obj == null) {
+            return false;
+        }
+        return Lino.of(field).throwable_map(f -> {
+
+            if (!f.isAccessible()) {
+                f.setAccessible(true);
+                f.set(obj, value);
+                f.setAccessible(false);
+            } else {
+                f.set(obj, value);
+            }
+            // 执行到此，说明未抛出异常，则可以表明赋值成功
+            return true;
+        }).present();
+
+    }
+
+    /**
+     * onlyCurrentClass = false
+     *
+     * @param obj   查找的实例
+     * @param name  查找的属性名
+     * @param value 设置的值
+     * @return #getFieldValue(Object, String, boolean)
+     */
+    public static boolean setFieldValue(Object obj, String name, Object value) {
+
+
+        return setFieldValue(obj, name, value, false);
+    }
+
+    /**
+     * @param obj              查找的实例
+     * @param name             查找的属性名
+     * @param value            设置的值
+     * @param onlyCurrentClass 是否只查找当前类
+     * @return #getFieldValue(Object, String, boolean)
+     */
+
+    public static boolean setFieldValue(Object obj, String name, Object value, boolean onlyCurrentClass) {
+
+
+        return Lino.of(obj)
+                .map(o -> getField(obj.getClass(), name, onlyCurrentClass).get())
+                .map(f -> setFieldValue(obj, f, value)).get(false);
 
     }
 }

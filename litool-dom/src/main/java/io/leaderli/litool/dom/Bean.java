@@ -1,7 +1,5 @@
 package io.leaderli.litool.dom;
 
-import io.leaderli.litool.core.util.LiStrUtil;
-
 /**
  * @author leaderli
  * @since 2022/7/8 9:55 PM
@@ -21,6 +19,10 @@ public class Bean extends SaxBean<Bean> {
 
     @Override
     public String toString() {
-     return    LiStrUtil.join(",", name, version,  children);
+        return "Bean{" +
+                "name='" + name + '\'' +
+                ", version='" + version + '\'' +
+                ", children=" + children +
+                '}';
     }
 }

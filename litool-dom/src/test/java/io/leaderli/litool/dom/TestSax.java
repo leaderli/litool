@@ -4,8 +4,8 @@ import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.lang3.LiStringUtils;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.LiReflectUtil;
 import io.leaderli.litool.core.util.LiPrintUtil;
-import org.dom4j.dom.DOMElement;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -43,23 +43,23 @@ public class TestSax {
                 }
 
                 Class<? extends SaxBean<?>> tagBeanClass = LiDomTagBean.getTagBeanClass(null, qName);
-                SaxBean<?> o = RuntimeExceptionTransfer.get(tagBeanClass::newInstance);
+                SaxBean<?> saxBean = RuntimeExceptionTransfer.get(tagBeanClass::newInstance);
 
-                Lino.of(peek).ifPresent(p -> p.add(o));
+                Lino.of(peek).ifPresent(p -> p.add(saxBean));
 
-                Lira.of(tagBeanClass.getFields()).filter(f -> !f.getType().isArray()).forEach(field -> {
+                for (int i = 0; i < attributes.getLength(); i++) {
+                    String name = attributes.getLocalName(i);
+                    String value = attributes.getValue(i);
 
-                    String name = field.getName();
-                    String value = attributes.getValue(name);
+                    LiReflectUtil.setFieldValue(saxBean, name, value, true);
+                }
 
-                    LiPrintUtil.print(name, value + "");
-                    if (value != null) {
+                Lira.of(tagBeanClass.getFields())
+                        .filter(f -> LiReflectUtil.getFieldValue(saxBean, f).absent())
+                        .forEach(f -> LiPrintUtil.print("########", f));
 
-                        RuntimeExceptionTransfer.run(() -> field.set(o, value));
-                    }
-                });
 
-                stack.push(o);
+                stack.push(saxBean);
                 LiPrintUtil.print("--->", stack);
 
             }
@@ -76,12 +76,13 @@ public class TestSax {
 
             @Override
             public void endElement(String uri, String localName, String qName) {
-                LiPrintUtil.print("<---", stack);
 
-                Object peek = stack.peek();
+                Object pop = stack.pop();
 
+                if (stack.isEmpty()) {
+                    LiPrintUtil.print("~~~~~~~~~", pop);
+                }
 
-                stack.pop();
             }
         });
     }
