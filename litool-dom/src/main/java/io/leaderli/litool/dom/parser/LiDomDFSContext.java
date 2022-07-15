@@ -9,7 +9,7 @@ import io.leaderli.litool.core.type.LiReflectUtil;
 import io.leaderli.litool.core.util.LiIoUtil;
 import io.leaderli.litool.core.util.LiPrintUtil;
 import io.leaderli.litool.dom.LocatorDefaultHandler;
-import io.leaderli.litool.dom.SaxBean;
+import io.leaderli.litool.dom.sax.SaxBean;
 import org.xml.sax.Attributes;
 
 import javax.xml.parsers.SAXParser;

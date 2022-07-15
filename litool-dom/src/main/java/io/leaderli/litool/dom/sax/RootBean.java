@@ -1,10 +1,6 @@
 package io.leaderli.litool.dom.sax;
 
 import io.leaderli.litool.core.lang.LiTupleMap;
-import io.leaderli.litool.dom.Bean;
-import io.leaderli.litool.dom.NoBean;
-import io.leaderli.litool.dom.SaxBean;
-import io.leaderli.litool.dom.SupportTagBuilder;
 
 /**
  * @author leaderli
