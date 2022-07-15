@@ -61,6 +61,15 @@ public abstract class RaSome<T> implements Lira<T> {
     }
 
     @Override
+    public Lino<T> last() {
+
+        LiBox<T> value = LiBox.none();
+
+        this.subscribe(new ConsumerRaSubscriber<>(v -> value.value(v.get())));
+        return value.lino();
+    }
+
+    @Override
     public Lino<T> first(Function<? super T, Object> filter) {
         return filter(filter).first();
     }

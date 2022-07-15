@@ -114,6 +114,11 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
     Lino<T> first();
 
     /**
+     * @return 返回最后一个元素 , 当无元素时返回 {@link Lino#none()}
+     */
+    Lino<T> last();
+
+    /**
      * @param filter 过滤函数
      * @return 过滤后返回第一个元素 , 当无元素时返回 {@link Lino#none()}
      * @see #filter(Function)
@@ -258,6 +263,7 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
         }
 
 
+
     }
 
     final class ArrayRaSubscription<T> implements RaSubscription {
@@ -347,6 +353,11 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
 
         @Override
         public Lino<T> first() {
+            return Lino.none();
+        }
+
+        @Override
+        public Lino<T> last() {
             return Lino.none();
         }
 

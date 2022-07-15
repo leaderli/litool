@@ -10,7 +10,12 @@
         </bean>
 
     </bean>
+    123
     <nobean name="no">
+
+
 <!--        123<bean>123</bean>-->
     </nobean>
+    456
+    789
 </root>

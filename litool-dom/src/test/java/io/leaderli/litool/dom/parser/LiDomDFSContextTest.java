@@ -12,6 +12,13 @@ class LiDomDFSContextTest {
     @Test
     void parse() {
 
-        System.out.println(LiDomDFSContext.parse("/bean.xml", RootBean.class));
+        RootBean root = LiDomDFSContext.parse("/bean.xml", RootBean.class);
+
+    }
+
+    @Test
+    public void test() {
+
+
     }
 }

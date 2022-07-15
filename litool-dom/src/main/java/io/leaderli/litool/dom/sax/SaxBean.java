@@ -14,10 +14,10 @@ public abstract class SaxBean implements SupportTag {
 
     public String body = "";
 
-    public List<Object> children = new ArrayList<>();
+    public List<SaxBean> children = new ArrayList<>();
 
 
-    public void add(Object t) {
+    public void add(SaxBean t) {
 
         Lino.of(t).ifPresent(children::add);
     }

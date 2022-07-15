@@ -138,6 +138,8 @@ class LiraTest {
         Assertions.assertSame(1, Lira.of(2, 1).sort().first().get());
         Assertions.assertSame(3, Lira.of(2, 1, 3).sort((o1, o2) -> o2 - o1).first().get());
 
+        Assertions.assertSame(2, Lira.of(2, 1).sort().last().get());
+        Assertions.assertSame(1, Lira.of(2, 1, 3).sort((o1, o2) -> o2 - o1).last().get());
     }
 
     @Test

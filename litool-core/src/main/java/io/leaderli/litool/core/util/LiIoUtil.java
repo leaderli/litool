@@ -3,13 +3,12 @@ package io.leaderli.litool.core.util;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class LiIoUtil {
@@ -40,4 +39,24 @@ public class LiIoUtil {
                 .toLira(File.class);
 
     }
+
+    public static Map<Integer, String> lineStrOfResourcesFile(String path) {
+
+        return Lino.of(path)
+                .map(LiIoUtil::getResourceAsStream)
+                .map(InputStreamReader::new)
+                .map(BufferedReader::new)
+                .throwable_map(reader -> {
+                    Map<Integer, String> lines = new HashMap<>();
+                    int i = 0;
+                    while (reader.ready()) {
+                        lines.put(++i, reader.readLine());
+                    }
+
+                    return lines;
+                }).or(HashMap::new)
+                .get();
+    }
+
+
 }
