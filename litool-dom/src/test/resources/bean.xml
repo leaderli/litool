@@ -11,6 +11,6 @@
 
     </bean>
     <nobean name="no">
-        123<bean>123</bean>
+<!--        123<bean>123</bean>-->
     </nobean>
 </root>

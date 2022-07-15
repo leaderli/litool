@@ -43,6 +43,13 @@ class LiTupleMapTest {
         Assertions.assertEquals(2, of.getValueByKey("1").get());
         Assertions.assertEquals("1", of.getKeyByValue(2).get());
 
+        tupleMap.putKeyValue("k1", "v1");
+        tupleMap.putKeyValue("k2", "v2");
+
+        tupleMap.removeIf(t -> t._1.contains("1"));
+
+
+        Assertions.assertEquals(1, tupleMap.keySet().size());
     }
 
 }

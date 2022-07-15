@@ -3,6 +3,7 @@ package io.leaderli.litool.core.lang;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.Lira;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,5 +85,17 @@ public class LiTupleMap<K, V> {
 
     public void removeIf(Predicate<LiTuple2<K, V>> predicate) {
         paris.removeIf(predicate);
+    }
+
+    public Lira<K> keySet() {
+        return Lira.of(paris).map(LiTuple2::_1);
+    }
+
+    public Lira<V> ValueSet() {
+        return Lira.of(paris).map(LiTuple2::_2);
+    }
+
+    public Lira<LiTuple2<K, V>> entrySet() {
+        return Lira.of(paris);
     }
 }
