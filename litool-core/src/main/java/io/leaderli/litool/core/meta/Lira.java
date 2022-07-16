@@ -1,11 +1,9 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.collection.LiListUtil;
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.meta.reactor.ArrayRa;
 import io.leaderli.litool.core.meta.reactor.PublisherRa;
-import io.leaderli.litool.core.meta.reactor.SubscriberRa;
 import io.leaderli.litool.core.type.LiClassUtil;
 
 import java.util.*;
@@ -72,13 +70,16 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
         return of(iterable.iterator());
     }
 
+
+    Lira<?> NONE = new ArrayRa<>(Collections.emptyIterator());
     /**
      * @param <T> 泛型
      * @return 返回全局唯一的空 Lira
      */
+    @SuppressWarnings("unchecked")
     static <T> Lira<T> none() {
-        @SuppressWarnings("unchecked") final None<T> none = (None<T>) None.INSTANCE;
-        return none;
+        return (Lira<T>) NONE;
+
     }
 
     /**
@@ -185,10 +186,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      */
     <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
 
-    /**
-     * @return 提前触发短路操作, 返回一个新的 Lira ， 当为 {@link #none()} 则返回 {@link #none()}
-     */
-    Lira<T> eager();
+
 
     /**
      * @param others 数组
@@ -248,173 +246,4 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapping, Function<? super T, ? extends V> valueMapping);
 
 
-    final class None<T> implements Lira<T> {
-
-        public static final Object INSTANCE = new None<>();
-
-        private None() {
-
-        }
-
-        @Override
-        public boolean present() {
-            return false;
-        }
-
-        @Override
-        public String name() {
-            return "Empty";
-        }
-
-        @Override
-        public String toString() {
-            return name() + "[]";
-        }
-
-        @Override
-        public <R> Lira<R> cast(Class<R> type) {
-            return none();
-        }
-
-        @Override
-        public <K, V> Lira<Map<K, V>> cast(Class<K> keyType, Class<V> valueType) {
-            return none();
-        }
-
-        @Override
-        public Lira<T> filter(Function<? super T, Object> filter) {
-            return this;
-        }
-
-        @Override
-        public Lira<T> filter() {
-            return this;
-        }
-
-        @Override
-        public Lino<T> first() {
-            return Lino.none();
-        }
-
-        @Override
-        public Lino<T> last() {
-            return Lino.none();
-        }
-
-        @Override
-        public Lino<T> first(Function<? super T, Object> filter) {
-            return Lino.none();
-        }
-
-        @Override
-        public List<Lino<T>> get() {
-            return LiListUtil.emptyList();
-
-        }
-
-        @Override
-        public Lino<T> get(int index) {
-            return Lino.none();
-        }
-
-
-        @Override
-        public List<T> getRaw() {
-            return LiListUtil.emptyList();
-        }
-
-        @Override
-        public <R> Lira<R> map(Function<? super T, ? extends R> mapping) {
-            return none();
-        }
-
-        @Override
-        public Lira<T> skip(int n) {
-            return this;
-        }
-
-        @Override
-        public Lira<T> limit(int n) {
-            return this;
-        }
-
-        @Override
-        public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
-            return none();
-        }
-
-        @Override
-        public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
-            return none();
-        }
-
-        @Override
-        public Lira<T> eager() {
-            return this;
-        }
-
-        @SafeVarargs
-        @Override
-        public final Lira<T> or(T... others) {
-            return of(others);
-        }
-
-        @Override
-        public Lira<T> or(Iterator<T> others) {
-            return of(others);
-        }
-
-        @Override
-        public Lira<T> or(Iterable<T> others) {
-            return of(others);
-        }
-
-
-        @Override
-        public int size() {
-            return 0;
-        }
-
-        @Override
-        public Lira<T> sort() {
-            return this;
-        }
-
-        @Override
-        public Lira<T> sort(Comparator<? super T> comparator) {
-            return this;
-        }
-
-        @Override
-        public void forEachLino(Consumer<Lino<T>> consumer) {
-
-        }
-
-        @Override
-        public void forEach(Consumer<T> consumer) {
-
-        }
-
-        @Override
-        public void forThrowableEach(LiThrowableConsumer<T> consumer) {
-
-        }
-
-        @Override
-        public void forThrowableEach(LiThrowableConsumer<T> consumer, Consumer<Throwable> whenThrow) {
-
-        }
-
-        @Override
-        public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapping, Function<? super T, ? extends V> valueMapping) {
-            return new HashMap<>();
-        }
-
-
-        @Override
-        public void subscribe(SubscriberRa<? super T> subscriber) {
-
-
-        }
-    }
 }

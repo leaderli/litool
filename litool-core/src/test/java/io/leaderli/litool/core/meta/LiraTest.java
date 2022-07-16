@@ -46,14 +46,6 @@ class LiraTest {
         Lira<String> cast = narrow1.cast(String.class);
         Assertions.assertEquals(cast.getRaw().toString(), "[123, 456]");
 
-        Lira<Integer> integerLino = narrow1.cast(Integer.class).eager();
-        Assertions.assertSame(integerLino, Lira.none());
-    }
-
-    @Test
-    void none() {
-
-        Assertions.assertSame(Lira.none(), Lira.of(1, 2, 3).filter(i -> i > 4).eager());
     }
 
     @Test

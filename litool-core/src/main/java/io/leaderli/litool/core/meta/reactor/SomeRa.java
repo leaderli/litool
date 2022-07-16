@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * {@link Lira} 的有值实现类，采用响应式编程思路，仅在实际获取值的方法操作中才会对底层元素进行各种操作，也可以使用 {@link #eager()} 来提前触发动作
+ * {@link Lira} 的有值实现类，采用响应式编程思路，仅在实际获取值的方法操作中才会对底层元素进行各种操作;
  *
  * @author leaderli
  * @since 2022/6/28
@@ -234,10 +234,6 @@ public abstract class SomeRa<T> implements Lira<T> {
 
     }
 
-    @Override
-    public Lira<T> eager() {
-        return Lira.of(getRaw());
-    }
 
     @SafeVarargs
     @Override
