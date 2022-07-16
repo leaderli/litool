@@ -24,7 +24,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
     /**
      * @return 返回一个值为 1 的实例
      */
-    static SomeLink<Integer> of() {
+    static LiLink<Integer> of() {
 
         return new ValueLink<>(1);
     }
@@ -34,7 +34,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @param <T>   泛型
      * @return 返回一个新的实例
      */
-    static <T> SomeLink<T> of(T value) {
+    static <T> LiLink<T> of(T value) {
 
         return new ValueLink<>(value);
     }
@@ -47,7 +47,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @return this
      * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
      */
-    public SomeLink<T> then(Function<T, Object> filter) {
+    public LiLink<T> then(Function<T, Object> filter) {
         return new FilterLink<>(this, filter);
     }
 
@@ -56,7 +56,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @return this
      * @see #then(Function)
      */
-    public SomeLink<T> then(Supplier<Object> supplier) {
+    public LiLink<T> then(Supplier<Object> supplier) {
         return new FilterLink<>(this, t -> supplier.get());
     }
 
@@ -66,7 +66,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @param consumer 消费者
      * @return this
      */
-    public SomeLink<T> then(Consumer<? super T> consumer) {
+    public LiLink<T> then(Consumer<? super T> consumer) {
         return new FilterLink<>(this, t -> {
             consumer.accept(t);
             return true;
@@ -79,7 +79,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @param runnable 运行函数
      * @return this
      */
-    public SomeLink<T> then(Runnable runnable) {
+    public LiLink<T> then(Runnable runnable) {
         return new FilterLink<>(this, t -> {
             runnable.run();
             return true;
@@ -94,7 +94,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @return this
      * @see #then(Function)
      */
-    public SomeLink<T> throwable_then(LiThrowableFunction<T, Object> filter) {
+    public LiLink<T> throwable_then(LiThrowableFunction<T, Object> filter) {
 
         return new FilterLink<>(this, t -> {
             try {
@@ -114,7 +114,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @return this
      * @see #then(Supplier)
      */
-    public SomeLink<T> throwable_then(LiThrowableSupplier<Object> filter) {
+    public LiLink<T> throwable_then(LiThrowableSupplier<Object> filter) {
         return new FilterLink<>(this, t -> {
             try {
                 return filter.get();
@@ -132,7 +132,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @return this
      * @see #then(Consumer)
      */
-    public SomeLink<T> throwable_then(LiThrowableConsumer<? super T> consumer) {
+    public LiLink<T> throwable_then(LiThrowableConsumer<? super T> consumer) {
         return new FilterLink<>(this, t -> {
             try {
                 consumer.accept(t);
@@ -151,7 +151,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @return this
      * @see #then(Runnable)
      */
-    public SomeLink<T> throwable_then(LiThrowableRunner runner) {
+    public LiLink<T> throwable_then(LiThrowableRunner runner) {
         return new FilterLink<>(this, t -> {
             try {
                 runner.run();
@@ -170,7 +170,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @param runnable 执行函数
      * @return this
      */
-    public SomeLink<T> error(Runnable runnable) {
+    public LiLink<T> error(Runnable runnable) {
 
         return new CancelRunnableLink<>(this, runnable);
     }
@@ -192,7 +192,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @return this
      * @see LiConstant#WHEN_THROW
      */
-    public SomeLink<T> throwable_error(LiThrowableRunner runnable) {
+    public LiLink<T> throwable_error(LiThrowableRunner runnable) {
 
         return new CancelRunnableLink<>(this, () -> {
             try {
