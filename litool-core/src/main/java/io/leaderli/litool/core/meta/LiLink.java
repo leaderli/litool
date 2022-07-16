@@ -164,6 +164,13 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T> {
     }
 
     /**
+     * @see #present()
+     */
+    public void onFinally() {
+        present();
+    }
+
+    /**
      * @param onFinally 最后一个消费者
      * @see #present()
      */
