@@ -25,19 +25,15 @@ public class ThrowableMapRa<T, R> extends SomeRa<R> {
 
     @Override
     public void subscribe(SubscriberRa<? super R> actualSubscriber) {
-        prevPublisher.subscribe(new ThrowableMapSubscriberRa<>(actualSubscriber, mapper, whenThrow));
+        prevPublisher.subscribe(new ThrowableMapSubscriberRa(actualSubscriber));
 
     }
 
-    private static class ThrowableMapSubscriberRa<T, R> extends IntermediateSubscriberRa<T, R> {
+    private class ThrowableMapSubscriberRa extends IntermediateSubscriberRa<T, R> {
 
-        private final LiThrowableFunction<? super T, ? extends R> mapper;
-        private final Consumer<Throwable> whenThrow;
 
-        private ThrowableMapSubscriberRa(SubscriberRa<? super R> actualSubscriber, LiThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
+        private ThrowableMapSubscriberRa(SubscriberRa<? super R> actualSubscriber) {
             super(actualSubscriber);
-            this.mapper = mapper;
-            this.whenThrow = whenThrow;
         }
 
 

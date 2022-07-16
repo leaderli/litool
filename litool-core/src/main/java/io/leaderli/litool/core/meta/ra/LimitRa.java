@@ -8,39 +8,39 @@ import io.leaderli.litool.core.meta.Lino;
  * @author leaderli
  * @since 2022/6/27
  */
-public class LimitRa<T, R> extends SomeRa<T> {
-    private final int skip;
+public class LimitRa<T> extends SomeRa<T> {
+    private final int limit;
     private final PublisherRa<T> prevPublisher;
 
-    public LimitRa(PublisherRa<T> prevPublisher, int skip) {
+    public LimitRa(PublisherRa<T> prevPublisher, int limit) {
         this.prevPublisher = prevPublisher;
-        this.skip = skip;
+        this.limit = limit;
     }
 
     @Override
     public void subscribe(SubscriberRa<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new LimitSubscriberRa<>(actualSubscriber, skip));
+        prevPublisher.subscribe(new LimitSubscriberRa<>(actualSubscriber, limit));
 
     }
 
-    private static class LimitSubscriberRa<T> extends IntermediateSubscriberRa<T, T> {
+    private static final class LimitSubscriberRa<T> extends IntermediateSubscriberRa<T, T> {
 
-        private int skip;
+        private int limit;
 
-        private LimitSubscriberRa(SubscriberRa<? super T> actualSubscriber, int skip) {
+        private LimitSubscriberRa(SubscriberRa<? super T> actualSubscriber, int limit) {
             super(actualSubscriber);
-            this.skip = skip;
+            this.limit = limit;
         }
 
 
         @Override
         public void next(Lino<? extends T> t) {
-            if (skip < 1) {
+            if (limit < 1) {
                 this.cancel();
 
             } else {
                 this.actualSubscriber.next(t);
-                skip--;
+                limit--;
             }
         }
 

@@ -25,20 +25,18 @@ public final class ArrayRa<T> extends SomeRa<T> {
 
     @Override
     public void subscribe(SubscriberRa<? super T> actualSubscriber) {
-        actualSubscriber.onSubscribe(new ArraySubscriptionRa<>(actualSubscriber, arr));
+        actualSubscriber.onSubscribe(new ArraySubscriptionRa(actualSubscriber));
     }
 
-    private static final class ArraySubscriptionRa<T> implements SubscriptionRa {
+    private final class ArraySubscriptionRa implements SubscriptionRa {
 
-        private final T[] arr;
         private final SubscriberRa<? super T> actualSubscriber;
 
 
         private boolean canceled;
 
-        public ArraySubscriptionRa(SubscriberRa<? super T> actualSubscriber, T[] arr) {
+        public ArraySubscriptionRa(SubscriberRa<? super T> actualSubscriber) {
             this.actualSubscriber = actualSubscriber;
-            this.arr = arr;
         }
 
         @Override

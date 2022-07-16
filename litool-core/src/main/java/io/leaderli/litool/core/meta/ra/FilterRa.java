@@ -25,17 +25,15 @@ public class FilterRa<T> extends SomeRa<T> {
 
     @Override
     public void subscribe(SubscriberRa<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new FilterSubscriberRa<>(actualSubscriber, filter));
+        prevPublisher.subscribe(new FilterSubscriberRa(actualSubscriber));
 
     }
 
 
-    private static class FilterSubscriberRa<T> extends IntermediateSubscriberRa<T, T> {
-        private final Function<? super T, ?> filter;
+    private final class FilterSubscriberRa extends IntermediateSubscriberRa<T, T> {
 
-        public FilterSubscriberRa(SubscriberRa<? super T> actualSubscriber, Function<? super T, ?> filter) {
+        public FilterSubscriberRa(SubscriberRa<? super T> actualSubscriber) {
             super(actualSubscriber);
-            this.filter = filter;
         }
 
         @Override

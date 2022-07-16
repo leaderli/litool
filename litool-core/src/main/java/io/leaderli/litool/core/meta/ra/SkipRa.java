@@ -8,7 +8,7 @@ import io.leaderli.litool.core.meta.Lino;
  * @author leaderli
  * @since 2022/6/27
  */
-public class SkipRa<T, R> extends SomeRa<T> {
+public class SkipRa<T> extends SomeRa<T> {
     private final int skip;
     private final PublisherRa<T> prevPublisher;
 

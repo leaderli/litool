@@ -21,17 +21,15 @@ public class MapRa<T, R> extends SomeRa<R> {
 
     @Override
     public void subscribe(SubscriberRa<? super R> actualSubscriber) {
-        prevPublisher.subscribe(new MapSubscriberRa<>(actualSubscriber, mapper));
+        prevPublisher.subscribe(new MapSubscriberRa(actualSubscriber));
 
     }
 
-    private static class MapSubscriberRa<T, R> extends IntermediateSubscriberRa<T, R> {
+    private class MapSubscriberRa extends IntermediateSubscriberRa<T, R> {
 
-        private final Function<? super T, ? extends R> mapper;
 
-        private MapSubscriberRa(SubscriberRa<? super R> actualSubscriber, Function<? super T, ? extends R> mapper) {
+        private MapSubscriberRa(SubscriberRa<? super R> actualSubscriber) {
             super(actualSubscriber);
-            this.mapper = mapper;
         }
 
 
