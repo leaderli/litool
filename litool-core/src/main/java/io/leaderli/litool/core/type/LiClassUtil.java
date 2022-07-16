@@ -211,7 +211,7 @@ public class LiClassUtil {
      * @param <V>       the type parameter of valueType
      * @return the map  cast key and value type and filter the element can not cast
      */
-    public static <K, V> Map<K, V> filterCanCast(Map<?, ?> map, Class<K> keyType, Class<V> valueType) {
+    public static <K, V> Map<K, V> filterCanCast(Map<?, ?> map, Class<? extends K> keyType, Class<? extends V> valueType) {
 
         if (map == null || keyType == null || valueType == null) {
             return new HashMap<>();

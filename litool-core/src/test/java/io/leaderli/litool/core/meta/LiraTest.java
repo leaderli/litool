@@ -15,18 +15,7 @@ import java.util.Map;
 class LiraTest {
 
 
-    @Test
-    void debug() {
 
-
-        Lira.of(1, 2)
-                .filter(i -> i > -1)
-                .filter(i -> 5 / (3 - i))
-                .map(i -> {
-                    System.out.println("map");
-                    return i * 10;
-                });
-    }
 
     @Test
     void getIndex() {

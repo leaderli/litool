@@ -72,6 +72,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
 
 
     Lira<?> NONE = new ArrayRa<>(Collections.emptyIterator());
+
     /**
      * @param <T> 泛型
      * @return 返回全局唯一的空 Lira
@@ -87,17 +88,17 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      * @param <R>  可转换的类型的泛型
      * @return 若集合的元素 可以转换为 type 类型 ，则返回 转换后的类型，否则返回 {@link #none()}
      */
-    <R> Lira<R> cast(Class<R> type);
+    <R> Lira<R> cast(Class<? extends R> type);
 
     /**
-     * @param keyType   map 的 key 的类型
-     * @param valueType map 的 value 的类型
      * @param <K>       key 的泛型
      * @param <V>       value 的泛型
+     * @param keyType   map 的 key 的类型
+     * @param valueType map 的 value 的类型
      * @return 当 {@link Lino#get()} 的值为 map 时，且其 key 和 value 的类型可以转换为 keyType valueType 时，
      * 则返回泛型 {@code Lira<Map<K,V>>} 的 Lira，否则返回 {@link #none()}
      */
-    <K, V> Lira<Map<K, V>> cast(Class<K> keyType, Class<V> valueType);
+    <K, V> Lira<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType);
 
 
     /**
@@ -185,7 +186,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      * @return 转换后的 Lira
      */
     <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
-
 
 
     /**

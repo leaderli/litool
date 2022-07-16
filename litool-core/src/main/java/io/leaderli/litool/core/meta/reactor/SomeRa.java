@@ -32,14 +32,14 @@ public abstract class SomeRa<T> implements Lira<T> {
 
 
     @Override
-    public <R> Lira<R> cast(Class<R> type) {
+    public <R> Lira<R> cast(Class<? extends R> type) {
         return map(m -> Lino.of(m).cast(type).get());
 
     }
 
     @Override
-    public <K, V> Lira<Map<K, V>> cast(Class<K> keyType, Class<V> valueType) {
-        return map(m -> Lino.of(m).cast(keyType, valueType).get());
+    public <K, V> Lira<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType) {
+        return map(m -> Lino.of(m).<K, V>cast(keyType, valueType).get());
     }
 
     @Override

@@ -90,23 +90,22 @@ public interface Lino<T> extends LiValue {
     Lino<T> assertNotNone(String msg);
 
 
-
     /**
-     * @param type 可转换的类型
      * @param <R>  可转换的类型的泛型
+     * @param type 可转换的类型
      * @return 若 value 可以转换为 type 类型 ，则返回 转换后的类型，否则返回 {@link #none()}
      */
-    <R> Lino<R> cast(Class<R> type);
+    <R> Lino<R> cast(Class<? extends R> type);
 
     /**
-     * @param keyType   map 的 key 的类型
-     * @param valueType map 的 value 的类型
      * @param <K>       key 的泛型
      * @param <V>       value 的泛型
+     * @param keyType   map 的 key 的类型
+     * @param valueType map 的 value 的类型
      * @return 当 {@link Lino#get()} 的值为 map 时，且其 key 和 value 的类型可以转换为 keyType valueType 时，
      * 则返回泛型 {@code Lino<Map<K,V>>} 的 Lino，否则返回 {@link #none()}
      */
-    <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType);
+    <K, V> Lino<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType);
 
 
     /**
@@ -128,7 +127,7 @@ public interface Lino<T> extends LiValue {
      * @see #filter(boolean)
      * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
      */
-    Lino<T> filter(Function<? super T, Object> function);
+    Lino<T> filter(Function<? super T, ?> function);
 
     T get();
 
@@ -139,7 +138,7 @@ public interface Lino<T> extends LiValue {
      * @param consumer 当 {@link #present()}  时消费
      * @return this
      */
-    Lino<T> ifPresent(Consumer<T> consumer);
+    Lino<T> ifPresent(Consumer<? super T> consumer);
 
 
     /**
@@ -147,7 +146,7 @@ public interface Lino<T> extends LiValue {
      * @return this
      * @see RuntimeExceptionTransfer
      */
-    Lino<T> ifThrowablePresent(LiThrowableConsumer<T> consumer);
+    Lino<T> ifThrowablePresent(LiThrowableConsumer<? super T> consumer);
 
 
     /**
@@ -173,7 +172,7 @@ public interface Lino<T> extends LiValue {
      * @param consumer 以 Lino 作为参数的消费者
      * @return this
      */
-    Lino<T> nest(Consumer<Lino<T>> consumer);
+    Lino<T> nest(Consumer<? super Lino<T>> consumer);
 
 
     /**
@@ -186,7 +185,7 @@ public interface Lino<T> extends LiValue {
      * @param supplier 提供值的函数
      * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(supplier.get())}
      */
-    Lino<T> or(Supplier<T> supplier);
+    Lino<T> or(Supplier<? extends T> supplier);
 
 
     /**
@@ -255,7 +254,7 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> Lino<R> cast(Class<R> type) {
+        public <R> Lino<R> cast(Class<? extends R> type) {
             return of(LiClassUtil.cast(this.value, type));
         }
 
@@ -268,9 +267,9 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType) {
+        public <K, V> Lino<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType) {
 
-            return cast(Map.class).map(m -> LiClassUtil.filterCanCast(m, keyType, valueType)).filter();
+            return cast(Map.class).map(m -> LiClassUtil.<K, V>filterCanCast(m, keyType, valueType)).filter();
         }
 
         @Override
@@ -294,7 +293,7 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> filter(Function<? super T, Object> function) {
+        public Lino<T> filter(Function<? super T, ?> function) {
             if (function == null) {
                 return this;
             }
@@ -312,19 +311,19 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> ifPresent(Consumer<T> consumer) {
+        public Lino<T> ifPresent(Consumer<? super T> consumer) {
             consumer.accept(this.value);
             return this;
         }
 
         @Override
-        public Lino<T> nest(Consumer<Lino<T>> consumer) {
+        public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
             consumer.accept(this);
             return this;
         }
 
         @Override
-        public Lino<T> ifThrowablePresent(LiThrowableConsumer<T> consumer) {
+        public Lino<T> ifThrowablePresent(LiThrowableConsumer<? super T> consumer) {
             RuntimeExceptionTransfer.accept(consumer, this.value);
             return this;
         }
@@ -378,7 +377,7 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> or(Supplier<T> supplier) {
+        public Lino<T> or(Supplier<? extends T> supplier) {
             return this;
         }
 
@@ -469,12 +468,12 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> Lino<R> cast(Class<R> type) {
+        public <R> Lino<R> cast(Class<? extends R> type) {
             return none();
         }
 
         @Override
-        public <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType) {
+        public <K, V> Lino<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType) {
             return none();
         }
 
@@ -494,7 +493,7 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> filter(Function<? super T, Object> function) {
+        public Lino<T> filter(Function<? super T, ?> function) {
             return this;
         }
 
@@ -509,17 +508,17 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> ifPresent(Consumer<T> consumer) {
+        public Lino<T> ifPresent(Consumer<? super T> consumer) {
             return this;
         }
 
         @Override
-        public Lino<T> nest(Consumer<Lino<T>> consumer) {
+        public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
             return this;
         }
 
         @Override
-        public Lino<T> ifThrowablePresent(LiThrowableConsumer<T> consumer) {
+        public Lino<T> ifThrowablePresent(LiThrowableConsumer<? super T> consumer) {
             return this;
         }
 
@@ -555,7 +554,7 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> or(Supplier<T> supplier) {
+        public Lino<T> or(Supplier<? extends T> supplier) {
             return of(supplier.get());
         }
 

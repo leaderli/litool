@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -28,12 +29,11 @@ class LiClassUtilTest {
     }
 
     @Test
-    public void narrow() throws Throwable {
+    public void narrow() {
 
 
         Assertions.assertDoesNotThrow(() -> {
-            Class<CharSequence> narrow = LiClassUtil.narrow(CharSequence.class);
-            narrow = LiClassUtil.narrow(null);
+            Class<CharSequence> narrow = LiClassUtil.narrow(String.class);
         });
     }
 
@@ -176,6 +176,7 @@ class LiClassUtilTest {
         Assertions.assertEquals(1, LiClassUtil.filterCanCast(map, String.class, String.class).size());
         Assertions.assertEquals(1, LiClassUtil.filterCanCast(map, int.class, int.class).size());
         Assertions.assertEquals(0, LiClassUtil.filterCanCast(map, String.class, int.class).size());
+        Map<CharSequence, Number> actual = LiClassUtil.filterCanCast(map, String.class, int.class);
     }
 
     public interface Fuck extends Function<String, Integer> {
