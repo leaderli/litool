@@ -9,7 +9,7 @@ public interface IfSubscription<T> {
      *
      * @param completeConsumer 调用链结束时调用的消费者
      */
-    void request(Consumer<T> completeConsumer);
+    void request(Consumer<? super T> completeConsumer);
 
     /**
      * @param value 调用链结束时调用的最终结果

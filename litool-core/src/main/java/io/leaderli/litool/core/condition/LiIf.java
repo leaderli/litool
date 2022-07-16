@@ -292,10 +292,10 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
             subscriber.onSubscribe(new IfSubscription<R>() {
 
 
-                private Consumer<R> completeConsumer;
+                private Consumer<? super R> completeConsumer;
 
                 @Override
-                public void request(Consumer<R> completeConsumer) {
+                public void request(Consumer<? super R> completeConsumer) {
 
                     this.completeConsumer = completeConsumer;
                     subscriber.next(lino.get(), null);
@@ -312,9 +312,9 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
 
     class End<T, R> implements IfSubscriber<T, R> {
 
-        private final Consumer<R> completeConsumer;
+        private final Consumer<? super R> completeConsumer;
 
-        private End(Consumer<R> completeConsumer) {
+        private End(Consumer<? super R> completeConsumer) {
             this.completeConsumer = completeConsumer;
         }
 

@@ -22,7 +22,7 @@ public abstract class IfMiddleSubscriber<T, R> implements IfSubscriber<T, R>, If
 
 
     @Override
-    public void request(Consumer<R> completeConsumer) {
+    public void request(Consumer<? super R> completeConsumer) {
         this.prevSubscription.request(completeConsumer);
 
     }
