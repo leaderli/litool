@@ -20,6 +20,8 @@ public interface SubscriberLink<T> {
 
     /**
      * 执行链条中断时调用
+     *
+     * @param lino 实际值
      */
     default void onCancel(Lino<T> lino) {
 

@@ -222,7 +222,8 @@ public class BeanPath {
     }
 
     /**
-     * @param map@return
+     * @param map 数据源
+     * @return 根据 {@link #path} 找到的数据
      */
     public Lino<Object> parse(Map<String, ?> map) {
         Lino<Object> of = Lino.of(map);
