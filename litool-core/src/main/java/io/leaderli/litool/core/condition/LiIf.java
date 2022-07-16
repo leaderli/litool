@@ -85,7 +85,7 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
      * @return {@code  LiCaseThen<T, M, R>}
      * @see LiCaseThen
      */
-    default <M> LiCaseThen<T, M, R> _instanceof(Class<M> type) {
+    default <M> LiCaseThen<T, M, R> _instanceof(Class<? extends M> type) {
         return new CaseWhen<>(this, type);
     }
 
@@ -167,9 +167,9 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
 
     class CaseWhen<T, M, R> implements LiCaseThen<T, M, R> {
         private final IfPublisher<T, R> prevPublisher;
-        private final Class<M> middleType;
+        private final Class<? extends M> middleType;
 
-        public CaseWhen(IfPublisher<T, R> prevPublisher, Class<M> middleType) {
+        public CaseWhen(IfPublisher<T, R> prevPublisher, Class<? extends M> middleType) {
             this.prevPublisher = prevPublisher;
             this.middleType = middleType;
         }

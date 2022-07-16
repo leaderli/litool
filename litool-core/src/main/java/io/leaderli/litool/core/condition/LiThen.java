@@ -27,7 +27,7 @@ public interface LiThen<T, R> extends IfPublisher<T, R> {
      * @param supplier 当条件满足时提供值
      * @return 返回一个新的 LiIf ,  以方便链式调用
      */
-    default LiIf<T, R> then(Supplier<R> supplier) {
+    default LiIf<T, R> then(Supplier<? extends R> supplier) {
 
         return new Then<>(this, v -> supplier.get());
     }
