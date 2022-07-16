@@ -20,7 +20,7 @@ class LiLinkTest {
         LiBox<Integer> e1 = LiBox.none();
         LiBox<Integer> e2 = LiBox.none();
 
-        LiLink.of()
+        SomeLink.of()
                 .then(() -> t1.value(1))
                 .error(LiAssertUtil::assertNotHere)
                 .then(() -> 0)
@@ -36,7 +36,7 @@ class LiLinkTest {
 
         e1.reset();
 
-        LiLink.of(null)
+        SomeLink.of(null)
                 .error(v -> LiAssertUtil.assertNotHere()).error(() -> e1.value(1))
                 .present();
         Assertions.assertEquals(e1.value(), 1);
@@ -44,7 +44,7 @@ class LiLinkTest {
 
         e1.reset();
         e2.reset();
-        LiLink.of(10)
+        SomeLink.of(10)
                 .then(() -> 0)
                 .error((Consumer<Integer>) e1::value)
                 .error(() -> e2.value(1))
@@ -54,12 +54,12 @@ class LiLinkTest {
         Assertions.assertEquals(e2.value(), 1);
 
 
-        LiLink.of().onFinally(LiAssertUtil::assertTrue);
-        LiLink.of(null).onFinally(LiAssertUtil::assertFalse);
+        SomeLink.of().onFinally(LiAssertUtil::assertTrue);
+        SomeLink.of(null).onFinally(LiAssertUtil::assertFalse);
 
 
         LiConstant.temporary(
-                () -> LiLink.of()
+                () -> SomeLink.of()
                         .throwable_then(i -> {
                             System.out.println(i / (i - 1));
                             return true;
@@ -67,13 +67,13 @@ class LiLinkTest {
                         .onFinally(LiAssertUtil::assertFalse));
 
         Assertions.assertThrows(ArithmeticException.class,
-                () -> LiLink.of()
+                () -> SomeLink.of()
                         .then(i -> i / (i - 1))
                         .onFinally(LiAssertUtil::assertFalse));
 
         Assertions.assertDoesNotThrow(
                 () -> {
-                    LiLink.of()
+                    SomeLink.of()
                             .then(i -> i / (i - 1));
                 });
     }

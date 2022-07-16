@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.meta.reactor;
 
-import io.leaderli.litool.core.meta.LiLink;
+import io.leaderli.litool.core.meta.SomeLink;
 
 import java.util.function.Consumer;
 
@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * @author leaderli
  * @since 2022/7/16
  */
-public class CancelConsumerLink<T> extends LiLink<T> {
+public class CancelConsumerLink<T> extends SomeLink<T> {
 
     private final PublisherLink<T> prevPublisher;
     private final Consumer<? super T> cancelConsumer;

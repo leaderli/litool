@@ -1,17 +1,17 @@
 package io.leaderli.litool.core.meta.reactor;
 
-import io.leaderli.litool.core.meta.LiLink;
+import io.leaderli.litool.core.meta.SomeLink;
 
 /**
  * @author leaderli
  * @since 2022/7/16
  */
-public class SomeLink<T> extends LiLink<T> {
+public class ValueLink<T> extends SomeLink<T> {
 
 
     private final T value;
 
-    public SomeLink(T t) {
+    public ValueLink(T t) {
         this.value = t;
 
     }

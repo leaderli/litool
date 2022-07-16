@@ -1,12 +1,12 @@
 package io.leaderli.litool.core.meta.reactor;
 
-import io.leaderli.litool.core.meta.LiLink;
+import io.leaderli.litool.core.meta.SomeLink;
 
 /**
  * @author leaderli
  * @since 2022/7/16
  */
-public class CancelRunnableLink<T> extends LiLink<T> {
+public class CancelRunnableLink<T> extends SomeLink<T> {
 
     private final PublisherLink<T> prevPublisher;
     private final Runnable runnable;

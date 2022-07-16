@@ -19,14 +19,14 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/7/16
  */
-public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
+public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
 
     /**
      * @return 返回一个值为 1 的实例
      */
     static LiLink<Integer> of() {
 
-        return new SomeLink<>(1);
+        return new ValueLink<>(1);
     }
 
     /**
@@ -36,7 +36,7 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      */
     static <T> LiLink<T> of(T value) {
 
-        return new SomeLink<>(value);
+        return new ValueLink<>(value);
     }
 
 
@@ -47,18 +47,14 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
      */
-    public LiLink<T> then(Function<T, Object> filter) {
-        return new FilterLink<>(this, filter);
-    }
+    LiLink<T> then(Function<T, Object> filter);
 
     /**
      * @param supplier 过滤器
      * @return this
      * @see #then(Function)
      */
-    public LiLink<T> then(Supplier<Object> supplier) {
-        return new FilterLink<>(this, t -> supplier.get());
-    }
+    LiLink<T> then(Supplier<Object> supplier);
 
     /**
      * 未中断链条时执行，且继续执行下一个节点，该节点不会捕获异常，
@@ -66,12 +62,7 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      * @param consumer 消费者
      * @return this
      */
-    public LiLink<T> then(Consumer<? super T> consumer) {
-        return new FilterLink<>(this, t -> {
-            consumer.accept(t);
-            return true;
-        });
-    }
+    LiLink<T> then(Consumer<? super T> consumer);
 
     /**
      * 未中断链条时执行，且继续执行下一个节点，该节点不会捕获异常，
@@ -79,12 +70,7 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      * @param runnable 运行函数
      * @return this
      */
-    public LiLink<T> then(Runnable runnable) {
-        return new FilterLink<>(this, t -> {
-            runnable.run();
-            return true;
-        });
-    }
+    LiLink<T> then(Runnable runnable);
 
 
     /**
@@ -94,18 +80,7 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see #then(Function)
      */
-    public LiLink<T> throwable_then(LiThrowableFunction<T, Object> filter) {
-
-        return new FilterLink<>(this, t -> {
-            try {
-                return filter.apply(t);
-            } catch (Throwable e) {
-                LiConstant.accept(e);
-                return false;
-            }
-        });
-
-    }
+    LiLink<T> throwable_then(LiThrowableFunction<T, Object> filter);
 
     /**
      * 当抛出异常时，中断链条执行
@@ -114,16 +89,7 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see #then(Supplier)
      */
-    public LiLink<T> throwable_then(LiThrowableSupplier<Object> filter) {
-        return new FilterLink<>(this, t -> {
-            try {
-                return filter.get();
-            } catch (Throwable e) {
-                LiConstant.accept(e);
-                return false;
-            }
-        });
-    }
+    LiLink<T> throwable_then(LiThrowableSupplier<Object> filter);
 
     /**
      * 当抛出异常时，中断链条执行
@@ -132,17 +98,7 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see #then(Consumer)
      */
-    public LiLink<T> throwable_then(LiThrowableConsumer<? super T> consumer) {
-        return new FilterLink<>(this, t -> {
-            try {
-                consumer.accept(t);
-            } catch (Throwable e) {
-                LiConstant.accept(e);
-                return false;
-            }
-            return true;
-        });
-    }
+    LiLink<T> throwable_then(LiThrowableConsumer<? super T> consumer);
 
     /**
      * 当抛出异常时，中断链条执行
@@ -151,17 +107,7 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see #then(Runnable)
      */
-    public LiLink<T> throwable_then(LiThrowableRunner runner) {
-        return new FilterLink<>(this, t -> {
-            try {
-                runner.run();
-            } catch (Throwable e) {
-                LiConstant.accept(e);
-                return false;
-            }
-            return true;
-        });
-    }
+    LiLink<T> throwable_then(LiThrowableRunner runner);
 
 
     /**
@@ -170,10 +116,7 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      * @param runnable 执行函数
      * @return this
      */
-    public LiLink<T> error(Runnable runnable) {
-
-        return new CancelRunnableLink<>(this, runnable);
-    }
+    LiLink<T> error(Runnable runnable);
 
     /**
      * 当链条失败且 value 不为 null 时执行
@@ -181,9 +124,7 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      * @param consumer 消费者
      * @return this
      */
-    public CancelConsumerLink<T> error(Consumer<? super T> consumer) {
-        return new CancelConsumerLink<>(this, consumer);
-    }
+    CancelConsumerLink<T> error(Consumer<? super T> consumer);
 
     /**
      * 当链条失败时执行，无视异常
@@ -192,16 +133,7 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see LiConstant#WHEN_THROW
      */
-    public LiLink<T> throwable_error(LiThrowableRunner runnable) {
-
-        return new CancelRunnableLink<>(this, () -> {
-            try {
-                runnable.run();
-            } catch (Throwable e) {
-                LiConstant.accept(e);
-            }
-        });
-    }
+    LiLink<T> throwable_error(LiThrowableRunner runnable);
 
     /**
      * 当链条失败且 value 不为 null 时执行，无视异常
@@ -210,46 +142,19 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see LiConstant#WHEN_THROW
      */
-    public CancelConsumerLink<T> throwable_error(LiThrowableConsumer<? super T> consumer) {
-        return new CancelConsumerLink<>(this, v -> {
-            try {
-                consumer.accept(v);
-            } catch (Throwable e) {
-                LiConstant.accept(e);
-            }
-
-        });
-    }
+    CancelConsumerLink<T> throwable_error(LiThrowableConsumer<? super T> consumer);
 
     /**
      * @return 链条是否正确执行完成，没有任何 error 节点执行
      */
     @Override
-    public boolean present() {
-        LiBox<Object> next = LiBox.none();
-        this.subscribe(new SubscriberLink<T>() {
-            @Override
-            public void onSubscribe(SubscriptionLink<T> prevSubscription) {
-                prevSubscription.request();
-            }
-
-            @Override
-            public void next(T value) {
-                next.value(value);
-
-            }
-        });
-
-        return next.present();
-    }
+    boolean present();
 
     /**
      * @param onFinally 最后一个消费者
      * @see #present()
      */
-    public void onFinally(Consumer<Boolean> onFinally) {
-        onFinally.accept(present());
-    }
+    void onFinally(Consumer<Boolean> onFinally);
 
     /**
      * 触发执行动作
@@ -257,14 +162,10 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
      * @see #present()
      */
     @Override
-    public void run() {
-        present();
-    }
+    void run();
 
     @Override
-    public String name() {
-        return "link";
-    }
+    String name();
 
 
 }
