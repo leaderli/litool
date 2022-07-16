@@ -50,8 +50,6 @@ public final class ArrayRa<T> extends SomeRa<T> {
 
             for (T t : arr) {
 
-//                Lino.of(t).ifPresent(l -> actualSubscriber.next(Lino.of(l)));
-
                 Lino.of(t).nest(actualSubscriber::next);
                 // 通过 onSubscribe 将 Subscription 传递给订阅者，由订阅者来调用 cancel方法从而实现提前结束循环
                 if (canceled) {
