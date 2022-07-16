@@ -1,7 +1,11 @@
-package io.leaderli.litool.core.meta;
+package io.leaderli.litool.core.meta.reactor;
 
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
+import io.leaderli.litool.core.meta.LiBox;
+import io.leaderli.litool.core.meta.LiConstant;
+import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.Lira;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -219,7 +223,7 @@ public abstract class RaSome<T> implements Lira<T> {
 
     @Override
     public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
-        return new RaThrowableMap<>(this, mapping, LiConstant.whenThrow);
+        return new RaThrowableMap<>(this, mapping, LiConstant.getWhenThrow());
 
 
     }

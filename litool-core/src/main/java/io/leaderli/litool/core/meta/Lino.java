@@ -334,7 +334,7 @@ public interface Lino<T> extends LiValue {
 
         @Override
         public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
-            return throwable_map(mapping, LiConstant.whenThrow);
+            return throwable_map(mapping, LiConstant.getWhenThrow());
         }
 
         @Override

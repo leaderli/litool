@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 class LiReflectUtilTest {
 
     static {
-        LiConstant.whenThrow = null;
+        LiConstant.setWhenThrow(null);
 
     }
 

@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.meta;
+package io.leaderli.litool.core.meta.reactor;
 
 /**
  * 一个用于连接前后节点的中间 消费者，消费操作的抽象类
