@@ -22,16 +22,14 @@ class CaseThen<T, M, R> implements LiIf<T, R> {
 
 
     public void subscribe(SubscriberIf<T, R> actualSubscriber) {
-        prevPublisher.subscribe(new CaseThenSubscriberIf<>(mapper, actualSubscriber));
+        prevPublisher.subscribe(new CaseThenSubscriberIf(actualSubscriber));
 
     }
 
-    private static class CaseThenSubscriberIf<T, M, R> extends IntermediateSubscriberIf<T, R> {
-        private final Function<? super M, ? extends R> mapper;
+    private class CaseThenSubscriberIf extends IntermediateSubscriberIf<T, R> {
 
-        public CaseThenSubscriberIf(Function<? super M, ? extends R> mapper, SubscriberIf<T, R> actualSubscriber) {
+        public CaseThenSubscriberIf(SubscriberIf<T, R> actualSubscriber) {
             super(actualSubscriber);
-            this.mapper = mapper;
 
         }
 
@@ -49,7 +47,7 @@ class CaseThen<T, M, R> implements LiIf<T, R> {
         public void next(T t, Function<? super T, ?> predicate) {
 
             if (t != null && LiBoolUtil.parse(predicate.apply(t))) {
-                this.onComplete(this.mapper.apply((M) t));
+                this.onComplete(mapper.apply((M) t));
             } else {
                 this.actualSubscriber.next(t, null);
             }

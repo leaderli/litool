@@ -20,16 +20,14 @@ class CaseWhen<T, M, R> implements LiCaseThen<T, M, R> {
 
     @Override
     public void subscribe(SubscriberIf<T, R> actualSubscriber) {
-        prevPublisher.subscribe(new CaseWhenSubscriberIf<>(middleType, actualSubscriber));
+        prevPublisher.subscribe(new CaseWhenSubscriberIf(actualSubscriber));
 
     }
 
-    private static class CaseWhenSubscriberIf<T, M, R> extends IntermediateSubscriberIf<T, R> {
-        private final Class<M> middleType;
+    private class CaseWhenSubscriberIf extends IntermediateSubscriberIf<T, R> {
 
-        public CaseWhenSubscriberIf(Class<M> middleType, SubscriberIf<T, R> actualSubscriber) {
+        public CaseWhenSubscriberIf(SubscriberIf<T, R> actualSubscriber) {
             super(actualSubscriber);
-            this.middleType = middleType;
 
         }
 

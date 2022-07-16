@@ -18,16 +18,14 @@ class When<T, R> implements LiThen<T, R> {
 
     @Override
     public void subscribe(SubscriberIf<T, R> actualSubscriber) {
-        prevPublisher.subscribe(new WhenSubscriberIf<>(filter, actualSubscriber));
+        prevPublisher.subscribe(new WhenSubscriberIf(actualSubscriber));
 
     }
 
-    private static class WhenSubscriberIf<T, R> extends IntermediateSubscriberIf<T, R> {
-        private final Function<? super T, ?> predicate;
+    private class WhenSubscriberIf extends IntermediateSubscriberIf<T, R> {
 
-        public WhenSubscriberIf(Function<? super T, ?> predicate, SubscriberIf<T, R> actualSubscriber) {
+        public WhenSubscriberIf(SubscriberIf<T, R> actualSubscriber) {
             super(actualSubscriber);
-            this.predicate = predicate;
 
         }
 
@@ -35,7 +33,7 @@ class When<T, R> implements LiThen<T, R> {
         @Override
         public void next(T t, Function<? super T, ?> predicate) {
 
-            this.actualSubscriber.next(t, this.predicate);
+            this.actualSubscriber.next(t, filter);
         }
 
     }

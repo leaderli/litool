@@ -22,17 +22,14 @@ class Then<T, R> implements LiIf<T, R> {
 
 
     public void subscribe(SubscriberIf<T, R> actualSubscriber) {
-        prevPublisher.subscribe(new ThenSubscriberIf<>(mapper, actualSubscriber));
+        prevPublisher.subscribe(new ThenSubscriberIf(actualSubscriber));
 
     }
 
-    private static class ThenSubscriberIf<T, R> extends IntermediateSubscriberIf<T, R> {
-        private final Function<? super T, ? extends R> mapper;
+    private class ThenSubscriberIf extends IntermediateSubscriberIf<T, R> {
 
-        public ThenSubscriberIf(Function<? super T, ? extends R> mapper, SubscriberIf<T, R> actualSubscriber) {
+        public ThenSubscriberIf(SubscriberIf<T, R> actualSubscriber) {
             super(actualSubscriber);
-            this.mapper = mapper;
-
         }
 
 
@@ -47,7 +44,7 @@ class Then<T, R> implements LiIf<T, R> {
         public void next(T t, Function<? super T, ?> predicate) {
 
             if (t != null && LiBoolUtil.parse(predicate.apply(t))) {
-                this.onComplete(this.mapper.apply(t));
+                this.onComplete(mapper.apply(t));
             } else {
                 this.actualSubscriber.next(t, null);
             }
