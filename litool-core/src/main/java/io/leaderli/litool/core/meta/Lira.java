@@ -63,7 +63,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      * @param <T>      迭代器泛型
      * @return 返回一个新的实例
      */
-    static <T> Lira<T> of(Iterable<T> iterable) {
+    static <T> Lira<T> of(Iterable<? extends T> iterable) {
         if (iterable == null) {
             return none();
         }
@@ -106,7 +106,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      * @return 一个新的过滤后的 Lira , 实际通过对对底层集合或数组，执行 filter
      * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
      */
-    Lira<T> filter(Function<? super T, Object> filter);
+    Lira<T> filter(Function<? super T, ?> filter);
 
     /**
      * @return 一个新的过滤后的 Lira , 实际通过对对底层集合或数组，执行 {@link io.leaderli.litool.core.util.LiBoolUtil#parse(Object)}
@@ -130,7 +130,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      * @see #filter(Function)
      */
 
-    Lino<T> first(Function<? super T, Object> filter);
+    Lino<T> first(Function<? super T, ?> filter);
 
 
     /**
@@ -200,13 +200,13 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      * @param others 数组
      * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(other)}
      */
-    Lira<T> or(Iterator<T> others);
+    Lira<T> or(Iterator<? extends T> others);
 
     /**
      * @param others 数组
      * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(other)}
      */
-    Lira<T> or(Iterable<T> others);
+    Lira<T> or(Iterable<? extends T> others);
 
 
     /**
@@ -218,20 +218,20 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
 
     Lira<T> sort(Comparator<? super T> comparator);
 
-    void forEachLino(Consumer<Lino<T>> consumer);
+    void forEachLino(Consumer<Lino<? super T>> consumer);
 
-    void forEach(Consumer<T> consumer);
+    void forEach(Consumer<? super T> consumer);
 
-    void forThrowableEach(LiThrowableConsumer<T> consumer);
+    void forThrowableEach(LiThrowableConsumer<? super T> consumer);
 
-    void forThrowableEach(LiThrowableConsumer<T> consumer, Consumer<Throwable> whenThrow);
+    void forThrowableEach(LiThrowableConsumer<? super T> consumer, Consumer<Throwable> whenThrow);
 
     default Stream<T> stream() {
         return getRaw().stream();
     }
 
-    default T[] toArray(Class<T> type) {
-        return getRaw().toArray(LiClassUtil.newArray(type, 0));
+    default T[] toArray(Class<? extends T> type) {
+        return getRaw().toArray((T[]) LiClassUtil.newArray(type, 0));
     }
 
     /**

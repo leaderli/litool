@@ -130,6 +130,9 @@ class LiClassUtilTest {
         Assertions.assertEquals(1, strings.length);
 
         Assertions.assertTrue(LiClassUtil.isAssignableFromOrIsWrapper(CharSequence[].class, LiClassUtil.newArray(String.class, 0).getClass()));
+
+
+        Assertions.assertThrows(NullPointerException.class, () -> LiClassUtil.newArray(null, 0));
     }
 
 

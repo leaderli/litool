@@ -43,7 +43,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public Lira<T> filter(Function<? super T, Object> filter) {
+    public Lira<T> filter(Function<? super T, ?> filter) {
         return new FilterRa<>(this, filter);
 
     }
@@ -74,31 +74,31 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public Lino<T> first(Function<? super T, Object> filter) {
+    public Lino<T> first(Function<? super T, ?> filter) {
         return filter(filter).first();
     }
 
     @Override
-    public void forEachLino(Consumer<Lino<T>> consumer) {
+    public void forEachLino(Consumer<Lino<? super T>> consumer) {
         this.subscribe(new ConsumerSubscriberRa<>(consumer));
     }
 
 
     @Override
-    public void forEach(Consumer<T> consumer) {
+    public void forEach(Consumer<? super T> consumer) {
         this.subscribe(new ConsumerSubscriberRa<>((v) -> consumer.accept(v.get())));
     }
 
 
     @Override
-    public void forThrowableEach(LiThrowableConsumer<T> consumer) {
+    public void forThrowableEach(LiThrowableConsumer<? super T> consumer) {
         forThrowableEach(consumer, Throwable::printStackTrace);
     }
 
     @Override
-    public void forThrowableEach(LiThrowableConsumer<T> consumer, Consumer<Throwable> whenThrow) {
+    public void forThrowableEach(LiThrowableConsumer<? super T> consumer, Consumer<Throwable> whenThrow) {
 
-        LiThrowableConsumer<T> finalConsumer = consumer == null ? t -> {
+        LiThrowableConsumer<? super T> finalConsumer = consumer == null ? t -> {
         } : consumer;
         this.subscribe(new SubscriberRa<T>() {
 
@@ -243,7 +243,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public Lira<T> or(Iterator<T> others) {
+    public Lira<T> or(Iterator<? extends T> others) {
         List<T> raw = getRaw();
         if (raw.isEmpty()) {
             return Lira.of(others);
@@ -252,7 +252,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public Lira<T> or(Iterable<T> others) {
+    public Lira<T> or(Iterable<? extends T> others) {
         return or(others.iterator());
     }
 

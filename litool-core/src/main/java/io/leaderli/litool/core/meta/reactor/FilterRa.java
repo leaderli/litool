@@ -16,9 +16,9 @@ public class FilterRa<T> extends SomeRa<T> {
     private final PublisherRa<T> prevPublisher;
 
 
-    private final Function<? super T, Object> filter;
+    private final Function<? super T, ?> filter;
 
-    public FilterRa(PublisherRa<T> prevPublisher, Function<? super T, Object> filter) {
+    public FilterRa(PublisherRa<T> prevPublisher, Function<? super T, ?> filter) {
         this.prevPublisher = prevPublisher;
         this.filter = filter;
     }
@@ -31,9 +31,9 @@ public class FilterRa<T> extends SomeRa<T> {
 
 
     private static class FilterSubscriberRa<T> extends IntermediateSubscriberRa<T, T> {
-        private final Function<? super T, Object> filter;
+        private final Function<? super T, ?> filter;
 
-        public FilterSubscriberRa(SubscriberRa<? super T> actualSubscriber, Function<? super T, Object> filter) {
+        public FilterSubscriberRa(SubscriberRa<? super T> actualSubscriber, Function<? super T, ?> filter) {
             super(actualSubscriber);
             this.filter = filter;
         }

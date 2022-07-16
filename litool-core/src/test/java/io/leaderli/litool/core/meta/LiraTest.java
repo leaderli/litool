@@ -15,8 +15,6 @@ import java.util.Map;
 class LiraTest {
 
 
-
-
     @Test
     void getIndex() {
 
@@ -156,4 +154,18 @@ class LiraTest {
         Assertions.assertEquals("{}", Lira.of(LiTuple.of(null, null)).toMap(LiTuple2::_1, LiTuple2::_2).toString());
 
     }
+
+
+    @Test
+    void toArray() {
+
+        Assertions.assertDoesNotThrow(
+                () -> {
+
+                    Number[] nums = Lira.of(1, 2, 3).toArray(Integer.class);
+                    Number[] nums2 = Lira.of(1, 2, 3).toArray(int.class);
+                }
+        );
+    }
+
 }
