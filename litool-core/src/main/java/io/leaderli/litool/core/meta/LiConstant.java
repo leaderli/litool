@@ -15,7 +15,7 @@ public class LiConstant {
      *
      * @see Lino#throwable_map(LiThrowableFunction)
      * @see Lira#throwable_map(LiThrowableFunction)
-     * @see io.leaderli.litool.core.meta.reactor.ThrowableMapRa
+     * @see io.leaderli.litool.core.meta.ra.ThrowableMapRa
      */
     public static Consumer<Throwable> WHEN_THROW = Throwable::printStackTrace;
 

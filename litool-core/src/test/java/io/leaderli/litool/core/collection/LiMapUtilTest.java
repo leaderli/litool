@@ -157,7 +157,8 @@ public class LiMapUtilTest {
         map.put("str_str", k2);
         k2.put("a", "a");
         assertEquals("a", LiMapUtil.getTypeMap(map, "str_str").get("a"));
-        assertEquals("a", LiMapUtil.getTypeMap(map, "str_str", String.class).get("a"));
+        Map<String, CharSequence> str_str = LiMapUtil.getTypeMap(map, "str_str", String.class);
+        assertEquals("a", str_str.get("a"));
     }
 
 

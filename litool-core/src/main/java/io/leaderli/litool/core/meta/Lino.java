@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.condition.LiIf;
+import io.leaderli.litool.core.meta.condition.LiIf;
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;

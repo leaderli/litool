@@ -98,7 +98,7 @@ public class LiMapUtil {
      * @param <T>          集合的元素泛型
      * @return 根据 key，查询一个 {@code List<T>} ，筛选 list 中满足指定 class 类型的数据。当查询不到或者无满足 class 类型的数据，会返回一个空的集合
      */
-    public static <T> List<T> getTypeList(Map<String, ?> map, String key, Class<T> listItemType) {
+    public static <T> List<T> getTypeList(Map<String, ?> map, String key, Class<? extends T> listItemType) {
 
         if (map == null) {
             return LiListUtil.emptyList();
@@ -107,8 +107,7 @@ public class LiMapUtil {
 
         if (value instanceof List) {
 
-            //noinspection
-            return Lira.of((List<?>) value).cast(listItemType).getRaw();
+            return Lira.of((List<?>) value).<T>cast(listItemType).getRaw();
         }
         return new ArrayList<>();
     }
@@ -132,7 +131,7 @@ public class LiMapUtil {
      * @param <V>       值的泛型
      * @return 根据 key，查询一个 {@code Map<K,V>}，筛选 map 中满足指定 class 类型的数据。当查询不到或者无满足 class 类型的数据，会返回一个空的集合
      */
-    public static <K, V> Map<K, V> getTypeMap(Map<String, ?> map, String key, Class<K> keyType, Class<V> valueType) {
+    public static <K, V> Map<K, V> getTypeMap(Map<String, ?> map, String key, Class<? extends K> keyType, Class<? extends V> valueType) {
 
         if (map == null) {
             return new HashMap<>();
@@ -154,7 +153,7 @@ public class LiMapUtil {
      * @return 根据 key，查询一个 {@code Map<String,V>}，筛选 map 中满足指定 class 类型的数据。当查询不到或者无满足 class 类型的数据，会返回一个空的集合
      * @see #getTypeMap(Map, String, Class, Class)
      */
-    public static <V> Map<String, V> getTypeMap(Map<String, ?> map, String key, Class<V> valueType) {
+    public static <V> Map<String, V> getTypeMap(Map<String, ?> map, String key, Class<? extends V> valueType) {
         return getTypeMap(map, key, String.class, valueType);
     }
 
@@ -175,7 +174,7 @@ public class LiMapUtil {
      * @param <T>      值的泛型
      * @return 根据 key，查询指定 class 类型的值，当查询不到或类型不匹配时，返回空
      */
-    public static <T> Lino<T> getTypeObject(Map<String, ?> map, String key, Class<T> itemType) {
+    public static <T> Lino<T> getTypeObject(Map<String, ?> map, String key, Class<? extends T> itemType) {
         return Lino.of(map).map(to -> LiClassUtil.cast(map.get(key), itemType));
     }
 

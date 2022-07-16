@@ -15,7 +15,7 @@ public class LiListUtil {
      * @param <T>  集合元素的泛型
      * @return 返回集合中重复的元素集合
      */
-    public static <T> List<T> getDuplicateElement(Collection<T> list) {
+    public static <T> List<T> getDuplicateElement(Collection<? extends T> list) {
 
         if (list == null || list.isEmpty()) {
             return emptyList();

@@ -179,7 +179,10 @@ class LiClassUtilTest {
         Assertions.assertEquals(1, LiClassUtil.filterCanCast(map, String.class, String.class).size());
         Assertions.assertEquals(1, LiClassUtil.filterCanCast(map, int.class, int.class).size());
         Assertions.assertEquals(0, LiClassUtil.filterCanCast(map, String.class, int.class).size());
-        Map<CharSequence, Number> actual = LiClassUtil.filterCanCast(map, String.class, int.class);
+
+        Assertions.assertDoesNotThrow(() -> {
+            Map<CharSequence, Number> actual = LiClassUtil.filterCanCast(map, String.class, int.class);
+        });
     }
 
     public interface Fuck extends Function<String, Integer> {
