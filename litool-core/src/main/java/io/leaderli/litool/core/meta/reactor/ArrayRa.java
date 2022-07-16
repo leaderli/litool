@@ -42,18 +42,17 @@ public final class ArrayRa<T> extends SomeRa<T> {
         }
 
         @Override
-        public void request(int n) {
+        public void request() {
             if (canceled) {
                 return;
             }
 
-            if (n < 0 || n > arr.length) {
-                n = arr.length;
-            }
-            for (int i = 0; i < n; i++) {
 
+            for (T t : arr) {
 
-                Lino.of(arr[i]).nest(l -> actualSubscriber.next(Lino.narrow(l)));
+//                Lino.of(t).ifPresent(l -> actualSubscriber.next(Lino.of(l)));
+
+                Lino.of(t).nest(actualSubscriber::next);
                 // 通过 onSubscribe 将 Subscription 传递给订阅者，由订阅者来调用 cancel方法从而实现提前结束循环
                 if (canceled) {
                     return;

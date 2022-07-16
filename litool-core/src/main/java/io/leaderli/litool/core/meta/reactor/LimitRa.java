@@ -34,12 +34,12 @@ public class LimitRa<T, R> extends SomeRa<T> {
 
 
         @Override
-        public void next(Lino<T> t) {
+        public void next(Lino<? extends T> t) {
             if (skip < 1) {
                 this.cancel();
 
             } else {
-                this.actualSubscriber.next(Lino.narrow(t));
+                this.actualSubscriber.next(t);
                 skip--;
             }
         }

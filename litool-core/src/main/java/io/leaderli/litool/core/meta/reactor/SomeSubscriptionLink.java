@@ -20,8 +20,14 @@ class SomeSubscriptionLink<T> implements SubscriptionLink<T> {
     @Override
     public void request() {
 
-        Lino.of(value).ifPresent(actualSubscriber::next)
-                .ifAbsent(() -> actualSubscriber.onCancel(Lino.none()));
+        request(value);
 
+    }
+
+    @Override
+    public void request(T t) {
+
+        Lino.of(t).ifPresent(actualSubscriber::next)
+                .ifAbsent(() -> actualSubscriber.onCancel(Lino.none()));
     }
 }

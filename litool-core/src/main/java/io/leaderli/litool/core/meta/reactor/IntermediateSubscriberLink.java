@@ -29,6 +29,10 @@ public abstract class IntermediateSubscriberLink<T> implements SubscriberLink<T>
         this.prevSubscription.request();
     }
 
+    @Override
+    public void request(T t) {
+        this.prevSubscription.request(t);
+    }
 
     @Override
     public void onCancel(Lino<T> lino) {

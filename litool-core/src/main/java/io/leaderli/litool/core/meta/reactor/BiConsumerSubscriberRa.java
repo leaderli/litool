@@ -13,7 +13,7 @@ import java.util.function.BiConsumer;
 public class BiConsumerSubscriberRa<T> implements SubscriberRa<T> {
     private SubscriptionRa prevSubscription;
     /**
-     * 该消费者仅保留 {@link CancelSubscriptionRa#cancel()} 操作，不允许使用 {@link SubscriptionRa#request(int)}
+     * 该消费者仅保留 {@link CancelSubscriptionRa#cancel()} 操作，不允许使用 {@link SubscriptionRa#request()}
      */
     private final BiConsumer<? super Lino<T>, CancelSubscriptionRa> consumer;
 
@@ -29,13 +29,13 @@ public class BiConsumerSubscriberRa<T> implements SubscriberRa<T> {
     @Override
     public void onSubscribe(SubscriptionRa prevSubscription) {
         this.prevSubscription = prevSubscription;
-        this.prevSubscription.request(-1);
+        this.prevSubscription.request();
 
     }
 
     @Override
-    public void next(Lino<T> t) {
-        consumer.accept(t, this.prevSubscription);
+    public void next(Lino<? extends T> t) {
+        consumer.accept(Lino.narrow(t), this.prevSubscription);
     }
 
 

@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/7/16
  */
-public abstract class LiLink<T> implements LiValue, PublisherLink<T> {
+public abstract class LiLink<T> implements LiValue, PublisherLink<T>, Runnable {
 
     /**
      * @return 返回一个值为 1 的实例
@@ -163,20 +163,6 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T> {
         });
     }
 
-    /**
-     * @see #present()
-     */
-    public void onFinally() {
-        present();
-    }
-
-    /**
-     * @param onFinally 最后一个消费者
-     * @see #present()
-     */
-    public void onFinally(Consumer<Boolean> onFinally) {
-        onFinally.accept(present());
-    }
 
     /**
      * 当链条失败时执行
@@ -257,6 +243,23 @@ public abstract class LiLink<T> implements LiValue, PublisherLink<T> {
         return next.present();
     }
 
+    /**
+     * @param onFinally 最后一个消费者
+     * @see #present()
+     */
+    public void onFinally(Consumer<Boolean> onFinally) {
+        onFinally.accept(present());
+    }
+
+    /**
+     * 触发执行动作
+     *
+     * @see #present()
+     */
+    @Override
+    public void run() {
+        present();
+    }
 
     @Override
     public String name() {

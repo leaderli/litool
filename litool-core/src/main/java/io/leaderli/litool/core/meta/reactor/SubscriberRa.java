@@ -15,7 +15,7 @@ public interface SubscriberRa<T> {
      *
      * @param t 消息
      */
-    void next(Lino<T> t);
+    void next(Lino<? extends T> t);
 
 
     /**
@@ -24,4 +24,5 @@ public interface SubscriberRa<T> {
     default void onComplete() {
 
     }
+
 }

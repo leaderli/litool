@@ -11,4 +11,10 @@ public interface SubscriptionLink<T> {
      */
     void request();
 
+    /**
+     * 请求数据
+     *
+     * @param t 新的实例
+     */
+    void request(T t);
 }

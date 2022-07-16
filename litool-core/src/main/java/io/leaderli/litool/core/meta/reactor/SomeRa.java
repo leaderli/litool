@@ -104,12 +104,12 @@ public abstract class SomeRa<T> implements Lira<T> {
 
             @Override
             public void onSubscribe(SubscriptionRa prevSubscription) {
-                prevSubscription.request(-1);
+                prevSubscription.request();
 
             }
 
             @Override
-            public void next(Lino<T> t) {
+            public void next(Lino<? extends T> t) {
                 try {
                     finalConsumer.accept(t.get());
                 } catch (Throwable e) {
@@ -148,11 +148,11 @@ public abstract class SomeRa<T> implements Lira<T> {
             @Override
             public void onSubscribe(SubscriptionRa prevSubscription) {
                 this.prevSubscription = prevSubscription;
-                prevSubscription.request(-1);
+                prevSubscription.request();
             }
 
             @Override
-            public void next(Lino<T> t) {
+            public void next(Lino<? extends T> t) {
 
                 if (count.value() == index) {
                     result.value(t.get());

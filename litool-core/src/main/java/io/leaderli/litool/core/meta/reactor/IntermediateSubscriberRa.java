@@ -15,8 +15,8 @@ public abstract class IntermediateSubscriberRa<T, R> implements SubscriberRa<T>,
     }
 
     @Override
-    public final void request(int n) {
-        this.prevSubscription.request(n);
+    public final void request() {
+        this.prevSubscription.request();
 
     }
 

@@ -36,8 +36,8 @@ public class MapRa<T, R> extends SomeRa<R> {
 
 
         @Override
-        public void next(Lino<T> t) {
-            t.map(mapper).nest(f -> this.actualSubscriber.next(Lino.narrow(f)));
+        public void next(Lino<? extends T> t) {
+            t.map(mapper).nest(this.actualSubscriber::next);
         }
 
     }

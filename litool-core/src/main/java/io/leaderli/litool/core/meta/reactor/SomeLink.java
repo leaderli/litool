@@ -20,6 +20,5 @@ public class SomeLink<T> extends LiLink<T> {
     public void subscribe(SubscriberLink<T> actualSubscriber) {
         SubscriptionLink<T> subscription = new SomeSubscriptionLink<>(actualSubscriber, value);
         actualSubscriber.onSubscribe(subscription);
-
     }
 }

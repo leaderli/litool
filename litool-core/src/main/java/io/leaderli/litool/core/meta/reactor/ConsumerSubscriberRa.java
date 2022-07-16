@@ -24,13 +24,13 @@ public class ConsumerSubscriberRa<T> implements SubscriberRa<T> {
 
     @Override
     public void onSubscribe(SubscriptionRa prevSubscription) {
-        prevSubscription.request(-1);
+        prevSubscription.request();
 
     }
 
     @Override
-    public void next(Lino<T> t) {
-        consumer.accept(t);
+    public void next(Lino<? extends T> t) {
+        consumer.accept(Lino.narrow(t));
     }
 
 

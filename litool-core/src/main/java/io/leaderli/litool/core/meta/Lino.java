@@ -70,6 +70,7 @@ public interface Lino<T> extends LiValue {
 
     }
 
+
     /**
      * @param <T> 泛型
      * @return 返回全局唯一的空 Lino
@@ -88,6 +89,8 @@ public interface Lino<T> extends LiValue {
      */
     Lino<T> assertNotNone(String msg);
 
+
+
     /**
      * @param type 可转换的类型
      * @param <R>  可转换的类型的泛型
@@ -104,7 +107,6 @@ public interface Lino<T> extends LiValue {
      * 则返回泛型 {@code Lino<Map<K,V>>} 的 Lino，否则返回 {@link #none()}
      */
     <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType);
-
 
 
     /**

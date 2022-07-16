@@ -39,9 +39,9 @@ public class FilterRa<T> extends SomeRa<T> {
         }
 
         @Override
-        public void next(Lino<T> t) {
+        public void next(Lino<? extends T> t) {
 
-            t.filter(filter).nest(f -> this.actualSubscriber.next(Lino.narrow(f)));
+            t.filter(filter).nest(this.actualSubscriber::next);
 
         }
 

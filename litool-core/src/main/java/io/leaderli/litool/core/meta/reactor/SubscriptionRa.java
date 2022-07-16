@@ -9,8 +9,7 @@ public interface SubscriptionRa extends CancelSubscriptionRa {
     /**
      * 请求数据
      *
-     * @param n 请求 n 个数据
      */
-    void request(int n);
+    void request();
 
 }
