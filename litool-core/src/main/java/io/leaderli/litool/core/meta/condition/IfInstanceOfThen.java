@@ -9,24 +9,24 @@ import java.util.function.Function;
  * @since 2022/7/17
  */
 public
-class CaseWhen<T, M, R> implements LiCaseThen<T, M, R> {
+class IfInstanceOfThen<T, M, R> implements LiInstanceOfThen<T, M, R> {
     private final PublisherIf<T, R> prevPublisher;
     private final Class<? extends M> middleType;
 
-    public CaseWhen(PublisherIf<T, R> prevPublisher, Class<? extends M> middleType) {
+    public IfInstanceOfThen(PublisherIf<T, R> prevPublisher, Class<? extends M> middleType) {
         this.prevPublisher = prevPublisher;
         this.middleType = middleType;
     }
 
     @Override
     public void subscribe(SubscriberIf<T, R> actualSubscriber) {
-        prevPublisher.subscribe(new CaseWhenSubscriberIf(actualSubscriber));
+        prevPublisher.subscribe(new SubscriberIfInstanceOfThen(actualSubscriber));
 
     }
 
-    private class CaseWhenSubscriberIf extends IntermediateSubscriberIf<T, R> {
+    private class SubscriberIfInstanceOfThen extends IntermediateSubscriberIf<T, R> {
 
-        public CaseWhenSubscriberIf(SubscriberIf<T, R> actualSubscriber) {
+        public SubscriberIfInstanceOfThen(SubscriberIf<T, R> actualSubscriber) {
             super(actualSubscriber);
 
         }

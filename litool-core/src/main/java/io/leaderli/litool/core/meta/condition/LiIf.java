@@ -25,7 +25,7 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
         if (lino == null) {
             lino = Lino.none();
         }
-        return new Begin<>(lino);
+        return new BeginIf<>(lino);
     }
 
     /**
@@ -35,7 +35,7 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
      */
     default LiThen<T, R> _if(Function<? super T, ?> predicate) {
 
-        return new When<>(this, predicate);
+        return new IfThen<>(this, predicate);
     }
 
     /**
@@ -43,7 +43,7 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
      * @return {@link #_if(Function)}
      */
     default LiThen<T, R> _case(T compare) {
-        return new When<>(this, v -> v.equals(compare));
+        return new IfThen<>(this, v -> v.equals(compare));
     }
 
     /**
@@ -53,7 +53,7 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
     @SuppressWarnings("unchecked")
     default LiThen<T, R> _case(T... compares) {
 
-        return new When<>(this, v -> {
+        return new IfThen<>(this, v -> {
 
             if (compares != null) {
                 for (T compare : compares) {
@@ -82,10 +82,10 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
      * @param type 当  值 instanceof type 时执行
      * @param <M>  type 的泛型
      * @return {@code  LiCaseThen<T, M, R>}
-     * @see LiCaseThen
+     * @see LiInstanceOfThen
      */
-    default <M> LiCaseThen<T, M, R> _instanceof(Class<? extends M> type) {
-        return new CaseWhen<>(this, type);
+    default <M> LiInstanceOfThen<T, M, R> _instanceof(Class<? extends M> type) {
+        return new IfInstanceOfThen<>(this, type);
     }
 
 
@@ -95,7 +95,7 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
      * @param mapping 转换函数
      * @return {@code _if(predicate).then(mapper)}
      * @see #_instanceof(Class)
-     * @see LiCaseThen#then(Function)
+     * @see LiInstanceOfThen#then(Function)
      */
 
     default <M> LiIf<T, R> _instanceof(Class<M> type, Function<? super M, ? extends R> mapping) {
@@ -123,13 +123,13 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
      * @return 触发实际链条执行的函数
      */
     default Lino<R> _else(Runnable runnable) {
-        Other<T, R> other = new Other<>(this, () -> {
+        OtherThen<T, R> otherThen = new OtherThen<>(this, () -> {
             runnable.run();
             return null;
         });
         LiBox<R> result = LiBox.none();
-        End<T, R> end = new End<>(result::value);
-        end.request(other);
+        EndIf<T, R> endIf = new EndIf<>(result::value);
+        endIf.request(otherThen);
         return result.lino();
     }
 
@@ -140,10 +140,10 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
      * @return 触发实际链条执行的函数
      */
     default Lino<R> _else(Supplier<? extends R> supplier) {
-        Other<T, R> other = new Other<>(this, supplier);
+        OtherThen<T, R> otherThen = new OtherThen<>(this, supplier);
         LiBox<R> result = LiBox.none();
-        End<T, R> end = new End<>(result::value);
-        end.request(other);
+        EndIf<T, R> endIf = new EndIf<>(result::value);
+        endIf.request(otherThen);
         return result.lino();
     }
 
@@ -173,10 +173,10 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
      * @param <T> 源数据泛型
      * @param <R> 结果数据泛型
      */
-    class Begin<T, R> implements LiIf<T, R> {
+    class BeginIf<T, R> implements LiIf<T, R> {
         private final Lino<T> lino;
 
-        public Begin(Lino<T> lino) {
+        public BeginIf(Lino<T> lino) {
             this.lino = lino;
         }
 
@@ -204,11 +204,11 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
 
     }
 
-    class End<T, R> implements SubscriberIf<T, R> {
+    class EndIf<T, R> implements SubscriberIf<T, R> {
 
         private final Consumer<? super R> completeConsumer;
 
-        private End(Consumer<? super R> completeConsumer) {
+        private EndIf(Consumer<? super R> completeConsumer) {
             this.completeConsumer = completeConsumer;
         }
 
@@ -224,8 +224,8 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
             throw new UnsupportedOperationException();
         }
 
-        public void request(Other<T, R> other) {
-            other.subscribe(this);
+        public void request(OtherThen<T, R> otherThen) {
+            otherThen.subscribe(this);
         }
     }
 }

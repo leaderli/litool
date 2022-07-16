@@ -7,47 +7,45 @@ import java.util.function.Function;
 /**
  * @author leaderli
  * @since 2022/7/17
+ * <p>
+ * 当条件满足时执行转换函数，后接 if 系列
  */
-public
-class CaseThen<T, M, R> implements LiIf<T, R> {
+public class ThenIf<T, R> implements LiIf<T, R> {
 
     private final PublisherIf<T, R> prevPublisher;
-    private final Function<? super M, ? extends R> mapper;
+    private final Function<? super T, ? extends R> mapper;
 
 
-    public CaseThen(PublisherIf<T, R> prevPublisher, Function<? super M, ? extends R> mapper) {
+    public ThenIf(PublisherIf<T, R> prevPublisher, Function<? super T, ? extends R> mapper) {
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }
 
 
     public void subscribe(SubscriberIf<T, R> actualSubscriber) {
-        prevPublisher.subscribe(new CaseThenSubscriberIf(actualSubscriber));
+        prevPublisher.subscribe(new SubscriberThenIf(actualSubscriber));
 
     }
 
-    private class CaseThenSubscriberIf extends IntermediateSubscriberIf<T, R> {
+    private class SubscriberThenIf extends IntermediateSubscriberIf<T, R> {
 
-        public CaseThenSubscriberIf(SubscriberIf<T, R> actualSubscriber) {
+        public SubscriberThenIf(SubscriberIf<T, R> actualSubscriber) {
             super(actualSubscriber);
-
         }
 
 
         /**
          * 对实际值进行断言，如果满足，值执行转换函数，并将结果保存，并终止执行，
          *
-         * @param t         实际值，该值一定 instanceof M
-         * @param predicate 断言函数，此处一定为 {@link io.leaderli.litool.core.meta.condition.CaseWhen.CaseWhenSubscriberIf#next(Object, Function)}
+         * @param t         实际值
+         * @param predicate 断言函数
          * @see #mapper
-         * @see LiBoolUtil#parse(Object)
          */
-        @SuppressWarnings({"unchecked", "JavadocReference"})
         @Override
         public void next(T t, Function<? super T, ?> predicate) {
 
             if (t != null && LiBoolUtil.parse(predicate.apply(t))) {
-                this.onComplete(mapper.apply((M) t));
+                this.onComplete(mapper.apply(t));
             } else {
                 this.actualSubscriber.next(t, null);
             }

@@ -18,7 +18,7 @@ public interface LiThen<T, R> extends PublisherIf<T, R> {
      */
     default LiIf<T, R> then(Function<? super T, ? extends R> mapping) {
 
-        return new Then<>(this, mapping);
+        return new ThenIf<>(this, mapping);
     }
 
     /**
@@ -27,7 +27,7 @@ public interface LiThen<T, R> extends PublisherIf<T, R> {
      */
     default LiIf<T, R> then(Supplier<? extends R> supplier) {
 
-        return new Then<>(this, v -> supplier.get());
+        return new ThenIf<>(this, v -> supplier.get());
     }
 
     /**
@@ -36,7 +36,7 @@ public interface LiThen<T, R> extends PublisherIf<T, R> {
      */
     default LiIf<T, R> then(R value) {
 
-        return new Then<>(this, v -> value);
+        return new ThenIf<>(this, v -> value);
     }
 
     /**
@@ -45,7 +45,7 @@ public interface LiThen<T, R> extends PublisherIf<T, R> {
      */
     default LiIf<T, R> then(Consumer<? super T> consumer) {
 
-        return new Then<>(this, v -> {
+        return new ThenIf<>(this, v -> {
             consumer.accept(v);
             return null;
         });
