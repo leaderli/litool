@@ -12,6 +12,7 @@ public class ValueLink<T> extends SomeLink<T> {
     private final T value;
 
     public ValueLink(T t) {
+        super(null);
         this.value = t;
 
     }

@@ -152,6 +152,9 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     @Override
     boolean present();
 
+
+    Runnable request(T t);
+
     /**
      * @param onFinally 最后一个消费者
      * @see #present()

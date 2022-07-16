@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta.link;
 
+import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.SomeLink;
 
 import java.util.function.Consumer;
@@ -10,20 +11,42 @@ import java.util.function.Consumer;
  */
 public class CancelConsumerLink<T> extends SomeLink<T> {
 
-    private final PublisherLink<T> prevPublisher;
     private final Consumer<? super T> cancelConsumer;
 
 
     public CancelConsumerLink(PublisherLink<T> prevPublisher, final Consumer<? super T> cancelConsumer) {
-        this.prevPublisher = prevPublisher;
+        super(prevPublisher);
         this.cancelConsumer = cancelConsumer;
     }
 
 
     @Override
     public void subscribe(SubscriberLink<T> actualSubscriber) {
-        prevPublisher.subscribe(new CancelConsumerSubscriberLink<>(actualSubscriber, cancelConsumer));
+        prevPublisher.subscribe(new CancelConsumerSubscriberLink(actualSubscriber));
     }
 
 
+    private class CancelConsumerSubscriberLink extends IntermediateSubscriberLink<T> implements ErrorLink {
+
+
+        protected CancelConsumerSubscriberLink(SubscriberLink<T> actualSubscriber) {
+            super(actualSubscriber);
+        }
+
+
+        @Override
+        public void next(T value) {
+
+            this.actualSubscriber.next(value);
+        }
+
+        @Override
+        public void onCancel(Lino<T> lino) {
+            lino.ifPresent(cancelConsumer);
+
+            if (this.actualSubscriber instanceof ErrorLink) {
+                this.actualSubscriber.onCancel(lino);
+            }
+        }
+    }
 }

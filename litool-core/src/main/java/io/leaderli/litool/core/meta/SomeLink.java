@@ -21,6 +21,12 @@ import java.util.function.Supplier;
  */
 public abstract class SomeLink<T> implements LiLink<T> {
 
+    protected final PublisherLink<T> prevPublisher;
+
+    public SomeLink(PublisherLink<T> prevPublisher) {
+        this.prevPublisher = prevPublisher;
+    }
+
     /**
      * @return 返回一个值为 1 的实例
      */
@@ -241,6 +247,11 @@ public abstract class SomeLink<T> implements LiLink<T> {
         });
 
         return next.present();
+    }
+
+    @Override
+    public LiLink<T> request(final T t) {
+        return new NewRequestLink<>(this, t);
     }
 
     /**

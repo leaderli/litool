@@ -10,7 +10,7 @@ import io.leaderli.litool.core.meta.Lino;
  */
 public abstract class IntermediateSubscriberLink<T> implements SubscriberLink<T>, SubscriptionLink<T> {
     protected final SubscriberLink<T> actualSubscriber;
-    private SubscriptionLink<T> prevSubscription;
+    protected SubscriptionLink<T> prevSubscription;
 
     protected IntermediateSubscriberLink(SubscriberLink<T> actualSubscriber) {
         this.actualSubscriber = actualSubscriber;
