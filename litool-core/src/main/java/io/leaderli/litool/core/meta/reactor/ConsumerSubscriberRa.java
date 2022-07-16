@@ -10,10 +10,10 @@ import java.util.function.Consumer;
  * @author leaderli
  * @since 2022/6/27
  */
-public class ConsumerRaSubscriber<T> implements RaSubscriber<T> {
+public class ConsumerSubscriberRa<T> implements SubscriberRa<T> {
     private final Consumer<? super Lino<T>> consumer;
 
-    public ConsumerRaSubscriber(Consumer<? super Lino<T>> consumer) {
+    public ConsumerSubscriberRa(Consumer<? super Lino<T>> consumer) {
         if (consumer == null) {
             consumer = (Consumer<Lino<T>>) lino -> {
 
@@ -23,7 +23,7 @@ public class ConsumerRaSubscriber<T> implements RaSubscriber<T> {
     }
 
     @Override
-    public void onSubscribe(RaSubscription prevSubscription) {
+    public void onSubscribe(SubscriptionRa prevSubscription) {
         prevSubscription.request(-1);
 
     }

@@ -10,22 +10,20 @@ import java.util.function.Consumer;
  */
 public class LiConstant {
 
-
-    private static Consumer<Throwable> whenThrow = Throwable::printStackTrace;
-
     /**
      * 默认的异常消费者，适用于
      *
      * @see Lino#throwable_map(LiThrowableFunction)
      * @see Lira#throwable_map(LiThrowableFunction)
+     * @see io.leaderli.litool.core.meta.reactor.ThrowableMapRa
      */
-    public static Consumer<Throwable> getWhenThrow() {
-        return whenThrow;
-    }
+    public static Consumer<Throwable> WHEN_THROW = Throwable::printStackTrace;
 
-    public static void setWhenThrow(Consumer<Throwable> whenThrow) {
-        if (whenThrow != null) {
-            LiConstant.whenThrow = whenThrow;
+
+    public static void accept(Throwable e) {
+
+        if (WHEN_THROW != null) {
+            WHEN_THROW.accept(e);
         }
     }
 }

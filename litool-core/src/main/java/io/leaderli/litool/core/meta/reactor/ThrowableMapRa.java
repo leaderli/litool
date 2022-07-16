@@ -12,29 +12,29 @@ import java.util.function.Consumer;
  * @see Lino#throwable_map(LiThrowableFunction)
  * @since 2022/6/27
  */
-public class RaThrowableMap<T, R> extends RaSome<R> {
+public class ThrowableMapRa<T, R> extends SomeRa<R> {
     private final LiThrowableFunction<? super T, ? extends R> mapper;
-    private final RaPublisher<T> prevPublisher;
+    private final PublisherRa<T> prevPublisher;
     private final Consumer<Throwable> whenThrow;
 
-    public RaThrowableMap(RaPublisher<T> prevPublisher, LiThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
+    public ThrowableMapRa(PublisherRa<T> prevPublisher, LiThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
         this.whenThrow = whenThrow;
     }
 
     @Override
-    public void subscribe(RaSubscriber<? super R> actualSubscriber) {
-        prevPublisher.subscribe(new ThrowableMapRaSubscriber<>(actualSubscriber, mapper, whenThrow));
+    public void subscribe(SubscriberRa<? super R> actualSubscriber) {
+        prevPublisher.subscribe(new ThrowableMapSubscriberRa<>(actualSubscriber, mapper, whenThrow));
 
     }
 
-    private static class ThrowableMapRaSubscriber<T, R> extends IntermediateRaSubscriber<T, R> {
+    private static class ThrowableMapSubscriberRa<T, R> extends IntermediateSubscriberRa<T, R> {
 
         private final LiThrowableFunction<? super T, ? extends R> mapper;
         private final Consumer<Throwable> whenThrow;
 
-        private ThrowableMapRaSubscriber(RaSubscriber<? super R> actualSubscriber, LiThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
+        private ThrowableMapSubscriberRa(SubscriberRa<? super R> actualSubscriber, LiThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
             super(actualSubscriber);
             this.mapper = mapper;
             this.whenThrow = whenThrow;

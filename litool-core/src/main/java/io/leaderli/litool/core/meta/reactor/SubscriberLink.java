@@ -6,22 +6,23 @@ import io.leaderli.litool.core.meta.Lino;
  * @author leaderli
  * @since 2022/6/27
  */
-public interface RaSubscriber<T> {
+public interface SubscriberLink<T> {
 
-    void onSubscribe(RaSubscription subscription);
+    void onSubscribe(SubscriptionLink<T> subscription);
 
     /**
      * 发布者推送了一个消息
      *
-     * @param t 消息
+     * @param lino 消息
      */
-    void next(Lino<T> t);
+    void next(T lino);
 
 
     /**
-     * 发布者提交一个完成事件
+     * 执行链条中断时调用
      */
-    default void onComplete() {
+    default void onCancel(Lino<T> lino) {
 
     }
+
 }

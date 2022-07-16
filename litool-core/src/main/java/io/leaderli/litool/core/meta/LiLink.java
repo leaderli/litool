@@ -2,10 +2,7 @@ package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.exception.LiThrowableSupplier;
-import io.leaderli.litool.core.meta.reactor.IntermediateRaSubscriber;
-import io.leaderli.litool.core.meta.reactor.LinkSubscription;
-import io.leaderli.litool.core.meta.reactor.RaPublisher;
-import io.leaderli.litool.core.meta.reactor.RaSubscriber;
+import io.leaderli.litool.core.meta.reactor.*;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -20,93 +17,85 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/7/16
  */
-public interface LiLink<T> extends LiValue {
-
+public abstract class LiLink<T> implements LiValue, PublisherLink<T> {
 
     /**
-     * @param t   实例
-     * @param <T> 泛型
+     * @return 返回一个值为 1 的实例
+     */
+    static LiLink<Integer> of() {
+
+        return new SomeLink<>(1);
+    }
+
+    /**
+     * @param value 实例
+     * @param <T>   泛型
      * @return 返回一个新的实例
      */
-    static <T> LiLink<T> of(T t) {
+    static <T> LiLink<T> of(T value) {
 
-        return new RaLinkBegin<>();
+        return new SomeLink<>(value);
     }
 
-    LiLink<T> then(Function<T, Object> supplier);
 
-    LiLink<T> throwable_then(LiThrowableFunction<T, Object> function);
-
-    LiLink<T> then(Supplier<Object> supplier);
-
-    LiLink<T> throwable_then(LiThrowableSupplier<Object> function);
-
-    void error(Runnable runnable);
-
-    void error(Consumer<T> runnable);
-
-}
-
-abstract class RaLink<T> implements LiLink<T>, RaPublisher<T> {
-
-    private boolean err = false;
-
-
-    @Override
-    public LiLink<T> then(Function<T, Object> supplier) {
-//        lira = lira.filter(supplier);
-        return this;
+    public LiLink<T> then(Function<T, Object> filter) {
+        return new FilterLink<>(this, filter);
     }
 
-    @Override
     public LiLink<T> throwable_then(LiThrowableFunction<T, Object> function) {
-//        lira = lira.filter(
-//                t -> {
-//                    try {
-//                        return function.apply(t);
-//                    } catch (Throwable e) {
-//                        LiConstant.getWhenThrow().accept(e);
-//                        return false;
-//                    }
-//                }
-//        );
-        return this;
+
+        return new FilterLink<>(this, t -> {
+            try {
+                return function.apply(t);
+            } catch (Throwable e) {
+                LiConstant.accept(e);
+                return false;
+            }
+        });
+
     }
 
-    @Override
     public LiLink<T> then(Supplier<Object> supplier) {
-//        lira = lira.filter(t -> supplier.get());
-        return this;
+        return new FilterLink<>(this, t -> supplier.get());
     }
 
-    @Override
     public LiLink<T> throwable_then(LiThrowableSupplier<Object> supplier) {
-//        lira = lira.filter(t -> {
-//            try {
-//                return supplier.get();
-//            } catch (Throwable e) {
-//                LiConstant.getWhenThrow().accept(e);
-//                return false;
-//            }
-//        });
-        return this;
+        return new FilterLink<>(this, t -> {
+            try {
+                return supplier.get();
+            } catch (Throwable e) {
+                LiConstant.accept(e);
+                return false;
+            }
+        });
     }
 
-    @Override
-    public void error(Runnable runnable) {
-        err = true;
-//        lira.first().ifAbsent(runnable);
+    public LiLink<T> error(Runnable runnable) {
+
+        return new CancelRunnableLink<>(this, runnable);
     }
 
-    @Override
-    public void error(Consumer<T> runnable) {
-        err = true;
-//        lira.first().ifAbsent(() -> runnable.accept(value));
+    public CancelConsumerLink<T> error(Consumer<? super T> runnable) {
+        return new CancelConsumerLink<>(this, runnable);
     }
 
     @Override
     public boolean present() {
-        return true;
+        LiBox<Object> next = LiBox.none();
+        this.subscribe(new SubscriberLink<T>() {
+            @Override
+            public void onSubscribe(SubscriptionLink<T> prevSubscription) {
+                prevSubscription.request();
+            }
+
+            @Override
+            public void next(T value) {
+                next.value(value);
+
+            }
+        });
+
+        return next.present();
     }
 
     @Override
@@ -117,62 +106,4 @@ abstract class RaLink<T> implements LiLink<T>, RaPublisher<T> {
 
 }
 
-class RaLinkBegin<T> extends RaLink<T> {
-
-    @Override
-    public void subscribe(RaSubscriber<? super T> actualSubscriber) {
-        actualSubscriber.onSubscribe(new LinkBeginRaSubscription<>(actualSubscriber));
-
-    }
-
-}
-
-class LinkBeginRaSubscription<T> implements LinkSubscription<T> {
-    private final T[] arr;
-
-    private final RaSubscriber<? super T> actualSubscriber;
-
-    public LinkBeginRaSubscription(RaSubscriber<? super T> actualSubscriber) {
-    }
-
-
-    @Override
-    public void request(T t) {
-
-    }
-}
-
-class RaLinkFilter<T> extends RaLink<T> {
-    private final RaPublisher<T> prevPublisher;
-
-
-    private final Function<? super T, Object> filter;
-
-    public RaLinkFilter(RaPublisher<T> prevPublisher, Function<? super T, Object> filter) {
-        this.prevPublisher = prevPublisher;
-        this.filter = filter;
-    }
-
-
-    @Override
-    public void subscribe(RaSubscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new LinkFilterRaSubscriber<>(actualSubscriber, filter));
-
-    }
-
-    private static class LinkFilterRaSubscriber<T> extends IntermediateRaSubscriber<T, T> {
-        private final Function<? super T, Object> filter;
-
-        public LinkFilterRaSubscriber(RaSubscriber<? super T> actualSubscriber, Function<? super T, Object> filter) {
-            super(actualSubscriber);
-            this.filter = filter;
-        }
-
-        @Override
-        public void next(Lino<T> t) {
-            t.filter(filter).nest(f -> this.actualSubscriber.next(Lino.narrow(f)));
-
-        }
-    }
-}
 

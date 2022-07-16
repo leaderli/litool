@@ -4,8 +4,8 @@ package io.leaderli.litool.core.meta.reactor;
  * @author leaderli
  * @since 2022/6/27
  */
-public interface RaPublisher<T> {
+public interface PublisherRa<T> {
 
 
-    void subscribe(RaSubscriber<? super T> subscriber);
+    void subscribe(SubscriberRa<? super T> subscriber);
 }

@@ -13,7 +13,7 @@ class LiStringConvertTest {
     @Test
     void parserInt() {
 
-        LiConstant.setWhenThrow(null);
+        LiConstant.WHEN_THROW = null;
         Assertions.assertSame(0, LiStringConvert.parser(null, 0));
         Assertions.assertSame(1, LiStringConvert.parser("1", 0));
         Assertions.assertSame(true, LiStringConvert.parser("true", false));

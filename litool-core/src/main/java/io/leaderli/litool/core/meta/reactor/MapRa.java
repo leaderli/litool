@@ -10,26 +10,26 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/6/27
  */
-public class RaMap<T, R> extends RaSome<R> {
+public class MapRa<T, R> extends SomeRa<R> {
     private final Function<? super T, ? extends R> mapper;
-    private final RaPublisher<T> prevPublisher;
+    private final PublisherRa<T> prevPublisher;
 
-    public RaMap(RaPublisher<T> prevPublisher, Function<? super T, ? extends R> mapper) {
+    public MapRa(PublisherRa<T> prevPublisher, Function<? super T, ? extends R> mapper) {
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }
 
     @Override
-    public void subscribe(RaSubscriber<? super R> actualSubscriber) {
-        prevPublisher.subscribe(new MapRaSubscriber<>(actualSubscriber, mapper));
+    public void subscribe(SubscriberRa<? super R> actualSubscriber) {
+        prevPublisher.subscribe(new MapSubscriberRa<>(actualSubscriber, mapper));
 
     }
 
-    private static class MapRaSubscriber<T, R> extends IntermediateRaSubscriber<T, R> {
+    private static class MapSubscriberRa<T, R> extends IntermediateSubscriberRa<T, R> {
 
         private final Function<? super T, ? extends R> mapper;
 
-        private MapRaSubscriber(RaSubscriber<? super R> actualSubscriber, Function<? super T, ? extends R> mapper) {
+        private MapSubscriberRa(SubscriberRa<? super R> actualSubscriber, Function<? super T, ? extends R> mapper) {
             super(actualSubscriber);
             this.mapper = mapper;
         }

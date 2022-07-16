@@ -15,7 +15,7 @@ import java.util.stream.Stream;
  * @author leaderli
  * @since 2022/6/19
  */
-public interface Lira<T> extends LiValue, RaPublisher<T> {
+public interface Lira<T> extends LiValue, PublisherRa<T> {
 
 
     /**
@@ -55,7 +55,7 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
         if (iterator == null || !iterator.hasNext()) {
             return none();
         }
-        return new RaArray<>(iterator);
+        return new ArrayRa<>(iterator);
     }
 
     /**
@@ -165,12 +165,12 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
     Lira<T> skip(int n);
 
     /**
-     * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)},  第二个参数传  {@link LiConstant#whenThrow}
+     * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)},  第二个参数传  {@link LiConstant#WHEN_THROW}
      *
      * @param mapping 转换函数
      * @param <R>     转换后的泛型
      * @return 转换后的 Lira
-     * @see LiConstant#whenThrow
+     * @see LiConstant#WHEN_THROW
      */
     <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping);
 
@@ -409,7 +409,7 @@ public interface Lira<T> extends LiValue, RaPublisher<T> {
 
 
         @Override
-        public void subscribe(RaSubscriber<? super T> subscriber) {
+        public void subscribe(SubscriberRa<? super T> subscriber) {
 
 
         }

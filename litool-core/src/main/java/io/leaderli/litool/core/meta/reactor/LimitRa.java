@@ -8,26 +8,26 @@ import io.leaderli.litool.core.meta.Lino;
  * @author leaderli
  * @since 2022/6/27
  */
-public class RaLimit<T, R> extends RaSome<T> {
+public class LimitRa<T, R> extends SomeRa<T> {
     private final int skip;
-    private final RaPublisher<T> prevPublisher;
+    private final PublisherRa<T> prevPublisher;
 
-    public RaLimit(RaPublisher<T> prevPublisher, int skip) {
+    public LimitRa(PublisherRa<T> prevPublisher, int skip) {
         this.prevPublisher = prevPublisher;
         this.skip = skip;
     }
 
     @Override
-    public void subscribe(RaSubscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new LimitRaSubscriber<>(actualSubscriber, skip));
+    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
+        prevPublisher.subscribe(new LimitSubscriberRa<>(actualSubscriber, skip));
 
     }
 
-    private static class LimitRaSubscriber<T> extends IntermediateRaSubscriber<T, T> {
+    private static class LimitSubscriberRa<T> extends IntermediateSubscriberRa<T, T> {
 
         private int skip;
 
-        private LimitRaSubscriber(RaSubscriber<? super T> actualSubscriber, int skip) {
+        private LimitSubscriberRa(SubscriberRa<? super T> actualSubscriber, int skip) {
             super(actualSubscriber);
             this.skip = skip;
         }

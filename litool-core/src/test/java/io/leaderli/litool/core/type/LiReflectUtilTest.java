@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 class LiReflectUtilTest {
 
     static {
-        LiConstant.setWhenThrow(null);
+        LiConstant.WHEN_THROW = null;
 
     }
 
@@ -113,7 +113,7 @@ class LiReflectUtilTest {
 
         Assertions.assertTrue(LiReflectUtil.setFieldValue(littleBean, LittleBean.class.getField("name"), "hello"));
 
-        Assertions.assertFalse(LiReflectUtil.setFieldValue(littleBean, Lino.Some.class.getDeclaredField("value"),"hello"));
+        Assertions.assertFalse(LiReflectUtil.setFieldValue(littleBean, Lino.Some.class.getDeclaredField("value"), "hello"));
 
 
     }

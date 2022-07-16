@@ -17,7 +17,7 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/6/28
  */
-public abstract class RaSome<T> implements Lira<T> {
+public abstract class SomeRa<T> implements Lira<T> {
 
 
     @Override
@@ -44,7 +44,7 @@ public abstract class RaSome<T> implements Lira<T> {
 
     @Override
     public Lira<T> filter(Function<? super T, Object> filter) {
-        return new RaFilter<>(this, filter);
+        return new FilterRa<>(this, filter);
 
     }
 
@@ -57,7 +57,7 @@ public abstract class RaSome<T> implements Lira<T> {
     public Lino<T> first() {
         LiBox<T> value = LiBox.none();
 
-        this.subscribe(new BiConsumerRaSubscriber<>((v, s) -> {
+        this.subscribe(new BiConsumerSubscriberRa<>((v, s) -> {
             value.value(v.get());
             s.cancel();
         }));
@@ -69,7 +69,7 @@ public abstract class RaSome<T> implements Lira<T> {
 
         LiBox<T> value = LiBox.none();
 
-        this.subscribe(new ConsumerRaSubscriber<>(v -> value.value(v.get())));
+        this.subscribe(new ConsumerSubscriberRa<>(v -> value.value(v.get())));
         return value.lino();
     }
 
@@ -80,13 +80,13 @@ public abstract class RaSome<T> implements Lira<T> {
 
     @Override
     public void forEachLino(Consumer<Lino<T>> consumer) {
-        this.subscribe(new ConsumerRaSubscriber<>(consumer));
+        this.subscribe(new ConsumerSubscriberRa<>(consumer));
     }
 
 
     @Override
     public void forEach(Consumer<T> consumer) {
-        this.subscribe(new ConsumerRaSubscriber<>((v) -> consumer.accept(v.get())));
+        this.subscribe(new ConsumerSubscriberRa<>((v) -> consumer.accept(v.get())));
     }
 
 
@@ -100,10 +100,10 @@ public abstract class RaSome<T> implements Lira<T> {
 
         LiThrowableConsumer<T> finalConsumer = consumer == null ? t -> {
         } : consumer;
-        this.subscribe(new RaSubscriber<T>() {
+        this.subscribe(new SubscriberRa<T>() {
 
             @Override
-            public void onSubscribe(RaSubscription prevSubscription) {
+            public void onSubscribe(SubscriptionRa prevSubscription) {
                 prevSubscription.request(-1);
 
             }
@@ -128,7 +128,7 @@ public abstract class RaSome<T> implements Lira<T> {
     @Override
     public List<Lino<T>> get() {
         List<Lino<T>> result = new ArrayList<>();
-        this.subscribe(new ConsumerRaSubscriber<>(result::add));
+        this.subscribe(new ConsumerSubscriberRa<>(result::add));
 
         return result;
     }
@@ -142,11 +142,11 @@ public abstract class RaSome<T> implements Lira<T> {
         }
         LiBox<Integer> count = LiBox.of(0);
         LiBox<T> result = LiBox.none();
-        this.subscribe(new RaSubscriber<T>() {
-            private RaSubscription prevSubscription;
+        this.subscribe(new SubscriberRa<T>() {
+            private SubscriptionRa prevSubscription;
 
             @Override
-            public void onSubscribe(RaSubscription prevSubscription) {
+            public void onSubscribe(SubscriptionRa prevSubscription) {
                 this.prevSubscription = prevSubscription;
                 prevSubscription.request(-1);
             }
@@ -172,7 +172,7 @@ public abstract class RaSome<T> implements Lira<T> {
 
         Map<K, V> result = new HashMap<>();
 
-        this.subscribe(new ConsumerRaSubscriber<>(e -> e.map(keyMapping).ifPresent(key -> result.put(key, e.map(valueMapping).get()))));
+        this.subscribe(new ConsumerSubscriberRa<>(e -> e.map(keyMapping).ifPresent(key -> result.put(key, e.map(valueMapping).get()))));
 
         return result;
     }
@@ -180,7 +180,7 @@ public abstract class RaSome<T> implements Lira<T> {
     @Override
     public Lira<T> limit(int n) {
         if (n >= 0) {
-            return new RaLimit<>(this, n);
+            return new LimitRa<>(this, n);
         }
         return this;
     }
@@ -189,20 +189,20 @@ public abstract class RaSome<T> implements Lira<T> {
     public List<T> getRaw() {
 
         List<T> result = new ArrayList<>();
-        this.subscribe(new ConsumerRaSubscriber<>(v -> result.add(v.get())));
+        this.subscribe(new ConsumerSubscriberRa<>(v -> result.add(v.get())));
         return result;
     }
 
     @Override
     public <R> Lira<R> map(Function<? super T, ? extends R> mapping) {
-        return new RaMap<>(this, mapping);
+        return new MapRa<>(this, mapping);
 
     }
 
     @Override
     public Lira<T> skip(int n) {
         if (n > 0) {
-            return new RaSkip<>(this, n);
+            return new SkipRa<>(this, n);
         }
 
         return this;
@@ -223,14 +223,14 @@ public abstract class RaSome<T> implements Lira<T> {
 
     @Override
     public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
-        return new RaThrowableMap<>(this, mapping, LiConstant.getWhenThrow());
+        return new ThrowableMapRa<>(this, mapping, LiConstant.WHEN_THROW);
 
 
     }
 
     @Override
     public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
-        return new RaThrowableMap<>(this, mapping, whenThrow);
+        return new ThrowableMapRa<>(this, mapping, whenThrow);
 
     }
 

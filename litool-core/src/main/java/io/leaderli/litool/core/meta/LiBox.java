@@ -8,7 +8,7 @@ import java.util.Objects;
  * <p>
  * 装箱一个实例，方便在lambda表达式中更新值
  */
-public class LiBox<T> {
+public class LiBox<T> implements LiValue {
 
     private T value;
 
@@ -56,6 +56,16 @@ public class LiBox<T> {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    @Override
+    public boolean present() {
+        return this.value != null;
+    }
+
+    @Override
+    public String name() {
+        return "box";
     }
 
     @Override
