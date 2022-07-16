@@ -90,7 +90,7 @@ public interface LiThen<T, R> extends IfPublisher<T, R> {
          * @see #mapper
          */
         @Override
-        public void next(T t, Function<? super T, Object> predicate) {
+        public void next(T t, Function<? super T, ?> predicate) {
 
             if (t != null && LiBoolUtil.parse(predicate.apply(t))) {
                 this.onComplete(this.mapper.apply(t));

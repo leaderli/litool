@@ -34,7 +34,7 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
      * @return 返回一个可以提供 {@link LiThen#then(Function)} 转换函数的接口类，以方便链式调用。只有当 断言函数返回为true时，才会实际调用 转换函数
      * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
      */
-    default LiThen<T, R> _if(Function<? super T, Object> predicate) {
+    default LiThen<T, R> _if(Function<? super T, ?> predicate) {
 
         return new When<>(this, predicate);
     }
@@ -194,7 +194,7 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
 
 
         @Override
-        public void next(T t, Function<? super T, Object> predicate) {
+        public void next(T t, Function<? super T, ?> predicate) {
 
             this.actualSubscriber.next(t, v -> LiClassUtil.isAssignableFromOrIsWrapper(middleType, v.getClass()));
         }
@@ -204,9 +204,9 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
 
     class When<T, R> implements LiThen<T, R> {
         private final IfPublisher<T, R> prevPublisher;
-        private final Function<? super T, Object> filter;
+        private final Function<? super T, ?> filter;
 
-        public When(IfPublisher<T, R> prevPublisher, Function<? super T, Object> filter) {
+        public When(IfPublisher<T, R> prevPublisher, Function<? super T, ?> filter) {
             this.prevPublisher = prevPublisher;
             this.filter = filter;
         }
@@ -221,9 +221,9 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
     }
 
     class WhenSubscriber<T, R> extends IfMiddleSubscriber<T, R> {
-        private final Function<? super T, Object> predicate;
+        private final Function<? super T, ?> predicate;
 
-        public WhenSubscriber(Function<? super T, Object> predicate, IfSubscriber<T, R> actualSubscriber) {
+        public WhenSubscriber(Function<? super T, ?> predicate, IfSubscriber<T, R> actualSubscriber) {
             super(actualSubscriber);
             this.predicate = predicate;
 
@@ -231,7 +231,7 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
 
 
         @Override
-        public void next(T t, Function<? super T, Object> predicate) {
+        public void next(T t, Function<? super T, ?> predicate) {
 
             this.actualSubscriber.next(t, this.predicate);
         }
@@ -265,7 +265,7 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
 
 
         @Override
-        public void next(T t, Function<? super T, Object> predicate) {
+        public void next(T t, Function<? super T, ?> predicate) {
             if (supplier != null) {
                 onComplete(supplier.get());
             }
@@ -325,7 +325,7 @@ public interface LiIf<T, R> extends IfPublisher<T, R> {
         }
 
         @Override
-        public void next(T t, Function<? super T, Object> predicate) {
+        public void next(T t, Function<? super T, ?> predicate) {
 
             throw new UnsupportedOperationException();
         }

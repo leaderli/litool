@@ -216,19 +216,17 @@ public interface Lino<T> extends LiValue {
      * @param <R> 泛型
      * @return 返回 LiCase 实例
      */
-    <R> LiIf<T, R> toIf();
+    <R> LiIf<? super T, R> toIf();
 
     /**
-     * @param type 类型
      * @param <R>  泛型
+     * @param type 类型
      * @return 根据实际值的类型，将数组或集合转换为 {@link Lira}
      */
-    <R> Lira<R> toLira(Class<R> type);
+    <R> Lira<R> toLira(Class<? extends R> type);
 
 
-    default Lino<? super T> wide() {
-        return this;
-    }
+
 
     final class Some<T> implements Lino<T> {
 
@@ -390,12 +388,12 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> LiIf<T, R> toIf() {
+        public <R> LiIf<? super T, R> toIf() {
             return LiIf.of(this);
         }
 
         @Override
-        public <R> Lira<R> toLira(Class<R> type) {
+        public <R> Lira<R> toLira(Class<? extends R> type) {
             Class<?> valueClass = this.value.getClass();
             if (valueClass.isArray()) {
                 Class<?> componentType = valueClass.getComponentType();
@@ -564,12 +562,12 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> LiIf<T, R> toIf() {
+        public <R> LiIf<? super T, R> toIf() {
             return LiIf.of();
         }
 
         @Override
-        public <R> Lira<R> toLira(Class<R> type) {
+        public <R> Lira<R> toLira(Class<? extends R> type) {
             return Lira.none();
         }
     }

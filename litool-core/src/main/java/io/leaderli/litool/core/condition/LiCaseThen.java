@@ -87,13 +87,13 @@ public interface LiCaseThen<T, M, R> extends IfPublisher<T, R> {
          * 对实际值进行断言，如果满足，值执行转换函数，并将结果保存，并终止执行，
          *
          * @param t         实际值，该值一定 instanceof M
-         * @param predicate 断言函数，此处一定为 {@link io.leaderli.litool.core.condition.LiIf.CaseWhenSubscriber#next(Object, Function)}
+         * @param predicate 断言函数，此处一定为 {@link LiIf.CaseWhenSubscriber#next(Object, Function)}
          * @see #mapper
          * @see LiBoolUtil#parse(Object)
          */
         @SuppressWarnings("unchecked")
         @Override
-        public void next(T t, Function<? super T, Object> predicate) {
+        public void next(T t, Function<? super T, ?> predicate) {
 
             if (t != null && LiBoolUtil.parse(predicate.apply(t))) {
                 this.onComplete(this.mapper.apply((M) t));

@@ -93,10 +93,14 @@ class LiIfTest {
 
         Lino<String[]> strs = Lino.of(new String[]{});
 
-        Object o = strs.map(a -> a.length).toIf()
+
+//        LiIf<? super Integer, ? extends Integer> liIf = strs.map(a -> a.length).toIf();
+//        liIf._case(1).then(()->2);
+        int o = strs.map(a -> a.length).<Integer>toIf()
                 ._case(1).then(1)
                 ._case(2).then(2)
                 ._else(3).get();
+
 
     }
 
