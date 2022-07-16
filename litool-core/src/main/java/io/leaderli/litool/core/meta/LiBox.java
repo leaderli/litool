@@ -41,6 +41,11 @@ public class LiBox<T> implements LiValue {
         return this.value;
     }
 
+    public LiBox<T> reset() {
+        this.value = null;
+        return this;
+    }
+
     public Lino<T> lino() {
         return Lino.of(this.value);
     }

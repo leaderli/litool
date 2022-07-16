@@ -14,8 +14,22 @@ import java.util.Map;
  */
 class LiraTest {
 
+
     @Test
-    public void getIndex() {
+    void debug() {
+
+
+        Lira.of(1, 2)
+                .filter(i -> i > -1)
+                .filter(i -> 5 / (3 - i))
+                .map(i -> {
+                    System.out.println("map");
+                    return i * 10;
+                });
+    }
+
+    @Test
+    void getIndex() {
 
         Assertions.assertEquals(1, Lira.of(1, 2, 3).get(0).get());
         Assertions.assertEquals(2, Lira.of(1, 2, 3).get(1).get());

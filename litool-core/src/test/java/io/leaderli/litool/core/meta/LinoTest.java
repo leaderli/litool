@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
  */
 class LinoTest {
 
+
     @Test
     void narrow() {
         Lino<CharSequence> narrow = Lino.narrow(Lino.<String>of(null));

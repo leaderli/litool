@@ -27,20 +27,6 @@ public interface Lino<T> extends LiValue {
 
 
     /**
-     * @param value 值
-     * @param <T>   泛型
-     * @return 返回一个实例，
-     * 当 {@code value == null} 时返回 {@link #none()}
-     * 否则返回 {@link Some}
-     */
-    static <T> Lino<T> of(T value) {
-        if (value == null) {
-            return none();
-        }
-        return new Some<>(value);
-    }
-
-    /**
      * @param supplier 获取值的提供者函数
      * @param <T>      泛型
      * @return 返回一个实例，
@@ -53,6 +39,21 @@ public interface Lino<T> extends LiValue {
             return none();
         }
         return of(supplier.get());
+    }
+
+
+    /**
+     * @param value 值
+     * @param <T>   泛型
+     * @return 返回一个实例，
+     * 当 {@code value == null} 时返回 {@link #none()}
+     * 否则返回 {@link Some}
+     */
+    static <T> Lino<T> of(T value) {
+        if (value == null) {
+            return none();
+        }
+        return new Some<>(value);
     }
 
     /**
@@ -69,10 +70,6 @@ public interface Lino<T> extends LiValue {
 
     }
 
-    default Lino<? super T> wide() {
-        return this;
-    }
-
     /**
      * @param <T> 泛型
      * @return 返回全局唯一的空 Lino
@@ -82,6 +79,14 @@ public interface Lino<T> extends LiValue {
         return (Lino<T>) None.INSTANCE;
 
     }
+
+    /**
+     * 当为 none 时 直接抛出异常
+     *
+     * @param msg 断言信息
+     * @return this
+     */
+    Lino<T> assertNotNone(String msg);
 
     /**
      * @param type 可转换的类型
@@ -100,13 +105,7 @@ public interface Lino<T> extends LiValue {
      */
     <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType);
 
-    /**
-     * 当为 none 时 直接抛出异常
-     *
-     * @param msg 断言信息
-     * @return this
-     */
-    Lino<T> assertNotNone(String msg);
+
 
     /**
      * @return 通过 {@link LiBoolUtil#parse(Object)} 对 实际值 进行过滤
@@ -142,13 +141,6 @@ public interface Lino<T> extends LiValue {
 
 
     /**
-     * @param consumer 以 Lino 作为参数的消费者
-     * @return this
-     */
-    Lino<T> nest(Consumer<Lino<T>> consumer);
-
-
-    /**
      * @param consumer 当 {@link #present()}  时消费，可能会抛出 {@link RuntimeException}
      * @return this
      * @see RuntimeExceptionTransfer
@@ -176,22 +168,10 @@ public interface Lino<T> extends LiValue {
     <R> Lino<R> map(Function<? super T, ? extends R> mapping);
 
     /**
-     * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)}, 第二个参数传  {@link LiConstant#WHEN_THROW}
-     *
-     * @param mapping 转换函数
-     * @param <R>     转换后的泛型
-     * @return 转换后的 Lino
-     * @see LiConstant#WHEN_THROW
+     * @param consumer 以 Lino 作为参数的消费者
+     * @return this
      */
-    <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping);
-
-    /**
-     * @param mapping   转换函数
-     * @param whenThrow 当转换函数抛出异常时执行的函数
-     * @param <R>       转换后的泛型
-     * @return 转换后的 Lino
-     */
-    <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
+    Lino<T> nest(Consumer<Lino<T>> consumer);
 
 
     /**
@@ -214,6 +194,24 @@ public interface Lino<T> extends LiValue {
     Lino<T> same(T other);
 
     /**
+     * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)}, 第二个参数传  {@link LiConstant#WHEN_THROW}
+     *
+     * @param mapping 转换函数
+     * @param <R>     转换后的泛型
+     * @return 转换后的 Lino
+     * @see LiConstant#WHEN_THROW
+     */
+    <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping);
+
+    /**
+     * @param mapping   转换函数
+     * @param whenThrow 当转换函数抛出异常时执行的函数
+     * @param <R>       转换后的泛型
+     * @return 转换后的 Lino
+     */
+    <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
+
+    /**
      * @param <R> 泛型
      * @return 返回 LiCase 实例
      */
@@ -226,6 +224,10 @@ public interface Lino<T> extends LiValue {
      */
     <R> Lira<R> toLira(Class<R> type);
 
+
+    default Lino<? super T> wide() {
+        return this;
+    }
 
     final class Some<T> implements Lino<T> {
 
@@ -246,14 +248,32 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
+        public int hashCode() {
+            return Objects.hash(value);
+        }
+
+        @Override
         public <R> Lino<R> cast(Class<R> type) {
             return of(LiClassUtil.cast(this.value, type));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Some<?> some = (Some<?>) o;
+            return Objects.equals(value, some.value);
         }
 
         @Override
         public <K, V> Lino<Map<K, V>> cast(Class<K> keyType, Class<V> valueType) {
 
             return cast(Map.class).map(m -> LiClassUtil.filterCanCast(m, keyType, valueType)).filter();
+        }
+
+        @Override
+        public String toString() {
+            return name() + "(" + value + ")";
         }
 
         @Override
@@ -420,23 +440,7 @@ public interface Lino<T> extends LiValue {
             return Lira.of(this.value).cast(type);
         }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(value);
-        }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Some<?> some = (Some<?>) o;
-            return Objects.equals(value, some.value);
-        }
-
-        @Override
-        public String toString() {
-            return name() + "(" + value + ")";
-        }
     }
 
 
