@@ -10,9 +10,9 @@ import java.util.function.Function;
  * @since 2022/7/16
  */
 class FilterSubscriberLink<T> extends IntermediateSubscriberLink<T> {
-    private final Function<? super T, Object> filter;
+    private final Function<? super T, ?> filter;
 
-    public FilterSubscriberLink(SubscriberLink<T> actualSubscriber, Function<? super T, Object> filter) {
+    public FilterSubscriberLink(SubscriberLink<T> actualSubscriber, Function<? super T, ?> filter) {
         super(actualSubscriber);
         this.filter = filter;
     }

@@ -47,7 +47,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @return this
      * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
      */
-    public LiLink<T> then(Function<T, Object> filter) {
+    public LiLink<T> then(Function<? super T, ?> filter) {
         return new FilterLink<>(this, filter);
     }
 
@@ -56,7 +56,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @return this
      * @see #then(Function)
      */
-    public LiLink<T> then(Supplier<Object> supplier) {
+    public LiLink<T> then(Supplier<?> supplier) {
         return new FilterLink<>(this, t -> supplier.get());
     }
 
@@ -94,7 +94,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @return this
      * @see #then(Function)
      */
-    public LiLink<T> throwable_then(LiThrowableFunction<T, Object> filter) {
+    public LiLink<T> throwable_then(LiThrowableFunction<? super T, ?> filter) {
 
         return new FilterLink<>(this, t -> {
             try {
@@ -114,7 +114,7 @@ public abstract class SomeLink<T> implements LiLink<T> {
      * @return this
      * @see #then(Supplier)
      */
-    public LiLink<T> throwable_then(LiThrowableSupplier<Object> filter) {
+    public LiLink<T> throwable_then(LiThrowableSupplier<?> filter) {
         return new FilterLink<>(this, t -> {
             try {
                 return filter.get();

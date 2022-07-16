@@ -12,9 +12,9 @@ public class FilterLink<T> extends SomeLink<T> {
     private final PublisherLink<T> prevPublisher;
 
 
-    private final Function<? super T, Object> filter;
+    private final Function<? super T, ?> filter;
 
-    public FilterLink(PublisherLink<T> prevPublisher, Function<? super T, Object> filter) {
+    public FilterLink(PublisherLink<T> prevPublisher, Function<? super T, ?> filter) {
         this.prevPublisher = prevPublisher;
         this.filter = filter;
     }

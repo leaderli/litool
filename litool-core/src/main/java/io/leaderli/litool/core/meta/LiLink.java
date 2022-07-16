@@ -4,7 +4,9 @@ import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.exception.LiThrowableRunner;
 import io.leaderli.litool.core.exception.LiThrowableSupplier;
-import io.leaderli.litool.core.meta.reactor.*;
+import io.leaderli.litool.core.meta.reactor.CancelConsumerLink;
+import io.leaderli.litool.core.meta.reactor.PublisherLink;
+import io.leaderli.litool.core.meta.reactor.ValueLink;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -47,14 +49,14 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
      */
-    LiLink<T> then(Function<T, Object> filter);
+    LiLink<T> then(Function<? super T, ?> filter);
 
     /**
      * @param supplier 过滤器
      * @return this
      * @see #then(Function)
      */
-    LiLink<T> then(Supplier<Object> supplier);
+    LiLink<T> then(Supplier<?> supplier);
 
     /**
      * 未中断链条时执行，且继续执行下一个节点，该节点不会捕获异常，
@@ -80,7 +82,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see #then(Function)
      */
-    LiLink<T> throwable_then(LiThrowableFunction<T, Object> filter);
+    LiLink<T> throwable_then(LiThrowableFunction<? super T, ?> filter);
 
     /**
      * 当抛出异常时，中断链条执行
@@ -89,7 +91,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see #then(Supplier)
      */
-    LiLink<T> throwable_then(LiThrowableSupplier<Object> filter);
+    LiLink<T> throwable_then(LiThrowableSupplier<?> filter);
 
     /**
      * 当抛出异常时，中断链条执行
