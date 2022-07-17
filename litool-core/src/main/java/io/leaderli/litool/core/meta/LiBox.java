@@ -17,6 +17,10 @@ public class LiBox<T> implements LiValue {
 
     }
 
+    public LiBox(T value) {
+        this.value = value;
+    }
+
     /**
      * @param <T> 泛型
      * @return 返回一个  {@code value = null } 的实例
@@ -27,10 +31,6 @@ public class LiBox<T> implements LiValue {
 
     public static <T> LiBox<T> of(T value) {
         return new LiBox<>(value);
-    }
-
-    public LiBox(T value) {
-        this.value = value;
     }
 
     public void value(T value) {
@@ -51,6 +51,11 @@ public class LiBox<T> implements LiValue {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -59,8 +64,10 @@ public class LiBox<T> implements LiValue {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(value);
+    public String toString() {
+        return "LiBox{" +
+                "value=" + value +
+                '}';
     }
 
     @Override
@@ -71,12 +78,5 @@ public class LiBox<T> implements LiValue {
     @Override
     public String name() {
         return "box";
-    }
-
-    @Override
-    public String toString() {
-        return "LiBox{" +
-                "value=" + value +
-                '}';
     }
 }

@@ -15,8 +15,12 @@ public class SupportTagBuilder<T extends SupportTag> {
         this.pairs = pairs;
     }
 
-    public static <T extends SupportTag> SupportTagBuilder<T> of(LiTupleMap<String, Class<T>> pairs) {
-        return new SupportTagBuilder<>(pairs);
+    public static <T extends SupportTag> LiTupleMap<String, Class<T>> build(LiTupleMap<String, Class<T>> pairs, Class<? extends T> cls) {
+        return of(pairs).add(cls).build();
+    }
+
+    public LiTupleMap<String, Class<T>> build() {
+        return this.pairs;
     }
 
     public SupportTagBuilder<T> add(Class<? extends T> cls) {
@@ -29,11 +33,7 @@ public class SupportTagBuilder<T extends SupportTag> {
         return this;
     }
 
-    public LiTupleMap<String, Class<T>> build() {
-        return this.pairs;
-    }
-
-    public static <T extends SupportTag> LiTupleMap<String, Class<T>> build(LiTupleMap<String, Class<T>> pairs, Class<? extends T> cls) {
-        return of(pairs).add(cls).build();
+    public static <T extends SupportTag> SupportTagBuilder<T> of(LiTupleMap<String, Class<T>> pairs) {
+        return new SupportTagBuilder<>(pairs);
     }
 }

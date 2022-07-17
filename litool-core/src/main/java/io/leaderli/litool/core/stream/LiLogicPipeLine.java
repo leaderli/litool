@@ -5,24 +5,11 @@ import java.util.function.Predicate;
 public class LiLogicPipeLine<T> implements LinterLogicPipeLineSink<T> {
 
 
-    private static class Head<T> extends LiSink<T, Boolean> {
-
-        public Head() {
-            super(null);
-        }
-
-        @Override
-        public Boolean apply(T request, Boolean last) {
-            return next(request, LiPredicateSink.NO_NOT_OPERATION);
-        }
-    }
-
     private LiSink<T, Boolean> liSink;
 
     private LiLogicPipeLine() {
 
     }
-
 
     public static <T> LinterCombineOperationSink<T> begin() {
 
@@ -55,7 +42,6 @@ public class LiLogicPipeLine<T> implements LinterLogicPipeLineSink<T> {
         return this;
     }
 
-
     @Override
     public LinterCombineOperationSink<T> and() {
 
@@ -85,6 +71,18 @@ public class LiLogicPipeLine<T> implements LinterLogicPipeLineSink<T> {
             }
         };
         return this;
+    }
+
+    private static class Head<T> extends LiSink<T, Boolean> {
+
+        public Head() {
+            super(null);
+        }
+
+        @Override
+        public Boolean apply(T request, Boolean last) {
+            return next(request, LiPredicateSink.NO_NOT_OPERATION);
+        }
     }
 
 }

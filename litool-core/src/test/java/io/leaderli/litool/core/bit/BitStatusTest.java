@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 
 /**
  * @author leaderli
@@ -12,13 +11,6 @@ import java.util.Arrays;
  */
 class BitStatusTest {
 
-
-    public interface TestMask {
-
-        int A = 0b1;
-        int B = 0b10;
-        int C = 0b1000;
-    }
 
     @Test
     public void beauty() {
@@ -33,7 +25,7 @@ class BitStatusTest {
         Assertions.assertEquals("A", bitStatus.beauty(1));
         Assertions.assertEquals("", bitStatus.beauty(0));
 
-        Assertions.assertEquals("A",bitStatus.beauty(0b001 | 0b100));
+        Assertions.assertEquals("A", bitStatus.beauty(0b001 | 0b100));
     }
 
     @Test
@@ -44,6 +36,13 @@ class BitStatusTest {
 
 //        System.out.println(Modifier.class.getDeclaredField("BRIDGE").get(null));
 
+    }
+
+    public interface TestMask {
+
+        int A = 0b1;
+        int B = 0b10;
+        int C = 0b1000;
     }
 
 }

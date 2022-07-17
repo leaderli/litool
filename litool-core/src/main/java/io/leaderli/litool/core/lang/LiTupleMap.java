@@ -20,27 +20,14 @@ public class LiTupleMap<K, V> {
 
     private final List<LiTuple2<K, V>> paris = new ArrayList<>();
 
-
-    public static <K, V> LiTupleMap<K, V> of() {
-
-        return new LiTupleMap<>();
-    }
-
     public static <K, V> LiTupleMap<K, V> of(K k, V v) {
         LiTupleMap<K, V> of = of();
         return of.putKeyValue(k, v);
     }
 
-    public Lino<V> getValueByKey(K key) {
+    public static <K, V> LiTupleMap<K, V> of() {
 
-        for (LiTuple2<K, V> tuple : paris) {
-
-            if (Objects.equals(key, tuple._1)) {
-
-                return Lino.of(tuple._2);
-            }
-        }
-        return Lino.none();
+        return new LiTupleMap<>();
     }
 
     public LiTupleMap<K, V> putKeyValue(K key, V value) {
@@ -53,6 +40,18 @@ public class LiTupleMap<K, V> {
 
     public void removeByKey(K key) {
         paris.removeIf(tuple -> Objects.equals(key, tuple._1));
+    }
+
+    public Lino<V> getValueByKey(K key) {
+
+        for (LiTuple2<K, V> tuple : paris) {
+
+            if (Objects.equals(key, tuple._1)) {
+
+                return Lino.of(tuple._2);
+            }
+        }
+        return Lino.none();
     }
 
     public Lino<K> getKeyByValue(V value) {

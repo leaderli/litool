@@ -17,10 +17,6 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
         return of(null);
     }
 
-    static <T, R> LiIf<T, R> of(T value) {
-        return of(Lino.of(value));
-    }
-
     static <T, R> LiIf<T, R> of(Lino<T> lino) {
         if (lino == null) {
             lino = Lino.none();
@@ -28,22 +24,8 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
         return new BeginIf<>(lino);
     }
 
-    /**
-     * @param predicate 断言函数
-     * @return 返回一个可以提供 {@link LiThen#then(Function)} 转换函数的接口类，以方便链式调用。只有当 断言函数返回为true时，才会实际调用 转换函数
-     * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
-     */
-    default LiThen<T, R> _if(Function<? super T, ?> predicate) {
-
-        return new IfThen<>(this, predicate);
-    }
-
-    /**
-     * @param compare 当值 equals 时执行
-     * @return {@link #_if(Function)}
-     */
-    default LiThen<T, R> _case(T compare) {
-        return new IfThen<>(this, v -> v.equals(compare));
+    static <T, R> LiIf<T, R> of(T value) {
+        return of(Lino.of(value));
     }
 
     /**
@@ -77,17 +59,13 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
         return _case(compare).then(mapping);
     }
 
-
     /**
-     * @param type 当  值 instanceof type 时执行
-     * @param <M>  type 的泛型
-     * @return {@code  LiCaseThen<T, M, R>}
-     * @see LiInstanceOfThen
+     * @param compare 当值 equals 时执行
+     * @return {@link #_if(Function)}
      */
-    default <M> LiInstanceOfThen<T, M, R> _instanceof(Class<? extends M> type) {
-        return new IfInstanceOfThen<>(this, type);
+    default LiThen<T, R> _case(T compare) {
+        return new IfThen<>(this, v -> v.equals(compare));
     }
-
 
     /**
      * @param type    当  值 instanceof type 时执行
@@ -104,6 +82,16 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
     }
 
     /**
+     * @param type 当  值 instanceof type 时执行
+     * @param <M>  type 的泛型
+     * @return {@code  LiCaseThen<T, M, R>}
+     * @see LiInstanceOfThen
+     */
+    default <M> LiInstanceOfThen<T, M, R> _instanceof(Class<? extends M> type) {
+        return new IfInstanceOfThen<>(this, type);
+    }
+
+    /**
      * @param predicate 断言函数
      * @param mapping   转换函数
      * @return {@code _if(predicate).then(mapper)}
@@ -115,6 +103,15 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
         return _if(predicate).then(mapping);
     }
 
+    /**
+     * @param predicate 断言函数
+     * @return 返回一个可以提供 {@link LiThen#then(Function)} 转换函数的接口类，以方便链式调用。只有当 断言函数返回为true时，才会实际调用 转换函数
+     * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
+     */
+    default LiThen<T, R> _if(Function<? super T, ?> predicate) {
+
+        return new IfThen<>(this, predicate);
+    }
 
     /**
      * 当原数据为 null 时，则所有前置条件都不执行断言，直接执行 runnable
@@ -134,6 +131,14 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
     }
 
     /**
+     * @param value 当所有前置断言全部失败时的默认值
+     * @return {@link #_else(Supplier)}
+     */
+    default Lino<R> _else(R value) {
+        return _else(() -> value);
+    }
+
+    /**
      * 当原数据为 null 时，则所有前置条件都不执行断言，直接使用默认值提供者
      *
      * @param supplier 当所有前置断言全部失败时的默认值提供者
@@ -148,14 +153,6 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
     }
 
     /**
-     * @param value 当所有前置断言全部失败时的默认值
-     * @return {@link #_else(Supplier)}
-     */
-    default Lino<R> _else(R value) {
-        return _else(() -> value);
-    }
-
-    /**
      * else 不做任何动作，仅用于触发函数调用
      *
      * @return {@link #_else(Supplier)} 传递参数为 null
@@ -163,8 +160,6 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
     default Lino<R> _else() {
         return _else((Supplier<? extends R>) null);
     }
-
-
 
 
     /**

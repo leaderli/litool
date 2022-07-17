@@ -1,9 +1,9 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.meta.condition.LiIf;
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
+import io.leaderli.litool.core.meta.condition.LiIf;
 import io.leaderli.litool.core.type.LiClassUtil;
 import io.leaderli.litool.core.type.LiPrimitive;
 import io.leaderli.litool.core.util.LiBoolUtil;
@@ -41,6 +41,15 @@ public interface Lino<T> extends LiValue {
         return of(supplier.get());
     }
 
+    /**
+     * @param <T> 泛型
+     * @return 返回全局唯一的空 Lino
+     */
+    @SuppressWarnings("unchecked")
+    static <T> Lino<T> none() {
+        return (Lino<T>) None.INSTANCE;
+
+    }
 
     /**
      * @param value 值
@@ -67,17 +76,6 @@ public interface Lino<T> extends LiValue {
     static <T> Lino<T> narrow(Lino<? extends T> value) {
 
         return (Lino<T>) value;
-
-    }
-
-
-    /**
-     * @param <T> 泛型
-     * @return 返回全局唯一的空 Lino
-     */
-    @SuppressWarnings("unchecked")
-    static <T> Lino<T> none() {
-        return (Lino<T>) None.INSTANCE;
 
     }
 
@@ -226,8 +224,6 @@ public interface Lino<T> extends LiValue {
     <R> Lira<R> toLira(Class<? extends R> type);
 
 
-
-
     final class Some<T> implements Lino<T> {
 
         private final T value;
@@ -252,22 +248,11 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> Lino<R> cast(Class<? extends R> type) {
-            return of(LiClassUtil.cast(this.value, type));
-        }
-
-        @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Some<?> some = (Some<?>) o;
             return Objects.equals(value, some.value);
-        }
-
-        @Override
-        public <K, V> Lino<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType) {
-
-            return cast(Map.class).map(m -> LiClassUtil.<K, V>filterCanCast(m, keyType, valueType)).filter();
         }
 
         @Override
@@ -278,6 +263,17 @@ public interface Lino<T> extends LiValue {
         @Override
         public Lino<T> assertNotNone(String msg) {
             return this;
+        }
+
+        @Override
+        public <R> Lino<R> cast(Class<? extends R> type) {
+            return of(LiClassUtil.cast(this.value, type));
+        }
+
+        @Override
+        public <K, V> Lino<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType) {
+
+            return cast(Map.class).map(m -> LiClassUtil.<K, V>filterCanCast(m, keyType, valueType)).filter();
         }
 
         @Override
@@ -315,12 +311,6 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
-            consumer.accept(this);
-            return this;
-        }
-
-        @Override
         public Lino<T> ifThrowablePresent(LiThrowableConsumer<? super T> consumer) {
             RuntimeExceptionTransfer.accept(consumer, this.value);
             return this;
@@ -352,21 +342,9 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
-            return throwable_map(mapping, LiConstant.WHEN_THROW);
-        }
-
-        @Override
-        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
-            try {
-
-                return of(mapping.apply(this.value));
-            } catch (Throwable throwable) {
-                if (whenThrow != null) {
-                    whenThrow.accept(throwable);
-                }
-            }
-            return none();
+        public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
+            consumer.accept(this);
+            return this;
         }
 
         @Override
@@ -383,6 +361,24 @@ public interface Lino<T> extends LiValue {
         public Lino<T> same(T other) {
             if (this.value.equals(other)) {
                 return this;
+            }
+            return none();
+        }
+
+        @Override
+        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
+            return throwable_map(mapping, LiConstant.WHEN_THROW);
+        }
+
+        @Override
+        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
+            try {
+
+                return of(mapping.apply(this.value));
+            } catch (Throwable throwable) {
+                if (whenThrow != null) {
+                    whenThrow.accept(throwable);
+                }
             }
             return none();
         }
@@ -466,6 +462,11 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
+        public Lino<T> assertNotNone(String msg) {
+            throw new IllegalStateException(msg);
+        }
+
+        @Override
         public <R> Lino<R> cast(Class<? extends R> type) {
             return none();
         }
@@ -473,11 +474,6 @@ public interface Lino<T> extends LiValue {
         @Override
         public <K, V> Lino<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType) {
             return none();
-        }
-
-        @Override
-        public Lino<T> assertNotNone(String msg) {
-            throw new IllegalStateException(msg);
         }
 
         @Override
@@ -511,11 +507,6 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
-            return this;
-        }
-
-        @Override
         public Lino<T> ifThrowablePresent(LiThrowableConsumer<? super T> consumer) {
             return this;
         }
@@ -537,13 +528,8 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
-            return none();
-        }
-
-        @Override
-        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
-            return none();
+        public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
+            return this;
         }
 
         @Override
@@ -559,6 +545,16 @@ public interface Lino<T> extends LiValue {
         @Override
         public Lino<T> same(T other) {
             return this;
+        }
+
+        @Override
+        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
+            return none();
+        }
+
+        @Override
+        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
+            return none();
         }
 
         @Override

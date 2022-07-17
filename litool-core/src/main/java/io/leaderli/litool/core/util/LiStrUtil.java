@@ -123,15 +123,6 @@ public class LiStrUtil {
     }
 
     /**
-     * @param str 字符串
-     * @return 获取字符串的长度
-     */
-    public static int length(String str) {
-
-        return str == null ? 0 : str.length();
-    }
-
-    /**
      * @param str       字符串
      * @param chunkSize 切割子字符串的长度
      * @return 将字符串每隔  chunkSize 位 插入一个空格
@@ -145,12 +136,13 @@ public class LiStrUtil {
 
     }
 
-    public static String join(String delimiter, Iterable<?> elements) {
+    /**
+     * @param str 字符串
+     * @return 获取字符串的长度
+     */
+    public static int length(String str) {
 
-
-        StringJoiner joiner = new StringJoiner(Lino.of(delimiter).get(" "));
-        Lira.of(elements).getRaw().stream().map(String::valueOf).forEach(joiner::add);
-        return joiner.toString();
+        return str == null ? 0 : str.length();
     }
 
     /**
@@ -161,6 +153,20 @@ public class LiStrUtil {
     public static String join(String delimiter, Object... elements) {
 
         return join(delimiter, Lino.of(elements).map(Arrays::asList).get());
+    }
+
+    public static String join(String delimiter, Iterable<?> elements) {
+
+
+        StringJoiner joiner = new StringJoiner(Lino.of(delimiter).get(" "));
+        Lira.of(elements).getRaw().stream().map(String::valueOf).forEach(joiner::add);
+        return joiner.toString();
+    }
+
+    public static String localMessageAtLineOfClass(Throwable throwable, Class<?> threwClass) {
+
+        return localMessageStartWith(throwable, threwClass.getName());
+
     }
 
     public static String localMessageStartWith(Throwable throwable, String prefix) {
@@ -188,32 +194,8 @@ public class LiStrUtil {
         return "";
     }
 
-    public static String localMessageAtLineOfClass(Throwable throwable, Class<?> threwClass) {
-
-        return localMessageStartWith(throwable, threwClass.getName());
-
-    }
-
     public static String localMessageAtLineOfPackage(Throwable throwable, Package _package) {
         return localMessageStartWith(throwable, _package.getName());
-    }
-
-
-    private static boolean endsWith(final CharSequence str, final CharSequence suffix, final boolean ignoreCase) {
-        if (str == null || suffix == null) {
-            return str == null && suffix == null;
-        }
-        if (suffix.length() > str.length()) {
-            return false;
-        }
-        final int strOffset = str.length() - suffix.length();
-
-
-        return LiCharSequenceUtils.regionMatches(str, ignoreCase, strOffset, suffix, 0, suffix.length());
-    }
-
-    public static boolean endsWith(final CharSequence str, final CharSequence suffix) {
-        return endsWith(str, suffix, false);
     }
 
     public static boolean endsWithAny(final CharSequence sequence, final CharSequence... searchStrings) {
@@ -226,6 +208,23 @@ public class LiStrUtil {
             }
         }
         return false;
+    }
+
+    public static boolean endsWith(final CharSequence str, final CharSequence suffix) {
+        return endsWith(str, suffix, false);
+    }
+
+    private static boolean endsWith(final CharSequence str, final CharSequence suffix, final boolean ignoreCase) {
+        if (str == null || suffix == null) {
+            return str == null && suffix == null;
+        }
+        if (suffix.length() > str.length()) {
+            return false;
+        }
+        final int strOffset = str.length() - suffix.length();
+
+
+        return LiCharSequenceUtils.regionMatches(str, ignoreCase, strOffset, suffix, 0, suffix.length());
     }
 
 

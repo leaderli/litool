@@ -18,15 +18,7 @@ public class LiRandomUtil {
      */
     public static int nextInt() {
 
-        return RANDOM.nextInt( Integer.MAX_VALUE);
-    }
-
-    /**
-     * @param max 上边界
-     * @return 返回 0 ~ max，包括 0
-     */
-    public static int nextInt(final int max) {
-        return RANDOM.nextInt(max);
+        return RANDOM.nextInt(Integer.MAX_VALUE);
     }
 
     /**
@@ -44,6 +36,14 @@ public class LiRandomUtil {
         }
 
         return min + nextInt(max - min);
+    }
+
+    /**
+     * @param max 上边界
+     * @return 返回 0 ~ max，包括 0
+     */
+    public static int nextInt(final int max) {
+        return RANDOM.nextInt(max);
     }
 
 }

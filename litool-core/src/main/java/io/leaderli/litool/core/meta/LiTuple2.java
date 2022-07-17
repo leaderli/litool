@@ -78,21 +78,6 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
         };
     }
 
-    @SuppressWarnings("unchecked")
-    private static <U1 extends Comparable<? super U1>, U2 extends Comparable<? super U2>> int compareTo(LiTuple2<?, ?> o1, LiTuple2<?, ?> o2) {
-        final LiTuple2<U1, U2> t1 = (LiTuple2<U1, U2>) o1;
-        final LiTuple2<U1, U2> t2 = (LiTuple2<U1, U2>) o2;
-
-        final int check1 = t1._1.compareTo(t2._1);
-        if (check1 != 0) {
-            return check1;
-        }
-
-        return t1._2.compareTo(t2._2);
-
-        // all components are equal
-    }
-
     @Override
     public int arity() {
         return 2;
@@ -106,6 +91,21 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     @Override
     public int compareTo(LiTuple2<T1, T2> that) {
         return LiTuple2.compareTo(this, that);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <U1 extends Comparable<? super U1>, U2 extends Comparable<? super U2>> int compareTo(LiTuple2<?, ?> o1, LiTuple2<?, ?> o2) {
+        final LiTuple2<U1, U2> t1 = (LiTuple2<U1, U2>) o1;
+        final LiTuple2<U1, U2> t2 = (LiTuple2<U1, U2>) o2;
+
+        final int check1 = t1._1.compareTo(t2._1);
+        if (check1 != 0) {
+            return check1;
+        }
+
+        return t1._2.compareTo(t2._2);
+
+        // all components are equal
     }
 
     /**
@@ -242,6 +242,11 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     // -- Object
 
     @Override
+    public int hashCode() {
+        return LiTuple.hash(_1, _2);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) {
             return true;
@@ -252,11 +257,6 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
             return Objects.equals(this._1, that._1)
                     && Objects.equals(this._2, that._2);
         }
-    }
-
-    @Override
-    public int hashCode() {
-        return LiTuple.hash(_1, _2);
     }
 
     @Override

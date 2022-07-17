@@ -19,21 +19,6 @@ public class LiConstant {
      */
     public static Consumer<Throwable> WHEN_THROW = Throwable::printStackTrace;
 
-
-    /**
-     * 恢复默认异常处理
-     */
-    public static void reset() {
-        WHEN_THROW = Throwable::printStackTrace;
-    }
-
-    /**
-     * 清除异常处理
-     */
-    public static void clear() {
-        WHEN_THROW = null;
-    }
-
     public static void accept(Throwable e) {
 
         if (WHEN_THROW != null) {
@@ -53,5 +38,19 @@ public class LiConstant {
         runnable.run();
         reset();
 
+    }
+
+    /**
+     * 清除异常处理
+     */
+    public static void clear() {
+        WHEN_THROW = null;
+    }
+
+    /**
+     * 恢复默认异常处理
+     */
+    public static void reset() {
+        WHEN_THROW = Throwable::printStackTrace;
     }
 }

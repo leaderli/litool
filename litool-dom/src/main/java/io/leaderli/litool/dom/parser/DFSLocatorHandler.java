@@ -56,26 +56,16 @@ public class DFSLocatorHandler<T extends SaxBean> extends LocatorDefaultHandler 
 //
 //        }
 
-    //        private void populateProperties(SaxBean saxBean, Attributes attributes) {
-//            // 将当前 saxBean 压栈，以供后续的深度遍历使用
-//            stack.push(saxBean);
-//            //填充属性值
-//            for (int i = 0; i < attributes.getLength(); i++) {
-//                String name = attributes.getQName(i);
-//                String value = attributes.getValue(i);
-//                startAttribute(name, value);
-//
-//            }
-//
-//
-//        }
-    boolean isSpaceOnly(String bodyStr) {
-        String bodyTrimmed = bodyStr.trim();
-        return (bodyTrimmed.length() == 0);
-    }
+    @Override
+    public void endElement(String uri, String localName, String qName) {
 
-    Lino<BodyEvent> getLastEvent() {
-        return Lira.of(saxEventList).first().cast(BodyEvent.class);
+        saxEventList.add(new EndEvent(locator, qName));
+
+        // 当前层级遍历完成，弹栈，回到上一层
+//            SaxBean pop = stack.pop();
+//            if (!stack.isEmpty()) {
+//                stack.peek().add(pop);
+//            }
     }
 
     @Override
@@ -99,16 +89,26 @@ public class DFSLocatorHandler<T extends SaxBean> extends LocatorDefaultHandler 
                 .ifPresent(body -> body.append(trim));
     }
 
-    @Override
-    public void endElement(String uri, String localName, String qName) {
-
-        saxEventList.add(new EndEvent(locator, qName));
-
-        // 当前层级遍历完成，弹栈，回到上一层
-//            SaxBean pop = stack.pop();
-//            if (!stack.isEmpty()) {
-//                stack.peek().add(pop);
+    //        private void populateProperties(SaxBean saxBean, Attributes attributes) {
+//            // 将当前 saxBean 压栈，以供后续的深度遍历使用
+//            stack.push(saxBean);
+//            //填充属性值
+//            for (int i = 0; i < attributes.getLength(); i++) {
+//                String name = attributes.getQName(i);
+//                String value = attributes.getValue(i);
+//                startAttribute(name, value);
+//
 //            }
+//
+//
+//        }
+    boolean isSpaceOnly(String bodyStr) {
+        String bodyTrimmed = bodyStr.trim();
+        return (bodyTrimmed.length() == 0);
+    }
+
+    Lino<BodyEvent> getLastEvent() {
+        return Lira.of(saxEventList).first().cast(BodyEvent.class);
     }
 
     public List<SaxEvent> getSaxEventList() {

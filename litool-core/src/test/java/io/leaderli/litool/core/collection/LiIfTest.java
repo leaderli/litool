@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.collection;
 
-import io.leaderli.litool.core.meta.condition.LiIf;
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.condition.LiIf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

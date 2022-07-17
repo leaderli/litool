@@ -37,20 +37,6 @@ public class LiPrimitive {
         return ZERO_VALUE.get(type).get();
     }
 
-
-    @SuppressWarnings("all")
-    private static class PrimitiveValue {
-        public static byte BYTE;
-        public static boolean BOOLEAN;
-        public static char CHAR;
-        public static double DOUBLE;
-        public static float FLOAT;
-        public static long LONG;
-        public static int INT;
-        public static short SHORT;
-    }
-
-
     public static Byte[] toWrapperArray(byte[] arr) {
 
         Byte[] result = (Byte[]) Array.newInstance(Byte.class, arr.length);
@@ -129,6 +115,18 @@ public class LiPrimitive {
             result[i] = arr[i];
         }
         return result;
+    }
+
+    @SuppressWarnings("all")
+    private static class PrimitiveValue {
+        public static byte BYTE;
+        public static boolean BOOLEAN;
+        public static char CHAR;
+        public static double DOUBLE;
+        public static float FLOAT;
+        public static long LONG;
+        public static int INT;
+        public static short SHORT;
     }
 
 }

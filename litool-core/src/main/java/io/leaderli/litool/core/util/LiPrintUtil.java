@@ -27,6 +27,17 @@ public class LiPrintUtil {
     }
 
     /**
+     * 快速打印多个参数值，使用 delimiter 分割，为了避免和 {@link #print(Object...)} 冲突，第一个参数使用 box 包装一下
+     *
+     * @param delimiter 分隔符
+     * @param args      参数
+     */
+    private static void print0(String delimiter, Iterable<?> args) {
+
+        System.out.println(LiStrUtil.join(Lino.of(delimiter).get(" "), args));
+    }
+
+    /**
      * 快速打印多个参数值，使用空格分割
      *
      * @param args 参数
@@ -36,16 +47,6 @@ public class LiPrintUtil {
 
         print0(null, Arrays.asList(args));
 
-    }
-
-    /**
-     * 快速打印多个参数值，默认使用空格分割
-     *
-     * @param delimiter 分割符
-     * @param args      参数
-     */
-    public static void print0(String delimiter, Object... args) {
-        System.out.println(LiStrUtil.join(Lino.of(delimiter).get(" "), args));
     }
 
     /**
@@ -71,13 +72,12 @@ public class LiPrintUtil {
     }
 
     /**
-     * 快速打印多个参数值，使用 delimiter 分割，为了避免和 {@link #print(Object...)} 冲突，第一个参数使用 box 包装一下
+     * 快速打印多个参数值，默认使用空格分割
      *
-     * @param delimiter 分隔符
+     * @param delimiter 分割符
      * @param args      参数
      */
-    private static void print0(String delimiter, Iterable<?> args) {
-
+    public static void print0(String delimiter, Object... args) {
         System.out.println(LiStrUtil.join(Lino.of(delimiter).get(" "), args));
     }
 

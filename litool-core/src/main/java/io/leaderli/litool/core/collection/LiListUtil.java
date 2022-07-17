@@ -35,6 +35,14 @@ public class LiListUtil {
 
     }
 
+    /**
+     * @param <T> 泛型
+     * @return 返回一个空的 ArrayList
+     */
+    public static <T> List<T> emptyList() {
+
+        return new ArrayList<>();
+    }
 
     @SafeVarargs
     public static List<List<Object>> cartesianProduct(List<Object>... elements) {
@@ -66,7 +74,6 @@ public class LiListUtil {
         return x;
     }
 
-
     /**
      * @param originalArray 数组
      * @return 如果 originalArray 不是数组 返回 null , 如果 数组是基础类型的数组，则返回其包装类，其他则进行强转
@@ -88,15 +95,5 @@ public class LiListUtil {
         }
 
         return array;
-    }
-
-
-    /**
-     * @param <T> 泛型
-     * @return 返回一个空的 ArrayList
-     */
-    public static <T> List<T> emptyList() {
-
-        return new ArrayList<>();
     }
 }

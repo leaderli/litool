@@ -11,11 +11,11 @@ import java.util.function.BiConsumer;
  * @since 2022/6/27
  */
 public class BiConsumerSubscriberRa<T> implements SubscriberRa<T> {
-    private SubscriptionRa prevSubscription;
     /**
      * 该消费者仅保留 {@link CancelSubscriptionRa#cancel()} 操作，不允许使用 {@link SubscriptionRa#request()}
      */
     private final BiConsumer<? super Lino<T>, CancelSubscriptionRa> consumer;
+    private SubscriptionRa prevSubscription;
 
     public BiConsumerSubscriberRa(BiConsumer<? super Lino<T>, CancelSubscriptionRa> consumer) {
         if (consumer == null) {

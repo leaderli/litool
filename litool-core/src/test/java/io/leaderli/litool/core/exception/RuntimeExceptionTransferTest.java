@@ -3,8 +3,6 @@ package io.leaderli.litool.core.exception;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * @author leaderli
  * @since 2022/6/16

@@ -8,7 +8,6 @@ public interface SubscriptionRa extends CancelSubscriptionRa {
 
     /**
      * 请求数据
-     *
      */
     void request();
 

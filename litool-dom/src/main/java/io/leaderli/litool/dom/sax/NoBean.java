@@ -8,8 +8,4 @@ public class NoBean extends SaxBean {
     public String name;
 
 
-
-
-
-
 }

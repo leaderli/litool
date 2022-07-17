@@ -18,34 +18,6 @@ class LiReflectUtilTest {
 
     }
 
-    public static class Bean {
-
-        public String name = "bean";
-        private int age = 80;
-
-
-        @Override
-        public String toString() {
-            return "Bean{" +
-                    "name='" + name + '\'' +
-                    ", age=" + age +
-                    '}';
-        }
-    }
-
-    public static class LittleBean extends Bean {
-        private String name = "little";
-        public int age = 8;
-
-        @Override
-        public String toString() {
-            return "LittleBean{" +
-                    "name='" + name + '\'' +
-                    ", age=" + age +
-                    '}';
-        }
-    }
-
     @Test
     void getField() {
 
@@ -61,7 +33,6 @@ class LiReflectUtilTest {
         }).get());
         Assertions.assertEquals(8, LiReflectUtil.getField(LittleBean.class, "age", true).throwable_map(f -> f.get(littleBean)).get());
     }
-
 
     @SuppressWarnings("JavaReflectionMemberAccess")
     @Test
@@ -116,5 +87,33 @@ class LiReflectUtilTest {
         Assertions.assertFalse(LiReflectUtil.setFieldValue(littleBean, Lino.Some.class.getDeclaredField("value"), "hello"));
 
 
+    }
+
+    public static class Bean {
+
+        public String name = "bean";
+        private int age = 80;
+
+
+        @Override
+        public String toString() {
+            return "Bean{" +
+                    "name='" + name + '\'' +
+                    ", age=" + age +
+                    '}';
+        }
+    }
+
+    public static class LittleBean extends Bean {
+        public int age = 8;
+        private String name = "little";
+
+        @Override
+        public String toString() {
+            return "LittleBean{" +
+                    "name='" + name + '\'' +
+                    ", age=" + age +
+                    '}';
+        }
     }
 }

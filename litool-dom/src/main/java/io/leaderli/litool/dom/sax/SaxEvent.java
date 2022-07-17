@@ -19,14 +19,13 @@ public class SaxEvent {
         this.name = name;
     }
 
-
-    protected String description() {
-        return name;
-    }
-
     @Override
     public String toString() {
 
         return String.format("%s(%s)%d,%d", this.getClass().getSimpleName(), this.description(), locator.getLineNumber(), locator.getColumnNumber());
+    }
+
+    protected String description() {
+        return name;
     }
 }

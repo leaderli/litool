@@ -15,7 +15,7 @@ class LiRandomUtilTest {
 
         Assertions.assertSame(0, LiRandomUtil.nextInt(1));
         Assertions.assertTrue(LiRandomUtil.nextInt() >= 0);
-        Assertions.assertSame(1, LiRandomUtil.nextInt(1,1));
-        Assertions.assertSame(1, LiRandomUtil.nextInt(1,2));
+        Assertions.assertSame(1, LiRandomUtil.nextInt(1, 1));
+        Assertions.assertSame(1, LiRandomUtil.nextInt(1, 2));
     }
 }

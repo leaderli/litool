@@ -19,7 +19,8 @@ public interface SubscriberIf<T, R> {
 
     /**
      * 发布者推送了一个消息
-     *  @param t         源数据
+     *
+     * @param t         源数据
      * @param predicate 断言函数
      */
     void next(T t, Function<? super T, ?> predicate);

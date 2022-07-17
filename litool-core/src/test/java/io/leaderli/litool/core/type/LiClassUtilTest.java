@@ -185,28 +185,6 @@ class LiClassUtilTest {
         });
     }
 
-    public interface Fuck extends Function<String, Integer> {
-        @Override
-        Integer apply(String s);
-    }
-
-    public static class Proxy {
-
-        public Integer apply(String s) {
-            return Integer.valueOf(s);
-        }
-
-        public Object apply(Object s) {
-            return s;
-        }
-
-    }
-
-    interface MyFunction {
-
-        Integer apply(String value);
-    }
-
     @Test
     void addInterface() {
 
@@ -220,6 +198,28 @@ class LiClassUtilTest {
         MyFunction function = LiClassUtil.addInterface(MyFunction.class, new Proxy());
 
         Assertions.assertSame(123, function.apply("123"));
+
+    }
+
+    public interface Fuck extends Function<String, Integer> {
+        @Override
+        Integer apply(String s);
+    }
+
+    interface MyFunction {
+
+        Integer apply(String value);
+    }
+
+    public static class Proxy {
+
+        public Integer apply(String s) {
+            return Integer.valueOf(s);
+        }
+
+        public Object apply(Object s) {
+            return s;
+        }
 
     }
 

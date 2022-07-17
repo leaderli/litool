@@ -27,6 +27,16 @@ public class LiDomUtil {
     @SuppressWarnings("java:S106")
     private static final PrintStream LOGGER = System.out;
 
+    public static DOMElement getDOMRootByPath(String path) throws DocumentException {
+        return (DOMElement) getDOMDocumentByPath(path).getRootElement();
+
+    }
+
+    public static DOMDocument getDOMDocumentByPath(String path) throws DocumentException {
+        return (DOMDocument) getSAXReader().read(LiDomUtil.class.getResourceAsStream(path));
+
+    }
+
     private static SAXReader getSAXReader() {
         SAXReader saxReader = new SAXReader(DOMDocumentFactory.getInstance(), false);
         try {
@@ -37,8 +47,8 @@ public class LiDomUtil {
         return saxReader;
     }
 
-    public static DOMDocument getDOMDocumentByPath(String path) throws DocumentException {
-        return (DOMDocument) getSAXReader().read(LiDomUtil.class.getResourceAsStream(path));
+    public static DOMElement getDOMRootByInputStream(InputStream inputStream) throws DocumentException {
+        return (DOMElement) getDOMDocumentByInputStream(inputStream).getRootElement();
 
     }
 
@@ -47,24 +57,13 @@ public class LiDomUtil {
 
     }
 
-    public static DOMDocument getDOMDocumentByString(String xml) throws DocumentException {
-        return (DOMDocument) getSAXReader().read(new StringReader(xml));
-
-    }
-
-
-    public static DOMElement getDOMRootByPath(String path) throws DocumentException {
-        return (DOMElement) getDOMDocumentByPath(path).getRootElement();
-
-    }
-
-    public static DOMElement getDOMRootByInputStream(InputStream inputStream) throws DocumentException {
-        return (DOMElement) getDOMDocumentByInputStream(inputStream).getRootElement();
-
-    }
-
     public static DOMElement getDOMRootByString(String xml) throws DocumentException {
         return (DOMElement) getDOMDocumentByString(xml).getRootElement();
+
+    }
+
+    public static DOMDocument getDOMDocumentByString(String xml) throws DocumentException {
+        return (DOMDocument) getSAXReader().read(new StringReader(xml));
 
     }
 

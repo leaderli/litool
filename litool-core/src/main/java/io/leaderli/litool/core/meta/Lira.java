@@ -18,6 +18,8 @@ import java.util.stream.Stream;
 public interface Lira<T> extends LiValue, PublisherRa<T> {
 
 
+    Lira<?> NONE = new ArrayRa<>(Collections.emptyIterator());
+
     /**
      * @param value 值
      * @param <T>   泛型
@@ -47,15 +49,13 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     }
 
     /**
-     * @param iterator 迭代器
-     * @param <T>      迭代器泛型
-     * @return 返回一个新的实例
+     * @param <T> 泛型
+     * @return 返回全局唯一的空 Lira
      */
-    static <T> Lira<T> of(Iterator<? extends T> iterator) {
-        if (iterator == null || !iterator.hasNext()) {
-            return none();
-        }
-        return new ArrayRa<>(iterator);
+    @SuppressWarnings("unchecked")
+    static <T> Lira<T> none() {
+        return (Lira<T>) NONE;
+
     }
 
     /**
@@ -70,17 +70,16 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
         return of(iterable.iterator());
     }
 
-
-    Lira<?> NONE = new ArrayRa<>(Collections.emptyIterator());
-
     /**
-     * @param <T> 泛型
-     * @return 返回全局唯一的空 Lira
+     * @param iterator 迭代器
+     * @param <T>      迭代器泛型
+     * @return 返回一个新的实例
      */
-    @SuppressWarnings("unchecked")
-    static <T> Lira<T> none() {
-        return (Lira<T>) NONE;
-
+    static <T> Lira<T> of(Iterator<? extends T> iterator) {
+        if (iterator == null || !iterator.hasNext()) {
+            return none();
+        }
+        return new ArrayRa<>(iterator);
     }
 
     /**
@@ -151,17 +150,11 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     Lira<T> limit(int n);
 
     /**
-     * @return 返回被 lino 包裹的实际元素的一个新的 list
-     */
-    List<T> getRaw();
-
-    /**
      * @param mapping 转换函数
      * @param <R>     转换后的泛型
      * @return 转换后的 Lira
      */
     <R> Lira<R> map(Function<? super T, ? extends R> mapping);
-
 
     /**
      * @param n 跳过多少个元素
@@ -187,14 +180,12 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      */
     <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
 
-
     /**
      * @param others 数组
      * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(other)}
      */
     @SuppressWarnings("unchecked")
     Lira<T> or(T... others);
-
 
     /**
      * @param others 数组
@@ -207,7 +198,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(other)}
      */
     Lira<T> or(Iterable<? extends T> others);
-
 
     /**
      * @return 返回底层元素的数量
@@ -229,6 +219,11 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     default Stream<T> stream() {
         return getRaw().stream();
     }
+
+    /**
+     * @return 返回被 lino 包裹的实际元素的一个新的 list
+     */
+    List<T> getRaw();
 
     default T[] toArray(Class<? extends T> type) {
         return getRaw().toArray((T[]) LiClassUtil.newArray(type, 0));

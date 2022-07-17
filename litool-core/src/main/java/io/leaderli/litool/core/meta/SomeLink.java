@@ -250,6 +250,11 @@ public abstract class SomeLink<T> implements LiLink<T> {
     }
 
     @Override
+    public String name() {
+        return "link";
+    }
+
+    @Override
     public LiLink<T> request(final T t) {
         return new NewRequestLink<>(this, t);
     }
@@ -270,11 +275,6 @@ public abstract class SomeLink<T> implements LiLink<T> {
     @Override
     public void run() {
         present();
-    }
-
-    @Override
-    public String name() {
-        return "link";
     }
 
 

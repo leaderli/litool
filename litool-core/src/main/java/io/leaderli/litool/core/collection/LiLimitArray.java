@@ -31,6 +31,24 @@ public class LiLimitArray<T> {
     }
 
     /**
+     * @param t 元素
+     * @return 元素是否存在
+     * <p>
+     * 当  {@code t == null} 时 返回 false
+     */
+    public boolean contains(T t) {
+        if (t == null) {
+            return false;
+        }
+        for (int i = 0; i < size; i++) {
+            if (t.equals(data[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 删除查找到的元素，同时将右边所有元素左移一位
      *
      * @param t 需要删除的元素
@@ -56,24 +74,6 @@ public class LiLimitArray<T> {
             System.arraycopy(data, index + 1, data, index,
                     numMoved);
         data[size - 1] = null;
-    }
-
-    /**
-     * @param t 元素
-     * @return 元素是否存在
-     * <p>
-     * 当  {@code t == null} 时 返回 false
-     */
-    public boolean contains(T t) {
-        if (t == null) {
-            return false;
-        }
-        for (int i = 0; i < size; i++) {
-            if (t.equals(data[i])) {
-                return true;
-            }
-        }
-        return false;
     }
 
 

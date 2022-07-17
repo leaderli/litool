@@ -52,6 +52,12 @@ public class LiLogicPipeLineTest {
 
     }
 
+    @Test
+    public void test2() {
+        assert !MyLiLogicPipeLine.instance().test(str -> true).and().test(str -> false).apply("1");
+        assert !MyLiLogicPipeLine.instance().len(1).and().len(2).apply("1");
+        assert MyLiLogicPipeLine.instance().len(1).or().len(2).apply("1");
+    }
 
     private interface MyLinterPredicateSink extends LinterPredicateSink<String> {
         MyLinterCombineOperationSink and();
@@ -70,9 +76,9 @@ public class LiLogicPipeLineTest {
         MyLinterOperationSink not();
     }
 
+
     private interface MyLinterCombineOperationSink extends MyLinterOperationSink, MyLinterNotOperationSink, LinterCombineOperationSink<String> {
     }
-
 
     private interface MyLinterLogicPipeLineSink extends MyLinterCombineOperationSink, MyLinterPredicateSink {
 
@@ -110,12 +116,6 @@ public class LiLogicPipeLineTest {
         }
 
         @Override
-        public MyLinterPredicateSink test(Predicate<String> predicate) {
-            proxy.test(predicate);
-            return this;
-        }
-
-        @Override
         public Boolean apply(String s) {
             return proxy.apply(s);
         }
@@ -126,14 +126,12 @@ public class LiLogicPipeLineTest {
             return this;
         }
 
+        @Override
+        public MyLinterPredicateSink test(Predicate<String> predicate) {
+            proxy.test(predicate);
+            return this;
+        }
 
-    }
 
-
-    @Test
-    public void test2() {
-        assert !MyLiLogicPipeLine.instance().test(str -> true).and().test(str -> false).apply("1");
-        assert !MyLiLogicPipeLine.instance().len(1).and().len(2).apply("1");
-        assert MyLiLogicPipeLine.instance().len(1).or().len(2).apply("1");
     }
 }

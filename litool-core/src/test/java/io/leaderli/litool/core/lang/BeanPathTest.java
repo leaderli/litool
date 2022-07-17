@@ -20,27 +20,26 @@ class BeanPathTest {
     public void test() {
 
 
+        Assertions.assertThrows(BeanPath.BeginIllegalStateException.class, () -> BeanPath.parse(null, "."));
+        Assertions.assertThrows(BeanPath.BeginIllegalStateException.class, () -> BeanPath.parse(null, "["));
+        Assertions.assertThrows(BeanPath.BeginIllegalStateException.class, () -> BeanPath.parse(null, "]"));
 
-        Assertions.assertThrows(BeanPath.BeginIllegalStateException.class, () -> BeanPath.parse(null,"."));
-        Assertions.assertThrows(BeanPath.BeginIllegalStateException.class, () ->  BeanPath.parse(null,"["));
-        Assertions.assertThrows(BeanPath.BeginIllegalStateException.class, () ->  BeanPath.parse(null,"]"));
+        Assertions.assertThrows(BeanPath.KeyEndIllegalStateException.class, () -> BeanPath.parse(null, "abc.."));
+        Assertions.assertThrows(BeanPath.KeyEndIllegalStateException.class, () -> BeanPath.parse(null, "abc.["));
+        Assertions.assertThrows(BeanPath.KeyEndIllegalStateException.class, () -> BeanPath.parse(null, "abc.]"));
 
-        Assertions.assertThrows(BeanPath.KeyEndIllegalStateException.class, () ->  BeanPath.parse(null,"abc.."));
-        Assertions.assertThrows(BeanPath.KeyEndIllegalStateException.class, () ->  BeanPath.parse(null,"abc.["));
-        Assertions.assertThrows(BeanPath.KeyEndIllegalStateException.class, () ->  BeanPath.parse(null,"abc.]"));
+        Assertions.assertThrows(BeanPath.ArrayEndIllegalStateException.class, () -> BeanPath.parse(null, "a[1]]"));
+        Assertions.assertThrows(BeanPath.ArrayEndIllegalStateException.class, () -> BeanPath.parse(null, "a[1]a"));
 
-        Assertions.assertThrows(BeanPath.ArrayEndIllegalStateException.class, () ->  BeanPath.parse(null,"a[1]]"));
-        Assertions.assertThrows(BeanPath.ArrayEndIllegalStateException.class, () ->  BeanPath.parse(null,"a[1]a"));
+        Assertions.assertThrows(BeanPath.NotCompleteIllegalStateException.class, () -> BeanPath.parse(null, "a."));
+        Assertions.assertThrows(BeanPath.NotCompleteIllegalStateException.class, () -> BeanPath.parse(null, "a["));
+        Assertions.assertThrows(BeanPath.NotCompleteIllegalStateException.class, () -> BeanPath.parse(null, "a[1"));
 
-        Assertions.assertThrows(BeanPath.NotCompleteIllegalStateException.class, () ->  BeanPath.parse(null,"a."));
-        Assertions.assertThrows(BeanPath.NotCompleteIllegalStateException.class, () ->  BeanPath.parse(null,"a["));
-        Assertions.assertThrows(BeanPath.NotCompleteIllegalStateException.class, () ->  BeanPath.parse(null,"a[1"));
-
-        Assertions.assertDoesNotThrow(() ->  BeanPath.parse(null,"a"));
-        Assertions.assertDoesNotThrow(() ->  BeanPath.parse(null,"a.1"));
-        Assertions.assertDoesNotThrow(() ->  BeanPath.parse(null,"a[1]"));
-        Assertions.assertDoesNotThrow(() ->  BeanPath.parse(null,"a[1][1]"));
-        Assertions.assertDoesNotThrow(() ->  BeanPath.parse(null,"a[1].b"));
+        Assertions.assertDoesNotThrow(() -> BeanPath.parse(null, "a"));
+        Assertions.assertDoesNotThrow(() -> BeanPath.parse(null, "a.1"));
+        Assertions.assertDoesNotThrow(() -> BeanPath.parse(null, "a[1]"));
+        Assertions.assertDoesNotThrow(() -> BeanPath.parse(null, "a[1][1]"));
+        Assertions.assertDoesNotThrow(() -> BeanPath.parse(null, "a[1].b"));
 
 
         Map<String, Object> origin = new HashMap<>();

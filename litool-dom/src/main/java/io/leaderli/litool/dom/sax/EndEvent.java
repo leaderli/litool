@@ -12,5 +12,4 @@ public class EndEvent extends SaxEvent {
     }
 
 
-
 }

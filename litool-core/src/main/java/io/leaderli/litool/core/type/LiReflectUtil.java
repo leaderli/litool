@@ -105,32 +105,6 @@ public class LiReflectUtil {
     }
 
     /**
-     * @param obj   查找的实例
-     * @param field 查找的属性
-     * @param value 设置的值
-     * @return 返回是否成功修改值
-     */
-    public static boolean setFieldValue(Object obj, Field field, Object value) {
-
-        if (obj == null) {
-            return false;
-        }
-        return Lino.of(field).throwable_map(f -> {
-
-            if (!f.isAccessible()) {
-                f.setAccessible(true);
-                f.set(obj, value);
-                f.setAccessible(false);
-            } else {
-                f.set(obj, value);
-            }
-            // 执行到此，说明未抛出异常，则可以表明赋值成功
-            return true;
-        }).present();
-
-    }
-
-    /**
      * onlyCurrentClass = false
      *
      * @param obj   查找的实例
@@ -158,6 +132,32 @@ public class LiReflectUtil {
         return Lino.of(obj)
                 .map(o -> getField(obj.getClass(), name, onlyCurrentClass).get())
                 .map(f -> setFieldValue(obj, f, value)).get(false);
+
+    }
+
+    /**
+     * @param obj   查找的实例
+     * @param field 查找的属性
+     * @param value 设置的值
+     * @return 返回是否成功修改值
+     */
+    public static boolean setFieldValue(Object obj, Field field, Object value) {
+
+        if (obj == null) {
+            return false;
+        }
+        return Lino.of(field).throwable_map(f -> {
+
+            if (!f.isAccessible()) {
+                f.setAccessible(true);
+                f.set(obj, value);
+                f.setAccessible(false);
+            } else {
+                f.set(obj, value);
+            }
+            // 执行到此，说明未抛出异常，则可以表明赋值成功
+            return true;
+        }).present();
 
     }
 }

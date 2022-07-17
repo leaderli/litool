@@ -60,16 +60,6 @@ public final class LiTuple1<T1> implements LiTuple, Comparable<LiTuple1<T1>>, Se
         };
     }
 
-    @SuppressWarnings("unchecked")
-    private static <U1 extends Comparable<? super U1>> int compareTo(LiTuple1<?> o1, LiTuple1<?> o2) {
-        final LiTuple1<U1> t1 = (LiTuple1<U1>) o1;
-        final LiTuple1<U1> t2 = (LiTuple1<U1>) o2;
-
-        return t1._1.compareTo(t2._1);
-
-        // all components are equal
-    }
-
     @Override
     public int arity() {
         return 1;
@@ -83,6 +73,16 @@ public final class LiTuple1<T1> implements LiTuple, Comparable<LiTuple1<T1>>, Se
     @Override
     public int compareTo(LiTuple1<T1> that) {
         return LiTuple1.compareTo(this, that);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <U1 extends Comparable<? super U1>> int compareTo(LiTuple1<?> o1, LiTuple1<?> o2) {
+        final LiTuple1<U1> t1 = (LiTuple1<U1>) o1;
+        final LiTuple1<U1> t2 = (LiTuple1<U1>) o2;
+
+        return t1._1.compareTo(t2._1);
+
+        // all components are equal
     }
 
     /**
@@ -154,6 +154,10 @@ public final class LiTuple1<T1> implements LiTuple, Comparable<LiTuple1<T1>>, Se
         return LiTuple.of(_1, tuple._1);
     }
 
+    @Override
+    public int hashCode() {
+        return LiTuple.hash(_1);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -165,11 +169,6 @@ public final class LiTuple1<T1> implements LiTuple, Comparable<LiTuple1<T1>>, Se
             final LiTuple1<?> that = (LiTuple1<?>) o;
             return Objects.equals(this._1, that._1);
         }
-    }
-
-    @Override
-    public int hashCode() {
-        return LiTuple.hash(_1);
     }
 
     @Override

@@ -53,14 +53,6 @@ public class LiBoolUtil {
     }
 
     /**
-     * @param value 数值
-     * @return 返回数值不为0
-     */
-    public static boolean parse(Number value) {
-        return value.byteValue() != 0;
-    }
-
-    /**
      * @param value {@link LiValue}
      * @return {@link LiValue#present()}
      */
@@ -75,7 +67,6 @@ public class LiBoolUtil {
     public static boolean parse(Boolean value) {
         return value;
     }
-
 
     /**
      * @param iterable {@link Iterable#iterator()}
@@ -93,12 +84,19 @@ public class LiBoolUtil {
         return iterator.hasNext();
     }
 
-
     /**
      * @param map {@link Map}
      * @return map 的 集合不为空
      */
     public static boolean parse(Map<?, ?> map) {
         return !map.isEmpty();
+    }
+
+    /**
+     * @param value 数值
+     * @return 返回数值不为0
+     */
+    public static boolean parse(Number value) {
+        return value.byteValue() != 0;
     }
 }

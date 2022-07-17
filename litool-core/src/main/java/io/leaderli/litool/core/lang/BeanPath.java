@@ -27,6 +27,7 @@ public class BeanPath {
 
 
     private final int start_state;
+    private final List<Function<Lino<Object>, Lino<Object>>> path = new ArrayList<>();
 
     public BeanPath() {
 
@@ -40,35 +41,12 @@ public class BeanPath {
 
     }
 
-    public static class BeginIllegalStateException extends IllegalStateException {
+    public static Lino<Object> parse(Map<String, ?> obj, String expression) {
 
-        public BeginIllegalStateException() {
-            super("expression cannot start with  '.','[',']' ");
-        }
+        BeanPath beanPath = new BeanPath();
+        beanPath.build(expression);
+        return beanPath.parse(obj);
     }
-
-    public static class KeyEndIllegalStateException extends IllegalStateException {
-
-        public KeyEndIllegalStateException() {
-            super("expression after . cannot union with  '.','[',']' ");
-        }
-    }
-
-    public static class ArrayEndIllegalStateException extends IllegalStateException {
-
-        public ArrayEndIllegalStateException() {
-            super("expression after ] only can union with  '.','[' ");
-        }
-    }
-
-    public static class NotCompleteIllegalStateException extends IllegalStateException {
-
-        public NotCompleteIllegalStateException() {
-            super("expression is not complete");
-        }
-    }
-
-    private final List<Function<Lino<Object>, Lino<Object>>> path = new ArrayList<>();
 
     /**
      * @param expression key 的表达式
@@ -77,6 +55,21 @@ public class BeanPath {
 
         //noinspection unchecked
         build(expression, new Function[]{});
+    }
+
+    /**
+     * @param map 数据源
+     * @return 根据 {@link #path} 找到的数据
+     */
+    public Lino<Object> parse(Map<String, ?> map) {
+        Lino<Object> of = Lino.of(map);
+
+        for (Function<Lino<Object>, Lino<Object>> linoLinoFunction : path) {
+
+            of = linoLinoFunction.apply(of);
+        }
+
+        return of;
     }
 
     /**
@@ -221,33 +214,39 @@ public class BeanPath {
         path.add(filterWrapper);
     }
 
-    /**
-     * @param map 数据源
-     * @return 根据 {@link #path} 找到的数据
-     */
-    public Lino<Object> parse(Map<String, ?> map) {
-        Lino<Object> of = Lino.of(map);
-
-        for (Function<Lino<Object>, Lino<Object>> linoLinoFunction : path) {
-
-            of = linoLinoFunction.apply(of);
-        }
-
-        return of;
-    }
-
-    public static Lino<Object> parse(Map<String, ?> obj, String expression) {
-
-        BeanPath beanPath = new BeanPath();
-        beanPath.build(expression);
-        return beanPath.parse(obj);
-    }
-
     @SafeVarargs
     public static Lino<Object> parse(Map<String, ?> obj, String expression, Function<Lino<?>, Lino<?>>... filters) {
 
         BeanPath beanPath = new BeanPath();
         beanPath.build(expression, filters);
         return beanPath.parse(obj);
+    }
+
+    public static class BeginIllegalStateException extends IllegalStateException {
+
+        public BeginIllegalStateException() {
+            super("expression cannot start with  '.','[',']' ");
+        }
+    }
+
+    public static class KeyEndIllegalStateException extends IllegalStateException {
+
+        public KeyEndIllegalStateException() {
+            super("expression after . cannot union with  '.','[',']' ");
+        }
+    }
+
+    public static class ArrayEndIllegalStateException extends IllegalStateException {
+
+        public ArrayEndIllegalStateException() {
+            super("expression after ] only can union with  '.','[' ");
+        }
+    }
+
+    public static class NotCompleteIllegalStateException extends IllegalStateException {
+
+        public NotCompleteIllegalStateException() {
+            super("expression is not complete");
+        }
     }
 }

@@ -21,15 +21,6 @@ public class LiMethodUtil {
 
         return getSameSignatureMethod(method, Lino.of(obj).map(Object::getClass));
     }
-    /**
-     * @param method 源方法
-     * @param type    查找的类型
-     * @return 返回 type 中 同名、参数类型相同，返回类型的方法，且必须是 public 方法
-     */
-    public static Lino<Method> getSameSignatureMethod(Method method, Class<?> type) {
-
-        return getSameSignatureMethod(method, Lino.of(type));
-    }
 
     private static Lino<Method> getSameSignatureMethod(Method origin, Lino<Class<?>> type) {
 
@@ -39,5 +30,15 @@ public class LiMethodUtil {
                 .filter(m -> origin.getName().equals(m.getName()))
                 .filter(m -> Arrays.equals(m.getParameterTypes(), origin.getParameterTypes()))
                 .first();
+    }
+
+    /**
+     * @param method 源方法
+     * @param type   查找的类型
+     * @return 返回 type 中 同名、参数类型相同，返回类型的方法，且必须是 public 方法
+     */
+    public static Lino<Method> getSameSignatureMethod(Method method, Class<?> type) {
+
+        return getSameSignatureMethod(method, Lino.of(type));
     }
 }

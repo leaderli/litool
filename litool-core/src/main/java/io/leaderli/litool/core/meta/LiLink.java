@@ -152,6 +152,8 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     @Override
     boolean present();
 
+    @Override
+    String name();
 
     Runnable request(T t);
 
@@ -168,9 +170,6 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      */
     @Override
     void run();
-
-    @Override
-    String name();
 
 
 }

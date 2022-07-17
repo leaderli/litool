@@ -26,10 +26,6 @@ public class LiIoUtil {
         return (new ByteArrayInputStream(string.getBytes(DEFAULT_CHARACTER_ENCODING)));
     }
 
-    public static InputStream getResourceAsStream(String path) {
-        return LiIoUtil.class.getResourceAsStream(path);
-    }
-
     public static Lira<File> getResourcesFile(FileFilter fileFilter) {
 
         return Lino.of(LiIoUtil.class.getResource("/"))
@@ -56,6 +52,10 @@ public class LiIoUtil {
                     return lines;
                 }).or(HashMap::new)
                 .get();
+    }
+
+    public static InputStream getResourceAsStream(String path) {
+        return LiIoUtil.class.getResourceAsStream(path);
     }
 
 

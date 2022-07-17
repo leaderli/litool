@@ -11,10 +11,6 @@ public class Bean extends SaxBean {
     public String version = "0";
 
 
-
-
-
-
     @Override
     public LiTupleMap<String, Class<SaxBean>> support() {
         return SupportTagBuilder.build(LiTupleMap.of(), Bean.class);

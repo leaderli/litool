@@ -66,24 +66,6 @@ public class LiClassUtil {
 
     /**
      * @param cls 需要转换的 class
-     * @return 返回其包装类 class ，当类是数组 class 时，返回其包装数组 class ，例如 {@code int[].class --> Integer.class }
-     */
-    public static Class<?> primitiveToWrapper(final Class<?> cls) {
-        Class<?> convertedClass = cls;
-        if (cls != null) {
-
-            if (cls.isPrimitive()) {
-                convertedClass = PRIMITIVE_WRAPPER_MAP.get(cls);
-            } else if (cls.isArray()) {
-                convertedClass = Array.newInstance(cls.getComponentType(), 0).getClass();
-
-            }
-        }
-        return convertedClass;
-    }
-
-    /**
-     * @param cls 需要转换的 class
      * @return 返回其基础类 class ，当类是数组 class 时，返回其基础数组 class ，例如 {@code Integer[].class --> int.class }
      */
     public static Class<?> wrapperToPrimitive(final Class<?> cls) {
@@ -104,36 +86,13 @@ public class LiClassUtil {
     }
 
     /**
-     * @param father 父类或包装类
-     * @param son    子类或包装类
-     * @return {@code son} 是否继承或等于或是包装类 {@code father}，需要注意的是 数组类型的基础类型与包装类无法进行互相 cast
+     * @param type class 类型
+     * @return 获取 class 类 的数组类 class
      */
-    public static boolean isAssignableFromOrIsWrapper(Class<?> father, Class<?> son) {
+    public static Class<?> getArrayClass(Class<?> type) {
 
 
-        if (father != null && son != null) {
-
-            if (father.isArray()) {
-
-                if (son.isArray()) {
-
-                    //对于数组，基础类型的数组无法进行强转,所以这里不能将 基础类型 视作可以继承自其包装类
-                    father = father.getComponentType();
-                    son = son.getComponentType();
-                    if (father.isPrimitive() || son.isPrimitive()) {
-                        return father == son;
-                    }
-                    return father.isAssignableFrom(son);
-                }
-            } else {
-
-                if (father.isAssignableFrom(son)) {
-                    return true;
-                }
-                return primitiveToWrapper(son) == primitiveToWrapper(father);
-            }
-        }
-        return false;
+        return Array.newInstance(type, 0).getClass();
     }
 
     /**
@@ -170,38 +129,23 @@ public class LiClassUtil {
         return (T[]) Array.newInstance(primitiveToWrapper(componentType), length);
     }
 
-
     /**
-     * @param type class 类型
-     * @return 获取 class 类 的数组类 class
+     * @param cls 需要转换的 class
+     * @return 返回其包装类 class ，当类是数组 class 时，返回其包装数组 class ，例如 {@code int[].class --> Integer.class }
      */
-    public static Class<?> getArrayClass(Class<?> type) {
+    public static Class<?> primitiveToWrapper(final Class<?> cls) {
+        Class<?> convertedClass = cls;
+        if (cls != null) {
 
+            if (cls.isPrimitive()) {
+                convertedClass = PRIMITIVE_WRAPPER_MAP.get(cls);
+            } else if (cls.isArray()) {
+                convertedClass = Array.newInstance(cls.getComponentType(), 0).getClass();
 
-        return Array.newInstance(type, 0).getClass();
-    }
-
-    /**
-     * @param obj      实例
-     * @param castType 强转后的 class 类型
-     * @param <T>      泛型
-     * @return 强转后的实例，如果实例无法进行强转将会返回 null，对于基础类型因为泛型的缘故，会返回其包装类型，基础类型数组 还是会直接返回基础类型数组
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T cast(Object obj, Class<T> castType) {
-
-        if (obj == null || castType == null) {
-            return null;
+            }
         }
-
-        if (isAssignableFromOrIsWrapper(castType, obj.getClass())) {
-
-            return (T) obj;
-        }
-
-        return null;
+        return convertedClass;
     }
-
 
     /**
      * @param map       An map object
@@ -230,6 +174,59 @@ public class LiClassUtil {
                 ));
     }
 
+    /**
+     * @param obj      实例
+     * @param castType 强转后的 class 类型
+     * @param <T>      泛型
+     * @return 强转后的实例，如果实例无法进行强转将会返回 null，对于基础类型因为泛型的缘故，会返回其包装类型，基础类型数组 还是会直接返回基础类型数组
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T cast(Object obj, Class<T> castType) {
+
+        if (obj == null || castType == null) {
+            return null;
+        }
+
+        if (isAssignableFromOrIsWrapper(castType, obj.getClass())) {
+
+            return (T) obj;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param father 父类或包装类
+     * @param son    子类或包装类
+     * @return {@code son} 是否继承或等于或是包装类 {@code father}，需要注意的是 数组类型的基础类型与包装类无法进行互相 cast
+     */
+    public static boolean isAssignableFromOrIsWrapper(Class<?> father, Class<?> son) {
+
+
+        if (father != null && son != null) {
+
+            if (father.isArray()) {
+
+                if (son.isArray()) {
+
+                    //对于数组，基础类型的数组无法进行强转,所以这里不能将 基础类型 视作可以继承自其包装类
+                    father = father.getComponentType();
+                    son = son.getComponentType();
+                    if (father.isPrimitive() || son.isPrimitive()) {
+                        return father == son;
+                    }
+                    return father.isAssignableFrom(son);
+                }
+            } else {
+
+                if (father.isAssignableFrom(son)) {
+                    return true;
+                }
+                return primitiveToWrapper(son) == primitiveToWrapper(father);
+            }
+        }
+        return false;
+    }
 
     /**
      * @param _interface 一个不含泛型的接口

@@ -14,16 +14,9 @@ public class LiTypeMap {
 
     private final Map<Class<?>, Object> proxy = new HashMap<>();
 
-    public <T> T put(Class<T> type, T value) {
-        proxy.put(LiClassUtil.primitiveToWrapper(type), value);
-        return value;
-    }
-
-
     public <T> Lino<T> computeIfAbsent(Class<T> type, Supplier<T> supplier) {
         return get(type).or(() -> put(type, supplier.get()));
     }
-
 
     @SuppressWarnings("unchecked")
     public <T> Lino<T> get(Class<T> type) {
@@ -31,6 +24,10 @@ public class LiTypeMap {
         return Lino.of((T) proxy.get(LiClassUtil.primitiveToWrapper(type)));
     }
 
+    public <T> T put(Class<T> type, T value) {
+        proxy.put(LiClassUtil.primitiveToWrapper(type), value);
+        return value;
+    }
 
     public <T> void remove(Class<T> type) {
         this.proxy.remove(type);

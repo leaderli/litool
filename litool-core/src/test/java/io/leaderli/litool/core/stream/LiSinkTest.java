@@ -28,8 +28,7 @@ public class LiSinkTest {
         }
 
 
-
-        assertFalse( prev.request("hello"));
+        assertFalse(prev.request("hello"));
 
 
     }

@@ -23,6 +23,10 @@ public abstract class IntermediateSubscriberLink<T> implements SubscriberLink<T>
         actualSubscriber.onSubscribe(this);
     }
 
+    @Override
+    public void onCancel(Lino<T> lino) {
+        this.actualSubscriber.onCancel(lino);
+    }
 
     @Override
     public void request() {
@@ -32,10 +36,5 @@ public abstract class IntermediateSubscriberLink<T> implements SubscriberLink<T>
     @Override
     public void request(T t) {
         this.prevSubscription.request(t);
-    }
-
-    @Override
-    public void onCancel(Lino<T> lino) {
-        this.actualSubscriber.onCancel(lino);
     }
 }

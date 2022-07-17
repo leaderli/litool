@@ -10,32 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LiDomUtilTest {
 
 
-    private static class Visitor {
-        void visit(DOMElement dom) {
-
-        }
-
-        void visit(String text) {
-
-        }
-    }
-
-    private static class MyDom {
-
-        private final DOMElement dom;
-
-        public MyDom(DOMElement dom) {
-            this.dom = dom;
-        }
-
-        void accept(Visitor visitor) {
-
-            visitor.visit(dom);
-            LiDomUtil.selectNodes(dom).forEach(child -> new MyDom(child).accept(visitor));
-            visitor.visit(dom.getTextTrim());
-        }
-    }
-
     @Test
     public void test() throws DocumentException {
         DOMElement dom = LiDomUtil.getDOMRootByPath("/test1.xml");
@@ -91,5 +65,31 @@ public class LiDomUtilTest {
                 "</test>", LiDomUtil.pretty(dom));
 
         LiDomUtil.prettyPrint(dom);
+    }
+
+    private static class Visitor {
+        void visit(DOMElement dom) {
+
+        }
+
+        void visit(String text) {
+
+        }
+    }
+
+    private static class MyDom {
+
+        private final DOMElement dom;
+
+        public MyDom(DOMElement dom) {
+            this.dom = dom;
+        }
+
+        void accept(Visitor visitor) {
+
+            visitor.visit(dom);
+            LiDomUtil.selectNodes(dom).forEach(child -> new MyDom(child).accept(visitor));
+            visitor.visit(dom.getTextTrim());
+        }
     }
 }

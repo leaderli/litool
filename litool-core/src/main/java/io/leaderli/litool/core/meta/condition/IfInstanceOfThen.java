@@ -8,8 +8,7 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/7/17
  */
-public
-class IfInstanceOfThen<T, M, R> implements LiInstanceOfThen<T, M, R> {
+public class IfInstanceOfThen<T, M, R> implements LiInstanceOfThen<T, M, R> {
     private final PublisherIf<T, R> prevPublisher;
     private final Class<? extends M> middleType;
 

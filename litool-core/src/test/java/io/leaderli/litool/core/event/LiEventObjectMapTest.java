@@ -5,26 +5,6 @@ import org.junit.jupiter.api.Test;
 
 public class LiEventObjectMapTest {
 
-    private static class TempEventObject extends LiEventObject<String> {
-
-        public TempEventObject(String source) {
-            super(source);
-        }
-    }
-
-    private static class Temp implements ILiEventListener<TempEventObject> {
-
-        @Override
-        public void listen(TempEventObject source) {
-
-        }
-
-        @Override
-        public Class<TempEventObject> componentType() {
-            return TempEventObject.class;
-        }
-    }
-
     @Test
     void test() {
 
@@ -63,6 +43,26 @@ public class LiEventObjectMapTest {
         Assertions.assertEquals(1, liEventMap.get(TempEventObject.class).size());
 
 
+    }
+
+    private static class TempEventObject extends LiEventObject<String> {
+
+        public TempEventObject(String source) {
+            super(source);
+        }
+    }
+
+    private static class Temp implements ILiEventListener<TempEventObject> {
+
+        @Override
+        public void listen(TempEventObject source) {
+
+        }
+
+        @Override
+        public Class<TempEventObject> componentType() {
+            return TempEventObject.class;
+        }
     }
 
 

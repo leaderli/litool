@@ -42,18 +42,6 @@ public interface LiTuple {
     int MAX_ARITY = 2;
 
     /**
-     * Returns the number of elements of this tuple.
-     *
-     * @return the number of elements.
-     */
-    int arity();
-
-    /**
-     * @return 是否包含 null 值
-     */
-    boolean notIncludeNull();
-
-    /**
      * Creates a {@code Tuple2} from a {@link Map.Entry}.
      *
      * @param <T1>  Type of first component (entry key)
@@ -90,17 +78,6 @@ public interface LiTuple {
         return new LiTuple2<>(t1, t2);
     }
 
-
-    /**
-     * Return the order-dependent hash of the one given value.
-     *
-     * @param o1 the 1st value to hash
-     * @return the same result as {@link Objects#hashCode(Object)}
-     */
-    static int hash(Object o1) {
-        return Objects.hashCode(o1);
-    }
-
     /**
      * Return the order-dependent hash of the two given values.
      *
@@ -115,6 +92,15 @@ public interface LiTuple {
         return result;
     }
 
+    /**
+     * Return the order-dependent hash of the one given value.
+     *
+     * @param o1 the 1st value to hash
+     * @return the same result as {@link Objects#hashCode(Object)}
+     */
+    static int hash(Object o1) {
+        return Objects.hashCode(o1);
+    }
 
     /**
      * Narrows a widened {@code Tuple1<? extends T1>} to {@code Tuple1<T1>}.
@@ -142,6 +128,18 @@ public interface LiTuple {
     static <T1, T2> LiTuple2<T1, T2> narrow(LiTuple2<? extends T1, ? extends T2> t) {
         return (LiTuple2<T1, T2>) t;
     }
+
+    /**
+     * Returns the number of elements of this tuple.
+     *
+     * @return the number of elements.
+     */
+    int arity();
+
+    /**
+     * @return 是否包含 null 值
+     */
+    boolean notIncludeNull();
 
 
 }

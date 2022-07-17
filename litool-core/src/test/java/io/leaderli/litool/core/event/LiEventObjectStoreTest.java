@@ -6,13 +6,57 @@ import org.junit.jupiter.api.Test;
 public class LiEventObjectStoreTest {
 
 
+    @Test
+    void getPublisher() {
+
+
+        LiEventBus eventStore = new LiEventBus();
+
+        eventStore.registerListener(new TestLiEventListener());
+        eventStore.registerListener(new TestLiEventListener2());
+
+        Assertions.assertThrows(AssertionError.class, () -> {
+
+            eventStore.push(new TestLiEventObject("456"));
+            eventStore.push(null);
+        });
+
+    }
+
+    @Test
+    void test1() {
+
+        LiEventBus liEventBus = new LiEventBus();
+
+        TempListener listener = new TempListener(true);
+        Assertions.assertEquals(0, listener.count);
+        liEventBus.registerListener(listener);
+        liEventBus.push(new TestLiEventObject("123"));
+        Assertions.assertEquals(1, listener.count);
+        liEventBus.push(new TestLiEventObject("123"));
+        Assertions.assertEquals(1, listener.count);
+    }
+
+    @Test
+    void test2() {
+        LiEventBus liEventBus = new LiEventBus();
+
+
+        TempListener listener = new TempListener(false);
+        Assertions.assertEquals(0, listener.count);
+        liEventBus.registerListener(listener);
+        liEventBus.push(new TestLiEventObject("123"));
+        Assertions.assertEquals(1, listener.count);
+        liEventBus.push(new TestLiEventObject("123"));
+        Assertions.assertEquals(2, listener.count);
+    }
+
     private static class TestLiEventObject extends LiEventObject<String> {
 
         public TestLiEventObject(String source) {
             super(source);
         }
     }
-
 
     private static class TestLiEventListener implements ILiEventListener<TestLiEventObject> {
 
@@ -28,7 +72,6 @@ public class LiEventObjectStoreTest {
             return TestLiEventObject.class;
         }
     }
-
 
     @SuppressWarnings("all")
     private static class TestLiEventListener2 implements ILiEventListener<TestLiEventObject> {
@@ -62,24 +105,6 @@ public class LiEventObjectStoreTest {
         }
     }
 
-
-    @Test
-    void getPublisher() {
-
-
-        LiEventBus eventStore = new LiEventBus();
-
-        eventStore.registerListener(new TestLiEventListener());
-        eventStore.registerListener(new TestLiEventListener2());
-
-        Assertions.assertThrows(AssertionError.class, () -> {
-
-            eventStore.push(new TestLiEventObject("456"));
-            eventStore.push(null);
-        });
-
-    }
-
     static class TempListener implements ILiEventListener<TestLiEventObject> {
 
         int count;
@@ -108,35 +133,6 @@ public class LiEventObjectStoreTest {
         public boolean removeIf() {
             return remove;
         }
-    }
-
-
-    @Test
-    void test1() {
-
-        LiEventBus liEventBus = new LiEventBus();
-
-        TempListener listener = new TempListener(true);
-        Assertions.assertEquals(0, listener.count);
-        liEventBus.registerListener(listener);
-        liEventBus.push(new TestLiEventObject("123"));
-        Assertions.assertEquals(1, listener.count);
-        liEventBus.push(new TestLiEventObject("123"));
-        Assertions.assertEquals(1, listener.count);
-    }
-
-    @Test
-    void test2() {
-        LiEventBus liEventBus = new LiEventBus();
-
-
-        TempListener listener = new TempListener(false);
-        Assertions.assertEquals(0, listener.count);
-        liEventBus.registerListener(listener);
-        liEventBus.push(new TestLiEventObject("123"));
-        Assertions.assertEquals(1, listener.count);
-        liEventBus.push(new TestLiEventObject("123"));
-        Assertions.assertEquals(2, listener.count);
     }
 
 

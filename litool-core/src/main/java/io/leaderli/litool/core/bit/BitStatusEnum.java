@@ -62,11 +62,14 @@ public enum BitStatusEnum {
         this.value = 1 << index;
     }
 
+    public static Map<Integer, BitStatusEnum> getBitStatusMap() {
+        return Arrays.stream(values()).collect(Collectors.toMap(bit -> bit.value, bit -> bit));
+    }
+
     @Override
     public String toString() {
         return LiStrUtil.split(LiStrUtil.ljust(Integer.toBinaryString(value), 32, "0"), 4);
     }
-
 
     /**
      * @param status 状态
@@ -74,9 +77,5 @@ public enum BitStatusEnum {
      */
     public boolean match(int status) {
         return (status & this.value) == this.value;
-    }
-
-    public static Map<Integer, BitStatusEnum> getBitStatusMap() {
-        return Arrays.stream(values()).collect(Collectors.toMap(bit -> bit.value, bit -> bit));
     }
 }
