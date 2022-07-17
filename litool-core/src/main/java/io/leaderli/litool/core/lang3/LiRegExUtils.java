@@ -37,16 +37,16 @@ public class LiRegExUtils {
      * <p>A {@code null} reference passed to this method is a no-op.</p>
      *
      * <pre>
-     * StringUtils.removeAll(null, *)      = null
-     * StringUtils.removeAll("any", (Pattern) null)  = "any"
-     * StringUtils.removeAll("any", Pattern.compile(""))    = "any"
-     * StringUtils.removeAll("any", Pattern.compile(".*"))  = ""
-     * StringUtils.removeAll("any", Pattern.compile(".+"))  = ""
-     * StringUtils.removeAll("abc", Pattern.compile(".?"))  = ""
-     * StringUtils.removeAll("A&lt;__&gt;\n&lt;__&gt;B", Pattern.compile("&lt;.*&gt;"))      = "A\nB"
-     * StringUtils.removeAll("A&lt;__&gt;\n&lt;__&gt;B", Pattern.compile("(?s)&lt;.*&gt;"))  = "AB"
-     * StringUtils.removeAll("A&lt;__&gt;\n&lt;__&gt;B", Pattern.compile("&lt;.*&gt;", Pattern.DOTALL))  = "AB"
-     * StringUtils.removeAll("ABCabc123abc", Pattern.compile("[a-z]"))     = "ABC123"
+     * LiStringUtils.removeAll(null, *)      = null
+     * LiStringUtils.removeAll("any", (Pattern) null)  = "any"
+     * LiStringUtils.removeAll("any", Pattern.compile(""))    = "any"
+     * LiStringUtils.removeAll("any", Pattern.compile(".*"))  = ""
+     * LiStringUtils.removeAll("any", Pattern.compile(".+"))  = ""
+     * LiStringUtils.removeAll("abc", Pattern.compile(".?"))  = ""
+     * LiStringUtils.removeAll("A&lt;__&gt;\n&lt;__&gt;B", Pattern.compile("&lt;.*&gt;"))      = "A\nB"
+     * LiStringUtils.removeAll("A&lt;__&gt;\n&lt;__&gt;B", Pattern.compile("(?s)&lt;.*&gt;"))  = "AB"
+     * LiStringUtils.removeAll("A&lt;__&gt;\n&lt;__&gt;B", Pattern.compile("&lt;.*&gt;", Pattern.DOTALL))  = "AB"
+     * LiStringUtils.removeAll("ABCabc123abc", Pattern.compile("[a-z]"))     = "ABC123"
      * </pre>
      *
      * @param text  text to remove from, may be null
@@ -72,20 +72,20 @@ public class LiRegExUtils {
      * <p>A {@code null} reference passed to this method is a no-op.</p>
      *
      * <pre>
-     * StringUtils.replaceAll(null, *, *)       = null
-     * StringUtils.replaceAll("any", (Pattern) null, *)   = "any"
-     * StringUtils.replaceAll("any", *, null)   = "any"
-     * StringUtils.replaceAll("", Pattern.compile(""), "zzz")    = "zzz"
-     * StringUtils.replaceAll("", Pattern.compile(".*"), "zzz")  = "zzz"
-     * StringUtils.replaceAll("", Pattern.compile(".+"), "zzz")  = ""
-     * StringUtils.replaceAll("abc", Pattern.compile(""), "ZZ")  = "ZZaZZbZZcZZ"
-     * StringUtils.replaceAll("&lt;__&gt;\n&lt;__&gt;", Pattern.compile("&lt;.*&gt;"), "z")                 = "z\nz"
-     * StringUtils.replaceAll("&lt;__&gt;\n&lt;__&gt;", Pattern.compile("&lt;.*&gt;", Pattern.DOTALL), "z") = "z"
-     * StringUtils.replaceAll("&lt;__&gt;\n&lt;__&gt;", Pattern.compile("(?s)&lt;.*&gt;"), "z")             = "z"
-     * StringUtils.replaceAll("ABCabc123", Pattern.compile("[a-z]"), "_")       = "ABC___123"
-     * StringUtils.replaceAll("ABCabc123", Pattern.compile("[^A-Z0-9]+"), "_")  = "ABC_123"
-     * StringUtils.replaceAll("ABCabc123", Pattern.compile("[^A-Z0-9]+"), "")   = "ABC123"
-     * StringUtils.replaceAll("Lorem ipsum  dolor   sit", Pattern.compile("( +)([a-z]+)"), "_$2")  = "Lorem_ipsum_dolor_sit"
+     * LiStringUtils.replaceAll(null, *, *)       = null
+     * LiStringUtils.replaceAll("any", (Pattern) null, *)   = "any"
+     * LiStringUtils.replaceAll("any", *, null)   = "any"
+     * LiStringUtils.replaceAll("", Pattern.compile(""), "zzz")    = "zzz"
+     * LiStringUtils.replaceAll("", Pattern.compile(".*"), "zzz")  = "zzz"
+     * LiStringUtils.replaceAll("", Pattern.compile(".+"), "zzz")  = ""
+     * LiStringUtils.replaceAll("abc", Pattern.compile(""), "ZZ")  = "ZZaZZbZZcZZ"
+     * LiStringUtils.replaceAll("&lt;__&gt;\n&lt;__&gt;", Pattern.compile("&lt;.*&gt;"), "z")                 = "z\nz"
+     * LiStringUtils.replaceAll("&lt;__&gt;\n&lt;__&gt;", Pattern.compile("&lt;.*&gt;", Pattern.DOTALL), "z") = "z"
+     * LiStringUtils.replaceAll("&lt;__&gt;\n&lt;__&gt;", Pattern.compile("(?s)&lt;.*&gt;"), "z")             = "z"
+     * LiStringUtils.replaceAll("ABCabc123", Pattern.compile("[a-z]"), "_")       = "ABC___123"
+     * LiStringUtils.replaceAll("ABCabc123", Pattern.compile("[^A-Z0-9]+"), "_")  = "ABC_123"
+     * LiStringUtils.replaceAll("ABCabc123", Pattern.compile("[^A-Z0-9]+"), "")   = "ABC123"
+     * LiStringUtils.replaceAll("Lorem ipsum  dolor   sit", Pattern.compile("( +)([a-z]+)"), "_$2")  = "Lorem_ipsum_dolor_sit"
      * </pre>
      *
      * @param text        text to search and replace in, may be null
@@ -108,7 +108,7 @@ public class LiRegExUtils {
      * <p>
      * This method is a {@code null} safe equivalent to:
      * <ul>
-     *  <li>{@code text.replaceAll(regex, StringUtils.EMPTY)}</li>
+     *  <li>{@code text.replaceAll(regex, LiStringUtils.EMPTY)}</li>
      *  <li>{@code Pattern.compile(regex).matcher(text).replaceAll(StringUtils.EMPTY)}</li>
      * </ul>
      *
@@ -120,15 +120,15 @@ public class LiRegExUtils {
      * DOTALL is also known as single-line mode in Perl.</p>
      *
      * <pre>
-     * StringUtils.removeAll(null, *)      = null
-     * StringUtils.removeAll("any", (String) null)  = "any"
-     * StringUtils.removeAll("any", "")    = "any"
-     * StringUtils.removeAll("any", ".*")  = ""
-     * StringUtils.removeAll("any", ".+")  = ""
-     * StringUtils.removeAll("abc", ".?")  = ""
-     * StringUtils.removeAll("A&lt;__&gt;\n&lt;__&gt;B", "&lt;.*&gt;")      = "A\nB"
-     * StringUtils.removeAll("A&lt;__&gt;\n&lt;__&gt;B", "(?s)&lt;.*&gt;")  = "AB"
-     * StringUtils.removeAll("ABCabc123abc", "[a-z]")     = "ABC123"
+     * LiStringUtils.removeAll(null, *)      = null
+     * LiStringUtils.removeAll("any", (String) null)  = "any"
+     * LiStringUtils.removeAll("any", "")    = "any"
+     * LiStringUtils.removeAll("any", ".*")  = ""
+     * LiStringUtils.removeAll("any", ".+")  = ""
+     * LiStringUtils.removeAll("abc", ".?")  = ""
+     * LiStringUtils.removeAll("A&lt;__&gt;\n&lt;__&gt;B", "&lt;.*&gt;")      = "A\nB"
+     * LiStringUtils.removeAll("A&lt;__&gt;\n&lt;__&gt;B", "(?s)&lt;.*&gt;")  = "AB"
+     * LiStringUtils.removeAll("ABCabc123abc", "[a-z]")     = "ABC123"
      * </pre>
      *
      * @param text  text to remove from, may be null
@@ -164,19 +164,19 @@ public class LiRegExUtils {
      * DOTALL is also known as single-line mode in Perl.</p>
      *
      * <pre>
-     * StringUtils.replaceAll(null, *, *)       = null
-     * StringUtils.replaceAll("any", (String) null, *)   = "any"
-     * StringUtils.replaceAll("any", *, null)   = "any"
-     * StringUtils.replaceAll("", "", "zzz")    = "zzz"
-     * StringUtils.replaceAll("", ".*", "zzz")  = "zzz"
-     * StringUtils.replaceAll("", ".+", "zzz")  = ""
-     * StringUtils.replaceAll("abc", "", "ZZ")  = "ZZaZZbZZcZZ"
-     * StringUtils.replaceAll("&lt;__&gt;\n&lt;__&gt;", "&lt;.*&gt;", "z")      = "z\nz"
-     * StringUtils.replaceAll("&lt;__&gt;\n&lt;__&gt;", "(?s)&lt;.*&gt;", "z")  = "z"
-     * StringUtils.replaceAll("ABCabc123", "[a-z]", "_")       = "ABC___123"
-     * StringUtils.replaceAll("ABCabc123", "[^A-Z0-9]+", "_")  = "ABC_123"
-     * StringUtils.replaceAll("ABCabc123", "[^A-Z0-9]+", "")   = "ABC123"
-     * StringUtils.replaceAll("Lorem ipsum  dolor   sit", "( +)([a-z]+)", "_$2")  = "Lorem_ipsum_dolor_sit"
+     * LiStringUtils.replaceAll(null, *, *)       = null
+     * LiStringUtils.replaceAll("any", (String) null, *)   = "any"
+     * LiStringUtils.replaceAll("any", *, null)   = "any"
+     * LiStringUtils.replaceAll("", "", "zzz")    = "zzz"
+     * LiStringUtils.replaceAll("", ".*", "zzz")  = "zzz"
+     * LiStringUtils.replaceAll("", ".+", "zzz")  = ""
+     * LiStringUtils.replaceAll("abc", "", "ZZ")  = "ZZaZZbZZcZZ"
+     * LiStringUtils.replaceAll("&lt;__&gt;\n&lt;__&gt;", "&lt;.*&gt;", "z")      = "z\nz"
+     * LiStringUtils.replaceAll("&lt;__&gt;\n&lt;__&gt;", "(?s)&lt;.*&gt;", "z")  = "z"
+     * LiStringUtils.replaceAll("ABCabc123", "[a-z]", "_")       = "ABC___123"
+     * LiStringUtils.replaceAll("ABCabc123", "[^A-Z0-9]+", "_")  = "ABC_123"
+     * LiStringUtils.replaceAll("ABCabc123", "[^A-Z0-9]+", "")   = "ABC123"
+     * LiStringUtils.replaceAll("Lorem ipsum  dolor   sit", "( +)([a-z]+)", "_$2")  = "Lorem_ipsum_dolor_sit"
      * </pre>
      *
      * @param text        text to search and replace in, may be null
@@ -208,16 +208,16 @@ public class LiRegExUtils {
      * <p>A {@code null} reference passed to this method is a no-op.</p>
      *
      * <pre>
-     * StringUtils.removeFirst(null, *)      = null
-     * StringUtils.removeFirst("any", (Pattern) null)  = "any"
-     * StringUtils.removeFirst("any", Pattern.compile(""))    = "any"
-     * StringUtils.removeFirst("any", Pattern.compile(".*"))  = ""
-     * StringUtils.removeFirst("any", Pattern.compile(".+"))  = ""
-     * StringUtils.removeFirst("abc", Pattern.compile(".?"))  = "bc"
-     * StringUtils.removeFirst("A&lt;__&gt;\n&lt;__&gt;B", Pattern.compile("&lt;.*&gt;"))      = "A\n&lt;__&gt;B"
-     * StringUtils.removeFirst("A&lt;__&gt;\n&lt;__&gt;B", Pattern.compile("(?s)&lt;.*&gt;"))  = "AB"
-     * StringUtils.removeFirst("ABCabc123", Pattern.compile("[a-z]"))          = "ABCbc123"
-     * StringUtils.removeFirst("ABCabc123abc", Pattern.compile("[a-z]+"))      = "ABC123abc"
+     * LiStringUtils.removeFirst(null, *)      = null
+     * LiStringUtils.removeFirst("any", (Pattern) null)  = "any"
+     * LiStringUtils.removeFirst("any", Pattern.compile(""))    = "any"
+     * LiStringUtils.removeFirst("any", Pattern.compile(".*"))  = ""
+     * LiStringUtils.removeFirst("any", Pattern.compile(".+"))  = ""
+     * LiStringUtils.removeFirst("abc", Pattern.compile(".?"))  = "bc"
+     * LiStringUtils.removeFirst("A&lt;__&gt;\n&lt;__&gt;B", Pattern.compile("&lt;.*&gt;"))      = "A\n&lt;__&gt;B"
+     * LiStringUtils.removeFirst("A&lt;__&gt;\n&lt;__&gt;B", Pattern.compile("(?s)&lt;.*&gt;"))  = "AB"
+     * LiStringUtils.removeFirst("ABCabc123", Pattern.compile("[a-z]"))          = "ABCbc123"
+     * LiStringUtils.removeFirst("ABCabc123abc", Pattern.compile("[a-z]+"))      = "ABC123abc"
      * </pre>
      *
      * @param text  text to remove from, may be null
@@ -244,19 +244,19 @@ public class LiRegExUtils {
      * <p>A {@code null} reference passed to this method is a no-op.</p>
      *
      * <pre>
-     * StringUtils.replaceFirst(null, *, *)       = null
-     * StringUtils.replaceFirst("any", (Pattern) null, *)   = "any"
-     * StringUtils.replaceFirst("any", *, null)   = "any"
-     * StringUtils.replaceFirst("", Pattern.compile(""), "zzz")    = "zzz"
-     * StringUtils.replaceFirst("", Pattern.compile(".*"), "zzz")  = "zzz"
-     * StringUtils.replaceFirst("", Pattern.compile(".+"), "zzz")  = ""
-     * StringUtils.replaceFirst("abc", Pattern.compile(""), "ZZ")  = "ZZabc"
-     * StringUtils.replaceFirst("&lt;__&gt;\n&lt;__&gt;", Pattern.compile("&lt;.*&gt;"), "z")      = "z\n&lt;__&gt;"
-     * StringUtils.replaceFirst("&lt;__&gt;\n&lt;__&gt;", Pattern.compile("(?s)&lt;.*&gt;"), "z")  = "z"
-     * StringUtils.replaceFirst("ABCabc123", Pattern.compile("[a-z]"), "_")          = "ABC_bc123"
-     * StringUtils.replaceFirst("ABCabc123abc", Pattern.compile("[^A-Z0-9]+"), "_")  = "ABC_123abc"
-     * StringUtils.replaceFirst("ABCabc123abc", Pattern.compile("[^A-Z0-9]+"), "")   = "ABC123abc"
-     * StringUtils.replaceFirst("Lorem ipsum  dolor   sit", Pattern.compile("( +)([a-z]+)"), "_$2")  = "Lorem_ipsum  dolor   sit"
+     * LiStringUtils.replaceFirst(null, *, *)       = null
+     * LiStringUtils.replaceFirst("any", (Pattern) null, *)   = "any"
+     * LiStringUtils.replaceFirst("any", *, null)   = "any"
+     * LiStringUtils.replaceFirst("", Pattern.compile(""), "zzz")    = "zzz"
+     * LiStringUtils.replaceFirst("", Pattern.compile(".*"), "zzz")  = "zzz"
+     * LiStringUtils.replaceFirst("", Pattern.compile(".+"), "zzz")  = ""
+     * LiStringUtils.replaceFirst("abc", Pattern.compile(""), "ZZ")  = "ZZabc"
+     * LiStringUtils.replaceFirst("&lt;__&gt;\n&lt;__&gt;", Pattern.compile("&lt;.*&gt;"), "z")      = "z\n&lt;__&gt;"
+     * LiStringUtils.replaceFirst("&lt;__&gt;\n&lt;__&gt;", Pattern.compile("(?s)&lt;.*&gt;"), "z")  = "z"
+     * LiStringUtils.replaceFirst("ABCabc123", Pattern.compile("[a-z]"), "_")          = "ABC_bc123"
+     * LiStringUtils.replaceFirst("ABCabc123abc", Pattern.compile("[^A-Z0-9]+"), "_")  = "ABC_123abc"
+     * LiStringUtils.replaceFirst("ABCabc123abc", Pattern.compile("[^A-Z0-9]+"), "")   = "ABC123abc"
+     * LiStringUtils.replaceFirst("Lorem ipsum  dolor   sit", Pattern.compile("( +)([a-z]+)"), "_$2")  = "Lorem_ipsum  dolor   sit"
      * </pre>
      *
      * @param text        text to search and replace in, may be null
@@ -279,7 +279,7 @@ public class LiRegExUtils {
      * <p>
      * This method is a {@code null} safe equivalent to:
      * <ul>
-     *  <li>{@code text.replaceFirst(regex, StringUtils.EMPTY)}</li>
+     *  <li>{@code text.replaceFirst(regex, LiStringUtils.EMPTY)}</li>
      *  <li>{@code Pattern.compile(regex).matcher(text).replaceFirst(StringUtils.EMPTY)}</li>
      * </ul>
      *
@@ -290,16 +290,16 @@ public class LiRegExUtils {
      * DOTALL is also known as single-line mode in Perl.</p>
      *
      * <pre>
-     * StringUtils.removeFirst(null, *)      = null
-     * StringUtils.removeFirst("any", (String) null)  = "any"
-     * StringUtils.removeFirst("any", "")    = "any"
-     * StringUtils.removeFirst("any", ".*")  = ""
-     * StringUtils.removeFirst("any", ".+")  = ""
-     * StringUtils.removeFirst("abc", ".?")  = "bc"
-     * StringUtils.removeFirst("A&lt;__&gt;\n&lt;__&gt;B", "&lt;.*&gt;")      = "A\n&lt;__&gt;B"
-     * StringUtils.removeFirst("A&lt;__&gt;\n&lt;__&gt;B", "(?s)&lt;.*&gt;")  = "AB"
-     * StringUtils.removeFirst("ABCabc123", "[a-z]")          = "ABCbc123"
-     * StringUtils.removeFirst("ABCabc123abc", "[a-z]+")      = "ABC123abc"
+     * LiStringUtils.removeFirst(null, *)      = null
+     * LiStringUtils.removeFirst("any", (String) null)  = "any"
+     * LiStringUtils.removeFirst("any", "")    = "any"
+     * LiStringUtils.removeFirst("any", ".*")  = ""
+     * LiStringUtils.removeFirst("any", ".+")  = ""
+     * LiStringUtils.removeFirst("abc", ".?")  = "bc"
+     * LiStringUtils.removeFirst("A&lt;__&gt;\n&lt;__&gt;B", "&lt;.*&gt;")      = "A\n&lt;__&gt;B"
+     * LiStringUtils.removeFirst("A&lt;__&gt;\n&lt;__&gt;B", "(?s)&lt;.*&gt;")  = "AB"
+     * LiStringUtils.removeFirst("ABCabc123", "[a-z]")          = "ABCbc123"
+     * LiStringUtils.removeFirst("ABCabc123abc", "[a-z]+")      = "ABC123abc"
      * </pre>
      *
      * @param text  text to remove from, may be null
@@ -333,19 +333,19 @@ public class LiRegExUtils {
      * DOTALL is also known as single-line mode in Perl.</p>
      *
      * <pre>
-     * StringUtils.replaceFirst(null, *, *)       = null
-     * StringUtils.replaceFirst("any", (String) null, *)   = "any"
-     * StringUtils.replaceFirst("any", *, null)   = "any"
-     * StringUtils.replaceFirst("", "", "zzz")    = "zzz"
-     * StringUtils.replaceFirst("", ".*", "zzz")  = "zzz"
-     * StringUtils.replaceFirst("", ".+", "zzz")  = ""
-     * StringUtils.replaceFirst("abc", "", "ZZ")  = "ZZabc"
-     * StringUtils.replaceFirst("&lt;__&gt;\n&lt;__&gt;", "&lt;.*&gt;", "z")      = "z\n&lt;__&gt;"
-     * StringUtils.replaceFirst("&lt;__&gt;\n&lt;__&gt;", "(?s)&lt;.*&gt;", "z")  = "z"
-     * StringUtils.replaceFirst("ABCabc123", "[a-z]", "_")          = "ABC_bc123"
-     * StringUtils.replaceFirst("ABCabc123abc", "[^A-Z0-9]+", "_")  = "ABC_123abc"
-     * StringUtils.replaceFirst("ABCabc123abc", "[^A-Z0-9]+", "")   = "ABC123abc"
-     * StringUtils.replaceFirst("Lorem ipsum  dolor   sit", "( +)([a-z]+)", "_$2")  = "Lorem_ipsum  dolor   sit"
+     * LiStringUtils.replaceFirst(null, *, *)       = null
+     * LiStringUtils.replaceFirst("any", (String) null, *)   = "any"
+     * LiStringUtils.replaceFirst("any", *, null)   = "any"
+     * LiStringUtils.replaceFirst("", "", "zzz")    = "zzz"
+     * LiStringUtils.replaceFirst("", ".*", "zzz")  = "zzz"
+     * LiStringUtils.replaceFirst("", ".+", "zzz")  = ""
+     * LiStringUtils.replaceFirst("abc", "", "ZZ")  = "ZZabc"
+     * LiStringUtils.replaceFirst("&lt;__&gt;\n&lt;__&gt;", "&lt;.*&gt;", "z")      = "z\n&lt;__&gt;"
+     * LiStringUtils.replaceFirst("&lt;__&gt;\n&lt;__&gt;", "(?s)&lt;.*&gt;", "z")  = "z"
+     * LiStringUtils.replaceFirst("ABCabc123", "[a-z]", "_")          = "ABC_bc123"
+     * LiStringUtils.replaceFirst("ABCabc123abc", "[^A-Z0-9]+", "_")  = "ABC_123abc"
+     * LiStringUtils.replaceFirst("ABCabc123abc", "[^A-Z0-9]+", "")   = "ABC123abc"
+     * LiStringUtils.replaceFirst("Lorem ipsum  dolor   sit", "( +)([a-z]+)", "_$2")  = "Lorem_ipsum  dolor   sit"
      * </pre>
      *
      * @param text        text to search and replace in, may be null
@@ -370,17 +370,17 @@ public class LiRegExUtils {
      * <p>
      * This call is a {@code null} safe equivalent to:
      * <ul>
-     * <li>{@code text.replaceAll(&quot;(?s)&quot; + regex, StringUtils.EMPTY)}</li>
+     * <li>{@code text.replaceAll(&quot;(?s)&quot; + regex, LiStringUtils.EMPTY)}</li>
      * <li>{@code Pattern.compile(regex, Pattern.DOTALL).matcher(text).replaceAll(StringUtils.EMPTY)}</li>
      * </ul>
      *
      * <p>A {@code null} reference passed to this method is a no-op.</p>
      *
      * <pre>
-     * StringUtils.removePattern(null, *)       = null
-     * StringUtils.removePattern("any", (String) null)   = "any"
-     * StringUtils.removePattern("A&lt;__&gt;\n&lt;__&gt;B", "&lt;.*&gt;")  = "AB"
-     * StringUtils.removePattern("ABCabc123", "[a-z]")    = "ABC123"
+     * LiStringUtils.removePattern(null, *)       = null
+     * LiStringUtils.removePattern("any", (String) null)   = "any"
+     * LiStringUtils.removePattern("A&lt;__&gt;\n&lt;__&gt;B", "&lt;.*&gt;")  = "AB"
+     * LiStringUtils.removePattern("ABCabc123", "[a-z]")    = "ABC123"
      * </pre>
      *
      * @param text  the source string
@@ -407,17 +407,17 @@ public class LiRegExUtils {
      * <p>A {@code null} reference passed to this method is a no-op.</p>
      *
      * <pre>
-     * StringUtils.replacePattern(null, *, *)       = null
-     * StringUtils.replacePattern("any", (String) null, *)   = "any"
-     * StringUtils.replacePattern("any", *, null)   = "any"
-     * StringUtils.replacePattern("", "", "zzz")    = "zzz"
-     * StringUtils.replacePattern("", ".*", "zzz")  = "zzz"
-     * StringUtils.replacePattern("", ".+", "zzz")  = ""
-     * StringUtils.replacePattern("&lt;__&gt;\n&lt;__&gt;", "&lt;.*&gt;", "z")       = "z"
-     * StringUtils.replacePattern("ABCabc123", "[a-z]", "_")       = "ABC___123"
-     * StringUtils.replacePattern("ABCabc123", "[^A-Z0-9]+", "_")  = "ABC_123"
-     * StringUtils.replacePattern("ABCabc123", "[^A-Z0-9]+", "")   = "ABC123"
-     * StringUtils.replacePattern("Lorem ipsum  dolor   sit", "( +)([a-z]+)", "_$2")  = "Lorem_ipsum_dolor_sit"
+     * LiStringUtils.replacePattern(null, *, *)       = null
+     * LiStringUtils.replacePattern("any", (String) null, *)   = "any"
+     * LiStringUtils.replacePattern("any", *, null)   = "any"
+     * LiStringUtils.replacePattern("", "", "zzz")    = "zzz"
+     * LiStringUtils.replacePattern("", ".*", "zzz")  = "zzz"
+     * LiStringUtils.replacePattern("", ".+", "zzz")  = ""
+     * LiStringUtils.replacePattern("&lt;__&gt;\n&lt;__&gt;", "&lt;.*&gt;", "z")       = "z"
+     * LiStringUtils.replacePattern("ABCabc123", "[a-z]", "_")       = "ABC___123"
+     * LiStringUtils.replacePattern("ABCabc123", "[^A-Z0-9]+", "_")  = "ABC_123"
+     * LiStringUtils.replacePattern("ABCabc123", "[^A-Z0-9]+", "")   = "ABC123"
+     * LiStringUtils.replacePattern("Lorem ipsum  dolor   sit", "( +)([a-z]+)", "_$2")  = "Lorem_ipsum_dolor_sit"
      * </pre>
      *
      * @param text        the source string

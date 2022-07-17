@@ -16,6 +16,7 @@
  */
 package io.leaderli.litool.core.lang3;
 
+import io.leaderli.litool.core.text.CharPool;
 import io.leaderli.litool.core.text.StrPool;
 
 import java.io.UnsupportedEncodingException;
@@ -5897,7 +5898,7 @@ public class LiStringUtils implements StrPool {
 
         if (str.length() == 1) {
             final char ch = str.charAt(0);
-            if (ch == LiCharUtils.CR || ch == LiCharUtils.LF) {
+            if (ch == CharPool.CR || ch == CharPool.LF) {
                 return EMPTY;
             }
             return str;
@@ -5906,11 +5907,11 @@ public class LiStringUtils implements StrPool {
         int lastIdx = str.length() - 1;
         final char last = str.charAt(lastIdx);
 
-        if (last == LiCharUtils.LF) {
-            if (str.charAt(lastIdx - 1) == LiCharUtils.CR) {
+        if (last == CharPool.LF) {
+            if (str.charAt(lastIdx - 1) == CharPool.CR) {
                 lastIdx--;
             }
-        } else if (last != LiCharUtils.CR) {
+        } else if (last != CharPool.CR) {
             lastIdx++;
         }
         return str.substring(0, lastIdx);
@@ -6025,7 +6026,7 @@ public class LiStringUtils implements StrPool {
         final int lastIdx = strLen - 1;
         final String ret = str.substring(0, lastIdx);
         final char last = str.charAt(lastIdx);
-        if (last == LiCharUtils.LF && ret.charAt(lastIdx - 1) == LiCharUtils.CR) {
+        if (last == CharPool.LF && ret.charAt(lastIdx - 1) == CharPool.CR) {
             return ret.substring(0, lastIdx - 1);
         }
         return ret;
@@ -9053,7 +9054,7 @@ public class LiStringUtils implements StrPool {
      */
     public static String wrap(final String str, final char wrapWith) {
 
-        if (isEmpty(str) || wrapWith == LiCharUtils.NUL) {
+        if (isEmpty(str) || wrapWith == CharPool.NUL) {
             return str;
         }
 
@@ -9120,7 +9121,7 @@ public class LiStringUtils implements StrPool {
      * @since 3.5
      */
     public static String wrapIfMissing(final String str, final char wrapWith) {
-        if (isEmpty(str) || wrapWith == LiCharUtils.NUL) {
+        if (isEmpty(str) || wrapWith == CharPool.NUL) {
             return str;
         }
         final StringBuilder builder = new StringBuilder(str.length() + 2);
@@ -9239,7 +9240,7 @@ public class LiStringUtils implements StrPool {
      * @since 3.6
      */
     public static String unwrap(final String str, final char wrapChar) {
-        if (isEmpty(str) || wrapChar == LiCharUtils.NUL) {
+        if (isEmpty(str) || wrapChar == CharPool.NUL) {
             return str;
         }
 

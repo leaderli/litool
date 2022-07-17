@@ -82,4 +82,11 @@ public interface CharPool {
      * 字符常量：艾特 {@code '@'}
      */
     char AT = '@';
+
+    /**
+     * {@code \u0000} null control character ('\0'), abbreviated NUL.
+     *
+     * @since 3.6
+     */
+    char NUL = '\0';
 }

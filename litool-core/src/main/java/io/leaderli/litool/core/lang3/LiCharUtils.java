@@ -17,6 +17,7 @@
 package io.leaderli.litool.core.lang3;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.text.CharPool;
 
 /**
  * <p>Operations on char primitives and Character objects.</p>
@@ -29,30 +30,8 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
  *
  * @since 2.1
  */
-public class LiCharUtils {
+public class LiCharUtils implements CharPool {
 
-    /**
-     * {@code \u000a} linefeed LF ('\n').
-     *
-     * @see <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6">JLF: Escape Sequences
-     * for Character and String Literals</a>
-     * @since 2.2
-     */
-    public static final char LF = '\n';
-    /**
-     * {@code \u000d} carriage return CR ('\r').
-     *
-     * @see <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6">JLF: Escape Sequences
-     * for Character and String Literals</a>
-     * @since 2.2
-     */
-    public static final char CR = '\r';
-    /**
-     * {@code \u0000} null control character ('\0'), abbreviated NUL.
-     *
-     * @since 3.6
-     */
-    public static final char NUL = '\0';
     private static final String[] CHAR_STRING_ARRAY = new String[128];
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
@@ -63,8 +42,8 @@ public class LiCharUtils {
     }
 
     /**
-     * <p>{@code CharUtils} instances should NOT be constructed in standard programming.
-     * Instead, the class should be used as {@code CharUtils.toString('c');}.</p>
+     * <p>{@code LiCharUtils} instances should NOT be constructed in standard programming.
+     * Instead, the class should be used as {@code LiCharUtils.toString('c');}.</p>
      *
      * <p>This constructor is public to permit tools that require a JavaBean instance
      * to operate.</p>
@@ -82,8 +61,8 @@ public class LiCharUtils {
      * same Character object each time.</p>
      *
      * <pre>
-     *   CharUtils.toCharacterObject(' ')  = ' '
-     *   CharUtils.toCharacterObject('A')  = 'A'
+     *   LiCharUtils.toCharacterObject(' ')  = ' '
+     *   LiCharUtils.toCharacterObject('A')  = 'A'
      * </pre>
      *
      * @param ch the character to convert
@@ -103,10 +82,10 @@ public class LiCharUtils {
      * same Character object each time.</p>
      *
      * <pre>
-     *   CharUtils.toCharacterObject(null) = null
-     *   CharUtils.toCharacterObject("")   = null
-     *   CharUtils.toCharacterObject("A")  = 'A'
-     *   CharUtils.toCharacterObject("BA") = 'B'
+     *   LiCharUtils.toCharacterObject(null) = null
+     *   LiCharUtils.toCharacterObject("")   = null
+     *   LiCharUtils.toCharacterObject("A")  = 'A'
+     *   LiCharUtils.toCharacterObject("BA") = 'B'
      * </pre>
      *
      * @param str the character to convert
@@ -125,9 +104,9 @@ public class LiCharUtils {
      * <p>Converts the Character to a char throwing an exception for {@code null}.</p>
      *
      * <pre>
-     *   CharUtils.toChar(' ')  = ' '
-     *   CharUtils.toChar('A')  = 'A'
-     *   CharUtils.toChar(null) throws IllegalArgumentException
+     *   LiCharUtils.toChar(' ')  = ' '
+     *   LiCharUtils.toChar('A')  = 'A'
+     *   LiCharUtils.toChar(null) throws IllegalArgumentException
      * </pre>
      *
      * @param ch the character to convert
@@ -143,9 +122,9 @@ public class LiCharUtils {
      * <p>Converts the Character to a char handling {@code null}.</p>
      *
      * <pre>
-     *   CharUtils.toChar(null, 'X') = 'X'
-     *   CharUtils.toChar(' ', 'X')  = ' '
-     *   CharUtils.toChar('A', 'X')  = 'A'
+     *   LiCharUtils.toChar(null, 'X') = 'X'
+     *   LiCharUtils.toChar(' ', 'X')  = ' '
+     *   LiCharUtils.toChar('A', 'X')  = 'A'
      * </pre>
      *
      * @param ch           the character to convert
@@ -166,10 +145,10 @@ public class LiCharUtils {
      * an exception on empty Strings.</p>
      *
      * <pre>
-     *   CharUtils.toChar("A")  = 'A'
-     *   CharUtils.toChar("BA") = 'B'
-     *   CharUtils.toChar(null) throws IllegalArgumentException
-     *   CharUtils.toChar("")   throws IllegalArgumentException
+     *   LiCharUtils.toChar("A")  = 'A'
+     *   LiCharUtils.toChar("BA") = 'B'
+     *   LiCharUtils.toChar(null) throws IllegalArgumentException
+     *   LiCharUtils.toChar("")   throws IllegalArgumentException
      * </pre>
      *
      * @param str the character to convert
@@ -186,10 +165,10 @@ public class LiCharUtils {
      * the value on empty Strings.</p>
      *
      * <pre>
-     *   CharUtils.toChar(null, 'X') = 'X'
-     *   CharUtils.toChar("", 'X')   = 'X'
-     *   CharUtils.toChar("A", 'X')  = 'A'
-     *   CharUtils.toChar("BA", 'X') = 'B'
+     *   LiCharUtils.toChar(null, 'X') = 'X'
+     *   LiCharUtils.toChar("", 'X')   = 'X'
+     *   LiCharUtils.toChar("A", 'X')  = 'A'
+     *   LiCharUtils.toChar("BA", 'X') = 'B'
      * </pre>
      *
      * @param str          the character to convert
@@ -212,9 +191,9 @@ public class LiCharUtils {
      * <p>This method converts the char '1' to the int 1 and so on.</p>
      *
      * <pre>
-     *   CharUtils.toIntValue('3')  = 3
-     *   CharUtils.toIntValue(null) throws IllegalArgumentException
-     *   CharUtils.toIntValue('A')  throws IllegalArgumentException
+     *   LiCharUtils.toIntValue('3')  = 3
+     *   LiCharUtils.toIntValue(null) throws IllegalArgumentException
+     *   LiCharUtils.toIntValue('A')  throws IllegalArgumentException
      * </pre>
      *
      * @param ch the character to convert, not null
@@ -233,8 +212,8 @@ public class LiCharUtils {
      * <p>This method converts the char '1' to the int 1 and so on.</p>
      *
      * <pre>
-     *   CharUtils.toIntValue('3')  = 3
-     *   CharUtils.toIntValue('A')  throws IllegalArgumentException
+     *   LiCharUtils.toIntValue('3')  = 3
+     *   LiCharUtils.toIntValue('A')  throws IllegalArgumentException
      * </pre>
      *
      * @param ch the character to convert
@@ -252,12 +231,12 @@ public class LiCharUtils {
      * <p>Checks whether the character is ASCII 7 bit numeric.</p>
      *
      * <pre>
-     *   CharUtils.isAsciiNumeric('a')  = false
-     *   CharUtils.isAsciiNumeric('A')  = false
-     *   CharUtils.isAsciiNumeric('3')  = true
-     *   CharUtils.isAsciiNumeric('-')  = false
-     *   CharUtils.isAsciiNumeric('\n') = false
-     *   CharUtils.isAsciiNumeric('&copy;') = false
+     *   LiCharUtils.isAsciiNumeric('a')  = false
+     *   LiCharUtils.isAsciiNumeric('A')  = false
+     *   LiCharUtils.isAsciiNumeric('3')  = true
+     *   LiCharUtils.isAsciiNumeric('-')  = false
+     *   LiCharUtils.isAsciiNumeric('\n') = false
+     *   LiCharUtils.isAsciiNumeric('&copy;') = false
      * </pre>
      *
      * @param ch the character to check
@@ -274,9 +253,9 @@ public class LiCharUtils {
      * <p>This method converts the char '1' to the int 1 and so on.</p>
      *
      * <pre>
-     *   CharUtils.toIntValue(null, -1) = -1
-     *   CharUtils.toIntValue('3', -1)  = 3
-     *   CharUtils.toIntValue('A', -1)  = -1
+     *   LiCharUtils.toIntValue(null, -1) = -1
+     *   LiCharUtils.toIntValue('3', -1)  = 3
+     *   LiCharUtils.toIntValue('A', -1)  = -1
      * </pre>
      *
      * @param ch           the character to convert
@@ -299,8 +278,8 @@ public class LiCharUtils {
      * <p>This method converts the char '1' to the int 1 and so on.</p>
      *
      * <pre>
-     *   CharUtils.toIntValue('3', -1)  = 3
-     *   CharUtils.toIntValue('A', -1)  = -1
+     *   LiCharUtils.toIntValue('3', -1)  = 3
+     *   LiCharUtils.toIntValue('A', -1)  = -1
      * </pre>
      *
      * @param ch           the character to convert
@@ -323,9 +302,9 @@ public class LiCharUtils {
      * <p>If {@code null} is passed in, {@code null} will be returned.</p>
      *
      * <pre>
-     *   CharUtils.toString(null) = null
-     *   CharUtils.toString(' ')  = " "
-     *   CharUtils.toString('A')  = "A"
+     *   LiCharUtils.toString(null) = null
+     *   LiCharUtils.toString(' ')  = " "
+     *   LiCharUtils.toString('A')  = "A"
      * </pre>
      *
      * @param ch the character to convert
@@ -347,8 +326,8 @@ public class LiCharUtils {
      * same String object each time.</p>
      *
      * <pre>
-     *   CharUtils.toString(' ')  = " "
-     *   CharUtils.toString('A')  = "A"
+     *   LiCharUtils.toString(' ')  = " "
+     *   LiCharUtils.toString('A')  = "A"
      * </pre>
      *
      * @param ch the character to convert
@@ -369,9 +348,9 @@ public class LiCharUtils {
      * <p>If {@code null} is passed in, {@code null} will be returned.</p>
      *
      * <pre>
-     *   CharUtils.unicodeEscaped(null) = null
-     *   CharUtils.unicodeEscaped(' ')  = "\u0020"
-     *   CharUtils.unicodeEscaped('A')  = "\u0041"
+     *   LiCharUtils.unicodeEscaped(null) = null
+     *   LiCharUtils.unicodeEscaped(' ')  = "\u0020"
+     *   LiCharUtils.unicodeEscaped('A')  = "\u0041"
      * </pre>
      *
      * @param ch the character to convert, may be null
@@ -392,8 +371,8 @@ public class LiCharUtils {
      * <p>This format is the Java source code format.</p>
      *
      * <pre>
-     *   CharUtils.unicodeEscaped(' ') = "\u0020"
-     *   CharUtils.unicodeEscaped('A') = "\u0041"
+     *   LiCharUtils.unicodeEscaped(' ') = "\u0020"
+     *   LiCharUtils.unicodeEscaped('A') = "\u0041"
      * </pre>
      *
      * @param ch the character to convert
@@ -411,12 +390,12 @@ public class LiCharUtils {
      * <p>Checks whether the character is ASCII 7 bit.</p>
      *
      * <pre>
-     *   CharUtils.isAscii('a')  = true
-     *   CharUtils.isAscii('A')  = true
-     *   CharUtils.isAscii('3')  = true
-     *   CharUtils.isAscii('-')  = true
-     *   CharUtils.isAscii('\n') = true
-     *   CharUtils.isAscii('&copy;') = false
+     *   LiCharUtils.isAscii('a')  = true
+     *   LiCharUtils.isAscii('A')  = true
+     *   LiCharUtils.isAscii('3')  = true
+     *   LiCharUtils.isAscii('-')  = true
+     *   LiCharUtils.isAscii('\n') = true
+     *   LiCharUtils.isAscii('&copy;') = false
      * </pre>
      *
      * @param ch the character to check
@@ -430,12 +409,12 @@ public class LiCharUtils {
      * <p>Checks whether the character is ASCII 7 bit printable.</p>
      *
      * <pre>
-     *   CharUtils.isAsciiPrintable('a')  = true
-     *   CharUtils.isAsciiPrintable('A')  = true
-     *   CharUtils.isAsciiPrintable('3')  = true
-     *   CharUtils.isAsciiPrintable('-')  = true
-     *   CharUtils.isAsciiPrintable('\n') = false
-     *   CharUtils.isAsciiPrintable('&copy;') = false
+     *   LiCharUtils.isAsciiPrintable('a')  = true
+     *   LiCharUtils.isAsciiPrintable('A')  = true
+     *   LiCharUtils.isAsciiPrintable('3')  = true
+     *   LiCharUtils.isAsciiPrintable('-')  = true
+     *   LiCharUtils.isAsciiPrintable('\n') = false
+     *   LiCharUtils.isAsciiPrintable('&copy;') = false
      * </pre>
      *
      * @param ch the character to check
@@ -449,12 +428,12 @@ public class LiCharUtils {
      * <p>Checks whether the character is ASCII 7 bit control.</p>
      *
      * <pre>
-     *   CharUtils.isAsciiControl('a')  = false
-     *   CharUtils.isAsciiControl('A')  = false
-     *   CharUtils.isAsciiControl('3')  = false
-     *   CharUtils.isAsciiControl('-')  = false
-     *   CharUtils.isAsciiControl('\n') = true
-     *   CharUtils.isAsciiControl('&copy;') = false
+     *   LiCharUtils.isAsciiControl('a')  = false
+     *   LiCharUtils.isAsciiControl('A')  = false
+     *   LiCharUtils.isAsciiControl('3')  = false
+     *   LiCharUtils.isAsciiControl('-')  = false
+     *   LiCharUtils.isAsciiControl('\n') = true
+     *   LiCharUtils.isAsciiControl('&copy;') = false
      * </pre>
      *
      * @param ch the character to check
@@ -468,12 +447,12 @@ public class LiCharUtils {
      * <p>Checks whether the character is ASCII 7 bit numeric.</p>
      *
      * <pre>
-     *   CharUtils.isAsciiAlphanumeric('a')  = true
-     *   CharUtils.isAsciiAlphanumeric('A')  = true
-     *   CharUtils.isAsciiAlphanumeric('3')  = true
-     *   CharUtils.isAsciiAlphanumeric('-')  = false
-     *   CharUtils.isAsciiAlphanumeric('\n') = false
-     *   CharUtils.isAsciiAlphanumeric('&copy;') = false
+     *   LiCharUtils.isAsciiAlphanumeric('a')  = true
+     *   LiCharUtils.isAsciiAlphanumeric('A')  = true
+     *   LiCharUtils.isAsciiAlphanumeric('3')  = true
+     *   LiCharUtils.isAsciiAlphanumeric('-')  = false
+     *   LiCharUtils.isAsciiAlphanumeric('\n') = false
+     *   LiCharUtils.isAsciiAlphanumeric('&copy;') = false
      * </pre>
      *
      * @param ch the character to check
@@ -487,12 +466,12 @@ public class LiCharUtils {
      * <p>Checks whether the character is ASCII 7 bit alphabetic.</p>
      *
      * <pre>
-     *   CharUtils.isAsciiAlpha('a')  = true
-     *   CharUtils.isAsciiAlpha('A')  = true
-     *   CharUtils.isAsciiAlpha('3')  = false
-     *   CharUtils.isAsciiAlpha('-')  = false
-     *   CharUtils.isAsciiAlpha('\n') = false
-     *   CharUtils.isAsciiAlpha('&copy;') = false
+     *   LiCharUtils.isAsciiAlpha('a')  = true
+     *   LiCharUtils.isAsciiAlpha('A')  = true
+     *   LiCharUtils.isAsciiAlpha('3')  = false
+     *   LiCharUtils.isAsciiAlpha('-')  = false
+     *   LiCharUtils.isAsciiAlpha('\n') = false
+     *   LiCharUtils.isAsciiAlpha('&copy;') = false
      * </pre>
      *
      * @param ch the character to check
@@ -506,12 +485,12 @@ public class LiCharUtils {
      * <p>Checks whether the character is ASCII 7 bit alphabetic upper case.</p>
      *
      * <pre>
-     *   CharUtils.isAsciiAlphaUpper('a')  = false
-     *   CharUtils.isAsciiAlphaUpper('A')  = true
-     *   CharUtils.isAsciiAlphaUpper('3')  = false
-     *   CharUtils.isAsciiAlphaUpper('-')  = false
-     *   CharUtils.isAsciiAlphaUpper('\n') = false
-     *   CharUtils.isAsciiAlphaUpper('&copy;') = false
+     *   LiCharUtils.isAsciiAlphaUpper('a')  = false
+     *   LiCharUtils.isAsciiAlphaUpper('A')  = true
+     *   LiCharUtils.isAsciiAlphaUpper('3')  = false
+     *   LiCharUtils.isAsciiAlphaUpper('-')  = false
+     *   LiCharUtils.isAsciiAlphaUpper('\n') = false
+     *   LiCharUtils.isAsciiAlphaUpper('&copy;') = false
      * </pre>
      *
      * @param ch the character to check
@@ -525,12 +504,12 @@ public class LiCharUtils {
      * <p>Checks whether the character is ASCII 7 bit alphabetic lower case.</p>
      *
      * <pre>
-     *   CharUtils.isAsciiAlphaLower('a')  = true
-     *   CharUtils.isAsciiAlphaLower('A')  = false
-     *   CharUtils.isAsciiAlphaLower('3')  = false
-     *   CharUtils.isAsciiAlphaLower('-')  = false
-     *   CharUtils.isAsciiAlphaLower('\n') = false
-     *   CharUtils.isAsciiAlphaLower('&copy;') = false
+     *   LiCharUtils.isAsciiAlphaLower('a')  = true
+     *   LiCharUtils.isAsciiAlphaLower('A')  = false
+     *   LiCharUtils.isAsciiAlphaLower('3')  = false
+     *   LiCharUtils.isAsciiAlphaLower('-')  = false
+     *   LiCharUtils.isAsciiAlphaLower('\n') = false
+     *   LiCharUtils.isAsciiAlphaLower('&copy;') = false
      * </pre>
      *
      * @param ch the character to check
