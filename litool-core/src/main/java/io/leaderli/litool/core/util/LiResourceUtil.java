@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class LiIoUtil {
+public class LiResourceUtil {
 
     public static final Charset DEFAULT_CHARACTER_ENCODING = StandardCharsets.UTF_8;
 
@@ -28,7 +28,7 @@ public class LiIoUtil {
 
     public static Lira<File> getResourcesFile(FileFilter fileFilter) {
 
-        return Lino.of(LiIoUtil.class.getResource("/"))
+        return Lino.of(LiResourceUtil.class.getResource("/"))
                 .map(URL::getFile)
                 .map(File::new)
                 .map(f -> f.listFiles(fileFilter))
@@ -36,10 +36,14 @@ public class LiIoUtil {
 
     }
 
+    /**
+     * @param path 路径
+     * @return 返回每一行字符串的 map
+     */
     public static Map<Integer, String> lineStrOfResourcesFile(String path) {
 
         return Lino.of(path)
-                .map(LiIoUtil::getResourceAsStream)
+                .map(LiResourceUtil::getResourceAsStream)
                 .map(InputStreamReader::new)
                 .map(BufferedReader::new)
                 .throwable_map(reader -> {
@@ -55,7 +59,7 @@ public class LiIoUtil {
     }
 
     public static InputStream getResourceAsStream(String path) {
-        return LiIoUtil.class.getResourceAsStream(path);
+        return LiClassLoaderUtil.getClassLoader().getResourceAsStream(path);
     }
 
 

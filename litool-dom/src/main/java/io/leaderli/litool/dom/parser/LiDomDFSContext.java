@@ -1,8 +1,8 @@
 package io.leaderli.litool.dom.parser;
 
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
-import io.leaderli.litool.core.util.LiIoUtil;
 import io.leaderli.litool.core.util.LiPrintUtil;
+import io.leaderli.litool.core.util.LiResourceUtil;
 import io.leaderli.litool.core.util.LiStrUtil;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.dom.sax.SaxEvent;
@@ -26,9 +26,9 @@ public class LiDomDFSContext {
             SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
             SAXParser saxParser = saxParserFactory.newSAXParser();
             DFSLocatorHandler<T> dh = new DFSLocatorHandler<>();
-            saxParser.parse(LiIoUtil.getResourceAsStream(path), dh);
+            saxParser.parse(LiResourceUtil.getResourceAsStream(path), dh);
 
-            Map<Integer, String> map = LiIoUtil.lineStrOfResourcesFile(path);
+            Map<Integer, String> map = LiResourceUtil.lineStrOfResourcesFile(path);
             for (SaxEvent saxEvent : dh.getSaxEventList()) {
                 LiPrintUtil.print(LiStrUtil.rjust(saxEvent.toString(), 30), map.get(saxEvent.locator.getLineNumber()));
             }

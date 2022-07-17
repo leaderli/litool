@@ -1,12 +1,7 @@
 package io.leaderli.litool.dom.parser;
 
-import io.leaderli.litool.core.exception.LiThrowableSupplier;
-import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.dom.sax.SaxBean;
-
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
+import io.leaderli.litool.core.lang.LiTupleMap;
+import io.leaderli.litool.dom.LiDomParser;
 
 /**
  * @author leaderli
@@ -15,19 +10,20 @@ import java.util.Map;
 public class LiDomParserFactory {
 
 
-    private static final Map<String, LiThrowableSupplier<Constructor<? extends SaxBean>>> NAME_CONSTRUCTOR = new HashMap<>();
+    private static LiTupleMap<Class<?>, LiDomParser<?>> TYPE_PARSER = new LiTupleMap<>();
 
+    static {
 
-    public static void register(String name, Class<? extends SaxBean> cls) {
-        NAME_CONSTRUCTOR.put(name, cls::getConstructor);
+        StringParser stringParser = new StringParser();
+        TYPE_PARSER.putKeyValue(stringParser.componentType(), stringParser);
+
     }
 
-
-    public static Lino<SaxBean> create(String tagName) {
-
-        return Lino.of(NAME_CONSTRUCTOR.get(tagName))
-                .throwable_map(LiThrowableSupplier::get)
-                .throwable_map(Constructor::newInstance);
-    }
+//
+//    public static <T> Lino<T> create(Class<T> type, String value) {
+//
+//
+//        return Lino.of(TYPE_PARSER.get(type))
+//    }
 
 }

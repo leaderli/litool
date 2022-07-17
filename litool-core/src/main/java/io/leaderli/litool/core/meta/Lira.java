@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.collection.ArrayIter;
+import io.leaderli.litool.core.collection.IterableIter;
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.meta.ra.ArrayRa;
@@ -44,7 +46,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
             return none();
         }
 
-        return of(Arrays.asList(elements));
+        return of(ArrayIter.of(elements));
 
     }
 
@@ -59,27 +61,27 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     }
 
     /**
-     * @param iterable 迭代器
-     * @param <T>      迭代器泛型
-     * @return 返回一个新的实例
-     */
-    static <T> Lira<T> of(Iterable<? extends T> iterable) {
-        if (iterable == null) {
-            return none();
-        }
-        return of(iterable.iterator());
-    }
-
-    /**
      * @param iterator 迭代器
      * @param <T>      迭代器泛型
      * @return 返回一个新的实例
      */
     static <T> Lira<T> of(Iterator<? extends T> iterator) {
-        if (iterator == null || !iterator.hasNext()) {
-            return none();
+
+        IterableIter<? extends T> iter = IterableIter.of(iterator);
+        if (iter.hasNext()) {
+
+            return new ArrayRa<>(iter);
         }
-        return new ArrayRa<>(iterator);
+        return none();
+    }
+
+    /**
+     * @param iterable 迭代器
+     * @param <T>      迭代器泛型
+     * @return 返回一个新的实例
+     */
+    static <T> Lira<T> of(Iterable<? extends T> iterable) {
+        return of(IterableIter.of(iterable));
     }
 
     /**

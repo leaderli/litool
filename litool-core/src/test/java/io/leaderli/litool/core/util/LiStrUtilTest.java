@@ -68,8 +68,8 @@ class LiStrUtilTest {
 
             outmock();
         } catch (Exception e) {
-            Assertions.assertTrue(LiStrUtil.localMessageAtLineOfClass(e, Lino.class).contains("Some.map("));
-            Assertions.assertTrue(LiStrUtil.localMessageAtLineOfClass(e, LiStrUtilTest.class).contains("mock$0"));
+            Assertions.assertTrue(LiStrUtil.localMessageAtLineOfClass(e, Lino.class).contains("Lino$Some.map("));
+            Assertions.assertTrue(LiStrUtil.localMessageAtLineOfClass(e, LiStrUtilTest.class).contains("lambda$mock$"));
         }
         Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertTrue(LiStrUtil.localMessageAtLineOfClass(e, Lino.class).contains("Some.throwable_map(")));
         Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertTrue(LiStrUtil.localMessageAtLineOfPackage(e, Lino.class.getPackage()).contains("Some.throwable_map(")));

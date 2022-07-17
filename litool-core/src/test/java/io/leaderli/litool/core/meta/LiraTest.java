@@ -65,7 +65,7 @@ class LiraTest {
         Assertions.assertSame(1, Lira.of("1", null).size());
         Assertions.assertSame(Lira.none(), Lira.of());
 
-
+        Lira.of((Object) null);
         Assertions.assertSame(Lira.none(), Lira.of());
         Assertions.assertSame(Lira.none(), Lira.of((Object) null));
         Assertions.assertSame(Lira.none(), Lira.of(Collections.emptyIterator()));

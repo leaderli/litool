@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
  * @author leaderli
  * @since 2022/7/12
  */
-class LiIoUtilTest {
+class LiResourceUtilTest {
 
     @Test
     void getResourcesFile() {

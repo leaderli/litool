@@ -3,7 +3,7 @@ package io.leaderli.litool.config;
 import io.leaderli.litool.core.collection.LiMapUtil;
 import io.leaderli.litool.core.lang3.LiStringUtils;
 import io.leaderli.litool.core.meta.LiBox;
-import io.leaderli.litool.core.util.LiIoUtil;
+import io.leaderli.litool.core.util.LiResourceUtil;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
@@ -23,7 +23,7 @@ public class LiYamlConfig {
 
 
         Yaml yaml = new Yaml();
-        LiIoUtil.getResourcesFile(f -> LiStringUtils.endsWithAny(f.getName(), ".yml", ".yaml")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), e -> {
+        LiResourceUtil.getResourcesFile(f -> LiStringUtils.endsWithAny(f.getName(), ".yml", ".yaml")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), e -> {
             throw new IllegalStateException(e);
         });
     }
@@ -38,7 +38,7 @@ public class LiYamlConfig {
         List<String> strings = Arrays.asList(names);
 
         LiBox<Map<String, Object>> result = LiBox.of(new HashMap<>());
-        LiIoUtil.getResourcesFile(f -> strings.contains(f.getName()))
+        LiResourceUtil.getResourcesFile(f -> strings.contains(f.getName()))
                 .sort(Comparator.comparingInt(f -> strings.indexOf(f.getName())))
                 .forThrowableEach(
                         f -> result.value(LiMapUtil.merge(result.value(), new Yaml().load(new FileInputStream(f)))),

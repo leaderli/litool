@@ -15,17 +15,17 @@ public class LiTypeMap {
     private final Map<Class<?>, Object> proxy = new HashMap<>();
 
     public <T> Lino<T> computeIfAbsent(Class<T> type, Supplier<T> supplier) {
-        return get(type).or(() -> put(type, supplier.get()));
+        return this.get(type).or(() -> this.put(type, supplier.get()));
     }
 
     @SuppressWarnings("unchecked")
     public <T> Lino<T> get(Class<T> type) {
         // 基本类型在 LiTypeMap 会被装箱，因此需要使用其包装类去查找
-        return Lino.of((T) proxy.get(LiClassUtil.primitiveToWrapper(type)));
+        return Lino.of((T) this.proxy.get(LiClassUtil.primitiveToWrapper(type)));
     }
 
     public <T> T put(Class<T> type, T value) {
-        proxy.put(LiClassUtil.primitiveToWrapper(type), value);
+        this.proxy.put(LiClassUtil.primitiveToWrapper(type), value);
         return value;
     }
 
