@@ -16,6 +16,8 @@
  */
 package io.leaderli.litool.core.lang3;
 
+import io.leaderli.litool.core.text.StrPool;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
@@ -110,52 +112,9 @@ import java.util.regex.Pattern;
  * @since 1.0
  */
 //@Immutable
-public class LiStringUtils {
+public class LiStringUtils implements StrPool {
 
-    /**
-     * A String for a space character.
-     *
-     * @since 3.2
-     */
-    public static final String SPACE = " ";
 
-    // Performance testing notes (JDK 1.4, Jul03, scolebourne)
-    // Whitespace:
-    // Character.isWhitespace() is faster than WHITESPACE.indexOf()
-    // where WHITESPACE is a string of all whitespace characters
-    //
-    // Character access:
-    // String.charAt(n) versus toCharArray(), then array[n]
-    // String.charAt(n) is about 15% worse for a 10K string
-    // They are about equal for a length 50 string
-    // String.charAt(n) is about 4 times better for a length 3 string
-    // String.charAt(n) is best bet overall
-    //
-    // Append:
-    // String.concat about twice as fast as StringBuffer.append
-    // (not sure who tested this)
-    /**
-     * The empty String {@code ""}.
-     *
-     * @since 2.0
-     */
-    public static final String EMPTY = "";
-    /**
-     * A String for linefeed LF ("\n").
-     *
-     * @see <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6">JLF: Escape Sequences
-     * for Character and String Literals</a>
-     * @since 3.2
-     */
-    public static final String LF = "\n";
-    /**
-     * A String for carriage return CR ("\r").
-     *
-     * @see <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6">JLF: Escape Sequences
-     * for Character and String Literals</a>
-     * @since 3.2
-     */
-    public static final String CR = "\r";
     /**
      * Represents a failed index search.
      *

@@ -15,6 +15,6 @@ public class StringParser implements LiDomParser<String> {
 
     @Override
     public Class<String> componentType() {
-        return null;
+        return String.class;
     }
 }
