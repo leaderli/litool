@@ -1,6 +1,6 @@
 package io.leaderli.litool.dom.parser;
 
-import io.leaderli.litool.dom.sax.RootBean;
+import io.leaderli.litool.dom.RootBean;
 import org.junit.jupiter.api.Test;
 
 /**

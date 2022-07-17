@@ -19,7 +19,7 @@ public class IfInstanceOfThen<T, M, R> implements LiInstanceOfThen<T, M, R> {
 
     @Override
     public void subscribe(SubscriberIf<T, R> actualSubscriber) {
-        prevPublisher.subscribe(new SubscriberIfInstanceOfThen(actualSubscriber));
+        this.prevPublisher.subscribe(new SubscriberIfInstanceOfThen(actualSubscriber));
 
     }
 
@@ -27,14 +27,13 @@ public class IfInstanceOfThen<T, M, R> implements LiInstanceOfThen<T, M, R> {
 
         public SubscriberIfInstanceOfThen(SubscriberIf<T, R> actualSubscriber) {
             super(actualSubscriber);
-
         }
 
 
         @Override
         public void next(T t, Function<? super T, ?> predicate) {
 
-            this.actualSubscriber.next(t, v -> LiClassUtil.isAssignableFromOrIsWrapper(middleType, v.getClass()));
+            this.actualSubscriber.next(t, v -> LiClassUtil.isAssignableFromOrIsWrapper(IfInstanceOfThen.this.middleType, v.getClass()));
         }
 
     }

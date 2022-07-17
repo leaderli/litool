@@ -1,4 +1,6 @@
-package io.leaderli.litool.dom.sax;
+package io.leaderli.litool.dom;
+
+import io.leaderli.litool.dom.sax.SaxBean;
 
 /**
  * @author leaderli
