@@ -4,6 +4,7 @@ import io.leaderli.litool.core.exception.LiAssertException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -124,6 +125,8 @@ class LiClassUtilTest {
         Assertions.assertFalse("/jar/".matches("^[^/]++/$"));
         Assertions.assertTrue(LiClassUtil.getAppJars().size() > 0);
 
+
+        System.out.println(Arrays.toString(System.getProperty("java.class.path").split(System.getProperty("path.separator"))));
 
     }
 

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 
 /**
  * @author leaderli
@@ -201,6 +202,21 @@ class LiraTest {
 
         System.out.println(linos);
         System.out.println(linos.size());
+
+    }
+
+    @Test
+    void reduce() {
+
+        List<Integer> list = Arrays.asList(1, 2, 3);
+
+        System.out.println(list.stream().reduce(new BinaryOperator<Integer>() {
+            @Override
+            public Integer apply(Integer integer, Integer integer2) {
+                return integer + integer2;
+            }
+        }).get());
+
 
     }
 
