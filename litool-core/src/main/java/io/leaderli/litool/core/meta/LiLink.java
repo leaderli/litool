@@ -32,6 +32,15 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     }
 
     /**
+     * @param <T> 泛型
+     * @return 返回一个新的实例
+     */
+    static <T> LiLink<T> none() {
+
+        return new ValueLink<>(null);
+    }
+
+    /**
      * @param value 实例
      * @param <T>   泛型
      * @return 返回一个新的实例
@@ -41,6 +50,15 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
         return new ValueLink<>(value);
     }
 
+    /**
+     * 新的 liLink 是否执行，取决于之前的链条执行结果。
+     * 如果后续有 request(R r)，也只会停留在 map 处，而不会请求到链条头节点
+     *
+     * @param mapper 转换函数
+     * @param <R>    转换后的泛型
+     * @return 返回一个新的LiLink
+     */
+    <R> LiLink<R> map(Function<? super T, ? extends R> mapper);
 
     /**
      * 当返回 false 时 ，跳过执行后续的  filter,then, 执行最近的 连续的 error 节点，并且终止执行
@@ -155,7 +173,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     @Override
     String name();
 
-    Runnable request(T t);
+    void request(T t);
 
     /**
      * @param onFinally 最后一个消费者

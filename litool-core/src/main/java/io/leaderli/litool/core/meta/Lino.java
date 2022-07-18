@@ -185,6 +185,8 @@ public interface Lino<T> extends LiValue {
      */
     Lino<T> or(Supplier<? extends T> supplier);
 
+    Lino<T> or(Lino<? extends T> lino);
+
 
     /**
      * @param other 实例
@@ -354,6 +356,11 @@ public interface Lino<T> extends LiValue {
 
         @Override
         public Lino<T> or(Supplier<? extends T> supplier) {
+            return this;
+        }
+
+        @Override
+        public Lino<T> or(Lino<? extends T> lino) {
             return this;
         }
 
@@ -540,6 +547,11 @@ public interface Lino<T> extends LiValue {
         @Override
         public Lino<T> or(Supplier<? extends T> supplier) {
             return of(supplier.get());
+        }
+
+        @Override
+        public Lino<T> or(Lino<? extends T> lino) {
+            return Lino.narrow(lino);
         }
 
         @Override

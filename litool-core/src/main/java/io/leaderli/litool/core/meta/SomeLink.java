@@ -46,6 +46,11 @@ public abstract class SomeLink<T> implements LiLink<T> {
     }
 
 
+    @Override
+    public <R> LiLink<R> map(Function<? super T, ? extends R> mapper) {
+        return new MapLink<>(this, mapper);
+    }
+
     /**
      * 当返回 false 时 ，跳过执行后续的  filter,then, 执行最近的 连续的 error 节点，并且终止执行
      *
@@ -255,8 +260,8 @@ public abstract class SomeLink<T> implements LiLink<T> {
     }
 
     @Override
-    public LiLink<T> request(final T t) {
-        return new NewRequestLink<>(this, t);
+    public void request(final T t) {
+        new NewRequestLink<>(this, t).run();
     }
 
     /**

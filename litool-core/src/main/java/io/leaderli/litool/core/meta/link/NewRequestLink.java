@@ -40,7 +40,7 @@ public class NewRequestLink<T> extends SomeLink<T> {
 
         @Override
         public void next(T value) {
-            this.actualSubscriber.next(newValue);
+            this.actualSubscriber.next(value);
         }
     }
 }
