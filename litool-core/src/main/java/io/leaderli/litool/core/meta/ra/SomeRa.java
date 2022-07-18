@@ -6,6 +6,7 @@ import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.LiClassUtil;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -33,7 +34,7 @@ public abstract class SomeRa<T> implements Lira<T> {
 
     @Override
     public <R> Lira<R> cast(Class<? extends R> type) {
-        return map(m -> Lino.of(m).cast(type).get());
+        return map(m -> LiClassUtil.cast(m, type));
 
     }
 
@@ -76,11 +77,6 @@ public abstract class SomeRa<T> implements Lira<T> {
         }));
         return value.lino();
     }
-
-    public Iterator<T> iterator() {
-        return getRaw().iterator();
-    }
-
 
     @Override
     public Lino<T> last() {
@@ -137,20 +133,16 @@ public abstract class SomeRa<T> implements Lira<T> {
         return result.lino();
     }
 
+    public Iterator<T> iterator() {
+        return getRaw().iterator();
+    }
+
     @Override
     public Lira<T> limit(int n) {
         if (n >= 0) {
             return new LimitRa<>(this, n);
         }
         return this;
-    }
-
-    @Override
-    public List<T> getRaw() {
-
-        List<T> result = new ArrayList<>();
-        this.subscribe(new ConsumerSubscriberRa<>(v -> result.add(v.get())));
-        return result;
     }
 
     @Override
@@ -263,6 +255,14 @@ public abstract class SomeRa<T> implements Lira<T> {
 
             }
         });
+    }
+
+    @Override
+    public List<T> getRaw() {
+
+        List<T> result = new ArrayList<>();
+        this.subscribe(new ConsumerSubscriberRa<>(v -> result.add(v.get())));
+        return result;
     }
 
     @Override
