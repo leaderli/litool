@@ -1,12 +1,10 @@
 package io.leaderli.litool.core.meta.link;
 
-import io.leaderli.litool.core.meta.SomeLink;
-
 /**
  * @author leaderli
  * @since 2022/7/16
  */
-public class NewRequestLink<T> extends SomeLink<T> {
+public class NewRequestLink<T> extends SomeLink<T, T> {
 
 
     private final T newValue;
@@ -27,7 +25,7 @@ public class NewRequestLink<T> extends SomeLink<T> {
      * @author leaderli
      * @since 2022/7/16
      */
-    private class NewRequestSubscriberLink extends IntermediateSubscriberLink<T> {
+    private class NewRequestSubscriberLink extends SameTypeIntermediateSubscriberLink<T> {
 
         public NewRequestSubscriberLink(SubscriberLink<T> actualSubscriber) {
             super(actualSubscriber);

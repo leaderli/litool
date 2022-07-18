@@ -1,18 +1,16 @@
 package io.leaderli.litool.core.meta.link;
 
-import io.leaderli.litool.core.meta.Lino;
-
 /**
  * 一个用于连接前后节点的中间 消费者，消费操作的抽象类
  *
  * @author leaderli
  * @since 2022/6/22
  */
-public abstract class IntermediateSubscriberLink<T> implements SubscriberLink<T>, SubscriptionLink<T> {
-    protected final SubscriberLink<T> actualSubscriber;
+public abstract class IntermediateSubscriberLink<T, R> implements SubscriberLink<T>, SubscriptionLink<R> {
+    protected final SubscriberLink<R> actualSubscriber;
     protected SubscriptionLink<T> prevSubscription;
 
-    protected IntermediateSubscriberLink(SubscriberLink<T> actualSubscriber) {
+    protected IntermediateSubscriberLink(SubscriberLink<R> actualSubscriber) {
         this.actualSubscriber = actualSubscriber;
     }
 
@@ -23,18 +21,11 @@ public abstract class IntermediateSubscriberLink<T> implements SubscriberLink<T>
         actualSubscriber.onSubscribe(this);
     }
 
-    @Override
-    public void onCancel(Lino<T> lino) {
-        this.actualSubscriber.onCancel(lino);
-    }
 
     @Override
     public void request() {
         this.prevSubscription.request();
     }
 
-    @Override
-    public void request(T t) {
-        this.prevSubscription.request(t);
-    }
+
 }

@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.meta.link;
 
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.meta.SomeLink;
 import io.leaderli.litool.core.util.LiBoolUtil;
 
 import java.util.function.Function;
@@ -10,7 +9,7 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/7/16
  */
-public class FilterLink<T> extends SomeLink<T> {
+public class FilterLink<T> extends SomeLink<T, T> {
 
 
     private final Function<? super T, ?> filter;
@@ -31,7 +30,7 @@ public class FilterLink<T> extends SomeLink<T> {
      * @author leaderli
      * @since 2022/7/16
      */
-    private class FilterSubscriberLink extends IntermediateSubscriberLink<T> {
+    private class FilterSubscriberLink extends SameTypeIntermediateSubscriberLink<T> {
 
         public FilterSubscriberLink(SubscriberLink<T> actualSubscriber) {
             super(actualSubscriber);

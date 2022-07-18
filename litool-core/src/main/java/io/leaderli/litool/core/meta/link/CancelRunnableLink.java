@@ -1,13 +1,12 @@
 package io.leaderli.litool.core.meta.link;
 
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.meta.SomeLink;
 
 /**
  * @author leaderli
  * @since 2022/7/16
  */
-public class CancelRunnableLink<T> extends SomeLink<T> {
+public class CancelRunnableLink<T> extends SomeLink<T, T> {
 
     private final Runnable runnable;
 
@@ -24,7 +23,7 @@ public class CancelRunnableLink<T> extends SomeLink<T> {
     }
 
 
-    private class CancelRunnableSubscriberLink extends IntermediateSubscriberLink<T> implements ErrorLink {
+    private class CancelRunnableSubscriberLink extends SameTypeIntermediateSubscriberLink<T> implements ErrorLink {
 
 
         protected CancelRunnableSubscriberLink(SubscriberLink<T> actualSubscriber) {

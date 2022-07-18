@@ -1,10 +1,12 @@
-package io.leaderli.litool.core.meta;
+package io.leaderli.litool.core.meta.link;
 
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.exception.LiThrowableRunner;
 import io.leaderli.litool.core.exception.LiThrowableSupplier;
-import io.leaderli.litool.core.meta.link.*;
+import io.leaderli.litool.core.meta.LiBox;
+import io.leaderli.litool.core.meta.LiConstant;
+import io.leaderli.litool.core.meta.LiLink;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -19,11 +21,11 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/7/16
  */
-public abstract class SomeLink<T> implements LiLink<T> {
+public abstract class SomeLink<P, T> implements LiLink<T> {
 
-    protected final PublisherLink<T> prevPublisher;
+    protected final PublisherLink<P> prevPublisher;
 
-    public SomeLink(PublisherLink<T> prevPublisher) {
+    public SomeLink(PublisherLink<P> prevPublisher) {
         this.prevPublisher = prevPublisher;
     }
 
@@ -49,6 +51,16 @@ public abstract class SomeLink<T> implements LiLink<T> {
     @Override
     public <R> LiLink<R> map(Function<? super T, ? extends R> mapper) {
         return new MapLink<>(this, mapper);
+    }
+
+    @Override
+    public <R> LiLink<R> union(R value) {
+        return new UnionLink<>(this, () -> value);
+    }
+
+    @Override
+    public <R> LiLink<R> union(Supplier<R> supplier) {
+        return new UnionLink<>(this, supplier);
     }
 
     /**

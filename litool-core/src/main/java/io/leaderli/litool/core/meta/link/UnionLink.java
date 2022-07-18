@@ -2,21 +2,21 @@ package io.leaderli.litool.core.meta.link;
 
 import io.leaderli.litool.core.meta.Lino;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author leaderli
  * @since 2022/7/16
  */
-public class MapLink<T, R> extends SomeLink<T, R> {
+public class UnionLink<T, R> extends SomeLink<T, R> {
 
 
-    private final Function<? super T, ? extends R> mapper;
+    private final Supplier<? extends R> supplier;
 
 
-    public MapLink(PublisherLink<T> prevPublisher, Function<? super T, ? extends R> mapper) {
+    public UnionLink(PublisherLink<T> prevPublisher, Supplier<? extends R> supplier) {
         super(prevPublisher);
-        this.mapper = mapper;
+        this.supplier = supplier;
     }
 
     @Override
@@ -40,13 +40,13 @@ public class MapLink<T, R> extends SomeLink<T, R> {
          *
          * @param value 上一个节点传递的值
          * @see #request(Object)
-         * @see #mapper
+         * @see #supplier
          */
         @Override
         public void next(T value) {
 
             Lino.of(newValue)
-                    .or(mapper.apply(value))
+                    .or(supplier)
                     .ifPresent(actualSubscriber::next)
                     .ifAbsent(() -> actualSubscriber.onCancel(Lino.none()));
 
@@ -54,7 +54,7 @@ public class MapLink<T, R> extends SomeLink<T, R> {
 
         @Override
         public void onCancel(Lino<T> value) {
-            this.actualSubscriber.onCancel(Lino.of(newValue).or(value.map(mapper)));
+            this.actualSubscriber.onCancel(Lino.of(newValue).or(supplier));
         }
 
         @Override

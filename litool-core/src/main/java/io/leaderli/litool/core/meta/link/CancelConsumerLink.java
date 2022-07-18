@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.meta.link;
 
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.meta.SomeLink;
 
 import java.util.function.Consumer;
 
@@ -9,7 +8,7 @@ import java.util.function.Consumer;
  * @author leaderli
  * @since 2022/7/16
  */
-public class CancelConsumerLink<T> extends SomeLink<T> {
+public class CancelConsumerLink<T> extends SomeLink<T, T> {
 
     private final Consumer<? super T> cancelConsumer;
 
@@ -26,7 +25,7 @@ public class CancelConsumerLink<T> extends SomeLink<T> {
     }
 
 
-    private class CancelConsumerSubscriberLink extends IntermediateSubscriberLink<T> implements ErrorLink {
+    private class CancelConsumerSubscriberLink extends SameTypeIntermediateSubscriberLink<T> implements ErrorLink {
 
 
         protected CancelConsumerSubscriberLink(SubscriberLink<T> actualSubscriber) {

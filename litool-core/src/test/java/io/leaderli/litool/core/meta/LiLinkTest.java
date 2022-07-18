@@ -168,5 +168,16 @@ class LiLinkTest {
                 .run();
         Assertions.assertEquals(e1.value(), 1);
 
+
+        e1.value(0);
+        LiLink.of(1)
+                .then((Consumer<? super Integer>) v -> t1.value(0))
+                .error(LiAssertUtil::assertNotHere)
+                .union("1")
+                .then(v -> 0)
+                .error(() -> e1.value(1))
+                .run();
+        Assertions.assertEquals(e1.value(), 1);
+
     }
 }

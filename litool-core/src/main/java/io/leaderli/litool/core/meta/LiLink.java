@@ -60,6 +60,27 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      */
     <R> LiLink<R> map(Function<? super T, ? extends R> mapper);
 
+
+    /**
+     * 新的 liLink 是否执行，取决于之前的链条执行结果。
+     * 如果后续有 request(R r)，也只会停留在 union 处，而不会请求到链条头节点
+     *
+     * @param value 新值
+     * @param <R>   转换后的泛型
+     * @return 返回一个新的LiLink
+     */
+    <R> LiLink<R> union(R value);
+
+    /**
+     * 新的 liLink 是否执行，取决于之前的链条执行结果。
+     * 如果后续有 request(R r)，也只会停留在 union 处，而不会请求到链条头节点
+     *
+     * @param supplier 新值
+     * @param <R>      转换后的泛型
+     * @return 返回一个新的LiLink
+     */
+    <R> LiLink<R> union(Supplier<R> supplier);
+
     /**
      * 当返回 false 时 ，跳过执行后续的  filter,then, 执行最近的 连续的 error 节点，并且终止执行
      *
