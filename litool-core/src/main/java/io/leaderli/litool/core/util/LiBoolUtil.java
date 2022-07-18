@@ -57,7 +57,7 @@ public class LiBoolUtil {
      * @return {@link LiValue#present()}
      */
     public static boolean parse(LiValue value) {
-        return value.present();
+        return value != null && value.present();
     }
 
     /**
@@ -65,7 +65,7 @@ public class LiBoolUtil {
      * @return {@link Boolean#valueOf(String)}
      */
     public static boolean parse(Boolean value) {
-        return value;
+        return value != null && value;
     }
 
     /**
@@ -73,7 +73,7 @@ public class LiBoolUtil {
      * @return 迭代器中包含元素
      */
     public static boolean parse(Iterable<?> iterable) {
-        return iterable.iterator().hasNext();
+        return iterable != null && iterable.iterator().hasNext();
     }
 
     /**
@@ -81,7 +81,7 @@ public class LiBoolUtil {
      * @return 迭代器中包含元素
      */
     public static boolean parse(Iterator<?> iterator) {
-        return iterator.hasNext();
+        return iterator != null && iterator.hasNext();
     }
 
     /**
@@ -89,7 +89,7 @@ public class LiBoolUtil {
      * @return map 的 集合不为空
      */
     public static boolean parse(Map<?, ?> map) {
-        return !map.isEmpty();
+        return map != null && !map.isEmpty();
     }
 
     /**
@@ -97,6 +97,6 @@ public class LiBoolUtil {
      * @return 返回数值不为0
      */
     public static boolean parse(Number value) {
-        return value.byteValue() != 0;
+        return value != null && value.byteValue() != 0;
     }
 }

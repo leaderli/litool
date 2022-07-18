@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.meta.LiValue;
 import io.leaderli.litool.core.meta.Lino;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -52,5 +53,7 @@ class LiBoolUtilTest {
         a = 0;
         Assertions.assertFalse(LiBoolUtil.parse(a));
 
+
+        Assertions.assertDoesNotThrow(() -> LiBoolUtil.parse((LiValue) null));
     }
 }
