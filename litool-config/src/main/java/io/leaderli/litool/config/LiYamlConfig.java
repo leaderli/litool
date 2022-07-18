@@ -23,7 +23,7 @@ public class LiYamlConfig {
 
 
         Yaml yaml = new Yaml();
-        LiResourceUtil.getResourcesFile(f -> LiStringUtils.endsWithAny(f.getName(), ".yml", ".yaml")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), e -> {
+        LiResourceUtil.getResourceFile(f -> LiStringUtils.endsWithAny(f.getName(), ".yml", ".yaml")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), e -> {
             throw new IllegalStateException(e);
         });
     }
@@ -38,7 +38,7 @@ public class LiYamlConfig {
         List<String> strings = Arrays.asList(names);
 
         LiBox<Map<String, Object>> result = LiBox.of(new HashMap<>());
-        LiResourceUtil.getResourcesFile(f -> strings.contains(f.getName()))
+        LiResourceUtil.getResourceFile(f -> strings.contains(f.getName()))
                 .sort(Comparator.comparingInt(f -> strings.indexOf(f.getName())))
                 .forThrowableEach(
                         f -> result.value(LiMapUtil.merge(result.value(), new Yaml().load(new FileInputStream(f)))),

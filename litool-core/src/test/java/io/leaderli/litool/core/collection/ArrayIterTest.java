@@ -12,12 +12,18 @@ import java.util.NoSuchElementException;
 class ArrayIterTest {
 
 
+    @SuppressWarnings("ConfusingArgumentToVarargsMethod")
     @Test
     void test() {
 
 
-        ArrayIter<Object> none = new ArrayIter<>(null);
+        ArrayIter<?> none = ArrayIter.of((Object[]) null);
+        Assertions.assertFalse(none.hasNext());
 
+        none = ArrayIter.of((Object) null);
+        Assertions.assertFalse(none.hasNext());
+
+        none = ArrayIter.of(null);
         Assertions.assertFalse(none.hasNext());
 
         ArrayIter<Integer> iter = ArrayIter.of(1, 2);

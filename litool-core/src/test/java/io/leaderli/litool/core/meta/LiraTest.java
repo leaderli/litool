@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.meta.ra.SomeRa;
+import io.leaderli.litool.core.collection.ArrayIter;
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -176,6 +177,31 @@ class LiraTest {
         );
     }
 
+    @Test
+    void set() {
 
+        Lira<Integer> set = Lira.of(1, 2, 1, 2).filter(i -> {
+            LiAssertUtil.assertNotHere();
+            return true;
+        }).set();
+
+        Assertions.assertEquals(2, Lira.of(1, 2, 1, 2).set().size());
+
+
+        Assertions.assertEquals(3, Lira.of(1, 2, 3, 4, 1).set().map(i -> i / 2).set().size());
+    }
+
+    @Test
+    void flatMap() {
+
+        List<String> linos = Lira.of("1 2 3")
+                .map(s -> s.split(" "))
+                .flatMap(ArrayIter::of)
+                .getRaw();
+
+        System.out.println(linos);
+        System.out.println(linos.size());
+
+    }
 
 }

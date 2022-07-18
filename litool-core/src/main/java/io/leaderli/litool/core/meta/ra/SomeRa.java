@@ -146,8 +146,22 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public <R> Lira<R> map(Function<? super T, ? extends R> mapping) {
-        return new MapRa<>(this, mapping);
+    public <R> Lira<R> flatMap() {
+//
+//        return new FlatMapRa<>(this, v -> {
+//        });
+        return null;
+    }
+
+    @Override
+    public <R> Lira<R> flatMap(Function<? super T, Iterator<? extends R>> mapper) {
+
+        return new FlatMapRa<>(this, mapper);
+    }
+
+    @Override
+    public <R> Lira<R> map(Function<? super T, ? extends R> mapper) {
+        return new MapRa<>(this, mapper);
 
     }
 
@@ -161,15 +175,15 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
-        return new ThrowableMapRa<>(this, mapping, LiConstant.WHEN_THROW);
+    public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapper) {
+        return new ThrowableMapRa<>(this, mapper, LiConstant.WHEN_THROW);
 
 
     }
 
     @Override
-    public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
-        return new ThrowableMapRa<>(this, mapping, whenThrow);
+    public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
+        return new ThrowableMapRa<>(this, mapper, whenThrow);
 
     }
 
@@ -197,6 +211,14 @@ public abstract class SomeRa<T> implements Lira<T> {
     @Override
     public int size() {
         return this.get().size();
+    }
+
+    @Override
+    public Lira<T> set() {
+
+
+        return new SetRa<>(this);
+
     }
 
     @Override

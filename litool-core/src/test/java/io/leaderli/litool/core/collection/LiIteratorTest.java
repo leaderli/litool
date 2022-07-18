@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -22,6 +23,7 @@ class LiIteratorTest {
 
 
         Assertions.assertFalse(LiIterator.of((Object[]) null).hasNext());
+        Assertions.assertFalse(LiIterator.of((Object) null).hasNext());
         Assertions.assertThrows(NoSuchElementException.class, LiIterator.of((Iterable<Object>) null)::next);
 
 
@@ -30,6 +32,7 @@ class LiIteratorTest {
         Assertions.assertEquals(1, LiIterator.of(Arrays.asList(1, 2)).next());
         Assertions.assertThrows(IllegalStateException.class, LiIterator.of(Arrays.asList(1, 2))::remove);
 
+        Assertions.assertThrows(NoSuchElementException.class, LiIterator.of((Enumeration<Integer>) null)::next);
 
     }
 }

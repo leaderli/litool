@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.collection.EnumerationIter;
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
@@ -8,6 +9,7 @@ import io.leaderli.litool.core.type.LiClassUtil;
 import io.leaderli.litool.core.type.LiPrimitive;
 import io.leaderli.litool.core.util.LiBoolUtil;
 
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -219,9 +221,21 @@ public interface Lino<T> extends LiValue {
     <R> LiIf<? super T, R> toIf();
 
     /**
+     * 支持的转换的类型有
+     * {@link Iterable}
+     * {@link Iterator}
+     * {@link Enumeration}
+     * 数组
+     *
+     * @return 根据实际值的类型，将数组或集合转换为 {@link Lira}
+     */
+    Lira<?> toLira();
+
+    /**
      * @param <R>  泛型
      * @param type 类型
      * @return 根据实际值的类型，将数组或集合转换为 {@link Lira}
+     * @see #toLira()
      */
     <R> Lira<R> toLira(Class<? extends R> type);
 
@@ -396,52 +410,60 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> Lira<R> toLira(Class<? extends R> type) {
+        public Lira<?> toLira() {
             Class<?> valueClass = this.value.getClass();
             if (valueClass.isArray()) {
                 Class<?> componentType = valueClass.getComponentType();
 
                 if (!componentType.isPrimitive()) {
-                    return Lira.of(((Object[]) this.value)).cast(type);
+                    return Lira.of(((Object[]) this.value));
                 }
 
                 if (componentType == boolean.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((boolean[]) this.value)).cast(type);
+                    return Lira.of(LiPrimitive.toWrapperArray((boolean[]) this.value));
                 }
                 if (componentType == byte.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((byte[]) this.value)).cast(type);
+                    return Lira.of(LiPrimitive.toWrapperArray((byte[]) this.value));
                 }
                 if (componentType == char.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((char[]) this.value)).cast(type);
+                    return Lira.of(LiPrimitive.toWrapperArray((char[]) this.value));
                 }
                 if (componentType == double.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((double[]) this.value)).cast(type);
+                    return Lira.of(LiPrimitive.toWrapperArray((double[]) this.value));
                 }
                 if (componentType == float.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((float[]) this.value)).cast(type);
+                    return Lira.of(LiPrimitive.toWrapperArray((float[]) this.value));
                 }
                 if (componentType == int.class) {
 
-                    return Lira.of(LiPrimitive.toWrapperArray((int[]) this.value)).cast(type);
+                    return Lira.of(LiPrimitive.toWrapperArray((int[]) this.value));
                 }
                 if (componentType == long.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((long[]) this.value)).cast(type);
+                    return Lira.of(LiPrimitive.toWrapperArray((long[]) this.value));
                 }
                 if (componentType == short.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((short[]) this.value)).cast(type);
+                    return Lira.of(LiPrimitive.toWrapperArray((short[]) this.value));
                 }
             }
 
             if (this.value instanceof Iterable) {
-                return Lira.of((Iterable<?>) this.value).cast(type);
+                return Lira.of((Iterable<?>) this.value);
             }
             if (this.value instanceof Iterator) {
-                return Lira.of((Iterator<?>) this.value).cast(type);
+                return Lira.of((Iterator<?>) this.value);
+            }
+            if (this.value instanceof Enumeration) {
+                return Lira.of(EnumerationIter.of((Enumeration<?>) this.value));
             }
 
-            return Lira.of(this.value).cast(type);
+            return Lira.of(this.value);
         }
 
+
+        @Override
+        public <R> Lira<R> toLira(Class<? extends R> type) {
+            return toLira().cast(type);
+        }
 
     }
 
@@ -572,6 +594,11 @@ public interface Lino<T> extends LiValue {
         @Override
         public <R> LiIf<? super T, R> toIf() {
             return LiIf.of();
+        }
+
+        @Override
+        public Lira<?> toLira() {
+            return Lira.none();
         }
 
         @Override

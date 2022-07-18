@@ -12,14 +12,13 @@ import java.util.function.Function;
  * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
  * @since 2022/6/27
  */
-public class FilterRa<T> extends SomeRa<T> {
-    private final PublisherRa<T> prevPublisher;
+public class FilterRa<T> extends DefaultSomeRa<T> {
 
 
     private final Function<? super T, ?> filter;
 
     public FilterRa(PublisherRa<T> prevPublisher, Function<? super T, ?> filter) {
-        this.prevPublisher = prevPublisher;
+        super(prevPublisher);
         this.filter = filter;
     }
 

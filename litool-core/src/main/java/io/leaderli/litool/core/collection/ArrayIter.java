@@ -10,16 +10,21 @@ import java.util.NoSuchElementException;
 public class ArrayIter<T> implements Iterator<T> {
 
 
+    private static final ArrayIter<?> NONE = new ArrayIter<>(null);
     private T[] arr;
     private int index = 0;
 
-    public ArrayIter(T[] arr) {
+    private ArrayIter(T[] arr) {
+
         this.arr = arr;
     }
 
+    @SuppressWarnings("unchecked")
     @SafeVarargs
     public static <T> ArrayIter<T> of(T... arr) {
-
+        if (arr == null || arr.length == 0 || (arr.length == 1 && arr[0] == null)) {
+            return (ArrayIter<T>) NONE;
+        }
 
         return new ArrayIter<>(arr);
     }

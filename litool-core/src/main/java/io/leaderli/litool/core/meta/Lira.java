@@ -67,7 +67,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      */
     static <T> Lira<T> of(Iterator<? extends T> iterator) {
 
-        LiIterator<? extends T> iter = LiIterator.of(iterator);
+        Iterator<? extends T> iter = LiIterator.of(iterator);
         if (iter.hasNext()) {
 
             return new ArrayRa<>(iter);
@@ -162,11 +162,28 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     Lira<T> limit(int n);
 
     /**
-     * @param mapping 转换函数
-     * @param <R>     转换后的泛型
+     * 使用 LiIterator 作为迭代器
+     *
+     * @param <R> 迭代器的值类型
+     * @return 展开后的 lira
+     * @see LiIterator
+     * @see #flatMap(Function)
+     */
+    <R> Lira<R> flatMap();
+
+    /**
+     * @param mapper 转换为一个迭代器
+     * @param <R>    迭代器的值类型
+     * @return 展开后的 lira
+     */
+    <R> Lira<R> flatMap(Function<? super T, Iterator<? extends R>> mapper);
+
+    /**
+     * @param mapper 转换函数
+     * @param <R>    转换后的泛型
      * @return 转换后的 Lira
      */
-    <R> Lira<R> map(Function<? super T, ? extends R> mapping);
+    <R> Lira<R> map(Function<? super T, ? extends R> mapper);
 
     /**
      * @param n 跳过多少个元素
@@ -177,20 +194,20 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     /**
      * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)},  第二个参数传  {@link LiConstant#WHEN_THROW}
      *
-     * @param mapping 转换函数
-     * @param <R>     转换后的泛型
+     * @param mapper 转换函数
+     * @param <R>    转换后的泛型
      * @return 转换后的 Lira
      * @see LiConstant#WHEN_THROW
      */
-    <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping);
+    <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapper);
 
     /**
-     * @param mapping   转换函数
+     * @param mapper    转换函数
      * @param whenThrow 当转换函数抛出异常时执行的函数
      * @param <R>       转换后的泛型
      * @return 转换后的 Lira
      */
-    <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
+    <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
 
     /**
      * @param others 数组
@@ -215,6 +232,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      * @return 返回底层元素的数量
      */
     int size();
+
+    Lira<T> set();
+
 
     Lira<T> sort();
 

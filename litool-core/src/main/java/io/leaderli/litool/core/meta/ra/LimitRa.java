@@ -8,12 +8,11 @@ import io.leaderli.litool.core.meta.Lino;
  * @author leaderli
  * @since 2022/6/27
  */
-public class LimitRa<T> extends SomeRa<T> {
+public class LimitRa<T> extends DefaultSomeRa<T> {
     private final int limit;
-    private final PublisherRa<T> prevPublisher;
 
     public LimitRa(PublisherRa<T> prevPublisher, int limit) {
-        this.prevPublisher = prevPublisher;
+        super(prevPublisher);
         this.limit = limit;
     }
 

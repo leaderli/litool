@@ -1,6 +1,6 @@
 package io.leaderli.litool.dom.parser;
 
-import io.leaderli.litool.core.util.LiClassLoaderUtil;
+import io.leaderli.litool.core.type.LiClassLoaderUtil;
 import io.leaderli.litool.dom.LiDomParser;
 import org.junit.jupiter.api.Test;
 

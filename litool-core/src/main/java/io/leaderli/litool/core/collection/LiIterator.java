@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.collection;
 
-import io.leaderli.litool.core.meta.Lino;
-
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -9,36 +8,77 @@ import java.util.NoSuchElementException;
  * @author leaderli
  * @since 2022/7/17
  */
-public class LiIterator<T> implements Iterator<T> {
+public class LiIterator<T> implements Iterator<T>, Enumeration<T> {
+
+    private static final LiIterator<?> NONE = new LiIterator<>(NoneIter.of());
 
 
     private final Iterator<T> iterator;
 
-    public LiIterator(Iterable<T> iterable) {
-        this(Lino.of(iterable).map(Iterable::iterator).get());
-    }
 
-    public LiIterator(Iterator<T> iterator) {
+    private LiIterator(Iterator<T> iterator) {
 
         this.iterator = iterator;
     }
 
-    @SafeVarargs
-    public LiIterator(T... arr) {
-        this.iterator = ArrayIter.of(arr);
+
+    /**
+     * @param obj 将 obj 转换为 LiIterator
+     * @param <T> 泛型
+     * @return 迭代器
+     * @see #of(Iterable)
+     * @see #of(Iterator)
+     * @see #of(Enumeration)
+     * @see #of(Object[])
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Iterator<T> parse(Object obj) {
+
+
+        if (obj == null) {
+            return NoneIter.of();
+        }
+        if (obj instanceof Iterator) {
+            return of((Iterator<T>) obj);
+        }
+        if (obj instanceof Iterable) {
+            return of((Iterable<T>) obj);
+        }
+        if (obj instanceof Enumeration) {
+            return of((Enumeration<T>) obj);
+        }
+
+        if (obj.getClass().isArray()) {
+            return of((T[]) obj);
+        }
+
+        return NoneIter.of();
+
     }
 
-    public static <T> LiIterator<T> of(Iterator<T> iterator) {
+    public static <T> Iterator<T> of(Iterator<T> iterator) {
         return new LiIterator<>(iterator);
     }
 
-    public static <T> LiIterator<T> of(Iterable<T> iterable) {
-        return new LiIterator<>(iterable);
+    public static <T> Iterator<T> of(Iterable<T> iterable) {
+        if (iterable == null) {
+            return NoneIter.of();
+        }
+        return new LiIterator<>(iterable.iterator());
+    }
+
+    public static <T> Iterator<T> of(Enumeration<T> enumeration) {
+        return new LiIterator<>(EnumerationIter.of(enumeration));
     }
 
     @SafeVarargs
-    public static <T> LiIterator<T> of(T... arr) {
-        return new LiIterator<>(arr);
+    public static <T> Iterator<T> of(T... arr) {
+        return new LiIterator<>(ArrayIter.of(arr));
+    }
+
+    @Override
+    public boolean hasMoreElements() {
+        return hasNext();
     }
 
     @Override
@@ -61,4 +101,11 @@ public class LiIterator<T> implements Iterator<T> {
             iterator.remove();
         }
     }
+
+    @Override
+    public T nextElement() {
+        return next();
+    }
+
+
 }

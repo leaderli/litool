@@ -1,7 +1,10 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.net.URL;
 
 /**
  * @author leaderli
@@ -9,14 +12,35 @@ import org.junit.jupiter.api.Test;
  */
 class LiResourceUtilTest {
 
+
     @Test
-    void getResourcesFile() {
+    void getResource() {
 
 
-        Assertions.assertNotNull(LiResourceUtil.getResourceAsStream("/"));
+        Assertions.assertEquals(LiResourceUtil.getResource("/"), LiResourceUtil.getResource(""));
+        Assertions.assertEquals(LiResourceUtil.getResource("/"), LiResourceUtil.getResource(null));
+        Assertions.assertEquals(LiResourceUtil.getResource("/", LiResourceUtil.class), LiResourceUtil.getResource(""));
+        Assertions.assertNotEquals(LiResourceUtil.getResource("", LiResourceUtil.class), LiResourceUtil.getResource(""));
+    }
 
+    @Test
+    void getResourceIter() {
 
-        Assertions.assertEquals(1, LiResourceUtil.getResourcesFile(null).size());
+        Lira<URL> resourcesLira = LiResourceUtil.getResourcesLira("io/leaderli");
+        System.out.println(resourcesLira.getRaw());
+//        LiPrintUtil.println(LiResourceUtil.getResourceIter("").getRaw());
+//
+//        EnumerationIter.of(LiClassLoaderUtil.getClassLoader().getResources("")).forEachRemaining(
+//                System.out::println
+//        );
+//        System.out.println("------------------");
+//        Assertions.assertNotNull(LiResourceUtil.getResourceAsStream("/"));
+//
+//
+////        System.out.println(LiResourceUtil.getResourcesFile(null).getRaw());
+//        LiIterator.of(LiClassLoaderUtil.getClassLoader().getResources(""))
+//                .forEachRemaining(System.out::println);
+//        Assertions.assertEquals(1, LiResourceUtil.getResourceFile(null).size());
 
 
     }
