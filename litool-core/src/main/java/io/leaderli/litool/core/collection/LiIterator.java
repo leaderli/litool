@@ -1,5 +1,8 @@
 package io.leaderli.litool.core.collection;
 
+import io.leaderli.litool.core.type.LiClassUtil;
+
+import java.lang.reflect.Array;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -32,8 +35,7 @@ public class LiIterator<T> implements Iterator<T>, Enumeration<T> {
      * @see #of(Object[])
      */
     @SuppressWarnings("unchecked")
-    public static <T> Iterator<T> parse(Object obj) {
-
+    public static <T> Iterator<T> of(Object obj) {
 
         if (obj == null) {
             return NoneIter.of();
@@ -49,7 +51,14 @@ public class LiIterator<T> implements Iterator<T>, Enumeration<T> {
         }
 
         if (obj.getClass().isArray()) {
-            return of((T[]) obj);
+            int length = Array.getLength(obj);
+            Object[] objects = LiClassUtil.newArray(obj.getClass().getComponentType(), length);
+            for (int i = 0; i < length; i++) {
+
+                objects[i] = Array.get(obj, i);
+            }
+
+            return (Iterator<T>) of(objects);
         }
 
         return NoneIter.of();
@@ -71,9 +80,12 @@ public class LiIterator<T> implements Iterator<T>, Enumeration<T> {
         return new LiIterator<>(EnumerationIter.of(enumeration));
     }
 
-    @SafeVarargs
-    public static <T> Iterator<T> of(T... arr) {
+    public static <T> Iterator<T> of(T[] arr) {
         return new LiIterator<>(ArrayIter.of(arr));
+    }
+
+    private static Object box(Object o) {
+        return o;
     }
 
     @Override

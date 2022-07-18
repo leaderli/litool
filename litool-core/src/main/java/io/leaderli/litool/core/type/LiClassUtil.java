@@ -148,6 +148,14 @@ public class LiClassUtil {
     }
 
     /**
+     * @param origin 数据
+     * @return 自动装箱
+     */
+    public static Object box(Object origin) {
+        return origin;
+    }
+
+    /**
      * @param map       An map object
      * @param keyType   the type of map key can cast to
      * @param valueType the type of map value can cast to

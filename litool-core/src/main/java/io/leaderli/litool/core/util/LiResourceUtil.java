@@ -30,14 +30,11 @@ public class LiResourceUtil {
 
     public static Lira<File> getResourceFile(FileFilter fileFilter) {
 
-//        return getResourcesLira("")
-//                .map(URL::getFile)
-//                .map(File::new)
-//                .map(f -> f.listFiles(fileFilter))
-//
-//                .map(f -> f.listFiles(fileFilter));
-
-        return null;
+        return getResourcesLira("")
+                .map(URL::getFile)
+                .map(File::new)
+                .map(f -> f.listFiles(fileFilter))
+                .flatMap();
 
     }
 

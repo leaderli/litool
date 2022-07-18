@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
+import io.leaderli.litool.core.collection.LiIterator;
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.meta.LiBox;
@@ -147,10 +148,7 @@ public abstract class SomeRa<T> implements Lira<T> {
 
     @Override
     public <R> Lira<R> flatMap() {
-//
-//        return new FlatMapRa<>(this, v -> {
-//        });
-        return null;
+        return new FlatMapRa<>(this, LiIterator::of);
     }
 
     @Override

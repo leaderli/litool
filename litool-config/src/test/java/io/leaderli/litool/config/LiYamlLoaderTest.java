@@ -20,7 +20,6 @@ public class LiYamlLoaderTest {
 
         Yaml yaml = new Yaml();
         List<Throwable> error = new ArrayList<>();
-        LiResourceUtil.getResourcesLira("").filter(f -> f.getFile());
         LiResourceUtil.getResourceFile(f -> f.getName().endsWith(".yml")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), error::add);
 
         Assertions.assertSame(error.size(), 0);

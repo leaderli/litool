@@ -29,6 +29,16 @@ class LiClassUtilTest {
     }
 
     @Test
+    void box() {
+
+        int a = 1;
+        Assertions.assertEquals(Integer.class, LiClassUtil.box(a).getClass());
+        Object obj = a;
+        Assertions.assertEquals(Integer.class, LiClassUtil.box(obj).getClass());
+
+    }
+
+    @Test
     public void narrow() {
 
 
