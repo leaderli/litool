@@ -43,6 +43,19 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
+    public boolean contains(T t) {
+
+        LiBox<Integer> exits = LiBox.none();
+        this.subscribe(new BiConsumerSubscriberRa<>((v, s) -> {
+            if (v.equals(t)) {
+                exits.value(1);
+                s.cancel();
+            }
+        }));
+        return exits.present();
+    }
+
+    @Override
     public Lira<T> filter(Function<? super T, ?> filter) {
         return new FilterRa<>(this, filter);
 
@@ -63,6 +76,11 @@ public abstract class SomeRa<T> implements Lira<T> {
         }));
         return value.lino();
     }
+
+    public Iterator<T> iterator() {
+        return getRaw().iterator();
+    }
+
 
     @Override
     public Lino<T> last() {

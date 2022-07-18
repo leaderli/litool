@@ -1,12 +1,10 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.meta.ra.SomeRa;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author leaderli
@@ -51,6 +49,16 @@ class LiraTest {
         Assertions.assertEquals("{1=1}", Lira.of(obj).cast(String.class, String.class).first().get().toString());
         Assertions.assertSame(Lino.none(), Lira.of(obj).cast(Integer.class, String.class).first());
 
+
+    }
+
+    @Test
+    void contains() {
+
+        Assertions.assertFalse(Lira.of((Iterable<?>) null).contains(null));
+        Assertions.assertFalse(Lira.of(1, 2).contains(null));
+        Assertions.assertFalse(Lira.of(1, 2).contains(1));
+        Assertions.assertFalse(Lira.of(1, 2).contains(2));
 
     }
 
@@ -167,5 +175,7 @@ class LiraTest {
                 }
         );
     }
+
+
 
 }

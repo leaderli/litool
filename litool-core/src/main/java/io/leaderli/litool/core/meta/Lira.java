@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.ArrayIter;
-import io.leaderli.litool.core.collection.IterableIter;
+import io.leaderli.litool.core.collection.LiIterator;
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.meta.ra.ArrayRa;
@@ -67,7 +67,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      */
     static <T> Lira<T> of(Iterator<? extends T> iterator) {
 
-        IterableIter<? extends T> iter = IterableIter.of(iterator);
+        LiIterator<? extends T> iter = LiIterator.of(iterator);
         if (iter.hasNext()) {
 
             return new ArrayRa<>(iter);
@@ -81,7 +81,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      * @return 返回一个新的实例
      */
     static <T> Lira<T> of(Iterable<? extends T> iterable) {
-        return of(IterableIter.of(iterable));
+        return of(LiIterator.of(iterable));
     }
 
     /**
@@ -101,6 +101,11 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      */
     <K, V> Lira<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType);
 
+    /**
+     * @param t 元素
+     * @return 是否包含 t
+     */
+    boolean contains(T t);
 
     /**
      * @param filter 过滤函数
@@ -144,6 +149,11 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      * @return 返回指定角标的位置的元素，当元素不存在时返回 {@link Lino#none()}
      */
     Lino<T> get(int index);
+
+    /**
+     * @return 返回迭代器
+     */
+    Iterator<T> iterator();
 
     /**
      * @param n 最多保留的元素

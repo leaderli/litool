@@ -59,7 +59,7 @@ public class LiResourceUtil {
     }
 
     public static InputStream getResourceAsStream(String path) {
-        return LiClassLoaderUtil.getClassLoader().getResourceAsStream(path);
+        return LiResourceUtil.class.getResourceAsStream(path);
     }
 
 

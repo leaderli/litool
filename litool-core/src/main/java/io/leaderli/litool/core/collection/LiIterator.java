@@ -9,26 +9,36 @@ import java.util.NoSuchElementException;
  * @author leaderli
  * @since 2022/7/17
  */
-public class IterableIter<T> implements Iterator<T> {
+public class LiIterator<T> implements Iterator<T> {
 
 
     private final Iterator<T> iterator;
 
-    public IterableIter(Iterable<T> iterable) {
+    public LiIterator(Iterable<T> iterable) {
         this(Lino.of(iterable).map(Iterable::iterator).get());
     }
 
-    public IterableIter(Iterator<T> iterator) {
+    public LiIterator(Iterator<T> iterator) {
 
         this.iterator = iterator;
     }
 
-    public static <T> IterableIter<T> of(Iterator<T> iterator) {
-        return new IterableIter<>(iterator);
+    @SafeVarargs
+    public LiIterator(T... arr) {
+        this.iterator = ArrayIter.of(arr);
     }
 
-    public static <T> IterableIter<T> of(Iterable<T> iterable) {
-        return new IterableIter<>(iterable);
+    public static <T> LiIterator<T> of(Iterator<T> iterator) {
+        return new LiIterator<>(iterator);
+    }
+
+    public static <T> LiIterator<T> of(Iterable<T> iterable) {
+        return new LiIterator<>(iterable);
+    }
+
+    @SafeVarargs
+    public static <T> LiIterator<T> of(T... arr) {
+        return new LiIterator<>(arr);
     }
 
     @Override
