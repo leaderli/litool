@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.resource.LiResourceUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -38,5 +38,7 @@ class LiIteratorTest {
         Assertions.assertTrue(LiIterator.of(new int[]{1, 2}).hasNext());
         Assertions.assertTrue(LiIterator.of(new String[]{"1", "2"}).hasNext());
         Assertions.assertTrue(LiIterator.of("123".toCharArray()).hasNext());
+
+
     }
 }

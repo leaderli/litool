@@ -139,6 +139,11 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
+    public void forEach(Consumer<? super T> consumer) {
+        this.subscribe(new ConsumerSubscriberRa<>((v) -> consumer.accept(v.get())));
+    }
+
+    @Override
     public Lira<T> limit(int n) {
         if (n >= 0) {
             return new LimitRa<>(this, n);
@@ -235,11 +240,6 @@ public abstract class SomeRa<T> implements Lira<T> {
     @Override
     public void forEachLino(Consumer<Lino<? super T>> consumer) {
         this.subscribe(new ConsumerSubscriberRa<>(consumer));
-    }
-
-    @Override
-    public void forEach(Consumer<? super T> consumer) {
-        this.subscribe(new ConsumerSubscriberRa<>((v) -> consumer.accept(v.get())));
     }
 
     @Override

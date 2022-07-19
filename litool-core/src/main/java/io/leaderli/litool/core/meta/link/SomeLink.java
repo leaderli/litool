@@ -7,6 +7,7 @@ import io.leaderli.litool.core.exception.LiThrowableSupplier;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.LiLink;
+import io.leaderli.litool.core.util.LiBoolUtil;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -68,7 +69,7 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
      *
      * @param filter 过滤器
      * @return this
-     * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
+     * @see LiBoolUtil#parse(Object)
      */
     public LiLink<T> then(Function<? super T, ?> filter) {
         return new FilterLink<>(this, filter);

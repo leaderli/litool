@@ -1,14 +1,13 @@
 package io.leaderli.litool.core.collection;
 
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
  * @author leaderli
  * @since 2022/7/17
  */
-public class EnumerationIter<T> implements Iterator<T>, Enumeration<T> {
+public class EnumerationIter<T> implements IterableIter<T>, Enumeration<T> {
 
 
     private final Enumeration<T> enumeration;

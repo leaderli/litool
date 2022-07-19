@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.util;
+package io.leaderli.litool.core.text;
 
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.type.LiClassUtil;

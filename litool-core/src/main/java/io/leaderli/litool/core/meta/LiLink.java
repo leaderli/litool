@@ -7,6 +7,7 @@ import io.leaderli.litool.core.exception.LiThrowableSupplier;
 import io.leaderli.litool.core.meta.link.CancelConsumerLink;
 import io.leaderli.litool.core.meta.link.PublisherLink;
 import io.leaderli.litool.core.meta.link.ValueLink;
+import io.leaderli.litool.core.util.LiBoolUtil;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -86,7 +87,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      *
      * @param filter 过滤器
      * @return this
-     * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
+     * @see LiBoolUtil#parse(Object)
      */
     LiLink<T> then(Function<? super T, ?> filter);
 

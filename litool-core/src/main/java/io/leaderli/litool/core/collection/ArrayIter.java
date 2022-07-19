@@ -1,13 +1,12 @@
 package io.leaderli.litool.core.collection;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
  * @author leaderli
  * @since 2022/7/17
  */
-public class ArrayIter<T> implements Iterator<T> {
+public class ArrayIter<T> implements IterableIter<T> {
 
 
     private static final ArrayIter<?> NONE = new ArrayIter<>(null);

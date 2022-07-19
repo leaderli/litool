@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.meta.ra;
 
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.util.LiBoolUtil;
 
 import java.util.function.Function;
 
@@ -9,7 +10,7 @@ import java.util.function.Function;
  *
  * @author leaderli
  * @see Lino#filter(Function)
- * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
+ * @see LiBoolUtil#parse(Object)
  * @since 2022/6/27
  */
 public class FilterRa<T> extends DefaultSomeRa<T> {

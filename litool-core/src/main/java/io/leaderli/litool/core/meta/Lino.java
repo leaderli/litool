@@ -123,9 +123,9 @@ public interface Lino<T> extends LiValue {
 
     /**
      * @param function 转换函数
-     * @return lino 实际值经过转换函数转换后，通过 {@link io.leaderli.litool.core.util.LiBoolUtil#parse(Object)} 后，调用 {@link #filter(boolean)}
+     * @return lino 实际值经过转换函数转换后，通过 {@link LiBoolUtil#parse(Object)} 后，调用 {@link #filter(boolean)}
      * @see #filter(boolean)
-     * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
+     * @see LiBoolUtil#parse(Object)
      */
     Lino<T> filter(Function<? super T, ?> function);
 
@@ -453,7 +453,7 @@ public interface Lino<T> extends LiValue {
                 return Lira.of((Iterator<?>) this.value);
             }
             if (this.value instanceof Enumeration) {
-                return Lira.of(EnumerationIter.of((Enumeration<?>) this.value));
+                return Lira.of((Iterator<?>) EnumerationIter.of((Enumeration<?>) this.value));
             }
 
             return Lira.of(this.value);

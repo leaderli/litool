@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.lang;
 
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.util.LiStringConvert;
+import io.leaderli.litool.core.text.LiStringConvert;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -260,5 +260,10 @@ public class LiClassUtil {
         return _interface.cast(Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{_interface}, invocationHandler));
     }
 
-
+    /**
+     * @return 获得Java ClassPath路径，不包括 jre
+     */
+    public static String[] getJavaClassPaths() {
+        return System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+    }
 }

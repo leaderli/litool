@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
  * @author leaderli
  * @since 2022/7/17
  */
-public class LiIterator<T> implements Iterator<T>, Enumeration<T> {
+public class LiIterator<T> implements IterableIter<T>, Enumeration<T> {
 
     private static final LiIterator<?> NONE = new LiIterator<>(NoneIter.of());
 
@@ -35,7 +35,7 @@ public class LiIterator<T> implements Iterator<T>, Enumeration<T> {
      * @see #of(Object[])
      */
     @SuppressWarnings("unchecked")
-    public static <T> Iterator<T> of(Object obj) {
+    public static <T> IterableIter<T> of(Object obj) {
 
         if (obj == null) {
             return NoneIter.of();
@@ -58,35 +58,32 @@ public class LiIterator<T> implements Iterator<T>, Enumeration<T> {
                 objects[i] = Array.get(obj, i);
             }
 
-            return (Iterator<T>) of(objects);
+            return (IterableIter<T>) of(objects);
         }
 
         return NoneIter.of();
 
     }
 
-    public static <T> Iterator<T> of(Iterator<T> iterator) {
+    public static <T> IterableIter<T> of(Iterator<T> iterator) {
         return new LiIterator<>(iterator);
     }
 
-    public static <T> Iterator<T> of(Iterable<T> iterable) {
+    public static <T> IterableIter<T> of(Iterable<T> iterable) {
         if (iterable == null) {
             return NoneIter.of();
         }
         return new LiIterator<>(iterable.iterator());
     }
 
-    public static <T> Iterator<T> of(Enumeration<T> enumeration) {
+    public static <T> IterableIter<T> of(Enumeration<T> enumeration) {
         return new LiIterator<>(EnumerationIter.of(enumeration));
     }
 
-    public static <T> Iterator<T> of(T[] arr) {
+    public static <T> IterableIter<T> of(T[] arr) {
         return new LiIterator<>(ArrayIter.of(arr));
     }
 
-    private static Object box(Object o) {
-        return o;
-    }
 
     @Override
     public boolean hasMoreElements() {

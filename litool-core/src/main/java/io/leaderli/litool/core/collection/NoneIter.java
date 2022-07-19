@@ -1,13 +1,12 @@
 package io.leaderli.litool.core.collection;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
  * @author leaderli
  * @since 2022/7/18
  */
-public class NoneIter<T> implements Iterator<T> {
+public class NoneIter<T> implements IterableIter<T> {
 
     private static final NoneIter<?> NONE = new NoneIter<>();
 

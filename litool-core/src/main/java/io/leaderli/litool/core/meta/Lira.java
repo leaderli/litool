@@ -1,12 +1,14 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.ArrayIter;
+import io.leaderli.litool.core.collection.IterableIter;
 import io.leaderli.litool.core.collection.LiIterator;
 import io.leaderli.litool.core.exception.LiThrowableConsumer;
 import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.meta.ra.ArrayRa;
 import io.leaderli.litool.core.meta.ra.PublisherRa;
 import io.leaderli.litool.core.type.LiClassUtil;
+import io.leaderli.litool.core.util.LiBoolUtil;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -46,7 +48,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
             return none();
         }
 
-        return of(ArrayIter.of(elements));
+        return of((Iterator<? extends T>) ArrayIter.of(elements));
 
     }
 
@@ -73,6 +75,16 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
             return new ArrayRa<>(iter);
         }
         return none();
+    }
+
+    /**
+     * @param iterableIter 迭代器
+     * @param <T>          迭代器泛型
+     * @return 返回一个新的实例
+     */
+    static <T> Lira<T> of(IterableIter<? extends T> iterableIter) {
+
+        return of((Iterator<? extends T>) iterableIter);
     }
 
     /**
@@ -110,12 +122,12 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     /**
      * @param filter 过滤函数
      * @return 一个新的过滤后的 Lira , 实际通过对对底层集合或数组，执行 filter
-     * @see io.leaderli.litool.core.util.LiBoolUtil#parse(Object)
+     * @see LiBoolUtil#parse(Object)
      */
     Lira<T> filter(Function<? super T, ?> filter);
 
     /**
-     * @return 一个新的过滤后的 Lira , 实际通过对对底层集合或数组，执行 {@link io.leaderli.litool.core.util.LiBoolUtil#parse(Object)}
+     * @return 一个新的过滤后的 Lira , 实际通过对对底层集合或数组，执行 {@link LiBoolUtil#parse(Object)}
      * @see #filter(Function)
      */
     Lira<T> filter();
@@ -154,6 +166,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      * @return 返回迭代器
      */
     Iterator<T> iterator();
+
+    void forEach(Consumer<? super T> consumer);
 
     /**
      * @param n 最多保留的元素
@@ -235,14 +249,11 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
 
     Lira<T> set();
 
-
     Lira<T> sort();
 
     Lira<T> sort(Comparator<? super T> comparator);
 
     void forEachLino(Consumer<Lino<? super T>> consumer);
-
-    void forEach(Consumer<? super T> consumer);
 
     void forThrowableEach(LiThrowableConsumer<? super T> consumer);
 
