@@ -17,7 +17,7 @@ public class LiAssertUtil {
 
         if (!assertTrue) {
 
-            throw new LiAssertException(msg);
+            throw new AssertException(msg);
         }
     }
 
@@ -25,7 +25,7 @@ public class LiAssertUtil {
 
         if (!assertTrue) {
 
-            throw new LiAssertException(supplier.get());
+            throw new AssertException(supplier.get());
         }
     }
 
@@ -38,7 +38,7 @@ public class LiAssertUtil {
 
         if (assertFalse) {
 
-            throw new LiAssertException(msg);
+            throw new AssertException(msg);
         }
     }
 
@@ -46,7 +46,7 @@ public class LiAssertUtil {
 
         if (assertFalse) {
 
-            throw new LiAssertException(supplier.get());
+            throw new AssertException(supplier.get());
         }
     }
 }

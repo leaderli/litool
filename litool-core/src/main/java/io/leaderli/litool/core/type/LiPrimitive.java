@@ -17,7 +17,7 @@ public class LiPrimitive {
     public static final int INT = PrimitiveValue.INT;
     public static final long LONG = PrimitiveValue.LONG;
     public static final short SHORT = PrimitiveValue.SHORT;
-    private static final LiTypeMap ZERO_VALUE = new LiTypeMap();
+    private static final TypeMap ZERO_VALUE = new TypeMap();
 
     static {
         ZERO_VALUE.put(Boolean.class, BOOLEAN);
@@ -33,7 +33,7 @@ public class LiPrimitive {
 
     @SuppressWarnings("unchecked")
     public static <T> T get(Class<T> type) {
-        type = (Class<T>) LiClassUtil.primitiveToWrapper(type);
+        type = (Class<T>) ClassUtil.primitiveToWrapper(type);
         return ZERO_VALUE.get(type).get();
     }
 

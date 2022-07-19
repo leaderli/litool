@@ -2,55 +2,55 @@ package io.leaderli.litool.core.stream;
 
 import java.util.function.Predicate;
 
-public class LiLogicPipeLine<T> implements LinterLogicPipeLineSink<T> {
+public class LiLogicPipeLine<T> implements InterLogicPipeLineSink<T> {
 
 
-    private LiSink<T, Boolean> liSink;
+    private Sink<T, Boolean> sink;
 
     private LiLogicPipeLine() {
 
     }
 
-    public static <T> LinterCombineOperationSink<T> begin() {
+    public static <T> InterCombineOperationSink<T> begin() {
 
         LiLogicPipeLine<T> logic = new LiLogicPipeLine<>();
-        logic.liSink = new Head<>();
+        logic.sink = new Head<>();
         return logic;
     }
 
     @Override
     public Boolean apply(T t) {
-        return liSink.request(t);
+        return sink.request(t);
     }
 
     @Override
-    public LinterOperationSink<T> not() {
-        this.liSink = new LiSink<T, Boolean>(this.liSink) {
+    public InterOperationSink<T> not() {
+        this.sink = new Sink<T, Boolean>(this.sink) {
             @Override
             public Boolean apply(T request, Boolean last) {
-                return next(request, LiPredicateSink.IS_NOT_OPERATION);
+                return next(request, PredicateSink.IS_NOT_OPERATION);
             }
         };
         return this;
     }
 
     @Override
-    public LinterPredicateSink<T> test(Predicate<T> predicate) {
+    public InterPredicateSink<T> test(Predicate<T> predicate) {
 
-        this.liSink = new LiPredicateSink<>(this.liSink, predicate);
+        this.sink = new PredicateSink<>(this.sink, predicate);
 
         return this;
     }
 
     @Override
-    public LinterCombineOperationSink<T> and() {
+    public InterCombineOperationSink<T> and() {
 
-        this.liSink = new LiSink<T, Boolean>(this.liSink) {
+        this.sink = new Sink<T, Boolean>(this.sink) {
             @Override
             public Boolean apply(T request, Boolean lastPredicateResult) {
                 //短路
                 if (Boolean.TRUE.equals(lastPredicateResult)) {
-                    return next(request, LiPredicateSink.NO_NOT_OPERATION);
+                    return next(request, PredicateSink.NO_NOT_OPERATION);
                 }
                 return false;
             }
@@ -59,21 +59,21 @@ public class LiLogicPipeLine<T> implements LinterLogicPipeLineSink<T> {
     }
 
     @Override
-    public LinterCombineOperationSink<T> or() {
-        this.liSink = new LiSink<T, Boolean>(this.liSink) {
+    public InterCombineOperationSink<T> or() {
+        this.sink = new Sink<T, Boolean>(this.sink) {
             @Override
             public Boolean apply(T request, Boolean lastPredicateResult) {
                 //短路
                 if (Boolean.TRUE.equals(lastPredicateResult)) {
                     return true;
                 }
-                return next(request, LiPredicateSink.NO_NOT_OPERATION);
+                return next(request, PredicateSink.NO_NOT_OPERATION);
             }
         };
         return this;
     }
 
-    private static class Head<T> extends LiSink<T, Boolean> {
+    private static class Head<T> extends Sink<T, Boolean> {
 
         public Head() {
             super(null);
@@ -81,7 +81,7 @@ public class LiLogicPipeLine<T> implements LinterLogicPipeLineSink<T> {
 
         @Override
         public Boolean apply(T request, Boolean last) {
-            return next(request, LiPredicateSink.NO_NOT_OPERATION);
+            return next(request, PredicateSink.NO_NOT_OPERATION);
         }
     }
 

@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.bit;
 
 
-import io.leaderli.litool.core.util.LiStrUtil;
+import io.leaderli.litool.core.text.StringUtils;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -68,7 +68,7 @@ public enum BitStatusEnum {
 
     @Override
     public String toString() {
-        return LiStrUtil.split(LiStrUtil.ljust(Integer.toBinaryString(value), 32, "0"), 4);
+        return StringUtils.split(StringUtils.ljust(Integer.toBinaryString(value), 32, "0"), 4);
     }
 
     /**

@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.meta.condition;
 
-import io.leaderli.litool.core.util.LiBoolUtil;
+import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.function.Function;
 
@@ -44,7 +44,7 @@ public class ThenIf<T, R> implements LiIf<T, R> {
         @Override
         public void next(T t, Function<? super T, ?> predicate) {
 
-            if (t != null && LiBoolUtil.parse(predicate.apply(t))) {
+            if (t != null && BooleanUtil.parse(predicate.apply(t))) {
                 this.onComplete(mapper.apply(t));
             } else {
                 this.actualSubscriber.next(t, null);

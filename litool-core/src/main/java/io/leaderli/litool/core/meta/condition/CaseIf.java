@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.meta.condition;
 
-import io.leaderli.litool.core.util.LiBoolUtil;
+import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.function.Function;
 
@@ -40,13 +40,13 @@ class CaseIf<T, M, R> implements LiIf<T, R> {
          * @param t         实际值，该值一定 instanceof M
          * @param predicate 断言函数，此处一定为 {@link IfInstanceOfThen.CaseWhenSubscriberIf#next(Object, Function)}
          * @see #mapper
-         * @see LiBoolUtil#parse(Object)
+         * @see BooleanUtil#parse(Object)
          */
         @SuppressWarnings({"unchecked", "JavadocReference"})
         @Override
         public void next(T t, Function<? super T, ?> predicate) {
 
-            if (t != null && LiBoolUtil.parse(predicate.apply(t))) {
+            if (t != null && BooleanUtil.parse(predicate.apply(t))) {
                 this.onComplete(mapper.apply((M) t));
             } else {
                 this.actualSubscriber.next(t, null);

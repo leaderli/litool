@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.exception.LiThrowableFunction;
+import io.leaderli.litool.core.function.ThrowableFunction;
 
 import java.util.function.Consumer;
 
@@ -13,8 +13,8 @@ public class LiConstant {
     /**
      * 默认的异常消费者，适用于
      *
-     * @see Lino#throwable_map(LiThrowableFunction)
-     * @see Lira#throwable_map(LiThrowableFunction)
+     * @see Lino#throwable_map(ThrowableFunction)
+     * @see Lira#throwable_map(ThrowableFunction)
      * @see io.leaderli.litool.core.meta.ra.ThrowableMapRa
      */
     public static Consumer<Throwable> WHEN_THROW = Throwable::printStackTrace;

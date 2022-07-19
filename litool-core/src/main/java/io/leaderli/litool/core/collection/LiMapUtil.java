@@ -3,7 +3,7 @@ package io.leaderli.litool.core.collection;
 
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.type.LiClassUtil;
+import io.leaderli.litool.core.type.ClassUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,7 +110,7 @@ public class LiMapUtil {
     public static <T> List<T> getTypeList(Map<String, ?> map, String key, Class<? extends T> listItemType) {
 
         if (map == null) {
-            return LiListUtil.emptyList();
+            return CollectionUtils.emptyList();
         }
         Object value = map.get(key);
 
@@ -150,7 +150,7 @@ public class LiMapUtil {
         Object value = map.get(key);
 
         if (value instanceof Map) {
-            return LiClassUtil.filterCanCast((Map<?, ?>) value, keyType, valueType);
+            return ClassUtil.filterCanCast((Map<?, ?>) value, keyType, valueType);
         }
 
         return new HashMap<>();
@@ -184,7 +184,7 @@ public class LiMapUtil {
      * @return 根据 key，查询指定 class 类型的值，当查询不到或类型不匹配时，返回空
      */
     public static <T> Lino<T> getTypeObject(Map<String, ?> map, String key, Class<? extends T> itemType) {
-        return Lino.of(map).map(to -> LiClassUtil.cast(map.get(key), itemType));
+        return Lino.of(map).map(to -> ClassUtil.cast(map.get(key), itemType));
     }
 
 

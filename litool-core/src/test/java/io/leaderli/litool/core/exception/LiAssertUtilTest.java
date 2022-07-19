@@ -14,20 +14,20 @@ public class LiAssertUtilTest {
     @Test
     public void test() {
 
-        Assertions.assertThrows(LiAssertException.class, () -> {
+        Assertions.assertThrows(AssertException.class, () -> {
             LiAssertUtil.assertTrue(false);
         });
 
-        LiAssertException thrown = Assertions.assertThrows(LiAssertException.class, () -> {
+        AssertException thrown = Assertions.assertThrows(AssertException.class, () -> {
             LiAssertUtil.assertTrue(false, "123");
         });
         Assertions.assertEquals(thrown.getMessage(), "123");
 
-        Assertions.assertThrows(LiAssertException.class, () -> {
+        Assertions.assertThrows(AssertException.class, () -> {
             LiAssertUtil.assertFalse(true);
         });
 
-        thrown = Assertions.assertThrows(LiAssertException.class, () -> {
+        thrown = Assertions.assertThrows(AssertException.class, () -> {
             LiAssertUtil.assertFalse(true, "123");
         });
         Assertions.assertEquals(thrown.getMessage(), "123");

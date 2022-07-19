@@ -1,13 +1,13 @@
 package io.leaderli.litool.core.meta.link;
 
-import io.leaderli.litool.core.exception.LiThrowableConsumer;
-import io.leaderli.litool.core.exception.LiThrowableFunction;
-import io.leaderli.litool.core.exception.LiThrowableRunner;
-import io.leaderli.litool.core.exception.LiThrowableSupplier;
+import io.leaderli.litool.core.function.ThrowableConsumer;
+import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.function.ThrowableRunner;
+import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.LiLink;
-import io.leaderli.litool.core.util.LiBoolUtil;
+import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -69,7 +69,7 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
      *
      * @param filter 过滤器
      * @return this
-     * @see LiBoolUtil#parse(Object)
+     * @see BooleanUtil#parse(Object)
      */
     public LiLink<T> then(Function<? super T, ?> filter) {
         return new FilterLink<>(this, filter);
@@ -118,7 +118,7 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
      * @return this
      * @see #then(Function)
      */
-    public LiLink<T> throwable_then(LiThrowableFunction<? super T, ?> filter) {
+    public LiLink<T> throwable_then(ThrowableFunction<? super T, ?> filter) {
 
         return new FilterLink<>(this, t -> {
             try {
@@ -138,7 +138,7 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
      * @return this
      * @see #then(Supplier)
      */
-    public LiLink<T> throwable_then(LiThrowableSupplier<?> filter) {
+    public LiLink<T> throwable_then(ThrowableSupplier<?> filter) {
         return new FilterLink<>(this, t -> {
             try {
                 return filter.get();
@@ -156,7 +156,7 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
      * @return this
      * @see #then(Consumer)
      */
-    public LiLink<T> throwable_then(LiThrowableConsumer<? super T> consumer) {
+    public LiLink<T> throwable_then(ThrowableConsumer<? super T> consumer) {
         return new FilterLink<>(this, t -> {
             try {
                 consumer.accept(t);
@@ -175,7 +175,7 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
      * @return this
      * @see #then(Runnable)
      */
-    public LiLink<T> throwable_then(LiThrowableRunner runner) {
+    public LiLink<T> throwable_then(ThrowableRunner runner) {
         return new FilterLink<>(this, t -> {
             try {
                 runner.run();
@@ -216,7 +216,7 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
      * @return this
      * @see LiConstant#WHEN_THROW
      */
-    public LiLink<T> throwable_error(LiThrowableRunner runnable) {
+    public LiLink<T> throwable_error(ThrowableRunner runnable) {
 
         return new CancelRunnableLink<>(this, () -> {
             try {
@@ -234,7 +234,7 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
      * @return this
      * @see LiConstant#WHEN_THROW
      */
-    public CancelConsumerLink<T> throwable_error(LiThrowableConsumer<? super T> consumer) {
+    public CancelConsumerLink<T> throwable_error(ThrowableConsumer<? super T> consumer) {
         return new CancelConsumerLink<>(this, v -> {
             try {
                 consumer.accept(v);

@@ -1,6 +1,6 @@
 package io.leaderli.litool.dom;
 
-import io.leaderli.litool.core.lang.LiTupleMap;
+import io.leaderli.litool.core.lang.TupleMap;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.dom.sax.SupportTagBuilder;
 
@@ -14,7 +14,7 @@ public class Bean extends SaxBean {
 
 
     @Override
-    public LiTupleMap<String, Class<SaxBean>> support() {
-        return SupportTagBuilder.build(LiTupleMap.of(), Bean.class);
+    public TupleMap<String, Class<SaxBean>> support() {
+        return SupportTagBuilder.build(TupleMap.of(), Bean.class);
     }
 }

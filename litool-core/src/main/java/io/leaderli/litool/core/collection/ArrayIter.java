@@ -21,7 +21,7 @@ public class ArrayIter<T> implements IterableIter<T> {
     @SuppressWarnings("unchecked")
     @SafeVarargs
     public static <T> ArrayIter<T> of(T... arr) {
-        if (arr == null || arr.length == 0 || (arr.length == 1 && arr[0] == null)) {
+        if (arr == null || arr.length == 0) {
             return (ArrayIter<T>) NONE;
         }
 

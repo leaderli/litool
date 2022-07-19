@@ -1,6 +1,6 @@
 package io.leaderli.litool.dom.sax;
 
-import io.leaderli.litool.core.lang.LiTupleMap;
+import io.leaderli.litool.core.lang.TupleMap;
 
 /**
  * @author leaderli
@@ -9,8 +9,8 @@ import io.leaderli.litool.core.lang.LiTupleMap;
 public interface SupportTag {
 
 
-    default LiTupleMap<String, Class<SaxBean>> support() {
-        return LiTupleMap.of();
+    default TupleMap<String, Class<SaxBean>> support() {
+        return TupleMap.of();
     }
 
 

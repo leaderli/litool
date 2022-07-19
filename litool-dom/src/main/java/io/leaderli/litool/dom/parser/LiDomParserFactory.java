@@ -1,6 +1,6 @@
 package io.leaderli.litool.dom.parser;
 
-import io.leaderli.litool.core.lang.LiTupleMap;
+import io.leaderli.litool.core.lang.TupleMap;
 import io.leaderli.litool.dom.LiDomParser;
 
 /**
@@ -10,7 +10,7 @@ import io.leaderli.litool.dom.LiDomParser;
 public class LiDomParserFactory {
 
 
-    private static LiTupleMap<Class<?>, LiDomParser<?>> TYPE_PARSER = new LiTupleMap<>();
+    private static TupleMap<Class<?>, LiDomParser<?>> TYPE_PARSER = new TupleMap<>();
 
     static {
 

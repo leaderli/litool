@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.lang;
 
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.text.LiStringConvert;
+import io.leaderli.litool.core.text.StringConvert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,7 +141,7 @@ public class BeanPath {
                         temp.append(ch);
                     } else if (ch == ARR_END) {
 
-                        int index = LiStringConvert.parser(temp.toString(), -1);
+                        int index = StringConvert.parser(temp.toString(), -1);
 
                         Function<Lino<?>, Lino<?>> filter = null;
                         if (filter_index < filters.length) {

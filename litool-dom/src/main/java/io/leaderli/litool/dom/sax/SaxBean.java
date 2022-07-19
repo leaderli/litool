@@ -1,7 +1,7 @@
 package io.leaderli.litool.dom.sax;
 
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.util.LiPrintUtil;
+import io.leaderli.litool.core.util.ConsoleUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,6 @@ public abstract class SaxBean implements SupportTag {
     @Override
     public String toString() {
 
-        return String.format("%s{%s}", this.tagName(), LiPrintUtil.getFieldsToString(this));
+        return String.format("%s{%s}", this.tagName(), ConsoleUtil.getFieldsToString(this));
     }
 }

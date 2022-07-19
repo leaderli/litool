@@ -3,12 +3,12 @@ package io.leaderli.litool.core.meta;
 import io.leaderli.litool.core.collection.ArrayIter;
 import io.leaderli.litool.core.collection.IterableIter;
 import io.leaderli.litool.core.collection.LiIterator;
-import io.leaderli.litool.core.exception.LiThrowableConsumer;
-import io.leaderli.litool.core.exception.LiThrowableFunction;
+import io.leaderli.litool.core.function.ThrowableConsumer;
+import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.meta.ra.ArrayRa;
 import io.leaderli.litool.core.meta.ra.PublisherRa;
-import io.leaderli.litool.core.type.LiClassUtil;
-import io.leaderli.litool.core.util.LiBoolUtil;
+import io.leaderli.litool.core.type.ClassUtil;
+import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -78,6 +78,15 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     }
 
     /**
+     * @param iterable 迭代器
+     * @param <T>      迭代器泛型
+     * @return 返回一个新的实例
+     */
+    static <T> Lira<T> of(Iterable<? extends T> iterable) {
+        return of(LiIterator.of(iterable));
+    }
+
+    /**
      * @param iterableIter 迭代器
      * @param <T>          迭代器泛型
      * @return 返回一个新的实例
@@ -85,15 +94,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     static <T> Lira<T> of(IterableIter<? extends T> iterableIter) {
 
         return of((Iterator<? extends T>) iterableIter);
-    }
-
-    /**
-     * @param iterable 迭代器
-     * @param <T>      迭代器泛型
-     * @return 返回一个新的实例
-     */
-    static <T> Lira<T> of(Iterable<? extends T> iterable) {
-        return of(LiIterator.of(iterable));
     }
 
     /**
@@ -122,12 +122,12 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     /**
      * @param filter 过滤函数
      * @return 一个新的过滤后的 Lira , 实际通过对对底层集合或数组，执行 filter
-     * @see LiBoolUtil#parse(Object)
+     * @see BooleanUtil#parse(Object)
      */
     Lira<T> filter(Function<? super T, ?> filter);
 
     /**
-     * @return 一个新的过滤后的 Lira , 实际通过对对底层集合或数组，执行 {@link LiBoolUtil#parse(Object)}
+     * @return 一个新的过滤后的 Lira , 实际通过对对底层集合或数组，执行 {@link BooleanUtil#parse(Object)}
      * @see #filter(Function)
      */
     Lira<T> filter();
@@ -206,14 +206,14 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     Lira<T> skip(int n);
 
     /**
-     * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)},  第二个参数传  {@link LiConstant#WHEN_THROW}
+     * 实际调用 {@link #throwable_map(ThrowableFunction, Consumer)},  第二个参数传  {@link LiConstant#WHEN_THROW}
      *
      * @param mapper 转换函数
      * @param <R>    转换后的泛型
      * @return 转换后的 Lira
      * @see LiConstant#WHEN_THROW
      */
-    <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapper);
+    <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
 
     /**
      * @param mapper    转换函数
@@ -221,7 +221,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      * @param <R>       转换后的泛型
      * @return 转换后的 Lira
      */
-    <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
+    <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
 
     /**
      * @param others 数组
@@ -255,9 +255,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
 
     void forEachLino(Consumer<Lino<? super T>> consumer);
 
-    void forThrowableEach(LiThrowableConsumer<? super T> consumer);
+    void forThrowableEach(ThrowableConsumer<? super T> consumer);
 
-    void forThrowableEach(LiThrowableConsumer<? super T> consumer, Consumer<Throwable> whenThrow);
+    void forThrowableEach(ThrowableConsumer<? super T> consumer, Consumer<Throwable> whenThrow);
 
     default Stream<T> stream() {
         return getRaw().stream();
@@ -269,7 +269,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
     List<T> getRaw();
 
     default T[] toArray(Class<? extends T> type) {
-        return getRaw().toArray((T[]) LiClassUtil.newArray(type, 0));
+        return getRaw().toArray((T[]) ClassUtil.newArray(type, 0));
     }
 
     /**

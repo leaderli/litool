@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.bit;
 
-import io.leaderli.litool.core.util.LiObjUtil;
+import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.lang.reflect.Modifier;
 import java.util.EnumMap;
@@ -30,7 +30,7 @@ public class BitStatus {
         BitStatus bitStatus = new BitStatus();
         Stream.of(stateClass.getDeclaredFields())
                 .filter(field -> Modifier.isStatic(field.getModifiers()) && Modifier.isFinal(field.getModifiers()))
-                .filter(field -> LiObjUtil.sameAny(field.getType(), int.class, Integer.class))
+                .filter(field -> ObjectsUtil.sameAny(field.getType(), int.class, Integer.class))
                 .forEach(field -> {
                     try {
                         field.setAccessible(true);

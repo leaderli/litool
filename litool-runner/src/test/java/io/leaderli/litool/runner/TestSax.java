@@ -1,9 +1,8 @@
 package io.leaderli.litool.runner;
 
-import io.leaderli.litool.core.util.LiPrintUtil;
+import io.leaderli.litool.core.util.ConsoleUtil;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
@@ -23,13 +22,13 @@ public class TestSax {
 
         saxParser.parse(TestSax.class.getResourceAsStream("/request.xml"), new DefaultHandler() {
             @Override
-            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-                LiPrintUtil.print(qName, attributes);
+            public void startElement(String uri, String localName, String qName, Attributes attributes) {
+                ConsoleUtil.print(qName, attributes);
             }
 
             @Override
-            public void characters(char[] ch, int start, int length) throws SAXException {
-                LiPrintUtil.print("body", new String(ch, start, length));
+            public void characters(char[] ch, int start, int length) {
+                ConsoleUtil.print("body", new String(ch, start, length));
             }
         });
     }

@@ -1,25 +1,25 @@
 package io.leaderli.litool.dom.sax;
 
-import io.leaderli.litool.core.lang.LiTupleMap;
+import io.leaderli.litool.core.lang.TupleMap;
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.type.LiClassUtil;
+import io.leaderli.litool.core.type.ClassUtil;
 
 /**
  * @author leaderli
  * @since 2022/7/15
  */
 public class SupportTagBuilder<T extends SupportTag> {
-    private final LiTupleMap<String, Class<T>> pairs;
+    private final TupleMap<String, Class<T>> pairs;
 
-    private SupportTagBuilder(LiTupleMap<String, Class<T>> pairs) {
+    private SupportTagBuilder(TupleMap<String, Class<T>> pairs) {
         this.pairs = pairs;
     }
 
-    public static <T extends SupportTag> LiTupleMap<String, Class<T>> build(LiTupleMap<String, Class<T>> pairs, Class<? extends T> cls) {
+    public static <T extends SupportTag> TupleMap<String, Class<T>> build(TupleMap<String, Class<T>> pairs, Class<? extends T> cls) {
         return of(pairs).add(cls).build();
     }
 
-    public LiTupleMap<String, Class<T>> build() {
+    public TupleMap<String, Class<T>> build() {
         return this.pairs;
     }
 
@@ -29,11 +29,11 @@ public class SupportTagBuilder<T extends SupportTag> {
                 .throwable_map(Class::newInstance, t -> {
                     throw new UnsupportedOperationException(cls + " cannot instance", t);
                 })
-                .ifPresent(sax -> pairs.putKeyValue(sax.tagName(), LiClassUtil.narrow(cls)));
+                .ifPresent(sax -> pairs.putKeyValue(sax.tagName(), ClassUtil.narrow(cls)));
         return this;
     }
 
-    public static <T extends SupportTag> SupportTagBuilder<T> of(LiTupleMap<String, Class<T>> pairs) {
+    public static <T extends SupportTag> SupportTagBuilder<T> of(TupleMap<String, Class<T>> pairs) {
         return new SupportTagBuilder<>(pairs);
     }
 }

@@ -1,8 +1,8 @@
 package io.leaderli.litool.core.net;
 
 import io.leaderli.litool.core.text.CharPool;
-import io.leaderli.litool.core.util.LiCharUtil;
-import io.leaderli.litool.core.util.LiStrUtil;
+import io.leaderli.litool.core.text.CharUtils;
+import io.leaderli.litool.core.text.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
@@ -58,7 +58,7 @@ public class URLDecoder implements Serializable {
 		if (null == charset) {
 			return str;
 		}
-		return LiStrUtil.str(decode(LiStrUtil.bytes(str, charset), isPlusToSpace), charset);
+		return StringUtils.str(decode(StringUtils.bytes(str, charset), isPlusToSpace), charset);
 	}
 
 	/**
@@ -86,9 +86,9 @@ public class URLDecoder implements Serializable {
 				buffer.write(isPlusToSpace ? CharPool.SPACE : b);
 			} else if (b == ESCAPE_CHAR) {
 				if (i + 1 < bytes.length) {
-					final int u = LiCharUtil.digit16(bytes[i + 1]);
+					final int u = CharUtils.digit16(bytes[i + 1]);
 					if (u >= 0 && i + 2 < bytes.length) {
-						final int l = LiCharUtil.digit16(bytes[i + 2]);
+						final int l = CharUtils.digit16(bytes[i + 2]);
 						if (l >= 0) {
 							buffer.write((char) ((u << 4) + l));
 							i += 2;

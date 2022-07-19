@@ -1,13 +1,13 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.EnumerationIter;
-import io.leaderli.litool.core.exception.LiThrowableConsumer;
-import io.leaderli.litool.core.exception.LiThrowableFunction;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
+import io.leaderli.litool.core.function.ThrowableConsumer;
+import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.meta.condition.LiIf;
-import io.leaderli.litool.core.type.LiClassUtil;
+import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiPrimitive;
-import io.leaderli.litool.core.util.LiBoolUtil;
+import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -109,8 +109,8 @@ public interface Lino<T> extends LiValue {
 
 
     /**
-     * @return 通过 {@link LiBoolUtil#parse(Object)} 对 实际值 进行过滤
-     * @see LiBoolUtil
+     * @return 通过 {@link BooleanUtil#parse(Object)} 对 实际值 进行过滤
+     * @see BooleanUtil
      * @see #filter(boolean)
      */
     Lino<T> filter();
@@ -123,9 +123,9 @@ public interface Lino<T> extends LiValue {
 
     /**
      * @param function 转换函数
-     * @return lino 实际值经过转换函数转换后，通过 {@link LiBoolUtil#parse(Object)} 后，调用 {@link #filter(boolean)}
+     * @return lino 实际值经过转换函数转换后，通过 {@link BooleanUtil#parse(Object)} 后，调用 {@link #filter(boolean)}
      * @see #filter(boolean)
-     * @see LiBoolUtil#parse(Object)
+     * @see BooleanUtil#parse(Object)
      */
     Lino<T> filter(Function<? super T, ?> function);
 
@@ -146,7 +146,7 @@ public interface Lino<T> extends LiValue {
      * @return this
      * @see RuntimeExceptionTransfer
      */
-    Lino<T> ifThrowablePresent(LiThrowableConsumer<? super T> consumer);
+    Lino<T> ifThrowablePresent(ThrowableConsumer<? super T> consumer);
 
 
     /**
@@ -197,14 +197,14 @@ public interface Lino<T> extends LiValue {
     Lino<T> same(T other);
 
     /**
-     * 实际调用 {@link #throwable_map(LiThrowableFunction, Consumer)}, 第二个参数传  {@link LiConstant#WHEN_THROW}
+     * 实际调用 {@link #throwable_map(ThrowableFunction, Consumer)}, 第二个参数传  {@link LiConstant#WHEN_THROW}
      *
      * @param mapping 转换函数
      * @param <R>     转换后的泛型
      * @return 转换后的 Lino
      * @see LiConstant#WHEN_THROW
      */
-    <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping);
+    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping);
 
     /**
      * @param mapping   转换函数
@@ -212,7 +212,7 @@ public interface Lino<T> extends LiValue {
      * @param <R>       转换后的泛型
      * @return 转换后的 Lino
      */
-    <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
+    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
 
     /**
      * @param <R> 泛型
@@ -283,18 +283,18 @@ public interface Lino<T> extends LiValue {
 
         @Override
         public <R> Lino<R> cast(Class<? extends R> type) {
-            return of(LiClassUtil.cast(this.value, type));
+            return of(ClassUtil.cast(this.value, type));
         }
 
         @Override
         public <K, V> Lino<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType) {
 
-            return cast(Map.class).map(m -> LiClassUtil.<K, V>filterCanCast(m, keyType, valueType)).filter();
+            return cast(Map.class).map(m -> ClassUtil.<K, V>filterCanCast(m, keyType, valueType)).filter();
         }
 
         @Override
         public Lino<T> filter() {
-            return filter(LiBoolUtil.parse(this.value));
+            return filter(BooleanUtil.parse(this.value));
         }
 
         @Override
@@ -307,7 +307,7 @@ public interface Lino<T> extends LiValue {
             if (function == null) {
                 return this;
             }
-            return filter(LiBoolUtil.parse(function.apply(this.value)));
+            return filter(BooleanUtil.parse(function.apply(this.value)));
         }
 
         @Override
@@ -327,7 +327,7 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> ifThrowablePresent(LiThrowableConsumer<? super T> consumer) {
+        public Lino<T> ifThrowablePresent(ThrowableConsumer<? super T> consumer) {
             RuntimeExceptionTransfer.accept(consumer, this.value);
             return this;
         }
@@ -387,12 +387,12 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping) {
             return throwable_map(mapping, LiConstant.WHEN_THROW);
         }
 
         @Override
-        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
             try {
 
                 return of(mapping.apply(this.value));
@@ -536,7 +536,7 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> ifThrowablePresent(LiThrowableConsumer<? super T> consumer) {
+        public Lino<T> ifThrowablePresent(ThrowableConsumer<? super T> consumer) {
             return this;
         }
 
@@ -582,12 +582,12 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping) {
             return none();
         }
 
         @Override
-        public <R> Lino<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
             return none();
         }
 

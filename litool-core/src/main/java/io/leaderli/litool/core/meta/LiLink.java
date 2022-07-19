@@ -1,13 +1,13 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.exception.LiThrowableConsumer;
-import io.leaderli.litool.core.exception.LiThrowableFunction;
-import io.leaderli.litool.core.exception.LiThrowableRunner;
-import io.leaderli.litool.core.exception.LiThrowableSupplier;
+import io.leaderli.litool.core.function.ThrowableConsumer;
+import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.function.ThrowableRunner;
+import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.link.CancelConsumerLink;
 import io.leaderli.litool.core.meta.link.PublisherLink;
 import io.leaderli.litool.core.meta.link.ValueLink;
-import io.leaderli.litool.core.util.LiBoolUtil;
+import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -87,7 +87,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      *
      * @param filter 过滤器
      * @return this
-     * @see LiBoolUtil#parse(Object)
+     * @see BooleanUtil#parse(Object)
      */
     LiLink<T> then(Function<? super T, ?> filter);
 
@@ -122,7 +122,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see #then(Function)
      */
-    LiLink<T> throwable_then(LiThrowableFunction<? super T, ?> filter);
+    LiLink<T> throwable_then(ThrowableFunction<? super T, ?> filter);
 
     /**
      * 当抛出异常时，中断链条执行
@@ -131,7 +131,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see #then(Supplier)
      */
-    LiLink<T> throwable_then(LiThrowableSupplier<?> filter);
+    LiLink<T> throwable_then(ThrowableSupplier<?> filter);
 
     /**
      * 当抛出异常时，中断链条执行
@@ -140,7 +140,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see #then(Consumer)
      */
-    LiLink<T> throwable_then(LiThrowableConsumer<? super T> consumer);
+    LiLink<T> throwable_then(ThrowableConsumer<? super T> consumer);
 
     /**
      * 当抛出异常时，中断链条执行
@@ -149,7 +149,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see #then(Runnable)
      */
-    LiLink<T> throwable_then(LiThrowableRunner runner);
+    LiLink<T> throwable_then(ThrowableRunner runner);
 
 
     /**
@@ -175,7 +175,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see LiConstant#WHEN_THROW
      */
-    LiLink<T> throwable_error(LiThrowableRunner runnable);
+    LiLink<T> throwable_error(ThrowableRunner runnable);
 
     /**
      * 当链条失败且 value 不为 null 时执行，无视异常
@@ -184,7 +184,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see LiConstant#WHEN_THROW
      */
-    CancelConsumerLink<T> throwable_error(LiThrowableConsumer<? super T> consumer);
+    CancelConsumerLink<T> throwable_error(ThrowableConsumer<? super T> consumer);
 
     /**
      * @return 链条是否正确执行完成，没有任何 error 节点执行

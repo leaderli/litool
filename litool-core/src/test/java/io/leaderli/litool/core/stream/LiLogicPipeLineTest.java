@@ -59,32 +59,32 @@ public class LiLogicPipeLineTest {
         assert MyLiLogicPipeLine.instance().len(1).or().len(2).apply("1");
     }
 
-    private interface MyLinterPredicateSink extends LinterPredicateSink<String> {
-        MyLinterCombineOperationSink and();
+    private interface MyInterPredicateSink extends InterPredicateSink<String> {
+        MyInterCombineOperationSink and();
 
-        MyLinterCombineOperationSink or();
-
-    }
-
-    private interface MyLinterOperationSink extends LinterOperationSink<String> {
-        MyLinterPredicateSink len(int size);
-
-        MyLinterPredicateSink test(Predicate<String> predicate);
-    }
-
-    private interface MyLinterNotOperationSink extends LinterNotOperationSink<String> {
-        MyLinterOperationSink not();
-    }
-
-
-    private interface MyLinterCombineOperationSink extends MyLinterOperationSink, MyLinterNotOperationSink, LinterCombineOperationSink<String> {
-    }
-
-    private interface MyLinterLogicPipeLineSink extends MyLinterCombineOperationSink, MyLinterPredicateSink {
+        MyInterCombineOperationSink or();
 
     }
 
-    private static class MyLiLogicPipeLine implements MyLinterLogicPipeLineSink {
+    private interface MyInterOperationSink extends InterOperationSink<String> {
+        MyInterPredicateSink len(int size);
+
+        MyInterPredicateSink test(Predicate<String> predicate);
+    }
+
+    private interface MyInterNotOperationSink extends InterNotOperationSink<String> {
+        MyInterOperationSink not();
+    }
+
+
+    private interface MyInterCombineOperationSink extends MyInterOperationSink, MyInterNotOperationSink, InterCombineOperationSink<String> {
+    }
+
+    private interface MyInterLogicPipeLineSink extends MyInterCombineOperationSink, MyInterPredicateSink {
+
+    }
+
+    private static class MyLiLogicPipeLine implements MyInterLogicPipeLineSink {
 
         private final LiLogicPipeLine<String> proxy = (LiLogicPipeLine<String>) LiLogicPipeLine.<String>begin();
 
@@ -98,19 +98,19 @@ public class LiLogicPipeLineTest {
         }
 
         @Override
-        public MyLinterCombineOperationSink and() {
+        public MyInterCombineOperationSink and() {
             proxy.and();
             return this;
         }
 
         @Override
-        public MyLinterCombineOperationSink or() {
+        public MyInterCombineOperationSink or() {
             proxy.or();
             return this;
         }
 
         @Override
-        public MyLinterOperationSink not() {
+        public MyInterOperationSink not() {
             proxy.not();
             return this;
         }
@@ -121,13 +121,13 @@ public class LiLogicPipeLineTest {
         }
 
         @Override
-        public MyLinterPredicateSink len(int size) {
+        public MyInterPredicateSink len(int size) {
             test(str -> size == str.length());
             return this;
         }
 
         @Override
-        public MyLinterPredicateSink test(Predicate<String> predicate) {
+        public MyInterPredicateSink test(Predicate<String> predicate) {
             proxy.test(predicate);
             return this;
         }

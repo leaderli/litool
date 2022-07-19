@@ -1,6 +1,6 @@
 package io.leaderli.litool.dom.parser;
 
-import io.leaderli.litool.core.type.LiClassLoaderUtil;
+import io.leaderli.litool.core.type.ClassLoaderUtil;
 import io.leaderli.litool.dom.LiDomParser;
 import org.junit.jupiter.api.Test;
 
@@ -20,10 +20,10 @@ class LiDomParserFactoryTest {
 
         String name = LiDomParser.class.getPackage().getName();
         System.out.println(name);
-        System.out.println(LiClassLoaderUtil.getClassLoader().getResource(name));
+        System.out.println(ClassLoaderUtil.getClassLoader().getResource(name));
         name = "io";
 
-        System.out.println(LiClassLoaderUtil.getClassLoader().getResource(name));
+        System.out.println(ClassLoaderUtil.getClassLoader().getResource(name));
 
 
     }

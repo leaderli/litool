@@ -1,13 +1,13 @@
 package io.leaderli.litool.core.meta.ra;
 
 import io.leaderli.litool.core.collection.LiIterator;
-import io.leaderli.litool.core.exception.LiThrowableConsumer;
-import io.leaderli.litool.core.exception.LiThrowableFunction;
+import io.leaderli.litool.core.function.ThrowableConsumer;
+import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.type.LiClassUtil;
+import io.leaderli.litool.core.type.ClassUtil;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -35,7 +35,7 @@ public abstract class SomeRa<T> implements Lira<T> {
 
     @Override
     public <R> Lira<R> cast(Class<? extends R> type) {
-        return map(m -> LiClassUtil.cast(m, type));
+        return map(m -> ClassUtil.cast(m, type));
 
     }
 
@@ -178,14 +178,14 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapper) {
+    public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
         return new ThrowableMapRa<>(this, mapper, LiConstant.WHEN_THROW);
 
 
     }
 
     @Override
-    public <R> Lira<R> throwable_map(LiThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
+    public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
         return new ThrowableMapRa<>(this, mapper, whenThrow);
 
     }
@@ -243,14 +243,14 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public void forThrowableEach(LiThrowableConsumer<? super T> consumer) {
+    public void forThrowableEach(ThrowableConsumer<? super T> consumer) {
         forThrowableEach(consumer, Throwable::printStackTrace);
     }
 
     @Override
-    public void forThrowableEach(LiThrowableConsumer<? super T> consumer, Consumer<Throwable> whenThrow) {
+    public void forThrowableEach(ThrowableConsumer<? super T> consumer, Consumer<Throwable> whenThrow) {
 
-        LiThrowableConsumer<? super T> finalConsumer = consumer == null ? t -> {
+        ThrowableConsumer<? super T> finalConsumer = consumer == null ? t -> {
         } : consumer;
         this.subscribe(new SubscriberRa<T>() {
 

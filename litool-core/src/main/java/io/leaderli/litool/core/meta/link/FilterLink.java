@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.meta.link;
 
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.util.LiBoolUtil;
+import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.function.Function;
 
@@ -39,7 +39,7 @@ public class FilterLink<T> extends SomeLink<T, T> {
         @Override
         public void next(T value) {
 
-            boolean next = LiBoolUtil.parse(filter.apply(value));
+            boolean next = BooleanUtil.parse(filter.apply(value));
 
 
             if (next) {

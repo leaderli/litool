@@ -2,7 +2,7 @@ package io.leaderli.litool.core.meta.condition;
 
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.util.LiBoolUtil;
+import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -107,7 +107,7 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
     /**
      * @param predicate 断言函数
      * @return 返回一个可以提供 {@link LiThen#then(Function)} 转换函数的接口类，以方便链式调用。只有当 断言函数返回为true时，才会实际调用 转换函数
-     * @see LiBoolUtil#parse(Object)
+     * @see BooleanUtil#parse(Object)
      */
     default LiThen<T, R> _if(Function<? super T, ?> predicate) {
 

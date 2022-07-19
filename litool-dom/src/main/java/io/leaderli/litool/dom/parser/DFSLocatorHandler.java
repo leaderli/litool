@@ -1,7 +1,7 @@
 package io.leaderli.litool.dom.parser;
 
-import io.leaderli.litool.core.lang3.LiStringUtils;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.LocatorDefaultHandler;
 import io.leaderli.litool.dom.sax.*;
 import org.xml.sax.Attributes;
@@ -43,7 +43,7 @@ public class DFSLocatorHandler<T extends SaxBean> extends LocatorDefaultHandler 
     public void characters(char[] ch, int start, int length) {
         String trim = new String(ch, start, length).trim();
 
-        if (LiStringUtils.isEmpty(trim)) {
+        if (StringUtils.isEmpty(trim)) {
             return;
         }
 
