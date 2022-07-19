@@ -2,7 +2,6 @@ package io.leaderli.litool.core.collection;
 
 import io.leaderli.litool.core.type.LiClassUtil;
 
-import java.lang.reflect.Array;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -51,14 +50,7 @@ public class LiIterator<T> implements Iterator<T>, Enumeration<T> {
         }
 
         if (obj.getClass().isArray()) {
-            int length = Array.getLength(obj);
-            Object[] objects = LiClassUtil.newArray(obj.getClass().getComponentType(), length);
-            for (int i = 0; i < length; i++) {
-
-                objects[i] = Array.get(obj, i);
-            }
-
-            return (Iterator<T>) of(objects);
+            return of(LiClassUtil.newArray(obj));
         }
 
         return NoneIter.of();

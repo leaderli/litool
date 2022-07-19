@@ -129,6 +129,22 @@ public class LiClassUtil {
         return (T[]) Array.newInstance(primitiveToWrapper(componentType), length);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> T[] newArray(Object arr) {
+        if (arr == null || arr.getClass().getComponentType() == null) {
+            return null;
+
+        }
+        int length = Array.getLength(arr);
+        Object[] objects = newArray(arr.getClass().getComponentType(), length);
+
+        for (int i = 0; i < length; i++) {
+            objects[i] = Array.get(arr, i);
+        }
+
+        return (T[]) objects;
+    }
+
     /**
      * @param cls 需要转换的 class
      * @return 返回其包装类 class ，当类是数组 class 时，返回其包装数组 class ，例如 {@code int[].class --> Integer.class }
