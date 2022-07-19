@@ -146,6 +146,13 @@ class LiClassUtilTest {
 
 
         Assertions.assertThrows(NullPointerException.class, () -> LiClassUtil.newArray(null, 0));
+
+
+        Assertions.assertNull(LiClassUtil.newArray(null));
+        Assertions.assertNull(LiClassUtil.newArray(1));
+        Assertions.assertEquals(1, LiClassUtil.newArray(new int[]{1})[0]);
+        Assertions.assertEquals(1, LiClassUtil.newArray(new Integer[]{1})[0]);
+
     }
 
 
