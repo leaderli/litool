@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.net;
 
-import com.sun.xml.internal.ws.util.UtilException;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.text.CharsetUtil;
 import io.leaderli.litool.core.text.StringUtils;
@@ -45,22 +44,6 @@ public class URLUtil {
      */
     public static final String URL_PROTOCOL_ZIP = "zip";
     /**
-     * URL 协议表示WebSphere文件: "wsjar"
-     */
-    public static final String URL_PROTOCOL_WSJAR = "wsjar";
-    /**
-     * URL 协议表示JBoss zip文件: "vfszip"
-     */
-    public static final String URL_PROTOCOL_VFSZIP = "vfszip";
-    /**
-     * URL 协议表示JBoss文件: "vfsfile"
-     */
-    public static final String URL_PROTOCOL_VFSFILE = "vfsfile";
-    /**
-     * URL 协议表示JBoss VFS资源: "vfs"
-     */
-    public static final String URL_PROTOCOL_VFS = "vfs";
-    /**
      * Jar路径以及内部文件路径的分界符: "!/"
      */
     public static final String JAR_URL_SEPARATOR = "!/";
@@ -76,9 +59,8 @@ public class URLUtil {
      * @param content URL
      * @param charset 编码
      * @return 解码后的URL
-     * @throws UtilException UnsupportedEncodingException
      */
-    public static String decode(String content, String charset) throws UtilException {
+    public static String decode(String content, String charset) {
         return decode(content, StringUtils.isEmpty(charset) ? null : CharsetUtil.charset(charset));
     }
 
