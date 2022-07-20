@@ -52,6 +52,9 @@ class ReflectUtilTest {
 
         Assertions.assertEquals("bean", ReflectUtil.getFieldValue(littleBean, LittleBean.class.getField("name")).get());
         Assertions.assertNull(ReflectUtil.getFieldValue(littleBean, Lino.Some.class.getDeclaredField("value")).get());
+
+
+        Assertions.assertEquals(1, ReflectUtil.getFieldValue(null, Static.class.getField("age")).get());
     }
 
     @SuppressWarnings("JavaReflectionMemberAccess")
@@ -87,6 +90,10 @@ class ReflectUtilTest {
         Assertions.assertFalse(ReflectUtil.setFieldValue(littleBean, Lino.Some.class.getDeclaredField("value"), "hello"));
 
 
+    }
+
+    public static class Static {
+        public static int age = 1;
     }
 
     public static class Bean {

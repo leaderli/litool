@@ -10,12 +10,11 @@ import java.util.Set;
 
 /**
  * @author leaderli
- * @since 2022/6/14
+ * @since 2022/7/21
  */
-class BitStatuesEnumTest {
-
+class BitStatusEnumTest {
     @Test
-    public void test() {
+    void match() {
 
         assert BitStatusEnum.valueOf("B1").value == 1;
         assert BitStatusEnum.valueOf("B32").value == Integer.MIN_VALUE;
@@ -29,7 +28,7 @@ class BitStatuesEnumTest {
     }
 
     @Test
-    public void getBitStatusMap() {
+    void getBitStatusMap() {
         Set<Integer> integers = BitStatusEnum.getBitStatusMap().keySet();
         assert integers.size() == 32;
         for (Integer value : integers) {
@@ -39,13 +38,13 @@ class BitStatuesEnumTest {
     }
 
     @Test
-    public void test1() {
+    void test1() {
         Map<BitStatusEnum, String> status = new EnumMap<>(BitStatusEnum.class);
 
         status.put(BitStatusEnum.B2, "B2");
         status.put(BitStatusEnum.B1, "B1");
 
         Assertions.assertEquals("[0000 0000 0000 0000 0000 0000 0000 0001, 0000 0000 0000 0000 0000 0000 0000 0010]", status.keySet().toString());
-
     }
+
 }

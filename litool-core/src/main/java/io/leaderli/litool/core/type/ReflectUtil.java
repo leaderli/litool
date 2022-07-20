@@ -85,9 +85,7 @@ public class ReflectUtil {
      */
     public static Lino<?> getFieldValue(Object obj, Field field) {
 
-        if (obj == null) {
-            return Lino.none();
-        }
+
         return Lino.of(field).throwable_map(f -> {
 
                     Object result;

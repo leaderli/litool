@@ -3,8 +3,6 @@ package io.leaderli.litool.core.bit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Modifier;
-
 /**
  * @author leaderli
  * @since 2022/6/16 8:45 AM
@@ -29,12 +27,11 @@ class BitStatusTest {
     }
 
     @Test
-    public void test() throws Throwable {
+    void test() {
 
-        BitStatus bitStatus = BitStatus.of(Modifier.class);
+        BitStatus bitStatus = BitStatus.of(TestMask.class);
 
-
-//        System.out.println(Modifier.class.getDeclaredField("BRIDGE").get(null));
+        Assertions.assertTrue(bitStatus.toString().contains("0001"));
 
     }
 

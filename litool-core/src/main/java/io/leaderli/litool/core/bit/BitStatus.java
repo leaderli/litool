@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.bit;
 
+import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.lang.reflect.Modifier;
@@ -31,20 +32,14 @@ public class BitStatus {
         Stream.of(stateClass.getDeclaredFields())
                 .filter(field -> Modifier.isStatic(field.getModifiers()) && Modifier.isFinal(field.getModifiers()))
                 .filter(field -> ObjectsUtil.sameAny(field.getType(), int.class, Integer.class))
-                .forEach(field -> {
-                    try {
-                        field.setAccessible(true);
-                        Integer value = (Integer) field.get(null);
-                        field.setAccessible(false);
-
-                        BitStatusEnum statusEnum = bitStatusMap.get(value);
-                        if (statusEnum != null) {
-                            bitStatus.statuses.put(statusEnum, field.getName());
-                        }
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                });
+                .forEach(field ->
+                        ReflectUtil.getFieldValue(null, field)
+                                .cast(Integer.class)
+                                .map(bitStatusMap::get)
+                                .ifPresent(statusEnum ->
+                                        bitStatus.statuses.put(statusEnum, field.getName())
+                                )
+                );
         return bitStatus;
     }
 
