@@ -1,6 +1,6 @@
 package io.leaderli.litool.config;
 
-import io.leaderli.litool.core.util.LiResourceUtil;
+import io.leaderli.litool.core.resource.ResourceUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -20,10 +20,10 @@ public class LiYamlLoaderTest {
 
         Yaml yaml = new Yaml();
         List<Throwable> error = new ArrayList<>();
-        LiResourceUtil.getResourceFile(f -> f.getName().endsWith(".yml")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), error::add);
+        ResourceUtil.getResourceFile(f -> f.getName().endsWith(".yml")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), error::add);
 
         Assertions.assertSame(error.size(), 0);
-        LiResourceUtil.getResourceFile(f -> f.getName().endsWith(".txt")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), error::add);
+        ResourceUtil.getResourceFile(f -> f.getName().endsWith(".txt")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), error::add);
         Assertions.assertSame(error.size(), 1);
 
     }
