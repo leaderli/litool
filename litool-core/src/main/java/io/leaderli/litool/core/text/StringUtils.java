@@ -20,8 +20,10 @@ import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.lang.RegExUtils;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.ReflectUtil;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.util.*;
@@ -3150,35 +3152,6 @@ public class StringUtils implements StrPool {
     //-----------------------------------------------------------------------
 
     /**
-     * <p>Splits the provided text into an array, separators specified.
-     * This is an alternative to using StringTokenizer.</p>
-     *
-     * <p>The separator is not included in the returned String array.
-     * Adjacent separators are treated as one separator.
-     * For more control over the split use the StrTokenizer class.</p>
-     *
-     * <p>A {@code null} input String returns {@code null}.
-     * A {@code null} separatorChars splits on whitespace.</p>
-     *
-     * <pre>
-     * StringUtils.split(null, *)         = null
-     * StringUtils.split("", *)           = []
-     * StringUtils.split("abc def", null) = ["abc", "def"]
-     * StringUtils.split("abc def", " ")  = ["abc", "def"]
-     * StringUtils.split("abc  def", " ") = ["abc", "def"]
-     * StringUtils.split("ab:cd:ef", ":") = ["ab", "cd", "ef"]
-     * </pre>
-     *
-     * @param str            the String to parse, may be null
-     * @param separatorChars the characters used as the delimiters,
-     *                       {@code null} splits on whitespace
-     * @return an array of parsed Strings, {@code null} if null String input
-     */
-    public static String[] split(final String str, final String separatorChars) {
-        return splitWorker(str, separatorChars, -1, false);
-    }
-
-    /**
      * <p>Splits the provided text into an array, separator string specified.</p>
      *
      * <p>The separator(s) will not be included in the returned String array.
@@ -3486,8 +3459,6 @@ public class StringUtils implements StrPool {
         return list.toArray(new String[0]);
     }
 
-    // -----------------------------------------------------------------------
-
     /**
      * <p>Splits the provided text into an array, separators specified,
      * preserving all tokens, including empty tokens created by adjacent
@@ -3524,6 +3495,8 @@ public class StringUtils implements StrPool {
     public static String[] splitPreserveAllTokens(final String str, final String separatorChars) {
         return splitWorker(str, separatorChars, -1, true);
     }
+
+    // -----------------------------------------------------------------------
 
     /**
      * <p>Splits the provided text into an array with a maximum length,
@@ -3664,7 +3637,6 @@ public class StringUtils implements StrPool {
     public static String[] splitByCharacterTypeCamelCase(final String str) {
         return splitByCharacterType(str, true);
     }
-
 
     private static StringBuilder newStringBuilder(final int noOfItems) {
         return new StringBuilder(noOfItems * 16);
@@ -3810,9 +3782,6 @@ public class StringUtils implements StrPool {
         return str;
     }
 
-    // Delete
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Case insensitive check if a CharSequence starts with a specified prefix.</p>
      *
@@ -3839,7 +3808,7 @@ public class StringUtils implements StrPool {
         return startsWith(str, prefix, true);
     }
 
-    // Remove
+    // Delete
     //-----------------------------------------------------------------------
 
     /**
@@ -3862,6 +3831,9 @@ public class StringUtils implements StrPool {
         }
         return CharSequenceUtils.regionMatches(str, ignoreCase, 0, prefix, 0, prefix.length());
     }
+
+    // Remove
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Case insensitive removal of a substring if it is at the end of a source string,
@@ -4143,9 +4115,6 @@ public class StringUtils implements StrPool {
         return replace(text, searchString, replacement, max, true);
     }
 
-    // Replacing
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Removes all occurrences of a character from within the source string.</p>
      *
@@ -4178,6 +4147,9 @@ public class StringUtils implements StrPool {
         }
         return new String(chars, 0, pos);
     }
+
+    // Replacing
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Removes each substring of the text String that matches the given regular expression.</p>
@@ -4811,9 +4783,6 @@ public class StringUtils implements StrPool {
         return replaceEach(result, searchList, replacementList, repeat, timeToLive - 1);
     }
 
-    // Replace, character based
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Replaces all occurrences of a character in a String with another.
      * This is a null-safe version of {@link String#replace(char, char)}.</p>
@@ -4840,6 +4809,9 @@ public class StringUtils implements StrPool {
         }
         return str.replace(searchChar, replaceChar);
     }
+
+    // Replace, character based
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Replaces multiple characters in a String in one go.
@@ -4906,9 +4878,6 @@ public class StringUtils implements StrPool {
         return str;
     }
 
-    // Overlay
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Overlays part of a String with another String.</p>
      *
@@ -4968,7 +4937,7 @@ public class StringUtils implements StrPool {
                 str.substring(end);
     }
 
-    // Chomping
+    // Overlay
     //-----------------------------------------------------------------------
 
     /**
@@ -5022,6 +4991,9 @@ public class StringUtils implements StrPool {
         return str.substring(0, lastIdx);
     }
 
+    // Chomping
+    //-----------------------------------------------------------------------
+
     /**
      * <p>Removes {@code separator} from the end of
      * {@code str} if it's there, otherwise leave it alone.</p>
@@ -5053,9 +5025,6 @@ public class StringUtils implements StrPool {
     public static String chomp(final String str, final String separator) {
         return removeEnd(str, separator);
     }
-
-    // Chopping
-    //-----------------------------------------------------------------------
 
     /**
      * <p>Removes a substring only if it is at the end of a source string,
@@ -5091,10 +5060,7 @@ public class StringUtils implements StrPool {
         return str;
     }
 
-    // Conversion
-    //-----------------------------------------------------------------------
-
-    // Padding
+    // Chopping
     //-----------------------------------------------------------------------
 
     /**
@@ -5136,6 +5102,12 @@ public class StringUtils implements StrPool {
         }
         return ret;
     }
+
+    // Conversion
+    //-----------------------------------------------------------------------
+
+    // Padding
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Repeat a String {@code repeat} times to form a
@@ -5480,9 +5452,6 @@ public class StringUtils implements StrPool {
         }
     }
 
-    // Centering
-    //-----------------------------------------------------------------------
-
     /**
      * Gets a CharSequence length or {@code 0} if the CharSequence is
      * {@code null}.
@@ -5496,6 +5465,9 @@ public class StringUtils implements StrPool {
     public static int length(final CharSequence cs) {
         return cs == null ? 0 : cs.length();
     }
+
+    // Centering
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Centers a String in a larger String of size {@code size}
@@ -5562,9 +5534,6 @@ public class StringUtils implements StrPool {
         return str;
     }
 
-    // Case conversion
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Centers a String in a larger String of size {@code size}.
      * Uses a supplied String as the value to pad the String with.</p>
@@ -5607,6 +5576,9 @@ public class StringUtils implements StrPool {
         str = rightPad(str, size, padStr);
         return str;
     }
+
+    // Case conversion
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Converts a String to upper case as per {@link String#toUpperCase()}.</p>
@@ -5792,9 +5764,6 @@ public class StringUtils implements StrPool {
         return new String(newCodePoints, 0, outOffset);
     }
 
-    // Count matches
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Swaps the case of a String changing upper and title case to
      * lower case, and lower case to upper case.</p>
@@ -5847,6 +5816,9 @@ public class StringUtils implements StrPool {
         return new String(newCodePoints, 0, outOffset);
     }
 
+    // Count matches
+    //-----------------------------------------------------------------------
+
     /**
      * <p>Counts how many times the substring appears in the larger string.</p>
      *
@@ -5880,9 +5852,6 @@ public class StringUtils implements StrPool {
         return count;
     }
 
-    // Character Tests
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Counts how many times the char appears in the given string.</p>
      *
@@ -5915,6 +5884,9 @@ public class StringUtils implements StrPool {
         }
         return count;
     }
+
+    // Character Tests
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Checks if the CharSequence contains only Unicode letters.</p>
@@ -6318,9 +6290,6 @@ public class StringUtils implements StrPool {
         return true;
     }
 
-    // Defaults
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Checks if the CharSequence contains mixed casing of both uppercase and lowercase characters.</p>
      *
@@ -6361,6 +6330,9 @@ public class StringUtils implements StrPool {
         }
         return containsUppercase && containsLowercase;
     }
+
+    // Defaults
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Returns the first value in the array which is not empty (""),
@@ -6525,9 +6497,6 @@ public class StringUtils implements StrPool {
         return builder.toString();
     }
 
-    // Rotating (circular shift)
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Gets a substring from the specified String avoiding exceptions.</p>
      *
@@ -6572,7 +6541,7 @@ public class StringUtils implements StrPool {
         return str.substring(start);
     }
 
-    // Reversing
+    // Rotating (circular shift)
     //-----------------------------------------------------------------------
 
     /**
@@ -6643,6 +6612,9 @@ public class StringUtils implements StrPool {
         return str.substring(start, end);
     }
 
+    // Reversing
+    //-----------------------------------------------------------------------
+
     /**
      * <p>Reverses a String as per {@link StringBuilder#reverse()}.</p>
      *
@@ -6663,9 +6635,6 @@ public class StringUtils implements StrPool {
         }
         return new StringBuilder(str).reverse().toString();
     }
-
-    // Abbreviating
-    //-----------------------------------------------------------------------
 
     /**
      * <p>Reverses a String that is delimited by a specific character.</p>
@@ -6697,6 +6666,59 @@ public class StringUtils implements StrPool {
         return join0(separatorChar, strs);
     }
 
+    // Abbreviating
+    //-----------------------------------------------------------------------
+
+    /**
+     * <p>Splits the provided text into an array, separators specified.
+     * This is an alternative to using StringTokenizer.</p>
+     *
+     * <p>The separator is not included in the returned String array.
+     * Adjacent separators are treated as one separator.
+     * For more control over the split use the StrTokenizer class.</p>
+     *
+     * <p>A {@code null} input String returns {@code null}.
+     * A {@code null} separatorChars splits on whitespace.</p>
+     *
+     * <pre>
+     * StringUtils.split(null, *)         = null
+     * StringUtils.split("", *)           = []
+     * StringUtils.split("abc def", null) = ["abc", "def"]
+     * StringUtils.split("abc def", " ")  = ["abc", "def"]
+     * StringUtils.split("abc  def", " ") = ["abc", "def"]
+     * StringUtils.split("ab:cd:ef", ":") = ["ab", "cd", "ef"]
+     * </pre>
+     *
+     * @param str            the String to parse, may be null
+     * @param separatorChars the characters used as the delimiters,
+     *                       {@code null} splits on whitespace
+     * @return an array of parsed Strings, {@code null} if null String input
+     */
+    public static String[] split(final String str, final String separatorChars) {
+        return splitWorker(str, separatorChars, -1, false);
+    }
+
+    /**
+     * @param delimiter 分割符
+     * @param elements  数组
+     * @return 将数组转换为字符串并通过 delimiter 连接起来
+     */
+    public static String join0(String delimiter, Object[] elements) {
+
+        return join(delimiter, Lino.of(elements).map(Arrays::asList).get());
+    }
+
+    public static String join(String delimiter, Iterable<?> elements) {
+
+
+        StringJoiner joiner = new StringJoiner(Lino.of(delimiter).get(" "));
+        Lira.of(elements).getRaw().stream().map(String::valueOf).forEach(joiner::add);
+        return joiner.toString();
+    }
+
+    // Difference
+    //-----------------------------------------------------------------------
+
     /**
      * <p>Splits the provided text into an array, separator specified.
      * This is an alternative to using StringTokenizer.</p>
@@ -6724,7 +6746,6 @@ public class StringUtils implements StrPool {
     public static String[] split(final String str, final char separatorChar) {
         return splitWorker(str, separatorChar, false);
     }
-
 
     /**
      * <p>Abbreviates a String using ellipses. This will turn
@@ -6761,9 +6782,6 @@ public class StringUtils implements StrPool {
         final String defaultAbbrevMarker = "...";
         return abbreviate(str, defaultAbbrevMarker, 0, maxWidth);
     }
-
-    // Difference
-    //-----------------------------------------------------------------------
 
     /**
      * <p>Abbreviates a String using ellipses. This will turn
@@ -6844,6 +6862,9 @@ public class StringUtils implements StrPool {
     public static String abbreviate(final String str, final String abbrevMarker, final int maxWidth) {
         return abbreviate(str, abbrevMarker, 0, maxWidth);
     }
+
+    // Misc
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Abbreviates a String using a given replacement marker. This will turn
@@ -6961,9 +6982,6 @@ public class StringUtils implements StrPool {
                 middle +
                 str.substring(endOffset);
     }
-
-    // Misc
-    //-----------------------------------------------------------------------
 
     /**
      * <p>Compares two Strings, and returns the portion where they differ.
@@ -7103,6 +7121,9 @@ public class StringUtils implements StrPool {
             return strs[0].substring(0, smallestIndexOfDiff);
         }
     }
+
+    // startsWith
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Compares all CharSequences in an array and returns the index at which the
@@ -7283,9 +7304,6 @@ public class StringUtils implements StrPool {
 
         return p[n];
     }
-
-    // startsWith
-    //-----------------------------------------------------------------------
 
     /**
      * <p>Find the Levenshtein distance between two Strings if it's less than or equal to a given
@@ -7508,6 +7526,9 @@ public class StringUtils implements StrPool {
         return Math.round(jw * 100.0D) / 100.0D;
     }
 
+    // endsWith
+    //-----------------------------------------------------------------------
+
     private static int[] matches(final CharSequence first, final CharSequence second) {
         CharSequence max, min;
         if (first.length() > second.length()) {
@@ -7646,9 +7667,6 @@ public class StringUtils implements StrPool {
 
         return score;
     }
-
-    // endsWith
-    //-----------------------------------------------------------------------
 
     /**
      * <p>Check if a CharSequence starts with any of the provided case-sensitive prefixes.</p>
@@ -8330,7 +8348,6 @@ public class StringUtils implements StrPool {
         return value == null ? null : String.valueOf(value);
     }
 
-
     /**
      * @param origin     -
      * @param min_length -
@@ -8470,24 +8487,6 @@ public class StringUtils implements StrPool {
         return join(delimiter, Lino.of(elements).map(Arrays::asList).get());
     }
 
-    /**
-     * @param delimiter 分割符
-     * @param elements  数组
-     * @return 将数组转换为字符串并通过 delimiter 连接起来
-     */
-    public static String join0(String delimiter, Object[] elements) {
-
-        return join(delimiter, Lino.of(elements).map(Arrays::asList).get());
-    }
-
-    public static String join(String delimiter, Iterable<?> elements) {
-
-
-        StringJoiner joiner = new StringJoiner(Lino.of(delimiter).get(" "));
-        Lira.of(elements).getRaw().stream().map(String::valueOf).forEach(joiner::add);
-        return joiner.toString();
-    }
-
     public static String localMessageAtLineOfClass(Throwable throwable, Class<?> threwClass) {
 
         return localMessageStartWith(throwable, threwClass.getName());
@@ -8567,5 +8566,16 @@ public class StringUtils implements StrPool {
      */
     public static String str(CharSequence cs) {
         return null == cs ? null : cs.toString();
+    }
+
+    public static String getFieldsToString(Object o) {
+
+        return join(",", Lino.of(o).map(l -> l.getClass().getFields())
+
+                .toLira(Field.class)
+                .map(f -> f.getName() + " = " + ReflectUtil.getFieldValue(o, f).get())
+                .getRaw());
+
+
     }
 }

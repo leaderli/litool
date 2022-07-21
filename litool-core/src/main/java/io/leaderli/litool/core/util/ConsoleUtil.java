@@ -2,9 +2,8 @@ package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.text.StringUtils;
-import io.leaderli.litool.core.type.ReflectUtil;
 
-import java.lang.reflect.Field;
+import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
@@ -14,6 +13,9 @@ import java.util.Arrays;
  */
 public class ConsoleUtil {
 
+
+    public static final String LINE_SEPARATOR = java.security.AccessController.doPrivileged(new sun.security.action.GetPropertyAction("line.separator"));
+    public static PrintStream CONSOLE = System.out;
 
     /**
      * 快速打印多个参数值，使用空格分割
@@ -35,7 +37,7 @@ public class ConsoleUtil {
      */
     private static void print0(String delimiter, Iterable<?> args) {
 
-        System.out.println(StringUtils.join(Lino.of(delimiter).get(" "), args));
+        CONSOLE.println(StringUtils.join(Lino.of(delimiter).get(" "), args));
     }
 
     /**
@@ -58,7 +60,7 @@ public class ConsoleUtil {
     public static void println(Iterable<?> args) {
 
 
-        print0("\n", args);
+        print0(LINE_SEPARATOR, args);
 
     }
 
@@ -67,7 +69,7 @@ public class ConsoleUtil {
      */
     public static void line() {
 
-        System.out.println(StringUtils.ljust("", 20, "-"));
+        CONSOLE.println(StringUtils.ljust("", 60, "-"));
 
     }
 
@@ -79,7 +81,7 @@ public class ConsoleUtil {
      */
     public static void println(Object... args) {
 
-        print0("\n", args);
+        print0(LINE_SEPARATOR, args);
     }
 
     /**
@@ -89,7 +91,7 @@ public class ConsoleUtil {
      * @param args      参数
      */
     public static void print0(String delimiter, Object... args) {
-        System.out.println(StringUtils.join(Lino.of(delimiter).get(" "), args));
+        CONSOLE.println(StringUtils.join(Lino.of(delimiter).get(" "), args));
     }
 
     /**
@@ -100,19 +102,6 @@ public class ConsoleUtil {
      * @see MessageFormat#format(String, Object...)
      */
     public static void print_format(String pattern, Object... arguments) {
-
-        System.out.println(MessageFormat.format(pattern, arguments));
-    }
-
-
-    public static String getFieldsToString(Object o) {
-
-        return StringUtils.join(",", Lino.of(o).map(l -> l.getClass().getFields())
-
-                .toLira(Field.class)
-                .map(f -> f.getName() + " = " + ReflectUtil.getFieldValue(o, f).get())
-                .getRaw());
-
-
+        CONSOLE.println(MessageFormat.format(pattern, arguments));
     }
 }
