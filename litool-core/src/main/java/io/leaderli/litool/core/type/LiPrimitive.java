@@ -32,10 +32,11 @@ public class LiPrimitive {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T get(Class<T> type) {
+    public static <T> T def(Class<T> type) {
         type = (Class<T>) ClassUtil.primitiveToWrapper(type);
         return ZERO_VALUE.get(type).get();
     }
+
 
     public static Byte[] toWrapperArray(byte[] arr) {
 

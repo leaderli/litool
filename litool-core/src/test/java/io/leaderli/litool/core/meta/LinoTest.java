@@ -100,9 +100,9 @@ class LinoTest {
 
     @Test
     void same() {
-        Assertions.assertTrue(Lino.of("1").same("1").present());
-        Assertions.assertTrue(Lino.of("2").same("1").absent());
-        Assertions.assertTrue(Lino.of(null).same("1").absent());
+        Assertions.assertTrue(Lino.of("1").contain("1").present());
+        Assertions.assertTrue(Lino.of("2").contain("1").absent());
+        Assertions.assertTrue(Lino.of(null).contain("1").absent());
     }
 
     @Test

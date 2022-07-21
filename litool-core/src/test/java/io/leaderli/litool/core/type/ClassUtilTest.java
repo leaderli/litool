@@ -16,19 +16,15 @@ import java.util.function.Function;
  * @since 2022/6/17
  */
 class ClassUtilTest {
+
+
     @Test
-    public void test() throws Throwable {
+    void testGetClass() {
 
+        //noinspection ConstantConditions
+        Assertions.assertNull(ClassUtil.getClass(null));
 
-        Assertions.assertDoesNotThrow(() -> {
-            Class<CharSequence> narrow = ClassUtil.getClass("123");
-        });
-        Assertions.assertThrows(NullPointerException.class, () -> {
-
-            Class<CharSequence> narrow = ClassUtil.getClass(null);
-        });
-
-
+        Assertions.assertEquals(Integer.class, ClassUtil.getClass(1));
     }
 
     @Test
@@ -130,26 +126,6 @@ class ClassUtilTest {
         Lira<String> a = ClassUtil.getJavaClassPaths();
         Lira<String> b = Lira.of(ClassUtil.getAppJars());
         ConsoleUtil.println(a.size(), b.size());
-//
-//        a.forEach(t -> {
-//
-//            if ("D:\\ProgramFiles\\Idea2021\\lib\\idea_rt.jar".equals(t)) {
-//                System.out.println("---------->" + t);
-//            }
-//        });
-//        ConsoleUtil.println(a.contains("D:\\ProgramFiles\\Idea2021\\lib\\idea_rt.jar"));
-//        ConsoleUtil.println(b.contains("D:\\ProgramFiles\\Idea2021\\lib\\idea_rt.jar"));
-//
-//        ConsoleUtil.line();
-//        System.out.println(a.size());
-//        System.out.println(b.size());
-//        ConsoleUtil.println(a);
-//        ConsoleUtil.line();
-//        ConsoleUtil.println(b);
-//        ConsoleUtil.line();
-
-//        ConsoleUtil.print(a.contains("D:/ProgramFiles/Idea2021/lib/idea_rt.jar"), b.contains("D:/ProgramFiles/Idea2021/lib/idea_rt.jar"));
-//        ConsoleUtil.print(a.getRaw().contains("D:/ProgramFiles/Idea2021/lib/idea_rt.jar"), b.getRaw().contains("D:/ProgramFiles/Idea2021/lib/idea_rt.jar"));
         ConsoleUtil.println(CollectionUtils.intersection(a, b));
 
 

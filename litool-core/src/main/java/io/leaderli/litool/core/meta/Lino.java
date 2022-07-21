@@ -194,7 +194,7 @@ public interface Lino<T> extends LiValue {
      * @param other 实例
      * @return 当 other 与 lino 实际值 equals 时，返回 this，否则返回 {@link #none()}
      */
-    Lino<T> same(T other);
+    Lino<T> contain(T other);
 
     /**
      * 实际调用 {@link #throwable_map(ThrowableFunction, Consumer)}, 第二个参数传  {@link LiConstant#WHEN_THROW}
@@ -379,7 +379,7 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> same(T other) {
+        public Lino<T> contain(T other) {
             if (this.value.equals(other)) {
                 return this;
             }
@@ -577,7 +577,7 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
-        public Lino<T> same(T other) {
+        public Lino<T> contain(T other) {
             return this;
         }
 

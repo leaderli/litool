@@ -13,7 +13,6 @@ import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -51,8 +50,10 @@ public class ClassUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T, E extends T> Class<T> getClass(E def) {
-        Objects.requireNonNull(def, "default value should can not be null");
 
+        if (def == null) {
+            return null;
+        }
         return (Class<T>) def.getClass();
     }
 
