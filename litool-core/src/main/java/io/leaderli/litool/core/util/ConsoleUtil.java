@@ -63,6 +63,16 @@ public class ConsoleUtil {
     }
 
     /**
+     * 打印横线
+     */
+    public static void line() {
+
+        System.out.println(StringUtils.ljust("", 20, "-"));
+
+    }
+
+
+    /**
      * 快速打印多个参数值，使用换行符作为分割
      *
      * @param args 参数

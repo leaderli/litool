@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.collection;
 
+import com.sun.istack.internal.NotNull;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
 
@@ -103,5 +104,66 @@ public class CollectionUtils {
         }
 
         return array;
+    }
+
+    /**
+     * @param a   集合
+     * @param b   集合
+     * @param <T> 集合泛型
+     * @return 两个集合的异或
+     */
+    public static <T> Lira<T> xor(Lira<T> a, Lira<T> b) {
+
+
+        List<T> union = union(a, b).getRaw();
+        List<T> intersection = intersection(a, b).getRaw();
+
+
+        union.removeIf(intersection::contains);
+
+        return Lira.of(union);
+
+    }
+
+    /**
+     * @param a   集合
+     * @param b   集合
+     * @param <T> 集合泛型
+     * @return 两个集合的并集
+     */
+    public static <T> Lira<T> union(@NotNull Lira<T> a, @NotNull Lira<T> b) {
+
+
+        List<T> raw = a.getRaw();
+
+        b.forEach(raw::add);
+
+        return Lira.of(raw).distinct();
+
+    }
+
+    /**
+     * @param a   集合
+     * @param b   集合
+     * @param <T> 集合泛型
+     * @return 两个集合的交集
+     */
+    public static <T> Lira<T> intersection(@NotNull Lira<T> a, @NotNull Lira<T> b) {
+
+
+        List<T> result = new ArrayList<>();
+
+        List<T> raw = b.getRaw();
+
+        a.forEach(t -> {
+
+            if (raw.contains(t)) {
+                result.add(t);
+            }
+        });
+
+        return Lira.of(result).distinct();
+
+
     }
 }

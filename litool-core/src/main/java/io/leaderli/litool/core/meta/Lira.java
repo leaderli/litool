@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  * @author leaderli
  * @since 2022/6/19
  */
-public interface Lira<T> extends LiValue, PublisherRa<T> {
+public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
 
     Lira<?> NONE = new ArrayRa<>(Collections.emptyIterator());
@@ -247,7 +247,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T> {
      */
     int size();
 
-    Lira<T> set();
+    Lira<T> distinct();
 
     Lira<T> sort();
 

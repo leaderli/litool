@@ -1,6 +1,9 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.AssertException;
+import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.util.ConsoleUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -124,6 +127,30 @@ class ClassUtilTest {
         Assertions.assertFalse("/jar/".matches("^[^/]++/$"));
         Assertions.assertTrue(ClassUtil.getAppJars().size() > 0);
 
+        Lira<String> a = ClassUtil.getJavaClassPaths();
+        Lira<String> b = Lira.of(ClassUtil.getAppJars());
+        ConsoleUtil.println(a.size(), b.size());
+//
+//        a.forEach(t -> {
+//
+//            if ("D:\\ProgramFiles\\Idea2021\\lib\\idea_rt.jar".equals(t)) {
+//                System.out.println("---------->" + t);
+//            }
+//        });
+//        ConsoleUtil.println(a.contains("D:\\ProgramFiles\\Idea2021\\lib\\idea_rt.jar"));
+//        ConsoleUtil.println(b.contains("D:\\ProgramFiles\\Idea2021\\lib\\idea_rt.jar"));
+//
+//        ConsoleUtil.line();
+//        System.out.println(a.size());
+//        System.out.println(b.size());
+//        ConsoleUtil.println(a);
+//        ConsoleUtil.line();
+//        ConsoleUtil.println(b);
+//        ConsoleUtil.line();
+
+//        ConsoleUtil.print(a.contains("D:/ProgramFiles/Idea2021/lib/idea_rt.jar"), b.contains("D:/ProgramFiles/Idea2021/lib/idea_rt.jar"));
+//        ConsoleUtil.print(a.getRaw().contains("D:/ProgramFiles/Idea2021/lib/idea_rt.jar"), b.getRaw().contains("D:/ProgramFiles/Idea2021/lib/idea_rt.jar"));
+        ConsoleUtil.println(CollectionUtils.intersection(a, b));
 
 
     }

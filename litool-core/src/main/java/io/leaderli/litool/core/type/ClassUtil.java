@@ -1,16 +1,19 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.bit.BitStatus;
-import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
 
-import java.io.IOException;
+import java.io.File;
 import java.lang.reflect.*;
-import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -100,22 +103,15 @@ public class ClassUtil {
      */
     public static List<String> getAppJars() {
 
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        try {
-            Enumeration<URL> resources = loader.getResources("META-INF");
-            return Collections.list(resources).stream()
-                    .filter(url -> "jar".equals(url.getProtocol()))
-                    .map(URL::getFile)
-                    .map(path -> path.replace("!/META-INF", "")
-                            .replaceAll("^[^/]++/", ""))
+        return getJavaClassPaths().filter(f -> f.endsWith(FileNameUtil.EXT_JAR)).getRaw();
 
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    }
 
-        return CollectionUtils.emptyList();
-
+    /**
+     * @return 获得Java ClassPath路径，不包括 jre
+     */
+    public static Lira<String> getJavaClassPaths() {
+        return Lira.of(System.getProperty("java.class.path").split(System.getProperty("path.separator"))).map(path -> path.replace(File.separatorChar, '/'));
     }
 
     @SuppressWarnings("unchecked")
@@ -274,12 +270,5 @@ public class ClassUtil {
                         .throwable_map(m -> m.invoke(aop, params), Throwable::printStackTrace)
                         .get();
         return _interface.cast(Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{_interface}, invocationHandler));
-    }
-
-    /**
-     * @return 获得Java ClassPath路径，不包括 jre
-     */
-    public static String[] getJavaClassPaths() {
-        return System.getProperty("java.class.path").split(System.getProperty("path.separator"));
     }
 }

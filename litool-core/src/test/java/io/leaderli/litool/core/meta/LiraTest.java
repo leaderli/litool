@@ -58,8 +58,9 @@ class LiraTest {
 
         Assertions.assertFalse(Lira.of((Iterable<?>) null).contains(null));
         Assertions.assertFalse(Lira.of(1, 2).contains(null));
-        Assertions.assertFalse(Lira.of(1, 2).contains(1));
-        Assertions.assertFalse(Lira.of(1, 2).contains(2));
+        Assertions.assertTrue(Lira.of(1, 2).contains(1));
+        Assertions.assertTrue(Lira.of(1, 2).contains(2));
+
 
     }
 
@@ -183,12 +184,12 @@ class LiraTest {
         Lira<Integer> set = Lira.of(1, 2, 1, 2).filter(i -> {
             LiAssertUtil.assertNotHere();
             return true;
-        }).set();
+        }).distinct();
 
-        Assertions.assertEquals(2, Lira.of(1, 2, 1, 2).set().size());
+        Assertions.assertEquals(2, Lira.of(1, 2, 1, 2).distinct().size());
 
 
-        Assertions.assertEquals(3, Lira.of(1, 2, 3, 4, 1).set().map(i -> i / 2).set().size());
+        Assertions.assertEquals(3, Lira.of(1, 2, 3, 4, 1).distinct().map(i -> i / 2).distinct().size());
     }
 
     @Test

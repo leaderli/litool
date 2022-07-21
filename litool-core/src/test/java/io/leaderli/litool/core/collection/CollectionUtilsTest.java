@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.collection;
 
+import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * @author leaderli
  * @since 2022/1/22
  */
-public class LiListUtilTest {
+public class CollectionUtilsTest {
 
     @Test
 
@@ -45,6 +46,7 @@ public class LiListUtilTest {
 
     }
 
+    @Test
     void emptyList() {
         List<Object> actual = CollectionUtils.emptyList();
         Assertions.assertEquals(0, actual.size());
@@ -52,6 +54,40 @@ public class LiListUtilTest {
         Assertions.assertEquals(1, actual.size());
         actual.remove(0);
         Assertions.assertEquals(0, actual.size());
+
+    }
+
+
+    @Test
+    void intersection() {
+
+
+        Lira<Integer> a = Lira.of(Arrays.asList(1, 2, 3));
+        Lira<Integer> b = Lira.of(Arrays.asList(3, 4, 5));
+        Assertions.assertEquals(1, CollectionUtils.intersection(a, b).size());
+        Assertions.assertEquals(0, CollectionUtils.intersection(a, Lira.none()).size());
+    }
+
+    @Test
+    void union() {
+
+
+        Lira<Integer> a = Lira.of(Arrays.asList(1, 2, 3));
+        Lira<Integer> b = Lira.of(Arrays.asList(3, 4, 5));
+        Assertions.assertEquals(5, CollectionUtils.union(a, b).size());
+        Assertions.assertEquals(3, CollectionUtils.union(a, Lira.none()).size());
+    }
+
+
+    @Test
+    void xor() {
+
+
+        Lira<Integer> a = Lira.of(Arrays.asList(1, 2, 3));
+        Lira<Integer> b = Lira.of(Arrays.asList(3, 4, 5));
+        Assertions.assertEquals(4, CollectionUtils.xor(a, b).size());
+        Assertions.assertEquals(3, CollectionUtils.xor(a, Lira.none()).size());
+
 
     }
 }

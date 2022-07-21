@@ -5,6 +5,7 @@ import io.leaderli.litool.core.collection.EnumerationIter;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.function.Filter;
 import io.leaderli.litool.core.io.FileUtil;
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.net.URLUtil;
 import io.leaderli.litool.core.resource.ResourceUtil;
 import io.leaderli.litool.core.text.CharPool;
@@ -155,8 +156,8 @@ public class ClassScanner {
      * 扫描Java指定的ClassPath路径
      */
     private void scanJavaClassPaths() {
-        final String[] javaClassPaths = ClassUtil.getJavaClassPaths();
-        for (String classPath : javaClassPaths) {
+        final Lira<String> javaClassPaths = ClassUtil.getJavaClassPaths();
+        for (String classPath : javaClassPaths.getRaw()) {
             // bug修复，由于路径中空格和中文导致的Jar找不到
             classPath = URLUtil.decode(classPath, CharsetUtil.systemCharsetName());
 

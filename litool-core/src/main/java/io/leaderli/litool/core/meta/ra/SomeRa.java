@@ -7,6 +7,7 @@ import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.ClassUtil;
 
 import java.util.*;
@@ -32,7 +33,6 @@ public abstract class SomeRa<T> implements Lira<T> {
         return "List";
     }
 
-
     @Override
     public <R> Lira<R> cast(Class<? extends R> type) {
         return map(m -> ClassUtil.cast(m, type));
@@ -48,12 +48,14 @@ public abstract class SomeRa<T> implements Lira<T> {
     public boolean contains(T t) {
 
         LiBox<Integer> exits = LiBox.none();
-        this.subscribe(new BiConsumerSubscriberRa<>((v, s) -> {
-            if (v.equals(t)) {
-                exits.value(1);
-                s.cancel();
-            }
-        }));
+        this.subscribe(new BiConsumerSubscriberRa<>((lino, s) ->
+                lino
+                        .contain(t)
+                        .ifPresent(v1 -> {
+                            exits.value(1);
+                            s.cancel();
+                        }))
+        );
         return exits.present();
     }
 
@@ -134,6 +136,7 @@ public abstract class SomeRa<T> implements Lira<T> {
         return result.lino();
     }
 
+    @Override
     public Iterator<T> iterator() {
         return getRaw().iterator();
     }
@@ -217,7 +220,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public Lira<T> set() {
+    public Lira<T> distinct() {
 
 
         return new SetRa<>(this);
@@ -293,6 +296,11 @@ public abstract class SomeRa<T> implements Lira<T> {
         this.subscribe(new ConsumerSubscriberRa<>(e -> e.map(keyMapping).ifPresent(key -> result.put(key, e.map(valueMapping).get()))));
 
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return StringUtils.join(",", getRaw());
     }
 
 
