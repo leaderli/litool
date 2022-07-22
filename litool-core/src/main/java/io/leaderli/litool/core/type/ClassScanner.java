@@ -28,7 +28,6 @@ import java.util.jar.JarFile;
  * <p>
  * 参考 hutool
  */
-//TODO 补充新添加的类的测试案例
 public class ClassScanner {
 
     /**
@@ -292,5 +291,19 @@ public class ClassScanner {
                 }
             }
         }
+    }
+
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> Lira<Class<T>> getSubTypesOf(String packageName, Class<T> cls) {
+
+
+        ClassScanner classScanner = new ClassScanner(packageName, find -> ClassUtil.isAssignableFromOrIsWrapper(cls, find));
+        classScanner.scan();
+
+        //noinspection UnnecessaryLocalVariable
+        Lira of = Lira.of(classScanner.classes);
+        return of;
+
     }
 }

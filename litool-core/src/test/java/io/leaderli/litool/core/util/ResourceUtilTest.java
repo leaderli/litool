@@ -2,6 +2,7 @@ package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.resource.ResourceUtil;
+import io.leaderli.litool.core.type.ClassUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +14,20 @@ import java.net.URL;
  */
 class ResourceUtilTest {
 
+
+    @Test
+    void test() {
+
+        String classpath = System.getProperty("java.class.path");
+
+        ConsoleUtil.println(classpath.split(":").length);
+
+
+        System.out.println("----------------");
+
+        ConsoleUtil.println(ClassUtil.getAppJars().size());
+
+    }
 
     @Test
     void getResource() {

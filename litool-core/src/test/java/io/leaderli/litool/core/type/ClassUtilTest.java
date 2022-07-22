@@ -16,8 +16,6 @@ import java.util.function.Function;
  * @since 2022/6/17
  */
 class ClassUtilTest {
-
-
     @Test
     void testGetClass() {
 
@@ -125,8 +123,6 @@ class ClassUtilTest {
 
         Lira<String> a = ClassUtil.getJavaClassPaths();
         Lira<String> b = Lira.of(ClassUtil.getAppJars());
-        ConsoleUtil.println(a.size(), b.size());
-        ConsoleUtil.println(CollectionUtils.intersection(a, b));
 
 
     }

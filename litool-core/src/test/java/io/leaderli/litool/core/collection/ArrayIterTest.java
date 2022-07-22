@@ -19,6 +19,8 @@ class ArrayIterTest {
 
         ArrayIter<?> none = ArrayIter.of((Object[]) null);
         Assertions.assertFalse(none.hasNext());
+        none = ArrayIter.of();
+        Assertions.assertFalse(none.hasNext());
 
         none = ArrayIter.of((Object) null);
         Assertions.assertTrue(none.hasNext());
