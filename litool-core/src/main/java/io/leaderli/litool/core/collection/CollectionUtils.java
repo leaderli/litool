@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.collection;
 
-import com.sun.istack.internal.NotNull;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
 
@@ -32,10 +31,10 @@ public class CollectionUtils {
 
         List<T> duplicate = new ArrayList<>();
 
-        Set<T> uniq = new HashSet<>();
+        Set<T> unique = new HashSet<>();
 
         for (T t : list) {
-            if (!uniq.add(t)) {
+            if (!unique.add(t)) {
                 duplicate.add(t);
             }
         }
@@ -131,7 +130,7 @@ public class CollectionUtils {
      * @param <T> 集合泛型
      * @return 两个集合的并集
      */
-    public static <T> Lira<T> union(@NotNull Lira<T> a, @NotNull Lira<T> b) {
+    public static <T> Lira<T> union(Lira<T> a, Lira<T> b) {
 
 
         List<T> raw = a.getRaw();
@@ -148,7 +147,7 @@ public class CollectionUtils {
      * @param <T> 集合泛型
      * @return 两个集合的交集
      */
-    public static <T> Lira<T> intersection(@NotNull Lira<T> a, @NotNull Lira<T> b) {
+    public static <T> Lira<T> intersection(Lira<T> a, Lira<T> b) {
 
 
         List<T> result = new ArrayList<>();
