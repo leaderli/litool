@@ -1,12 +1,11 @@
 package io.leaderli.litool.core.type;
 
-import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.util.ConsoleUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -75,7 +74,7 @@ class ClassUtilTest {
     }
 
     @Test
-    public void isAssignableFromOrIsWrapper() {
+    public void isAssignableFromOrIsWrapper() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         Assertions.assertFalse(ClassUtil.isAssignableFromOrIsWrapper(null, null));
         Assertions.assertFalse(ClassUtil.isAssignableFromOrIsWrapper(null, String.class));
@@ -96,6 +95,28 @@ class ClassUtilTest {
         Assertions.assertTrue(Integer[].class.isAssignableFrom(Integer[].class));
         Assertions.assertFalse(Integer[].class.isAssignableFrom(int[].class));
 
+
+        System.out.println(Integer.class.getConstructor(int.class).getParameterTypes()[0]);
+
+    }
+
+    @Test
+    public void _instanceof() {
+
+        Assertions.assertFalse(ClassUtil._instanceof(null, null));
+        Assertions.assertFalse(ClassUtil._instanceof(Integer.class, null));
+        Assertions.assertFalse(ClassUtil._instanceof(null, 1));
+
+        Assertions.assertTrue(ClassUtil._instanceof(Integer.class, 1));
+        Assertions.assertTrue(ClassUtil._instanceof(int.class, 1));
+        Assertions.assertTrue(ClassUtil._instanceof(Number.class, 1));
+
+        Assertions.assertFalse(ClassUtil._instanceof(String.class, 1));
+
+        Assertions.assertTrue(ClassUtil._instanceof(int[].class, new int[]{1}));
+        Assertions.assertFalse(ClassUtil._instanceof(int[].class, new Integer[]{1}));
+        Assertions.assertFalse(ClassUtil._instanceof(Integer[].class, new int[]{1}));
+        Assertions.assertTrue(ClassUtil._instanceof(CharSequence[].class, new String[]{"1"}));
 
     }
 

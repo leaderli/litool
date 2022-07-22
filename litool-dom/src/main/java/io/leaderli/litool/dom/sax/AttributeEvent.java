@@ -8,7 +8,7 @@ import org.xml.sax.Locator;
  */
 public class AttributeEvent extends SaxEvent {
 
-    private final String value;
+    public final String value;
 
     public AttributeEvent(Locator locator, String name, String value) {
         super(locator, name);

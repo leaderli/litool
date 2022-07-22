@@ -92,6 +92,27 @@ class ReflectUtilTest {
 
     }
 
+    @Test
+    void newInstance() {
+
+        Assertions.assertTrue(ReflectUtil.newInstance(Integer.class).absent());
+        Assertions.assertTrue(ReflectUtil.newInstance(Bean.class).present());
+
+        Assertions.assertTrue(ReflectUtil.newInstance(Integer.class, new Object[]{}).absent());
+
+        Assertions.assertTrue(ReflectUtil.newInstance(Integer.class, (String) null).absent());
+        Assertions.assertTrue(ReflectUtil.newInstance(Integer.class, (Integer) null).absent());
+        Assertions.assertTrue(ReflectUtil.newInstance(Integer.class, 1).present());
+
+        Assertions.assertTrue(ReflectUtil.newInstance(TestBean.class, (String) null).present());
+    }
+    public static class TestBean{
+
+        public TestBean(String s){
+
+        }
+
+    }
     public static class Static {
         public static int age = 1;
     }

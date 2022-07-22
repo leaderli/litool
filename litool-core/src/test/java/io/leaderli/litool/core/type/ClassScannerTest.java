@@ -35,7 +35,6 @@ class ClassScannerTest {
     void getSubTypesOf() {
 
         Lira<Class<Lino>> subTypesOf = ClassScanner.getSubTypesOf(Lino.class.getPackage().getName(), Lino.class);
-
         Assertions.assertEquals(2, subTypesOf.size());
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 一个用于存储 监听事件的class 类型 和 监听器 的 Map 容器 ,  监听器 和 事件的泛型是相同的
+ * 一个用于存储 监听事件的class 类型 和 监听器 的 Map 容器 ,  监听器 和 事件的泛型是相同的，非线程安全
  */
 class LiEventMap {
 

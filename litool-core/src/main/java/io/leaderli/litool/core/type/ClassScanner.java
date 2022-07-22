@@ -298,12 +298,10 @@ public class ClassScanner {
     public static <T> Lira<Class<T>> getSubTypesOf(String packageName, Class<T> cls) {
 
 
-        ClassScanner classScanner = new ClassScanner(packageName, find -> ClassUtil.isAssignableFromOrIsWrapper(cls, find));
+        ClassScanner classScanner = new ClassScanner(packageName, find -> ClassUtil.isAssignableFromOrIsWrapper(cls, find) && cls != find);
         classScanner.scan();
 
-        //noinspection UnnecessaryLocalVariable
-        Lira of = Lira.of(classScanner.classes);
-        return of;
+        return (Lira) Lira.of(classScanner.classes);
 
     }
 }

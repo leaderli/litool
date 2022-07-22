@@ -13,9 +13,8 @@ public class RootBean extends SaxBean {
 
     @Override
     public TupleMap<String, Class<SaxBean>> support() {
-        TupleMap<String, Class<SaxBean>> pairs = TupleMap.of();
 
-        return SupportTagBuilder.of(pairs)
+        return SupportTagBuilder.of(super.support())
                 .add(Bean.class)
                 .add(NoBean.class)
                 .build();

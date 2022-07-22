@@ -25,6 +25,10 @@ class StringConvertTest {
         Assertions.assertSame(1, StringConvert.parser("1", 0));
         Assertions.assertSame(1L, StringConvert.parser("1", 0L));
         Assertions.assertSame((short) 1, StringConvert.parser("1", (short) 0));
+
+        Assertions.assertSame(1, StringConvert.parser(int.class, "1"));
+        Assertions.assertSame(null, StringConvert.parser(int.class, "a"));
+
     }
 
 

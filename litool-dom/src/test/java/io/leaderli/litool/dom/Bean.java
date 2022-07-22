@@ -10,7 +10,7 @@ import io.leaderli.litool.dom.sax.SupportTagBuilder;
  */
 public class Bean extends SaxBean {
     public String name;
-    public String version = "0";
+    public double version = 0;
 
 
     @Override

@@ -24,6 +24,7 @@ import io.leaderli.litool.core.type.ReflectUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.util.*;
@@ -8573,6 +8574,7 @@ public class StringUtils implements StrPool {
         return join(",", Lino.of(o).map(l -> l.getClass().getFields())
 
                 .toLira(Field.class)
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
                 .map(f -> f.getName() + " = " + ReflectUtil.getFieldValue(o, f).get())
                 .getRaw());
 

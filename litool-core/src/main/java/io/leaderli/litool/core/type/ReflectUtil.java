@@ -160,5 +160,58 @@ public class ReflectUtil {
 
     }
 
+    /**
+     * @param <T> 泛型
+     * @param cls class
+     * @return 返回一个新的实例
+     */
+    public static <T> Lino<T> newInstance(Class<T> cls) {
+        return Lino.of(cls).throwable_map(Class::newInstance);
+    }
+
+    /**
+     * @param cls  cls
+     * @param args 构造器参数 , 对于可选参数，需要手动传递数组类型
+     * @param <T>  泛型
+     * @return 根据参数个数和参数的类型，调用最接近的一个构造器
+     */
+    public static <T> Lino<T> newInstance(Class<T> cls, Object... args) {
+
+        if (cls == null || args == null || args.length == 0) {
+            return newInstance(cls);
+        }
+
+        return Lira.of(cls.getConstructors())
+                .filter(c -> c.getParameterCount() == args.length)
+                .filter(c -> {
+                    Class<?>[] parameterTypes = c.getParameterTypes();
+                    for (int i = 0; i < parameterTypes.length; i++) {
+                        // 参数传 null 时，视为符合
+
+
+                        Class<?> parameterType = parameterTypes[i];
+                        final Object arg = args[i];
+
+                        if (parameterType.isPrimitive()) {
+
+                            if (arg == null) {
+                                return false;
+                            }
+
+                            if (!ClassUtil._instanceof(parameterType, arg)) {
+                                return false;
+                            }
+
+                        }
+                        if (arg != null && !ClassUtil._instanceof(parameterType, args[i])) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }).first().throwable_map(c -> c.newInstance(args)).cast(cls);
+
+
+    }
+
 
 }

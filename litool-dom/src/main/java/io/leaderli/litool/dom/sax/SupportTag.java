@@ -13,7 +13,6 @@ public interface SupportTag {
         return TupleMap.of();
     }
 
-
     default String tagName() {
         return this.getClass().getSimpleName().toLowerCase();
     }

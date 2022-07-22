@@ -2,7 +2,9 @@ package io.leaderli.litool.dom.parser;
 
 import io.leaderli.litool.dom.RootBean;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
 /**
@@ -12,10 +14,11 @@ import java.io.IOException;
 class LiDomDFSContextTest {
 
     @Test
-    void parse() throws IOException {
+    void parse() throws IOException, ParserConfigurationException, SAXException {
 
         RootBean root = LiDomDFSContext.parse("bean.xml", RootBean.class);
 
+        System.out.println(root);
     }
 
 

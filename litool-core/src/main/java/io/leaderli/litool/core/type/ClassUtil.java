@@ -216,6 +216,16 @@ public class ClassUtil {
         return null;
     }
 
+    public static boolean _instanceof(Class<?> father, Object son) {
+
+        if (father == null || son == null) {
+            return false;
+        }
+
+        return isAssignableFromOrIsWrapper(father, son.getClass());
+
+    }
+
     /**
      * @param father 父类或包装类
      * @param son    子类或包装类

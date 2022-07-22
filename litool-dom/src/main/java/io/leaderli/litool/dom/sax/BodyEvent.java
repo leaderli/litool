@@ -11,7 +11,7 @@ public class BodyEvent extends SaxEvent {
     private String text = "";
 
     public BodyEvent(Locator locator) {
-        super(locator, "");
+        super(locator, "body");
     }
 
     public void append(String str) {
