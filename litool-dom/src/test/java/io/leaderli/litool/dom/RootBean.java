@@ -1,28 +1,24 @@
 package io.leaderli.litool.dom;
 
-import io.leaderli.litool.core.lang.TupleMap;
 import io.leaderli.litool.dom.sax.SaxBean;
-import io.leaderli.litool.dom.sax.SupportTagBuilder;
+import io.leaderli.litool.dom.sax.SaxBody;
+import io.leaderli.litool.dom.sax.SaxList;
 
 /**
  * @author leaderli
  * @since 2022/7/15
  */
-public class RootBean extends SaxBean {
+public class RootBean implements SaxBean {
 
 
-    @Override
-    public TupleMap<String, Class<SaxBean>> support() {
+    public SaxList beans = new BeanSaxList();
 
-        return SupportTagBuilder.of(super.support())
-                .add(Bean.class)
-                .add(NoBean.class)
-                .build();
-
-    }
+    public NoBean nobean;
+    public SaxBody body;
 
     @Override
-    public String tagName() {
+    public String name() {
         return "root";
     }
+
 }

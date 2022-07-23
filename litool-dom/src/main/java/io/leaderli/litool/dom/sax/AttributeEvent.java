@@ -5,6 +5,7 @@ import org.xml.sax.Locator;
 /**
  * @author leaderli
  * @since 2022/7/16
+ * 标签属性
  */
 public class AttributeEvent extends SaxEvent {
 

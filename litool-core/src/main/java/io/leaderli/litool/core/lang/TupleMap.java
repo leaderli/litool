@@ -1,9 +1,6 @@
 package io.leaderli.litool.core.lang;
 
-import io.leaderli.litool.core.meta.LiTuple;
-import io.leaderli.litool.core.meta.LiTuple2;
-import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.meta.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +13,7 @@ import java.util.function.Predicate;
  * <p>
  * 键值对一一对应的 map
  */
-public class TupleMap<K, V> {
+public class TupleMap<K, V> implements LiValue {
 
     private final List<LiTuple2<K, V>> paris = new ArrayList<>();
 
@@ -96,5 +93,19 @@ public class TupleMap<K, V> {
 
     public Lira<LiTuple2<K, V>> entrySet() {
         return Lira.of(paris);
+    }
+
+    @Override
+    public boolean present() {
+        return size() > 0;
+    }
+
+    public int size() {
+        return paris.size();
+    }
+
+    @Override
+    public String name() {
+        return "tuple_map";
     }
 }

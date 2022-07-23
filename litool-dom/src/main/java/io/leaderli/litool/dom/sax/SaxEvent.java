@@ -7,7 +7,7 @@ import org.xml.sax.helpers.LocatorImpl;
  * @author leaderli
  * @since 2022/7/16
  */
-public class SaxEvent {
+public abstract class SaxEvent {
 
     final public Locator locator;
     final public String name;
