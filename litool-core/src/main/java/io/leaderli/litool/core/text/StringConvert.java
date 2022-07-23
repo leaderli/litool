@@ -36,6 +36,10 @@ public class StringConvert {
         CACHE.put(String.class, str -> str);
     }
 
+    public static boolean support(Class<?> key) {
+        return CACHE.containsKey(key);
+    }
+
     public static <T> T parser(String value, T def) {
 
         Class<T> cls = ClassUtil.getClass(def);

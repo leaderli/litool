@@ -26,6 +26,11 @@
             <artifactId>litool-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.leaderli.litool</groupId>
+            <artifactId>litool-dom</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
     </dependencies>
 

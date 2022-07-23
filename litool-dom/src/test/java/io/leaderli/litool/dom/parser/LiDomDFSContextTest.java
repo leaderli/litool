@@ -7,6 +7,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author leaderli
@@ -20,6 +22,9 @@ class LiDomDFSContextTest {
         RootBean root = LiDomDFSContext.parse("bean.xml", RootBean.class);
 
         Assertions.assertEquals("no", root.nobean.name);
+        Map<String, String> map = new HashMap<>();
+        map.put("123", "abc");
+        Assertions.assertEquals("abc", root.nobean.body.get(map));
     }
 
 

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <request>
-    123
-    <variable>
-        abc
-    </variable>
-    456
+    <entry label="渠道">CHANNEL</entry>
+    <entry label="编号" type="int" def="1">ID</entry>
 </request>

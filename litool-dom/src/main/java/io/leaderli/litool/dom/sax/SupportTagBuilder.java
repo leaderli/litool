@@ -36,4 +36,14 @@ public class SupportTagBuilder<T extends SaxBean> {
     public static <T extends SaxBean> SupportTagBuilder<T> of(TupleMap<String, Class<T>> pairs) {
         return new SupportTagBuilder<>(pairs);
     }
+
+    public static <T extends SaxBean> SupportTagBuilder<T> of() {
+        return new SupportTagBuilder<>(new TupleMap<>());
+    }
+
+    public static <T extends SaxBean> SupportTagBuilder<T> of(Class<? extends T> cls) {
+        SupportTagBuilder<T> builder = new SupportTagBuilder<>(new TupleMap<>());
+        builder.add(cls);
+        return builder;
+    }
 }

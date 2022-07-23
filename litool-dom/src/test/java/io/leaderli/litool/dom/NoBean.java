@@ -9,5 +9,7 @@ import io.leaderli.litool.dom.sax.SaxBean;
 public class NoBean implements SaxBean {
     public String name;
 
+    public MapSaxBody body;
+
 
 }

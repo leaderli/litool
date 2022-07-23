@@ -1,9 +1,6 @@
 package io.leaderli.litool.dom.sax;
 
-import io.leaderli.litool.core.meta.Lino;
-
-import java.util.ArrayList;
-import java.util.List;
+import io.leaderli.litool.core.lang.TupleMap;
 
 /**
  * @author leaderli
@@ -11,15 +8,17 @@ import java.util.List;
  * <p>
  * 用于多个不同标签名的集合类标签
  */
-public abstract class SaxList implements SupportTag {
+public interface SaxList<T extends SaxBean> {
 
 
-    public final List<SaxBean> children = new ArrayList<>();
+    void add(T t);
 
-
-    public void add(SaxBean t) {
-
-        Lino.of(t).ifPresent(children::add);
+    /**
+     * @return 返回当前类支持的 SaxList 支持的子元素
+     */
+    default TupleMap<String, Class<T>> support() {
+        return TupleMap.of();
     }
+
 
 }
