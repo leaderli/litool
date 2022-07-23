@@ -13,8 +13,6 @@ import java.util.List;
  * @author leaderli
  * @since 2022/7/16
  */
-// TODO 父类注册属性
-//  最后注册supportTag
 public class DFSLocatorHandler<T extends SaxBean> extends LocatorDefaultHandler {
 
 
