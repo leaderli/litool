@@ -1,6 +1,6 @@
 package io.leaderli.litool.runner.adapter;
 
-import io.leaderli.litool.dom.parser.LiDomDFSContext;
+import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.json.GsonUtil;
 import io.leaderli.litool.runner.xml.MainElement;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ class RunnerGsonTest {
 
     @Test
     void test() {
-        LiDomDFSContext<MainElement> dfs = new LiDomDFSContext<>(MainElement.class);
+        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
         MainElement main = dfs.parse("main.xml");
 
         String json = RunnerGson.GSON.toJson(main);

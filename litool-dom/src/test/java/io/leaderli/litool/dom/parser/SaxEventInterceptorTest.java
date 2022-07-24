@@ -12,12 +12,12 @@ import java.util.Map;
  * @author leaderli
  * @since 2022/7/15 8:41 AM
  */
-class LiDomDFSContextTest {
+class SaxEventInterceptorTest {
 
     @Test
     void parse() {
 
-        LiDomDFSContext<RootBean> dfs = new LiDomDFSContext<>(RootBean.class);
+        SaxEventInterceptor<RootBean> dfs = new SaxEventInterceptor<>(RootBean.class);
         RootBean root = dfs.parse("bean.xml");
         Assertions.assertEquals("no", root.nobean.name);
         Map<String, String> map = new HashMap<>();
@@ -26,7 +26,7 @@ class LiDomDFSContextTest {
 
 
         IgnoreSaxBeanWithMsg ignoreSaxBean = new IgnoreSaxBeanWithMsg();
-        dfs = new LiDomDFSContext<>(RootBean.class, ignoreSaxBean);
+        dfs = new SaxEventInterceptor<>(RootBean.class, ignoreSaxBean);
         dfs.parse("bean.xml");
 
         Assertions.assertTrue(ignoreSaxBean.msgs.toString().contains("<yyyy>"));

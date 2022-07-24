@@ -1,7 +1,7 @@
 package io.leaderli.litool.runner.xml;
 
 import com.google.gson.Gson;
-import io.leaderli.litool.dom.parser.LiDomDFSContext;
+import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.adapter.RunnerGson;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ class MainElementTest {
 
     @Test
     void test() {
-        LiDomDFSContext<MainElement> dfs = new LiDomDFSContext<>(MainElement.class);
+        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
 
         MainElement main = dfs.parse("main.xml");
 

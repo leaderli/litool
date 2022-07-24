@@ -1,7 +1,7 @@
 package io.leaderli.litool.runner.xml;
 
 import io.leaderli.litool.core.collection.ImmutableMap;
-import io.leaderli.litool.dom.parser.LiDomDFSContext;
+import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.TypeAlias;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class RequestElementTest {
 
     @Test
     void test() {
-        LiDomDFSContext<RequestElement> dfs = new LiDomDFSContext<>(RequestElement.class);
+        SaxEventInterceptor<RequestElement> dfs = new SaxEventInterceptor<>(RequestElement.class);
 
         RequestElement requestElement = dfs.parse("request.xml");
 

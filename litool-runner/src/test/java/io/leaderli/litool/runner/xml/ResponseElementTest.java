@@ -1,7 +1,7 @@
 package io.leaderli.litool.runner.xml;
 
 import io.leaderli.litool.core.meta.LiConstant;
-import io.leaderli.litool.dom.parser.LiDomDFSContext;
+import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.TypeAlias;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class ResponseElementTest {
 
     @Test
     void test() {
-        LiDomDFSContext<ResponseElement> dfs = new LiDomDFSContext<>(ResponseElement.class);
+        SaxEventInterceptor<ResponseElement> dfs = new SaxEventInterceptor<>(ResponseElement.class);
 
         ResponseElement responseElement = dfs.parse("response.xml");
 

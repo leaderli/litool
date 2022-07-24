@@ -13,7 +13,7 @@ import java.util.List;
  * @author leaderli
  * @since 2022/7/16
  */
-public class DFSLocatorHandler<T extends SaxBean> extends LocatorDefaultHandler {
+public class SaxEventLocatorHandler<T extends SaxBean> extends LocatorDefaultHandler {
 
 
     private final List<SaxEvent> saxEventList = new ArrayList<>();

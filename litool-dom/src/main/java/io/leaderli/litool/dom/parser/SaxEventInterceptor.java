@@ -18,7 +18,7 @@ import java.util.Stack;
  * @author leaderli
  * @since 2022/7/7
  */
-public class LiDomDFSContext<T extends SaxBean> {
+public class SaxEventInterceptor<T extends SaxBean> {
 
     private static final SaxBean DEFAULT_IGNORE_SAX_BEAN = new IgnoreSaxBean();
     private final Class<T> entryClass;
@@ -27,11 +27,11 @@ public class LiDomDFSContext<T extends SaxBean> {
      */
     private final SaxBean ignoreSaxBean;
 
-    public LiDomDFSContext(Class<T> entryClass) {
+    public SaxEventInterceptor(Class<T> entryClass) {
         this(entryClass, DEFAULT_IGNORE_SAX_BEAN);
     }
 
-    public LiDomDFSContext(Class<T> entryClass, SaxBean ignoreSaxBean) {
+    public SaxEventInterceptor(Class<T> entryClass, SaxBean ignoreSaxBean) {
         Objects.requireNonNull(entryClass);
         Objects.requireNonNull(ignoreSaxBean);
         this.entryClass = entryClass;
@@ -39,13 +39,6 @@ public class LiDomDFSContext<T extends SaxBean> {
     }
 
 
-//    public static <T extends SaxBean> T parse(String path, Class<T> cls) {
-//
-//        LiDomDFSContext<T> dfs = new LiDomDFSContext<>(path, cls, null);
-//        dfs.parse();
-//        return dfs.entry;
-//
-//    }
 
     public T parse(String path) {
         List<SaxEvent> saxEventList = RuntimeExceptionTransfer.get(() -> getSaxEventList(path));
@@ -94,7 +87,7 @@ public class LiDomDFSContext<T extends SaxBean> {
     private static <T extends SaxBean> List<SaxEvent> getSaxEventList(String path) throws ParserConfigurationException, SAXException, IOException {
         SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
         SAXParser saxParser = saxParserFactory.newSAXParser();
-        DFSLocatorHandler<T> dh = new DFSLocatorHandler<>();
+        SaxEventLocatorHandler<T> dh = new SaxEventLocatorHandler<>();
         saxParser.parse(ResourceUtil.getResourceAsStream(path), dh);
         return dh.getSaxEventList();
     }
