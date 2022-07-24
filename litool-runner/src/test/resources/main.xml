@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<main>
+    <request>
+        <entry label="渠道">CHANNEL</entry>
+        <entry label="编号" type="int" def="1">ID</entry>
+    </request>
+
+    <response>
+        <entry label="渠道">CHANNEL</entry>
+        <entry label="编号" type="int" def="1">ID</entry>
+    </response>
+</main>

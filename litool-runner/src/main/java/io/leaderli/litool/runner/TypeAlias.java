@@ -1,5 +1,7 @@
 package io.leaderli.litool.runner;
 
+import io.leaderli.litool.core.text.StringConvert;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,14 +18,17 @@ public class TypeAlias {
         ALIAS.put("str", String.class);
     }
 
-    public final String type;
-
-    public TypeAlias() {
-        this.type = "str";
+    public static Class<?> getType(String type) {
+        return ALIAS.get(type);
     }
 
-    public TypeAlias(String type) {
-        this.type = type;
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static Object parser(String type, String value, String def) {
+
+        Class cls = ALIAS.get(type);
+        return StringConvert.parser(cls, value)
+                .or(() -> StringConvert.parser(cls, def).assertNotNone("cannot parser def value to type " + cls).get())
+                .get();
     }
 
 }

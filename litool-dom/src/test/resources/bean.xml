@@ -13,9 +13,15 @@
     123
     <nobean name="no">
 
-123
+        123
         <!--        123<bean>123</bean>-->
     </nobean>
     456
     789
+    <xx>
+        123
+        <yyyy>
+            456
+        </yyyy>
+    </xx>
 </root>

@@ -5,7 +5,6 @@ import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -74,7 +73,7 @@ class ClassUtilTest {
     }
 
     @Test
-    public void isAssignableFromOrIsWrapper() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void isAssignableFromOrIsWrapper() {
 
         Assertions.assertFalse(ClassUtil.isAssignableFromOrIsWrapper(null, null));
         Assertions.assertFalse(ClassUtil.isAssignableFromOrIsWrapper(null, String.class));
@@ -95,8 +94,6 @@ class ClassUtilTest {
         Assertions.assertTrue(Integer[].class.isAssignableFrom(Integer[].class));
         Assertions.assertFalse(Integer[].class.isAssignableFrom(int[].class));
 
-
-        System.out.println(Integer.class.getConstructor(int.class).getParameterTypes()[0]);
 
     }
 

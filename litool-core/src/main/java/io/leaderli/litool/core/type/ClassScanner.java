@@ -113,6 +113,27 @@ public class ClassScanner {
         this.charset = charset;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> Lira<Class<T>> getSubTypesOf(String packageName, Class<T> cls) {
+
+
+        ClassScanner classScanner = new ClassScanner(packageName, find -> ClassUtil.isAssignableFromOrIsWrapper(cls, find) && cls != find);
+        classScanner.scan();
+
+        return (Lira) Lira.of(classScanner.classes);
+
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> Lira<Class<T>> getSubTypesOf(Class<?> packageCLass, Class<T> cls) {
+
+
+        ClassScanner classScanner = new ClassScanner(packageCLass.getPackage().getName(), find -> ClassUtil.isAssignableFromOrIsWrapper(cls, find) && cls != find);
+        classScanner.scan();
+
+        return (Lira) Lira.of(classScanner.classes);
+
+    }
 
     /**
      * 扫描包路径下满足class过滤器条件的所有class文件<br>
@@ -291,17 +312,5 @@ public class ClassScanner {
                 }
             }
         }
-    }
-
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T> Lira<Class<T>> getSubTypesOf(String packageName, Class<T> cls) {
-
-
-        ClassScanner classScanner = new ClassScanner(packageName, find -> ClassUtil.isAssignableFromOrIsWrapper(cls, find) && cls != find);
-        classScanner.scan();
-
-        return (Lira) Lira.of(classScanner.classes);
-
     }
 }

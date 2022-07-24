@@ -6,10 +6,15 @@ package io.leaderli.litool.dom.sax;
  * <p>
  * 用于指定名称 {@link #name()} 的复杂成员变量
  */
-public interface SaxBean {
+public interface SaxBean extends SaxEventHandler {
 
 
     default String name() {
         return this.getClass().getSimpleName().toLowerCase();
+    }
+
+    @Override
+    default SaxBean sax() {
+        return this;
     }
 }

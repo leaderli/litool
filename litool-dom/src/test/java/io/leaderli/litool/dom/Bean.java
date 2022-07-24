@@ -11,6 +11,7 @@ public class Bean implements SaxBean {
     public String name;
     public double version = 0;
 
-    public SaxList saxList = new BeanSaxList();
+    public SaxList<Bean> saxList = new BeanSaxList();
+
 
 }
