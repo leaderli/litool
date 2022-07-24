@@ -21,4 +21,6 @@ public class EntryList extends SaxList<EntryElement> {
     public Class<EntryElement> componentType() {
         return EntryElement.class;
     }
+
+
 }

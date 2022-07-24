@@ -1,6 +1,7 @@
 package io.leaderli.litool.dom.sax;
 
 import io.leaderli.litool.core.lang.TupleMap;
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ComponentType;
 
 import java.util.ArrayList;
@@ -28,8 +29,8 @@ public abstract class SaxList<T extends SaxBean> implements ComponentType<T> {
         return TupleMap.of();
     }
 
-    public List<T> copy() {
-        return new ArrayList<>(children);
+    public Lira<T> lira() {
+        return Lira.of(children);
     }
 
 }

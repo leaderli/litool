@@ -26,7 +26,7 @@ class ResponseElementTest {
 
 
         LiConstant.WHEN_THROW = null;
-        responseElement.entryList.copy().forEach(entry -> {
+        responseElement.entryList.lira().forEach(entry -> {
 
             String key = entry.key.text;
             Class<?> type = TypeAlias.getType(entry.type);

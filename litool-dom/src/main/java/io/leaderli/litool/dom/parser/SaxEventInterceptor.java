@@ -39,7 +39,6 @@ public class SaxEventInterceptor<T extends SaxBean> {
     }
 
 
-
     public T parse(String path) {
         List<SaxEvent> saxEventList = RuntimeExceptionTransfer.get(() -> getSaxEventList(path));
 
@@ -47,36 +46,43 @@ public class SaxEventInterceptor<T extends SaxBean> {
 
         Stack<SaxBeanAdapter> saxBeanStack = new Stack<>();
         for (SaxEvent saxEvent : saxEventList) {
+
+
             if (saxEvent instanceof StartEvent) {
+
 
                 if (saxBeanStack.isEmpty()) {
                     saxBeanStack.push(SaxBeanAdapter.of(entry));
                 } else {
+
 
                     SaxBeanAdapter peek = saxBeanStack.peek();
                     StartEvent startEvent = (StartEvent) saxEvent;
                     startEvent.setNewSaxBean(SaxBeanAdapter.of(ignoreSaxBean));
                     peek.start(startEvent);
 
+                    startEvent.getNewSaxBean().sax.father(peek.sax);
                     saxBeanStack.push(startEvent.getNewSaxBean());
                 }
+
             } else if (saxEvent instanceof AttributeEvent) {
 
-                saxBeanStack.peek().attribute((AttributeEvent) saxEvent);
+                SaxBeanAdapter peek = saxBeanStack.peek();
+                peek.attribute((AttributeEvent) saxEvent);
 
             } else if (saxEvent instanceof BodyEvent) {
 
                 SaxBeanAdapter peek = saxBeanStack.peek();
+
                 peek.body((BodyEvent) saxEvent);
 
             } else if (saxEvent instanceof EndEvent) {
 
                 SaxBeanAdapter pop = saxBeanStack.pop();
+
                 EndEvent endEvent = (EndEvent) saxEvent;
                 endEvent.setSaxBeanWrapper(pop);
-                if (!saxBeanStack.isEmpty()) {
-                    endEvent.setFather(saxBeanStack.peek().sax);
-                }
+
                 pop.end(endEvent);
 
             }

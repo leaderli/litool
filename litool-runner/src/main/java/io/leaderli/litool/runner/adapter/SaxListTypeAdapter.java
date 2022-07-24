@@ -57,7 +57,7 @@ class SaxListTypeAdapter implements JsonTypeAdapter<SaxList<?>> {
 
     @Override
     public JsonElement serialize(SaxList<?> src, Type typeOfSrc, JsonSerializationContext context) {
-        return context.serialize(src.copy());
+        return context.serialize(src.lira().getRaw());
     }
 
 }

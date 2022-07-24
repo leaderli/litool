@@ -9,18 +9,9 @@ import org.xml.sax.Locator;
 public class EndEvent extends SaxEvent {
 
     private SaxBeanAdapter saxBeanAdapter;
-    private SaxBean father;
 
     public EndEvent(Locator locator, String name) {
         super(locator, name);
-    }
-
-    public SaxBean getFather() {
-        return father;
-    }
-
-    public void setFather(SaxBean father) {
-        this.father = father;
     }
 
     public SaxBeanAdapter getSaxBeanWrapper() {

@@ -28,4 +28,6 @@ public abstract class SaxEvent {
     protected String description() {
         return name;
     }
+
+
 }

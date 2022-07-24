@@ -17,4 +17,5 @@ public interface SaxBean extends SaxEventHandler {
     default SaxBean sax() {
         return this;
     }
+
 }

@@ -63,6 +63,9 @@ public interface SaxEventHandler {
 
     SaxBean sax();
 
+    default void father(SaxBean father) {
+    }
+
     default void attribute(AttributeEvent attributeEvent) {
         // 使用 attribute 的值填充 field 的值
         ReflectUtil.getField(sax().getClass(), attributeEvent.name)

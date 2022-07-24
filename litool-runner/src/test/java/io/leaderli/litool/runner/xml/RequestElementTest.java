@@ -27,7 +27,7 @@ class RequestElementTest {
         request.put("CHANNEL", "IVR");
 
 
-        requestElement.entryList.copy().forEach(entry -> {
+        requestElement.entryList.lira().forEach(entry -> {
 
             String text = entry.key.text;
             String value = request.getOrDefault(text, entry.def);
@@ -44,5 +44,12 @@ class RequestElementTest {
         Assertions.assertEquals(1, of.get("ID"));
 
 
+    }
+
+    @Test
+    void error() {
+        SaxEventInterceptor<RequestElement> dfs = new SaxEventInterceptor<>(RequestElement.class);
+
+        RequestElement requestElement = dfs.parse("request_error.xml");
     }
 }
