@@ -1,12 +1,12 @@
 package io.leaderli.litool.dom.sax;
 
+import io.leaderli.litool.core.function.ThrowableRunner;
 import io.leaderli.litool.core.lang.TupleMap;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringConvert;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
-import io.leaderli.litool.core.util.ConsoleUtil;
 
 import java.lang.reflect.Modifier;
 
@@ -33,11 +33,9 @@ public interface SaxEventHandler {
                         ReflectUtil.newInstance(m.getParameterTypes()[0])
                                 .cast(SaxBean.class)
                                 .ifPresent(newFieldBean -> {
-
-                                    startEvent.setNewSaxBean(SaxBeanAdapter.of(
-                                            newFieldBean,
-                                            () -> m.invoke(this, newFieldBean)
-                                    ));
+                                    ThrowableRunner call = () -> m.invoke(this, newFieldBean);
+                                    SaxBeanAdapter newSaxBean = SaxBeanAdapter.of(newFieldBean, call);
+                                    startEvent.setNewSaxBean(newSaxBean);
                                 }));
 
 //        ReflectUtil.getField(this.getClass(), startEvent.name).ifPresent(field -> {

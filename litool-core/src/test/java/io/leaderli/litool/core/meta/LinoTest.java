@@ -223,6 +223,8 @@ class LinoTest {
 
         Assertions.assertEquals(1, Lino.of(new int[]{1, 2}).toLira(Object.class).getRaw().get(0));
         Assertions.assertEquals(1, Lino.of(1).toLira(Object.class).getRaw().get(0));
+
+
     }
 
     @Test

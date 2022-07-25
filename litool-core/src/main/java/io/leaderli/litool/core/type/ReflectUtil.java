@@ -226,8 +226,13 @@ public class ReflectUtil {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static Lira<Annotation> getAnnotations(Class<?> cls) {
 
-        List<Annotation> result = new ArrayList<>();
 
+        if (cls == null) {
+            return Lira.none();
+        }
+
+        List<Annotation> result = new ArrayList<>();
+       
         for (Annotation annotation : cls.getAnnotations()) {
             Lino<Method> repeatable = MethodUtil.findMethod(annotation.annotationType(),
                     //  Annotation[] value() 且 Annotation 上有 Repeatable 注解
