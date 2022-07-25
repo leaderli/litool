@@ -168,6 +168,8 @@ public interface Lino<T> extends LiValue {
      */
     <R> Lino<R> map(Function<? super T, ? extends R> mapping);
 
+    <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapping);
+
     /**
      * @param consumer 以 Lino 作为参数的消费者
      * @return this
@@ -356,6 +358,11 @@ public interface Lino<T> extends LiValue {
         @Override
         public <R> Lino<R> map(Function<? super T, ? extends R> mapping) {
             return of(mapping.apply(this.value));
+        }
+
+        @Override
+        public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapping) {
+            return map(mapping).map(r -> LiTuple.of(value, r));
         }
 
         @Override
@@ -555,6 +562,11 @@ public interface Lino<T> extends LiValue {
 
         @Override
         public <R> Lino<R> map(Function<? super T, ? extends R> mapping) {
+            return none();
+        }
+
+        @Override
+        public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapping) {
             return none();
         }
 
