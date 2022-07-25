@@ -5,9 +5,9 @@ import java.util.function.Function;
 /**
  * @author leaderli
  * @since 2022/7/26
+ * <p>
+ * 链式执行，直到最近一个方法返回非 null 值，后续不在执行有效操作
  */
-
-
 public interface LiShort<T, R> {
 
     static <T, R> LiShort<T, R> of(T src) {
