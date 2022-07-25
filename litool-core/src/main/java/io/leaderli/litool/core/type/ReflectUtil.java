@@ -3,7 +3,13 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Repeatable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author leaderli
@@ -161,15 +167,6 @@ public class ReflectUtil {
     }
 
     /**
-     * @param <T> 泛型
-     * @param cls class
-     * @return 返回一个新的实例
-     */
-    public static <T> Lino<T> newInstance(Class<T> cls) {
-        return Lino.of(cls).throwable_map(Class::newInstance);
-    }
-
-    /**
      * @param cls  cls
      * @param args 构造器参数 , 对于可选参数，需要手动传递数组类型
      * @param <T>  泛型
@@ -213,5 +210,41 @@ public class ReflectUtil {
 
     }
 
+    /**
+     * @param <T> 泛型
+     * @param cls class
+     * @return 返回一个新的实例
+     */
+    public static <T> Lino<T> newInstance(Class<T> cls) {
+        return Lino.of(cls).throwable_map(Class::newInstance);
+    }
+
+    /**
+     * @param cls 类
+     * @return 获取所有注解，包括重复注解，忽略重复注解的容器注解
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static Lira<Annotation> getAnnotations(Class<?> cls) {
+
+        List<Annotation> result = new ArrayList<>();
+
+        for (Annotation annotation : cls.getAnnotations()) {
+            Lino<Method> repeatable = MethodUtil.findMethod(annotation.annotationType(),
+                    //  Annotation[] value() 且 Annotation 上有 Repeatable 注解
+                    m -> m.getName().equals("value")
+                            && m.getReturnType().isArray()
+                            && m.getReturnType().getComponentType().isAnnotation()
+                            && m.getReturnType().getComponentType().isAnnotationPresent(Repeatable.class)
+            );
+            repeatable
+                    .ifAbsent(() -> result.add(annotation))
+                    .ifPresent(m -> {
+                        Class componentType = m.getReturnType().getComponentType();
+                        result.addAll(Arrays.asList(cls.getAnnotationsByType(componentType)));
+                    });
+        }
+        return Lira.of(result);
+
+    }
 
 }

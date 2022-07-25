@@ -232,6 +232,8 @@ class LinoTest {
 
         IllegalStateException assertThrows = Assertions.assertThrows(IllegalStateException.class, () -> Lino.of(null).assertNotNone("haha"));
         Assertions.assertEquals("haha", assertThrows.getMessage());
+
+
     }
 
 

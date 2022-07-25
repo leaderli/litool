@@ -196,6 +196,7 @@ public interface Lino<T> extends LiValue {
      */
     Lino<T> contain(T other);
 
+
     /**
      * 实际调用 {@link #throwable_map(ThrowableFunction, Consumer)}, 第二个参数传  {@link LiConstant#WHEN_THROW}
      *
@@ -385,6 +386,7 @@ public interface Lino<T> extends LiValue {
             }
             return none();
         }
+
 
         @Override
         public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping) {
@@ -580,6 +582,7 @@ public interface Lino<T> extends LiValue {
         public Lino<T> contain(T other) {
             return this;
         }
+
 
         @Override
         public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping) {

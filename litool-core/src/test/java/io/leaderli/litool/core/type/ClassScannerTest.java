@@ -5,7 +5,26 @@ import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.annotation.*;
 import java.util.Set;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.PARAMETER, ElementType.TYPE})
+@Repeatable(NotNulls.class)
+@interface NotNull {
+
+    String value();
+
+
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.PARAMETER, ElementType.TYPE})
+@interface NotNulls {
+    NotNull[] value();
+
+    String name() default "123";
+}
 
 /**
  * @author leaderli
@@ -13,9 +32,10 @@ import java.util.Set;
  */
 class ClassScannerTest {
 
-
     @Test
     void test() {
+
+//        NotNull.NotNulls
 
 
     }
@@ -23,12 +43,10 @@ class ClassScannerTest {
     @Test
     void scan() {
         Set<Class<?>> scan = new ClassScanner(this.getClass().getPackage().getName()).scan();
-        Assertions.assertTrue(scan.size() > 10);
+        Assertions.assertTrue(scan.contains(NotNull.class));
+        Assertions.assertTrue(scan.contains(NotNulls.class));
     }
 
-    @Test
-    void testScan() {
-    }
 
     @SuppressWarnings("rawtypes")
     @Test
@@ -37,4 +55,5 @@ class ClassScannerTest {
         Lira<Class<Lino>> subTypesOf = ClassScanner.getSubTypesOf(Lino.class.getPackage().getName(), Lino.class);
         Assertions.assertEquals(2, subTypesOf.size());
     }
+
 }
