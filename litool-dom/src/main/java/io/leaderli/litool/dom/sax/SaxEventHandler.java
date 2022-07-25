@@ -114,11 +114,10 @@ public interface SaxEventHandler {
 
         endEvent.getSaxBeanWrapper().run();
         // 校验是否有成员变量未初始化
-        Lira.of(this.getClass().getFields())
-                .forEach(field ->
-                        ReflectUtil.getFieldValue(this, field).assertNotNone(String.format("%s has no init", field))
-                );
+        for (Field field : getClass().getFields()) {
+            ReflectUtil.getFieldValue(this, field).assertNotNone(String.format("%s has no init", field));
 
+        }
     }
 
 
