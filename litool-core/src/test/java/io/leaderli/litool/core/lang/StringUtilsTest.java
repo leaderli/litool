@@ -71,6 +71,7 @@ class StringUtilsTest {
         } catch (Exception e) {
             Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, Lino.class).contains("Lino$Some.map("));
             Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, StringUtilsTest.class).contains("lambda$mock$"));
+            Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, null).length() > 0);
         }
         Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, Lino.class).contains("Some.throwable_map(")));
         Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertTrue(StringUtils.localMessageAtLineOfPackage(e, Lino.class.getPackage()).contains("Some.throwable_map(")));
@@ -78,6 +79,8 @@ class StringUtilsTest {
             String s = StringUtils.localMessageAtLineOfPackage(e, StringUtilsTest.class.getPackage());
             Assertions.assertTrue(s.contains("line$"));
         });
+
+        Assertions.assertEquals("",StringUtils.localMessageAtLineOfClass(null, null));
     }
 
     private void outmock() {

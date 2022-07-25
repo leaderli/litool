@@ -8490,7 +8490,7 @@ public class StringUtils implements StrPool {
 
     public static String localMessageAtLineOfClass(Throwable throwable, Class<?> threwClass) {
 
-        return localMessageStartWith(throwable, threwClass.getName());
+        return localMessageStartWith(throwable, Lino.of(threwClass).map(Class::getName).get());
 
     }
 
