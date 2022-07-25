@@ -1,5 +1,8 @@
 package io.leaderli.litool.dom.sax;
 
+import io.leaderli.litool.core.function.ThrowableRunner;
+import org.xml.sax.Locator;
+
 /**
  * @author leaderli
  * @since 2022/7/24
@@ -7,22 +10,22 @@ package io.leaderli.litool.dom.sax;
 public class SaxBeanAdapter implements Runnable, SaxEventHandler {
 
 
-    public final SaxBean sax;
+    public final SaxBean origin;
     /**
      * 用于在 {@link EndEvent} 中回调
      */
-    private final Runnable callback;
+    private final ThrowableRunner callback;
     /**
      * 保存解析的开始事件，用于 {@link EndEvent#getSaxBeanWrapper()#getStartEvent()} 中获取解析开始的位置等
      */
     private StartEvent startEvent;
 
-    private SaxBeanAdapter(SaxBean sax, Runnable callback) {
-        this.sax = sax;
+    private SaxBeanAdapter(SaxBean origin, ThrowableRunner callback) {
+        this.origin = origin;
         this.callback = callback;
     }
 
-    public static SaxBeanAdapter of(SaxBean sax, Runnable runnable) {
+    public static SaxBeanAdapter of(SaxBean sax, ThrowableRunner runnable) {
         return new SaxBeanAdapter(sax, runnable);
     }
 
@@ -40,34 +43,35 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
 
     @Override
     public void start(StartEvent startEvent) {
-        sax.start(startEvent);
+        origin.start(startEvent);
 
     }
 
-    @Override
-    public SaxBean sax() {
-        throw new UnsupportedOperationException();
-    }
 
     @Override
     public void attribute(AttributeEvent attributeEvent) {
-        sax.attribute(attributeEvent);
+        origin.attribute(attributeEvent);
     }
 
     @Override
     public void body(BodyEvent bodyEvent) {
-        sax.body(bodyEvent);
+        origin.body(bodyEvent);
     }
 
     @Override
     public void end(EndEvent endEvent) {
-        sax.end(endEvent);
+        origin.end(endEvent);
     }
 
     @Override
     public void run() {
         if (this.callback != null) {
-            this.callback.run();
+            try {
+                this.callback.run();
+            } catch (Throwable throwable) {
+                Locator locator = this.getStartEvent().locator;
+                throw new IllegalStateException(String.format("%s at line:%d column:%d", throwable, locator.getLineNumber(), locator.getColumnNumber()));
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import io.leaderli.litool.core.meta.ra.PublisherRa;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.util.BooleanUtil;
 
+import java.io.PrintStream;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -247,6 +248,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     int size();
 
+    Lira<T> print();
+    Lira<T> print(Consumer<T> out);
     Lira<T> distinct();
 
     Lira<T> sort();

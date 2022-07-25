@@ -10,6 +10,7 @@ import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.ClassUtil;
 
+import java.io.PrintStream;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -217,6 +218,16 @@ public abstract class SomeRa<T> implements Lira<T> {
     @Override
     public int size() {
         return this.get().size();
+    }
+    @Override
+    public Lira<T> print() {
+        return print(System.out::println);
+
+    }
+    @Override
+    public Lira<T> print(Consumer<T> debug) {
+        return new PrintRa<>(this,debug);
+
     }
 
     @Override

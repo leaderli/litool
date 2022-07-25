@@ -6,6 +6,9 @@ import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringConvert;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.core.util.ConsoleUtil;
+
+import java.lang.reflect.Modifier;
 
 /**
  * @author leaderli
@@ -20,23 +23,40 @@ public interface SaxEventHandler {
 
 
         // 优先查找同名 SaxBean 成员
-        ReflectUtil.getField(sax().getClass(), startEvent.name).ifPresent(field -> {
+        //TODO 查找set方法
 
-            Class<?> type = field.getType();
-            ReflectUtil.newInstance(type)
-                    .cast(SaxBean.class)
-                    .ifPresent(newFieldBean -> startEvent.setNewSaxBean(SaxBeanAdapter.of(
-                                    newFieldBean,
-                                    () -> ReflectUtil.setFieldValue(sax(), field, newFieldBean))
-                            )
-                    );
-        });
+        Lira.of(getClass().getMethods())
+                .filter(m -> m.getName().equalsIgnoreCase("set" + startEvent.name) && Modifier.isPublic(m.getModifiers()))
+                .filter(m -> m.getParameterCount() == 1 && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, m.getParameterTypes()[0]))
+                .first()
+                .ifPresent(m ->
+                        ReflectUtil.newInstance(m.getParameterTypes()[0])
+                                .cast(SaxBean.class)
+                                .ifPresent(newFieldBean -> {
+
+                                    startEvent.setNewSaxBean(SaxBeanAdapter.of(
+                                            newFieldBean,
+                                            () -> m.invoke(this, newFieldBean)
+                                    ));
+                                }));
+
+//        ReflectUtil.getField(this.getClass(), startEvent.name).ifPresent(field -> {
+//
+//            Class<?> type = field.getType();
+//            ReflectUtil.newInstance(type)
+//                    .cast(SaxBean.class)
+//                    .ifPresent(newFieldBean -> startEvent.setNewSaxBean(SaxBeanAdapter.of(
+//                            newFieldBean,
+//                            () -> ReflectUtil.setFieldValue(this, field, newFieldBean))
+//                            )
+//                    );
+//        });
 
         // 若未查找到，则查找支持该标签的 SaxList 成员
-        if (ClassUtil.isAssignableFromOrIsWrapper(IgnoreSaxBean.class, startEvent.getNewSaxBean().sax.getClass())) {
+        if (ClassUtil.isAssignableFromOrIsWrapper(IgnoreSaxBean.class, startEvent.getNewSaxBean().origin.getClass())) {
 
-            Lira.of(sax().getClass().getFields())
-                    .map(field -> ReflectUtil.getFieldValue(sax(), field).get())
+            Lira.of(this.getClass().getFields())
+                    .map(field -> ReflectUtil.getFieldValue(this, field).get())
                     .cast(SaxList.class)
                     .filter(saxList -> saxList.support().getValueByKey(startEvent.name))
                     .first()
@@ -61,14 +81,10 @@ public interface SaxEventHandler {
 
     }
 
-    SaxBean sax();
-
-    default void father(SaxBean father) {
-    }
 
     default void attribute(AttributeEvent attributeEvent) {
         // 使用 attribute 的值填充 field 的值
-        ReflectUtil.getField(sax().getClass(), attributeEvent.name)
+        ReflectUtil.getField(this.getClass(), attributeEvent.name)
                 .ifPresent(field -> {
                     Object fieldValue;
                     String value = attributeEvent.value;
@@ -79,19 +95,19 @@ public interface SaxEventHandler {
                         fieldValue = ReflectUtil.newInstance(field.getType(), value).get();
                     }
 
-                    ReflectUtil.setFieldValue(sax(), field, fieldValue);
+                    ReflectUtil.setFieldValue(this, field, fieldValue);
 
                 });
     }
 
     default void body(BodyEvent bodyEvent) {
         String value = bodyEvent.description();
-        Lira.of(sax().getClass().getFields())
+        Lira.of(this.getClass().getFields())
                 .filter(field -> ClassUtil.isAssignableFromOrIsWrapper(SaxBody.class, field.getType()))
                 .first()
                 .ifPresent(field -> {
                             Object fieldValue = ReflectUtil.newInstance(field.getType(), value).get();
-                            ReflectUtil.setFieldValue(sax(), field, fieldValue);
+                            ReflectUtil.setFieldValue(this, field, fieldValue);
                         }
                 );
     }
@@ -100,9 +116,9 @@ public interface SaxEventHandler {
 
         endEvent.getSaxBeanWrapper().run();
         // 校验是否有成员变量未初始化
-        Lira.of(sax().getClass().getFields())
+        Lira.of(this.getClass().getFields())
                 .forEach(field ->
-                        ReflectUtil.getFieldValue(sax(), field).assertNotNone(String.format("%s has no init", field))
+                        ReflectUtil.getFieldValue(this, field).assertNotNone(String.format("%s has no init", field))
                 );
 
     }

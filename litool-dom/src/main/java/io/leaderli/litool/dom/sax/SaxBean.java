@@ -13,9 +13,13 @@ public interface SaxBean extends SaxEventHandler {
         return this.getClass().getSimpleName().toLowerCase();
     }
 
-    @Override
-    default SaxBean sax() {
-        return this;
+
+    /**
+     * @param root 入口类
+     * @see io.leaderli.litool.dom.parser.SaxEventInterceptor#parse(String)
+     */
+    default void setRoot(SaxBean root) {
     }
+
 
 }

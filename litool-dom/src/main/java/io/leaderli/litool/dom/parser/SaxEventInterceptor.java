@@ -61,8 +61,9 @@ public class SaxEventInterceptor<T extends SaxBean> {
                     startEvent.setNewSaxBean(SaxBeanAdapter.of(ignoreSaxBean));
                     peek.start(startEvent);
 
-                    startEvent.getNewSaxBean().sax.father(peek.sax);
-                    saxBeanStack.push(startEvent.getNewSaxBean());
+                    SaxBeanAdapter newSaxBean = startEvent.getNewSaxBean();
+                    newSaxBean.origin.setRoot(entry);
+                    saxBeanStack.push(newSaxBean);
                 }
 
             } else if (saxEvent instanceof AttributeEvent) {

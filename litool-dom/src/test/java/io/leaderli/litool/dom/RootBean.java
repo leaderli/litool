@@ -12,7 +12,7 @@ public class RootBean implements NoBodyAndAttributeSaxBean {
 
     public SaxList<Bean> beans = new BeanSaxList();
 
-    public NoBean nobean;
+    private NoBean noBean;
 
     @Override
     public String name() {
@@ -20,4 +20,11 @@ public class RootBean implements NoBodyAndAttributeSaxBean {
     }
 
 
+    public NoBean getNoBean() {
+        return noBean;
+    }
+
+    public void setNoBean(NoBean noBean) {
+        this.noBean = noBean;
+    }
 }

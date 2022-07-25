@@ -19,10 +19,10 @@ class SaxEventInterceptorTest {
 
         SaxEventInterceptor<RootBean> dfs = new SaxEventInterceptor<>(RootBean.class);
         RootBean root = dfs.parse("bean.xml");
-        Assertions.assertEquals("no", root.nobean.name);
+        Assertions.assertEquals("no", root.getNoBean().name);
         Map<String, String> map = new HashMap<>();
         map.put("123", "abc");
-        Assertions.assertEquals("abc", root.nobean.body.get(map));
+        Assertions.assertEquals("abc", root.getNoBean().body.get(map));
 
 
         IgnoreSaxBeanWithMsg ignoreSaxBean = new IgnoreSaxBeanWithMsg();
