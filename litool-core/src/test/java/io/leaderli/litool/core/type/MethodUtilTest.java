@@ -47,7 +47,6 @@ class MethodUtilTest {
         Assertions.assertTrue(MethodUtil.findMethod(MethodUtilBean.class, "test", void.class).present());
         Assertions.assertTrue(MethodUtil.findMethod(MethodUtil.class, "findMethod", Lino.class, Class.class, String.class).present());
         Assertions.assertTrue(MethodUtil.findMethod(MethodUtil.class, "findMethod", Lino.class, Class.class, String.class, Class.class, Class[].class).present());
-        Assertions.assertTrue(MethodUtil.findMethod(this.getClass(), "findMethod").present());
 
     }
 }

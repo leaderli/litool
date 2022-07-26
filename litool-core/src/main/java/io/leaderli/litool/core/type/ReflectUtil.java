@@ -3,9 +3,9 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
-import java.lang.reflect.Constructor;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Repeatable;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -240,22 +240,30 @@ public class ReflectUtil {
         List<Annotation> result = new ArrayList<>();
 
         for (Annotation annotation : cls.getAnnotations()) {
-            Lino<Method> repeatable = MethodUtil.findMethod(annotation.annotationType(),
-                    //  Annotation[] value() 且 Annotation 上有 Repeatable 注解
-                    m -> m.getName().equals("value")
-                            && m.getReturnType().isArray()
-                            && m.getReturnType().getComponentType().isAnnotation()
-                            && m.getReturnType().getComponentType().isAnnotationPresent(Repeatable.class)
-            );
-            repeatable
-                    .ifAbsent(() -> result.add(annotation))
+
+            MethodScanner methodScanner = new MethodScanner(annotation.annotationType(), false, ReflectUtil::isValueMethodOfRepeatableContainer);
+            methodScanner.scan().first()
+                    // 属于重复注解
                     .ifPresent(m -> {
                         Class componentType = m.getReturnType().getComponentType();
                         result.addAll(Arrays.asList(cls.getAnnotationsByType(componentType)));
-                    });
+                    })
+                    // 非重复注解
+                    .ifAbsent(() -> result.add(annotation));
         }
         return Lira.of(result);
 
+    }
+
+    /**
+     * @param m 方法
+     * @return 判断是否为重复注解的容器类注解方法 value
+     */
+    private static boolean isValueMethodOfRepeatableContainer(Method m) {
+        return m.getName().equals("value")
+                && m.getReturnType().isArray()
+                && m.getReturnType().getComponentType().isAnnotation()
+                && m.getReturnType().getComponentType().isAnnotationPresent(Repeatable.class);
     }
 
 }

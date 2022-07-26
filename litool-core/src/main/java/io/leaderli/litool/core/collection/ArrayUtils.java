@@ -17,6 +17,7 @@
 package io.leaderli.litool.core.collection;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 
 /**
  * <p>Operations on arrays, primitive arrays (like {@code int[]}) and
@@ -739,5 +740,35 @@ public class ArrayUtils {
             j--;
             i++;
         }
+    }
+    public static  int[] union(int[] a, int[] b) {
+        if (a == null || a.length == 0) {
+            return b;
+        }
+        if (b == null || b.length == 0) {
+            return a;
+        }
+        int len = a.length + b.length;
+
+        int[] union = Arrays.copyOf(a, len);
+
+        System.arraycopy(b, 0, union, a.length, b.length);
+        return union;
+
+    }
+    public static <T> T[] union(T[] a, T[] b) {
+        if (a == null || a.length == 0) {
+            return b;
+        }
+        if (b == null || b.length == 0) {
+            return a;
+        }
+        int len = a.length + b.length;
+
+        T[] union = Arrays.copyOf(a, len);
+
+        System.arraycopy(b, 0, union, a.length, b.length);
+        return union;
+
     }
 }
