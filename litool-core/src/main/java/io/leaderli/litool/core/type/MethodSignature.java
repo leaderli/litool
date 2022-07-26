@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.type;
 
+import java.lang.annotation.Repeatable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -16,9 +17,19 @@ public class MethodSignature {
 
 
     public MethodSignature(String name, Class<?> returnType, Class<?>[] parameterTypes) {
+        if (returnType == null) {
+            returnType = void.class;
+        }
+        if (parameterTypes == null) {
+            parameterTypes = new Class[]{};
+        }
         this.name = name;
         this.returnType = returnType;
         this.parameterTypes = parameterTypes;
+    }
+
+    public static MethodSignature of(String name, Class<?> returnType, Class<?>[] parameterTypes) {
+        return new MethodSignature(name, returnType, parameterTypes);
     }
 
 
@@ -27,4 +38,5 @@ public class MethodSignature {
                 && method.getReturnType() == returnType
                 && Arrays.equals(parameterTypes, method.getParameterTypes());
     }
+
 }

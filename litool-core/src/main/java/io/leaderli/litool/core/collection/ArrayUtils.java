@@ -741,7 +741,7 @@ public class ArrayUtils {
             i++;
         }
     }
-    public static  int[] union(int[] a, int[] b) {
+    public static  int[] combination(int[] a, int[] b) {
         if (a == null || a.length == 0) {
             return b;
         }
@@ -756,7 +756,7 @@ public class ArrayUtils {
         return union;
 
     }
-    public static <T> T[] union(T[] a, T[] b) {
+    public static <T> T[] combination(T[] a, T[] b) {
         if (a == null || a.length == 0) {
             return b;
         }

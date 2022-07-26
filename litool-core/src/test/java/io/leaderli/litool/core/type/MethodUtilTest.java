@@ -49,4 +49,24 @@ class MethodUtilTest {
         Assertions.assertTrue(MethodUtil.findMethod(MethodUtil.class, "findMethod", Lino.class, Class.class, String.class, Class.class, Class[].class).present());
 
     }
+
+    @Test
+    void notObjectMethod() throws NoSuchMethodException {
+
+        Assertions.assertTrue(MethodUtil.notObjectMethod(this.getClass().getDeclaredMethod("notObjectMethod")));
+        Assertions.assertFalse(MethodUtil.notObjectMethod(this.getClass().getMethod("notify")));
+    }
+
+    @Test
+    void belongsTo() throws NoSuchMethodException {
+        Assertions.assertTrue(MethodUtil.belongsTo(this.getClass().getMethod("notify"), Object.class));
+        Assertions.assertFalse(MethodUtil.belongsTo(this.getClass().getDeclaredMethod("belongsTo"), Object.class));
+    }
+
+    @Test
+    void methodOfRepeatableContainer() throws NoSuchMethodException {
+
+        Assertions.assertTrue(MethodUtil.methodOfRepeatableContainer(NotNulls.class.getMethod("value")));
+        Assertions.assertFalse(MethodUtil.methodOfRepeatableContainer(NotNulls.class.getMethod("toString")));
+    }
 }

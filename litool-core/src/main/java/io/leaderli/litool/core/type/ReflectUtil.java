@@ -4,10 +4,8 @@ import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
 import java.lang.annotation.Annotation;
-import java.lang.annotation.Repeatable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -241,7 +239,7 @@ public class ReflectUtil {
 
         for (Annotation annotation : cls.getAnnotations()) {
 
-            MethodScanner methodScanner = new MethodScanner(annotation.annotationType(), false, ReflectUtil::isValueMethodOfRepeatableContainer);
+            MethodScanner methodScanner = new MethodScanner(annotation.annotationType(), false, MethodUtil::methodOfRepeatableContainer);
             methodScanner.scan().first()
                     // 属于重复注解
                     .ifPresent(m -> {
@@ -253,17 +251,6 @@ public class ReflectUtil {
         }
         return Lira.of(result);
 
-    }
-
-    /**
-     * @param m 方法
-     * @return 判断是否为重复注解的容器类注解方法 value
-     */
-    private static boolean isValueMethodOfRepeatableContainer(Method m) {
-        return m.getName().equals("value")
-                && m.getReturnType().isArray()
-                && m.getReturnType().getComponentType().isAnnotation()
-                && m.getReturnType().getComponentType().isAnnotationPresent(Repeatable.class);
     }
 
 }

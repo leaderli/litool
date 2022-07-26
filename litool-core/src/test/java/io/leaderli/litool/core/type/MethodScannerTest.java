@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ class MethodScannerTest {
 
         Lira<Method> scan = methodScanner.scan();
         Assertions.assertEquals("test", scan.first().get().getName());
+
+
 
     }
 

@@ -2,6 +2,7 @@ package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.meta.Lino;
 
+import java.lang.annotation.Repeatable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -53,16 +54,11 @@ public class MethodUtil {
     public static Lino<Method> findMethod(Class<?> source, String name, Class<?> returnType, Class<?>... parameterTypes) {
 
 
-        MethodScanner methodScanner = new MethodScanner(source, true, m -> sameSignature(m, name, returnType, parameterTypes));
+        MethodSignature signature = new MethodSignature(name, returnType, parameterTypes);
+        MethodScanner methodScanner = new MethodScanner(source, true, signature::same);
         return methodScanner.scan().first();
     }
 
-
-    public static boolean sameSignature(Method m, String name, Class<?> returnType, Class<?>... parameterTypes) {
-        return m.getName().equals(name)
-                && m.getReturnType() == returnType
-                && Arrays.equals(parameterTypes, m.getParameterTypes());
-    }
 
     public static boolean notObjectMethod(Method method) {
         return !belongsTo(method, Object.class);
@@ -72,4 +68,15 @@ public class MethodUtil {
         return method.getDeclaringClass() == cls;
     }
 
+    /**
+     * @param method 方法
+     * @return 判断是否为重复注解的容器类注解方法 value
+     */
+    public static boolean methodOfRepeatableContainer(Method method) {
+
+        return method.getName().equals("value")
+                && method.getReturnType().isArray()
+                && method.getReturnType().getComponentType().isAnnotation()
+                && method.getReturnType().getComponentType().isAnnotationPresent(Repeatable.class);
+    }
 }

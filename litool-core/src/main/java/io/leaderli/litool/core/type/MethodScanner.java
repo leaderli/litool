@@ -1,12 +1,9 @@
 package io.leaderli.litool.core.type;
 
-import io.leaderli.litool.core.collection.ArrayUtils;
+import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -33,10 +30,6 @@ public class MethodScanner {
      * @see io.leaderli.litool.core.util.BooleanUtil#parse(Object)
      */
     private final Function<Method, ?> filter;
-//    /**
-//     * 扫描结果集合
-//     */
-//    private final Set<Method> methods = new HashSet<>();
 
     public MethodScanner(Class<?> cls, boolean scan_private, Function<Method, ?> filter) {
         this.cls = cls;
@@ -45,15 +38,19 @@ public class MethodScanner {
     }
 
     /**
-     * @return 不查找 object 的方法
+     * 移除所有 object 的方法
+     *
+     * @return 扫描方法
+     * @see #filter
+     * @see #scan_private
      */
     public Lira<Method> scan() {
         if (cls != null) {
-            Method[] methods = cls.getMethods();
+            Lira<Method> methods = Lira.of(cls.getMethods());
             if (scan_private) {
-                methods = ArrayUtils.union(methods, cls.getDeclaredMethods());
+                methods = CollectionUtils.union(methods, Lira.of(cls.getDeclaredMethods()));
             }
-            return Lira.of(methods)
+            return methods
                     .filter(MethodUtil::notObjectMethod)
                     .filter(filter);
 
