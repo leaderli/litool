@@ -2,6 +2,7 @@ package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
+import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -106,11 +107,22 @@ class ReflectUtilTest {
         Assertions.assertTrue(ReflectUtil.newInstance(TestBean.class, (String) null).present());
     }
 
-    @Test
-    void getAnnotations() {
 
-        NotNull annotation = (NotNull) ReflectUtil.getAnnotations(TestBean.class).first().get();
+    @Test
+    void findAnnotations() {
+        NotNull annotation = (NotNull) ReflectUtil.findAnnotations(TestBean.class).first().get();
         Assertions.assertEquals("1", annotation.value());
+
+        Assertions.assertEquals(0, ReflectUtil.findAnnotations(TestBean.class, an -> an.annotationType() != NotNull.class).size());
+    }
+
+
+    @Test
+    void findAnnotationsWithMark() {
+
+
+        Assertions.assertEquals(2, ReflectUtil.findAnnotationsWithMark(TestBean.class, API.class).size());
+        Assertions.assertEquals(0, ReflectUtil.findAnnotationsWithMark(TestBean.class, NotNull.class).size());
     }
 
     @NotNull("1")

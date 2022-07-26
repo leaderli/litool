@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -225,10 +226,19 @@ public class ReflectUtil {
 
     /**
      * @param cls 类
+     * @return #findAnnotations(Class, Function)
+     */
+    public static Lira<Annotation> findAnnotations(Class<?> cls) {
+        return findAnnotations(cls, null);
+    }
+
+    /**
+     * @param cls    类
+     * @param filter 过滤
      * @return 获取所有注解，包括重复注解，忽略重复注解的容器注解
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static Lira<Annotation> getAnnotations(Class<?> cls) {
+    public static Lira<Annotation> findAnnotations(Class<?> cls, Function<? super Annotation, ?> filter) {
 
 
         if (cls == null) {
@@ -249,8 +259,18 @@ public class ReflectUtil {
                     // 非重复注解
                     .ifAbsent(() -> result.add(annotation));
         }
-        return Lira.of(result);
+        return Lira.of(result).filter(filter);
 
     }
 
+    /**
+     * @param cls  类
+     * @param mark 标记注解类
+     * @return 查找类的所有注解中被 mark 注解的注解
+     * @see #findAnnotations(Class, Function)
+     */
+    public static Lira<Annotation> findAnnotationsWithMark(Class<?> cls, Class<? extends Annotation> mark) {
+
+        return findAnnotations(cls, annotation -> annotation.annotationType().isAnnotationPresent(mark));
+    }
 }

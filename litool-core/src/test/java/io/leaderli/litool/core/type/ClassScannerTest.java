@@ -2,6 +2,7 @@ package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +12,7 @@ import java.util.Set;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER, ElementType.TYPE})
 @Repeatable(NotNulls.class)
+@API(status = API.Status.STABLE)
 @interface NotNull {
 
     String value();

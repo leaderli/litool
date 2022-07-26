@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.type;
 
-import java.lang.annotation.Repeatable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -11,8 +10,17 @@ import java.util.Arrays;
  */
 public class MethodSignature {
 
+    /**
+     * 方法名
+     */
     public final String name;
+    /**
+     * 方法返回类型
+     */
     public final Class<?> returnType;
+    /**
+     * 方法参数类型
+     */
     public final Class<?>[] parameterTypes;
 
 
@@ -33,6 +41,13 @@ public class MethodSignature {
     }
 
 
+    /**
+     * @param method 方法
+     * @return 方法描述符匹配
+     * @see #name
+     * @see #returnType
+     * @see #parameterTypes
+     */
     public boolean same(Method method) {
         return method.getName().equals(name)
                 && method.getReturnType() == returnType
