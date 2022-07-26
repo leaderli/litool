@@ -34,7 +34,6 @@ class ReflectUtilTest {
         Assertions.assertEquals(8, ReflectUtil.getField(LittleBean.class, "age", true).throwable_map(f -> f.get(littleBean)).get());
     }
 
-    @SuppressWarnings("JavaReflectionMemberAccess")
     @Test
     void getFieldValue() throws NoSuchFieldException {
 
@@ -106,13 +105,24 @@ class ReflectUtilTest {
 
         Assertions.assertTrue(ReflectUtil.newInstance(TestBean.class, (String) null).present());
     }
-    public static class TestBean{
 
-        public TestBean(String s){
+    @Test
+    void getAnnotations() {
+
+        NotNull annotation = (NotNull) ReflectUtil.getAnnotations(TestBean.class).first().get();
+        Assertions.assertEquals("1", annotation.value());
+    }
+
+    @NotNull("1")
+    @NotNull("2")
+    public static class TestBean {
+
+        public TestBean(String s) {
 
         }
 
     }
+
     public static class Static {
         public static int age = 1;
     }

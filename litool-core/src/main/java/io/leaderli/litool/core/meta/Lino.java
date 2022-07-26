@@ -168,6 +168,8 @@ public interface Lino<T> extends LiValue {
      */
     <R> Lino<R> map(Function<? super T, ? extends R> mapping);
 
+    <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapping);
+
     /**
      * @param consumer 以 Lino 作为参数的消费者
      * @return this
@@ -195,6 +197,7 @@ public interface Lino<T> extends LiValue {
      * @return 当 other 与 lino 实际值 equals 时，返回 this，否则返回 {@link #none()}
      */
     Lino<T> contain(T other);
+
 
     /**
      * 实际调用 {@link #throwable_map(ThrowableFunction, Consumer)}, 第二个参数传  {@link LiConstant#WHEN_THROW}
@@ -358,6 +361,11 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
+        public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapping) {
+            return map(mapping).map(r -> LiTuple.of(value, r));
+        }
+
+        @Override
         public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
             consumer.accept(this);
             return this;
@@ -385,6 +393,7 @@ public interface Lino<T> extends LiValue {
             }
             return none();
         }
+
 
         @Override
         public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping) {
@@ -557,6 +566,11 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
+        public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapping) {
+            return none();
+        }
+
+        @Override
         public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
             return this;
         }
@@ -580,6 +594,7 @@ public interface Lino<T> extends LiValue {
         public Lino<T> contain(T other) {
             return this;
         }
+
 
         @Override
         public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping) {

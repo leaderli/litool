@@ -5,6 +5,7 @@ import io.leaderli.litool.core.meta.Lino;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -41,4 +42,54 @@ public class MethodUtil {
 
         return getSameSignatureMethod(method, Lino.of(type));
     }
+
+    /**
+     * @param source 类
+     * @param name   方法名
+     * @return 查找到的方法
+     * @see #findMethod(Class, String, Class, Class[])
+     */
+    public static Lino<Method> findMethod(Class<?> source, String name) {
+
+        return findMethod(source, name, void.class);
+
+    }
+
+    /**
+     * @param source         类
+     * @param name           方法名
+     * @param returnType     方法返回类型
+     * @param parameterTypes 方法参数类数组
+     * @return 查找到的方法
+     */
+    public static Lino<Method> findMethod(Class<?> source, String name, Class<?> returnType, Class<?>... parameterTypes) {
+
+
+        return findMethod(source,
+                m -> m.getName().equals(name)
+                        && m.getReturnType() == returnType
+                        && Arrays.equals(parameterTypes, m.getParameterTypes())
+        );
+    }
+
+    public static Lino<Method> findMethod(Class<?> source, Function<Method, ?> filter) {
+
+        Lino<Method> find = Lino.of(source)
+                .map(Class::getMethods)
+                .toLira(Method.class)
+                .filter(filter)
+                .first();
+
+        if (find.absent()) {
+            find = Lino.of(source)
+                    .map(Class::getDeclaredMethods)
+                    .toLira(Method.class)
+                    .filter(filter)
+                    .first();
+        }
+        return find;
+
+    }
+
+
 }

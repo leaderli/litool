@@ -141,9 +141,10 @@ class LinoTest {
     void isPresent() {
         Lino.of(null).ifPresent(e -> Assertions.fail());
 
-        Lino.of(null).ifPresent(e -> {
-        }).ifAbsent(() -> {
-        }).absent();
+        Lino.of(null)
+                .ifPresent(e -> {
+                }).ifAbsent(() -> {
+                }).absent();
 
         Throwable cause = Assertions.assertThrows(RuntimeException.class, () -> Lino.of(0).ifPresent(in -> {
             @SuppressWarnings("unused") int i = 1 / in;
@@ -223,6 +224,8 @@ class LinoTest {
 
         Assertions.assertEquals(1, Lino.of(new int[]{1, 2}).toLira(Object.class).getRaw().get(0));
         Assertions.assertEquals(1, Lino.of(1).toLira(Object.class).getRaw().get(0));
+
+
     }
 
     @Test
@@ -232,6 +235,19 @@ class LinoTest {
 
         IllegalStateException assertThrows = Assertions.assertThrows(IllegalStateException.class, () -> Lino.of(null).assertNotNone("haha"));
         Assertions.assertEquals("haha", assertThrows.getMessage());
+
+
+    }
+
+    @Test
+    void tuple() {
+
+
+        Assertions.assertEquals(3, Lino.of("123").tuple(String::length).get()._2);
+        Assertions.assertNull(Lino.of("123").tuple(s -> null).map(LiTuple2::_2).get());
+        Assertions.assertNull(Lino.of((String) null).tuple(String::length).get());
+
+
     }
 
 
