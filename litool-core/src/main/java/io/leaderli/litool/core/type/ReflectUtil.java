@@ -3,6 +3,7 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
 /**
@@ -182,35 +183,40 @@ public class ReflectUtil {
         }
 
         return Lira.of(cls.getConstructors())
-                .filter(c -> c.getParameterCount() == args.length)
-                .filter(c -> {
-                    Class<?>[] parameterTypes = c.getParameterTypes();
-                    for (int i = 0; i < parameterTypes.length; i++) {
-                        // 参数传 null 时，视为符合
+                .filter(constructor -> constructor.getParameterCount() == args.length)
+                .filter(constructor -> sameParameterTypes(constructor, args))
+                .first()
+                .throwable_map(c -> c.newInstance(args))
+                .cast(cls);
 
 
-                        Class<?> parameterType = parameterTypes[i];
-                        final Object arg = args[i];
+    }
 
-                        if (parameterType.isPrimitive()) {
-
-                            if (arg == null) {
-                                return false;
-                            }
-
-                            if (!ClassUtil._instanceof(parameterType, arg)) {
-                                return false;
-                            }
-
-                        }
-                        if (arg != null && !ClassUtil._instanceof(parameterType, args[i])) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }).first().throwable_map(c -> c.newInstance(args)).cast(cls);
+    private static Object sameParameterTypes(Constructor<?> constructor, Object[] args) {
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        for (int i = 0; i < parameterTypes.length; i++) {
 
 
+            Class<?> parameterType = parameterTypes[i];
+            final Object arg = args[i];
+
+            if (parameterType.isPrimitive()) {
+
+                // 基础类型，参数传 null 时，不符合
+                if (arg == null) {
+                    return false;
+                }
+
+                if (!ClassUtil._instanceof(arg, parameterType)) {
+                    return false;
+                }
+
+            }
+            if (arg != null && !ClassUtil._instanceof(args[i], parameterType)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

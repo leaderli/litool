@@ -216,7 +216,7 @@ public class ClassUtil {
         return null;
     }
 
-    public static boolean _instanceof(Class<?> father, Object son) {
+    public static boolean _instanceof(Object son, Class<?> father) {
 
         if (father == null || son == null) {
             return false;

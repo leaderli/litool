@@ -101,19 +101,19 @@ class ClassUtilTest {
     public void _instanceof() {
 
         Assertions.assertFalse(ClassUtil._instanceof(null, null));
-        Assertions.assertFalse(ClassUtil._instanceof(Integer.class, null));
-        Assertions.assertFalse(ClassUtil._instanceof(null, 1));
+        Assertions.assertFalse(ClassUtil._instanceof(null, Integer.class));
+        Assertions.assertFalse(ClassUtil._instanceof(1, null));
 
-        Assertions.assertTrue(ClassUtil._instanceof(Integer.class, 1));
-        Assertions.assertTrue(ClassUtil._instanceof(int.class, 1));
-        Assertions.assertTrue(ClassUtil._instanceof(Number.class, 1));
+        Assertions.assertTrue(ClassUtil._instanceof(1, Integer.class));
+        Assertions.assertTrue(ClassUtil._instanceof(1, int.class));
+        Assertions.assertTrue(ClassUtil._instanceof(1, Number.class));
 
-        Assertions.assertFalse(ClassUtil._instanceof(String.class, 1));
+        Assertions.assertFalse(ClassUtil._instanceof(1, String.class));
 
-        Assertions.assertTrue(ClassUtil._instanceof(int[].class, new int[]{1}));
-        Assertions.assertFalse(ClassUtil._instanceof(int[].class, new Integer[]{1}));
-        Assertions.assertFalse(ClassUtil._instanceof(Integer[].class, new int[]{1}));
-        Assertions.assertTrue(ClassUtil._instanceof(CharSequence[].class, new String[]{"1"}));
+        Assertions.assertTrue(ClassUtil._instanceof(new int[]{1}, int[].class));
+        Assertions.assertFalse(ClassUtil._instanceof(new Integer[]{1}, int[].class));
+        Assertions.assertFalse(ClassUtil._instanceof(new int[]{1}, Integer[].class));
+        Assertions.assertTrue(ClassUtil._instanceof(new String[]{"1"}, CharSequence[].class));
 
     }
 

@@ -248,8 +248,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     int size();
 
-    Lira<T> print();
-    Lira<T> print(Consumer<T> out);
+    Lira<T> debug();
+    Lira<T> debug(Consumer<T> out);
     Lira<T> distinct();
 
     Lira<T> sort();
