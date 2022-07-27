@@ -37,6 +37,10 @@ public class MethodScanner {
         this.filter = filter;
     }
 
+    public static MethodScanner of(Class<?> cls, boolean scan_private, Function<Method, ?> filter) {
+        return new MethodScanner(cls, scan_private, filter);
+    }
+
     /**
      * 移除所有 object 的方法
      *

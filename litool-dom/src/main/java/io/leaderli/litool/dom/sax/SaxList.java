@@ -18,15 +18,8 @@ public abstract class SaxList<T extends SaxBean> implements ComponentType<T> {
     private final List<T> children = new ArrayList<>();
 
 
-    public void add(T entryElement) {
-        children.add(entryElement);
-    }
-
-    /**
-     * @return 返回当前类支持的 SaxList 支持的子元素
-     */
-    public TupleMap<String, Class<T>> support() {
-        return TupleMap.of();
+    public void add(T t) {
+        children.add(t);
     }
 
     public Lira<T> lira() {

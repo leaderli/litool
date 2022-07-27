@@ -27,4 +27,9 @@ public class RootBean implements NoBodyAndAttributeSaxBean {
     public void setNoBean(NoBean noBean) {
         this.noBean = noBean;
     }
+
+
+    public void addBean(Bean bean) {
+        this.beans.add(bean);
+    }
 }

@@ -6,12 +6,13 @@ import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringConvert;
+import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.ClassUtil;
+import io.leaderli.litool.core.type.MethodScanner;
 import io.leaderli.litool.core.type.ReflectUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 
 /**
  * @author leaderli
@@ -25,12 +26,18 @@ public interface SaxEventHandler {
     default void start(StartEvent startEvent) {
 
 
-        // 优先查找同名 SaxBean 成员
-        //TODO 查找set方法
+        // 查找set（优先级更高) 或 add 方法 填充属性
 
-        Lino<LiTuple2<Method, SaxBean>> simpleField = Lira.of(getClass().getMethods())
-                .filter(m -> m.getName().equalsIgnoreCase("set" + startEvent.name) && Modifier.isPublic(m.getModifiers()))
-                .filter(m -> m.getParameterCount() == 1 && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, m.getParameterTypes()[0]))
+        String methodName = startEvent.name;
+
+        MethodScanner methodScanner = MethodScanner.of(getClass(), false, method ->
+
+                StringUtils.equalsAnyIgnoreCase(method.getName(), "set" + methodName, "add" + methodName)
+                        && method.getParameterCount() == 1
+                        && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, method.getParameterTypes()[0]));
+
+        Lino<LiTuple2<Method, SaxBean>> simpleField = methodScanner.scan()
+                .sort((m1, m2) -> m2.getName().compareTo(m1.getName()))
                 .first()
                 .tuple(m -> ReflectUtil.newInstance(m.getParameterTypes()[0]).cast(SaxBean.class).get())
                 .ifPresent(tuple -> {
@@ -40,39 +47,10 @@ public interface SaxEventHandler {
                     SaxBeanAdapter saxBeanAdapter = SaxBeanAdapter.of(sax, call);
                     startEvent.setNewSaxBean(saxBeanAdapter);
                 });
-
-        // 若未查找到，则查找支持该标签的 SaxList 成员
-        if (simpleField.absent()) {
-
-            Lira.of(this.getClass().getFields())
-                    .map(field -> ReflectUtil.getFieldValue(this, field).get())
-                    .cast(SaxList.class)
-                    .filter(saxList -> saxList.support().getValueByKey(startEvent.name))
-                    .first()
-                    .tuple(saxList -> toSupportTuple(startEvent, saxList))
-                    .ifPresent(tuple -> {
-                        SaxList saxList = tuple._1;
-                        SaxBean sax = tuple._2;
-                        startEvent.setNewSaxBean(SaxBeanAdapter.of(sax, () -> saxList.add(sax)));
-
-                    });
-
-        }
-
-
     }
 
 
-    static SaxBean toSupportTuple(StartEvent startEvent, SaxList<?> saxList) {
 
-        TupleMap<String, ? extends Class<?>> support = saxList.support();
-
-        return support.getValueByKey(startEvent.name)
-                .map(ReflectUtil::newInstance)
-                .map(Lino::get)
-                .cast(SaxBean.class)
-                .get();
-    }
 
 
     default void attribute(AttributeEvent attributeEvent) {

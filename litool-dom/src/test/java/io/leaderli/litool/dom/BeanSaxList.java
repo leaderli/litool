@@ -12,14 +12,6 @@ class BeanSaxList extends SaxList<Bean> {
 
 
 
-    @Override
-    public TupleMap<String, Class<Bean>> support() {
-        return SupportTagBuilder.of(super.support())
-                .add(Bean.class)
-                .build();
-    }
-
-
 
     @Override
     public Class<Bean> componentType() {

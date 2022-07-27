@@ -9,18 +9,8 @@ import io.leaderli.litool.dom.sax.SupportTagBuilder;
  * @since 2022/7/24
  */
 public class EntryList extends SaxList<EntryElement> {
-
-
-    @Override
-    public TupleMap<String, Class<EntryElement>> support() {
-        return SupportTagBuilder.of(EntryElement.class).build();
-    }
-
-
     @Override
     public Class<EntryElement> componentType() {
         return EntryElement.class;
     }
-
-
 }
