@@ -28,7 +28,7 @@ class ResponseElementTest {
         LiConstant.WHEN_THROW = null;
         responseElement.entryList.lira().forEach(entry -> {
 
-            String key = entry.key.text;
+            String key = entry.key;
             Class<?> type = TypeAlias.getType(entry.type);
             Object parserValue = TypeAlias.parser(entry.type, null, entry.def);
 

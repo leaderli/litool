@@ -1,10 +1,9 @@
 package io.leaderli.litool.runner.xml;
 
-import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
-import io.leaderli.litool.dom.sax.SaxBody;
+
+import java.util.Objects;
 
 /**
  * @author leaderli
@@ -13,22 +12,43 @@ import io.leaderli.litool.dom.sax.SaxBody;
 public class EntryElement implements SaxBean {
 
     public String label;
-    public SaxBody key;
+    public String key;
     public String def = "";
     public String type = "str";
-
 
 
     @Override
     public void body(BodyEvent bodyEvent) {
 
 
-
-        this.key = new SaxBody(bodyEvent.description());
+        this.key = bodyEvent.description();
     }
 
     @Override
     public String name() {
         return "entry";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EntryElement that = (EntryElement) o;
+        return Objects.equals(key, that.key);
+    }
+
+    @Override
+    public String toString() {
+        return "EntryElement{" +
+                "label='" + label + '\'' +
+                ", key='" + key + '\'' +
+                ", def='" + def + '\'' +
+                ", type='" + type + '\'' +
+                '}';
     }
 }

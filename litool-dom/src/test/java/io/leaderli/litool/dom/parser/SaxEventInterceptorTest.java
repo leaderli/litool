@@ -36,7 +36,8 @@ class SaxEventInterceptorTest {
                 .sort((m1, m2) -> m2.getName().compareTo(m1.getName()))
                 .first();
 
-        Assertions.assertEquals("addBean",first.get().getName());
+        Assertions.assertEquals("addBean", first.get().getName());
+
 
     }
 
@@ -51,9 +52,7 @@ class SaxEventInterceptorTest {
 
         Assertions.assertTrue(root.beans.lira().first().present());
         Assertions.assertEquals("no", root.getNoBean().name);
-        Assertions.assertEquals("abc", root.getNoBean().body.get(map));
-
-
+        Assertions.assertEquals("abc", map.get(root.getNoBean().body));
 
 
         IgnoreSaxBeanWithMsg ignoreSaxBean = new IgnoreSaxBeanWithMsg();
@@ -62,7 +61,7 @@ class SaxEventInterceptorTest {
 
         Assertions.assertTrue(ignoreSaxBean.msgs.toString().contains("<yyyy>"));
 
-
+        GsonUtil.print(root);
     }
 
 

@@ -70,7 +70,7 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
                 this.callback.run();
             } catch (Throwable throwable) {
                 Locator locator = this.getStartEvent().locator;
-                throw new IllegalStateException(String.format("%s at line:%d column:%d", throwable, locator.getLineNumber(), locator.getColumnNumber()));
+                throw new IllegalStateException(String.format("%s at line:%d column:%d", throwable, locator.getLineNumber(), locator.getColumnNumber()), throwable);
             }
         }
     }

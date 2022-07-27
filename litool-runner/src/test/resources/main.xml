@@ -2,6 +2,7 @@
 <main>
     <request>
         <entry label="渠道">CHANNEL</entry>
+        <entry label="渠道">CHANNEL</entry>
         <entry label="编号" type="int" def="1">ID</entry>
     </request>
 

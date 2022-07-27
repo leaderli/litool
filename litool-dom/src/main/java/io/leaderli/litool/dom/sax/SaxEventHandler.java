@@ -1,10 +1,7 @@
 package io.leaderli.litool.dom.sax;
 
 import io.leaderli.litool.core.function.ThrowableRunner;
-import io.leaderli.litool.core.lang.TupleMap;
-import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringConvert;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.ClassUtil;
@@ -22,11 +19,11 @@ import java.lang.reflect.Method;
  */
 public interface SaxEventHandler {
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     default void start(StartEvent startEvent) {
 
 
         // 查找set（优先级更高) 或 add 方法 填充属性
+        // set 一般用于设置SaxBean， add 一般用于添加 SaxList
 
         String methodName = startEvent.name;
 
@@ -36,26 +33,33 @@ public interface SaxEventHandler {
                         && method.getParameterCount() == 1
                         && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, method.getParameterTypes()[0]));
 
-        Lino<LiTuple2<Method, SaxBean>> simpleField = methodScanner.scan()
+
+        Lino<Method> find = methodScanner.scan()
                 .sort((m1, m2) -> m2.getName().compareTo(m1.getName()))
-                .first()
-                .tuple(m -> ReflectUtil.newInstance(m.getParameterTypes()[0]).cast(SaxBean.class).get())
-                .ifPresent(tuple -> {
-                    Method method = tuple._1;
-                    SaxBean sax = tuple._2;
-                    ThrowableRunner call = () -> method.invoke(this, sax);
-                    SaxBeanAdapter saxBeanAdapter = SaxBeanAdapter.of(sax, call);
-                    startEvent.setNewSaxBean(saxBeanAdapter);
-                });
+                .first();
+
+        if (find.present()) {
+            Method method = find.get();
+            ReflectUtil.newInstance(method.getParameterTypes()[0]).cast(SaxBean.class).ifPresent(sax -> {
+                // 成员变量在执行到 end 时可以确保已经加载好，此时通过回调函数再注入到实例中
+                ThrowableRunner call = () -> method.invoke(this, sax);
+                SaxBeanAdapter saxBeanAdapter = SaxBeanAdapter.of(sax, call);
+                startEvent.setNewSaxBean(saxBeanAdapter);
+            });
+
+        }
+
     }
-
-
-
 
 
     default void attribute(AttributeEvent attributeEvent) {
         // 使用 attribute 的值填充 field 的值
 
+        MethodScanner methodScanner = MethodScanner.of(getClass(), false, method ->
+
+                StringUtils.equalsAnyIgnoreCase(method.getName(), "set" + attributeEvent.name)
+                        && method.getParameterCount() == 1
+                        && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, method.getParameterTypes()[0]));
 
         Lino<Field> lino = ReflectUtil.getField(this.getClass(), attributeEvent.name);
         if (lino.present()) {
@@ -64,10 +68,12 @@ public interface SaxEventHandler {
             Lino<?> fieldValue;
             String value = attributeEvent.value;
 
+            // 原始类型直接转换
             if (StringConvert.support(field.getType())) {
 
                 fieldValue = StringConvert.parser(field.getType(), value);
             } else {
+                //复杂类型，默认为一个使用 String 参数的构造器
                 fieldValue = ReflectUtil.newInstance(field.getType(), value);
             }
             fieldValue.ifPresent(v -> ReflectUtil.setFieldValue(this, field, v));
@@ -77,15 +83,7 @@ public interface SaxEventHandler {
     }
 
     default void body(BodyEvent bodyEvent) {
-        String value = bodyEvent.description();
-        Lira.of(this.getClass().getFields())
-                .filter(field -> ClassUtil.isAssignableFromOrIsWrapper(SaxBody.class, field.getType()))
-                .first()
-                .ifPresent(field -> {
-                            Object fieldValue = ReflectUtil.newInstance(field.getType(), value).get();
-                            ReflectUtil.setFieldValue(this, field, fieldValue);
-                        }
-                );
+
     }
 
     default void end(EndEvent endEvent) {

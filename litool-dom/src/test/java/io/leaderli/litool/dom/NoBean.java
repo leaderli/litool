@@ -1,5 +1,6 @@
 package io.leaderli.litool.dom;
 
+import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
 
 /**
@@ -9,7 +10,10 @@ import io.leaderli.litool.dom.sax.SaxBean;
 public class NoBean implements SaxBean {
     public String name;
 
-    public MapSaxBody body;
+    public String body;
 
-
+    @Override
+    public void body(BodyEvent bodyEvent) {
+        this.body = bodyEvent.description();
+    }
 }

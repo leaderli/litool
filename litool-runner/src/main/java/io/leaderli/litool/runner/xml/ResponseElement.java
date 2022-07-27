@@ -11,6 +11,10 @@ public class ResponseElement implements SaxBean {
 
     public EntryList entryList = new EntryList();
 
+    public void addEntry(EntryElement element) {
+        this.entryList.add(element);
+    }
+
     @Override
     public String name() {
         return "response";

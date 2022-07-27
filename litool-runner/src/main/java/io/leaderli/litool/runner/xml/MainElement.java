@@ -9,6 +9,22 @@ import io.leaderli.litool.dom.sax.SaxBean;
 
 public class MainElement implements SaxBean {
 
-    RequestElement request;
-    ResponseElement response;
+    private RequestElement request;
+    private ResponseElement response;
+
+    public RequestElement getRequest() {
+        return request;
+    }
+
+    public void setRequest(RequestElement request) {
+        this.request = request;
+    }
+
+    public ResponseElement getResponse() {
+        return response;
+    }
+
+    public void setResponse(ResponseElement response) {
+        this.response = response;
+    }
 }
