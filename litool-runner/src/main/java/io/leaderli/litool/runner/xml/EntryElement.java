@@ -11,10 +11,10 @@ import java.util.Objects;
  */
 public class EntryElement implements SaxBean {
 
-    public String label;
-    public String key;
-    public String def = "";
-    public String type = "str";
+    private String label;
+    private String key;
+    private String def = "";
+    private String type = "str";
 
 
     public void setLabel(String label) {
@@ -37,7 +37,7 @@ public class EntryElement implements SaxBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(key);
+        return Objects.hash(getKey());
     }
 
     @Override
@@ -45,16 +45,42 @@ public class EntryElement implements SaxBean {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EntryElement that = (EntryElement) o;
-        return Objects.equals(key, that.key);
+        return Objects.equals(getKey(), that.getKey());
     }
 
     @Override
     public String toString() {
         return "EntryElement{" +
-                "label='" + label + '\'' +
-                ", key='" + key + '\'' +
-                ", def='" + def + '\'' +
-                ", type='" + type + '\'' +
+                "label='" + getLabel() + '\'' +
+                ", key='" + getKey() + '\'' +
+                ", def='" + getDef() + '\'' +
+                ", type='" + getType() + '\'' +
                 '}';
     }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public String getDef() {
+        return def;
+    }
+
+    public void setDef(String def) {
+        this.def = def;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+
 }

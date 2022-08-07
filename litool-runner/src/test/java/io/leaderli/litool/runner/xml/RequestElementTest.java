@@ -29,10 +29,10 @@ class RequestElementTest {
 
         requestElement.entryList.lira().forEach(entry -> {
 
-            String text = entry.key;
-            String value = request.getOrDefault(text, entry.def);
-            Class<?> type = TypeAlias.getType(entry.type);
-            Object parserValue = TypeAlias.parser(entry.type, value, entry.def);
+            String text = entry.getKey();
+            String value = request.getOrDefault(text, entry.getDef());
+            Class<?> type = TypeAlias.getType(entry.getType());
+            Object parserValue = TypeAlias.parser(entry.getType(), value, entry.getDef());
 
             parserRequest.put(text, parserValue);
         });

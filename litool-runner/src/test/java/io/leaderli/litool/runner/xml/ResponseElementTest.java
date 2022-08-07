@@ -28,9 +28,9 @@ class ResponseElementTest {
         LiConstant.WHEN_THROW = null;
         responseElement.entryList.lira().forEach(entry -> {
 
-            String key = entry.key;
-            Class<?> type = TypeAlias.getType(entry.type);
-            Object parserValue = TypeAlias.parser(entry.type, null, entry.def);
+            String key = entry.getKey();
+            Class<?> type = TypeAlias.getType(entry.getType());
+            Object parserValue = TypeAlias.parser(entry.getType(), null, entry.getDef());
 
             response.put(key, parserValue);
         });

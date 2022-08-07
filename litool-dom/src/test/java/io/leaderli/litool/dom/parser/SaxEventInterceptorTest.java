@@ -51,7 +51,7 @@ class SaxEventInterceptorTest {
         RootBean root = dfs.parse("bean.xml");
 
         Assertions.assertTrue(root.beans.lira().first().present());
-        Assertions.assertEquals("no", root.getNoBean().name);
+        Assertions.assertEquals("no", root.getNoBean().getName());
         Assertions.assertEquals("abc", map.get(root.getNoBean().body));
 
 

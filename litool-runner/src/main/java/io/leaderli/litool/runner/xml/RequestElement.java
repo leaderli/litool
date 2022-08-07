@@ -15,7 +15,7 @@ public class RequestElement implements SaxBean {
 
     public void addEntry(EntryElement element) {
 
-        LiAssertUtil.assertFalse(entryList.lira().contains(element), "duplicate key of " + element.key);
+        LiAssertUtil.assertFalse(entryList.lira().contains(element), "duplicate key of " + element.getKey());
         this.entryList.add(element);
     }
 
