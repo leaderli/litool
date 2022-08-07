@@ -17,6 +17,12 @@ public class EntryElement implements SaxBean {
     public String type = "str";
 
 
+    public void setLabel(String label) {
+        System.out.println("==============label " + label);
+        this.label = label;
+    }
+
+
     @Override
     public void body(BodyEvent bodyEvent) {
 

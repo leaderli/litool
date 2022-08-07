@@ -1,12 +1,12 @@
 package io.leaderli.litool.dom.sax;
 
-import io.leaderli.litool.core.function.ThrowableRunner;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.text.StringConvert;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.MethodScanner;
 import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.core.util.ConsoleUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -41,9 +41,9 @@ public interface SaxEventHandler {
         if (find.present()) {
             Method method = find.get();
             ReflectUtil.newInstance(method.getParameterTypes()[0]).cast(SaxBean.class).ifPresent(sax -> {
+                SaxBeanAdapter saxBeanAdapter = SaxBeanAdapter.of(sax);
                 // 成员变量在执行到 end 时可以确保已经加载好，此时通过回调函数再注入到实例中
-                ThrowableRunner call = () -> method.invoke(this, sax);
-                SaxBeanAdapter saxBeanAdapter = SaxBeanAdapter.of(sax, call);
+                saxBeanAdapter.addCallback(() -> method.invoke(this, sax));
                 startEvent.setNewSaxBean(saxBeanAdapter);
             });
 
@@ -58,28 +58,43 @@ public interface SaxEventHandler {
         MethodScanner methodScanner = MethodScanner.of(getClass(), false, method ->
 
                 StringUtils.equalsAnyIgnoreCase(method.getName(), "set" + attributeEvent.name)
-                        && method.getParameterCount() == 1
-                        && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, method.getParameterTypes()[0]));
+                        && method.getParameterCount() == 1);
 
-        Lino<Field> lino = ReflectUtil.getField(this.getClass(), attributeEvent.name);
-        if (lino.present()) {
-            Field field = lino.get();
+        methodScanner.scan().first().ifPresent(method -> {
 
-            Lino<?> fieldValue;
+            Class<?> parameterType = method.getParameterTypes()[0];
             String value = attributeEvent.value;
+            Lino<?> fieldValue;
 
             // 原始类型直接转换
-            if (StringConvert.support(field.getType())) {
+            if (StringConvert.support(parameterType)) {
 
-                fieldValue = StringConvert.parser(field.getType(), value);
+                fieldValue = StringConvert.parser(parameterType, value);
             } else {
                 //复杂类型，默认为一个使用 String 参数的构造器
-                fieldValue = ReflectUtil.newInstance(field.getType(), value);
+                fieldValue = ReflectUtil.newInstance(parameterType, value);
             }
-            fieldValue.ifPresent(v -> ReflectUtil.setFieldValue(this, field, v));
 
+            fieldValue.ifThrowablePresent(v -> method.invoke(this, v));
+        });
 
-        }
+//        Lino<Field> lino = ReflectUtil.getField(this.getClass(), attributeEvent.name);
+//        if (lino.present()) {
+//            Field field = lino.get();
+//
+//
+//            // 原始类型直接转换
+//            if (StringConvert.support(field.getType())) {
+//
+//                fieldValue = StringConvert.parser(field.getType(), value);
+//            } else {
+//                //复杂类型，默认为一个使用 String 参数的构造器
+//                fieldValue = ReflectUtil.newInstance(field.getType(), value);
+//            }
+//            fieldValue.ifPresent(v -> ReflectUtil.setFieldValue(this, field, v));
+//
+//
+//        }
     }
 
     default void body(BodyEvent bodyEvent) {
@@ -89,6 +104,12 @@ public interface SaxEventHandler {
     default void end(EndEvent endEvent) {
 
         endEvent.getSaxBeanWrapper().run();
+
+        if (endEvent.getSaxBeanWrapper().getParseErrorMsgs().size() > 0) {
+
+            ConsoleUtil.println(endEvent.getSaxBeanWrapper().getParseErrorMsgs());
+
+        }
         // 校验是否有成员变量未初始化
         for (Field field : getClass().getFields()) {
             ReflectUtil.getFieldValue(this, field).assertNotNone(String.format("%s has no init", field));

@@ -51,5 +51,7 @@ class RequestElementTest {
         SaxEventInterceptor<RequestElement> dfs = new SaxEventInterceptor<>(RequestElement.class);
 
         RequestElement requestElement = dfs.parse("request_error.xml");
+
+        Assertions.assertEquals("duplicate key of CHANNEL at line:4 column:23", dfs.getParseErrorMsgs().get(0));
     }
 }

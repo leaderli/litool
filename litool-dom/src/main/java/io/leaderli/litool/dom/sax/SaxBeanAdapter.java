@@ -1,7 +1,11 @@
 package io.leaderli.litool.dom.sax;
 
+import io.leaderli.litool.core.exception.ExceptionUtil;
 import io.leaderli.litool.core.function.ThrowableRunner;
 import org.xml.sax.Locator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author leaderli
@@ -12,33 +16,28 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
 
     public final SaxBean origin;
     /**
-     * 用于在 {@link EndEvent} 中回调
+     * 用于在 {@link EndEvent} 中回调，用来执行参数校验，赋值复杂元素等
      */
-    private final ThrowableRunner callback;
+    private final List<ThrowableRunner> callbacks = new ArrayList<>();
+
+    private final List<String> parseErrorMsgs = new ArrayList<>();
     /**
      * 保存解析的开始事件，用于 {@link EndEvent#getSaxBeanWrapper()#getStartEvent()} 中获取解析开始的位置等
      */
     private StartEvent startEvent;
 
-    private SaxBeanAdapter(SaxBean origin, ThrowableRunner callback) {
+    private SaxBeanAdapter(SaxBean origin) {
         this.origin = origin;
-        this.callback = callback;
     }
 
-    public static SaxBeanAdapter of(SaxBean sax, ThrowableRunner runnable) {
-        return new SaxBeanAdapter(sax, runnable);
-    }
 
     public static SaxBeanAdapter of(SaxBean sax) {
-        return new SaxBeanAdapter(sax, null);
+        return new SaxBeanAdapter(sax);
     }
 
-    public StartEvent getStartEvent() {
-        return startEvent;
-    }
 
-    public void setStartEvent(StartEvent startEvent) {
-        this.startEvent = startEvent;
+    public void addCallback(ThrowableRunner callback) {
+        this.callbacks.add(callback);
     }
 
     @Override
@@ -46,7 +45,6 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
         origin.start(startEvent);
 
     }
-
 
     @Override
     public void attribute(AttributeEvent attributeEvent) {
@@ -65,15 +63,36 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
 
     @Override
     public void run() {
-        if (this.callback != null) {
+
+        for (ThrowableRunner callback : this.callbacks) {
+
             try {
-                this.callback.run();
+                callback.run();
             } catch (Throwable throwable) {
+                Throwable cause = ExceptionUtil.getCause(throwable);
                 Locator locator = this.getStartEvent().locator;
-                throw new IllegalStateException(String.format("%s at line:%d column:%d", throwable, locator.getLineNumber(), locator.getColumnNumber()), throwable);
+                parseErrorMsgs.add(String.format("%s at line:%d column:%d", cause.getMessage(), locator.getLineNumber(), locator.getColumnNumber()));
             }
         }
     }
 
+    public StartEvent getStartEvent() {
+        return startEvent;
+    }
 
+    public void setStartEvent(StartEvent startEvent) {
+        this.startEvent = startEvent;
+    }
+
+    public List<String> getParseErrorMsgs() {
+        return parseErrorMsgs;
+    }
+
+    @Override
+    public String toString() {
+        return "SaxBeanAdapter{" +
+                "origin=" + origin +
+                ", startEvent=" + startEvent +
+                '}';
+    }
 }
