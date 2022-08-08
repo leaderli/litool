@@ -70,7 +70,7 @@ public class SaxEventInterceptor<T extends SaxBean> {
 
                     // 实际解析后的有效标签
                     SaxBeanAdapter newSaxBean = startEvent.getNewSaxBean();
-                    newSaxBean.origin.setRoot(root);
+//                    newSaxBean.origin.setRoot(root);
                     saxBeanStack.push(newSaxBean);
                 }
 
