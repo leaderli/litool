@@ -23,7 +23,7 @@ class MainElementTest {
         System.out.println(dfs.getParseErrorMsgs());
         Assertions.assertEquals(1, dfs.getParseErrorMsgs().size());
 
-        GsonUtil.print(main);
+//        GsonUtil.print(main);
 
 
         Gson gson = RunnerGson.GSON_BUILDER.setPrettyPrinting().create();
