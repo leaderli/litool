@@ -9,7 +9,6 @@ import io.leaderli.litool.dom.sax.SaxBean;
 
 public class MainElement implements SaxBean {
 
-    private String name;
     private RequestElement request;
     private ResponseElement response;
 
@@ -28,4 +27,5 @@ public class MainElement implements SaxBean {
     public void setResponse(ResponseElement response) {
         this.response = response;
     }
+
 }

@@ -30,7 +30,7 @@ class StringConvertTest {
         Assertions.assertSame(1, StringConvert.parser(int.class, "1").get());
         Assertions.assertSame(Lino.none(), StringConvert.parser(int.class, "a"));
 
-        Assertions.assertSame(1, StringConvert.parser(int.class, "a", 1).get());
+        Assertions.assertSame(1, StringConvert.parser(int.class, "a", 1));
 
     }
 

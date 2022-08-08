@@ -2,10 +2,12 @@ package io.leaderli.litool.runner.xml;
 
 import com.google.gson.Gson;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
-import io.leaderli.litool.json.GsonUtil;
+import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.adapter.RunnerGson;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author leaderli
@@ -20,15 +22,22 @@ class MainElementTest {
         MainElement main = dfs.parse("main.xml");
 
 
-        System.out.println(dfs.getParseErrorMsgs());
-        Assertions.assertEquals(1, dfs.getParseErrorMsgs().size());
-
 //        GsonUtil.print(main);
 
 
         Gson gson = RunnerGson.GSON_BUILDER.setPrettyPrinting().create();
 
         System.out.println(gson.toJson(main));
+
+        Map<String, String> request = new HashMap<>();
+        request.put("CHANNEL", "IVR");
+
+
+        Context context = new Context(request);
+//        requestElement.visit(context);
+        context.visit(main);
+
+        System.out.println((String) context.getRequest("CHANNEL"));
 
 
     }

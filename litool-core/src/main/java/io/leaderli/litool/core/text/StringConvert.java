@@ -43,25 +43,23 @@ public class StringConvert {
     public static <T> T parser(String value, T def) {
 
         Class<T> cls = ClassUtil.getClass(def);
+
+        return parser(cls, value, def);
+    }
+
+    public static <T> T parser(Class<T> cls, String value, T def) {
+
         return Lino.of(CACHE.get(cls))
-                .throwable_map(f -> f.apply(value))
+                .throwable_map(f -> f.apply(value), null)
                 .cast(cls)
                 .get(def);
+
     }
 
     public static <T> Lino<T> parser(Class<T> cls, String value) {
 
         return Lino.of(CACHE.get(cls))
-                .throwable_map(f -> f.apply(value))
+                .throwable_map(f -> f.apply(value), null)
                 .cast(cls);
-    }
-
-    public static <T> Lino<T> parser(Class<T> cls, String value, T def) {
-
-        return Lino.of(CACHE.get(cls))
-                .throwable_map(f -> f.apply(value))
-                .cast(cls)
-                .or(def);
-
     }
 }

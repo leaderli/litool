@@ -1,13 +1,11 @@
 package io.leaderli.litool.runner.xml;
 
-import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
-import io.leaderli.litool.runner.TypeAlias;
+import io.leaderli.litool.runner.Context;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author leaderli
@@ -22,22 +20,25 @@ class ResponseElementTest {
 
         ResponseElement responseElement = dfs.parse("response.xml");
 
-        Map<String, Object> response = new HashMap<>();
+//        Map<String, Object> response = new HashMap<>();
+
+//        LiConstant.WHEN_THROW = null;
+//        responseElement.entryList.lira().forEach(entry -> {
+//
+//            String key = entry.getKey();
+//            Class<?> type = TypeAlias.getType(entry.getType());
+//            Object parserValue = TypeAlias.parser(entry.getType(), null, entry.getDef());
+//
+//            response.put(key, parserValue);
+//        });
+
+        Context context = new Context(new HashMap<>());
+
+        context.visit(responseElement);
 
 
-        LiConstant.WHEN_THROW = null;
-        responseElement.entryList.lira().forEach(entry -> {
-
-            String key = entry.getKey();
-            Class<?> type = TypeAlias.getType(entry.getType());
-            Object parserValue = TypeAlias.parser(entry.getType(), null, entry.getDef());
-
-            response.put(key, parserValue);
-        });
-
-
-        Assertions.assertEquals("", response.get("CHANNEL"));
-        Assertions.assertEquals(1, response.get("ID"));
+        Assertions.assertEquals("", context.getResponse("CHANNEL"));
+        Assertions.assertEquals(1, (int) context.getResponse("ID"));
 
 
     }

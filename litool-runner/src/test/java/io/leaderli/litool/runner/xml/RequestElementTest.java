@@ -1,8 +1,7 @@
 package io.leaderli.litool.runner.xml;
 
-import io.leaderli.litool.core.collection.ImmutableMap;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
-import io.leaderli.litool.runner.TypeAlias;
+import io.leaderli.litool.runner.Context;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -23,25 +22,16 @@ class RequestElementTest {
         RequestElement requestElement = dfs.parse("request.xml");
 
         Map<String, String> request = new HashMap<>();
-        Map<String, Object> parserRequest = new HashMap<>();
         request.put("CHANNEL", "IVR");
 
 
-        requestElement.entryList.lira().forEach(entry -> {
-
-            String text = entry.getKey();
-            String value = request.getOrDefault(text, entry.getDef());
-            Class<?> type = TypeAlias.getType(entry.getType());
-            Object parserValue = TypeAlias.parser(entry.getType(), value, entry.getDef());
-
-            parserRequest.put(text, parserValue);
-        });
-
-        ImmutableMap<String, Object> of = ImmutableMap.of(parserRequest);
+        Context context = new Context(request);
+//        requestElement.visit(context);
+        context.visit(requestElement);
 
 
-        Assertions.assertEquals("IVR", of.get("CHANNEL"));
-        Assertions.assertEquals(1, of.get("ID"));
+        Assertions.assertEquals("IVR", context.getRequest("CHANNEL"));
+        Assertions.assertEquals(1, (int) context.getRequest("ID"));
 
 
     }
