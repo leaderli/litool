@@ -105,6 +105,7 @@ public class SaxEventInterceptor<T extends SaxBean> {
         return parseErrorMsgs;
     }
 
+
     private static <T extends SaxBean> List<SaxEvent> getSaxEventList(String path) throws ParserConfigurationException, SAXException, IOException {
         SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
         SAXParser saxParser = saxParserFactory.newSAXParser();

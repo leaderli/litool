@@ -1,5 +1,6 @@
 package io.leaderli.litool.dom.sax;
 
+import io.leaderli.litool.core.exception.ExceptionUtil;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.text.StringConvert;
 import io.leaderli.litool.core.text.StringUtils;
@@ -7,6 +8,7 @@ import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.MethodScanner;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.util.ConsoleUtil;
+import org.xml.sax.Locator;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -43,7 +45,16 @@ public interface SaxEventHandler {
             ReflectUtil.newInstance(method.getParameterTypes()[0]).cast(SaxBean.class).ifPresent(sax -> {
                 SaxBeanAdapter saxBeanAdapter = SaxBeanAdapter.of(sax);
                 // 成员变量在执行到 end 时可以确保已经加载好，此时通过回调函数再注入到实例中
-                saxBeanAdapter.addCallback(() -> method.invoke(this, sax));
+                saxBeanAdapter.addCallback(() -> {
+                    try {
+                        method.invoke(this, sax);
+                    } catch (Throwable throwable) {
+
+                        Throwable cause = ExceptionUtil.getCause(throwable);
+                        Locator locator = startEvent.locator;
+                        saxBeanAdapter.getParseErrorMsgs().add(String.format("%s at line:%d column:%d", cause.getMessage(), locator.getLineNumber(), locator.getColumnNumber()));
+                    }
+                });
                 startEvent.setNewSaxBean(saxBeanAdapter);
             });
 
@@ -78,23 +89,6 @@ public interface SaxEventHandler {
             fieldValue.ifThrowablePresent(v -> method.invoke(this, v));
         });
 
-//        Lino<Field> lino = ReflectUtil.getField(this.getClass(), attributeEvent.name);
-//        if (lino.present()) {
-//            Field field = lino.get();
-//
-//
-//            // 原始类型直接转换
-//            if (StringConvert.support(field.getType())) {
-//
-//                fieldValue = StringConvert.parser(field.getType(), value);
-//            } else {
-//                //复杂类型，默认为一个使用 String 参数的构造器
-//                fieldValue = ReflectUtil.newInstance(field.getType(), value);
-//            }
-//            fieldValue.ifPresent(v -> ReflectUtil.setFieldValue(this, field, v));
-//
-//
-//        }
     }
 
     default void body(BodyEvent bodyEvent) {

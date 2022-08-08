@@ -1,5 +1,6 @@
 package io.leaderli.litool.runner.xml;
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
 
@@ -18,7 +19,6 @@ public class EntryElement implements SaxBean {
 
 
     public void setLabel(String label) {
-        System.out.println("==============label " + label);
         this.label = label;
     }
 

@@ -2,6 +2,7 @@ package io.leaderli.litool.runner.xml;
 
 import com.google.gson.Gson;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
+import io.leaderli.litool.json.GsonUtil;
 import io.leaderli.litool.runner.adapter.RunnerGson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,9 +20,10 @@ class MainElementTest {
         MainElement main = dfs.parse("main.xml");
 
 
+        System.out.println(dfs.getParseErrorMsgs());
         Assertions.assertEquals(1, dfs.getParseErrorMsgs().size());
 
-//        GsonUtil.print(main);
+        GsonUtil.print(main);
 
 
         Gson gson = RunnerGson.GSON_BUILDER.setPrettyPrinting().create();

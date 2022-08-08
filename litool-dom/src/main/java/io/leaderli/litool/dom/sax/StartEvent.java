@@ -20,6 +20,5 @@ public class StartEvent extends SaxEvent {
 
     public void setNewSaxBean(SaxBeanAdapter newSaxBean) {
         this.newSaxBean = newSaxBean;
-        this.newSaxBean.setStartEvent(this);
     }
 }
