@@ -20,10 +20,6 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
     private final List<Runnable> callbacks = new ArrayList<>();
 
     private final List<String> parseErrorMsgs = new ArrayList<>();
-//    /**
-//     * 保存解析的开始事件，用于 {@link EndEvent#getSaxBeanWrapper()#getStartEvent()} 中获取解析开始的位置等
-//     */
-//    private StartEvent startEvent;
 
     private SaxBeanAdapter(SaxBean origin) {
         this.origin = origin;
@@ -95,11 +91,6 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
         }
     }
 
-
-
-//    public void setStartEvent(StartEvent startEvent) {
-//        this.startEvent = startEvent;
-//    }
 
     public List<String> getParseErrorMsgs() {
         return parseErrorMsgs;

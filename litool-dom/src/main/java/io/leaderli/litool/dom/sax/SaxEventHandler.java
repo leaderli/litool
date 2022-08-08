@@ -7,7 +7,6 @@ import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.MethodScanner;
 import io.leaderli.litool.core.type.ReflectUtil;
-import io.leaderli.litool.core.util.ConsoleUtil;
 import org.xml.sax.Locator;
 
 import java.lang.reflect.Field;
@@ -99,15 +98,9 @@ public interface SaxEventHandler {
 
         endEvent.getSaxBeanWrapper().run();
 
-        if (endEvent.getSaxBeanWrapper().getParseErrorMsgs().size() > 0) {
-
-            ConsoleUtil.println(endEvent.getSaxBeanWrapper().getParseErrorMsgs());
-
-        }
         // 校验是否有成员变量未初始化
-        for (Field field : getClass().getFields()) {
+        for (Field field : ReflectUtil.getFields(getClass())) {
             ReflectUtil.getFieldValue(this, field).assertNotNone(String.format("%s has no init", field));
-
         }
     }
 

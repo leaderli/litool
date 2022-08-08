@@ -125,6 +125,11 @@ class ReflectUtilTest {
         Assertions.assertEquals(0, ReflectUtil.findAnnotationsWithMark(TestBean.class, NotNull.class).size());
     }
 
+    @Test
+    void getFields() {
+        Assertions.assertEquals(3, ReflectUtil.getFields(LittleBean.class).size());
+    }
+
     @NotNull("1")
     @NotNull("2")
     public static class TestBean {

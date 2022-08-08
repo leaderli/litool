@@ -52,6 +52,7 @@ class RequestElementTest {
 
         RequestElement requestElement = dfs.parse("request_error.xml");
 
+        System.out.println(dfs.getParseErrorMsgs());
 
         Assertions.assertEquals("duplicate key of CHANNEL at line:4 column:23", dfs.getParseErrorMsgs().get(0));
     }

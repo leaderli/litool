@@ -10,7 +10,7 @@ import io.leaderli.litool.dom.sax.SaxBean;
 public class RequestElement implements SaxBean {
 
 
-    public EntryList entryList = new EntryList();
+    public final EntryList entryList = new EntryList();
 
 
     public void addEntry(EntryElement element) {

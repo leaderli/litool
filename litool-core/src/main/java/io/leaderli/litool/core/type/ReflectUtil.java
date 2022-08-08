@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
@@ -16,6 +17,22 @@ import java.util.function.Function;
  * @since 2022/7/12
  */
 public class ReflectUtil {
+
+
+    /**
+     * @param cls 查找的类
+     * @return 查找类所有的属性
+     * @see Class#getFields()
+     * @see Class#getDeclaredFields()
+     */
+    public static Lira<Field> getFields(Class<?> cls) {
+
+        if (cls == null) {
+            return Lira.none();
+        }
+
+        return CollectionUtils.union(Lira.of(cls.getFields()), Lira.of(cls.getDeclaredFields()));
+    }
 
     /**
      * onlyCurrentClass = false
