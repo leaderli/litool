@@ -27,8 +27,12 @@ public class TypeAlias {
 
         Class cls = ALIAS.get(type);
         return StringConvert.parser(cls, value)
-                .or(() -> StringConvert.parser(cls, def).assertNotNone("cannot parser def value to type " + cls).get())
+                .or(() -> StringConvert.parser(cls, def).get())
                 .get();
+    }
+
+    public static boolean support(String type) {
+        return ALIAS.containsKey(type);
     }
 
 }

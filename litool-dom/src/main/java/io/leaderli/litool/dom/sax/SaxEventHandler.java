@@ -45,6 +45,7 @@ public interface SaxEventHandler {
                 SaxBeanAdapter saxBeanAdapter = SaxBeanAdapter.of(sax);
                 // 成员变量在执行到 end 时可以确保已经加载好，此时通过回调函数再注入到实例中
                 saxBeanAdapter.addCallback(() -> {
+                   
                     try {
                         method.invoke(this, sax);
                     } catch (Throwable throwable) {

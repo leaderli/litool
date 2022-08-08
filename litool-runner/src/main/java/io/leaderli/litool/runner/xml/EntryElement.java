@@ -1,10 +1,12 @@
 package io.leaderli.litool.runner.xml;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.LiConstant;
+import io.leaderli.litool.core.text.StringConvert;
 import io.leaderli.litool.dom.sax.BodyEvent;
+import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
-
-import java.util.Objects;
+import io.leaderli.litool.runner.TypeAlias;
 
 /**
  * @author leaderli
@@ -17,17 +19,22 @@ public class EntryElement implements SaxBean {
     private String def = "";
     private String type = "str";
 
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-
     @Override
     public void body(BodyEvent bodyEvent) {
 
 
-        this.key = bodyEvent.description();
+        String key = bodyEvent.description();
+        LiAssertUtil.assertTrue(key.matches(LiConstant.ENTRY_NAME_RULE), String.format("the entry key %s is not match %s", key, LiConstant.ENTRY_NAME_RULE));
+        this.key = key;
+    }
+
+    @Override
+    public void end(EndEvent endEvent) {
+
+
+        StringConvert.parser(TypeAlias.getType(this.type), def).assertNotNone(String.format("the def value %s cannot satisfied the entry type %s", def, type));
+        SaxBean.super.end(endEvent);
+
     }
 
     @Override
@@ -35,18 +42,6 @@ public class EntryElement implements SaxBean {
         return "entry";
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getKey());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EntryElement that = (EntryElement) o;
-        return Objects.equals(getKey(), that.getKey());
-    }
 
     @Override
     public String toString() {
@@ -62,11 +57,20 @@ public class EntryElement implements SaxBean {
         return label;
     }
 
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
     public String getDef() {
         return def;
     }
 
     public void setDef(String def) {
+
         this.def = def;
     }
 
@@ -75,12 +79,9 @@ public class EntryElement implements SaxBean {
     }
 
     public void setType(String type) {
+
+        LiAssertUtil.assertTrue(TypeAlias.support(type), String.format("the entry type  %s is unsupported ", type));
         this.type = type;
     }
-
-    public String getKey() {
-        return key;
-    }
-
 
 }

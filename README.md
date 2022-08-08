@@ -1,3 +1,1 @@
 # litool
-hello
-fuck

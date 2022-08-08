@@ -55,4 +55,13 @@ public class StringConvert {
                 .throwable_map(f -> f.apply(value))
                 .cast(cls);
     }
+
+    public static <T> Lino<T> parser(Class<T> cls, String value, T def) {
+
+        return Lino.of(CACHE.get(cls))
+                .throwable_map(f -> f.apply(value))
+                .cast(cls)
+                .or(def);
+
+    }
 }

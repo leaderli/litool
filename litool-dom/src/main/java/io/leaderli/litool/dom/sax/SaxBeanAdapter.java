@@ -5,6 +5,7 @@ import org.xml.sax.Locator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author leaderli
@@ -18,18 +19,15 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
      * 用于在 {@link EndEvent} 中回调，用来执行参数校验，赋值复杂元素等
      */
     private final List<Runnable> callbacks = new ArrayList<>();
-
     private final List<String> parseErrorMsgs = new ArrayList<>();
 
     private SaxBeanAdapter(SaxBean origin) {
         this.origin = origin;
     }
 
-
     public static SaxBeanAdapter of(SaxBean sax) {
         return new SaxBeanAdapter(sax);
     }
-
 
     public void addCallback(Runnable callback) {
         this.callbacks.add(callback);
@@ -37,49 +35,40 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
 
     @Override
     public void start(StartEvent startEvent) {
-        try {
+        parseErrorInvocationHandler(startEvent, origin::start);
+    }
 
-            origin.start(startEvent);
+    /**
+     * 包裹 saxEvent 执行的代理方法，用于捕捉解析异常信息。
+     *
+     * @param saxEvent sax事件
+     * @param consumer sax事件对应的消费者
+     * @param <T>      泛型
+     */
+    public <T extends SaxEvent> void parseErrorInvocationHandler(T saxEvent, Consumer<T> consumer) {
+        try {
+            consumer.accept(saxEvent);
         } catch (Throwable throwable) {
             Throwable cause = ExceptionUtil.getCause(throwable);
-            Locator locator = startEvent.locator;
+            Locator locator = saxEvent.locator;
             parseErrorMsgs.add(String.format("%s at line:%d column:%d", cause.getMessage(), locator.getLineNumber(), locator.getColumnNumber()));
         }
     }
 
     @Override
     public void attribute(AttributeEvent attributeEvent) {
-        try {
+        parseErrorInvocationHandler(attributeEvent, origin::attribute);
 
-            origin.attribute(attributeEvent);
-        } catch (Throwable throwable) {
-            Throwable cause = ExceptionUtil.getCause(throwable);
-            Locator locator = attributeEvent.locator;
-            parseErrorMsgs.add(String.format("%s at line:%d column:%d", cause.getMessage(), locator.getLineNumber(), locator.getColumnNumber()));
-        }
     }
 
     @Override
     public void body(BodyEvent bodyEvent) {
-        try {
-
-            origin.body(bodyEvent);
-        } catch (Throwable throwable) {
-            Throwable cause = ExceptionUtil.getCause(throwable);
-            Locator locator = bodyEvent.locator;
-            parseErrorMsgs.add(String.format("%s at line:%d column:%d", cause.getMessage(), locator.getLineNumber(), locator.getColumnNumber()));
-        }
+        parseErrorInvocationHandler(bodyEvent, origin::body);
     }
 
     @Override
     public void end(EndEvent endEvent) {
-        try {
-            origin.end(endEvent);
-        } catch (Throwable throwable) {
-            Throwable cause = ExceptionUtil.getCause(throwable);
-            Locator locator = endEvent.locator;
-            parseErrorMsgs.add(String.format("%s at line:%d column:%d", cause.getMessage(), locator.getLineNumber(), locator.getColumnNumber()));
-        }
+        parseErrorInvocationHandler(endEvent, origin::end);
     }
 
 
