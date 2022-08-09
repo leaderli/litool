@@ -26,8 +26,11 @@ class RequestElementTest {
 
 
         Context context = new Context(request);
+        requestElement.executor().visit(context);
 //        requestElement.visit(context);
-        context.visit(requestElement);
+//        context.visit(requestElement);
+
+//        new RequestElementExecutor(requestElement).visit(context);
 
 
         Assertions.assertEquals("IVR", context.getRequest("CHANNEL"));

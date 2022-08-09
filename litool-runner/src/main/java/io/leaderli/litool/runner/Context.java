@@ -27,35 +27,6 @@ public class Context {
         contextVisitor.visit(this);
     }
 
-    public void visit(MainElement main) {
-
-//        visit(main.getRequest());
-        visit(main.getResponse());
-    }
-
-//    public void visit(RequestElement requestElement) {
-//
-//        Map<String, Object> parserRequest = new HashMap<>();
-//        requestElement.entryList.lira().forEach(entry -> {
-//
-//            String text = entry.getKey();
-//            String value = (String) origin_request_or_response.getOrDefault(text, entry.getDef());
-//            Class<?> type = TypeAlias.getType(entry.getType());
-//            Object parserValue = TypeAlias.parser(entry.getType(), value, entry.getDef());
-//
-//            parserRequest.put(text, parserValue);
-//        });
-//
-//        this.origin_request_or_response.clear();
-//        this.readonly_request = ImmutableMap.of(parserRequest);
-//
-//    }
-
-//    public void visit(ResponseElement responseElement) {
-//        this.origin_request_or_response.putAll(responseElement.entryList.lira().toMap(EntryElement::getKey, e -> TypeAlias.parser(e.getType(), null, e.getDef())));
-//
-//    }
-
 
     @SuppressWarnings("unchecked")
     public <T> T getRequest(String key) {

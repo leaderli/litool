@@ -32,8 +32,8 @@ public class MainElement implements SaxBeanVisitor {
     @Override
     public void visit(Context context) {
 
-        context.visit(request);
-        context.visit(response);
+//        context.visit(request);
+//        context.visit(response);
 
     }
 }

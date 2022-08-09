@@ -1,19 +1,17 @@
 package io.leaderli.litool.runner.xml;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.dom.sax.EndEvent;
-import io.leaderli.litool.runner.Context;
-import io.leaderli.litool.runner.SaxBeanVisitor;
-import io.leaderli.litool.runner.TypeAlias;
+import io.leaderli.litool.dom.sax.SaxBean;
+import io.leaderli.litool.runner.executor.ElementExecutor;
+import io.leaderli.litool.runner.executor.ResponseElementExecutor;
 
-import java.util.Map;
 import java.util.Objects;
 
 /**
  * @author leaderli
  * @since 2022/7/23
  */
-public class ResponseElement implements SaxBeanVisitor {
+public class ResponseElement implements SaxBean, ElementExecutor<ResponseElementExecutor> {
 
 
     public EntryList entryList = new EntryList();
@@ -27,20 +25,13 @@ public class ResponseElement implements SaxBeanVisitor {
     }
 
     @Override
-    public void end(EndEvent endEvent) {
-        LiAssertUtil.assertFalse(entryList.lira().size() == 0, "the entryList of response is empty");
-        SaxBeanVisitor.super.end(endEvent);
-    }
-
-    @Override
     public String name() {
         return "response";
     }
 
 
     @Override
-    public void visit(Context context) {
-        Map<String, Object> response = this.entryList.lira().toMap(EntryElement::getKey, e -> TypeAlias.parser(e.getType(), null, e.getDef()));
-        context.origin_request_or_response.putAll(response);
+    public ResponseElementExecutor executor() {
+        return new ResponseElementExecutor(this);
     }
 }
