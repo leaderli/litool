@@ -65,6 +65,10 @@ public class EntryElement implements SaxBean {
         return key;
     }
 
+    public void setKey(String key) {
+        this.key = key;
+    }
+
     public String getDef() {
         return def;
     }

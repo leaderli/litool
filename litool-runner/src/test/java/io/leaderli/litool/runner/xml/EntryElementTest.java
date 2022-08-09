@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
  * @since 2022/8/8
  */
 class EntryElementTest {
+
     @Test
     void type_error() {
         LiConstant.WHEN_THROW = null;

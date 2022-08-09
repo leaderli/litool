@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <router>
+    <sequence id="" label="">
+        <unit label="">
+            <if cond="func()">
+                <assign/>
+                <goto/>
+            </if>
+            <if cond="func()">
 
-    <unit>123</unit>
-    <unit></unit>
-    <unit></unit>
-    <unit>
-        <if>
-            <condition></condition>
-            <then>
+            </if>
+        </unit>
+    </sequence>
 
-            </then>
-            <else>
-
-            </else>
-        </if>
-    </unit>
 </router>

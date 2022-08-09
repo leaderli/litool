@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<funcs>
+    <func name="switch86" label="" clazz="in" type="boolean">
+        <param type="str">$switch86</param>
+        <param type="">1</param>
+    </func>
+</funcs>
