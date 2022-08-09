@@ -2,6 +2,8 @@ package io.leaderli.litool.runner.xml;
 
 import io.leaderli.litool.core.collection.ImmutableMap;
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.dom.sax.EndEvent;
+import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.SaxBeanVisitor;
 import io.leaderli.litool.runner.TypeAlias;
@@ -30,6 +32,13 @@ public class RequestElement implements SaxBeanVisitor {
     }
 
     @Override
+    public void end(EndEvent endEvent) {
+        LiAssertUtil.assertFalse(entryList.lira().size() == 0, "the entryList of request is empty");
+
+        SaxBeanVisitor.super.end(endEvent);
+    }
+
+    @Override
     public String name() {
         return "request";
     }
@@ -50,5 +59,9 @@ public class RequestElement implements SaxBeanVisitor {
         context.origin_request_or_response.clear();
         context.setReadonly_request(ImmutableMap.of(parserRequest));
 
+    }
+
+    public EntryList getEntryList() {
+        return entryList;
     }
 }

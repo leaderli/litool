@@ -1,6 +1,7 @@
 package io.leaderli.litool.runner.xml;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.SaxBeanVisitor;
 import io.leaderli.litool.runner.TypeAlias;
@@ -23,6 +24,12 @@ public class ResponseElement implements SaxBeanVisitor {
             LiAssertUtil.assertFalse(Objects.equals(entry.getLabel(), element.getLabel()), "duplicate label of " + element.getLabel());
         });
         this.entryList.add(element);
+    }
+
+    @Override
+    public void end(EndEvent endEvent) {
+        LiAssertUtil.assertFalse(entryList.lira().size() == 0, "the entryList of response is empty");
+        SaxBeanVisitor.super.end(endEvent);
     }
 
     @Override
