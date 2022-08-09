@@ -47,6 +47,7 @@ public class InnerFuncContainer {
                     Class<?> parameterType = method.getParameterTypes()[i];
                     Class<?> temp = parameterType;
                     if (temp.isArray()) {
+                        // 仅允许最后一位为数组参数
                         LiAssertUtil.assertTrue(i == method.getParameterTypes().length - 1, String.format("innerFunc [%s] arr parameterType is only support on the last: %s", funcName, Arrays.toString(method.getParameterTypes())));
                         temp = temp.getComponentType();
 
