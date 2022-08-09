@@ -16,24 +16,11 @@ class ResponseElementTest {
 
     @Test
     void test() {
-        SaxEventInterceptor<ResponseElement> dfs = new SaxEventInterceptor<>(ResponseElement.class);
 
+        SaxEventInterceptor<ResponseElement> dfs = new SaxEventInterceptor<>(ResponseElement.class);
         ResponseElement responseElement = dfs.parse("response.xml");
 
-//        Map<String, Object> response = new HashMap<>();
-
-//        LiConstant.WHEN_THROW = null;
-//        responseElement.entryList.lira().forEach(entry -> {
-//
-//            String key = entry.getKey();
-//            Class<?> type = TypeAlias.getType(entry.getType());
-//            Object parserValue = TypeAlias.parser(entry.getType(), null, entry.getDef());
-//
-//            response.put(key, parserValue);
-//        });
-
         Context context = new Context(new HashMap<>());
-
         context.visit(responseElement);
 
 
