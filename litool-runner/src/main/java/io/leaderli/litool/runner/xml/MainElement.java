@@ -33,7 +33,7 @@ public class MainElement implements SaxBeanVisitor {
     public void visit(Context context) {
 
 //        context.visit(request);
-        context.visit(response);
+//        context.visit(response);
 
     }
 }
