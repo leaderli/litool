@@ -10,6 +10,7 @@ import io.leaderli.litool.runner.func.InnerFunc;
 import io.leaderli.litool.runner.xml.funcs.FuncElement;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -35,17 +36,22 @@ public class InnerFuncContainer {
                 Lira<Method> methods = ReflectUtil.getMethods(cls).filter(f -> f.getDeclaringClass() == cls);
                 Method method = methods.first().get();
 
-                LiAssertUtil.assertTrue(methods.size() == 1, String.format("%s can only have single method ", cls));
-                LiAssertUtil.assertTrue(ModifierUtil.isPublic(method) && ModifierUtil.isStatic(method), String.format("method %s should be static and public  ", method));
-                LiAssertUtil.assertTrue(TypeAlias.support(method.getReturnType()), String.format("method %s return type is unsupported", method));
+                String funcName = cls.getSimpleName();
+                LiAssertUtil.assertTrue(methods.size() == 1, String.format("innerFunc [%s] can only have single method ", funcName));
+                LiAssertUtil.assertTrue(ModifierUtil.isPublic(method) && ModifierUtil.isStatic(method), String.format("innerFunc [%s] should be static and public  ", funcName));
+                LiAssertUtil.assertTrue(TypeAlias.support(method.getReturnType()), String.format("innerFunc %s returnType is unsupported", funcName));
 
-                for (final Class<?> parameterType : method.getParameterTypes()) {
+                for (int i = 0; i < method.getParameterTypes().length; i++) {
 
+
+                    Class<?> parameterType = method.getParameterTypes()[i];
                     Class<?> temp = parameterType;
                     if (temp.isArray()) {
+                        LiAssertUtil.assertTrue(i == method.getParameterTypes().length - 1, String.format("innerFunc [%s] arr parameterType is only support on the last: %s", funcName, Arrays.toString(method.getParameterTypes())));
                         temp = temp.getComponentType();
+
                     }
-                    LiAssertUtil.assertTrue(TypeAlias.ALIAS.containsValue(temp), String.format("method %s parameter type is unsupported", parameterType));
+                    LiAssertUtil.assertTrue(TypeAlias.ALIAS.containsValue(temp), String.format("innerFunc [%s] parameterType [%s] is unsupported", funcName, parameterType));
 
                 }
                 return true;
