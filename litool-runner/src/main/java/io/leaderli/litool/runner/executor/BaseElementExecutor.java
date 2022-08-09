@@ -8,7 +8,7 @@ import io.leaderli.litool.runner.ContextVisitor;
  * @since 2022/8/9 5:02 PM
  */
 public abstract class BaseElementExecutor<T extends SaxBean> implements ContextVisitor {
-    protected final T element;
+    public final T element;
 
     public BaseElementExecutor(T element) {
         this.element = element;

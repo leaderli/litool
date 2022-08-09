@@ -16,6 +16,8 @@
  */
 package io.leaderli.litool.core.collection;
 
+import io.leaderli.litool.core.type.ClassUtil;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
@@ -741,7 +743,8 @@ public class ArrayUtils {
             i++;
         }
     }
-    public static  int[] combination(int[] a, int[] b) {
+
+    public static int[] combination(int[] a, int[] b) {
         if (a == null || a.length == 0) {
             return b;
         }
@@ -756,6 +759,7 @@ public class ArrayUtils {
         return union;
 
     }
+
     public static <T> T[] combination(T[] a, T[] b) {
         if (a == null || a.length == 0) {
             return b;
@@ -770,5 +774,23 @@ public class ArrayUtils {
         System.arraycopy(b, 0, union, a.length, b.length);
         return union;
 
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[] sub(T[] origin, int from, int to) {
+
+        if (origin == null) {
+            return null;
+        }
+
+        int length = origin.length;
+        if (to == -1) {
+            to = length;
+        }
+        if (from >= length || to <= from) {
+            return (T[]) ClassUtil.newArray(origin.getClass().getComponentType(), 0);
+        }
+
+        return Arrays.copyOfRange(origin, from, to);
     }
 }

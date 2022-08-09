@@ -1,8 +1,6 @@
 package io.leaderli.litool.dom;
 
-import io.leaderli.litool.core.lang.TupleMap;
 import io.leaderli.litool.dom.sax.SaxList;
-import io.leaderli.litool.dom.sax.SupportTagBuilder;
 
 /**
  * @author leaderli

@@ -1,14 +1,15 @@
 package io.leaderli.litool.runner.xml;
 
-import io.leaderli.litool.runner.Context;
-import io.leaderli.litool.runner.SaxBeanVisitor;
+import io.leaderli.litool.dom.sax.SaxBean;
+import io.leaderli.litool.runner.executor.ElementExecutor;
+import io.leaderli.litool.runner.executor.MainElementExecutor;
 
 /**
  * @author leaderli
  * @since 2022/7/24
  */
 
-public class MainElement implements SaxBeanVisitor {
+public class MainElement implements SaxBean, ElementExecutor<MainElementExecutor> {
 
     private RequestElement request;
     private ResponseElement response;
@@ -30,10 +31,7 @@ public class MainElement implements SaxBeanVisitor {
     }
 
     @Override
-    public void visit(Context context) {
-
-//        context.visit(request);
-//        context.visit(response);
-
+    public MainElementExecutor executor() {
+        return new MainElementExecutor(this);
     }
 }

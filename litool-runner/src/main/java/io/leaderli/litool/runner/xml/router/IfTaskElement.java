@@ -1,11 +1,6 @@
 package io.leaderli.litool.runner.xml.router;
 
-import io.leaderli.litool.runner.Context;
-import io.leaderli.litool.runner.SaxBeanVisitor;
+import io.leaderli.litool.dom.sax.SaxBean;
 
-public class IfTaskElement implements SaxBeanVisitor {
-    @Override
-    public void visit(Context context) {
-
-    }
+public class IfTaskElement implements SaxBean {
 }

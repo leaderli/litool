@@ -1,8 +1,25 @@
 package io.leaderli.litool.runner.func;
 
-import java.util.function.Function;
+import io.leaderli.litool.core.exception.LiAssertUtil;
 
-public interface IFunc extends Function<Object[], String> {
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-    Class<?>[] support();
+public abstract class IFunc {
+
+    final Method method;
+
+
+    protected IFunc(Method method) {
+        this.method = method;
+        LiAssertUtil.assertTrue(this.method.isAccessible());
+    }
+
+    public final String apply(Object[] params) throws InvocationTargetException, IllegalAccessException {
+        return (String) method.invoke(this, params);
+    }
+
+    public final Class<?>[] support() {
+        return method.getParameterTypes();
+    }
 }

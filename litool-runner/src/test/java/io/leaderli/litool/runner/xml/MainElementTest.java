@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.adapter.RunnerGson;
+import io.leaderli.litool.runner.executor.MainElementExecutor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -27,17 +29,17 @@ class MainElementTest {
 
         Gson gson = RunnerGson.GSON_BUILDER.setPrettyPrinting().create();
 
-        System.out.println(gson.toJson(main));
+//        System.out.println(gson.toJson(main));
 
         Map<String, String> request = new HashMap<>();
         request.put("CHANNEL", "IVR");
 
 
         Context context = new Context(request);
-//        requestElement.visit(context);
-        context.visit(main);
+        MainElementExecutor executor = main.executor();
+        executor.visit(context);
 
-        System.out.println((String) context.getRequest("CHANNEL"));
+        Assertions.assertEquals("IVR", context.getRequest("CHANNEL"));
 
 
     }
