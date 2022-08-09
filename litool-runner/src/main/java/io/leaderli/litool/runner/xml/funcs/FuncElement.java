@@ -41,7 +41,7 @@ public class FuncElement implements SaxBean {
 
         if (methodParameterTypes.length > 0) {
             final Class<?> lastParameterType = methodParameterTypes[methodParameterTypes.length - 1];
-            // 当实际方法最后一位为可选参数时，将其平铺成与 标签数量相同的数组
+            // 当实际方法最后一位为可选参数时，将其平铺成与标签 param 类型数组数量相同的数组
             if (lastParameterType.isArray()) {
 
                 Class<?>[] flat = new Class[paramListTypes.length - methodParameterTypes.length + 1];
