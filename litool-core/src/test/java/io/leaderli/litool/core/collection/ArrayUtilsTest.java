@@ -27,16 +27,19 @@ class ArrayUtilsTest {
         Assertions.assertNull(ArrayUtils.sub(original, 1, 2));
         original = new String[]{};
         Assertions.assertEquals(0, ArrayUtils.sub(original, 1, 2).length);
-        original = new String[]{"1","2","3"};
+        original = new String[]{"1", "2", "3"};
+
         Assertions.assertEquals(0, ArrayUtils.sub(original, 2, 2).length);
-
-        original = new String[]{"1","2","3"};
         Assertions.assertEquals(0, ArrayUtils.sub(original, 2, 1).length);
-        original = new String[]{"1","2","3"};
+        Assertions.assertEquals(0, ArrayUtils.sub(original, 0, -4).length);
+        Assertions.assertEquals(0, ArrayUtils.sub(original, -5, 0).length);
+        Assertions.assertEquals(0, ArrayUtils.sub(original, 5, 0).length);
+        Assertions.assertEquals(3, ArrayUtils.sub(original, 0, 10).length);
+       
         Assertions.assertEquals("3", ArrayUtils.sub(original, 2, 3)[0]);
-        original = new String[]{"1","2","3"};
-        Assertions.assertEquals("3", ArrayUtils.sub(original, 2, -1)[0]);
-//        System.out.println(Arrays.toString(Arrays.copyOfRange(original, 1, 2)));
-
+        Assertions.assertEquals("3", ArrayUtils.sub(original, 2, 0)[0]);
+        Assertions.assertEquals("2", ArrayUtils.sub(original, 1, -1)[0]);
+        Assertions.assertEquals("3", ArrayUtils.sub(original, -1, 0)[0]);
+        Assertions.assertEquals("2", ArrayUtils.sub(original, -2, 0)[0]);
     }
 }

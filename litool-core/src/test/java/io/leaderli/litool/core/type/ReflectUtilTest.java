@@ -130,6 +130,20 @@ class ReflectUtilTest {
         Assertions.assertEquals(3, ReflectUtil.getFields(LittleBean.class).size());
     }
 
+    @Test
+    void getMethods() {
+        Assertions.assertEquals(2 + Object.class.getMethods().length, ReflectUtil.getMethods(TestBean.class).size());
+    }
+
+    @Test
+    void getMethod() {
+
+        Assertions.assertTrue(ReflectUtil.getMethod(LittleBean.class, "m1").present());
+        Assertions.assertTrue(ReflectUtil.getMethod(LittleBean.class, "m3").present());
+        Assertions.assertTrue(ReflectUtil.getMethod(LittleBean.class, "m1", true).absent());
+    }
+
+
     @NotNull("1")
     @NotNull("2")
     public static class TestBean {
@@ -137,6 +151,7 @@ class ReflectUtilTest {
         public TestBean(String s) {
 
         }
+
 
     }
 
@@ -149,6 +164,13 @@ class ReflectUtilTest {
         public String name = "bean";
         private int age = 80;
 
+        public void m1() {
+
+        }
+
+        private void m2() {
+
+        }
 
         @Override
         public String toString() {
@@ -162,6 +184,10 @@ class ReflectUtilTest {
     public static class LittleBean extends Bean {
         public int age = 8;
         private String name = "little";
+
+        private void m3() {
+
+        }
 
         @Override
         public String toString() {

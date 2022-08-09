@@ -7,6 +7,7 @@ import io.leaderli.litool.core.meta.Lira;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,21 +19,6 @@ import java.util.function.Function;
  */
 public class ReflectUtil {
 
-
-    /**
-     * @param cls 查找的类
-     * @return 查找类所有的属性
-     * @see Class#getFields()
-     * @see Class#getDeclaredFields()
-     */
-    public static Lira<Field> getFields(Class<?> cls) {
-
-        if (cls == null) {
-            return Lira.none();
-        }
-
-        return CollectionUtils.union(Lira.of(cls.getFields()), Lira.of(cls.getDeclaredFields()));
-    }
 
     /**
      * onlyCurrentClass = false
@@ -57,20 +43,26 @@ public class ReflectUtil {
     public static Lino<Field> getField(Class<?> cls, String name, boolean onlyCurrentClass) {
 
 
-        return Lino.of(cls).map(Class::getFields)
-                .toLira(Field.class)
+        return getFields(cls)
                 .filter(f -> f.getName().equals(name))
                 .filter(f -> !onlyCurrentClass || f.getDeclaringClass().equals(cls))
-                .first()
-                .or(
+                .first();
 
-                        Lino.of(cls).map(Class::getDeclaredFields)
-                                .toLira(Field.class)
-                                .filter(f -> f.getName().equals(name))
-                                .filter(f -> !onlyCurrentClass || f.getDeclaringClass().equals(cls))
-                                .first()::get
-                );
+    }
 
+    /**
+     * @param cls 查找的类
+     * @return 查找类所有的属性
+     * @see Class#getFields()
+     * @see Class#getDeclaredFields()
+     */
+    public static Lira<Field> getFields(Class<?> cls) {
+
+        if (cls == null) {
+            return Lira.none();
+        }
+
+        return CollectionUtils.union(Lira.of(cls.getFields()), Lira.of(cls.getDeclaredFields()));
     }
 
     /**
@@ -205,6 +197,15 @@ public class ReflectUtil {
 
     }
 
+    /**
+     * @param <T> 泛型
+     * @param cls class
+     * @return 返回一个新的实例
+     */
+    public static <T> Lino<T> newInstance(Class<T> cls) {
+        return Lino.of(cls).throwable_map(Class::newInstance);
+    }
+
     private static Object sameParameterTypes(Constructor<?> constructor, Object[] args) {
         Class<?>[] parameterTypes = constructor.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++) {
@@ -230,15 +231,6 @@ public class ReflectUtil {
             }
         }
         return true;
-    }
-
-    /**
-     * @param <T> 泛型
-     * @param cls class
-     * @return 返回一个新的实例
-     */
-    public static <T> Lino<T> newInstance(Class<T> cls) {
-        return Lino.of(cls).throwable_map(Class::newInstance);
     }
 
     /**
@@ -289,5 +281,47 @@ public class ReflectUtil {
     public static Lira<Annotation> findAnnotationsWithMark(Class<?> cls, Class<? extends Annotation> mark) {
 
         return findAnnotations(cls, annotation -> annotation.annotationType().isAnnotationPresent(mark));
+    }
+
+
+    /**
+     * 查找当前类或父类的同名方法
+     *
+     * @param cls  查找的类
+     * @param name 方法名
+     * @return 查找的方法
+     * @see #getMethod(Class, String, boolean)
+     */
+    public static Lino<Method> getMethod(Class<?> cls, String name) {
+        return getMethod(cls, name, false);
+    }
+
+    /**
+     * @param cls              查找的类
+     * @param name             方法名
+     * @param onlyCurrentClass 是否仅查找当前类
+     * @return 查找的方法
+     * @see #getMethod(Class, String, boolean)
+     */
+    public static Lino<Method> getMethod(Class<?> cls, String name, boolean onlyCurrentClass) {
+
+        return getMethods(cls)
+                .filter(m -> m.getName().equals(name))
+                .filter(m -> !onlyCurrentClass || m.getDeclaringClass().equals(cls))
+                .first();
+    }
+
+
+    /**
+     * @param cls 查找的类
+     * @return 查找类所有的方法
+     * @see Class#getMethods()
+     * @see Class#getDeclaredMethods()
+     */
+    public static Lira<Method> getMethods(Class<?> cls) {
+        if (cls == null) {
+            return Lira.none();
+        }
+        return CollectionUtils.union(Lira.of(cls.getMethods()), Lira.of(cls.getDeclaredMethods()));
     }
 }

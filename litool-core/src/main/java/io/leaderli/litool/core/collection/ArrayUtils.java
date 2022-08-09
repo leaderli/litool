@@ -776,6 +776,13 @@ public class ArrayUtils {
 
     }
 
+    /**
+     * @param origin 原始数组
+     * @param from   起始位置，支持负数，表示从后开始计算的为止
+     * @param to     结束为止，支持负数，表示从后开始计算的为止，当为0时，表示数组的长度
+     * @param <T>    泛型
+     * @return 截取后的数组
+     */
     @SuppressWarnings("unchecked")
     public static <T> T[] sub(T[] origin, int from, int to) {
 
@@ -784,10 +791,15 @@ public class ArrayUtils {
         }
 
         int length = origin.length;
-        if (to == -1) {
+        if (to < 1) {
+            to = length + to;
+        } else if (to > length) {
             to = length;
         }
-        if (from >= length || to <= from) {
+        if (from < 0) {
+            from = length + from;
+        }
+        if (from < 0 || from >= length || to <= from) {
             return (T[]) ClassUtil.newArray(origin.getClass().getComponentType(), 0);
         }
 

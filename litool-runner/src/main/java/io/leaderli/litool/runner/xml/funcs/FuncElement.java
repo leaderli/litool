@@ -1,11 +1,18 @@
 package io.leaderli.litool.runner.xml.funcs;
 
+import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.LiConstant;
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
-import io.leaderli.litool.runner.FuncClassContainer;
+import io.leaderli.litool.runner.InnerFuncContainer;
 import io.leaderli.litool.runner.TypeAlias;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
 
 public class FuncElement implements SaxBean {
 
@@ -14,7 +21,7 @@ public class FuncElement implements SaxBean {
     private String clazz;
     private String type;
 
-    private ParamList paramList;
+    private ParamList paramList = new ParamList();
 
     public void addParam(ParamElement paramElement) {
         paramList.add(paramElement);
@@ -22,8 +29,30 @@ public class FuncElement implements SaxBean {
 
     @Override
     public void end(EndEvent endEvent) {
-        FuncClassContainer.funcElementCheck(this);
 
+
+        Method method = InnerFuncContainer.getInnerMethodByAlias(clazz);
+
+        final Class<?>[] paramListTypes = paramList.lira()
+                .map(p -> TypeAlias.getType(p.getType())).cast(Class.class)
+                .toArray(Class.class);
+
+        Class<?>[] methodParameterTypes = method.getParameterTypes();
+
+        if (methodParameterTypes.length > 0) {
+            final Class<?> lastParameterType = methodParameterTypes[methodParameterTypes.length - 1];
+            // 当实际方法最后一位为可选参数时，将其平铺成与 标签数量相同的数组
+            if (lastParameterType.isArray()) {
+
+                Class<?>[] flat = new Class[paramListTypes.length - methodParameterTypes.length + 1];
+                for (int i = 0; i < flat.length; i++) {
+                    flat[i] = lastParameterType.getComponentType();
+                }
+                methodParameterTypes = ArrayUtils.combination(ArrayUtils.sub(methodParameterTypes, 0, -1), flat);
+            }
+        }
+
+        LiAssertUtil.assertTrue(Objects.deepEquals(paramListTypes, methodParameterTypes), () -> String.format("the func [%s] parameterType is  not match clazz [%s] parameterType \r\n\t%s\r\n\t%s\r\n", name, clazz, Arrays.toString(paramListTypes), Arrays.toString(method.getParameterTypes())));
         SaxBean.super.end(endEvent);
     }
 
@@ -45,7 +74,7 @@ public class FuncElement implements SaxBean {
     }
 
     public void setName(String name) {
-        LiAssertUtil.assertTrue(name.matches(LiConstant.ENTRY_NAME_RULE), String.format("the func name [%s] is not match %s", name, LiConstant.ENTRY_NAME_RULE));
+        LiAssertUtil.assertTrue(name.matches(LiConstant.ATTRIBUTE_NAME_RULE), String.format("the func name [%s] is not match %s", name, LiConstant.ATTRIBUTE_NAME_RULE));
         this.name = name;
     }
 
@@ -55,6 +84,14 @@ public class FuncElement implements SaxBean {
 
     public void setClazz(String clazz) {
         this.clazz = clazz;
+        Method innerFunc = InnerFuncContainer.getInnerMethodByAlias(this.clazz);
+        LiAssertUtil.assertTrue(innerFunc != null, String.format("the inner func [%s] is unsupported", clazz));
+        String type = Lira.of(TypeAlias.ALIAS.entrySet())
+                .filter(entry -> entry.getValue() == innerFunc.getReturnType())
+                .map(Map.Entry::getKey)
+                .first()
+                .get();
+        this.setType(type);
     }
 
     public String getType() {
@@ -63,7 +100,6 @@ public class FuncElement implements SaxBean {
 
     public void setType(String type) {
         LiAssertUtil.assertTrue(TypeAlias.ALIAS.containsKey(type), String.format("the func type [%s] is unsupported", type));
-
         this.type = type;
     }
 

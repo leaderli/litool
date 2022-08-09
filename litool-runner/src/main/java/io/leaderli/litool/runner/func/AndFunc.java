@@ -1,9 +1,9 @@
 package io.leaderli.litool.runner.func;
 
-@FuncClass("and")
+@InnerFunc("and")
 public class AndFunc {
 
-    public Boolean invoke(Boolean... ands) {
+    public static Boolean invoke(Boolean... ands) {
 
         for (Boolean and : ands) {
             if (!and) {

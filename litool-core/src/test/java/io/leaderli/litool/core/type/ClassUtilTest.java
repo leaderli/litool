@@ -236,6 +236,12 @@ class ClassUtilTest {
 
     }
 
+    @Test
+    void test() {
+
+        
+    }
+
     public interface Fuck extends Function<String, Integer> {
         @Override
         Integer apply(String s);

@@ -6,11 +6,9 @@ import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.TypeAlias;
 import io.leaderli.litool.runner.util.ExpressionUtil;
 
-import java.util.regex.Pattern;
-
 public class ParamElement implements SaxBean {
 
-    private String type;
+    private String type = "str";
     private String value;
 
     @Override

@@ -16,6 +16,7 @@ public class TypeAlias {
     static {
         ALIAS.put("int", Integer.class);
         ALIAS.put("str", String.class);
+        ALIAS.put("boolean", Boolean.class);
     }
 
     public static Class<?> getType(String type) {
@@ -33,6 +34,10 @@ public class TypeAlias {
 
     public static boolean support(String type) {
         return ALIAS.containsKey(type);
+    }
+
+    public static boolean support(Class<?> type) {
+        return ALIAS.containsValue(type);
     }
 
 }

@@ -24,7 +24,7 @@ public class EntryElement implements SaxBean {
 
 
         String key = bodyEvent.description();
-        LiAssertUtil.assertTrue(key.matches(LiConstant.ENTRY_NAME_RULE), String.format("the entry key %s is not match %s", key, LiConstant.ENTRY_NAME_RULE));
+        LiAssertUtil.assertTrue(key.matches(LiConstant.ATTRIBUTE_NAME_RULE), String.format("the entry key %s is not match %s", key, LiConstant.ATTRIBUTE_NAME_RULE));
         this.key = key;
     }
 

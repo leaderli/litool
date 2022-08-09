@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  */
 public class LiConstant {
 
-    public static final String ENTRY_NAME_RULE = "[a-zA-Z0-9_]+";
+    public static final String ATTRIBUTE_NAME_RULE = "[a-zA-Z0-9_]+";
     /**
      * 默认的异常消费者，适用于
      *
