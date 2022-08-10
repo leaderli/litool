@@ -21,6 +21,7 @@ public class Context {
     private ImmutableMap<String, Object> readonly_request;
     /**
      * 用于存储所有func的计算过程
+     * TODO 最终校验哪些func的结果可以被缓存
      */
     public final Map<String, Function<Context, Object>> func_result = new HashMap<>();
 
@@ -52,7 +53,7 @@ public class Context {
         this.readonly_request = readonly_request;
     }
 
-    public void setFuncResult(Map<String, Function<Context, Object>> func_result) {
-        this.func_result.putAll(func_result);
+    public void setFuncResultMap(Map<String, Function<Context, Object>> func_result_map) {
+        this.func_result.putAll(func_result_map);
     }
 }

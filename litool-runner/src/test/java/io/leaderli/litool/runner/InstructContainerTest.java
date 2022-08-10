@@ -16,7 +16,7 @@ class InstructContainerTest {
     @Test
     void scan() {
 
-        Map<String, Method> scanner = InnerFuncContainer.scanner();
+        Map<String, Method> scanner = InstructContainer.scanner();
         Assertions.assertTrue(scanner.size() > 0);
     }
 

@@ -1,4 +1,4 @@
-package io.leaderli.litool.runner.func;
+package io.leaderli.litool.runner.instruct;
 
 @Instruct("and")
 public class AndInstruct {

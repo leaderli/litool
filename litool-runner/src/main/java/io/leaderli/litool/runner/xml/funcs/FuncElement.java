@@ -6,7 +6,7 @@ import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
-import io.leaderli.litool.runner.InnerFuncContainer;
+import io.leaderli.litool.runner.InstructContainer;
 import io.leaderli.litool.runner.TypeAlias;
 
 import java.lang.reflect.Method;
@@ -31,7 +31,7 @@ public class FuncElement implements SaxBean {
     public void end(EndEvent endEvent) {
 
 
-        Method method = InnerFuncContainer.getInnerMethodByAlias(instruct);
+        Method method = InstructContainer.getInnerMethodByAlias(instruct);
 
         final Class<?>[] paramListTypes = paramList.lira()
                 .map(p -> TypeAlias.getType(p.getType())).cast(Class.class)
@@ -84,7 +84,7 @@ public class FuncElement implements SaxBean {
 
     public void setInstruct(String instruct) {
         this.instruct = instruct;
-        Method innerFunc = InnerFuncContainer.getInnerMethodByAlias(this.instruct);
+        Method innerFunc = InstructContainer.getInnerMethodByAlias(this.instruct);
         LiAssertUtil.assertTrue(innerFunc != null, String.format("the inner func [%s] is unsupported", instruct));
         String type = Lira.of(TypeAlias.ALIAS.entrySet())
                 .filter(entry -> entry.getValue() == innerFunc.getReturnType())

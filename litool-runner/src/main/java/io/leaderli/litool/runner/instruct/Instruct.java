@@ -1,4 +1,4 @@
-package io.leaderli.litool.runner.func;
+package io.leaderli.litool.runner.instruct;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -33,12 +33,14 @@ public enum VariablesModel implements BiFunction<Context, String, Object> {
     TEMP(4) {
         @Override
         public Object apply(Context context, String s) {
+            // TODO 临时变量取值逻辑
             return null;
         }
     },
     FUNC(5) {
         @Override
         public Object apply(Context context, String s) {
+            // TODO 方法取值逻辑
             return null;
         }
     };
