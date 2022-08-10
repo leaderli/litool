@@ -6,7 +6,7 @@ import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassScanner;
 import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
-import io.leaderli.litool.runner.func.InnerFunc;
+import io.leaderli.litool.runner.func.Instruct;
 import io.leaderli.litool.runner.xml.funcs.FuncElement;
 
 import java.lang.reflect.Method;
@@ -30,7 +30,7 @@ public class InnerFuncContainer {
      */
     public static Map<String, Method> scanner() {
         Filter<Class<?>> classFilter = cls -> {
-            boolean annotationPresent = cls.isAnnotationPresent(InnerFunc.class);
+            boolean annotationPresent = cls.isAnnotationPresent(Instruct.class);
             if (annotationPresent) {
 
                 Lira<Method> methods = ReflectUtil.getMethods(cls).filter(f -> f.getDeclaringClass() == cls);
@@ -61,11 +61,11 @@ public class InnerFuncContainer {
 
         };
 
-        ClassScanner classScanner = new ClassScanner(InnerFunc.class.getPackage().getName(), classFilter);
+        ClassScanner classScanner = new ClassScanner(Instruct.class.getPackage().getName(), classFilter);
 
         return Lira.of(classScanner.scan())
                 .toMap(
-                        cls -> cls.getAnnotation(InnerFunc.class).value(),
+                        cls -> cls.getAnnotation(Instruct.class).value(),
                         cls -> cls.getMethods()[0]
                 );
     }

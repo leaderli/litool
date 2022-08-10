@@ -18,7 +18,7 @@ public class FuncElement implements SaxBean {
 
     private String label;
     private String name;
-    private String clazz;
+    private String instruct;
     private String type;
 
     private ParamList paramList = new ParamList();
@@ -31,7 +31,7 @@ public class FuncElement implements SaxBean {
     public void end(EndEvent endEvent) {
 
 
-        Method method = InnerFuncContainer.getInnerMethodByAlias(clazz);
+        Method method = InnerFuncContainer.getInnerMethodByAlias(instruct);
 
         final Class<?>[] paramListTypes = paramList.lira()
                 .map(p -> TypeAlias.getType(p.getType())).cast(Class.class)
@@ -52,7 +52,7 @@ public class FuncElement implements SaxBean {
             }
         }
 
-        LiAssertUtil.assertTrue(Objects.deepEquals(paramListTypes, methodParameterTypes), () -> String.format("the func [%s] parameterType is  not match clazz [%s] parameterType \r\n\t%s\r\n\t%s\r\n", name, clazz, Arrays.toString(paramListTypes), Arrays.toString(method.getParameterTypes())));
+        LiAssertUtil.assertTrue(Objects.deepEquals(paramListTypes, methodParameterTypes), () -> String.format("the func [%s] parameterType is  not match clazz [%s] parameterType \r\n\t%s\r\n\t%s\r\n", name, instruct, Arrays.toString(paramListTypes), Arrays.toString(method.getParameterTypes())));
         SaxBean.super.end(endEvent);
     }
 
@@ -78,14 +78,14 @@ public class FuncElement implements SaxBean {
         this.name = name;
     }
 
-    public String getClazz() {
-        return clazz;
+    public String getInstruct() {
+        return instruct;
     }
 
-    public void setClazz(String clazz) {
-        this.clazz = clazz;
-        Method innerFunc = InnerFuncContainer.getInnerMethodByAlias(this.clazz);
-        LiAssertUtil.assertTrue(innerFunc != null, String.format("the inner func [%s] is unsupported", clazz));
+    public void setInstruct(String instruct) {
+        this.instruct = instruct;
+        Method innerFunc = InnerFuncContainer.getInnerMethodByAlias(this.instruct);
+        LiAssertUtil.assertTrue(innerFunc != null, String.format("the inner func [%s] is unsupported", instruct));
         String type = Lira.of(TypeAlias.ALIAS.entrySet())
                 .filter(entry -> entry.getValue() == innerFunc.getReturnType())
                 .map(Map.Entry::getKey)

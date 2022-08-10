@@ -1,6 +1,7 @@
 package io.leaderli.litool.runner.xml.funcs;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.TypeAlias;
@@ -29,6 +30,9 @@ public class ParamElement implements SaxBean {
     }
 
     public void setType(String type) {
+        if (StringUtils.isEmpty(type)) {
+            return;
+        }
         LiAssertUtil.assertTrue(TypeAlias.support(type), String.format("the param type %s is unsupported ", type));
         this.type = type;
     }

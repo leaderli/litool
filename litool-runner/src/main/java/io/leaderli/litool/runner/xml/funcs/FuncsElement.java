@@ -3,10 +3,13 @@ package io.leaderli.litool.runner.xml.funcs;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
+import io.leaderli.litool.runner.executor.BaseElementExecutor;
+import io.leaderli.litool.runner.executor.ElementExecutor;
+import io.leaderli.litool.runner.executor.FuncsElementExecutor;
 
 import java.util.Objects;
 
-public class FuncsElement implements SaxBean {
+public class FuncsElement implements SaxBean, ElementExecutor<FuncsElementExecutor> {
 
     private FuncList funcList = new FuncList();
 
@@ -37,5 +40,10 @@ public class FuncsElement implements SaxBean {
 
     public void setFuncList(FuncList funcList) {
         this.funcList = funcList;
+    }
+
+    @Override
+    public FuncsElementExecutor executor() {
+        return new FuncsElementExecutor(this);
     }
 }

@@ -15,7 +15,7 @@ class FuncElementTest {
     void error() {
         SaxEventInterceptor<FuncElement> dfs = new SaxEventInterceptor<>(FuncElement.class);
 
-        FuncElement funcElement = dfs.parse("func_error.xml");
+        FuncElement funcElement = dfs.parse("funcs/func_error.xml");
 
         ConsoleUtil.println(dfs.getParseErrorMsgs());
         Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("the func name [$switch86] is not match [a-zA-Z0-9_]+ at"));
@@ -27,7 +27,7 @@ class FuncElementTest {
     void param_error() {
         SaxEventInterceptor<FuncElement> dfs = new SaxEventInterceptor<>(FuncElement.class);
 
-        FuncElement funcElement = dfs.parse("func_param_error.xml");
+        FuncElement funcElement = dfs.parse("funcs/func_param_error.xml");
 
         Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("the func [switch86] parameterType is  not match clazz [in] parameterType "));
 

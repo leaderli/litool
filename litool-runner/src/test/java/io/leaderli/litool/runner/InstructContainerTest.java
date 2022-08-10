@@ -10,7 +10,7 @@ import java.util.Map;
  * @author leaderli
  * @since 2022/8/9
  */
-class InnerFuncContainerTest {
+class InstructContainerTest {
 
 
     @Test
