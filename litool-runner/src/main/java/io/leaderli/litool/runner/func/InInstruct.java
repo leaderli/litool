@@ -2,8 +2,8 @@ package io.leaderli.litool.runner.func;
 
 import io.leaderli.litool.core.text.StringUtils;
 
-@InnerFunc("in")
-public class InFunc {
+@Instruct("in")
+public class InInstruct {
 
     public static Boolean invoke(String string, String... searchStrings) {
 
