@@ -1,7 +1,9 @@
 package io.leaderli.litool.runner.executor;
 
 import io.leaderli.litool.runner.Context;
+import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.InnerFuncContainer;
+import io.leaderli.litool.runner.constant.VariablesModel;
 import io.leaderli.litool.runner.xml.funcs.FuncsElement;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,11 +27,13 @@ public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
         element.getFuncList().lira().forEach(funcElement -> {
             String name = funcElement.getName();
             String clazz = funcElement.getInstruct();
-            funcResult.put(name, context1 -> {
+            funcResult.put(name, inContext -> {
                 Method method = InnerFuncContainer.getInnerMethodByAlias(clazz);
                 List<Object> params = new ArrayList<>();
                 funcElement.getParamList().lira().forEach(paramElement -> {
-
+                    Expression expression = paramElement.getExpression();
+                    Object param = expression.getModel().apply(inContext, expression.getName());
+                    params.add(param);
                 });
                 try {
                     return method.invoke(null, params.toArray());
@@ -38,6 +42,7 @@ public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
                 }
             });
         });
+        context.setFuncResult(funcResult);
     }
 
 }

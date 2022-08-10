@@ -5,7 +5,7 @@ import io.leaderli.litool.core.util.ConsoleUtil;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import org.junit.jupiter.api.Test;
 
-public class FuncsElementTest {
+class FuncsElementTest {
 
     @Test
     public void duplicate_name() {

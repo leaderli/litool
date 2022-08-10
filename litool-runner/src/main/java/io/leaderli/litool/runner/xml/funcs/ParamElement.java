@@ -3,6 +3,7 @@ package io.leaderli.litool.runner.xml.funcs;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.sax.BodyEvent;
+import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.TypeAlias;
@@ -17,6 +18,11 @@ public class ParamElement implements SaxBean {
         String expr = bodyEvent.description();
 
         this.expression = new Expression(expr);
+    }
+
+    @Override
+    public void end(EndEvent endEvent) {
+        SaxBean.super.end(endEvent);
     }
 
     @Override
