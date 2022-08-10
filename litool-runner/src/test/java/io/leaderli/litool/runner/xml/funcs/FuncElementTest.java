@@ -1,6 +1,5 @@
 package io.leaderli.litool.runner.xml.funcs;
 
-import io.leaderli.litool.core.util.ConsoleUtil;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,9 +16,8 @@ class FuncElementTest {
 
         FuncElement funcElement = dfs.parse("funcs/func_error.xml");
 
-        ConsoleUtil.println(dfs.getParseErrorMsgs());
         Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("the func name [$switch86] is not match [a-zA-Z0-9_]+ at"));
-        Assertions.assertTrue(dfs.getParseErrorMsgs().get(1).startsWith("the inner func [$1] is unsupported at "));
+        Assertions.assertTrue(dfs.getParseErrorMsgs().get(1).startsWith("instruct [$1] is unsupported at "));
 
     }
 

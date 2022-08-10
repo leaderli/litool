@@ -64,5 +64,13 @@ class SaxEventInterceptorTest {
         GsonUtil.print(root);
     }
 
+    @Test
+    void complex() {
+        SaxEventInterceptor<Sax> dfs = new SaxEventInterceptor<>(Sax.class);
+        Sax sax = dfs.parse("sax_complex_field.xml");
+
+        Assertions.assertSame(Color.RED, sax.color);
+    }
+
 
 }

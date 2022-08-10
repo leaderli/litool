@@ -5,12 +5,14 @@ import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -105,14 +107,9 @@ public class ReflectUtil {
         return Lino.of(field).throwable_map(f -> {
 
                     Object result;
-                    if (!f.isAccessible()) {
-                        f.setAccessible(true);
-                        result = f.get(obj);
-                        f.setAccessible(false);
-                    } else {
-                        result = f.get(obj);
-                    }
-                    return result;
+
+                    setAccessible(f);
+                    return f.get(obj);
                 }
 
         );
@@ -162,13 +159,8 @@ public class ReflectUtil {
         }
         return Lino.of(field).throwable_map(f -> {
 
-            if (!f.isAccessible()) {
-                f.setAccessible(true);
-                f.set(obj, value);
-                f.setAccessible(false);
-            } else {
-                f.set(obj, value);
-            }
+            setAccessible(f);
+            f.set(obj, value);
             // 执行到此，说明未抛出异常，则可以表明赋值成功
             return true;
         }).present();
@@ -183,11 +175,13 @@ public class ReflectUtil {
      */
     public static <T> Lino<T> newInstance(Class<T> cls, Object... args) {
 
-        if (cls == null || args == null || args.length == 0) {
+
+        Objects.requireNonNull(cls);
+        if (args == null || args.length == 0) {
             return newInstance(cls);
         }
 
-        return Lira.of(cls.getConstructors())
+        return getConstructors(cls)
                 .filter(constructor -> constructor.getParameterCount() == args.length)
                 .filter(constructor -> sameParameterTypes(constructor, args))
                 .first()
@@ -203,7 +197,13 @@ public class ReflectUtil {
      * @return 返回一个新的实例
      */
     public static <T> Lino<T> newInstance(Class<T> cls) {
-        return Lino.of(cls).throwable_map(Class::newInstance);
+        Objects.requireNonNull(cls);
+        Constructor<T> constructor = getConstructor(cls);
+        if (!constructor.isAccessible()) {
+            constructor.setAccessible(true);
+        }
+        return Lino.of(constructor).throwable_map(Constructor::newInstance);
+
     }
 
     private static Object sameParameterTypes(Constructor<?> constructor, Object[] args) {
@@ -231,6 +231,32 @@ public class ReflectUtil {
             }
         }
         return true;
+    }
+
+    /**
+     * @param cls 类
+     * @param <T> 泛型
+     * @return 获取无参构造器
+     */
+    public static <T> Constructor<T> getConstructor(Class<T> cls) {
+
+        return getConstructors(cls).first().get();
+    }
+
+    /**
+     * @param cls 类
+     * @param <T> 泛型
+     * @return 查找类的所有构造器
+     * @see Class#getConstructors()
+     * @see Class#getDeclaredConstructors()
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Lira<Constructor<T>> getConstructors(Class<T> cls) {
+
+        Objects.requireNonNull(cls);
+        Object union = CollectionUtils.union(cls.getConstructors(), cls.getDeclaredConstructors());
+        return (Lira<Constructor<T>>) union;
+
     }
 
     /**
@@ -283,7 +309,6 @@ public class ReflectUtil {
         return findAnnotations(cls, annotation -> annotation.annotationType().isAnnotationPresent(mark));
     }
 
-
     /**
      * 查找当前类或父类的同名方法
      *
@@ -311,7 +336,6 @@ public class ReflectUtil {
                 .first();
     }
 
-
     /**
      * @param cls 查找的类
      * @return 查找类所有的方法
@@ -322,6 +346,12 @@ public class ReflectUtil {
         if (cls == null) {
             return Lira.none();
         }
-        return CollectionUtils.union(Lira.of(cls.getMethods()), Lira.of(cls.getDeclaredMethods()));
+        return CollectionUtils.union(cls.getMethods(), cls.getDeclaredMethods());
+    }
+
+    public static void setAccessible(AccessibleObject obj) {
+        if (!obj.isAccessible()) {
+            obj.setAccessible(true);
+        }
     }
 }
