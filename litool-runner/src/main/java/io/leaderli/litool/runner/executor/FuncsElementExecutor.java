@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * 将所有的funcElement转化为Function<Context, Object>,用于计算func结果
+ * 将所有的funcElement转化为 {@code Function<Context, Object>},用于计算func结果
  */
 public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
 
