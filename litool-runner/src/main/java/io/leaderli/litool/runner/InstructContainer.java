@@ -6,7 +6,7 @@ import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassScanner;
 import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
-import io.leaderli.litool.runner.func.Instruct;
+import io.leaderli.litool.runner.instruct.Instruct;
 import io.leaderli.litool.runner.xml.funcs.FuncElement;
 
 import java.lang.reflect.Method;
@@ -14,12 +14,12 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
-public class InnerFuncContainer {
+public class InstructContainer {
 
-    private static final Map<String, Method> ALIAS_FUNC;
+    private static final Map<String, Method> ALIAS_INSTRUCT;
 
     static {
-        ALIAS_FUNC = scanner();
+        ALIAS_INSTRUCT = scanner();
     }
 
     /**
@@ -37,9 +37,9 @@ public class InnerFuncContainer {
                 Method method = methods.first().get();
 
                 String funcName = cls.getSimpleName();
-                LiAssertUtil.assertTrue(methods.size() == 1, String.format("innerFunc [%s] can only have single method ", funcName));
-                LiAssertUtil.assertTrue(ModifierUtil.isPublic(method) && ModifierUtil.isStatic(method), String.format("innerFunc [%s] should be static and public  ", funcName));
-                LiAssertUtil.assertTrue(TypeAlias.support(method.getReturnType()), String.format("innerFunc %s returnType is unsupported", funcName));
+                LiAssertUtil.assertTrue(methods.size() == 1, String.format("instruct [%s] can only have single method ", funcName));
+                LiAssertUtil.assertTrue(ModifierUtil.isPublic(method) && ModifierUtil.isStatic(method), String.format("instruct [%s] should be static and public  ", funcName));
+                LiAssertUtil.assertTrue(TypeAlias.support(method.getReturnType()), String.format("instruct %s returnType is unsupported", funcName));
 
                 for (int i = 0; i < method.getParameterTypes().length; i++) {
 
@@ -48,11 +48,11 @@ public class InnerFuncContainer {
                     Class<?> temp = parameterType;
                     if (temp.isArray()) {
                         // 仅允许最后一位为数组参数
-                        LiAssertUtil.assertTrue(i == method.getParameterTypes().length - 1, String.format("innerFunc [%s] arr parameterType is only support on the last: %s", funcName, Arrays.toString(method.getParameterTypes())));
+                        LiAssertUtil.assertTrue(i == method.getParameterTypes().length - 1, String.format("instruct [%s] arr parameterType is only support on the last: %s", funcName, Arrays.toString(method.getParameterTypes())));
                         temp = temp.getComponentType();
 
                     }
-                    LiAssertUtil.assertTrue(TypeAlias.ALIAS.containsValue(temp), String.format("innerFunc [%s] parameterType [%s] is unsupported", funcName, parameterType));
+                    LiAssertUtil.assertTrue(TypeAlias.ALIAS.containsValue(temp), String.format("instruct [%s] parameterType [%s] is unsupported", funcName, parameterType));
 
                 }
                 return true;
@@ -70,18 +70,8 @@ public class InnerFuncContainer {
                 );
     }
 
-
-    private static Function<Context, String> getFunc(FuncElement funcElement) {
-
-        return context -> {
-            // TODO 获取function
-            Object[] objects = funcElement.getParamList().lira().map(paramElement -> null).toArray(Object.class);
-            return "";
-        };
-    }
-
     public static Method getInnerMethodByAlias(String alias) {
-        return ALIAS_FUNC.get(alias);
+        return ALIAS_INSTRUCT.get(alias);
     }
 
 }

@@ -7,6 +7,7 @@ import io.leaderli.litool.runner.xml.ResponseElement;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -18,6 +19,11 @@ public class Context {
      */
     public final Map<String, Object> origin_request_or_response = new HashMap<>();
     private ImmutableMap<String, Object> readonly_request;
+    /**
+     * 用于存储所有func的计算过程
+     * TODO 最终校验哪些func的结果可以被缓存
+     */
+    public final Map<String, Function<Context, Object>> func_result = new HashMap<>();
 
     public Context(Map<String, String> origin_request) {
         this.origin_request_or_response.putAll(origin_request);
@@ -45,5 +51,9 @@ public class Context {
 
     public void setReadonly_request(ImmutableMap<String, Object> readonly_request) {
         this.readonly_request = readonly_request;
+    }
+
+    public void setFuncResultMap(Map<String, Function<Context, Object>> func_result_map) {
+        this.func_result.putAll(func_result_map);
     }
 }
