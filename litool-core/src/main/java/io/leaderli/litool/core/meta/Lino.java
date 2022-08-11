@@ -4,6 +4,7 @@ import io.leaderli.litool.core.collection.EnumerationIter;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.condition.LiIf;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiPrimitive;
@@ -41,6 +42,25 @@ public interface Lino<T> extends LiValue {
             return none();
         }
         return of(supplier.get());
+    }
+
+    /**
+     * @param supplier 获取值的提供者函数
+     * @param <T>      泛型
+     * @return 返回一个实例，
+     * 当 {@code supplier == null}，或异常时时返回 {@link #none()}
+     * 否则返回 {@link #of(Object)}
+     * @see #of(Object)
+     */
+    static <T> Lino<T> throwable_of(ThrowableSupplier<T> supplier) {
+        if (supplier == null) {
+            return none();
+        }
+        try {
+            return of(supplier.get());
+        } catch (Throwable e) {
+            return none();
+        }
     }
 
     /**

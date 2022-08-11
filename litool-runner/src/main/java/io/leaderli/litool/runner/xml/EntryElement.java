@@ -5,7 +5,6 @@ import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.text.StringConvert;
 import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.dom.sax.EndEvent;
-import io.leaderli.litool.runner.SaxBeanWithID;
 import io.leaderli.litool.runner.TypeAlias;
 
 /**

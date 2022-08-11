@@ -239,7 +239,17 @@ class ClassUtilTest {
     @Test
     void test() {
 
-        
+
+    }
+
+    @Test
+    void isPrimitiveOrWrapper() {
+        Assertions.assertFalse(ClassUtil.isPrimitiveOrWrapper(null));
+        Assertions.assertFalse(ClassUtil.isPrimitiveOrWrapper(Object.class));
+        Assertions.assertTrue(ClassUtil.isPrimitiveOrWrapper(int.class));
+        Assertions.assertTrue(ClassUtil.isPrimitiveOrWrapper(Integer.class));
+        Assertions.assertTrue(ClassUtil.isPrimitiveOrWrapper(void.class));
+        Assertions.assertTrue(ClassUtil.isPrimitiveOrWrapper(Void.class));
     }
 
     public interface Fuck extends Function<String, Integer> {

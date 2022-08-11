@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.util;
 
-import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.io.PrintStream;
@@ -38,7 +36,10 @@ public class ConsoleUtil {
      */
     private static void print0(String delimiter, Iterable<?> args) {
 
-        CONSOLE.println(StringUtils.join(Lino.of(delimiter).get(" "), args));
+        if (StringUtils.isEmpty(delimiter)) {
+            delimiter = " ";
+        }
+        CONSOLE.println(StringUtils.join(delimiter, args));
     }
 
     /**
@@ -92,7 +93,10 @@ public class ConsoleUtil {
      * @param args      参数
      */
     public static void print0(String delimiter, Object... args) {
-        CONSOLE.println(StringUtils.join(Lino.of(delimiter).get(" "), args));
+        if (StringUtils.isEmpty(delimiter)) {
+            delimiter = " ";
+        }
+        CONSOLE.println(StringUtils.join(delimiter, args));
     }
 
     /**

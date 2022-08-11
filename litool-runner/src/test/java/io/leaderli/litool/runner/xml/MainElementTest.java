@@ -25,11 +25,14 @@ class MainElementTest {
         request.put("CHANNEL", "IVR");
 
 
+        Assertions.assertEquals(0, dfs.getParseErrorMsgs().size());
         Context context = new Context(request);
         MainElementExecutor executor = main.executor();
         executor.visit(context);
 
         Assertions.assertEquals("IVR", context.getRequest("CHANNEL"));
+
+        Assertions.assertTrue((boolean) context.getFuncResult("func_a"));
 
 
     }

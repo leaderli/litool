@@ -20,6 +20,15 @@ public class LiPrimitive {
     private static final TypeMap ZERO_VALUE = new TypeMap();
 
     static {
+        ZERO_VALUE.put(boolean.class, BOOLEAN);
+        ZERO_VALUE.put(byte.class, BYTE);
+        ZERO_VALUE.put(char.class, CHAR);
+        ZERO_VALUE.put(double.class, DOUBLE);
+        ZERO_VALUE.put(float.class, FLOAT);
+        ZERO_VALUE.put(int.class, INT);
+        ZERO_VALUE.put(long.class, LONG);
+        ZERO_VALUE.put(short.class, SHORT);
+
         ZERO_VALUE.put(Boolean.class, BOOLEAN);
         ZERO_VALUE.put(Byte.class, BYTE);
         ZERO_VALUE.put(Character.class, CHAR);
@@ -30,6 +39,7 @@ public class LiPrimitive {
         ZERO_VALUE.put(Short.class, SHORT);
         ZERO_VALUE.put(Void.class, null);
     }
+
 
     @SuppressWarnings("unchecked")
     public static <T> T def(Class<T> type) {
