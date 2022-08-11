@@ -14,6 +14,7 @@ import io.leaderli.litool.runner.TypeAlias;
  */
 public class EntryElement implements SaxBean {
 
+    private String id;
     private String label;
     private String key;
     private String def = "";
@@ -42,15 +43,28 @@ public class EntryElement implements SaxBean {
         return "entry";
     }
 
+    @Override
+    public String id() {
+        return id;
+    }
 
     @Override
     public String toString() {
         return "EntryElement{" +
-                "label='" + getLabel() + '\'' +
-                ", key='" + getKey() + '\'' +
-                ", def='" + getDef() + '\'' +
-                ", type='" + getType() + '\'' +
+                "id='" + id + '\'' +
+                ", label='" + label + '\'' +
+                ", key='" + key + '\'' +
+                ", def='" + def + '\'' +
+                ", type='" + type + '\'' +
                 '}';
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getLabel() {

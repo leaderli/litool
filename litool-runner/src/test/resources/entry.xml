@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <request>
-    <entry label="编号1" type="fuck" def="1">ID1</entry>
-    <entry label="编号2" type="int" def="a">ID2</entry>
-    <entry label="编号3" def="a" type="int">ID3</entry>
-    <entry label="渠道4" type="int" def="1">$ID</entry>
+    <entry id="1" label="编号1" type="fuck" def="1">ID1</entry>
+    <entry id="1" label="编号2" type="int" def="a">ID2</entry>
+    <entry id="1" label="编号3" def="a" type="int">ID3</entry>
+    <entry id="1" label="渠道4" type="int" def="1">$ID</entry>
 
 </request>

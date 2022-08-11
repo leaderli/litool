@@ -8,6 +8,9 @@ package io.leaderli.litool.dom.sax;
  */
 public interface SaxBean extends SaxEventHandler {
 
+    default String id() {
+        return null;
+    }
 
     default String name() {
         return this.getClass().getSimpleName().toLowerCase();

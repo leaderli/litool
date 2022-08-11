@@ -14,7 +14,7 @@ public class AndInstruct implements Instruct {
         return "and";
     }
 
-    public static Boolean invoke(Boolean... ands) {
+    public Boolean invoke(Boolean... ands) {
 
         for (Boolean and : ands) {
             if (!and) {
@@ -23,4 +23,5 @@ public class AndInstruct implements Instruct {
         }
         return true;
     }
+
 }
