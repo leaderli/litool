@@ -3,6 +3,7 @@ package io.leaderli.litool.dom;
 
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.resource.ResourceUtil;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.dom.DOMDocument;
@@ -33,7 +34,7 @@ public class LiDomUtil {
     }
 
     public static DOMDocument getDOMDocumentByPath(String path) throws DocumentException {
-        return (DOMDocument) getSAXReader().read(LiDomUtil.class.getResourceAsStream(path));
+        return (DOMDocument) getSAXReader().read(ResourceUtil.getResourceAsStream(path));
 
     }
 

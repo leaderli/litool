@@ -11,6 +11,7 @@ import io.leaderli.litool.runner.executor.MainElementExecutor;
 
 public class MainElement implements SaxBean, ElementExecutor<MainElementExecutor> {
 
+    private String id;
     private RequestElement request;
     private ResponseElement response;
 
@@ -33,5 +34,13 @@ public class MainElement implements SaxBean, ElementExecutor<MainElementExecutor
     @Override
     public MainElementExecutor executor() {
         return new MainElementExecutor(this);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
