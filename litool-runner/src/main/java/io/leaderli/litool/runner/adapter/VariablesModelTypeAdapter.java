@@ -17,6 +17,6 @@ public class VariablesModelTypeAdapter implements JsonTypeAdapter<VariablesModel
 
     @Override
     public JsonElement serialize(VariablesModel src, Type typeOfSrc, JsonSerializationContext context) {
-        return context.serialize(src.getModelType());
+        return context.serialize(src.type);
     }
 }

@@ -56,4 +56,9 @@ public interface Instruct {
     Object apply(Object[] objects);
 
     String name();
+
+    default FuncScope getScope() {
+        return FuncScope.CONSTANT;
+    }
+
 }
