@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
  * @since 2022/7/24
  * <p>
  * 默认的事件处理器，具体 SaxBean 可以重写相关事件，达到更精准的处理
+ * TODO 特殊的供上层节点回调的方法
  */
 public interface SaxEventHandler {
 
