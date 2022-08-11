@@ -10,6 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +47,12 @@ public class SaxEventInterceptor<T extends SaxBean> {
 
 
     public T parse(String path) {
-        List<SaxEvent> saxEventList = RuntimeExceptionTransfer.get(() -> getSaxEventList(path));
+        return parse(ResourceUtil.getResourceAsStream(path));
+    }
+
+    public T parse(InputStream xmlStream) {
+
+        List<SaxEvent> saxEventList = RuntimeExceptionTransfer.get(() -> getSaxEventList(xmlStream));
 
         T root = ReflectUtil.newInstance(entryClass).get();
 
@@ -106,13 +112,11 @@ public class SaxEventInterceptor<T extends SaxBean> {
     }
 
 
-    private static <T extends SaxBean> List<SaxEvent> getSaxEventList(String path) throws ParserConfigurationException, SAXException, IOException {
+    private static <T extends SaxBean> List<SaxEvent> getSaxEventList(InputStream xmlStream) throws ParserConfigurationException, SAXException, IOException {
         SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
         SAXParser saxParser = saxParserFactory.newSAXParser();
         SaxEventLocatorHandler<T> dh = new SaxEventLocatorHandler<>();
-        saxParser.parse(ResourceUtil.getResourceAsStream(path), dh);
+        saxParser.parse(xmlStream, dh);
         return dh.getSaxEventList();
     }
-
-
 }

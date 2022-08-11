@@ -17,14 +17,15 @@ import java.util.Map;
  * 将所有的funcElement转化为 {@code Function<Context, Object>},用于计算func结果
  */
 public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
+    public final Map<String, IFunc> funcFactory = new HashMap<>();
 
     public FuncsElementExecutor(FuncsElement element) {
         super(element);
+        init();
     }
 
-    @Override
-    public void visit(Context context) {
-        Map<String, IFunc> funcResultMap = new HashMap<>();
+    public void init() {
+
 
         for (FuncElement funcElement : element.getFuncList().lira()) {
 
@@ -41,7 +42,7 @@ public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
                     .map(ParamElement::getExpression)
                     .map(expr -> {
                         if (expr.getModel() == VariablesModel.FUNC) {
-                            return funcResultMap.get(expr.getName()).getFuncScope();
+                            return funcFactory.get(expr.getName()).getFuncScope();
                         }
                         return expr.getModel().scope;
                     })
@@ -53,10 +54,14 @@ public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
 
             FuncScope finalScope = scope;
             IFunc iFunc = new IFunc(funcElement, scope);
-            funcResultMap.put(name, iFunc);
+            funcFactory.put(name, iFunc);
         }
+    }
 
-        context.setFuncContainer(ImmutableMap.of(funcResultMap));
+    @Override
+    public void visit(Context context) {
+
+        context.setFuncFactory(ImmutableMap.of(funcFactory));
     }
 
 }
