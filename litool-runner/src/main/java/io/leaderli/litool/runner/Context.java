@@ -2,8 +2,6 @@ package io.leaderli.litool.runner;
 
 import io.leaderli.litool.core.collection.ImmutableMap;
 import io.leaderli.litool.runner.instruct.IFunc;
-import io.leaderli.litool.runner.xml.funcs.FuncElement;
-import io.leaderli.litool.runner.xml.funcs.ParamElement;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,10 +16,10 @@ public class Context {
      */
     public final Map<String, Object> origin_request_or_response = new HashMap<>();
     /**
-     * 用于存储所有func的计算过程
-     * TODO 最终校验哪些func的结果可以被缓存
+     *
+     * @see  io.leaderli.litool.runner.executor.FuncsElementExecutor
      */
-    private ImmutableMap<String, IFunc> funcContainer;
+    private ImmutableMap<String, IFunc> funcFactory;
     /**
      * 用于缓存无需重复计算的func的计算结果
      */
@@ -62,17 +60,17 @@ public class Context {
         this.readonly_request = readonly_request;
     }
 
-    public void setFuncContainer(ImmutableMap<String, IFunc> funcContainer) {
-        this.funcContainer = funcContainer;
+    public void setFuncFactory(ImmutableMap<String, IFunc> funcFactory) {
+        this.funcFactory = funcFactory;
     }
 
     public Map<String, IFunc> _getFuncContainer() {
-        return funcContainer.copy();
+        return funcFactory.copy();
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getFuncResult(String key) {
-        return (T) funcContainer.get(key).apply(this);
+        return (T) funcFactory.get(key).apply(this);
     }
 
     public void setFuncResultCache(String key, Object value) {
