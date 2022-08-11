@@ -1,9 +1,6 @@
 package io.leaderli.litool.runner.instruct;
 
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.type.ClassUtil;
-
-import java.util.Arrays;
 
 public class AndInstruct implements Instruct {
 
