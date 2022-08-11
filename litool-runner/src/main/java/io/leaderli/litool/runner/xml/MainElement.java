@@ -1,16 +1,11 @@
 package io.leaderli.litool.runner.xml;
 
-import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.type.ClassUtil;
-import io.leaderli.litool.core.type.MethodUtil;
-import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.executor.ElementExecutor;
 import io.leaderli.litool.runner.executor.MainElementExecutor;
+import io.leaderli.litool.runner.util.ExpressionUtil;
 import io.leaderli.litool.runner.xml.funcs.FuncsElement;
-
-import java.lang.reflect.Method;
 
 /**
  * @author leaderli
@@ -55,23 +50,6 @@ public class MainElement implements SaxBean, ElementExecutor<MainElementExecutor
     @Override
     public void end(EndEvent endEvent) {
         SaxBean.super.end(endEvent);
-
-        checkExpression(this);
-    }
-
-    public void checkExpression(SaxBean saxBean) {
-
-        Lira<Method> lira = ReflectUtil.getMethods(saxBean.getClass())
-                .filter(m -> m.getName().startsWith("get"))
-
-                .filter(MethodUtil::notObjectMethod)
-                .filter(m -> !ClassUtil.isPrimitiveOrWrapper(m.getReturnType()))
-                .map(m->ReflectUtil.getMethodValue(m,saxBean))
-                ;
-
-        for (Method method : lira) {
-            System.out.println(method.getName());
-
-        }
+        ExpressionUtil.checkExpression(this, endEvent.getSaxBeanWrapper().getParseErrorMsgs(),this);
     }
 }

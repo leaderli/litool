@@ -182,7 +182,7 @@ class LiraTest {
     void set() {
 
         Lira<Integer> set = Lira.of(1, 2, 1, 2).filter(i -> {
-            LiAssertUtil.assertNotHere();
+            LiAssertUtil.assertNotRun();
             return true;
         }).distinct();
 

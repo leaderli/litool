@@ -1,8 +1,22 @@
 package io.leaderli.litool.runner.util;
 
 import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
+import io.leaderli.litool.core.type.ClassUtil;
+import io.leaderli.litool.core.type.MethodUtil;
+import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.dom.sax.SaxBean;
+import io.leaderli.litool.dom.sax.SaxList;
+import io.leaderli.litool.runner.Expression;
+import io.leaderli.litool.runner.TempNameEnum;
 import io.leaderli.litool.runner.constant.VariablesModel;
+import io.leaderli.litool.runner.xml.EntryElement;
+import io.leaderli.litool.runner.xml.MainElement;
+import io.leaderli.litool.runner.xml.funcs.FuncElement;
+
+import java.util.List;
 
 public class ExpressionUtil {
 
@@ -31,4 +45,64 @@ public class ExpressionUtil {
         return new LiTuple2<>(expr, VariablesModel.LITERAL);
     }
 
+    private static void addErrorMsgs(List<String> parseErrorMsgs, boolean not, String error) {
+        if (!not) {
+            parseErrorMsgs.add(error);
+        }
+    }
+
+    /**
+     * 递归校验所有表达式是否合法
+     *
+     * @param mainElement    入口
+     * @param parseErrorMsgs 错误消息集合
+     * @param saxBean        标签类
+     */
+    public static void checkExpression(MainElement mainElement, List<String> parseErrorMsgs, SaxBean saxBean) {
+
+        Lira<?> lira = ReflectUtil.getMethods(saxBean.getClass())
+                .filter(m -> m.getName().startsWith("get"))
+
+                .filter(MethodUtil::notObjectMethod)
+                .filter(m -> !ClassUtil.isPrimitiveOrWrapper(m.getReturnType()))
+                .map(m -> ReflectUtil.getMethodValue(m, saxBean).get());
+
+        for (Object obj : lira) {
+
+            if (obj instanceof SaxBean) {
+                checkExpression(mainElement, parseErrorMsgs, (SaxBean) obj);
+            } else if (obj instanceof SaxList) {
+
+                ((SaxList<?>) obj).lira().forEach(sax -> checkExpression(mainElement, parseErrorMsgs, sax));
+            } else if (obj instanceof Expression) {
+
+                Expression expression = (Expression) obj;
+
+                VariablesModel model = expression.getModel();
+                String name = expression.getName();
+                switch (model) {
+                    case FUNC:
+                        Lino<FuncElement> find_func = mainElement.getFuncs().getFuncList().lira().first(func -> StringUtils.equals(name, func.getName()));
+                        addErrorMsgs(parseErrorMsgs, find_func.present(), String.format("func [%s] not exists", name));
+                        break;
+                    case REQUEST:
+                        Lino<EntryElement> find_request = mainElement.getRequest().entryList.lira().first(entry -> StringUtils.equals(name, entry.getKey()));
+                        addErrorMsgs(parseErrorMsgs, find_request.present(), String.format("request variable [%s] not exists", name));
+                        break;
+                    case RESPONSE:
+                        Lino<EntryElement> find_response = mainElement.getResponse().entryList.lira().first(entry -> StringUtils.equals(name, entry.getKey()));
+                        addErrorMsgs(parseErrorMsgs, find_response.present(), String.format("response variable [%s] not exists", name));
+                        break;
+                    case TEMP:
+                        addErrorMsgs(parseErrorMsgs, Lira.of(TempNameEnum.values()).map(TempNameEnum::name).contains(name), String.format("temp variable [%s] not exists", name));
+                        break;
+                    case ERROR:
+                        addErrorMsgs(parseErrorMsgs, false, ("expression is error"));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
 }

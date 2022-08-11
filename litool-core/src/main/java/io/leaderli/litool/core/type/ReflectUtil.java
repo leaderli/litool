@@ -356,7 +356,13 @@ public class ReflectUtil {
         }
     }
 
-    public static Method getMethodValue(Method method, Object value) {
-        return null;
+    public static Lino<?> getMethodValue(Method method, Object obj, Object... args) {
+
+        if (method == null) {
+            return Lino.none();
+        }
+        setAccessible(method);
+
+        return Lino.throwable_of(() -> method.invoke(obj, args));
     }
 }

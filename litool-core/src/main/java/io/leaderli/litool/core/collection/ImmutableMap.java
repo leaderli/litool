@@ -14,6 +14,9 @@ public class ImmutableMap<K, V> {
     private final Map<K, V> map;
 
     private ImmutableMap(Map<K, V> map) {
+        if (map == null) {
+            map = new HashMap<>();
+        }
         this.map = new HashMap<>(map);
     }
 

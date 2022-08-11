@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<main>
+    <request>
+        <entry label="渠道">CHANNEL</entry>
+        <entry label="编号" type="int" def="1">ID</entry>
+    </request>
+
+    <response>
+        <entry label="渠道">CHANNEL</entry>
+        <entry label="编号" type="int" def="1">ID</entry>
+    </response>
+
+    <funcs>
+
+        <func name="func_a" label="func_a" instruct="in" type="boolean">
+            <param type="str">$A</param>
+            <param type="str">@B</param>
+            <param type="str">#C</param>
+        </func>
+    </funcs>
+</main>

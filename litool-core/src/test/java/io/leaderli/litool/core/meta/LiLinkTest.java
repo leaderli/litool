@@ -22,9 +22,9 @@ class LiLinkTest {
 
         LiLink.of()
                 .then(() -> t1.value(1))
-                .error(LiAssertUtil::assertNotHere)
+                .error(LiAssertUtil::assertNotRun)
                 .then(() -> 0)
-                .then(LiAssertUtil::assertNotHere)
+                .then(LiAssertUtil::assertNotRun)
                 .error(() -> e1.value(1))
                 .error(() -> e2.value(1))
                 .present();
@@ -37,7 +37,7 @@ class LiLinkTest {
         e1.reset();
 
         LiLink.none()
-                .error(v -> LiAssertUtil.assertNotHere()).error(() -> e1.value(1))
+                .error(v -> LiAssertUtil.assertNotRun()).error(() -> e1.value(1))
                 .present();
         Assertions.assertEquals(e1.value(), 1);
 
@@ -81,10 +81,10 @@ class LiLinkTest {
     @Test
     void request() {
         Assertions.assertDoesNotThrow(() -> LiLink.none()
-                .error(LiAssertUtil::assertNotHere)
+                .error(LiAssertUtil::assertNotRun)
                 .request(1));
         Assertions.assertThrows(IllegalStateException.class, () -> LiLink.of(1)
-                .error(LiAssertUtil::assertNotHere)
+                .error(LiAssertUtil::assertNotRun)
                 .request(null));
 
 
@@ -92,7 +92,7 @@ class LiLinkTest {
         LiBox<Integer> e1 = LiBox.none();
 
         LiLink.<Integer>none()
-                .error(LiAssertUtil::assertNotHere)
+                .error(LiAssertUtil::assertNotRun)
                 .then((Consumer<? super Integer>) t1::value)
                 .request(1);
 
@@ -100,7 +100,7 @@ class LiLinkTest {
 
         t1.value(0);
         LiLink.<Integer>none()
-                .error(LiAssertUtil::assertNotHere)
+                .error(LiAssertUtil::assertNotRun)
                 .then((Consumer<? super Integer>) v -> t1.value(t1.value() + v))
                 .then((Consumer<? super Integer>) v -> t1.value(t1.value() + v))
                 .request(1);
@@ -131,9 +131,9 @@ class LiLinkTest {
 
         t1.value(0);
         LiLink.<Integer>none()
-                .error(LiAssertUtil::assertNotHere)
+                .error(LiAssertUtil::assertNotRun)
                 .then((Consumer<? super Integer>) v -> t1.value(t1.value() + v))
-                .error(LiAssertUtil::assertNotHere)
+                .error(LiAssertUtil::assertNotRun)
                 .then((Consumer<? super Integer>) v -> t1.value(t1.value() + v))
                 .request(1);
 
@@ -144,14 +144,14 @@ class LiLinkTest {
         LiLink.of(1)
                 .then((Consumer<? super Integer>) v -> t1.value(0))
                 .map(Object::toString)
-                .error(LiAssertUtil::assertNotHere)
+                .error(LiAssertUtil::assertNotRun)
                 .run();
 
         e1.value(0);
         LiLink.of(0)
                 .then(v -> v)
                 .map(Object::toString)
-                .then(LiAssertUtil::assertNotHere)
+                .then(LiAssertUtil::assertNotRun)
                 .error(() -> e1.value(1))
                 .run();
 
@@ -161,7 +161,7 @@ class LiLinkTest {
         e1.value(0);
         LiLink.of(1)
                 .then((Consumer<? super Integer>) v -> t1.value(0))
-                .error(LiAssertUtil::assertNotHere)
+                .error(LiAssertUtil::assertNotRun)
                 .map(Object::toString)
                 .then(v -> 0)
                 .error(() -> e1.value(1))
@@ -172,7 +172,7 @@ class LiLinkTest {
         e1.value(0);
         LiLink.of(1)
                 .then((Consumer<? super Integer>) v -> t1.value(0))
-                .error(LiAssertUtil::assertNotHere)
+                .error(LiAssertUtil::assertNotRun)
                 .union("1")
                 .then(v -> 0)
                 .error(() -> e1.value(1))

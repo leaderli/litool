@@ -37,4 +37,9 @@ public class Expression {
     public Object apply(Context context) {
         return model.apply(context, name);
     }
+
+    @Override
+    public String toString() {
+        return  this.model+":"+this.name;
+    }
 }

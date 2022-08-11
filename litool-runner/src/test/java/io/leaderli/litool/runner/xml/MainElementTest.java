@@ -37,4 +37,13 @@ class MainElementTest {
 
     }
 
+    @Test
+    void test_error() {
+        //TODO 方法校验目前还未断言，等 router 写好后补充
+        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
+        dfs.parse("main_error_request.xml");
+        Assertions.assertEquals("[request variable [A] not exists, response variable [B] not exists, temp variable [C] not exists]", dfs.getParseErrorMsgs().toString());
+
+    }
+
 }
