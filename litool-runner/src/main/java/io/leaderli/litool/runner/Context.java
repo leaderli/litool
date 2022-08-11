@@ -1,6 +1,7 @@
 package io.leaderli.litool.runner;
 
 import io.leaderli.litool.core.collection.ImmutableMap;
+import io.leaderli.litool.runner.executor.SequenceElementExecutor;
 import io.leaderli.litool.runner.instruct.IFunc;
 
 import java.util.HashMap;
@@ -23,7 +24,7 @@ public class Context {
     /**
      * 用于缓存无需重复计算的func的计算结果
      */
-    public final Map<String, Object> func_result_cache = new HashMap<>();
+    private final Map<String, Object> func_result_cache = new HashMap<>();
 
     private ImmutableMap<String, Object> readonly_request;
     /**
@@ -31,6 +32,11 @@ public class Context {
      * TODO
      */
     private Map<String, Object> temp = new HashMap<>();
+
+    /**
+     * 用于存储除主流程外的所有的sequence执行器，解决可能出现的跳转问题
+     */
+    private ImmutableMap<String, SequenceElementExecutor> sequenceExecutorMap;
 
     public Context(Map<String, String> origin_request) {
         this.origin_request_or_response.putAll(origin_request);
@@ -93,6 +99,10 @@ public class Context {
 
     public Object getExpressionValue(Expression expression) {
         return expression.apply(this);
+    }
+
+    public void setSequenceExecutorMap(ImmutableMap<String, SequenceElementExecutor> sequenceExecutorMap) {
+        this.sequenceExecutorMap = sequenceExecutorMap;
     }
 
 }

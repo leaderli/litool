@@ -8,7 +8,7 @@ public class UnitElement implements SaxBean {
 
     private IfList ifList;
 
-    public void addCondition(IfElement ifElement) {
+    public void addIf(IfElement ifElement) {
         ifList.add(ifElement);
     }
 
@@ -23,5 +23,13 @@ public class UnitElement implements SaxBean {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public IfList getIfList() {
+        return ifList;
+    }
+
+    public void setIfList(IfList ifList) {
+        this.ifList = ifList;
     }
 }
