@@ -9,7 +9,7 @@ public class NowInstruct implements Instruct {
 
     @Override
     public Object apply(Object[] objects) {
-        return null;
+        return invoke((String)objects[0], (String)objects[1], (String) objects[2]);
     }
 
     public static String invoke(String formatStr, String currentDate, String test) {

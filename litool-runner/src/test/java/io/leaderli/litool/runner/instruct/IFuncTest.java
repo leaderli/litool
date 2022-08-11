@@ -53,13 +53,19 @@ class IFuncTest {
         FuncsElement funcsElement = dfs.parse("funcs/ifunc/funcs_runtime.xml");
 
         Map<String, String> request = new HashMap<>();
+        request.put("_testCurrentTime", "");
+        request.put("_test", "");
         Context context = new Context(request);
+
+        Map<String, Object> request_only = new HashMap<>(request);
+        context.setReadonly_request(ImmutableMap.of(request_only));
 
         FuncsElementExecutor funcsElementExecutor = new FuncsElementExecutor(funcsElement);
         funcsElementExecutor.visit(context);
 
+        Assertions.assertSame(context._getFuncContainer().get("func_a").funcScope, FuncScope.RUNTIME);
         Assertions.assertNull(context.getFuncResultCache("func_a"));
-        Assertions.assertTrue((Boolean) context.getFuncResult("func_a"));
+        Assertions.assertEquals(8, ((String) context.getFuncResult("func_a")).length());
         Assertions.assertNull(context.getFuncResultCache("func_a"));
     }
 

@@ -1,11 +1,7 @@
 package io.leaderli.litool.runner.instruct;
 
-import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class InInstruct implements Instruct {
 
