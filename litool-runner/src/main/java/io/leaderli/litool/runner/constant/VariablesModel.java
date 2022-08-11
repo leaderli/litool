@@ -8,48 +8,47 @@ public enum VariablesModel implements BiFunction<Context, String, Object> {
 
     ERROR(0) {
         @Override
-        public Object apply(Context context, String s) {
-            return null;
+        public Object apply(Context context, String ignore) {
+            throw new UnsupportedOperationException("ERROR VariablesModel");
         }
     },
     LITERAL(1) {
         @Override
-        public Object apply(Context context, String s) {
-            return s;
+        public Object apply(Context context, String value) {
+            return value;
         }
     },
     REQUEST(2) {
         @Override
-        public Object apply(Context context, String s) {
-            return context.getRequest(s);
+        public Object apply(Context context, String name) {
+            return context.getRequest(name);
         }
     },
     RESPONSE(3) {
         @Override
-        public Object apply(Context context, String s) {
-            return context.getResponse(s);
+        public Object apply(Context context, String name) {
+            return context.getResponse(name);
         }
     },
     TEMP(4) {
         @Override
-        public Object apply(Context context, String s) {
-            // TODO 临时变量取值逻辑
-            return null;
+        public Object apply(Context context, String name) {
+            return context.getTemp(name);
         }
     },
     FUNC(5) {
         @Override
-        public Object apply(Context context, String s) {
+        public Object apply(Context context, String name) {
             // TODO 方法取值逻辑
             return null;
         }
     };
 
+    final int modelType;
+
     VariablesModel(int modelType) {
         this.modelType = modelType;
     }
-
-    final int modelType;
 
     public static VariablesModel getVariableModel(int modelType) {
         for (VariablesModel model : values()) {

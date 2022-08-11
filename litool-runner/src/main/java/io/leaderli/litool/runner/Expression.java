@@ -13,9 +13,9 @@ public class Expression {
     }
 
     public Expression(String expr) {
-        LiTuple2<String, VariablesModel> stringVariablesModelLiTuple2 = ExpressionUtil.getExpression(expr);
-        this.name = stringVariablesModelLiTuple2._1;
-        this.model = stringVariablesModelLiTuple2._2;
+        LiTuple2<String, VariablesModel> name_model = ExpressionUtil.getExpression(expr);
+        this.name = name_model._1;
+        this.model = name_model._2;
     }
 
     public String getName() {
@@ -32,5 +32,9 @@ public class Expression {
 
     public void setModel(VariablesModel model) {
         this.model = model;
+    }
+
+    public Object apply(Context context) {
+        return model.apply(context, name);
     }
 }

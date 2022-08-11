@@ -1,20 +1,17 @@
 package io.leaderli.litool.runner.executor;
 
 import io.leaderli.litool.runner.Context;
-import io.leaderli.litool.runner.Expression;
-import io.leaderli.litool.runner.InstructContainer;
+import io.leaderli.litool.runner.instruct.Instruct;
+import io.leaderli.litool.runner.xml.funcs.FuncElement;
 import io.leaderli.litool.runner.xml.funcs.FuncsElement;
+import io.leaderli.litool.runner.xml.funcs.ParamElement;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 /**
- * 将所有的funcElement转化为Function<Context, Object>,用于计算func结果
+ * 将所有的funcElement转化为 {@code Function<Context, Object>},用于计算func结果
  */
 public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
 
@@ -26,24 +23,22 @@ public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
     @Override
     public void visit(Context context) {
         Map<String, Function<Context, Object>> funcResultMap = new HashMap<>();
-        element.getFuncList().lira().forEach(funcElement -> {
+        for (FuncElement funcElement : element.getFuncList().lira()) {
+
             String name = funcElement.getName();
-            String clazz = funcElement.getInstruct();
-            funcResultMap.put(name, inContext -> {
-                Method method = InstructContainer.getInnerMethodByAlias(clazz);
-                List<Object> params = new ArrayList<>();
-                funcElement.getParamList().lira().forEach(paramElement -> {
-                    Expression expression = paramElement.getExpression();
-                    Object param = expression.getModel().apply(inContext, expression.getName());
-                    params.add(param);
-                });
-                try {
-                    return method.invoke(null, params.toArray());
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new RuntimeException(e);
-                }
+            funcResultMap.put(name, cx -> {
+                Instruct instruct = funcElement.getInstruct();
+
+                Object[] params = funcElement.getParamList()
+                        .lira()
+                        .map(ParamElement::getExpression)
+                        .map(context::getExpressionValue)
+                        .toArray();
+
+                return instruct.apply(params);
+
             });
-        });
+        }
         context.setFuncResultMap(funcResultMap);
     }
 

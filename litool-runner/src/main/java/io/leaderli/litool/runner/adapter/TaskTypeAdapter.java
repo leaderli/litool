@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO
 public class TaskTypeAdapter implements JsonTypeAdapter<IfTaskElement> {
 
     private static Map<String, Class<? extends IfTaskElement>> TASK_TYPE = new HashMap<>();

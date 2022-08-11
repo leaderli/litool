@@ -124,22 +124,6 @@ public class CollectionUtils {
 
     }
 
-    /**
-     * @param a   集合
-     * @param b   集合
-     * @param <T> 集合泛型
-     * @return 两个集合的并集
-     */
-    public static <T> Lira<T> union(Lira<T> a, Lira<T> b) {
-
-
-        List<T> raw = a.getRaw();
-
-        b.forEach(raw::add);
-
-        return Lira.of(raw).distinct();
-
-    }
 
     /**
      * @param a   集合
@@ -163,6 +147,34 @@ public class CollectionUtils {
 
         return Lira.of(result).distinct();
 
+
+    }
+
+    /**
+     * @param a   集合
+     * @param b   集合
+     * @param <T> 集合泛型
+     * @return 两个集合的并集
+     */
+    public static <T> Lira<T> union(T[] a, T[] b) {
+
+        return union(Lira.of(a), Lira.of(b));
+    }
+
+    /**
+     * @param a   集合
+     * @param b   集合
+     * @param <T> 集合泛型
+     * @return 两个集合的并集
+     */
+    public static <T> Lira<T> union(Lira<T> a, Lira<T> b) {
+
+
+        List<T> raw = a.getRaw();
+
+        b.forEach(raw::add);
+
+        return Lira.of(raw).distinct();
 
     }
 }

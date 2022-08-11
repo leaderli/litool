@@ -1,6 +1,7 @@
 package io.leaderli.litool.json;
 
 import com.google.gson.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
@@ -11,8 +12,21 @@ import java.lang.reflect.Type;
  */
 class GsonUtilTest {
 
+    @Test
+    void toJson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(EnumTest.class, new EnumTestTypeAdapter());
+        Gson gson = gsonBuilder.create();
+        Assertions.assertEquals("1", gson.toJson(EnumTest.A));
+        Assertions.assertEquals(gson.fromJson("1", EnumTest.class), EnumTest.A);
+
+    }
+
+
     enum EnumTest {
-        AA(1);
+        A(1);
+
+        final int value;
 
         EnumTest(int value) {
             this.value = value;
@@ -24,13 +38,11 @@ class GsonUtilTest {
                     return enumTest;
                 }
             }
-            return AA;
+            return A;
         }
-
-        final int value;
     }
 
-    class EnumTestTypeAdapter implements JsonTypeAdapter<EnumTest> {
+    static class EnumTestTypeAdapter implements JsonTypeAdapter<EnumTest> {
 
         @Override
         public EnumTest deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -42,20 +54,6 @@ class GsonUtilTest {
 
             return context.serialize(src.value);
         }
-    }
-
-    @Test
-    void toJson() {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(EnumTest.class, new EnumTestTypeAdapter());
-        Gson gson = gsonBuilder.create();
-        System.out.println(gson.toJson(EnumTest.AA));
-        System.out.println(gson.fromJson("1", EnumTest.class));
-    }
-
-    @Test
-    void fromJson() {
-
     }
 
 }

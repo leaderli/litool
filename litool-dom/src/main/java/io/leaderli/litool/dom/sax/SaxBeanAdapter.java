@@ -49,6 +49,7 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
         try {
             consumer.accept(saxEvent);
         } catch (Throwable throwable) {
+//            throwable.printStackTrace();
             Throwable cause = ExceptionUtil.getCause(throwable);
             Locator locator = saxEvent.locator;
             parseErrorMsgs.add(String.format("%s at line:%d column:%d", cause.getMessage(), locator.getLineNumber(), locator.getColumnNumber()));

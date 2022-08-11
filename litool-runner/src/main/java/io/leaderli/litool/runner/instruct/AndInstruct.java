@@ -1,7 +1,16 @@
 package io.leaderli.litool.runner.instruct;
 
-@Instruct("and")
-public class AndInstruct {
+public class AndInstruct implements Instruct {
+
+    @Override
+    public Object apply(Object[] objects) {
+        return invoke((Boolean[]) objects);
+    }
+
+    @Override
+    public String name() {
+        return "and";
+    }
 
     public static Boolean invoke(Boolean... ands) {
 
@@ -12,5 +21,4 @@ public class AndInstruct {
         }
         return true;
     }
-
 }

@@ -45,7 +45,7 @@ public interface SaxEventHandler {
                 SaxBeanAdapter saxBeanAdapter = SaxBeanAdapter.of(sax);
                 // 成员变量在执行到 end 时可以确保已经加载好，此时通过回调函数再注入到实例中
                 saxBeanAdapter.addCallback(() -> {
-                   
+
                     try {
                         method.invoke(this, sax);
                     } catch (Throwable throwable) {
@@ -82,13 +82,22 @@ public interface SaxEventHandler {
 
                 fieldValue = StringConvert.parser(parameterType, value);
             } else {
-                //复杂类型，默认为一个使用 String 参数的构造器
-                fieldValue = ReflectUtil.newInstance(parameterType, value);
+                fieldValue = complexField(parameterType, value);
             }
 
-            fieldValue.ifThrowablePresent(v -> method.invoke(this, v));
+            fieldValue.ifThrowablePresent(val -> method.invoke(this, val));
         });
 
+    }
+
+
+    /**
+     * @param parameterType 参数类型
+     * @param value         参数的字符串值
+     * @return 复杂类型， 默认使用 String 参数的构造器，可以重写该方法
+     */
+    default Lino<?> complexField(Class<?> parameterType, String value) {
+        return ReflectUtil.newInstance(parameterType, value);
     }
 
     default void body(BodyEvent bodyEvent) {

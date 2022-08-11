@@ -10,7 +10,6 @@ import io.leaderli.litool.core.meta.ra.PublisherRa;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.util.BooleanUtil;
 
-import java.io.PrintStream;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -166,8 +165,10 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     /**
      * @return 返回迭代器
      */
+    @Override
     Iterator<T> iterator();
 
+    @Override
     void forEach(Consumer<? super T> consumer);
 
     /**
@@ -249,7 +250,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     int size();
 
     Lira<T> debug();
+
     Lira<T> debug(Consumer<T> out);
+
     Lira<T> distinct();
 
     Lira<T> sort();
@@ -270,6 +273,11 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return 返回被 lino 包裹的实际元素的一个新的 list
      */
     List<T> getRaw();
+
+
+    default Object[] toArray() {
+        return getRaw().toArray();
+    }
 
     default T[] toArray(Class<? extends T> type) {
         return getRaw().toArray((T[]) ClassUtil.newArray(type, 0));

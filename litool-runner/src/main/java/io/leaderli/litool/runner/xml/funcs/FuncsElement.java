@@ -3,7 +3,6 @@ package io.leaderli.litool.runner.xml.funcs;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
-import io.leaderli.litool.runner.executor.BaseElementExecutor;
 import io.leaderli.litool.runner.executor.ElementExecutor;
 import io.leaderli.litool.runner.executor.FuncsElementExecutor;
 

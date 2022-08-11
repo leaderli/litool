@@ -6,7 +6,9 @@ import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author leaderli
@@ -96,6 +98,7 @@ class ReflectUtilTest {
     void newInstance() {
 
         Assertions.assertTrue(ReflectUtil.newInstance(Integer.class).absent());
+        Assertions.assertTrue(ReflectUtil.newInstance(ConstructorBean.class).present());
         Assertions.assertTrue(ReflectUtil.newInstance(Bean.class).present());
 
         Assertions.assertTrue(ReflectUtil.newInstance(Integer.class, new Object[]{}).absent());
@@ -132,7 +135,7 @@ class ReflectUtilTest {
 
     @Test
     void getMethods() {
-        Assertions.assertEquals(2 + Object.class.getMethods().length, ReflectUtil.getMethods(TestBean.class).size());
+        Assertions.assertEquals(2 + Object.class.getMethods().length, ReflectUtil.getMethods(Bean.class).size());
     }
 
     @Test
@@ -143,6 +146,17 @@ class ReflectUtilTest {
         Assertions.assertTrue(ReflectUtil.getMethod(LittleBean.class, "m1", true).absent());
     }
 
+    @Test
+    void getConstructors() throws InvocationTargetException, IllegalAccessException, InstantiationException {
+
+
+        Constructor<ConstructorBean> constructor = ReflectUtil.getConstructor(ConstructorBean.class);
+        constructor.setAccessible(true);
+        ConstructorBean constructorBean = constructor.newInstance();
+        Assertions.assertNotNull(constructorBean);
+
+
+    }
 
     @NotNull("1")
     @NotNull("2")
@@ -195,6 +209,13 @@ class ReflectUtilTest {
                     "name='" + name + '\'' +
                     ", age=" + age +
                     '}';
+        }
+    }
+
+    static class ConstructorBean {
+
+        private ConstructorBean() {
+
         }
     }
 }

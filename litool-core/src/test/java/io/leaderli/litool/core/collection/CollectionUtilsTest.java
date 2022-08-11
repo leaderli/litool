@@ -76,6 +76,8 @@ public class CollectionUtilsTest {
         Lira<Integer> b = Lira.of(Arrays.asList(3, 4, 5));
         Assertions.assertEquals(5, CollectionUtils.union(a, b).size());
         Assertions.assertEquals(3, CollectionUtils.union(a, Lira.none()).size());
+        Assertions.assertEquals(5, CollectionUtils.union(new Integer[]{1, 2, 3}, new Integer[]{3, 4, 5}).size());
+        Assertions.assertEquals(3, CollectionUtils.union(null,new Integer[]{3, 4, 5}).size());
     }
 
 
