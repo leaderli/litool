@@ -15,7 +15,7 @@ public class CollectionUtilsTest {
 
     @Test
 
-    public void test() {
+    public void test1() {
         List<String> items =
                 Arrays.asList("apple", "apple", "banana",
                         "apple", "orange", "banana", "papaya");
@@ -35,7 +35,7 @@ public class CollectionUtilsTest {
     }
 
     @Test
-    void toWrapperArray() {
+    public void toWrapperArray() {
         Assertions.assertNull(CollectionUtils.toWrapperArray(null));
         Assertions.assertNull(CollectionUtils.toWrapperArray(1));
         Assertions.assertSame(Integer[].class, CollectionUtils.toWrapperArray(new int[]{1}).getClass());
@@ -47,7 +47,7 @@ public class CollectionUtilsTest {
     }
 
     @Test
-    void emptyList() {
+   public void emptyList() {
         List<Object> actual = CollectionUtils.emptyList();
         Assertions.assertEquals(0, actual.size());
         actual.add(0);
@@ -59,7 +59,7 @@ public class CollectionUtilsTest {
 
 
     @Test
-    void intersection() {
+    public void intersection() {
 
 
         Lira<Integer> a = Lira.of(Arrays.asList(1, 2, 3));
@@ -69,7 +69,7 @@ public class CollectionUtilsTest {
     }
 
     @Test
-    void union() {
+    public void union() {
 
 
         Lira<Integer> a = Lira.of(Arrays.asList(1, 2, 3));
@@ -82,7 +82,7 @@ public class CollectionUtilsTest {
 
 
     @Test
-    void xor() {
+    public void xor() {
 
 
         Lira<Integer> a = Lira.of(Arrays.asList(1, 2, 3));
