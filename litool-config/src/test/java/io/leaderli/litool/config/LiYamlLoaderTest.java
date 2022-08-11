@@ -17,7 +17,7 @@ public class LiYamlLoaderTest {
 
     @Test
     public void checkYamlFormat() {
-
+        System.out.println(ResourceUtil.getResource("/"));
         Yaml yaml = new Yaml();
         List<Throwable> error = new ArrayList<>();
         ResourceUtil.getResourceFile(f -> f.getName().endsWith(".yml")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), error::add);

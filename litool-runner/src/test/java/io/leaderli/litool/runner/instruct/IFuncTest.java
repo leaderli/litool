@@ -65,7 +65,7 @@ class IFuncTest {
 
         Assertions.assertSame(context._getFuncContainer().get("func_a").funcScope, FuncScope.RUNTIME);
         Assertions.assertNull(context.getFuncResultCache("func_a"));
-        Assertions.assertEquals(9, ((String) context.getFuncResult("func_a")).length());
+        Assertions.assertEquals(8, ((String) context.getFuncResult("func_a")).length());
         Assertions.assertNull(context.getFuncResultCache("func_a"));
     }
 
