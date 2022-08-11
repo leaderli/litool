@@ -18,7 +18,6 @@ public class RequestElementExecutor extends BaseElementExecutor<RequestElement> 
         super(requestElement);
     }
 
-
     @Override
     public void visit(Context context) {
         Map<String, Object> parserRequest = new HashMap<>();
