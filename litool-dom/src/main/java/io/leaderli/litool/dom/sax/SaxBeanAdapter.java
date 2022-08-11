@@ -56,7 +56,7 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
             Locator locator = saxEvent.locator;
 
             String id = origin.id();
-            id = Lino.of(id).map(i -> " id:" + i).get("");
+            id = Lino.of(id).filter(StringUtils::isNotBlank).map(i -> " id:" + i).get("");
             parseErrorMsgs.add(String.format("%s at line:%d column:%d%s", cause.getMessage(), locator.getLineNumber(), locator.getColumnNumber(), id));
         }
     }

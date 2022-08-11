@@ -5,16 +5,15 @@ import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.text.StringConvert;
 import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.dom.sax.EndEvent;
-import io.leaderli.litool.dom.sax.SaxBean;
+import io.leaderli.litool.runner.SaxBeanWithID;
 import io.leaderli.litool.runner.TypeAlias;
 
 /**
  * @author leaderli
  * @since 2022/7/24
  */
-public class EntryElement implements SaxBean {
+public class EntryElement extends SaxBeanWithID {
 
-    private String id;
     private String label;
     private String key;
     private String def = "";
@@ -34,7 +33,7 @@ public class EntryElement implements SaxBean {
 
 
         StringConvert.parser(TypeAlias.getType(this.type), def).assertNotNone(String.format("the def value %s cannot satisfied the entry type %s", def, type));
-        SaxBean.super.end(endEvent);
+        super.end(endEvent);
 
     }
 
@@ -44,27 +43,14 @@ public class EntryElement implements SaxBean {
     }
 
     @Override
-    public String id() {
-        return id;
-    }
-
-    @Override
     public String toString() {
         return "EntryElement{" +
-                "id='" + id + '\'' +
+                "id='" + id() + '\'' +
                 ", label='" + label + '\'' +
                 ", key='" + key + '\'' +
                 ", def='" + def + '\'' +
                 ", type='" + type + '\'' +
                 '}';
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getLabel() {
