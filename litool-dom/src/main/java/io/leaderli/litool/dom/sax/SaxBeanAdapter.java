@@ -1,6 +1,8 @@
 package io.leaderli.litool.dom.sax;
 
 import io.leaderli.litool.core.exception.ExceptionUtil;
+import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.text.StringUtils;
 import org.xml.sax.Locator;
 
 import java.util.ArrayList;
@@ -52,7 +54,10 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
 //            throwable.printStackTrace();
             Throwable cause = ExceptionUtil.getCause(throwable);
             Locator locator = saxEvent.locator;
-            parseErrorMsgs.add(String.format("%s at line:%d column:%d", cause.getMessage(), locator.getLineNumber(), locator.getColumnNumber()));
+
+            String id = origin.id();
+            id = Lino.of(id).filter(StringUtils::isNotBlank).map(i -> " id:" + i).get("");
+            parseErrorMsgs.add(String.format("%s at line:%d column:%d%s", cause.getMessage(), locator.getLineNumber(), locator.getColumnNumber(), id));
         }
     }
 

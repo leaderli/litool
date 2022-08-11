@@ -1,5 +1,6 @@
 package io.leaderli.litool.runner.xml;
 
+import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
 import org.junit.jupiter.api.Assertions;
@@ -46,8 +47,8 @@ class RequestElementTest {
         RequestElement requestElement = dfs.parse("request_error.xml");
 
 
-        Assertions.assertEquals("duplicate key of CHANNEL at line:4 column:23", dfs.getParseErrorMsgs().get(0));
-        Assertions.assertEquals("duplicate label of 渠道 at line:5 column:42", dfs.getParseErrorMsgs().get(1));
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "duplicate key of CHANNEL "));
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(1), "duplicate label of 渠道 "));
     }
 
 }

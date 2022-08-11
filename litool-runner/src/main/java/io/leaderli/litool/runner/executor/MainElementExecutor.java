@@ -8,16 +8,20 @@ import io.leaderli.litool.runner.xml.MainElement;
  * @since 2022/8/9 4:48 PM
  */
 public class MainElementExecutor extends BaseElementExecutor<MainElement> {
+    final RequestElementExecutor request;
+    final ResponseElementExecutor response;
 
     public MainElementExecutor(MainElement mainElement) {
         super(mainElement);
-    }
+        this.request = mainElement.getRequest().executor();
+        this.response = mainElement.getResponse().executor();
 
+    }
 
     @Override
     public void visit(Context context) {
 
-        element.getRequest().executor().visit(context);
-        element.getResponse().executor().visit(context);
+        request.visit(context);
+        response.visit(context);
     }
 }

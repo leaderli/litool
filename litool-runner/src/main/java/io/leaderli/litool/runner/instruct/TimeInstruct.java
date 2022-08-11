@@ -3,9 +3,7 @@ package io.leaderli.litool.runner.instruct;
 import io.leaderli.litool.core.text.StringUtils;
 import org.joda.time.DateTime;
 
-import java.lang.reflect.Method;
-
-public class NowInstruct implements Instruct {
+public class TimeInstruct implements Instruct {
 
     @Override
     public Object apply(Object[] objects) {
@@ -15,7 +13,7 @@ public class NowInstruct implements Instruct {
     public String invoke(String formatStr, String currentDate, String test) {
 
         if (StringUtils.isBlank(formatStr)) {
-            formatStr = "yyyyMMdd";
+            formatStr = "HHmm";
         }
         if (StringUtils.equals(test, "local_test")) {
             return currentDate;
@@ -25,7 +23,7 @@ public class NowInstruct implements Instruct {
 
     @Override
     public String name() {
-        return "now";
+        return "time";
     }
 
     @Override
