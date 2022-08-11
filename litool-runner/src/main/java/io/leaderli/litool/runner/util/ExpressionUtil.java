@@ -80,24 +80,26 @@ public class ExpressionUtil {
 
                 VariablesModel model = expression.getModel();
                 String name = expression.getName();
+                String id = saxBean.id();
+                id = Lino.of(id).filter(StringUtils::isNotBlank).map(i -> " id:" + i).get("");
                 switch (model) {
                     case FUNC:
                         Lino<FuncElement> find_func = mainElement.getFuncs().getFuncList().lira().first(func -> StringUtils.equals(name, func.getName()));
-                        addErrorMsgs(parseErrorMsgs, find_func.present(), String.format("func [%s] not exists", name));
+                        addErrorMsgs(parseErrorMsgs, find_func.present(), String.format("func [%s] not exists%s", name, id));
                         break;
                     case REQUEST:
                         Lino<EntryElement> find_request = mainElement.getRequest().entryList.lira().first(entry -> StringUtils.equals(name, entry.getKey()));
-                        addErrorMsgs(parseErrorMsgs, find_request.present(), String.format("request variable [%s] not exists", name));
+                        addErrorMsgs(parseErrorMsgs, find_request.present(), String.format("request variable [%s] not exists%s", name, id));
                         break;
                     case RESPONSE:
                         Lino<EntryElement> find_response = mainElement.getResponse().entryList.lira().first(entry -> StringUtils.equals(name, entry.getKey()));
-                        addErrorMsgs(parseErrorMsgs, find_response.present(), String.format("response variable [%s] not exists", name));
+                        addErrorMsgs(parseErrorMsgs, find_response.present(), String.format("response variable [%s] not exists%s", name, id));
                         break;
                     case TEMP:
-                        addErrorMsgs(parseErrorMsgs, Lira.of(TempNameEnum.values()).map(TempNameEnum::name).contains(name), String.format("temp variable [%s] not exists", name));
+                        addErrorMsgs(parseErrorMsgs, Lira.of(TempNameEnum.values()).map(TempNameEnum::name).contains(name), String.format("temp variable [%s] not exists%s", name, id));
                         break;
                     case ERROR:
-                        addErrorMsgs(parseErrorMsgs, false, ("expression is error"));
+                        addErrorMsgs(parseErrorMsgs, false, "expression is error " + id);
                         break;
                     default:
                         break;

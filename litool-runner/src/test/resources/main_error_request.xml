@@ -13,7 +13,7 @@
     <funcs>
 
         <func name="func_a" label="func_a" instruct="in" type="boolean">
-            <param type="str">$A</param>
+            <param type="str" id="1">$A</param>
             <param type="str">@B</param>
             <param type="str">#C</param>
         </func>
