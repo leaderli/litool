@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<funcs>
+    <func name="func_a" label="func_a" instruct="now" type="boolean">
+        <param type="str">yyyyMMdd</param>
+        <param type="str">$_testCurrentTime</param>
+        <param type="str">$_test</param>
+    </func>
+</funcs>
