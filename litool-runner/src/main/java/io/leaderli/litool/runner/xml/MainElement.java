@@ -1,11 +1,12 @@
 package io.leaderli.litool.runner.xml;
 
-import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.executor.ElementExecutor;
 import io.leaderli.litool.runner.executor.MainElementExecutor;
 import io.leaderli.litool.runner.util.ExpressionUtil;
 import io.leaderli.litool.runner.xml.funcs.FuncsElement;
+
+import java.util.List;
 
 /**
  * @author leaderli
@@ -48,8 +49,7 @@ public class MainElement implements SaxBean, ElementExecutor<MainElementExecutor
     }
 
     @Override
-    public void end(EndEvent endEvent) {
-        SaxBean.super.end(endEvent);
-        ExpressionUtil.checkExpression(this, endEvent.getSaxBeanWrapper().getParseErrorMsgs(),this);
+    public void end_check(List<String> parseErrorMsgs) {
+        ExpressionUtil.checkExpression(this, parseErrorMsgs, this);
     }
 }

@@ -11,6 +11,7 @@ import org.xml.sax.Locator;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author leaderli
@@ -20,6 +21,12 @@ import java.lang.reflect.Method;
  * TODO 特殊的供上层节点回调的方法
  */
 public interface SaxEventHandler {
+
+    static void addErrorMsgs(List<String> parseErrorMsgs, boolean success, String error) {
+        if (!success) {
+            parseErrorMsgs.add(error);
+        }
+    }
 
     default void start(StartEvent startEvent) {
 
@@ -113,6 +120,12 @@ public interface SaxEventHandler {
         for (Field field : ReflectUtil.getFields(getClass())) {
             ReflectUtil.getFieldValue(this, field).assertNotNone(String.format("%s has no init", field));
         }
+
+        end_check(endEvent.getSaxBeanWrapper().getParseErrorMsgs());
+    }
+
+    default void end_check(List<String> parseErrorMsgs) {
+
     }
 
 

@@ -20,12 +20,7 @@ class FuncsElementTest {
         Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("duplicate label of "));
     }
 
-    @Test
-    public void funcList_empty() {
-        SaxEventInterceptor<FuncsElement> dfs = new SaxEventInterceptor<>(FuncsElement.class);
-        FuncsElement funcsElement = dfs.parse("funcs/funcs_funcList_empty.xml");
-        Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("the funcList of funcs is empty"));
-    }
+
 
     @Test
     public void circular_reference() {
