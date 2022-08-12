@@ -18,7 +18,7 @@ public class NetUtil {
 
         return Lino.of(address)
                 .throwable_map(InetAddress::getByName)
-                .throwable_map(net -> net.isReachable(1000))
+                .throwable_map(net -> net.isReachable(10000))
                 .get(false);
 
     }
