@@ -35,7 +35,11 @@ public class TypeAlias {
 
         Function<String, ?> function = TYPE_CONVERT.get(type);
         try {
-            return function.apply(value);
+            Object apply = function.apply(value);
+            if (apply == null) {
+                return def;
+            }
+            return apply;
 
         } catch (Throwable throwable) {
             return function.apply(def);

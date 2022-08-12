@@ -2,6 +2,7 @@ package io.leaderli.litool.runner.xml.router.task;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.LiConstant;
+import io.leaderli.litool.dom.sax.AttributeEvent;
 import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.runner.executor.AssignElementExecutor;
 
@@ -9,6 +10,12 @@ public class AssignElement extends TaskElement<AssignElement, AssignElementExecu
 
     private String name;
     private String value;
+
+    @Override
+    public void attribute(AttributeEvent attributeEvent) {
+
+        super.attribute(attributeEvent);
+    }
 
     @Override
     public void body(BodyEvent bodyEvent) {
