@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
  */
 class RunnerGsonTest {
 
-    @Test
+//    @Test
     void test() {
 
         SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);

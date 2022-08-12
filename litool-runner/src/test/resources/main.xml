@@ -16,4 +16,11 @@
             <param type="str">IVR</param>
         </func>
     </funcs>
+    <router>
+        <sequence name="sequence_a" label="主流程">
+            <unit label="判断1">
+                <assign name="CHANNEL">123</assign>
+            </unit>
+        </sequence>
+    </router>
 </main>

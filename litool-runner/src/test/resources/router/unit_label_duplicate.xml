@@ -13,15 +13,17 @@
     <funcs>
 
         <func name="func_a" label="func_a" instruct="in" type="boolean">
-            <param type="str" id="1">$A</param>
-            <param type="str">@B</param>
-            <param type="str">#C</param>
+            <param type="str" id="1">$CHANNEL</param>
+            <param type="str">@CHANNEL</param>
         </func>
     </funcs>
     <router>
         <sequence name="sequence_a" label="主流程">
             <unit label="判断1">
-                <assign name="CHANNEL">123</assign>
+                <assign name="abc">123</assign>
+            </unit>
+            <unit label="判断1">
+                <assign name="abc">123</assign>
             </unit>
         </sequence>
     </router>
