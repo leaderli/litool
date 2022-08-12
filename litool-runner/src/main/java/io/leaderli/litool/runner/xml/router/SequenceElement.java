@@ -9,7 +9,7 @@ import io.leaderli.litool.runner.executor.SequenceElementExecutor;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SequenceElement implements SaxBean, ElementExecutor<SequenceElementExecutor> {
+public class SequenceElement implements SaxBean, ElementExecutor<SequenceElement, SequenceElementExecutor> {
 
     private String name;
     private String label;

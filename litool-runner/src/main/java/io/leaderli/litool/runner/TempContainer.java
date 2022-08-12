@@ -19,12 +19,12 @@ public class TempContainer {
         }
     }
 
-    public void putTemp(String key, Object value) {
+    public void put(String key, Object value) {
         tempMap.put(TempNameEnum.valueOf(key), value);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getTemp(String key) {
+    public <T> T get(String key) {
         return (T) tempMap.get(TempNameEnum.valueOf(key));
     }
 

@@ -32,7 +32,7 @@ public class RouterElementExecutor extends BaseElementExecutor<RouterElement> {
 
     @Override
     public void visit(Context context) {
-        context.setSequenceExecutorMap(ImmutableMap.of(sequenceExecutorMap));
+//        context.setSequenceExecutorMap(ImmutableMap.of(sequenceExecutorMap));
 
         mainSequenceExecutor.visit(context);
     }

@@ -11,7 +11,7 @@ import io.leaderli.litool.runner.executor.RouterElementExecutor;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RouterElement implements SaxBean, ElementExecutor<RouterElementExecutor> {
+public class RouterElement implements SaxBean, ElementExecutor<RouterElement, RouterElementExecutor> {
 
     private SequenceList sequenceList;
 

@@ -1,18 +1,16 @@
-package io.leaderli.litool.runner.xml.router;
+package io.leaderli.litool.runner.xml.router.task;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.constant.VariablesModel;
+import io.leaderli.litool.runner.executor.IfElementExecutor;
 
-public class IfElement implements SaxBean {
+public class IfElement extends TaskElement<IfElement, IfElementExecutor> {
 
     private Expression cond;
 
-    private IfTaskList ifTaskList = new IfTaskList();
-
-    public void addAssign(IfTaskElement element) {
-        ifTaskList.add(element);
+    public void addAssign(AssignElement element) {
+        taskList.add(element);
     }
 
     @Override
@@ -30,5 +28,10 @@ public class IfElement implements SaxBean {
                 , "variable cond can only use func ref or request ref");
 
         this.cond = cond;
+    }
+
+    @Override
+    public IfElementExecutor executor() {
+        return new IfElementExecutor(this);
     }
 }
