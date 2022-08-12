@@ -15,15 +15,4 @@ public interface SaxBean extends SaxEventHandler {
     default String name() {
         return this.getClass().getSimpleName().toLowerCase();
     }
-
-
-//    /**
-//     * @param root 入口类
-//     * @see io.leaderli.litool.dom.parser.SaxEventInterceptor#parse(String)
-//     */
-//    @Deprecated
-//    default void setRoot(SaxBean root) {
-//    }
-
-
 }

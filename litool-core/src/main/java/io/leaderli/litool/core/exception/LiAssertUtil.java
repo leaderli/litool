@@ -4,8 +4,12 @@ import java.util.function.Supplier;
 
 public class LiAssertUtil {
 
-    public static void assertNotHere() {
+    public static void assertNotRun() {
         throw new IllegalStateException(" assert not to run");
+    }
+
+    public static void assertNotRunWithMsg(String msg) {
+        throw new IllegalStateException(msg);
     }
 
     public static void assertTrue(boolean assertTrue) {

@@ -115,6 +115,15 @@ public class ClassUtil {
         return Lira.of(System.getProperty("java.class.path").split(System.getProperty("path.separator"))).map(path -> path.replace(File.separatorChar, '/'));
     }
 
+    /**
+     * @param cls 类
+     * @return 类是否为基础类型或者包装类
+     */
+    public static boolean isPrimitiveOrWrapper(Class<?> cls) {
+
+        return PRIMITIVE_WRAPPER_MAP.containsKey(cls) || PRIMITIVE_WRAPPER_MAP.containsValue(cls);
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> T[] newArray(Object arr) {
         if (arr == null || arr.getClass().getComponentType() == null) {

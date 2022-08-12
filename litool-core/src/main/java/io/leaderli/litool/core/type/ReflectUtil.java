@@ -90,29 +90,28 @@ public class ReflectUtil {
     public static Lino<?> getFieldValue(Object obj, String name, boolean onlyCurrentClass) {
 
 
-        return Lino.of(obj)
-                .map(o -> getField(obj.getClass(), name, onlyCurrentClass).get())
+        if (obj == null) {
+            return Lino.none();
+        }
+        return getField(obj.getClass(), name, onlyCurrentClass)
                 .map(f -> getFieldValue(obj, f).get());
 
     }
 
     /**
-     * @param obj   查找的实例
+     * @param obj   查找的实例 , obj 为空时，一般为调用静态方法
      * @param field 查找的属性
      * @return 包含属性实际值的 {@link Lino}, 当类不存在或者属性不存在时返回 {@link Lino#none()}
      */
     public static Lino<?> getFieldValue(Object obj, Field field) {
 
 
-        return Lino.of(field).throwable_map(f -> {
+        if (field == null) {
+            return Lino.none();
+        }
 
-                    Object result;
-
-                    setAccessible(f);
-                    return f.get(obj);
-                }
-
-        );
+        setAccessible(field);
+        return Lino.throwable_of(() -> field.get(obj));
     }
 
     /**
@@ -139,9 +138,11 @@ public class ReflectUtil {
 
     public static boolean setFieldValue(Object obj, String name, Object value, boolean onlyCurrentClass) {
 
+        if (obj == null) {
+            return false;
+        }
 
-        return Lino.of(obj)
-                .map(o -> getField(obj.getClass(), name, onlyCurrentClass).get())
+        return getField(obj.getClass(), name, onlyCurrentClass)
                 .map(f -> setFieldValue(obj, f, value)).get(false);
 
     }
@@ -154,16 +155,17 @@ public class ReflectUtil {
      */
     public static boolean setFieldValue(Object obj, Field field, Object value) {
 
-        if (obj == null) {
+        if (field == null) {
             return false;
         }
-        return Lino.of(field).throwable_map(f -> {
-
-            setAccessible(f);
-            f.set(obj, value);
+        setAccessible(field);
+        try {
+            field.set(obj, value);
             // 执行到此，说明未抛出异常，则可以表明赋值成功
             return true;
-        }).present();
+        } catch (Throwable ignore) {
+            return false;
+        }
 
     }
 
@@ -199,9 +201,8 @@ public class ReflectUtil {
     public static <T> Lino<T> newInstance(Class<T> cls) {
         Objects.requireNonNull(cls);
         Constructor<T> constructor = getConstructor(cls);
-        if (!constructor.isAccessible()) {
-            constructor.setAccessible(true);
-        }
+
+        setAccessible(constructor);
         return Lino.of(constructor).throwable_map(Constructor::newInstance);
 
     }
@@ -353,5 +354,15 @@ public class ReflectUtil {
         if (!obj.isAccessible()) {
             obj.setAccessible(true);
         }
+    }
+
+    public static Lino<?> getMethodValue(Method method, Object obj, Object... args) {
+
+        if (method == null) {
+            return Lino.none();
+        }
+        setAccessible(method);
+
+        return Lino.throwable_of(() -> method.invoke(obj, args));
     }
 }

@@ -184,7 +184,10 @@ public class LiMapUtil {
      * @return 根据 key，查询指定 class 类型的值，当查询不到或类型不匹配时，返回空
      */
     public static <T> Lino<T> getTypeObject(Map<String, ?> map, String key, Class<? extends T> itemType) {
-        return Lino.of(map).map(to -> ClassUtil.cast(map.get(key), itemType));
+        if (map == null) {
+            return Lino.none();
+        }
+        return Lino.of(map.get(key)).cast(itemType);
     }
 
 

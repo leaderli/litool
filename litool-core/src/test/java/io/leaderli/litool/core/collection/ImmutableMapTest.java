@@ -15,6 +15,7 @@ class ImmutableMapTest {
     @Test
     void of() {
 
+
         Map<String, String> src = new HashMap<>();
         src.put("1", "1");
 
@@ -25,5 +26,9 @@ class ImmutableMapTest {
 
         src.remove("1");
         Assertions.assertEquals("1", immutableMap.get("1"));
+
+
+        Assertions.assertDoesNotThrow(() -> ImmutableMap.of(null));
     }
+
 }

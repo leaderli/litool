@@ -6,17 +6,17 @@ import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.dom.sax.EndEvent;
-import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.InstructContainer;
 import io.leaderli.litool.runner.TypeAlias;
 import io.leaderli.litool.runner.instruct.Instruct;
+import io.leaderli.litool.runner.xml.SaxBeanWithID;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
-public class FuncElement implements SaxBean {
+public class FuncElement extends SaxBeanWithID {
 
     private String label;
     private String name;
@@ -55,7 +55,7 @@ public class FuncElement implements SaxBean {
         }
 
         LiAssertUtil.assertTrue(Objects.deepEquals(paramListTypes, methodParameterTypes), () -> String.format("the func [%s] parameterType is  not match clazz [%s] parameterType \r\n\t%s\r\n\t%s\r\n", name, instruct.name(), Arrays.toString(paramListTypes), Arrays.toString(method.getParameterTypes())));
-        SaxBean.super.end(endEvent);
+        super.end(endEvent);
     }
 
     @Override
@@ -121,6 +121,6 @@ public class FuncElement implements SaxBean {
 
             return Lino.of(InstructContainer.getInnerMethodByAlias(value)).assertNotNone(String.format("instruct [%s] is unsupported", value));
         }
-        return SaxBean.super.complexField(parameterType, value);
+        return super.complexField(parameterType, value);
     }
 }

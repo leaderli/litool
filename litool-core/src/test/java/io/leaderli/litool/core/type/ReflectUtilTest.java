@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * @author leaderli
@@ -158,6 +159,18 @@ class ReflectUtilTest {
 
     }
 
+    @Test
+    void getMethodValue() {
+
+        Method m1 = ReflectUtil.getMethod(Static.class,"m1").get();
+        Method m2 = ReflectUtil.getMethod(Static.class,"m2").get();
+        Method m3 = ReflectUtil.getMethod(Static.class,"m3").get();
+        Assertions.assertEquals(1, ReflectUtil.getMethodValue(m1, null).get());
+        Assertions.assertEquals(2, ReflectUtil.getMethodValue(m2, null).get());
+        Assertions.assertEquals(1, ReflectUtil.getMethodValue(m3, null,1).get());
+        Assertions.assertEquals(2, ReflectUtil.getMethodValue(m3, null,2).get());
+    }
+
     @NotNull("1")
     @NotNull("2")
     public static class TestBean {
@@ -171,6 +184,18 @@ class ReflectUtilTest {
 
     public static class Static {
         public static int age = 1;
+
+        private static int m1() {
+            return 1;
+        }
+
+        public static int m2() {
+            return 2;
+        }
+
+        public static int m3(int age) {
+            return age;
+        }
     }
 
     public static class Bean {

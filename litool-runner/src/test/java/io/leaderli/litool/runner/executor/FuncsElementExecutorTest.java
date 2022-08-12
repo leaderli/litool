@@ -1,5 +1,6 @@
 package io.leaderli.litool.runner.executor;
 
+import io.leaderli.litool.core.collection.ImmutableMap;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.instruct.FuncScope;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
-import java.util.Map;
 
 class FuncsElementExecutorTest {
 
@@ -21,7 +21,7 @@ class FuncsElementExecutorTest {
         Context context = new Context(new HashMap<>());
         context.visit(new FuncsElementExecutor(funcsElement));
 
-        Map<String, IFunc> funcContainer = context._getFuncContainer();
+        ImmutableMap<String, IFunc> funcContainer = context.getFuncFactory();
         Assertions.assertSame(funcContainer.get("func_a").funcScope, FuncScope.RUNTIME);
         Assertions.assertSame(funcContainer.get("func_b").funcScope, FuncScope.RUNTIME);
         Assertions.assertSame(funcContainer.get("func_c").funcScope, FuncScope.CONTEXT);

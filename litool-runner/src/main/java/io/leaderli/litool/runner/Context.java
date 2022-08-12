@@ -1,7 +1,6 @@
 package io.leaderli.litool.runner;
 
 import io.leaderli.litool.core.collection.ImmutableMap;
-import io.leaderli.litool.runner.executor.SequenceElementExecutor;
 import io.leaderli.litool.runner.instruct.IFunc;
 
 import java.util.HashMap;
@@ -17,26 +16,19 @@ public class Context {
      */
     public final Map<String, Object> origin_request_or_response = new HashMap<>();
     /**
-     *
-     * @see  io.leaderli.litool.runner.executor.FuncsElementExecutor
-     */
-    private ImmutableMap<String, IFunc> funcFactory;
-    /**
      * 用于缓存无需重复计算的func的计算结果
      */
-    private final Map<String, Object> func_result_cache = new HashMap<>();
-
+    public final Map<String, Object> func_result_cache = new HashMap<>();
+    /**
+     * @see io.leaderli.litool.runner.executor.FuncsElementExecutor
+     */
+    private ImmutableMap<String, IFunc> funcFactory;
     private ImmutableMap<String, Object> readonly_request;
     /**
      * 存储临时变量使用，每个临时变量都有一个唯一的名称，其类型是固定的，临时变量在使用前必须先初始化，即临时变量一定有默认值。
      * TODO
      */
     private Map<String, Object> temp = new HashMap<>();
-
-    /**
-     * 用于存储除主流程外的所有的sequence执行器，解决可能出现的跳转问题
-     */
-    private ImmutableMap<String, SequenceElementExecutor> sequenceExecutorMap;
 
     public Context(Map<String, String> origin_request) {
         this.origin_request_or_response.putAll(origin_request);
@@ -70,8 +62,8 @@ public class Context {
         this.funcFactory = funcFactory;
     }
 
-    public Map<String, IFunc> _getFuncContainer() {
-        return funcFactory.copy();
+    public ImmutableMap<String, IFunc> getFuncFactory() {
+        return funcFactory;
     }
 
     @SuppressWarnings("unchecked")
@@ -99,10 +91,6 @@ public class Context {
 
     public Object getExpressionValue(Expression expression) {
         return expression.apply(this);
-    }
-
-    public void setSequenceExecutorMap(ImmutableMap<String, SequenceElementExecutor> sequenceExecutorMap) {
-        this.sequenceExecutorMap = sequenceExecutorMap;
     }
 
 }

@@ -9,11 +9,13 @@
         <entry label="渠道">CHANNEL</entry>
         <entry label="编号" type="int" def="1">ID</entry>
     </response>
+
     <funcs>
 
         <func name="func_a" label="func_a" instruct="in" type="boolean">
-            <param type="str">$CHANNEL</param>
-            <param type="str">IVR</param>
+            <param type="str" id="1">$A</param>
+            <param type="str">@B</param>
+            <param type="str">#C</param>
         </func>
     </funcs>
 </main>
