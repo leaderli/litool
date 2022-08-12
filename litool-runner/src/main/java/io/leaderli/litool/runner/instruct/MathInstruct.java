@@ -33,6 +33,6 @@ public class MathInstruct implements Instruct {
 
     @Override
     public String name() {
-        return null;
+        return "math";
     }
 }

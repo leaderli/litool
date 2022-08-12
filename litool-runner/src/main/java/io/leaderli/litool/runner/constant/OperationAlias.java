@@ -3,6 +3,7 @@ package io.leaderli.litool.runner.constant;
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO 改成枚举，以及参数校验
 public class OperationAlias {
     public static final Map<String, String> OP_ALIAS = new HashMap<>();
 

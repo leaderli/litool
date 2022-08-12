@@ -1,8 +1,10 @@
 package io.leaderli.litool.runner.instruct;
 
 import io.leaderli.litool.runner.Context;
+import io.leaderli.litool.runner.Expression;
+import io.leaderli.litool.runner.TypeAlias;
+import io.leaderli.litool.runner.constant.VariablesModel;
 import io.leaderli.litool.runner.xml.funcs.FuncElement;
-import io.leaderli.litool.runner.xml.funcs.ParamElement;
 
 public class IFunc {
 
@@ -41,11 +43,20 @@ public class IFunc {
         return funcScope;
     }
 
+    //TODO literal 的类型
     public Object directInvoke(Context context) {
         Object[] params = funcElement.getParamList()
                 .lira()
-                .map(ParamElement::getExpression)
-                .map(context::getExpressionValue)
+                .map(param -> {
+                    Expression expression = param.getExpression();
+                    Object result = expression.apply(context);
+
+                    if (expression.getModel() == VariablesModel.LITERAL) {
+                        return TypeAlias.parser(param.getType(), (String) result);
+                    }
+                    return result;
+
+                })
                 .toArray();
         return funcElement.getInstruct().apply(params);
     }
