@@ -1,15 +1,15 @@
 package io.leaderli.litool.runner.xml.router;
 
-import io.leaderli.litool.dom.sax.SaxBean;
+import io.leaderli.litool.runner.executor.UnitElementExecutor;
+import io.leaderli.litool.runner.xml.router.task.IfElement;
+import io.leaderli.litool.runner.xml.router.task.TaskElement;
 
-public class UnitElement implements SaxBean {
+public class UnitElement extends TaskElement<UnitElement, UnitElementExecutor> {
 
     private String label;
 
-    private IfList ifList;
-
-    public void addCondition(IfElement ifElement) {
-        ifList.add(ifElement);
+    public void addIf(IfElement ifElement) {
+        taskList.add(ifElement);
     }
 
     @Override
@@ -23,5 +23,10 @@ public class UnitElement implements SaxBean {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    @Override
+    public UnitElementExecutor executor() {
+        return new UnitElementExecutor(this);
     }
 }

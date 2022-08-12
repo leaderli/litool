@@ -28,7 +28,7 @@ public class Context {
      * 存储临时变量使用，每个临时变量都有一个唯一的名称，其类型是固定的，临时变量在使用前必须先初始化，即临时变量一定有默认值。
      * TODO
      */
-    private Map<String, Object> temp = new HashMap<>();
+    private TempContainer temp = new TempContainer();
 
     public Context(Map<String, String> origin_request) {
         this.origin_request_or_response.putAll(origin_request);

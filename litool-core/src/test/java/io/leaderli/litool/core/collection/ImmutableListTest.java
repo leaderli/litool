@@ -27,6 +27,14 @@ class ImmutableListTest {
         Assertions.assertTrue(list.contains(1));
         Assertions.assertTrue(list.contains(2));
         Assertions.assertFalse(list.contains(3));
+
+
+        ImmutableList<Integer> of = ImmutableList.of(1, 2, 3);
+        of.iterator().remove();
+        Assertions.assertEquals(3, of.get(2));
+        for (Integer integer : of) {
+            Assertions.assertTrue(integer < 4);
+        }
     }
 
 }

@@ -17,14 +17,14 @@ import java.util.Map;
  * 将所有的funcElement转化为 {@code Function<Context, Object>},用于计算func结果
  */
 public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
-    public final Map<String, IFunc> funcFactory = new HashMap<>();
+    private final Map<String, IFunc> funcFactory = new HashMap<>();
 
     public FuncsElementExecutor(FuncsElement element) {
         super(element);
         init();
     }
 
-    public void init() {
+    private void init() {
 
 
         for (FuncElement funcElement : element.getFuncList().lira()) {
