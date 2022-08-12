@@ -1,17 +1,17 @@
 package io.leaderli.litool.runner.instruct;
 
-import io.leaderli.litool.runner.constant.OperationAlias;
+import io.leaderli.litool.runner.constant.OperatorEnum;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class AgeCompare implements Instruct {
+public class AgeCompareInstruct implements Instruct {
     @Override
     public Object apply(Object[] objects) {
-        return null;
+        return invoke((OperatorEnum) objects[0], (String) objects[1], (String) objects[2]);
     }
 
-    public Boolean invoke(String op, String birthday, String year) {
+    public Boolean invoke(OperatorEnum op, String birthday, String year) {
         if (birthday.trim().length() != 8) {
             throw new IllegalArgumentException(String.format("argument birthday:[%s] is illegal of Instruct [%s]", birthday, name()));
         }
@@ -26,21 +26,7 @@ public class AgeCompare implements Instruct {
         LocalDate date = LocalDate.parse(birthday, yyyyMMdd);
         LocalDate now = LocalDate.now();
 
-        op = OperationAlias.getOperation(op);
-        switch (op) {
-            case ">":
-                return date.compareTo(now.minusYears(year_int)) < 0;
-            case ">=":
-                return date.compareTo(now.minusYears(year_int)) <= 0;
-            case "<":
-                return date.compareTo(now.minusYears(year_int)) > 0;
-            case "<=":
-                return date.compareTo(now.minusYears(year_int)) >= 0;
-            case "=":
-                return date.compareTo(now.minusYears(year_int)) == 0;
-            default:
-                throw new UnsupportedOperationException(String.format("operation [%s] is unsupported", op));
-        }
+        return op.compare(date, now.minusYears(year_int));
     }
 
     @Override

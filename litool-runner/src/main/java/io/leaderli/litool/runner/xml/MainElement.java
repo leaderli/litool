@@ -5,6 +5,7 @@ import io.leaderli.litool.runner.executor.ElementExecutor;
 import io.leaderli.litool.runner.executor.MainElementExecutor;
 import io.leaderli.litool.runner.util.ExpressionUtil;
 import io.leaderli.litool.runner.xml.funcs.FuncsElement;
+import io.leaderli.litool.runner.xml.router.RouterElement;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class MainElement implements SaxBean, ElementExecutor<MainElement,MainEle
     private RequestElement request;
     private ResponseElement response;
     private FuncsElement funcs;
+    private RouterElement router;
 
     public RequestElement getRequest() {
         return request;
@@ -41,6 +43,14 @@ public class MainElement implements SaxBean, ElementExecutor<MainElement,MainEle
 
     public void setFuncs(FuncsElement funcs) {
         this.funcs = funcs;
+    }
+
+    public RouterElement getRouter() {
+        return router;
+    }
+
+    public void setRouter(RouterElement router) {
+        this.router = router;
     }
 
     @Override

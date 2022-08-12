@@ -14,7 +14,11 @@ public class SequenceElement implements SaxBean, ElementExecutor<SequenceElement
     private String name;
     private String label;
 
-    private UnitList unitList;
+    private UnitList unitList = new UnitList();
+
+    public void addUnit(UnitElement unitElement) {
+        unitList.add(unitElement);
+    }
 
     @Override
     public void end(EndEvent endEvent) {

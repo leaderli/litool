@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class RouterElement implements SaxBean, ElementExecutor<RouterElement, RouterElementExecutor> {
 
-    private SequenceList sequenceList;
+    private SequenceList sequenceList = new SequenceList();
 
     public void addSequence(SequenceElement sequenceElement) {
         sequenceList.add(sequenceElement);

@@ -1,5 +1,7 @@
 package io.leaderli.litool.runner;
 
+import io.leaderli.litool.runner.constant.OperatorEnum;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -18,7 +20,7 @@ public class TypeAlias {
         put("int", Integer.class, Integer::valueOf);
         put("str", String.class, s -> s);
         put("boolean", Boolean.class, Boolean::valueOf);
-        put("op", Boolean.class, Boolean::valueOf);
+        put("op", OperatorEnum.class, OperatorEnum::get);
     }
 
     public static <T> void put(String key, Class<T> type, Function<String, T> function) {

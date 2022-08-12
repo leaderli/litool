@@ -3,11 +3,14 @@ package io.leaderli.litool.runner.executor;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
+import io.leaderli.litool.runner.xml.MainElement;
 import io.leaderli.litool.runner.xml.router.task.AssignElement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class AssignElementExecutorTest {
@@ -22,5 +25,15 @@ class AssignElementExecutorTest {
         context.visit(new AssignElementExecutor(element));
 
         Assertions.assertTrue(StringUtils.equals(context.getResponse("skill"), "123"));
+    }
+
+    @Test
+    void name_error() {
+        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
+        MainElement element = dfs.parse("router/task/assign_error_name.xml");
+
+        List<String> list = new ArrayList<>();
+        element.end_check(list);
+        Assertions.assertTrue(StringUtils.equals(list.get(0), "response variable [abc] not exists"));
     }
 }

@@ -3,9 +3,10 @@ package io.leaderli.litool.runner.instruct;
 import io.leaderli.litool.runner.constant.OperatorEnum;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class DateCompareInstruct implements Instruct {
+public class TimeCompareInstruct implements Instruct {
 
     @Override
     public Object apply(Object[] objects) {
@@ -13,14 +14,14 @@ public class DateCompareInstruct implements Instruct {
     }
 
     public Boolean invoke(OperatorEnum op, String left, String right) {
-        if (left.trim().length() != 8 || right.trim().length() != 8) {
+        if (left.trim().length() != 4 || right.trim().length() != 4) {
             throw new IllegalArgumentException(String.format("argument left:[%s] right:[%s] is illegal of Instruct [%s]", left, right, name()));
         }
-        DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate leftDate = LocalDate.parse(left, yyyyMMdd);
-        LocalDate rightDate = LocalDate.parse(left, yyyyMMdd);
+        DateTimeFormatter HHmm = DateTimeFormatter.ofPattern("HHmm");
+        LocalTime leftTime = LocalTime.parse(left, HHmm);
+        LocalTime rightTime = LocalTime.parse(left, HHmm);
 
-        return op.compare(leftDate, rightDate);
+        return op.compare(leftTime, rightTime);
     }
 
     @Override
