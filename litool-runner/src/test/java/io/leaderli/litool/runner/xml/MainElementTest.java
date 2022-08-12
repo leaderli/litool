@@ -24,7 +24,6 @@ class MainElementTest {
         Map<String, String> request = new HashMap<>();
         request.put("CHANNEL", "IVR");
 
-
         Assertions.assertEquals(0, dfs.getParseErrorMsgs().size());
         Context context = new Context(request);
         MainElementExecutor executor = main.executor();
