@@ -30,11 +30,10 @@ public class CoordinateElement extends TaskElement<CoordinateElement, Coordinate
 
         String id = id();
         id = Lino.of(id).filter(StringUtils::isNotBlank).map(i -> " id:" + i).get("");
-        List<List<String>> raw = tdList.lira()
-                .map(td -> Arrays.asList(StringUtils.split(",")))
-                .getRaw();
-        int size = Lira.of(raw)
-                .map(List::size)
+        Lira<List<String>> lira = tdList.lira()
+                .map(td -> Arrays.asList(StringUtils.split(td.getValue(),",")));
+
+        int size = lira.map(List::size)
                 .distinct()
                 .size();
         //TODO 校验横坐标不能重复

@@ -20,7 +20,7 @@ public class TdElement implements SaxBean {
     @Override
     public void body(BodyEvent bodyEvent) {
         String value = bodyEvent.description();
-        LiAssertUtil.assertTrue(value.matches("[^,].*[^,]"),String.format("the td value %s is not match %s",value,"[^,]+.*[^,]+"));
+        LiAssertUtil.assertTrue(value.matches("[^,].*[^,]|[^,]"),String.format("the td value %s is not match %s",value,"[^,].*[^,]"));
         this.value = value;
     }
 
