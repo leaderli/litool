@@ -25,7 +25,6 @@ public class RequestElementExecutor extends BaseElementExecutor<RequestElement> 
 
             String text = entry.getKey();
             String value = (String) context.origin_request_or_response.getOrDefault(text, entry.getDef());
-            Class<?> type = TypeAlias.getType(entry.getType());
             Object parserValue = TypeAlias.parser(entry.getType(), value, entry.getDef());
 
             parserRequest.put(text, parserValue);

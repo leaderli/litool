@@ -1,8 +1,11 @@
 package io.leaderli.litool.runner.xml.funcs;
 
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
+import io.leaderli.litool.runner.Context;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
 
 /**
  * @author leaderli
@@ -27,7 +30,22 @@ class FuncElementTest {
 
         FuncElement funcElement = dfs.parse("funcs/func_param_error.xml");
 
+
         Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("the func [switch86] parameterType is  not match clazz [in] parameterType "));
+
+    }
+
+
+    @Test
+    void param_type_error() {
+        SaxEventInterceptor<FuncsElement> dfs = new SaxEventInterceptor<>(FuncsElement.class);
+
+        FuncsElement funcElement = dfs.parse("funcs/func_param_type_error.xml");
+
+        Context context = new Context(new HashMap<>());
+        context.visit(funcElement.executor());
+
+        Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("false cannot parse to int"));
 
     }
 }

@@ -1,35 +1,60 @@
 package io.leaderli.litool.runner;
 
-import io.leaderli.litool.core.text.StringConvert;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @author leaderli
  * @since 2022/7/24
+ * TODO 校验literal
  */
 public class TypeAlias {
 
     public final static Map<String, Class<?>> ALIAS = new HashMap<>();
+    public final static Map<String, Function<String, ?>> TYPE_CONVERT = new HashMap<>();
 
     static {
-        ALIAS.put("int", Integer.class);
-        ALIAS.put("str", String.class);
-        ALIAS.put("boolean", Boolean.class);
+        put("int", Integer.class, Integer::valueOf);
+        put("str", String.class, s -> s);
+        put("boolean", Boolean.class, Boolean::valueOf);
+        put("op", Boolean.class, Boolean::valueOf);
+    }
+
+    public static <T> void put(String key, Class<T> type, Function<String, T> function) {
+        ALIAS.put(key, type);
+        TYPE_CONVERT.put(key, function);
+
     }
 
     public static Class<?> getType(String type) {
         return ALIAS.get(type);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public static Object parser(String type, String value, String def) {
 
-        Class cls = ALIAS.get(type);
-        return StringConvert.parser(cls, value)
-                .or(() -> StringConvert.parser(cls, def).get())
-                .get();
+        Function<String, ?> function = TYPE_CONVERT.get(type);
+        try {
+            return function.apply(value);
+
+        } catch (Throwable throwable) {
+            return function.apply(def);
+        }
+
+    }
+
+    public static Object parser(String type, String value) {
+
+        return TYPE_CONVERT.get(type).apply(value);
+    }
+
+    public static void check(String type, String value, String error) {
+
+        try {
+            TYPE_CONVERT.get(type).apply(value);
+        } catch (Throwable throwable) {
+            throw new RuntimeException(error);
+        }
     }
 
     public static boolean support(String type) {

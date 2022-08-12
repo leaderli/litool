@@ -6,7 +6,10 @@ import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.TypeAlias;
+import io.leaderli.litool.runner.constant.VariablesModel;
 import io.leaderli.litool.runner.xml.SaxBeanWithID;
+
+import java.util.List;
 
 public class ParamElement extends SaxBeanWithID {
 
@@ -23,6 +26,16 @@ public class ParamElement extends SaxBeanWithID {
     @Override
     public void end(EndEvent endEvent) {
         super.end(endEvent);
+    }
+
+    @Override
+    public void end_check(List<String> parseErrorMsgs) {
+
+        if (this.expression.getModel() == VariablesModel.LITERAL) {
+
+            TypeAlias.check(this.type, this.expression.getName(), String.format("%s cannot parse to %s", this.expression.getName(), this.type));
+        }
+        super.end_check(parseErrorMsgs);
     }
 
     @Override
