@@ -12,7 +12,7 @@ public class IfElementExecutor extends BaseElementExecutor<IfElement> {
 
     public IfElementExecutor(IfElement element) {
         super(element);
-
+        init();
     }
 
     private void init() {
