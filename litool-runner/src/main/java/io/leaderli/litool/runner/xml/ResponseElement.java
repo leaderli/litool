@@ -11,7 +11,7 @@ import java.util.Objects;
  * @author leaderli
  * @since 2022/7/23
  */
-public class ResponseElement implements SaxBean, ElementExecutor<ResponseElementExecutor> {
+public class ResponseElement implements SaxBean, ElementExecutor<ResponseElement, ResponseElementExecutor> {
 
 
     public EntryList entryList = new EntryList();

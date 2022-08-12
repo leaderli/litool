@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class FuncsElement implements SaxBean, ElementExecutor<FuncsElementExecutor> {
+public class FuncsElement implements SaxBean, ElementExecutor<FuncsElement,FuncsElementExecutor> {
 
     private FuncList funcList = new FuncList();
 

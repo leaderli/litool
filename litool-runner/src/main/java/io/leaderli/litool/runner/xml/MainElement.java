@@ -13,7 +13,7 @@ import java.util.List;
  * @since 2022/7/24
  */
 
-public class MainElement implements SaxBean, ElementExecutor<MainElementExecutor> {
+public class MainElement implements SaxBean, ElementExecutor<MainElement,MainElementExecutor> {
 
     private RequestElement request;
     private ResponseElement response;
