@@ -39,12 +39,11 @@ public class MainCheckVisitor extends ElementCheckVisitor {
                 .map(m -> ReflectUtil.getMethodValue(m, saxBean).get());
 
         for (Object obj : lira) {
+            visitor.visit(obj, saxBean);
             if (obj instanceof SaxBean) {
                 visit0((SaxBean) obj, visitor);
             } else if (obj instanceof SaxList) {
                 ((SaxList<?>) obj).lira().forEach(sax -> this.visit0(sax, visitor));
-            } else {
-                visitor.visit(obj, saxBean);
             }
         }
     }
