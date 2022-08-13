@@ -1,6 +1,9 @@
 package io.leaderli.litool.runner;
 
 import io.leaderli.litool.core.collection.ImmutableMap;
+import io.leaderli.litool.core.event.ILiEventListener;
+import io.leaderli.litool.core.event.LiEventBus;
+import io.leaderli.litool.core.event.LiEventObject;
 import io.leaderli.litool.runner.instruct.IFunc;
 
 import java.util.HashMap;
@@ -29,6 +32,8 @@ public class Context {
      * TODO
      */
     private TempContainer temp = new TempContainer();
+
+    public final LiEventBus bus = new LiEventBus();
 
     public Context(Map<String, String> origin_request) {
         this.origin_request_or_response.putAll(origin_request);
@@ -93,4 +98,11 @@ public class Context {
         return expression.apply(this);
     }
 
+    public <T> void registerListener(ILiEventListener<T> listener) {
+        this.bus.registerListener(listener);
+    }
+
+    public <T> void publishEvent(LiEventObject<T> event) {
+        this.bus.push(event);
+    }
 }
