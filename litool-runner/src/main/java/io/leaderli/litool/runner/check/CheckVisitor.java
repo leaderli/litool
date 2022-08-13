@@ -1,5 +1,6 @@
 package io.leaderli.litool.runner.check;
 
+import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.xml.MainElement;
 
 /**
@@ -7,6 +8,9 @@ import io.leaderli.litool.runner.xml.MainElement;
  * @since 2022/8/13 3:16 PM
  */
 public interface CheckVisitor {
+    default void visit(Object obj, SaxBean saxBean) {
+    }
+
     default void addErrorMsgs(boolean success, String error) {
 
     }

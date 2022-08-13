@@ -25,11 +25,11 @@ public class MainCheckVisitor extends ElementCheckVisitor {
         this.parseErrorMsgs = parseErrorMsgs;
     }
 
-    public void visit(ElementCheckVisitor visitor) {
+    public void visit(CheckVisitor visitor) {
         visit0(mainElement, visitor);
     }
 
-    private void visit0(SaxBean saxBean, ElementCheckVisitor visitor) {
+    private void visit0(SaxBean saxBean, CheckVisitor visitor) {
 
         Lira<?> lira = ReflectUtil.getMethods(saxBean.getClass())
                 .filter(m -> m.getName().startsWith("get"))
