@@ -44,8 +44,4 @@ public class RouterElement implements SaxBean, ElementExecutor<RouterElement, Ro
         this.sequenceList = sequenceList;
     }
 
-    @Override
-    public RouterElementExecutor executor() {
-        return new RouterElementExecutor(this);
-    }
 }

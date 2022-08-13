@@ -37,10 +37,6 @@ public class AssignElement extends TaskElement<AssignElement, AssignElementExecu
         this.value = value;
     }
 
-    @Override
-    public AssignElementExecutor executor() {
-        return new AssignElementExecutor(this);
-    }
 
     @Override
     public Lino<?> complexField(Class<?> parameterType, String value) {

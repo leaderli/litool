@@ -193,10 +193,6 @@ class ReflectUtilTest {
         Assertions.assertTrue(ReflectUtil.getInterfacesType(Object.class).absent());
         Lira<Type> superInterface = ReflectUtil.getInterfacesType(ArrayList.class);
 
-        for (Type type : superInterface) {
-
-            System.out.println(type + " " + type.hashCode() + " " + type.getTypeName());
-        }
         Assertions.assertSame(6, superInterface.size());
     }
 

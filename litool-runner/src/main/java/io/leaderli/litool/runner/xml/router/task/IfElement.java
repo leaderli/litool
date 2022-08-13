@@ -30,8 +30,4 @@ public class IfElement extends TaskElement<IfElement, IfElementExecutor> {
         this.cond = cond;
     }
 
-    @Override
-    public IfElementExecutor executor() {
-        return new IfElementExecutor(this);
-    }
 }

@@ -10,10 +10,7 @@ import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiPrimitive;
 import io.leaderli.litool.core.util.BooleanUtil;
 
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -196,6 +193,8 @@ public interface Lino<T> extends LiValue {
      */
     Lino<T> nest(Consumer<? super Lino<T>> consumer);
 
+    Lino<T> debug();
+    Lino<T> debug(Consumer<T> debug);
 
     /**
      * @param other 值
@@ -388,6 +387,18 @@ public interface Lino<T> extends LiValue {
         @Override
         public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
             consumer.accept(this);
+            return this;
+        }
+
+        @Override
+        public Lino<T> debug() {
+            System.out.println(value);
+            return this;
+        }
+
+        @Override
+        public Lino<T> debug(Consumer<T> debug) {
+            debug.accept(value);
             return this;
         }
 
@@ -595,6 +606,15 @@ public interface Lino<T> extends LiValue {
             return this;
         }
 
+        @Override
+        public Lino<T> debug() {
+            return this;
+        }
+        @Override
+        public Lino<T> debug(Consumer<T> debug) {
+
+            return this;
+        }
         @Override
         public Lino<T> or(T other) {
             return of(other);

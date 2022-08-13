@@ -4,7 +4,6 @@ import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
-import javax.lang.model.element.TypeParameterElement;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -457,7 +456,7 @@ public class ReflectUtil {
                 .filter(type -> type.getRawType() == inter)
                 .first()
                 .map(type -> type.getActualTypeArguments()[position])
-                .cast(ParameterizedType.class)
+                .filter(type -> !(type instanceof TypeVariable))
                 .map(TypeUtil::getClass);
 
     }

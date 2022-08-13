@@ -63,10 +63,6 @@ public class CoordinateElement extends TaskElement<CoordinateElement, Coordinate
         this.tdList = tdList;
     }
 
-    @Override
-    public CoordinateElementExecutor executor() {
-        return new CoordinateElementExecutor(this);
-    }
 
 
     @Override

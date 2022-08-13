@@ -30,8 +30,5 @@ public class ResponseElement implements SaxBean, ElementExecutor<ResponseElement
     }
 
 
-    @Override
-    public ResponseElementExecutor executor() {
-        return new ResponseElementExecutor(this);
-    }
+
 }

@@ -61,8 +61,4 @@ public class SequenceElement implements SaxBean, ElementExecutor<SequenceElement
         this.unitList = unitList;
     }
 
-    @Override
-    public SequenceElementExecutor executor() {
-        return new SequenceElementExecutor(this);
-    }
 }

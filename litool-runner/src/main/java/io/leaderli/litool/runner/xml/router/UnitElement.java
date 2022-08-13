@@ -30,8 +30,5 @@ public class UnitElement extends TaskElement<UnitElement, UnitElementExecutor> {
         this.label = label;
     }
 
-    @Override
-    public UnitElementExecutor executor() {
-        return new UnitElementExecutor(this);
-    }
+
 }

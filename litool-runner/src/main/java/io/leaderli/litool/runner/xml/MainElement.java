@@ -55,10 +55,7 @@ public class MainElement implements SaxBean, ElementExecutor<MainElement, MainEl
         this.router = router;
     }
 
-    @Override
-    public MainElementExecutor executor() {
-        return new MainElementExecutor(this);
-    }
+
 
     @Override
     public void end_check(List<String> parseErrorMsgs) {
