@@ -6,7 +6,7 @@ import io.leaderli.litool.runner.util.ExpressionUtil;
 
 public class Expression {
 
-    private String name;
+    private Object name;
     private VariablesModel model;
 
     public Expression() {
@@ -18,8 +18,12 @@ public class Expression {
         this.model = name_model._2;
     }
 
-    public String getName() {
+    public Object getObject() {
         return name;
+    }
+
+    public String getName() {
+        return name + "";
     }
 
     public void setName(String name) {
@@ -40,6 +44,6 @@ public class Expression {
 
     @Override
     public String toString() {
-        return  this.model+":"+this.name;
+        return this.model + ":" + this.name;
     }
 }
