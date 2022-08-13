@@ -14,7 +14,11 @@ import io.leaderli.litool.runner.xml.funcs.FuncElement;
  */
 public class ModelCheckVisitor implements CheckVisitor {
 
-    private CheckVisitor checkVisitor;
+    private final CheckVisitor checkVisitor;
+
+    public ModelCheckVisitor(CheckVisitor checkVisitor) {
+        this.checkVisitor = checkVisitor;
+    }
 
 
     @Override
