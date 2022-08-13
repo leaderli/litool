@@ -2,8 +2,12 @@ package io.leaderli.litool.runner.xml.router.task;
 
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
+import io.leaderli.litool.runner.Context;
+import io.leaderli.litool.runner.TempNameEnum;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
 
 
 class CoordinateElementTest {
@@ -14,9 +18,23 @@ class CoordinateElementTest {
 
         CoordinateElement coordinateElement = dfs.parse("router/task/coordinate.xml");
 
-        Assertions.assertEquals(0, dfs.getParseErrorMsgs().size());
+        Context context = new Context(new HashMap<>());
+        coordinateElement.executor().visit(context);
+        Object value = context.getTemp(TempNameEnum.coordinate.name());
+        Assertions.assertEquals(value, "3");
     }
 
+    @Test
+    void def_success() {
+        SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
+
+        CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_def.xml");
+
+        Context context = new Context(new HashMap<>());
+        coordinateElement.executor().visit(context);
+        Object value = context.getTemp(TempNameEnum.coordinate.name());
+        Assertions.assertEquals(value, "1");
+    }
     @Test
     void error() {
         SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
