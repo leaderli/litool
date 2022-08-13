@@ -51,7 +51,7 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
         try {
             consumer.accept(saxEvent);
         } catch (Throwable throwable) {
-//            throwable.printStackTrace();
+            throwable.printStackTrace();
             Throwable cause = ExceptionUtil.getCause(throwable);
             Locator locator = saxEvent.locator;
 
