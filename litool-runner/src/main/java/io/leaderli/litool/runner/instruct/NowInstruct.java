@@ -3,8 +3,6 @@ package io.leaderli.litool.runner.instruct;
 import io.leaderli.litool.core.text.StringUtils;
 import org.joda.time.DateTime;
 
-import java.lang.reflect.Method;
-
 public class NowInstruct implements Instruct {
 
     @Override

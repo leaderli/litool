@@ -62,8 +62,10 @@ public class MainElement implements SaxBean, ElementExecutor<MainElement, MainEl
 
     @Override
     public void end_check(List<String> parseErrorMsgs) {
+        // 递归校验所有表达式是否合法
         MainCheckVisitor mainCheckVisitor = new MainCheckVisitor(this, parseErrorMsgs);
-        mainCheckVisitor.visit(new ExpressionCheckVisitor(new ModelCheckVisitor()));
-//        ExpressionUtil.checkExpression(this, parseErrorMsgs, this);
+        ModelCheckVisitor modelCheckVisitor = new ModelCheckVisitor(mainCheckVisitor);
+        ExpressionCheckVisitor expressionCheckVisitor = new ExpressionCheckVisitor(modelCheckVisitor);
+        mainCheckVisitor.visit(expressionCheckVisitor);
     }
 }

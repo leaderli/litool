@@ -1,7 +1,6 @@
 package io.leaderli.litool.runner.instruct;
 
 import io.leaderli.litool.runner.InstructContainer;
-import io.leaderli.litool.runner.instruct.Instruct;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

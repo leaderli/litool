@@ -5,7 +5,7 @@ import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.xml.MainElement;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RouterElementTest {
 

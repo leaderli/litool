@@ -7,8 +7,6 @@ import io.leaderli.litool.runner.constant.UnitStateConstant;
 import io.leaderli.litool.runner.xml.router.SequenceElement;
 import io.leaderli.litool.runner.xml.router.UnitElement;
 
-import java.util.List;
-
 public class SequenceElementExecutor extends BaseElementExecutor<SequenceElement> {
 
     private ImmutableList<UnitElementExecutor> unitExecutors;

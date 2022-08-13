@@ -3,7 +3,6 @@ package io.leaderli.litool.runner.adapter;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.xml.MainElement;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 /**
  * @author leaderli

@@ -2,13 +2,7 @@ package io.leaderli.litool.runner.util;
 
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.text.StringUtils;
-import io.leaderli.litool.dom.sax.SaxBean;
-import io.leaderli.litool.runner.check.ElementCheckVisitor;
-import io.leaderli.litool.runner.check.MainCheckVisitor;
 import io.leaderli.litool.runner.constant.VariablesModel;
-import io.leaderli.litool.runner.xml.MainElement;
-
-import java.util.List;
 
 public class ExpressionUtil {
 
@@ -37,16 +31,6 @@ public class ExpressionUtil {
         return new LiTuple2<>(expr, VariablesModel.LITERAL);
     }
 
-    /**
-     * 递归校验所有表达式是否合法
-     *
-     * @param mainElement    入口
-     * @param parseErrorMsgs 错误消息集合
-     * @param saxBean        标签类
-     */
-    public static void checkExpression(MainElement mainElement, List<String> parseErrorMsgs, SaxBean saxBean) {
 
-        new MainCheckVisitor(mainElement,parseErrorMsgs).visit(new ElementCheckVisitor() {
-        });
-    }
+
 }

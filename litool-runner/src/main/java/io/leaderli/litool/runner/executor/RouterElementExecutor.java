@@ -1,6 +1,5 @@
 package io.leaderli.litool.runner.executor;
 
-import io.leaderli.litool.core.collection.ImmutableMap;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.xml.router.RouterElement;
 import io.leaderli.litool.runner.xml.router.SequenceElement;

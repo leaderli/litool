@@ -1,7 +1,6 @@
 package io.leaderli.litool.runner.xml.router.task;
 
 import io.leaderli.litool.core.text.StringUtils;
-import io.leaderli.litool.core.util.ConsoleUtil;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,7 @@ class CoordinateElementTest {
 
         CoordinateElement coordinateElement = dfs.parse("router/task/coordinate.xml");
 
-        Assertions.assertTrue(dfs.getParseErrorMsgs().size() == 0);
+        Assertions.assertEquals(0, dfs.getParseErrorMsgs().size());
     }
 
     @Test

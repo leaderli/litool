@@ -8,9 +8,7 @@ import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.executor.CoordinateElementExecutor;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 public class CoordinateElement extends TaskElement<CoordinateElement, CoordinateElementExecutor>{

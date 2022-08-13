@@ -10,14 +10,13 @@ import io.leaderli.litool.runner.constant.VariablesModel;
  * @author leaderli
  * @since 2022/8/13 3:04 PM
  */
-public class ExpressionCheckVisitor extends ElementCheckVisitor {
+public class ExpressionCheckVisitor extends ElementCheckVisitor{
 
 
     private final ModelCheckVisitor modelCheckVisitor;
 
     public ExpressionCheckVisitor(ModelCheckVisitor modelCheckVisitor) {
         this.modelCheckVisitor = modelCheckVisitor;
-        this.modelCheckVisitor.setCheckVisitor(this);
     }
 
     public void visit(Expression expression, SaxBean saxBean) {
@@ -29,16 +28,12 @@ public class ExpressionCheckVisitor extends ElementCheckVisitor {
         switch (model) {
             case FUNC:
                 modelCheckVisitor.func(name, id);
-//                Lino<FuncElement> find_func = mainElement().getFuncs().getFuncList().lira().first(func -> StringUtils.equals(name, func.getName()));
-//                addErrorMsgs(find_func.present(), String.format("func [%s] not exists%s", name, id));
                 break;
             case REQUEST:
                 modelCheckVisitor.request(name, id);
-
                 break;
             case RESPONSE:
                 modelCheckVisitor.response(name, id);
-
                 break;
             case TEMP:
                 modelCheckVisitor.temp(name, id);

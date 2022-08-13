@@ -14,23 +14,20 @@ import io.leaderli.litool.runner.xml.funcs.FuncElement;
  */
 public class ModelCheckVisitor implements CheckVisitor {
 
-    private CheckVisitor checkVisitor;
+    private final MainCheckVisitor mainCheckVisitor;
 
-    public ModelCheckVisitor() {
+    public ModelCheckVisitor(MainCheckVisitor mainCheckVisitor) {
+        this.mainCheckVisitor = mainCheckVisitor;
     }
 
-    public void setCheckVisitor(CheckVisitor checkVisitor) {
-        this.checkVisitor = checkVisitor;
-    }
 
-    @Override
+
     public void addErrorMsgs(boolean success, String error) {
-        checkVisitor.addErrorMsgs(success, error);
+        mainCheckVisitor.addErrorMsgs(success, error);
     }
 
-    @Override
     public MainElement mainElement() {
-        return checkVisitor.mainElement();
+        return mainCheckVisitor.mainElement();
     }
 
     public void func(String name, String id) {
