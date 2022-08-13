@@ -20,7 +20,7 @@ public class DateCompareInstruct implements Instruct {
         LocalDate leftDate = LocalDate.parse(left, yyyyMMdd);
         LocalDate rightDate = LocalDate.parse(left, yyyyMMdd);
 
-        return op.compare(leftDate, rightDate);
+        return op.apply(leftDate, rightDate);
     }
 
     @Override

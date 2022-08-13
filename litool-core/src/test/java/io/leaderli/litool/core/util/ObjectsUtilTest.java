@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.util;
 
-import io.leaderli.litool.core.exception.UnsupportedClassException;
+import io.leaderli.litool.core.exception.UnsupportedTypeException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -46,12 +46,18 @@ class ObjectsUtilTest {
         Assertions.assertEquals(-1, ObjectsUtil.compare("11", "12"));
         Assertions.assertEquals(1, ObjectsUtil.compare("1.2", "1.1"));
 
+        Assertions.assertEquals(0, ObjectsUtil.compare(true, true));
+        Assertions.assertEquals(-1, ObjectsUtil.compare(false, true));
+        Assertions.assertEquals(1, ObjectsUtil.compare(true, false));
+
         Assertions.assertEquals(0, ObjectsUtil.compare(new int[]{}, new int[]{}));
         Assertions.assertEquals(-1, ObjectsUtil.compare(new int[]{}, new int[]{1}));
         Assertions.assertEquals(1, ObjectsUtil.compare(new int[]{1}, new int[]{}));
+
         Object a = new Object();
         Object b = new Object();
-        Assertions.assertThrows(UnsupportedClassException.class, () -> ObjectsUtil.compare(a, b));
+        Assertions.assertThrows(UnsupportedTypeException.class, () -> ObjectsUtil.compare(a, b));
+
 
     }
 }

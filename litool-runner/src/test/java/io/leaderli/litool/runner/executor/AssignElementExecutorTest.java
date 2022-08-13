@@ -1,6 +1,7 @@
 package io.leaderli.litool.runner.executor;
 
 import io.leaderli.litool.core.text.StringUtils;
+import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.xml.MainElement;
@@ -15,6 +16,14 @@ import java.util.Map;
 
 class AssignElementExecutorTest {
 
+    @Test
+    void test() {
+
+        System.out.println(ReflectUtil.getSuperclassType(AssignElement.class));
+
+        System.out.println(ReflectUtil.getGenericInterfacesType(AssignElement.class, ElementExecutor.class));
+
+    }
     @Test
     void visit() {
         SaxEventInterceptor<AssignElement> dfs = new SaxEventInterceptor<>(AssignElement.class);

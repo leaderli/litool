@@ -26,7 +26,7 @@ public class AgeCompareInstruct implements Instruct {
         LocalDate date = LocalDate.parse(birthday, yyyyMMdd);
         LocalDate now = LocalDate.now();
 
-        return op.compare(date, now.minusYears(year_int));
+        return op.apply(date, now.minusYears(year_int));
     }
 
     @Override

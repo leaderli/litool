@@ -5,6 +5,7 @@ import io.leaderli.litool.core.collection.IterableIter;
 import io.leaderli.litool.core.collection.LiIterator;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.ra.ArrayRa;
 import io.leaderli.litool.core.meta.ra.PublisherRa;
 import io.leaderli.litool.core.type.ClassUtil;
@@ -253,7 +254,16 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
     Lira<T> debug(Consumer<T> out);
 
+    /**
+     * @return 去重，根据 equals 方法
+     */
     Lira<T> distinct();
+
+    /**
+     * @param equalComparator 重写判断是否唯一的比较器
+     * @return 去重
+     */
+    Lira<T> distinct(EqualComparator<T> equalComparator);
 
     Lira<T> sort();
 

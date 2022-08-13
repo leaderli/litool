@@ -3,11 +3,11 @@ package io.leaderli.litool.core.meta.ra;
 import io.leaderli.litool.core.collection.LiIterator;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.ClassUtil;
 
 import java.util.*;
@@ -237,10 +237,16 @@ public abstract class SomeRa<T> implements Lira<T> {
     public Lira<T> distinct() {
 
 
-        return new SetRa<>(this);
+        return distinct(Object::equals);
 
     }
+    @Override
+    public Lira<T> distinct(EqualComparator<T> equalComparator) {
 
+
+        return new DistinctRa<>(this, equalComparator);
+
+    }
     @Override
     public Lira<T> sort() {
         return sort(null);
@@ -314,7 +320,9 @@ public abstract class SomeRa<T> implements Lira<T> {
 
     @Override
     public String toString() {
-        return StringUtils.join(",", getRaw());
+//        return getRaw();
+        return getRaw().toString();
+//        return StringUtils.join(",", getRaw());
     }
 
 

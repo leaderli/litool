@@ -4,11 +4,9 @@ import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
+import javax.lang.model.element.TypeParameterElement;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -364,5 +362,138 @@ public class ReflectUtil {
         setAccessible(method);
 
         return Lino.throwable_of(() -> method.invoke(obj, args));
+    }
+
+    /**
+     * @param cls 类
+     * @return 获取类上所有的接口 type ，包括继承类上的，对于重复的接口，以最先查找到的为准
+     */
+    public static Lira<Type> getInterfacesType(Class<?> cls) {
+        List<Type> list = new ArrayList<>();
+        while (cls != null && cls != Object.class) {
+            list.addAll(getGenericInterfacesOfInterface(cls));
+            cls = cls.getSuperclass();
+        }
+        return Lira.of(list).distinct(TypeUtil::equals);
+    }
+
+    private static List<Type> getGenericInterfacesOfInterface(Class<?> type) {
+
+        // 优先添加同一层级
+        List<Type> interfaces = new ArrayList<>(Arrays.asList(type.getGenericInterfaces()));
+
+        for (Type genericInterface : type.getGenericInterfaces()) {
+            if (genericInterface instanceof ParameterizedType) {
+                interfaces.addAll(getGenericInterfacesOfInterface((Class<?>) ((ParameterizedType) genericInterface).getRawType()));
+            } else if (genericInterface instanceof Class) {
+                interfaces.addAll(getGenericInterfacesOfInterface((Class<?>) genericInterface));
+            }
+        }
+        return interfaces;
+    }
+
+
+    /**
+     * @param cls 获取类的父类 type ， 会优先使用泛型 type
+     * @return 所有父类 type
+     * @see Type
+     * @see Class#getGenericSuperclass()
+     */
+    public static Lira<Type> getSuperclassType(Class<?> cls) {
+        if (cls == null || cls == Object.class) {
+            return Lira.none();
+        }
+
+        List<Type> list = new ArrayList<>();
+        while (cls != Objects.class) {
+
+            Type temp = cls.getGenericSuperclass();
+            if (temp instanceof ParameterizedType) {
+                cls = (Class<?>) ((ParameterizedType) temp).getRawType();
+            } else {
+                temp = cls.getSuperclass();
+                cls = (Class<?>) temp;
+            }
+            if (cls != null && cls != Object.class) {
+                list.add(temp);
+            } else {
+                break;
+            }
+        }
+        return Lira.of(list);
+    }
+
+    /**
+     * 查找第一个
+     *
+     * @param cls 类
+     * @param sup 泛型接口
+     * @return 获取指定泛型接口的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
+     * @see #getGenericInterfacesType(Class, Class, int)
+     */
+    public static Lino<Class<?>> getGenericInterfacesType(Class<?> cls, Class<?> sup) {
+
+        return getGenericInterfacesType(cls, sup, 0);
+    }
+
+    /**
+     * 查找第一个
+     *
+     * @param cls      类
+     * @param inter    泛型接口
+     * @param position 泛型接口的位置
+     * @return 获取指定泛型接口的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
+     * @see #getGenericInterfacesType(Class, Class, int)
+     */
+    public static Lino<Class<?>> getGenericInterfacesType(Class<?> cls, Class<?> inter, int position) {
+
+
+        if (cls == null || inter == null || !inter.isInterface() || inter.getTypeParameters().length < position + 1) {
+            return Lino.none();
+        }
+
+        return getInterfacesType(cls)
+                .cast(ParameterizedType.class)
+                .filter(type -> type.getRawType() == inter)
+                .first()
+                .map(type -> type.getActualTypeArguments()[position])
+                .cast(ParameterizedType.class)
+                .map(TypeUtil::getClass);
+
+    }
+
+    /**
+     * 查找第一个
+     *
+     * @param cls 类
+     * @param sup 泛型父类
+     * @return 获取指定泛型父类的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
+     * @see #getGenericSuperclassType(Class, Class, int)
+     */
+    public static Lino<Class<?>> getGenericSuperclassType(Class<?> cls, Class<?> sup) {
+        return getGenericSuperclassType(cls, sup, 0);
+
+    }
+
+    /**
+     * @param cls      类
+     * @param sup      泛型父类
+     * @param position 泛型父类的位置
+     * @return 获取指定泛型父类的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
+     */
+    public static Lino<Class<?>> getGenericSuperclassType(Class<?> cls, Class<?> sup, int position) {
+
+        if (cls == null || sup == null || position < 0 || cls == Object.class || sup.isInterface() || sup.getTypeParameters().length < position + 1) {
+            return Lino.none();
+        }
+
+        return getSuperclassType(cls)
+                .cast(ParameterizedType.class)
+                .filter(type -> type.getRawType() == sup)
+                .first()
+                .map(type -> type.getActualTypeArguments()[position])
+                .map(TypeUtil::getClass);
+
+
     }
 }

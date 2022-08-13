@@ -3,6 +3,7 @@ package io.leaderli.litool.core.meta.ra;
 import io.leaderli.litool.core.meta.Lino;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -64,6 +65,8 @@ public final class ArrayRa<T> extends SomeRa<T> {
             canceled = true;
         }
     }
+
+
 }
 
 

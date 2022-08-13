@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.util;
 
-import io.leaderli.litool.core.exception.UnsupportedClassException;
+import io.leaderli.litool.core.exception.UnsupportedTypeException;
 
 import java.lang.reflect.Array;
 import java.time.LocalTime;
@@ -64,6 +64,9 @@ public class ObjectsUtil {
             return ((String) left).compareTo((String) right);
         }
 
+        if(left instanceof Boolean){
+            return ((Boolean) left).compareTo((Boolean) right);
+        }
         if( left.getClass().isArray()){
             return compareNumber(Array.getLength(left),Array.getLength(right));
         }
@@ -76,7 +79,7 @@ public class ObjectsUtil {
         }
 
 
-        throw new UnsupportedClassException(left.getClass());
+        throw new UnsupportedTypeException(left.getClass());
 
     }
 

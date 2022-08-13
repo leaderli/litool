@@ -2,14 +2,18 @@ package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.Lira;
 import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -162,14 +166,66 @@ class ReflectUtilTest {
     @Test
     void getMethodValue() {
 
-        Method m1 = ReflectUtil.getMethod(Static.class,"m1").get();
-        Method m2 = ReflectUtil.getMethod(Static.class,"m2").get();
-        Method m3 = ReflectUtil.getMethod(Static.class,"m3").get();
+        Method m1 = ReflectUtil.getMethod(Static.class, "m1").get();
+        Method m2 = ReflectUtil.getMethod(Static.class, "m2").get();
+        Method m3 = ReflectUtil.getMethod(Static.class, "m3").get();
         Assertions.assertEquals(1, ReflectUtil.getMethodValue(m1, null).get());
         Assertions.assertEquals(2, ReflectUtil.getMethodValue(m2, null).get());
-        Assertions.assertEquals(1, ReflectUtil.getMethodValue(m3, null,1).get());
-        Assertions.assertEquals(2, ReflectUtil.getMethodValue(m3, null,2).get());
+        Assertions.assertEquals(1, ReflectUtil.getMethodValue(m3, null, 1).get());
+        Assertions.assertEquals(2, ReflectUtil.getMethodValue(m3, null, 2).get());
     }
+
+    @Test
+    void getSuperclassType() {
+
+        Assertions.assertSame(0, ReflectUtil.getSuperclassType(Object.class).size());
+        Assertions.assertSame(0, ReflectUtil.getSuperclassType(Function.class).size());
+        List<?> list = new ArrayList<String>() {
+
+        };
+        Lira<Type> superclassType = ReflectUtil.getSuperclassType(list.getClass());
+        Assertions.assertTrue(superclassType.first().get() instanceof ParameterizedType);
+    }
+
+    @Test
+    void getSuperInterface() {
+
+        Assertions.assertTrue(ReflectUtil.getInterfacesType(Object.class).absent());
+        Lira<Type> superInterface = ReflectUtil.getInterfacesType(ArrayList.class);
+
+        for (Type type : superInterface) {
+
+            System.out.println(type + " " + type.hashCode() + " " + type.getTypeName());
+        }
+        Assertions.assertSame(6, superInterface.size());
+    }
+
+    @Test
+    void getGenericInterfacesType() {
+
+        Consumer<?> consumer = new StringConsumer();
+
+        Assertions.assertEquals(String.class, ReflectUtil.getGenericInterfacesType(consumer.getClass(), Consumer.class).get());
+    }
+
+    @Test
+    void getGenericSuperclassType() {
+
+
+        Assertions.assertTrue(ReflectUtil.getGenericSuperclassType(Object.class, Object.class, 1).absent());
+        Assertions.assertTrue(ReflectUtil.getGenericSuperclassType(Object.class, null, 1).absent());
+        Assertions.assertTrue(ReflectUtil.getGenericSuperclassType(null, Object.class, -1).absent());
+        List<String> list = new ArrayList<String>() {
+        };
+        Assertions.assertSame(String.class, ReflectUtil.getGenericSuperclassType(list.getClass(), ArrayList.class, 0).get());
+        Assertions.assertSame(String.class, ReflectUtil.getGenericSuperclassType(list.getClass(), ArrayList.class).get());
+        Assertions.assertTrue(ReflectUtil.getGenericSuperclassType(list.getClass(), ArrayList.class, 1).absent());
+        Map<String, String> map = new HashMap<String, String>() {
+        };
+        Assertions.assertSame(String.class, ReflectUtil.getGenericSuperclassType(map.getClass(), HashMap.class, 0).get());
+        Assertions.assertSame(String.class, ReflectUtil.getGenericSuperclassType(map.getClass(), HashMap.class, 1).get());
+    }
+
 
     @NotNull("1")
     @NotNull("2")
@@ -240,6 +296,13 @@ class ReflectUtilTest {
     static class ConstructorBean {
 
         private ConstructorBean() {
+
+        }
+    }
+
+    private static class StringConsumer implements Consumer<String> {
+        @Override
+        public void accept(String o) {
 
         }
     }

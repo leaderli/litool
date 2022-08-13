@@ -10,7 +10,7 @@ public class MathCompareInstruct implements Instruct {
     }
 
     public Boolean invoke(OperatorEnum op, Integer left, Integer right) {
-        return op.compare(left, right);
+        return op.apply(left, right);
     }
 
     @Override

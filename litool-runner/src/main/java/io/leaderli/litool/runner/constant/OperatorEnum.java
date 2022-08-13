@@ -9,32 +9,32 @@ public enum OperatorEnum {
 
     GREATER_THAN(">", "gt", "大于") {
         @Override
-        public <T> boolean compare(int compare) {
+        public <T> boolean apply(int compare) {
             return compare > 0;
         }
 
     },
     GREATER_THAN_OR_EQUALS(">=", "ge", "大于等于") {
         @Override
-        public <T> boolean compare(int compare) {
+        public <T> boolean apply(int compare) {
             return compare >= 0;
         }
     },
     EQUALS("=", "==", "equals", "等于") {
         @Override
-        public <T> boolean compare(int compare) {
+        public <T> boolean apply(int compare) {
             return compare == 0;
         }
     },
     LESS_THAN("<", "lt", "小于") {
         @Override
-        public <T> boolean compare(int compare) {
+        public <T> boolean apply(int compare) {
             return compare < 0;
         }
     },
     LESS_THAN_OR_EQUALS("<=", "le", "小于等于") {
         @Override
-        public <T> boolean compare(int compare) {
+        public <T> boolean apply(int compare) {
             return compare <= 0;
         }
     };
@@ -54,13 +54,13 @@ public enum OperatorEnum {
         throw new UnsupportedOperationException(String.format("OperatorEnum unsupported [%s]", op));
     }
 
-    public abstract <T> boolean compare(int compare);
+    public abstract <T> boolean apply(int compare);
 
-    public final <T> boolean compare(T left, T right) {
+    public final <T> boolean apply(T left, T right) {
 
         int compare = ObjectsUtil.compare(left, right);
 
-        return compare(compare);
+        return apply(compare);
 
     }
 }
