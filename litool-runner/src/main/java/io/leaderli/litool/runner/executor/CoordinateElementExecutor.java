@@ -15,6 +15,7 @@ import java.util.Map;
 
 public class CoordinateElementExecutor extends BaseElementExecutor<CoordinateElement>{
     private ImmutableMap<String ,Map<String,String>> coordinateMap;
+    private String def;
     public CoordinateElementExecutor(CoordinateElement element) {
         super(element);
         init();
@@ -23,7 +24,9 @@ public class CoordinateElementExecutor extends BaseElementExecutor<CoordinateEle
     private void init () {
         Lira<List<String>> tdLira = element.getTdList().lira()
                 .map(TdElement::getValue);
-        List<String> x_axis = tdLira.first().toLira(String.class).skip(1).getRaw();
+        Lira<String> firstLine = tdLira.first().toLira(String.class);
+        def = firstLine.first().get();
+        List<String> x_axis = firstLine.skip(1).getRaw();
         Map<String,Map<String,String>> map = new HashMap<>();
         for (List<String> line : tdLira.skip(1)) {
             HashMap<String, String> xMap = new HashMap<>();
@@ -40,7 +43,6 @@ public class CoordinateElementExecutor extends BaseElementExecutor<CoordinateEle
     public void visit(Context context) {
         String x = (String) context.getExpressionValue(element.getX());
         String y = (String) context.getExpressionValue(element.getY());
-        String defaultValue = element.getTdList().lira().first().get().getValue().get(0);
-        context.setTemp(TempNameEnum.coordinate.name(), Lino.of(coordinateMap.get(y).get(x)).get(defaultValue));
+        context.setTemp(TempNameEnum.coordinate.name(), Lino.of(coordinateMap.get(y)).map(m -> m.get(x)).get(def));
     }
 }
