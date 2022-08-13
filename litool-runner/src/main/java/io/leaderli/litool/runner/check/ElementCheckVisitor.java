@@ -7,11 +7,9 @@ import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.dom.sax.SaxList;
 import io.leaderli.litool.runner.Expression;
-import io.leaderli.litool.runner.xml.MainElement;
+import io.leaderli.litool.runner.ExpressionList;
 import io.leaderli.litool.runner.xml.router.task.CoordinateElement;
 import io.leaderli.litool.runner.xml.router.task.GotoDestination;
-
-import java.util.List;
 
 /**
  * @author leaderli
@@ -52,6 +50,8 @@ public abstract class ElementCheckVisitor extends CheckVisitorAdapter {
             visit((CoordinateElement) obj, saxBean);
         } else if (obj instanceof GotoDestination) {
             visit((GotoDestination) obj, saxBean);
+        } else if (obj instanceof ExpressionList) {
+            visit((ExpressionList) obj,saxBean);
         }
 
     }
@@ -60,6 +60,9 @@ public abstract class ElementCheckVisitor extends CheckVisitorAdapter {
 
     }
 
+    public void visit(ExpressionList expressionList, SaxBean saxBean) {
+        expressionList.getExpressionList().forEach(e -> this.visit(e,saxBean));
+    }
     public void visit(CoordinateElement coordinate, SaxBean saxBean) {
 
     }
