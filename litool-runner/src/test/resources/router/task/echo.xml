@@ -21,7 +21,8 @@
             <unit label="判断1">
                 <if cond="">
                     <assign name="CHANNEL">123</assign>
-                    <echo>hello {@Code} world {#coordinate}</echo>
+                    <assign id="1" name="Code">123</assign>
+                    <echo id="2">hello {@Code} world {#coordinate}</echo>
                 </if>
             </unit>
         </sequence>

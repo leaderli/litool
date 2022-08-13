@@ -1,6 +1,8 @@
 package io.leaderli.litool.runner.xml.router.task;
 
 import io.leaderli.litool.core.event.ILiEventListener;
+import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.executor.EchoElementExecutor;
@@ -32,5 +34,6 @@ public class EchoElementTest {
             }
         });
         mainElement.executor().visit(context);
+        LiAssertUtil.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0),"response variable [Code] not exists"));
     }
 }
