@@ -17,7 +17,7 @@ public class AssignElement extends TaskElement<AssignElement, AssignElementExecu
     }
 
     @Override
-    public String name() {
+    public String tag() {
         return "assign";
     }
 

@@ -29,15 +29,12 @@ public class EntryElement extends SaxBeanWithID {
 
     @Override
     public void end(EndEvent endEvent) {
-
-
-        StringConvert.parser(TypeAlias.getType(this.type), def).assertNotNone(String.format("the def value %s cannot satisfied the entry type %s", def, type));
         super.end(endEvent);
-
+        StringConvert.parser(TypeAlias.getType(this.type), def).assertNotNone(String.format("the def value %s cannot satisfied the entry type %s", def, type));
     }
 
     @Override
-    public String name() {
+    public String tag() {
         return "entry";
     }
 

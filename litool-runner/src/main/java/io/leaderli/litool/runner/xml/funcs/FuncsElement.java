@@ -23,12 +23,6 @@ public class FuncsElement implements SaxBean, ElementExecutor<FuncsElement,Funcs
     }
 
     @Override
-    public void end(EndEvent endEvent) {
-
-        SaxBean.super.end(endEvent);
-    }
-
-    @Override
     public void end_check(List<String> parseErrorMsgs) {
 
         Set<String> nameSet = new HashSet<>();
@@ -51,7 +45,7 @@ public class FuncsElement implements SaxBean, ElementExecutor<FuncsElement,Funcs
     }
 
     @Override
-    public String name() {
+    public String tag() {
         return "funcs";
     }
 

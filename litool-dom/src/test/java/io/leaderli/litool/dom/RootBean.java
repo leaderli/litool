@@ -15,7 +15,7 @@ public class RootBean implements NoBodyAndAttributeSaxBean {
     private NoBean noBean;
 
     @Override
-    public String name() {
+    public String tag() {
         return "root";
     }
 

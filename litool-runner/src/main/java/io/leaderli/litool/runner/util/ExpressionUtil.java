@@ -13,7 +13,7 @@ public class ExpressionUtil {
     public static final String FUNC_SUFFIX = "()";
 
     public static LiTuple2<String, VariablesModel> getExpression(String expr) {
-        if (StringUtils.isBlank(expr)) {
+        if (expr == null) {
             return ERROR;
         }
         if (expr.startsWith(REQUEST_PREFIX)) {

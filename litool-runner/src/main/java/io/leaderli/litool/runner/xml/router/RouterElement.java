@@ -19,6 +19,8 @@ public class RouterElement implements SaxBean, ElementExecutor<RouterElement, Ro
 
     @Override
     public void end(EndEvent endEvent) {
+        SaxBean.super.end(endEvent);
+
         LiAssertUtil.assertFalse(sequenceList.lira().size() == 0, "the sequenceList of route is empty");
 
         Set<String> nameSet = new HashSet<>();
@@ -27,12 +29,10 @@ public class RouterElement implements SaxBean, ElementExecutor<RouterElement, Ro
             LiAssertUtil.assertTrue(nameSet.add(sequenceElement.getName()), "duplicate name of " + sequenceElement.getName());
             LiAssertUtil.assertTrue(labelSet.add(sequenceElement.getLabel()), "duplicate label of " + sequenceElement.getLabel());
         }
-
-        SaxBean.super.end(endEvent);
     }
 
     @Override
-    public String name() {
+    public String tag() {
         return "router";
     }
 

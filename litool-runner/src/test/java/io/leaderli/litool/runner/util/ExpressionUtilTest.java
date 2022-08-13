@@ -10,8 +10,11 @@ class ExpressionUtilTest {
     @Test
     void getExpression_blank() {
 
-        LiTuple2<String, VariablesModel> expression = ExpressionUtil.getExpression("");
-        Assertions.assertSame(expression, ExpressionUtil.ERROR);
+        LiTuple2<String, VariablesModel> expression = ExpressionUtil.getExpression(null);
+        Assertions.assertSame(expression._2, VariablesModel.ERROR);
+
+        expression = ExpressionUtil.getExpression("");
+        Assertions.assertSame(expression._2, VariablesModel.LITERAL);
 
     }
 

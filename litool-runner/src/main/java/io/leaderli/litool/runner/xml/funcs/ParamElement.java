@@ -24,11 +24,6 @@ public class ParamElement extends SaxBeanWithID {
     }
 
     @Override
-    public void end(EndEvent endEvent) {
-        super.end(endEvent);
-    }
-
-    @Override
     public void end_check(List<String> parseErrorMsgs) {
 
         if (this.expression.getModel() == VariablesModel.LITERAL) {
@@ -39,7 +34,7 @@ public class ParamElement extends SaxBeanWithID {
     }
 
     @Override
-    public String name() {
+    public String tag() {
         return "param";
     }
 

@@ -31,7 +31,7 @@ public class FuncElement extends SaxBeanWithID {
 
     @Override
     public void end(EndEvent endEvent) {
-
+        super.end(endEvent);
 
         Method method = this.instruct.getInstructMethod();
 
@@ -55,11 +55,11 @@ public class FuncElement extends SaxBeanWithID {
         }
 
         LiAssertUtil.assertTrue(Objects.deepEquals(paramListTypes, methodParameterTypes), () -> String.format("the func [%s] parameterType is  not match clazz [%s] parameterType \r\n\t%s\r\n\t%s\r\n", name, instruct.name(), Arrays.toString(paramListTypes), Arrays.toString(method.getParameterTypes())));
-        super.end(endEvent);
+
     }
 
     @Override
-    public String name() {
+    public String tag() {
         return "func";
     }
 
