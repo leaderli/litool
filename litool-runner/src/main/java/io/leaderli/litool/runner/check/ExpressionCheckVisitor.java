@@ -13,7 +13,12 @@ import io.leaderli.litool.runner.constant.VariablesModel;
 public class ExpressionCheckVisitor extends ElementCheckVisitor {
 
 
-    private ModelCheckVisitor modelCheckVisitor = new ModelCheckVisitor(this);
+    private final ModelCheckVisitor modelCheckVisitor;
+
+    public ExpressionCheckVisitor(ModelCheckVisitor modelCheckVisitor) {
+        this.modelCheckVisitor = modelCheckVisitor;
+        this.modelCheckVisitor.setCheckVisitor(this);
+    }
 
     public void visit(Expression expression, SaxBean saxBean) {
 

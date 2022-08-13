@@ -3,6 +3,7 @@ package io.leaderli.litool.runner.xml;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.check.ExpressionCheckVisitor;
 import io.leaderli.litool.runner.check.MainCheckVisitor;
+import io.leaderli.litool.runner.check.ModelCheckVisitor;
 import io.leaderli.litool.runner.executor.ElementExecutor;
 import io.leaderli.litool.runner.executor.MainElementExecutor;
 import io.leaderli.litool.runner.xml.funcs.FuncsElement;
@@ -15,7 +16,7 @@ import java.util.List;
  * @since 2022/7/24
  */
 
-public class MainElement implements SaxBean, ElementExecutor<MainElement,MainElementExecutor> {
+public class MainElement implements SaxBean, ElementExecutor<MainElement, MainElementExecutor> {
 
     private RequestElement request;
     private ResponseElement response;
@@ -62,7 +63,7 @@ public class MainElement implements SaxBean, ElementExecutor<MainElement,MainEle
     @Override
     public void end_check(List<String> parseErrorMsgs) {
         MainCheckVisitor mainCheckVisitor = new MainCheckVisitor(this, parseErrorMsgs);
-        mainCheckVisitor.visit(new ExpressionCheckVisitor());
+        mainCheckVisitor.visit(new ExpressionCheckVisitor(new ModelCheckVisitor()));
 //        ExpressionUtil.checkExpression(this, parseErrorMsgs, this);
     }
 }
