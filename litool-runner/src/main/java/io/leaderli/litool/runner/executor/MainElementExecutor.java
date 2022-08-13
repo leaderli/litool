@@ -11,12 +11,14 @@ public class MainElementExecutor extends BaseElementExecutor<MainElement> {
     final RequestElementExecutor request;
     final ResponseElementExecutor response;
     final FuncsElementExecutor funcs;
+    final RouterElementExecutor router;
 
     public MainElementExecutor(MainElement mainElement) {
         super(mainElement);
         this.request = mainElement.getRequest().executor();
         this.response = mainElement.getResponse().executor();
         this.funcs = mainElement.getFuncs().executor();
+        this.router = mainElement.getRouter().executor();
     }
 
     @Override
@@ -25,6 +27,8 @@ public class MainElementExecutor extends BaseElementExecutor<MainElement> {
         request.visit(context);
         response.visit(context);
         funcs.visit(context);
+        router.visit(context);
+
     }
 
 }

@@ -18,7 +18,7 @@ public enum FuncScope {
                 return funcScope;
             }
         }
-        return RUNTIME;
+        return CONTEXT;
     }
 
 }

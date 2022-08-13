@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<main>
+    <request>
+        <entry label="美国运通百夫长">bfzType</entry>
+    </request>
+    <response>
+        <entry label="坐席队列">skill</entry>
+    </response>
+    <funcs>
+        <func name="func_a" label="百夫长黑金卡" instruct="in" type="boolean">
+            <param type="str">$bfzType</param>
+            <param type="str">1</param>
+        </func>
+        <func name="func_b" label="百夫长白金卡" instruct="in" type="boolean">
+            <param type="str">$bfzType</param>
+            <param type="str">2</param>
+        </func>
+    </funcs>
+    <router>
+        <sequence name="main" label="主流程">
+            <unit label="百夫长">
+                <if cond="func_a()">
+                    <assign name="skill">001</assign>
+                    <goto next="sequence_a"/>
+                </if>
+                <if cond="func_b()">
+                    <assign name="skill">002</assign>
+                    <goto next="sequence_a"/>
+                </if>
+            </unit>
+            <unit label="默认技能">
+
+            </unit>
+        </sequence>
+        <sequence name="sequence_a" label="流程1">
+            <unit label="123">
+                <if cond="false">
+                    <echo>end</echo>
+                </if>
+            </unit>
+        </sequence>
+    </router>
+</main>

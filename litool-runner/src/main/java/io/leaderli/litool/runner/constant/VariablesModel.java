@@ -52,6 +52,15 @@ public enum VariablesModel implements BiFunction<Context, Object, Object> {
         this.scope = scope;
     }
 
+    public boolean matchAny(VariablesModel... models) {
+        for (VariablesModel model : models) {
+            if (this == model) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static VariablesModel getVariableModel(int modelType) {
         for (VariablesModel model : values()) {
             if (model.type == modelType) {

@@ -114,14 +114,15 @@ public interface SaxEventHandler {
 
     default void end(EndEvent endEvent) {
 
-        endEvent.getSaxBeanWrapper().run();
-
         // 校验是否有成员变量未初始化
         for (Field field : ReflectUtil.getFields(getClass())) {
             ReflectUtil.getFieldValue(this, field).assertNotNone(String.format("%s has no init", field));
         }
 
         end_check(endEvent.getSaxBeanWrapper().getParseErrorMsgs());
+        // 最后向上级元素注入
+        endEvent.getSaxBeanWrapper().run();
+
     }
 
     default void end_check(List<String> parseErrorMsgs) {

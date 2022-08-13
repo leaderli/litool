@@ -25,7 +25,7 @@ public class ResponseElement implements SaxBean, ElementExecutor<ResponseElement
     }
 
     @Override
-    public String name() {
+    public String tag() {
         return "response";
     }
 

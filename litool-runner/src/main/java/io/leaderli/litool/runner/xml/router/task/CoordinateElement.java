@@ -78,7 +78,7 @@ public class CoordinateElement extends TaskElement<CoordinateElement, Coordinate
 
 
     @Override
-    public String name() {
+    public String tag() {
         return "coordinate";
     }
 }

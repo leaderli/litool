@@ -27,7 +27,7 @@ public class RequestElement implements SaxBean, ElementExecutor<RequestElement, 
     }
 
     @Override
-    public String name() {
+    public String tag() {
         return "request";
     }
 }

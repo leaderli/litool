@@ -29,7 +29,7 @@ public class TdElement implements SaxBean {
     }
 
     @Override
-    public String name() {
+    public String tag() {
         return "td";
     }
 

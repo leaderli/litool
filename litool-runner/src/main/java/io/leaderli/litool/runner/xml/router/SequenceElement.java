@@ -22,18 +22,18 @@ public class SequenceElement implements SaxBean, ElementExecutor<SequenceElement
 
     @Override
     public void end(EndEvent endEvent) {
+        SaxBean.super.end(endEvent);
+
         LiAssertUtil.assertFalse(unitList.lira().size() == 0, "the unitList of sequence is empty");
 
         Set<String> labelSet = new HashSet<>();
         for (UnitElement unitElement : unitList.lira()) {
             LiAssertUtil.assertTrue(labelSet.add(unitElement.getLabel()), "duplicate label of " + unitElement.getLabel());
         }
-
-        SaxBean.super.end(endEvent);
     }
 
     @Override
-    public String name() {
+    public String tag() {
         return "sequence";
     }
 

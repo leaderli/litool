@@ -18,7 +18,7 @@ public class UnitElement extends TaskElement<UnitElement, UnitElementExecutor> {
     }
 
     @Override
-    public String name() {
+    public String tag() {
         return "unit";
     }
 

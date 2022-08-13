@@ -10,7 +10,9 @@ public enum TempNameEnum {
 
     unit_state(Integer.class, UnitStateConstant.CONTINUE),
 
-    coordinate(String.class, "");
+    coordinate(String.class, ""),
+
+    sequence_name(String.class, "");
 
 
     public final Class<?> type;
