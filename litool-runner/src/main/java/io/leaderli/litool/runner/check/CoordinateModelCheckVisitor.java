@@ -12,7 +12,7 @@ public class CoordinateModelCheckVisitor extends ElementCheckVisitor {
     public void visit(CoordinateElement coordinate, SaxBean saxBean) {
         Inner inner = new Inner();
         ExpressionCheckVisitor visitor = new ExpressionCheckVisitor(inner);
-        
+        this.visit(visitor);
     }
 
     private static class Inner extends ModelCheckVisitor {
