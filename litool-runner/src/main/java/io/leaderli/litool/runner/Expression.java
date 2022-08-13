@@ -18,6 +18,10 @@ public class Expression {
         this.model = name_model._2;
     }
 
+    public void setObject(Object obj) {
+        this.name = obj;
+    }
+
     public Object getObject() {
         return name;
     }
