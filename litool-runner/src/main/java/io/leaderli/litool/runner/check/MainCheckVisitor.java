@@ -17,8 +17,6 @@ import java.util.List;
  */
 public class MainCheckVisitor extends ElementCheckVisitor {
 
-    private final MainElement mainElement;
-    private final List<String> parseErrorMsgs;
 
     public MainCheckVisitor(MainElement mainElement, List<String> parseErrorMsgs) {
         this.mainElement = mainElement;
@@ -26,6 +24,8 @@ public class MainCheckVisitor extends ElementCheckVisitor {
     }
 
     public void visit(CheckVisitor visitor) {
+        visitor.setMainElement(mainElement);
+        visitor.setParseErrorMsgs(this.parseErrorMsgs);
         visit0(mainElement, visitor);
     }
 
@@ -48,12 +48,6 @@ public class MainCheckVisitor extends ElementCheckVisitor {
         }
     }
 
-    public MainElement mainElement() {
-        return mainElement;
-    }
 
-    public void addErrorMsgs(boolean success, String error) {
-        SaxEventHandler.addErrorMsgs(parseErrorMsgs, success, error);
-    }
 
 }
