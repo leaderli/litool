@@ -451,10 +451,32 @@ public class ReflectUtil {
             return Lino.none();
         }
 
-        return getInterfacesType(cls)
+        Lino<Class<?>> find = getInterfacesType(cls)
                 .cast(ParameterizedType.class)
                 .filter(type -> type.getRawType() == inter)
                 .first()
+                .map(type -> type.getActualTypeArguments()[position])
+                .filter(type -> !(type instanceof TypeVariable))
+                .map(TypeUtil::getClass);
+        if (find.present()) {
+            return find;
+        }
+
+
+        Lino<ParameterizedType> superType = Lino.none();
+        for (Type type : getSuperclassType(cls)) {
+
+
+            superType = Lino.of(type)
+                    .cast(ParameterizedType.class)
+                    .filter(f -> ClassUtil.isAssignableFromOrIsWrapper(inter, (Class<?>) f.getRawType()));
+//
+            if (superType.present()) {
+                break;
+            }
+
+        }
+        return superType
                 .map(type -> type.getActualTypeArguments()[position])
                 .filter(type -> !(type instanceof TypeVariable))
                 .map(TypeUtil::getClass);

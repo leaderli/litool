@@ -1,11 +1,16 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.exception.AssertException;
+import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -93,6 +98,9 @@ class ClassUtilTest {
         Assertions.assertFalse(int[].class.isAssignableFrom(Integer[].class));
         Assertions.assertTrue(Integer[].class.isAssignableFrom(Integer[].class));
         Assertions.assertFalse(Integer[].class.isAssignableFrom(int[].class));
+
+
+        Assertions.assertTrue(ClassUtil.isAssignableFromOrIsWrapper(List.class, ArrayList.class));
 
 
     }
@@ -202,8 +210,21 @@ class ClassUtilTest {
         Assertions.assertEquals(1, cs.length);
         Object[] cast = ClassUtil.cast(a, Object[].class);
         Assertions.assertEquals("1", cast[0]);
-    }
 
+
+        Type genericInterface = Param.class.getGenericInterfaces()[0];
+
+        ParameterizedType cast1 = Lino.of(String.class).cast(ParameterizedType.class).get();
+        System.out.println(cast1);
+
+    }
+    private class Param implements Function<String,String>{
+
+        @Override
+        public String apply(String s) {
+            return null;
+        }
+    }
 
     @Test
     public void filterCanCastMap() {
@@ -219,6 +240,7 @@ class ClassUtilTest {
             Map<CharSequence, Number> actual = ClassUtil.filterCanCast(map, String.class, int.class);
         });
     }
+
 
     @Test
     void addInterface() {

@@ -1,16 +1,15 @@
-package io.leaderli.litool.runner.xml.router.task;
+package io.leaderli.litool.runner.executor;
 
 import io.leaderli.litool.runner.xml.RequestElement;
+import io.leaderli.litool.runner.xml.router.task.AssignElement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author leaderli
- * @since 2022/8/13 6:16 PM
+ * @since 2022/8/14
  */
-class TaskElementTest {
+class ElementExecutorTest {
 
     @Test
     void executor() {

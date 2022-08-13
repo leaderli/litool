@@ -2,7 +2,6 @@ package io.leaderli.litool.runner.executor;
 
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.dom.sax.SaxBean;
-import io.leaderli.litool.runner.xml.router.SequenceElement;
 
 /**
  * @author leaderli
