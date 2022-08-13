@@ -7,7 +7,6 @@ import io.leaderli.litool.dom.sax.SaxEventHandler;
 import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.executor.CoordinateElementExecutor;
 
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -28,15 +27,17 @@ public class CoordinateElement extends TaskElement<CoordinateElement, Coordinate
 
         String id = id();
         id = Lino.of(id).filter(StringUtils::isNotBlank).map(i -> " id:" + i).get("");
-        Lira<List<String>> lira = tdList.lira()
-                .map(td -> Arrays.asList(StringUtils.split(td.getValue(),",")));
-
-        int size = lira.map(List::size)
-                .distinct()
-                .size();
-        //TODO 校验横坐标不能重复
+        Lira<TdElement> tdElements = tdList.lira();
+        Lira<List<String>> lira = tdElements.map(TdElement::getValue);
+        int size = lira.map(List::size).distinct().size();
+        Lira<String> xLira = lira.first().toLira(String.class);
+        int xSize = xLira.skip(1).distinct().size();
+        Lira<String> yLira = lira.map(l -> Lira.of(l).first().get());
+        int ySize = yLira.skip(1).distinct().size();
+        SaxEventHandler.addErrorMsgs(parseErrorMsgs,tdElements.size() > 1,String.format("coordinate td should have two or more %s",id));
         SaxEventHandler.addErrorMsgs(parseErrorMsgs,size == 1,String.format("coordinate td should have same size %s",id));
-//        SaxEventHandler.addErrorMsgs(parseErrorMsgs,size == 1,String.format("coordinate td should have same size %s",id));
+        SaxEventHandler.addErrorMsgs(parseErrorMsgs,xSize == xLira.size() - 1,String.format("x-coordinate should not repeated %s",id));
+        SaxEventHandler.addErrorMsgs(parseErrorMsgs,ySize == yLira.size() - 1,String.format("y-coordinate should not repeated %s",id));
     }
 
     public Expression getX() {

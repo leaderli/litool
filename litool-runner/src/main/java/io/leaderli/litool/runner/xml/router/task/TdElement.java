@@ -1,19 +1,23 @@
 package io.leaderli.litool.runner.xml.router.task;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
 
+import java.util.List;
+
 public class TdElement implements SaxBean {
 
-    private String value;
+    private List<String> value;
 
 
-    public String getValue() {
+    public List<String> getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(List<String> value) {
         this.value = value;
     }
 
@@ -21,7 +25,7 @@ public class TdElement implements SaxBean {
     public void body(BodyEvent bodyEvent) {
         String value = bodyEvent.description();
         LiAssertUtil.assertTrue(value.matches(TD_VALUE_RULE),String.format("the td value %s is not match %s",value, TD_VALUE_RULE));
-        this.value = value;
+        this.value = Lira.of(StringUtils.split(value,",")).getRaw();
     }
 
     @Override

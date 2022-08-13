@@ -36,5 +36,22 @@ class CoordinateElementTest {
         Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(2), "the td value 2, is not match"));
     }
 
+    @Test
+    void td_size_error() {
+        SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
 
+        CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_td_size_error.xml");
+
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "coordinate td should have two or more"));
+    }
+
+    @Test
+    void x_y_duplicate_error() {
+        SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
+
+        CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_x_y_duplicate_error.xml");
+
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "x-coordinate should not repeated"));
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(1), "y-coordinate should not repeated"));
+    }
 }
