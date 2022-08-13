@@ -1,13 +1,18 @@
 package io.leaderli.litool.runner.xml.router.task;
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.sax.SaxEventHandler;
 import io.leaderli.litool.runner.Expression;
+import io.leaderli.litool.runner.constant.VariablesModel;
 import io.leaderli.litool.runner.executor.CoordinateElementExecutor;
 
 import java.util.List;
+
+import static io.leaderli.litool.runner.constant.VariablesModel.REQUEST;
+import static io.leaderli.litool.runner.constant.VariablesModel.RESPONSE;
 
 
 public class CoordinateElement extends TaskElement<CoordinateElement, CoordinateElementExecutor>{
@@ -45,7 +50,12 @@ public class CoordinateElement extends TaskElement<CoordinateElement, Coordinate
     }
 
     public void setX(Expression x) {
+        assertExpression(x.getModel());
         this.x = x;
+    }
+
+    private void assertExpression(VariablesModel model) {
+        LiAssertUtil.assertTrue(model == REQUEST || model == RESPONSE,"coordinate params expression must be request or response ");
     }
 
     public Expression getY() {
@@ -53,6 +63,7 @@ public class CoordinateElement extends TaskElement<CoordinateElement, Coordinate
     }
 
     public void setY(Expression y) {
+        assertExpression(y.getModel());
         this.y = y;
     }
 

@@ -19,6 +19,8 @@ class CoordinateElementTest {
         CoordinateElement coordinateElement = dfs.parse("router/task/coordinate.xml");
 
         Context context = new Context(new HashMap<>());
+        context.setResponse("Skill","2");
+        context.setResponse("Code","2");
         coordinateElement.executor().visit(context);
         Object value = context.getTemp(TempNameEnum.coordinate.name());
         Assertions.assertEquals(value, "3");
@@ -31,6 +33,8 @@ class CoordinateElementTest {
         CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_def.xml");
 
         Context context = new Context(new HashMap<>());
+        context.setResponse("Skill","1");
+        context.setResponse("Code","1");
         coordinateElement.executor().visit(context);
         Object value = context.getTemp(TempNameEnum.coordinate.name());
         Assertions.assertEquals(value, "1");
