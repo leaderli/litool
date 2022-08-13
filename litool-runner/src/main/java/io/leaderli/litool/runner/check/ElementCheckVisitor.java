@@ -15,23 +15,14 @@ import io.leaderli.litool.runner.xml.funcs.FuncElement;
  * @author leaderli
  * @since 2022/8/13 2:41 PM
  */
-public abstract class ElementCheckVisitor {
+public abstract class ElementCheckVisitor implements CheckVisitor {
 
-
-    public void addErrorMsgs(boolean success, String error) {
-
-    }
-
-    public MainElement mainElement() {
-        throw new UnsupportedOperationException();
-    }
 
     public final void visit(Object obj, SaxBean saxBean) {
         if (obj instanceof Expression) {
             visit((Expression) obj, saxBean);
         }
     }
-
 
     public void visit(Expression expression, SaxBean saxBean) {
 
