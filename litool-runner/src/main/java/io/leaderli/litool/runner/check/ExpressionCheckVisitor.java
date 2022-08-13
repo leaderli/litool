@@ -10,7 +10,7 @@ import io.leaderli.litool.runner.constant.VariablesModel;
  * @author leaderli
  * @since 2022/8/13 3:04 PM
  */
-public class ExpressionCheckVisitor extends ElementCheckVisitor{
+public class ExpressionCheckVisitor extends ElementCheckVisitor {
 
 
     private final ModelCheckVisitor modelCheckVisitor;
@@ -21,6 +21,8 @@ public class ExpressionCheckVisitor extends ElementCheckVisitor{
 
     public void visit(Expression expression, SaxBean saxBean) {
 
+        modelCheckVisitor.setMainElement(this.mainElement);
+        modelCheckVisitor.setParseErrorMsgs(this.parseErrorMsgs);
         VariablesModel model = expression.getModel();
         String name = expression.getName();
         String id = saxBean.id();

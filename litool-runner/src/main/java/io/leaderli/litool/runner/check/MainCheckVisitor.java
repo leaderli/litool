@@ -17,8 +17,6 @@ import java.util.List;
  */
 public class MainCheckVisitor extends ElementCheckVisitor {
 
-    private final MainElement mainElement;
-    private final List<String> parseErrorMsgs;
 
     public MainCheckVisitor(MainElement mainElement, List<String> parseErrorMsgs) {
         this.mainElement = mainElement;
@@ -26,6 +24,8 @@ public class MainCheckVisitor extends ElementCheckVisitor {
     }
 
     public void visit(CheckVisitor visitor) {
+        visitor.setMainElement(mainElement);
+        visitor.setParseErrorMsgs(this.parseErrorMsgs);
         visit0(mainElement, visitor);
     }
 
@@ -39,22 +39,15 @@ public class MainCheckVisitor extends ElementCheckVisitor {
                 .map(m -> ReflectUtil.getMethodValue(m, saxBean).get());
 
         for (Object obj : lira) {
+            visitor.visit(obj, saxBean);
             if (obj instanceof SaxBean) {
                 visit0((SaxBean) obj, visitor);
             } else if (obj instanceof SaxList) {
                 ((SaxList<?>) obj).lira().forEach(sax -> this.visit0(sax, visitor));
-            } else {
-                visitor.visit(obj, saxBean);
             }
         }
     }
 
-    public MainElement mainElement() {
-        return mainElement;
-    }
 
-    public void addErrorMsgs(boolean success, String error) {
-        SaxEventHandler.addErrorMsgs(parseErrorMsgs, success, error);
-    }
 
 }

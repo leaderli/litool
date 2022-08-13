@@ -1,6 +1,9 @@
 package io.leaderli.litool.runner.check;
 
 import io.leaderli.litool.dom.sax.SaxBean;
+import io.leaderli.litool.runner.xml.MainElement;
+
+import java.util.List;
 
 /**
  * @author leaderli
@@ -11,4 +14,16 @@ public interface CheckVisitor {
     }
 
 
+    default void setMainElement(MainElement mainElement) {
+
+    }
+
+    default void setParseErrorMsgs(List<String> parseErrorMsgs) {
+
+
+    }
+
+
+    default void addErrorMsgs(boolean success, String error) {
+    }
 }
