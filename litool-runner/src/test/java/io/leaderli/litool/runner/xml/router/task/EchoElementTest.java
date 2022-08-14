@@ -1,18 +1,19 @@
 package io.leaderli.litool.runner.xml.router.task;
 
 import io.leaderli.litool.core.event.ILiEventListener;
-import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
-import io.leaderli.litool.runner.executor.EchoElementExecutor;
+import io.leaderli.litool.runner.event.EchoEvent;
 import io.leaderli.litool.runner.xml.MainElement;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class EchoElementTest {
-
 
 
     @Test
@@ -24,18 +25,23 @@ public class EchoElementTest {
         Context context = new Context(new HashMap<>());
         context.setResponse("Code", "114514");
         context.setTemp("coordinate", "你好");
-        context.registerListener(new ILiEventListener<EchoElementExecutor.EchoEvent>() {
+        LiBox<String[]> echos = LiBox.none();
+        context.registerListener(new ILiEventListener<EchoEvent>() {
             @Override
-            public void listen(EchoElementExecutor.EchoEvent source) {
-                System.out.println(source.getSource().get());
+            public void listen(EchoEvent source) {
+                echos.value(source.getSource().get());
             }
 
             @Override
-            public Class<EchoElementExecutor.EchoEvent> componentType() {
-                return EchoElementExecutor.EchoEvent.class;
+            public Class<EchoEvent> componentType() {
+                return EchoEvent.class;
             }
         });
         mainElement.executor().visit(context);
-        LiAssertUtil.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "response variable [Code] not exists"));
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "response variable [Code] not exists"));
+
+        Assertions.assertEquals("[debug, hello 123 world 你好]", Arrays.toString(echos.value()));
+
+
     }
 }

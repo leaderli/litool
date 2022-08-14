@@ -6,8 +6,17 @@ import io.leaderli.litool.runner.executor.EchoElementExecutor;
 
 public class EchoElement extends TaskElement<EchoElement, EchoElementExecutor> {
 
+    private String level = "debug";
+
     private LongExpression longExpression;
 
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
 
     public LongExpression getLongExpression() {
         return longExpression;
