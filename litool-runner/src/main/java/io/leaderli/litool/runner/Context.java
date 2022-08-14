@@ -29,7 +29,6 @@ public class Context {
     private ImmutableMap<String, Object> readonly_request;
     /**
      * 存储临时变量使用，每个临时变量都有一个唯一的名称，其类型是固定的，临时变量在使用前必须先初始化，即临时变量一定有默认值。
-     * TODO
      */
     private TempContainer temp = new TempContainer();
 
@@ -89,9 +88,8 @@ public class Context {
         this.temp.put(key, value);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T getTemp(String key) {
-        return (T) temp.get(key);
+        return temp.get(key);
     }
 
     public Object getExpressionValue(Expression expression) {

@@ -15,7 +15,7 @@ import static io.leaderli.litool.runner.constant.VariablesModel.REQUEST;
 import static io.leaderli.litool.runner.constant.VariablesModel.RESPONSE;
 
 
-public class CoordinateElement extends TaskElement<CoordinateElement, CoordinateElementExecutor>{
+public class CoordinateElement extends BaseElement<CoordinateElement, CoordinateElementExecutor>{
 
     private Expression x;
 

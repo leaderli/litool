@@ -2,12 +2,10 @@ package io.leaderli.litool.runner.executor;
 
 import io.leaderli.litool.core.collection.ImmutableList;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.TempNameEnum;
 import io.leaderli.litool.runner.constant.UnitStateConstant;
-import io.leaderli.litool.runner.xml.router.task.EchoElement;
 import io.leaderli.litool.runner.xml.router.task.IfElement;
 
 public class IfElementExecutor extends BaseElementExecutor<IfElement> {
@@ -18,6 +16,7 @@ public class IfElementExecutor extends BaseElementExecutor<IfElement> {
         init();
     }
 
+    @SuppressWarnings("unchecked")
     private void init() {
         Lira<BaseElementExecutor<?>> map = element.getTaskList().lira().map(ElementExecutor::executor);
         executors = ImmutableList.of(map);

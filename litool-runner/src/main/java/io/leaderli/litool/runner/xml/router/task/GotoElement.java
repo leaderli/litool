@@ -2,7 +2,7 @@ package io.leaderli.litool.runner.xml.router.task;
 
 import io.leaderli.litool.runner.executor.GotoElementExecutor;
 
-public class GotoElement extends TaskElement<GotoElement, GotoElementExecutor> {
+public class GotoElement extends BaseElement<GotoElement, GotoElementExecutor> {
 
     private GotoDestination next;
 

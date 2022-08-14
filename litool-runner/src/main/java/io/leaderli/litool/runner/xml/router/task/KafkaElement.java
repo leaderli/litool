@@ -3,9 +3,9 @@ package io.leaderli.litool.runner.xml.router.task;
 import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.runner.LongExpression;
 import io.leaderli.litool.runner.event.EchoEvent;
-import io.leaderli.litool.runner.executor.EchoElementExecutor;
+import io.leaderli.litool.runner.executor.KafkaElementExecutor;
 
-public class EchoElement extends BaseElement<EchoElement, EchoElementExecutor> {
+public class KafkaElement extends BaseElement<KafkaElement, KafkaElementExecutor> {
 
     private int level = EchoEvent.DEBUG;
 

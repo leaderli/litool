@@ -6,7 +6,7 @@ import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.constant.VariablesModel;
 import io.leaderli.litool.runner.executor.AssignElementExecutor;
 
-public class AssignElement extends TaskElement<AssignElement, AssignElementExecutor> {
+public class AssignElement extends BaseElement<AssignElement, AssignElementExecutor> {
 
     private Expression name;
     private String value;
