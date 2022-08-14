@@ -4,7 +4,7 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.executor.ElementExecutor;
-import io.leaderli.litool.runner.executor.SequenceElementExecutor;
+import io.leaderli.litool.runner.executor.router.SequenceElementExecutor;
 
 import java.util.HashSet;
 import java.util.Set;

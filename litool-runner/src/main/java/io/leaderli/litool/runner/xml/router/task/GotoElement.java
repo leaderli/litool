@@ -1,6 +1,6 @@
 package io.leaderli.litool.runner.xml.router.task;
 
-import io.leaderli.litool.runner.executor.GotoElementExecutor;
+import io.leaderli.litool.runner.executor.router.task.GotoElementExecutor;
 
 public class GotoElement extends BaseElement<GotoElement, GotoElementExecutor> {
 

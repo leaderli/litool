@@ -7,10 +7,10 @@ import io.leaderli.litool.runner.ContextVisitor;
  * @author leaderli
  * @since 2022/8/9 5:02 PM
  */
-public abstract class BaseElementExecutor<T extends SaxBean> implements ContextVisitor {
-    public final T element;
+public abstract class BaseElementExecutor<S extends SaxBean> implements ContextVisitor {
+    public final S element;
 
-    public BaseElementExecutor(T element) {
+    public BaseElementExecutor(S element) {
         this.element = element;
     }
 }

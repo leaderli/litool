@@ -5,7 +5,7 @@ import io.leaderli.litool.runner.executor.BaseElementExecutor;
 import io.leaderli.litool.runner.executor.ElementExecutor;
 import io.leaderli.litool.runner.xml.SaxBeanWithID;
 
-public abstract class BaseElement<R extends SaxBean & ElementExecutor<R, T>, T extends BaseElementExecutor<R>> extends SaxBeanWithID implements ElementExecutor<R, T> {
+public abstract class BaseElement<S extends SaxBean & ElementExecutor<S, E>, E extends BaseElementExecutor<S>> extends SaxBeanWithID implements ElementExecutor<S, E> {
 
 
 }

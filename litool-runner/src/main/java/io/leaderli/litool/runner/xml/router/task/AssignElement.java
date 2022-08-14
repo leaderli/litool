@@ -4,7 +4,7 @@ import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.constant.VariablesModel;
-import io.leaderli.litool.runner.executor.AssignElementExecutor;
+import io.leaderli.litool.runner.executor.router.task.AssignElementExecutor;
 
 public class AssignElement extends BaseElement<AssignElement, AssignElementExecutor> {
 

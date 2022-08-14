@@ -1,37 +1,19 @@
 package io.leaderli.litool.runner.xml.router.task;
 
-import io.leaderli.litool.dom.sax.BodyEvent;
-import io.leaderli.litool.runner.LongExpression;
-import io.leaderli.litool.runner.event.EchoEvent;
-import io.leaderli.litool.runner.executor.KafkaElementExecutor;
+import io.leaderli.litool.runner.event.KafkaEvent;
+import io.leaderli.litool.runner.executor.router.task.KafkaElementExecutor;
 
-public class KafkaElement extends BaseElement<KafkaElement, KafkaElementExecutor> {
+public class KafkaElement extends BaseEventElement<KafkaElement, KafkaElementExecutor, KafkaEvent> {
 
-    private int level = EchoEvent.DEBUG;
+    private String topic = "";
 
-    private LongExpression longExpression;
 
-    public Integer getLevel() {
-        return level;
+    public String getTopic() {
+        return topic;
     }
 
-    public void setLevel(Integer level) {
-        this.level = level;
-    }
-
-    public LongExpression getLongExpression() {
-        return longExpression;
-    }
-
-    public void setLongExpression(LongExpression longExpression) {
-        this.longExpression = longExpression;
-    }
-
-
-    @Override
-    public void body(BodyEvent bodyEvent) {
-        String message = bodyEvent.description();
-        this.longExpression = new LongExpression(message);
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 
 
