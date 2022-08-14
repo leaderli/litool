@@ -36,6 +36,7 @@ public class StrSubstitution {
 
         List<SubstitutionModel> substitutionModelList = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
+        // 解析状态机
         for (char c : text.toCharArray()) {
 
             switch (state) {
@@ -99,24 +100,27 @@ public class StrSubstitution {
 
     private static class VariablesFunction implements Function<String, String> {
 
-        private final Object[] args;
+        private final Object[] variables;
         private final List<String> keys = new ArrayList<>();
-        private int length = 0;
+        /**
+         * 当前填充的角标位置，当遇到新变量时，角标位置+1
+         */
+        private int index = 0;
 
-        private VariablesFunction(Object[] args) {
-            this.args = args;
+        private VariablesFunction(Object[] variables) {
+            this.variables = variables;
         }
 
         @Override
         public String apply(String s) {
 
-            int index = keys.indexOf(s);
-            if (index > -1) {
-                return args[index] + "";
+            int find = keys.indexOf(s);
+            if (find > -1) {
+                return variables[find] + "";
             }
-            if (this.length < args.length) {
+            if (this.index < variables.length) {
                 keys.add(s);
-                return args[this.length++] + "";
+                return variables[this.index++] + "";
             }
             return "";
         }
