@@ -2,19 +2,24 @@ package io.leaderli.litool.runner.check;
 
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.sax.SaxBean;
+import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.TypeAlias;
-import io.leaderli.litool.runner.xml.router.task.CoordinateElement;
+import io.leaderli.litool.runner.xml.router.task.IfElement;
 
-public class CoordinateElementCheckVisitor extends ElementCheckVisitor<CoordinateElement> {
+public class IfElementExpressionCheckVisitor extends ElementCheckVisitor<IfElement> {
 
 
-    public CoordinateElementCheckVisitor(CoordinateElement coordinateElement) {
-        super(coordinateElement);
+    public IfElementExpressionCheckVisitor(IfElement ifElement) {
+        super(ifElement);
     }
 
+    @Override
+    public void visit0(CheckVisitor visitor) {
+        visit0(element, visitor, false);
+    }
 
     @Override
-    public void visit(CoordinateElement coordinate, SaxBean saxBean) {
+    public void visit(Expression expression, SaxBean saxBean) {
         Inner inner = new Inner();
         ExpressionCheckVisitor visitor = new ExpressionCheckVisitor(inner);
         this.visit(visitor);
@@ -27,19 +32,20 @@ public class CoordinateElementCheckVisitor extends ElementCheckVisitor<Coordinat
         public void request(String name, String id) {
             mainElement.getRequest().entryList.lira()
                     .first(entry -> StringUtils.equals(name, entry.getKey()))
-                    .ifPresent(entry -> addErrorMsgs(TypeAlias.getType(entry.getType()) == String.class, String.format("coordinate expression [%s] only support string %s", name, id)));
+                    .ifPresent(entry -> addErrorMsgs(TypeAlias.getType(entry.getType()) == Boolean.class, String.format("cond expression [%s] only support boolean%s", name, id)));
         }
 
         @Override
         public void response(String name, String id) {
-            mainElement.getResponse().entryList.lira()
-                    .first(entry -> StringUtils.equals(name, entry.getKey()))
-                    .ifPresent(entry -> addErrorMsgs(TypeAlias.getType(entry.getType()) == String.class, String.format("coordinate expression [%s] only support string %s", name, id)));
+            throw new UnsupportedOperationException();
+
         }
 
         @Override
         public void func(String name, String id) {
-            throw new UnsupportedOperationException();
+            mainElement.getFuncs().getFuncList().lira()
+                    .first(func -> StringUtils.equals(name, func.getName()))
+                    .ifPresent(entry -> addErrorMsgs(TypeAlias.getType(entry.getType()) == Boolean.class, String.format("cond expression [%s] only support boolean%s", name, id)));
         }
 
         @Override

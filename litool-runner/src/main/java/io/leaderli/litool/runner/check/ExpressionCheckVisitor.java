@@ -24,14 +24,6 @@ public class ExpressionCheckVisitor extends CheckVisitor {
         this.modelCheckVisitor = modelCheckVisitor;
     }
 
-//    @Override
-//    public void visit(CheckVisitor visitor) {
-//        super.visit(visitor);
-////        modelCheckVisitor.setMainElement(this.mainElement);
-////        modelCheckVisitor.setParseErrorMsgs(this.parseErrorMsgs);
-//    }
-
-
 
     @Override
     public void init() {
@@ -70,9 +62,12 @@ public class ExpressionCheckVisitor extends CheckVisitor {
 
     @Override
     public void visit(IfElement ifElement, SaxBean saxBean) {
-        Expression cond = ifElement.getCond();
-        visit(cond, saxBean);
+        IfElementExpressionCheckVisitor visitor = new IfElementExpressionCheckVisitor(ifElement);
+        visitor.setMainElement(mainElement);
+        visitor.setParseErrorMsgs(parseErrorMsgs);
+        visitor.visit();
     }
+
     @Override
     public void visit(LongExpression longExpression, SaxBean saxBean) {
 
@@ -86,9 +81,9 @@ public class ExpressionCheckVisitor extends CheckVisitor {
 
     @Override
     public void visit(CoordinateElement coordinate, SaxBean saxBean) {
-        CoordinateElementCheckVisitor coordinateElementCheckVisitor = new CoordinateElementCheckVisitor(coordinate);
-        coordinateElementCheckVisitor.setMainElement(mainElement);
-        coordinateElementCheckVisitor.setParseErrorMsgs(parseErrorMsgs);
-        coordinateElementCheckVisitor.visit();
+        CoordinateExpressionElementCheckVisitor visitor = new CoordinateExpressionElementCheckVisitor(coordinate);
+        visitor.setMainElement(mainElement);
+        visitor.setParseErrorMsgs(parseErrorMsgs);
+        visitor.visit();
     }
 }

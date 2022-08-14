@@ -11,15 +11,9 @@ import io.leaderli.litool.runner.xml.funcs.FuncElement;
  * @author leaderli
  * @since 2022/8/13 3:12 PM
  */
-public class ModelCheckVisitor extends CheckVisitor {
-
-
+public class ModelCheckVisitor extends VisitorAdapter {
     public ModelCheckVisitor() {
     }
-
-
-
-
 
     public void func(String name, String id) {
         Lino<FuncElement> find_func = mainElement.getFuncs().getFuncList().lira().first(func -> StringUtils.equals(name, func.getName()));

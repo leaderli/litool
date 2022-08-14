@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<main>
+    <request>
+        <entry label="测试用时间">_testTime</entry>
+        <entry label="环境">_env</entry>
+        <entry label="美国运通百夫长">bfzType</entry>
+        <entry label="86开关">switch86</entry>
+        <entry label="语种标识">language</entry>
+        <entry label="分行内呼标识">isBankInline</entry>
+
+    </request>
+    <response>
+        <entry label="坐席队列">skill</entry>
+    </response>
+    <funcs>
+        <func name="time" label="当前时间" instruct="time" type="str">
+            <param type="str">HHmm</param>
+            <param type="str">$_testTime</param>
+            <param type="str">$_env</param>
+        </func>
+    </funcs>
+    <router>
+        <sequence name="main" label="主流程">
+            <unit label="百夫长">
+                <if cond="time()">
+                    <assign name="skill">002</assign>
+                    <goto next="sequence_c"/>
+                </if>
+            </unit>
+        </sequence>
+    </router>
+</main>

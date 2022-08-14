@@ -1,23 +1,17 @@
 package io.leaderli.litool.runner.check;
 
 import io.leaderli.litool.dom.sax.SaxBean;
-import io.leaderli.litool.dom.sax.SaxEventHandler;
 import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.LongExpression;
-import io.leaderli.litool.runner.xml.MainElement;
 import io.leaderli.litool.runner.xml.router.task.CoordinateElement;
 import io.leaderli.litool.runner.xml.router.task.GotoDestination;
 import io.leaderli.litool.runner.xml.router.task.IfElement;
-
-import java.util.List;
 
 /**
  * @author leaderli
  * @since 2022/8/13 4:28 PM
  */
-public abstract class CheckVisitor {
-    protected MainElement mainElement;
-    protected List<String> parseErrorMsgs;
+public abstract class CheckVisitor extends VisitorAdapter {
 
     public final void visit(CheckVisitor visitor) {
 
@@ -31,17 +25,7 @@ public abstract class CheckVisitor {
 
     }
 
-    public final void setMainElement(MainElement mainElement) {
-        this.mainElement = mainElement;
-    }
 
-    public final void setParseErrorMsgs(List<String> parseErrorMsgs) {
-        this.parseErrorMsgs = parseErrorMsgs;
-    }
-
-    public final void addErrorMsgs(boolean success, String error) {
-        SaxEventHandler.addErrorMsgs(parseErrorMsgs, success, error);
-    }
 
     public final void visit(Object obj, SaxBean saxBean) {
 
