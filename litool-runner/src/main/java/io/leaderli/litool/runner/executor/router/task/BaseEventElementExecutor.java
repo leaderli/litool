@@ -1,8 +1,9 @@
-package io.leaderli.litool.runner.executor;
+package io.leaderli.litool.runner.executor.router.task;
 
 import io.leaderli.litool.core.event.LiEventObject;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.runner.Context;
+import io.leaderli.litool.runner.executor.BaseElementExecutor;
 import io.leaderli.litool.runner.util.ExpressionUtil;
 import io.leaderli.litool.runner.xml.router.task.BaseEventElement;
 
@@ -10,8 +11,8 @@ import io.leaderli.litool.runner.xml.router.task.BaseEventElement;
  * @author leaderli
  * @since 2022/8/14
  */
-public abstract class EventElementExecutor<B extends BaseEventElement<B, ?, E>, E extends LiEventObject<?>> extends BaseElementExecutor<B> {
-    public EventElementExecutor(B element) {
+public abstract class BaseEventElementExecutor<B extends BaseEventElement<B, ?, E>, E extends LiEventObject<?>> extends BaseElementExecutor<B> {
+    public BaseEventElementExecutor(B element) {
         super(element);
     }
 

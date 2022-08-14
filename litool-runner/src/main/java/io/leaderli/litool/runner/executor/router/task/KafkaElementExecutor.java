@@ -1,10 +1,9 @@
 package io.leaderli.litool.runner.executor.router.task;
 
 import io.leaderli.litool.runner.event.KafkaEvent;
-import io.leaderli.litool.runner.executor.EventElementExecutor;
 import io.leaderli.litool.runner.xml.router.task.KafkaElement;
 
-public class KafkaElementExecutor extends EventElementExecutor<KafkaElement, KafkaEvent> {
+public class KafkaElementExecutor extends BaseEventElementExecutor<KafkaElement, KafkaEvent> {
     public KafkaElementExecutor(KafkaElement element) {
         super(element);
     }

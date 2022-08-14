@@ -3,9 +3,9 @@ package io.leaderli.litool.runner.xml.router.task;
 import io.leaderli.litool.core.event.LiEventObject;
 import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.runner.LongExpression;
-import io.leaderli.litool.runner.executor.EventElementExecutor;
+import io.leaderli.litool.runner.executor.router.task.BaseEventElementExecutor;
 
-public abstract class BaseEventElement<EL extends BaseEventElement<EL, EXE, EV>, EXE extends EventElementExecutor<EL, EV>, EV extends LiEventObject<?>> extends BaseElement<EL, EXE> {
+public abstract class BaseEventElement<B extends BaseEventElement<B, EXE, E>, EXE extends BaseEventElementExecutor<B, E>, E extends LiEventObject<?>> extends BaseElement<B, EXE> {
 
 
     protected LongExpression longExpression;
