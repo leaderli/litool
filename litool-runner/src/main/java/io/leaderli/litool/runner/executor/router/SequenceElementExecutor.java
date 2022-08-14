@@ -28,6 +28,7 @@ public class SequenceElementExecutor extends BaseElementExecutor<SequenceElement
             if (unitState == UnitStateConstant.INTERRUPT) {
                 break;
             }
+
             unitExecutor.visit(context);
         }
     }

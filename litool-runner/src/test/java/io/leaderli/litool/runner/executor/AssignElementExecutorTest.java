@@ -3,6 +3,7 @@ package io.leaderli.litool.runner.executor;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
+import io.leaderli.litool.runner.executor.router.task.AssignElementExecutor;
 import io.leaderli.litool.runner.xml.MainElement;
 import io.leaderli.litool.runner.xml.router.task.AssignElement;
 import org.junit.jupiter.api.Assertions;

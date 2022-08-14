@@ -27,13 +27,11 @@
                 </if>
                 <if cond="date_compare()">
                     <assign name="skill">002</assign>
-                    <goto next="sequence_c"/>
                 </if>
             </unit>
             <unit label="夜间">
                 <if>
                     <assign name="skill">003</assign>
-                    <goto next="sequence_a"/>
                 </if>
             </unit>
         </sequence>

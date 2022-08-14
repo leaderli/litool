@@ -27,17 +27,18 @@ public class UnitElementExecutor extends BaseElementExecutor<UnitElement> {
 
     @Override
     public void visit(Context context) {
+        context.setTemp(TempNameEnum.unit_state.name(),UnitStateConstant.CONTINUE);
         try {
             for (BaseElementExecutor<?> executor : executors) {
                 Integer unitState = context.getTemp(TempNameEnum.unit_state.name());
-                if (unitState == UnitStateConstant.INTERRUPT) {
+                if (unitState < UnitStateConstant.CONTINUE) {
                     break;
                 }
                 executor.visit(context);
             }
         } catch (Exception e) {
             //TODO 这里逻辑有问题
-            context.setTemp(TempNameEnum.unit_state.name(), UnitStateConstant.INTERRUPT);
+            context.setTemp(TempNameEnum.unit_state.name(), UnitStateConstant.ERROR);
             context.publishEvent(new UnitErrorEvent(element.id(), e));
         }
     }
