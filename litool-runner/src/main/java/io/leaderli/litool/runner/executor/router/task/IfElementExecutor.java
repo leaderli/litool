@@ -34,9 +34,7 @@ public class IfElementExecutor extends BaseElementExecutor<IfElement> {
                 if (unitState == UnitStateConstant.INTERRUPT) {
                     break;
                 }
-                if (executor instanceof GotoElementExecutor) {
-                    context.setTemp(TempNameEnum.unit_state.name(), UnitStateConstant.INTERRUPT);
-                }
+
                 executor.visit(context);
             }
         }

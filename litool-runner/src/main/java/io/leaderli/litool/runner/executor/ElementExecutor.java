@@ -9,9 +9,10 @@ import io.leaderli.litool.dom.sax.SaxBean;
  */
 public interface ElementExecutor<S extends SaxBean & ElementExecutor<S, E>, E extends BaseElementExecutor<S>> {
 
+    @SuppressWarnings("unchecked")
     default E executor() {
+        // 获取继承类指明的第二个泛型类
         Class<?> executorClass = ReflectUtil.getGenericInterfacesType(getClass(), ElementExecutor.class, 1).get();
-        //noinspection unchecked
         return (E) ReflectUtil.newInstance(executorClass, this).get();
 
     }

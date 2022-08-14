@@ -1,32 +1,34 @@
 package io.leaderli.litool.runner.check;
 
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.MethodUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.dom.sax.SaxList;
-import io.leaderli.litool.runner.Expression;
-import io.leaderli.litool.runner.LongExpression;
-import io.leaderli.litool.runner.util.ExpressionUtil;
-import io.leaderli.litool.runner.xml.router.task.CoordinateElement;
-import io.leaderli.litool.runner.xml.router.task.GotoDestination;
 
 /**
  * @author leaderli
  * @since 2022/8/13 2:41 PM
  */
-public abstract class ElementCheckVisitor extends CheckVisitorAdapter {
+public abstract class ElementCheckVisitor<T extends SaxBean> extends CheckVisitor {
 
+    protected final T element;
 
-    public void visit(CheckVisitor visitor) {
-        visitor.setMainElement(mainElement);
-        visitor.setParseErrorMsgs(this.parseErrorMsgs);
-        visit0(mainElement, visitor);
+    protected ElementCheckVisitor(T element) {
+        this.element = element;
     }
 
-    private void visit0(SaxBean saxBean, CheckVisitor visitor) {
+    @Override
+    public void visit0(CheckVisitor visitor) {
+        visit0(element, visitor);
+    }
+
+    public final void visit() {
+        super.visit(this);
+    }
+
+    protected void visit0(SaxBean saxBean, CheckVisitor visitor) {
 
         Lira<?> lira = ReflectUtil.getMethods(saxBean.getClass())
                 .filter(m -> m.getName().startsWith("get"))
@@ -45,38 +47,5 @@ public abstract class ElementCheckVisitor extends CheckVisitorAdapter {
         }
     }
 
-    @Override
-    public final void visit(Object obj, SaxBean saxBean) {
-        if (obj instanceof Expression) {
-            visit((Expression) obj, saxBean);
-        } else if (obj instanceof CoordinateElement) {
-            visit((CoordinateElement) obj, saxBean);
-        } else if (obj instanceof GotoDestination) {
-            visit((GotoDestination) obj, saxBean);
-        } else if (obj instanceof LongExpression) {
-            visit((LongExpression) obj, saxBean);
-        }
 
-    }
-
-    public void visit(Expression expression, SaxBean saxBean) {
-
-    }
-
-    public void visit(LongExpression longExpression, SaxBean saxBean) {
-
-        // 依次对占位符进行校验
-        StrSubstitution.replace(longExpression.getExpr(), expr -> {
-            visit(ExpressionUtil.getExpression(expr), saxBean);
-            return null;
-        });
-    }
-
-    public void visit(CoordinateElement coordinate, SaxBean saxBean) {
-
-    }
-
-    public void visit(GotoDestination gotoDestination, SaxBean saxBean) {
-
-    }
 }

@@ -2,6 +2,7 @@ package io.leaderli.litool.core.event;
 
 
 import io.leaderli.litool.core.type.ComponentType;
+import io.leaderli.litool.core.type.ReflectUtil;
 
 /**
  * 用来监听事件的监听器
@@ -25,5 +26,12 @@ public interface ILiEventListener<T> extends ComponentType<T> {
     default boolean removeIf() {
         return false;
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    default Class<T> componentType(){
+        return (Class<T>) ReflectUtil.getGenericInterfacesType(getClass(),ILiEventListener.class).get();
+    }
+
 
 }

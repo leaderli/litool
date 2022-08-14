@@ -5,6 +5,7 @@ import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.TempNameEnum;
 import io.leaderli.litool.runner.constant.UnitStateConstant;
+import io.leaderli.litool.runner.event.UnitErrorEvent;
 import io.leaderli.litool.runner.executor.BaseElementExecutor;
 import io.leaderli.litool.runner.executor.ElementExecutor;
 import io.leaderli.litool.runner.xml.router.UnitElement;
@@ -36,6 +37,7 @@ public class UnitElementExecutor extends BaseElementExecutor<UnitElement> {
             }
         } catch (Exception e) {
             context.setTemp(TempNameEnum.unit_state.name(), UnitStateConstant.INTERRUPT);
+            context.publishEvent(new UnitErrorEvent(element.id(),e));
         }
     }
 }

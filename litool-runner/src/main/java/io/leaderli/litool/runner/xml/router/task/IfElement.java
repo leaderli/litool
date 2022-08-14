@@ -3,7 +3,6 @@ package io.leaderli.litool.runner.xml.router.task;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.runner.Expression;
-import io.leaderli.litool.runner.constant.VariablesModel;
 import io.leaderli.litool.runner.executor.router.task.IfElementExecutor;
 
 import static io.leaderli.litool.runner.constant.VariablesModel.*;
@@ -39,7 +38,8 @@ public class IfElement extends TaskElement<IfElement, IfElementExecutor> {
                         || cond.getModel().matchAny(FUNC, REQUEST, LITERAL)
                 , "variable cond can only use func ref or request ref or string");
 
-        if (cond.getModel() == VariablesModel.LITERAL) {
+
+        if (cond.getModel() == LITERAL) {
             cond.setObject(StringUtils.equals(name, "") || Boolean.parseBoolean(name));
         }
         this.cond = cond;

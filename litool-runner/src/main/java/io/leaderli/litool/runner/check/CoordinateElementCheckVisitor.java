@@ -5,7 +5,12 @@ import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.TypeAlias;
 import io.leaderli.litool.runner.xml.router.task.CoordinateElement;
 
-public class CoordinateModelCheckVisitor extends ElementCheckVisitor {
+public class CoordinateElementCheckVisitor extends ElementCheckVisitor<CoordinateElement> {
+
+
+    public CoordinateElementCheckVisitor(CoordinateElement coordinateElement) {
+        super(coordinateElement);
+    }
 
 
     @Override

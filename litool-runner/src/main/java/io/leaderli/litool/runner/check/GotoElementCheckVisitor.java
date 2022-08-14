@@ -5,8 +5,14 @@ import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.xml.router.SequenceElement;
 import io.leaderli.litool.runner.xml.router.task.GotoDestination;
+import io.leaderli.litool.runner.xml.router.task.GotoElement;
 
-public class GotoElementCheckVisitor extends ElementCheckVisitor {
+public class GotoElementCheckVisitor extends ElementCheckVisitor<GotoElement> {
+
+
+    protected GotoElementCheckVisitor(GotoElement element) {
+        super(element);
+    }
 
     @Override
     public void visit(GotoDestination gotoDestination, SaxBean saxBean) {
