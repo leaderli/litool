@@ -2,11 +2,11 @@ package io.leaderli.litool.runner.xml.router;
 
 import io.leaderli.litool.core.event.ILiEventListener;
 import io.leaderli.litool.core.meta.LiTuple2;
-import io.leaderli.litool.core.util.ConsoleUtil;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.event.UnitErrorEvent;
 import io.leaderli.litool.runner.xml.MainElement;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -23,8 +23,6 @@ class UnitElementTest {
         SaxEventInterceptor<MainElement> interceptor = new SaxEventInterceptor<>(MainElement.class);
         MainElement element = interceptor.parse("unit_error.xml");
 
-        System.out.println(interceptor.getParseErrorMsgs());
-        ConsoleUtil.println(interceptor.getParseErrorMsgs());
         Map<String, String> request = new HashMap<>();
         request.put("bfzType", "1");
 
@@ -36,15 +34,16 @@ class UnitElementTest {
             public void listen(UnitErrorEvent source) {
 
                 LiTuple2<String, Throwable> tuple = source.getSource().get();
-                System.out.println(tuple);
+//                tuple._2.printStackTrace();
+//                System.out.println(tuple);
             }
         };
 //        System.out.println(listener.componentType());
         context.registerListener(listener);
         element.executor().visit(context);
         CharSequence skill = context.getResponse("skill");
-        System.out.println(skill);
 
+        Assertions.assertEquals("003", skill);
     }
 
 }

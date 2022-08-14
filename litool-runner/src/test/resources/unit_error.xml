@@ -13,8 +13,8 @@
         <entry label="坐席队列">skill</entry>
     </response>
     <funcs>
-        <func name="time" label="当前时间" instruct="time" type="str">
-            <param type="str">HHmm</param>
+        <func name="date_compare" label="当前时间" instruct="time" type="str">
+            <param type="op">gt</param>
             <param type="str">$_testTime</param>
             <param type="str">$_env</param>
         </func>
@@ -25,7 +25,7 @@
                 <if>
                     <assign name="skill">001</assign>
                 </if>
-                <if cond="time()">
+                <if cond="date_compare()">
                     <assign name="skill">002</assign>
                     <goto next="sequence_c"/>
                 </if>

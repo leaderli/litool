@@ -9,7 +9,7 @@ import static io.leaderli.litool.runner.constant.VariablesModel.*;
 
 public class IfElement extends TaskElement<IfElement, IfElementExecutor> {
 
-    private Expression cond = new Expression("true");
+    private Expression cond = new Expression(true, LITERAL);
 
     public void addAssign(AssignElement element) {
         taskList.add(element);
