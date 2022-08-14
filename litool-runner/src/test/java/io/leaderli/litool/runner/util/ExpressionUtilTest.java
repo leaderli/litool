@@ -1,6 +1,6 @@
 package io.leaderli.litool.runner.util;
 
-import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.constant.VariablesModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,51 +10,51 @@ class ExpressionUtilTest {
     @Test
     void getExpression_blank() {
 
-        LiTuple2<String, VariablesModel> expression = ExpressionUtil.getExpression(null);
-        Assertions.assertSame(expression._2, VariablesModel.ERROR);
+        Expression  expression = ExpressionUtil.getExpression(null);
+        Assertions.assertSame(expression.getModel(), VariablesModel.ERROR);
 
         expression = ExpressionUtil.getExpression("");
-        Assertions.assertSame(expression._2, VariablesModel.LITERAL);
+        Assertions.assertSame(expression.getModel(), VariablesModel.LITERAL);
 
     }
 
     @Test
     void getExpression_literal() {
 
-        LiTuple2<String, VariablesModel> expression = ExpressionUtil.getExpression("123");
-        Assertions.assertEquals(expression._1, "123");
-        Assertions.assertSame(expression._2, VariablesModel.LITERAL);
+        Expression expression = ExpressionUtil.getExpression("123");
+        Assertions.assertEquals(expression.getName(), "123");
+        Assertions.assertSame(expression.getModel(), VariablesModel.LITERAL);
     }
 
     @Test
     void getExpression_request() {
 
-        LiTuple2<String, VariablesModel> expression = ExpressionUtil.getExpression("$123");
-        Assertions.assertEquals(expression._1, "123");
-        Assertions.assertSame(expression._2, VariablesModel.REQUEST);
+        Expression expression = ExpressionUtil.getExpression("$123");
+        Assertions.assertEquals(expression.getName(), "123");
+        Assertions.assertSame(expression.getModel(), VariablesModel.REQUEST);
     }
 
     @Test
     void getExpression_response() {
 
-        LiTuple2<String, VariablesModel> expression = ExpressionUtil.getExpression("@123");
-        Assertions.assertEquals(expression._1, "123");
-        Assertions.assertSame(expression._2, VariablesModel.RESPONSE);
+        Expression expression = ExpressionUtil.getExpression("@123");
+        Assertions.assertEquals(expression.getName(), "123");
+        Assertions.assertSame(expression.getModel(), VariablesModel.RESPONSE);
     }
 
     @Test
     void getExpression_temp() {
 
-        LiTuple2<String, VariablesModel> expression = ExpressionUtil.getExpression("#123");
-        Assertions.assertEquals(expression._1, "123");
-        Assertions.assertSame(expression._2, VariablesModel.TEMP);
+        Expression expression = ExpressionUtil.getExpression("#123");
+        Assertions.assertEquals(expression.getName(), "123");
+        Assertions.assertSame(expression.getModel(), VariablesModel.TEMP);
     }
 
     @Test
     void getExpression_func() {
 
-        LiTuple2<String, VariablesModel> expression = ExpressionUtil.getExpression("123()");
-        Assertions.assertEquals(expression._1, "123");
-        Assertions.assertSame(expression._2, VariablesModel.FUNC);
+        Expression expression = ExpressionUtil.getExpression("123()");
+        Assertions.assertEquals(expression.getName(), "123");
+        Assertions.assertSame(expression.getModel(), VariablesModel.FUNC);
     }
 }

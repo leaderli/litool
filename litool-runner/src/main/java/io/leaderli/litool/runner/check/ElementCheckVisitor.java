@@ -1,13 +1,15 @@
 package io.leaderli.litool.runner.check;
 
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.MethodUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.dom.sax.SaxList;
 import io.leaderli.litool.runner.Expression;
-import io.leaderli.litool.runner.ExpressionList;
+import io.leaderli.litool.runner.LongExpression;
+import io.leaderli.litool.runner.util.ExpressionUtil;
 import io.leaderli.litool.runner.xml.router.task.CoordinateElement;
 import io.leaderli.litool.runner.xml.router.task.GotoDestination;
 
@@ -43,6 +45,7 @@ public abstract class ElementCheckVisitor extends CheckVisitorAdapter {
         }
     }
 
+    @Override
     public final void visit(Object obj, SaxBean saxBean) {
         if (obj instanceof Expression) {
             visit((Expression) obj, saxBean);
@@ -50,8 +53,8 @@ public abstract class ElementCheckVisitor extends CheckVisitorAdapter {
             visit((CoordinateElement) obj, saxBean);
         } else if (obj instanceof GotoDestination) {
             visit((GotoDestination) obj, saxBean);
-        } else if (obj instanceof ExpressionList) {
-            visit((ExpressionList) obj,saxBean);
+        } else if (obj instanceof LongExpression) {
+            visit((LongExpression) obj, saxBean);
         }
 
     }
@@ -60,9 +63,15 @@ public abstract class ElementCheckVisitor extends CheckVisitorAdapter {
 
     }
 
-    public void visit(ExpressionList expressionList, SaxBean saxBean) {
-        expressionList.getExpressionList().forEach(e -> this.visit(e,saxBean));
+    public void visit(LongExpression longExpression, SaxBean saxBean) {
+
+        // 依次对占位符进行校验
+        StrSubstitution.replace(longExpression.getExpr(), expr -> {
+            visit(ExpressionUtil.getExpression(expr), saxBean);
+            return null;
+        });
     }
+
     public void visit(CoordinateElement coordinate, SaxBean saxBean) {
 
     }

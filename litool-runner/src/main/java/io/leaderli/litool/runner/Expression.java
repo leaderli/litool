@@ -1,6 +1,5 @@
 package io.leaderli.litool.runner;
 
-import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.runner.constant.VariablesModel;
 import io.leaderli.litool.runner.util.ExpressionUtil;
 
@@ -13,9 +12,14 @@ public class Expression {
     }
 
     public Expression(String expr) {
-        LiTuple2<String, VariablesModel> name_model = ExpressionUtil.getExpression(expr);
-        this.name = name_model._1;
-        this.model = name_model._2;
+        Expression expression = ExpressionUtil.getExpression(expr);
+        this.name = expression.getName();
+        this.model = expression.getModel();
+    }
+
+    public Expression(Object name, VariablesModel model) {
+        this.name = name;
+        this.model = model;
     }
 
     public void setObject(Object obj) {

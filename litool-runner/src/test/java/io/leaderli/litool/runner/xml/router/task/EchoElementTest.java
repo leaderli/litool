@@ -13,6 +13,8 @@ import java.util.HashMap;
 
 public class EchoElementTest {
 
+
+
     @Test
     void success() {
         SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
@@ -20,8 +22,8 @@ public class EchoElementTest {
         MainElement mainElement = dfs.parse("router/task/echo.xml");
 
         Context context = new Context(new HashMap<>());
-        context.setResponse("Code","114514");
-        context.setTemp("coordinate","你好");
+        context.setResponse("Code", "114514");
+        context.setTemp("coordinate", "你好");
         context.registerListener(new ILiEventListener<EchoElementExecutor.EchoEvent>() {
             @Override
             public void listen(EchoElementExecutor.EchoEvent source) {
@@ -34,6 +36,6 @@ public class EchoElementTest {
             }
         });
         mainElement.executor().visit(context);
-        LiAssertUtil.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0),"response variable [Code] not exists"));
+        LiAssertUtil.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "response variable [Code] not exists"));
     }
 }
