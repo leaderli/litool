@@ -2,7 +2,8 @@ package io.leaderli.litool.runner.instruct;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BetweenTimeInstructTest {
 

@@ -3,7 +3,6 @@ package io.leaderli.litool.runner.check;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
-import io.leaderli.litool.dom.sax.SaxEventHandler;
 import io.leaderli.litool.runner.TempNameEnum;
 import io.leaderli.litool.runner.xml.EntryElement;
 import io.leaderli.litool.runner.xml.funcs.FuncElement;

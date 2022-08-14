@@ -1,12 +1,5 @@
 package io.leaderli.litool.runner.check;
 
-import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.type.ClassUtil;
-import io.leaderli.litool.core.type.MethodUtil;
-import io.leaderli.litool.core.type.ReflectUtil;
-import io.leaderli.litool.dom.sax.SaxBean;
-import io.leaderli.litool.dom.sax.SaxEventHandler;
-import io.leaderli.litool.dom.sax.SaxList;
 import io.leaderli.litool.runner.xml.MainElement;
 
 import java.util.List;
