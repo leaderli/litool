@@ -5,7 +5,6 @@ import io.leaderli.litool.runner.LongExpression;
 import io.leaderli.litool.runner.executor.EchoElementExecutor;
 
 public class EchoElement extends TaskElement<EchoElement, EchoElementExecutor> {
-    private static final String EXPRESSION_PATTERN = "\\{[^}]*}";
 
     private LongExpression longExpression;
 
