@@ -32,7 +32,7 @@ public class ExpressionCheckVisitor extends CheckVisitor {
     }
 
     @Override
-    public void visit(Expression expression, SaxBean saxBean) {
+    public void check(Expression expression, SaxBean saxBean) {
 
 
         VariablesModel model = expression.getModel();
@@ -61,7 +61,7 @@ public class ExpressionCheckVisitor extends CheckVisitor {
     }
 
     @Override
-    public void visit(IfElement ifElement, SaxBean saxBean) {
+    public void check(IfElement ifElement, SaxBean saxBean) {
         IfElementExpressionCheckVisitor visitor = new IfElementExpressionCheckVisitor(ifElement);
         visitor.setMainElement(mainElement);
         visitor.setParseErrorMsgs(parseErrorMsgs);
@@ -69,18 +69,18 @@ public class ExpressionCheckVisitor extends CheckVisitor {
     }
 
     @Override
-    public void visit(LongExpression longExpression, SaxBean saxBean) {
+    public void check(LongExpression longExpression, SaxBean saxBean) {
 
         // 依次对占位符进行校验
         StrSubstitution.replace(longExpression.getExpr(), expr -> {
-            visit(ExpressionUtil.getExpression(expr), saxBean);
+            check(ExpressionUtil.getExpression(expr), saxBean);
             return null;
         });
     }
 
 
     @Override
-    public void visit(CoordinateElement coordinate, SaxBean saxBean) {
+    public void check(CoordinateElement coordinate, SaxBean saxBean) {
         CoordinateExpressionElementCheckVisitor visitor = new CoordinateExpressionElementCheckVisitor(coordinate);
         visitor.setMainElement(mainElement);
         visitor.setParseErrorMsgs(parseErrorMsgs);

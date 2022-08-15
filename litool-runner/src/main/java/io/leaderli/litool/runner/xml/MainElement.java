@@ -69,9 +69,9 @@ public class MainElement extends SaxBean implements ElementExecutor<MainElement,
         ExpressionCheckVisitor expressionCheckVisitor = new ExpressionCheckVisitor(new ModelCheckVisitor());
 //        expressionCheckVisitor.setMainElement(this);
 //        expressionCheckVisitor.setParseErrorMsgs(parseErrorMsgs);
-        mainCheckVisitor.visit(expressionCheckVisitor);
+        mainCheckVisitor.check(expressionCheckVisitor);
 
-        mainCheckVisitor.visit(new GotoElementCheckVisitor());
+        mainCheckVisitor.check(new GotoElementCheckVisitor());
 //        mainCheckVisitor.visit();
 
     }

@@ -14,15 +14,15 @@ public class IfElementExpressionCheckVisitor extends ElementCheckVisitor<IfEleme
     }
 
     @Override
-    public void visit0(CheckVisitor visitor) {
-        visit0(element, visitor, false);
+    public void visit(CheckVisitor visitor) {
+        visit(element, visitor, false);
     }
 
     @Override
-    public void visit(Expression expression, SaxBean saxBean) {
+    public void check(Expression expression, SaxBean saxBean) {
         Inner inner = new Inner();
         ExpressionCheckVisitor visitor = new ExpressionCheckVisitor(inner);
-        this.visit(visitor);
+        this.check(visitor);
     }
 
     private static class Inner extends ModelCheckVisitor {

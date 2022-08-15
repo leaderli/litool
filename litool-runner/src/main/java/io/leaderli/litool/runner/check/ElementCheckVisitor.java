@@ -20,15 +20,15 @@ public abstract class ElementCheckVisitor<T extends SaxBean> extends CheckVisito
     }
 
     @Override
-    public void visit0(CheckVisitor visitor) {
-        visit0(element, visitor, true);
+    public void visit(CheckVisitor visitor) {
+        visit(element, visitor, true);
     }
 
     public final void visit() {
-        super.visit(this);
+        super.check(this);
     }
 
-    protected void visit0(SaxBean saxBean, CheckVisitor visitor, boolean deep) {
+    protected void visit(SaxBean saxBean, CheckVisitor visitor, boolean deep) {
 
         Lira<?> lira = ReflectUtil.getMethods(saxBean.getClass())
                 .filter(m -> m.getName().startsWith("get"))
@@ -38,16 +38,16 @@ public abstract class ElementCheckVisitor<T extends SaxBean> extends CheckVisito
                 .map(m -> ReflectUtil.getMethodValue(m, saxBean).get());
 
         for (Object obj : lira) {
-            visitor.visit(obj, saxBean);
+            visitor.check(obj, saxBean);
             if (deep) {
                 if (obj instanceof SaxBean) {
-                    visit0((SaxBean) obj, visitor, true);
+                    visit((SaxBean) obj, visitor, true);
                 } else if (obj instanceof SaxList) {
 
                     for (SaxBean sax : ((SaxList<?>) obj).lira()) {
 //                        ConsoleUtil.print(this,saxBean.tag(),sax.tag());
-                        visitor.visit(sax, saxBean);
-                        this.visit0(sax, visitor, true);
+                        visitor.check(sax, saxBean);
+                        this.visit(sax, visitor, true);
                     }
                 }
             }

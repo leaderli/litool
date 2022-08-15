@@ -15,10 +15,10 @@ public class CoordinateExpressionElementCheckVisitor extends ElementCheckVisitor
 
 
     @Override
-    public void visit(Expression expression, SaxBean saxBean) {
+    public void check(Expression expression, SaxBean saxBean) {
         Inner inner = new Inner();
         ExpressionCheckVisitor visitor = new ExpressionCheckVisitor(inner);
-        this.visit(visitor);
+        this.check(visitor);
     }
 
     private static class Inner extends ModelCheckVisitor {

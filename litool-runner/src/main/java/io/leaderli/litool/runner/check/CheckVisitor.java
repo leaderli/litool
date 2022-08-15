@@ -13,52 +13,52 @@ import io.leaderli.litool.runner.xml.router.task.IfElement;
  */
 public abstract class CheckVisitor extends VisitorAdapter {
 
-    public final void visit(CheckVisitor visitor) {
+    public final void check(CheckVisitor visitor) {
 
         visitor.setMainElement(mainElement);
         visitor.setParseErrorMsgs(this.parseErrorMsgs);
         visitor.init();
-        visit0(visitor);
+        visit(visitor);
     }
 
-    protected void visit0(CheckVisitor visitor) {
+    protected void visit(CheckVisitor visitor) {
 
     }
 
 
 
-    public final void visit(Object obj, SaxBean saxBean) {
+    public final void check(Object obj, SaxBean saxBean) {
 
         if (obj instanceof Expression) {
-            visit((Expression) obj, saxBean);
+            check((Expression) obj, saxBean);
         } else if (obj instanceof CoordinateElement) {
-            visit((CoordinateElement) obj, saxBean);
+            check((CoordinateElement) obj, saxBean);
         } else if (obj instanceof GotoDestination) {
-            visit((GotoDestination) obj, saxBean);
+            check((GotoDestination) obj, saxBean);
         } else if (obj instanceof LongExpression) {
-            visit((LongExpression) obj, saxBean);
+            check((LongExpression) obj, saxBean);
         } else if (obj instanceof IfElement) {
-            visit((IfElement) obj, saxBean);
+            check((IfElement) obj, saxBean);
         }
     }
 
-    public void visit(IfElement ifElement, SaxBean saxBean) {
+    public void check(IfElement ifElement, SaxBean saxBean) {
 
     }
 
-    public void visit(Expression expression, SaxBean saxBean) {
+    public void check(Expression expression, SaxBean saxBean) {
 
     }
 
-    public void visit(LongExpression longExpression, SaxBean saxBean) {
+    public void check(LongExpression longExpression, SaxBean saxBean) {
 
     }
 
-    public void visit(CoordinateElement coordinate, SaxBean saxBean) {
+    public void check(CoordinateElement coordinate, SaxBean saxBean) {
 
     }
 
-    public void visit(GotoDestination gotoDestination, SaxBean saxBean) {
+    public void check(GotoDestination gotoDestination, SaxBean saxBean) {
 
 
     }
