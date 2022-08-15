@@ -2,6 +2,7 @@ package io.leaderli.litool.runner.xml;
 
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.check.ExpressionCheckVisitor;
+import io.leaderli.litool.runner.check.GotoElementCheckVisitor;
 import io.leaderli.litool.runner.check.MainCheckVisitor;
 import io.leaderli.litool.runner.check.ModelCheckVisitor;
 import io.leaderli.litool.runner.executor.ElementExecutor;
@@ -66,6 +67,8 @@ public class MainElement implements SaxBean, ElementExecutor<MainElement, MainEl
 //        expressionCheckVisitor.setMainElement(this);
 //        expressionCheckVisitor.setParseErrorMsgs(parseErrorMsgs);
         mainCheckVisitor.visit(expressionCheckVisitor);
+
+        mainCheckVisitor.visit(new GotoElementCheckVisitor());
 //        mainCheckVisitor.visit();
 
     }
