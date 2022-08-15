@@ -11,10 +11,14 @@ import java.util.Objects;
  * @author leaderli
  * @since 2022/7/23
  */
-public class ResponseElement implements SaxBean, ElementExecutor<ResponseElement, ResponseElementExecutor> {
+public class ResponseElement extends SaxBean implements ElementExecutor<ResponseElement, ResponseElementExecutor> {
 
 
-    public EntryList entryList = new EntryList();
+    public final EntryList entryList = new EntryList();
+
+    public ResponseElement() {
+        super("response");
+    }
 
     public void addEntry(EntryElement element) {
         entryList.lira().iterator().forEachRemaining(entry -> {
@@ -24,10 +28,10 @@ public class ResponseElement implements SaxBean, ElementExecutor<ResponseElement
         this.entryList.add(element);
     }
 
-    @Override
-    public String tag() {
-        return "response";
+    public EntryList getEntryList() {
+        return entryList;
     }
+
 
 
 

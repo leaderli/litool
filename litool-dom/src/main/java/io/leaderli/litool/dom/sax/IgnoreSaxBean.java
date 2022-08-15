@@ -4,8 +4,12 @@ package io.leaderli.litool.dom.sax;
  * @author leaderli
  * @since 2022/7/24
  */
-public class IgnoreSaxBean implements SaxBean, SaxEventHandler {
+public class IgnoreSaxBean extends SaxBean implements SaxEventHandler {
 
+
+    public IgnoreSaxBean() {
+        super("");
+    }
 
     @Override
     public void start(StartEvent startEvent) {

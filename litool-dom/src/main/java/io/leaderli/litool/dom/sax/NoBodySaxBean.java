@@ -4,8 +4,12 @@ package io.leaderli.litool.dom.sax;
  * @author leaderli
  * @since 2022/7/24
  */
-public interface NoBodySaxBean extends SaxBean {
+public abstract class NoBodySaxBean extends SaxBean {
+    public NoBodySaxBean(String tag) {
+        super(tag);
+    }
+
     @Override
-    default void body(BodyEvent bodyEvent) {
+   public void body(BodyEvent bodyEvent) {
     }
 }

@@ -11,15 +11,15 @@ public class AssignElement extends BaseElement<AssignElement, AssignElementExecu
     private Expression name;
     private String value;
 
+    public AssignElement() {
+        super("assign");
+    }
+
     @Override
     public void body(BodyEvent bodyEvent) {
         this.value = bodyEvent.description();
     }
 
-    @Override
-    public String tag() {
-        return "assign";
-    }
 
     public Expression getName() {
         return name;

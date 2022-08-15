@@ -21,7 +21,7 @@ class GenerateXmlIDTest {
 
         SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
         MainElement main = dfs.parse(inputStream);
-        Assertions.assertEquals("2", main.getRequest().entryList.lira().first().get().id());
+        Assertions.assertEquals("2", main.getRequest().entryList.lira().first().get().getId());
 
 
     }

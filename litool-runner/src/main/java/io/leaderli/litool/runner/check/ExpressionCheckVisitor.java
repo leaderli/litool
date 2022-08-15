@@ -37,7 +37,7 @@ public class ExpressionCheckVisitor extends CheckVisitor {
 
         VariablesModel model = expression.getModel();
         String name = expression.getName();
-        String id = saxBean.id();
+        String id = saxBean.getId();
         id = Lino.of(id).filter(StringUtils::isNotBlank).map(i -> " id:" + i).get("");
         switch (model) {
             case FUNC:

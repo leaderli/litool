@@ -9,12 +9,16 @@ import io.leaderli.litool.runner.executor.router.SequenceElementExecutor;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SequenceElement implements SaxBean, ElementExecutor<SequenceElement, SequenceElementExecutor> {
+public class SequenceElement extends SaxBean implements ElementExecutor<SequenceElement, SequenceElementExecutor> {
 
     private String name;
     private String label;
 
     private UnitList unitList = new UnitList();
+
+    public SequenceElement() {
+        super("sequence");
+    }
 
     public void addUnit(UnitElement unitElement) {
         unitList.add(unitElement);
@@ -22,7 +26,7 @@ public class SequenceElement implements SaxBean, ElementExecutor<SequenceElement
 
     @Override
     public void end(EndEvent endEvent) {
-        SaxBean.super.end(endEvent);
+        super.end(endEvent);
 
         LiAssertUtil.assertFalse(unitList.lira().size() == 0, "the unitList of sequence is empty");
 
@@ -32,10 +36,7 @@ public class SequenceElement implements SaxBean, ElementExecutor<SequenceElement
         }
     }
 
-    @Override
-    public String tag() {
-        return "sequence";
-    }
+
 
     public String getName() {
         return name;

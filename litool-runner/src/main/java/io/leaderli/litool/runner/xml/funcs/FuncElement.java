@@ -23,10 +23,14 @@ public class FuncElement extends SaxBeanWithID {
     private Instruct instruct;
     private String type;
 
-    private ParamList paramList = new ParamList();
+    private ParamList params = new ParamList();
+
+    public FuncElement() {
+        super("func");
+    }
 
     public void addParam(ParamElement paramElement) {
-        paramList.add(paramElement);
+        params.add(paramElement);
     }
 
     @Override
@@ -35,7 +39,7 @@ public class FuncElement extends SaxBeanWithID {
 
         Method method = this.instruct.getInstructMethod();
 
-        final Class<?>[] paramListTypes = paramList.lira()
+        final Class<?>[] paramListTypes = params.lira()
                 .map(p -> TypeAlias.getType(p.getType())).cast(Class.class)
                 .toArray(Class.class);
 
@@ -58,10 +62,7 @@ public class FuncElement extends SaxBeanWithID {
 
     }
 
-    @Override
-    public String tag() {
-        return "func";
-    }
+
 
     public String getLabel() {
         return label;
@@ -105,12 +106,12 @@ public class FuncElement extends SaxBeanWithID {
         this.type = type;
     }
 
-    public ParamList getParamList() {
-        return paramList;
+    public ParamList getParams() {
+        return params;
     }
 
-    public void setParamList(ParamList paramList) {
-        this.paramList = paramList;
+    public void setParams(ParamList params) {
+        this.params = params;
     }
 
 

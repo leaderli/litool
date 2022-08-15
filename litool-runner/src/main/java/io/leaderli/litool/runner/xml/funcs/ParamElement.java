@@ -15,6 +15,10 @@ public class ParamElement extends SaxBeanWithID {
     private String type = "str";
     private Expression expression;
 
+    public ParamElement() {
+        super("param");
+    }
+
     @Override
     public void body(BodyEvent bodyEvent) {
         String expr = bodyEvent.description();
@@ -30,11 +34,6 @@ public class ParamElement extends SaxBeanWithID {
             TypeAlias.check(this.type, this.expression.getName(), String.format("%s cannot parse to %s", this.expression.getName(), this.type));
         }
         super.end_check(parseErrorMsgs);
-    }
-
-    @Override
-    public String tag() {
-        return "param";
     }
 
     public String getType() {

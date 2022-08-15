@@ -43,7 +43,7 @@ public class IfElementExpressionCheckVisitor extends ElementCheckVisitor<IfEleme
 
         @Override
         public void func(String name, String id) {
-            mainElement.getFuncs().getFuncList().lira()
+            mainElement.getFuncs().funcList.lira()
                     .first(func -> StringUtils.equals(name, func.getName()))
                     .ifPresent(entry -> addErrorMsgs(TypeAlias.getType(entry.getType()) == Boolean.class, String.format("cond expression [%s] only support boolean%s", name, id)));
         }

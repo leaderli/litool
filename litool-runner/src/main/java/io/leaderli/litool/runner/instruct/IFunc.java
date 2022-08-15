@@ -45,7 +45,7 @@ public class IFunc {
 
     //TODO literal 的类型
     public Object directInvoke(Context context) {
-        Object[] params = funcElement.getParamList()
+        Object[] params = funcElement.getParams()
                 .lira()
                 .map(param -> {
                     Expression expression = param.getExpression();

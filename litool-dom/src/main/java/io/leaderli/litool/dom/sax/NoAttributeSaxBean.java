@@ -4,8 +4,12 @@ package io.leaderli.litool.dom.sax;
  * @author leaderli
  * @since 2022/7/24
  */
-public interface NoAttributeSaxBean extends SaxBean {
+public abstract class  NoAttributeSaxBean extends SaxBean {
+    public NoAttributeSaxBean(String tag) {
+        super(tag);
+    }
+
     @Override
-    default void attribute(AttributeEvent attributeEvent) {
+    public void attribute(AttributeEvent attributeEvent) {
     }
 }

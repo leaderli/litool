@@ -6,6 +6,7 @@ import io.leaderli.litool.dom.sax.SaxList;
 import io.leaderli.litool.runner.instruct.Instruct;
 import io.leaderli.litool.runner.xml.RequestElement;
 import io.leaderli.litool.runner.xml.ResponseElement;
+import io.leaderli.litool.runner.xml.funcs.FuncsElement;
 
 /**
  * @author leaderli
@@ -22,11 +23,14 @@ public class RunnerGson {
         gsonBuilder.registerTypeHierarchyAdapter(SaxList.class, new SaxListTypeAdapter());
         gsonBuilder.registerTypeAdapter(RequestElement.class, new RequestElementTypeAdapter());
         gsonBuilder.registerTypeAdapter(ResponseElement.class, new ResponseElementTypeAdapter());
+        gsonBuilder.registerTypeAdapter(FuncsElement.class, new FuncsElementTypeAdapter());
         gsonBuilder.registerTypeHierarchyAdapter(Instruct.class, new InstructTypeAdapter());
 
 
         GSON_BUILDER = gsonBuilder;
-        GSON = GSON_BUILDER.create();
+        GSON = GSON_BUILDER
+                .setPrettyPrinting()
+               .create();
 
     }
 

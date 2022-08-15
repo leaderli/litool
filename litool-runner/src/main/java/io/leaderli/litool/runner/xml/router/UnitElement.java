@@ -9,6 +9,10 @@ public class UnitElement extends TaskElement<UnitElement, UnitElementExecutor> {
 
     private String label;
 
+    public UnitElement() {
+        super("unit");
+    }
+
     public void addIf(IfElement ifElement) {
         taskList.add(ifElement);
     }
@@ -17,10 +21,6 @@ public class UnitElement extends TaskElement<UnitElement, UnitElementExecutor> {
         taskList.add(assignElement);
     }
 
-    @Override
-    public String tag() {
-        return "unit";
-    }
 
     public String getLabel() {
         return label;

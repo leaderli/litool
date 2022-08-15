@@ -7,17 +7,18 @@ import io.leaderli.litool.dom.sax.SaxList;
  * @author leaderli
  * @since 2022/7/15
  */
-public class RootBean implements NoBodyAndAttributeSaxBean {
+public class RootBean extends NoBodyAndAttributeSaxBean {
 
 
     public SaxList<Bean> beans = new BeanSaxList();
 
     private NoBean noBean;
 
-    @Override
-    public String tag() {
-        return "root";
+    public RootBean() {
+        super("root");
     }
+
+
 
 
     public NoBean getNoBean() {
@@ -32,4 +33,7 @@ public class RootBean implements NoBodyAndAttributeSaxBean {
     public void addBean(Bean bean) {
         this.beans.add(bean);
     }
+
+
+
 }

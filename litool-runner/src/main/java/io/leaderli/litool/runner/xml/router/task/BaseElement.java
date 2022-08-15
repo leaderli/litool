@@ -8,4 +8,7 @@ import io.leaderli.litool.runner.xml.SaxBeanWithID;
 public abstract class BaseElement<S extends SaxBean & ElementExecutor<S, E>, E extends BaseElementExecutor<S>> extends SaxBeanWithID implements ElementExecutor<S, E> {
 
 
+    public BaseElement(String tag) {
+        super(tag);
+    }
 }

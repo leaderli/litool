@@ -18,7 +18,9 @@ public class ResponseElementTypeAdapter implements JsonTypeAdapter<ResponseEleme
     @Override
     public ResponseElement deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         ResponseElement requestElement = new ResponseElement();
-        requestElement.entryList = context.deserialize(json, EntryList.class);
+
+        EntryList entryList = context.deserialize(json, EntryList.class);
+        entryList.lira().forEach(requestElement::addEntry);
         return requestElement;
     }
 

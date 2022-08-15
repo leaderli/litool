@@ -11,10 +11,14 @@ import java.util.Objects;
  * @author leaderli
  * @since 2022/7/23
  */
-public class RequestElement implements SaxBean, ElementExecutor<RequestElement, RequestElementExecutor> {
+public class RequestElement extends SaxBean implements ElementExecutor<RequestElement, RequestElementExecutor> {
 
 
     public final EntryList entryList = new EntryList();
+
+    public RequestElement() {
+        super("request");
+    }
 
 
     public void addEntry(EntryElement element) {
@@ -26,8 +30,9 @@ public class RequestElement implements SaxBean, ElementExecutor<RequestElement, 
         this.entryList.add(element);
     }
 
-    @Override
-    public String tag() {
-        return "request";
+    public EntryList getEntryList() {
+        return entryList;
     }
+
+
 }

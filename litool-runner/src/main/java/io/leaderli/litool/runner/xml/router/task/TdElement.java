@@ -8,9 +8,13 @@ import io.leaderli.litool.dom.sax.SaxBean;
 
 import java.util.List;
 
-public class TdElement implements SaxBean {
+public class TdElement extends SaxBean {
 
     private List<String> value;
+
+    public TdElement() {
+        super("td");
+    }
 
 
     public List<String> getValue() {
@@ -28,10 +32,7 @@ public class TdElement implements SaxBean {
         this.value = Lira.of(StringUtils.split(value,",")).getRaw();
     }
 
-    @Override
-    public String tag() {
-        return "td";
-    }
+
 
     public static final String TD_VALUE_RULE = "(?!,).+(?<!,)";
 

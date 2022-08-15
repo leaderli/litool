@@ -18,6 +18,10 @@ public class EntryElement extends SaxBeanWithID {
     private String def = "";
     private String type = "str";
 
+    public EntryElement() {
+        super("");
+    }
+
     @Override
     public void body(BodyEvent bodyEvent) {
 
@@ -33,15 +37,11 @@ public class EntryElement extends SaxBeanWithID {
         StringConvert.parser(TypeAlias.getType(this.type), def).assertNotNone(String.format("the def value %s cannot satisfied the entry type %s", def, type));
     }
 
-    @Override
-    public String tag() {
-        return "entry";
-    }
 
     @Override
     public String toString() {
         return "EntryElement{" +
-                "id='" + id() + '\'' +
+                "id='" + getId() + '\'' +
                 ", label='" + label + '\'' +
                 ", key='" + key + '\'' +
                 ", def='" + def + '\'' +
