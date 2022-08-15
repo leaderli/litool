@@ -106,4 +106,42 @@ public class RunnerTest {
         CharSequence skill = context.getResponse("skill");
         assertTrue(StringUtils.equals(skill, "042"));
     }
+
+    /**
+     * 单位公务卡 0800-1900工作时间 2300-0700夜间
+     */
+    @Test
+    void test6() {
+        Map<String, String> request = new HashMap<>();
+        request.put("phoneType", "201");
+        request.put("_env", "local_test");
+        request.put("_testTime", "1200");
+
+        Context context = new Context(request);
+        executor.visit(context);
+        CharSequence skill = context.getResponse("skill");
+        assertTrue(StringUtils.equals(skill, "080"));
+
+        request.put("_testTime", "0000");
+        context = new Context(request);
+        executor.visit(context);
+        skill = context.getResponse("skill");
+        assertTrue(StringUtils.equals(skill, "030"));
+    }
+
+    /**
+     * 超高端白金卡
+     */
+    @Test
+    void test7() {
+        Map<String, String> request = new HashMap<>();
+        request.put("custType", "3");
+        request.put("_env", "local_test");
+        request.put("_testTime", "1200");
+
+        Context context = new Context(request);
+        executor.visit(context);
+        CharSequence skill = context.getResponse("skill");
+        assertTrue(StringUtils.equals(skill, "053"));
+    }
 }

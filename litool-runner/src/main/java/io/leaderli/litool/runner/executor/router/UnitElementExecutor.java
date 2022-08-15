@@ -19,7 +19,6 @@ public class UnitElementExecutor extends BaseElementExecutor<UnitElement> {
         init();
     }
 
-    @SuppressWarnings("unchecked")
     private void init() {
         Lira<BaseElementExecutor<?>> map = element.getTaskList().lira().map(ElementExecutor::executor);
         executors = ImmutableList.of(map);
@@ -27,6 +26,8 @@ public class UnitElementExecutor extends BaseElementExecutor<UnitElement> {
 
     @Override
     public void visit(Context context) {
+        // TODO 缓存重要信息
+
         context.setTemp(TempNameEnum.unit_state.name(),UnitStateConstant.CONTINUE);
         try {
             for (BaseElementExecutor<?> executor : executors) {
@@ -38,7 +39,8 @@ public class UnitElementExecutor extends BaseElementExecutor<UnitElement> {
             }
         } catch (Exception e) {
             //TODO 这里逻辑有问题
-            context.setTemp(TempNameEnum.unit_state.name(), UnitStateConstant.ERROR);
+            // 发生异常恢复缓存的信息
+//            context.setTemp(TempNameEnum.unit_state.name(), UnitStateConstant.ERROR);
             context.publishEvent(new UnitErrorEvent(element.id(), e));
         }
     }
