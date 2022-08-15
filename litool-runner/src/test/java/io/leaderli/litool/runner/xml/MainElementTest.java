@@ -44,5 +44,11 @@ class MainElementTest {
         Assertions.assertEquals("[request variable [A] not exists id:1, response variable [B] not exists, temp variable [C] not exists]", dfs.getParseErrorMsgs().toString());
 
     }
+    @Test
+    void test_duplicate_error() {
+        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
+        dfs.parse("main_duplicate_request.xml");
+        Assertions.assertTrue( dfs.getParseErrorMsgs().get(0).startsWith("MainElement:request already inited"));
 
+    }
 }

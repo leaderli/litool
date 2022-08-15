@@ -11,7 +11,6 @@ class IfElementTest {
     void test() {
         SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
         MainElement element = dfs.parse("if_error.xml");
-        System.out.println(dfs.getParseErrorMsgs());
 
         Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("cond expression [time] only support boolean"));
 
