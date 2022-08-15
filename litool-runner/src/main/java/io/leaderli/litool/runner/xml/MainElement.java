@@ -26,9 +26,6 @@ public class MainElement extends SaxBean implements ElementExecutor<MainElement,
     public MainElement() {
         super("main");
     }
-    public MainElement(String tag) {
-        super(tag);
-    }
 
     public RequestElement getRequest() {
         return request;
