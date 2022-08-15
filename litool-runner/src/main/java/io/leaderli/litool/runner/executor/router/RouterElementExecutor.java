@@ -30,18 +30,18 @@ public class RouterElementExecutor extends BaseElementExecutor<RouterElement> {
     }
 
     @Override
-    public void visit(Context context) {
+    public void execute(Context context) {
         // 第一个sequence为主流程
         // 取临时字段，为空时调用主流程
 
-        sequenceExecutorMap.get(defaultSequenceName).visit0(context);
+        sequenceExecutorMap.get(defaultSequenceName).visit(context);
     }
 
     @Override
     public boolean notify(Context context) {
         if (context.interrupt.allow(Interrupt.GOTO)) {
             context.interrupt.disable(Interrupt.GOTO);
-            sequenceExecutorMap.get((String) context.interruptObj).visit0(context);
+            sequenceExecutorMap.get((String) context.interruptObj).visit(context);
         }
         return false;
     }

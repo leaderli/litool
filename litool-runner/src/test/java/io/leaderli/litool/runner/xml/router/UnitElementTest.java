@@ -39,7 +39,7 @@ class UnitElementTest {
         ILiEventListener<UnitErrorEvent> listener = new UnitErrorEventILiEventListener();
 //        System.out.println(listener.componentType());
         context.registerListener(listener);
-        mainElement.executor().visit0(context);
+        mainElement.executor().visit(context);
 //        context.visit(mainElement.executor());
 //        mainElement.executor().visit(context);
         System.out.println(context.origin_request_or_response);
@@ -74,7 +74,7 @@ class UnitElementTest {
         context.registerListener(new UnitErrorEventILiEventListener());
         context.registerListener(new EndEventILiEventListener(contextInfo));
 
-        mainElement.executor().visit0(context);
+        mainElement.executor().visit(context);
 //        context.visit(mainElement.executor());
 
         GsonUtil.print(context.origin_request_or_response);

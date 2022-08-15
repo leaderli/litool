@@ -27,7 +27,7 @@ class MainElementTest {
         Assertions.assertEquals(0, dfs.getParseErrorMsgs().size());
         Context context = new Context(request);
         ContextVisitor executor = main.executor();
-        executor.visit0(context);
+        executor.visit(context);
 
         Assertions.assertEquals("IVR", context.getRequest("CHANNEL"));
 

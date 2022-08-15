@@ -20,7 +20,6 @@ public class IfElementExecutor extends BaseElementExecutor<IfElement> {
         init();
     }
 
-    @SuppressWarnings("unchecked")
     private void init() {
         Lira<ContextVisitor> map = element.getTaskList().lira().map(ElementExecutor::executor);
         executors = ImmutableList.of(map);
@@ -35,7 +34,7 @@ public class IfElementExecutor extends BaseElementExecutor<IfElement> {
     }
 
     @Override
-    public void visit(Context context) {
+    public void execute(Context context) {
         Expression cond = element.getCond();
         Boolean expressionValue = (Boolean) context.getExpressionValue(cond);
 

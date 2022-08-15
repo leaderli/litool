@@ -26,7 +26,7 @@ class AssignElementExecutorTest {
 
         Map<String, String> request = new HashMap<>();
         Context context = new Context(request);
-        new AssignElementExecutor(element).visit0(context);
+        new AssignElementExecutor(element).visit(context);
 
         Assertions.assertTrue(StringUtils.equals(context.getResponse("skill"), "123"));
     }

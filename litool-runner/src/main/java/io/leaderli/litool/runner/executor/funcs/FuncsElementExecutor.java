@@ -60,7 +60,7 @@ public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
     }
 
     @Override
-    public void visit(Context context) {
+    public void execute(Context context) {
 
         context.setFuncFactory(ImmutableMap.of(funcFactory));
     }

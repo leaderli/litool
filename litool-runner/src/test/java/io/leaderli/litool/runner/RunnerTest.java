@@ -39,7 +39,7 @@ public class RunnerTest {
         request.put("bfzType", "1");
 
         Context context = new Context(request);
-        executor.visit0(context);
+        executor.visit(context);
         CharSequence skill = context.getResponse("skill");
         assertTrue(StringUtils.equals(skill, "001"));
     }
@@ -53,7 +53,7 @@ public class RunnerTest {
         request.put("bfzType", "2");
 
         Context context = new Context(request);
-        executor.visit0(context);
+        executor.visit(context);
         CharSequence skill = context.getResponse("skill");
         assertTrue(StringUtils.equals(skill, "002"));
     }
@@ -70,7 +70,7 @@ public class RunnerTest {
         request.put("_testTime", "2300");
 
         Context context = new Context(request);
-        executor.visit0(context);
+        executor.visit(context);
         CharSequence skill = context.getResponse("skill");
         assertTrue(StringUtils.equals(skill, "sequence_a"));
     }
@@ -86,7 +86,7 @@ public class RunnerTest {
         request.put("_testTime", "1200");
 
         Context context = new Context(request);
-        executor.visit0(context);
+        executor.visit(context);
         CharSequence skill = context.getResponse("skill");
         assertTrue(StringUtils.equals(skill, "031"));
     }
@@ -102,7 +102,7 @@ public class RunnerTest {
         request.put("_testTime", "1200");
 
         Context context = new Context(request);
-        executor.visit0(context);
+        executor.visit(context);
         CharSequence skill = context.getResponse("skill");
         assertTrue(StringUtils.equals(skill, "042"));
     }

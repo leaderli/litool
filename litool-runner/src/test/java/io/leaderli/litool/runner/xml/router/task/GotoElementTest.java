@@ -22,7 +22,7 @@ class GotoElementTest {
         Map<String, String> request = new HashMap<>();
 
         Context context = new Context(request);
-        element.executor().visit0(context);
+        element.executor().visit(context);
 
         Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).contains("next has no init"));
         Assertions.assertTrue(dfs.getParseErrorMsgs().get(1).startsWith("goto next [001] is not exist"));

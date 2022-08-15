@@ -20,15 +20,15 @@ public abstract class BaseElementExecutor<S extends SaxBean> extends ContextVisi
     }
 
     @Override
-    protected void visit(Context context) {
+    protected void execute(Context context) {
 
     }
 
     @Override
-    public void visit0(Context context) {
+    public void visit(Context context) {
         List<ContextVisitor> contextVisitors = visit();
 
-        this.visit(context);
+        this.execute(context);
         for (ContextVisitor contextVisitor : contextVisitors) {
 
 //            System.out.println(contextVisitor);
@@ -41,7 +41,7 @@ public abstract class BaseElementExecutor<S extends SaxBean> extends ContextVisi
             }
 
             if (context.interrupt.none()) {
-                contextVisitor.visit0(context);
+                contextVisitor.visit(context);
             }
         }
     }

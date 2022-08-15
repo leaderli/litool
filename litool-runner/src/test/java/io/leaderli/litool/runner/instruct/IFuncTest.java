@@ -24,7 +24,7 @@ class IFuncTest {
         Map<String, Object> request_only = new HashMap<>(request);
         context.setReadonly_request(ImmutableMap.of(request_only));
 
-new FuncsElementExecutor(funcsElement).visit0(context);
+new FuncsElementExecutor(funcsElement).visit(context);
         Assertions.assertSame(context.getFuncFactory().get("func_a").funcScope, FuncScope.CONTEXT);
         Assertions.assertNull(context.getFuncResultCache("func_a"));
         Assertions.assertTrue((Boolean) context.getFuncResult("func_a"));
@@ -40,7 +40,7 @@ new FuncsElementExecutor(funcsElement).visit0(context);
         Context context = new Context(request);
 
         FuncsElementExecutor funcsElementExecutor = new FuncsElementExecutor(funcsElement);
-        funcsElementExecutor.visit(context);
+        funcsElementExecutor.execute(context);
 
         Assertions.assertNull(context.getFuncResultCache("func_a"));
         Assertions.assertTrue((Boolean) context.getFuncResult("func_a"));
@@ -61,7 +61,7 @@ new FuncsElementExecutor(funcsElement).visit0(context);
         context.setReadonly_request(ImmutableMap.of(request_only));
 
         FuncsElementExecutor funcsElementExecutor = new FuncsElementExecutor(funcsElement);
-        funcsElementExecutor.visit(context);
+        funcsElementExecutor.execute(context);
 
         Assertions.assertSame(context.getFuncFactory().get("func_a").funcScope, FuncScope.RUNTIME);
         Assertions.assertNull(context.getFuncResultCache("func_a"));

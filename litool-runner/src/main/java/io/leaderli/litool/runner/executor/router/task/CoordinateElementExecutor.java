@@ -41,7 +41,7 @@ public class CoordinateElementExecutor extends BaseElementExecutor<CoordinateEle
         coordinateMap = ImmutableMap.of(map);
     }
     @Override
-    public void visit(Context context) {
+    public void execute(Context context) {
         String x = (String) context.getExpressionValue(element.getX());
         String y = (String) context.getExpressionValue(element.getY());
         context.setTemp(TempNameEnum.coordinate.name(), Lino.of(coordinateMap.get(y)).map(m -> m.get(x)).get(def));
