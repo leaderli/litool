@@ -43,7 +43,7 @@ class FuncElementTest {
         FuncsElement funcElement = dfs.parse("funcs/func_param_type_error.xml");
 
         Context context = new Context(new HashMap<>());
-        context.visit(funcElement.executor());
+funcElement.executor().visit0(context);
 
         Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("false cannot parse to int"));
 

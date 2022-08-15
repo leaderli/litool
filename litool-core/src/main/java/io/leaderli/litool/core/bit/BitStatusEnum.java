@@ -55,7 +55,7 @@ public enum BitStatusEnum {
     /**
      * 角标位置从0开始
      */
-    final int index;
+    public final int index;
 
     BitStatusEnum() {
         this.index = Integer.parseInt(this.name().replace("B", "")) - 1;

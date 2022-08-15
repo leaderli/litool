@@ -2,7 +2,7 @@ package io.leaderli.litool.runner.xml;
 
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
-import io.leaderli.litool.runner.executor.MainElementExecutor;
+import io.leaderli.litool.runner.ContextVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,8 +26,8 @@ class MainElementTest {
 
         Assertions.assertEquals(0, dfs.getParseErrorMsgs().size());
         Context context = new Context(request);
-        MainElementExecutor executor = main.executor();
-        executor.visit(context);
+        ContextVisitor executor = main.executor();
+        executor.visit0(context);
 
         Assertions.assertEquals("IVR", context.getRequest("CHANNEL"));
 

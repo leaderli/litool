@@ -39,7 +39,8 @@ class UnitElementTest {
         ILiEventListener<UnitErrorEvent> listener = new UnitErrorEventILiEventListener();
 //        System.out.println(listener.componentType());
         context.registerListener(listener);
-        context.visit(mainElement.executor());
+        mainElement.executor().visit0(context);
+//        context.visit(mainElement.executor());
 //        mainElement.executor().visit(context);
         System.out.println(context.origin_request_or_response);
         CharSequence skill = context.getResponse("skill");
@@ -58,7 +59,7 @@ class UnitElementTest {
     }
 
 
-    @Test
+//    @Test
     void unit_long() {
 
         SaxEventInterceptor<MainElement> interceptor = new SaxEventInterceptor<>(MainElement.class);
@@ -73,7 +74,8 @@ class UnitElementTest {
         context.registerListener(new UnitErrorEventILiEventListener());
         context.registerListener(new EndEventILiEventListener(contextInfo));
 
-        context.visit(mainElement.executor());
+        mainElement.executor().visit0(context);
+//        context.visit(mainElement.executor());
 
         GsonUtil.print(context.origin_request_or_response);
         GsonUtil.print(contextInfo);
@@ -87,8 +89,8 @@ class UnitElementTest {
         public void listen(UnitErrorEvent source) {
 
             LiTuple2<String, Throwable> tuple = source.getSource().get();
-//                tuple._2.printStackTrace();
-//                System.out.println(tuple);
+                tuple._2.printStackTrace();
+                System.out.println(tuple);
         }
     }
 

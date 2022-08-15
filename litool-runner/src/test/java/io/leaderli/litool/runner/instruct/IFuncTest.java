@@ -24,7 +24,7 @@ class IFuncTest {
         Map<String, Object> request_only = new HashMap<>(request);
         context.setReadonly_request(ImmutableMap.of(request_only));
 
-        context.visit(new FuncsElementExecutor(funcsElement));
+new FuncsElementExecutor(funcsElement).visit0(context);
         Assertions.assertSame(context.getFuncFactory().get("func_a").funcScope, FuncScope.CONTEXT);
         Assertions.assertNull(context.getFuncResultCache("func_a"));
         Assertions.assertTrue((Boolean) context.getFuncResult("func_a"));

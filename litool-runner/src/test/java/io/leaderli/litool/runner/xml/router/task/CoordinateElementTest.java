@@ -21,7 +21,7 @@ class CoordinateElementTest {
         Context context = new Context(new HashMap<>());
         context.setResponse("Skill","2");
         context.setResponse("Code","2");
-        coordinateElement.executor().visit(context);
+        coordinateElement.executor().visit0(context);
         Object value = context.getTemp(TempNameEnum.coordinate.name());
         Assertions.assertEquals(value, "3");
     }
@@ -35,7 +35,7 @@ class CoordinateElementTest {
         Context context = new Context(new HashMap<>());
         context.setResponse("Skill","1");
         context.setResponse("Code","1");
-        coordinateElement.executor().visit(context);
+        coordinateElement.executor().visit0(context);
         Object value = context.getTemp(TempNameEnum.coordinate.name());
         Assertions.assertEquals(value, "1");
     }

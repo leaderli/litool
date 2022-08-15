@@ -20,7 +20,7 @@ class FuncsElementExecutorTest {
         FuncsElement funcsElement = dfs.parse("funcs/funcs_funcScope.xml");
 
         Context context = new Context(new HashMap<>());
-        context.visit(new FuncsElementExecutor(funcsElement));
+new FuncsElementExecutor(funcsElement).visit0(context);
 
         ImmutableMap<String, IFunc> funcContainer = context.getFuncFactory();
         Assertions.assertSame(funcContainer.get("func_a").funcScope, FuncScope.RUNTIME);

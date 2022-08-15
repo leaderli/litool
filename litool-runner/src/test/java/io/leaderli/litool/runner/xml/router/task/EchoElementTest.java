@@ -37,7 +37,7 @@ public class EchoElementTest {
                 return EchoEvent.class;
             }
         });
-        mainElement.executor().visit(context);
+        mainElement.executor().visit0(context);
         Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "response variable [Code] not exists"));
 
         Assertions.assertEquals("(1, hello 123 world 你好)", echos.value().toString());

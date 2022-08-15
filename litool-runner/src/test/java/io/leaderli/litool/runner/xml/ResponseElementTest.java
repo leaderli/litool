@@ -21,7 +21,7 @@ class ResponseElementTest {
         ResponseElement responseElement = dfs.parse("response.xml");
 
         Context context = new Context(new HashMap<>());
-        responseElement.executor().visit(context);
+        responseElement.executor().visit0(context);
 
 
         Assertions.assertEquals("", context.getResponse("CHANNEL"));

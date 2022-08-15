@@ -1,11 +1,10 @@
 package io.leaderli.litool.runner;
 
+import io.leaderli.litool.core.bit.BitPermission;
 import io.leaderli.litool.core.collection.ImmutableMap;
 import io.leaderli.litool.core.event.ILiEventListener;
 import io.leaderli.litool.core.event.LiEventBus;
 import io.leaderli.litool.core.event.LiEventObject;
-import io.leaderli.litool.runner.event.BeginEvent;
-import io.leaderli.litool.runner.event.EndEvent;
 import io.leaderli.litool.runner.instruct.IFunc;
 
 import java.util.HashMap;
@@ -25,6 +24,8 @@ public class Context {
      */
     public final Map<String, Object> func_result_cache = new HashMap<>();
     public final LiEventBus bus = new LiEventBus();
+    public BitPermission interrupt = new BitPermission();
+    public Object interruptObj = new Object();
     /**
      * @see io.leaderli.litool.runner.executor.funcs.FuncsElementExecutor
      */
@@ -39,12 +40,12 @@ public class Context {
         this.origin_request_or_response.putAll(origin_request);
     }
 
-    public void visit(ContextVisitor contextVisitor) {
-        publishEvent(BeginEvent.of());
-        contextVisitor.visit(this);
-        publishEvent(EndEvent.of());
-
-    }
+//    public void visit(ContextVisitor contextVisitor) {
+////        publishEvent(BeginEvent.of());
+//        contextVisitor.visit(this);
+////        publishEvent(EndEvent.of());
+//
+//    }
 
 
     @SuppressWarnings("unchecked")
