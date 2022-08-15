@@ -25,12 +25,10 @@ public class MainElementExecutor extends BaseElementExecutor<MainElement> {
 
     @Override
     public void visit(Context context) {
-
         request.visit(context);
         response.visit(context);
         funcs.visit(context);
         router.visit(context);
-
     }
 
 }

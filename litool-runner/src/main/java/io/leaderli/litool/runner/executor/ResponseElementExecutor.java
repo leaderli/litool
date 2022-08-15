@@ -22,5 +22,6 @@ public class ResponseElementExecutor extends BaseElementExecutor<ResponseElement
     public void visit(Context context) {
         Map<String, Object> response = element.entryList.lira().toMap(EntryElement::getKey, e -> TypeAlias.parser(e.getType(), null, e.getDef()));
         context.origin_request_or_response.putAll(response);
+
     }
 }

@@ -4,6 +4,8 @@ import io.leaderli.litool.core.collection.ImmutableMap;
 import io.leaderli.litool.core.event.ILiEventListener;
 import io.leaderli.litool.core.event.LiEventBus;
 import io.leaderli.litool.core.event.LiEventObject;
+import io.leaderli.litool.runner.event.BeginEvent;
+import io.leaderli.litool.runner.event.EndEvent;
 import io.leaderli.litool.runner.instruct.IFunc;
 
 import java.util.HashMap;
@@ -22,8 +24,9 @@ public class Context {
      * 用于缓存无需重复计算的func的计算结果
      */
     public final Map<String, Object> func_result_cache = new HashMap<>();
+    public final LiEventBus bus = new LiEventBus();
     /**
-     * @see io.leaderli.litool.runner.executor.FuncsElementExecutor
+     * @see io.leaderli.litool.runner.executor.funcs.FuncsElementExecutor
      */
     private ImmutableMap<String, IFunc> funcFactory;
     private ImmutableMap<String, Object> readonly_request;
@@ -32,14 +35,15 @@ public class Context {
      */
     private TempContainer temp = new TempContainer();
 
-    public final LiEventBus bus = new LiEventBus();
-
     public Context(Map<String, String> origin_request) {
         this.origin_request_or_response.putAll(origin_request);
     }
 
     public void visit(ContextVisitor contextVisitor) {
+        publishEvent(BeginEvent.of());
         contextVisitor.visit(this);
+        publishEvent(EndEvent.of());
+
     }
 
 

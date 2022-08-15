@@ -2,6 +2,7 @@ package io.leaderli.litool.runner.xml;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.dom.sax.SaxBean;
+import io.leaderli.litool.runner.ContextInfo;
 import io.leaderli.litool.runner.executor.ElementExecutor;
 import io.leaderli.litool.runner.executor.ResponseElementExecutor;
 
@@ -13,7 +14,6 @@ import java.util.Objects;
  */
 public class ResponseElement extends SaxBean implements ElementExecutor<ResponseElement, ResponseElementExecutor> {
 
-
     public final EntryList entryList = new EntryList();
 
     public ResponseElement() {
@@ -21,6 +21,7 @@ public class ResponseElement extends SaxBean implements ElementExecutor<Response
     }
 
     public void addEntry(EntryElement element) {
+        LiAssertUtil.assertFalse(Objects.equals(ContextInfo.INFO, element.getKey()), "should not use inner key " + ContextInfo.INFO);
         entryList.lira().iterator().forEachRemaining(entry -> {
             LiAssertUtil.assertFalse(Objects.equals(entry.getKey(), element.getKey()), "duplicate key of " + element.getKey());
             LiAssertUtil.assertFalse(Objects.equals(entry.getLabel(), element.getLabel()), "duplicate label of " + element.getLabel());
@@ -31,8 +32,6 @@ public class ResponseElement extends SaxBean implements ElementExecutor<Response
     public EntryList getEntryList() {
         return entryList;
     }
-
-
 
 
 }
