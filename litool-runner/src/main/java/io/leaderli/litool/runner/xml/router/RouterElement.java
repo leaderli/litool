@@ -35,10 +35,7 @@ public class RouterElement extends SaxBean implements ElementExecutor<RouterElem
         }
     }
 
-    @Override
-    public String tag() {
-        return "router";
-    }
+
 
     public SequenceList getSequenceList() {
         return sequenceList;

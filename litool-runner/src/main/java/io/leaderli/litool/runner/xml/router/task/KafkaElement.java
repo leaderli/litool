@@ -21,10 +21,5 @@ public class KafkaElement extends BaseEventElement<KafkaElement, KafkaElementExe
     }
 
 
-    @Override
-    public String tag() {
-        return "echo";
-    }
-
 
 }

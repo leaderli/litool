@@ -27,10 +27,6 @@ public class IfElement extends TaskElement<IfElement, IfElementExecutor> {
         taskList.add(element);
     }
 
-    @Override
-    public String tag() {
-        return "if";
-    }
 
     public Expression getCond() {
         return cond;

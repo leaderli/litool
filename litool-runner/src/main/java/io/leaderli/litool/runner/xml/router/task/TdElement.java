@@ -32,10 +32,7 @@ public class TdElement extends SaxBean {
         this.value = Lira.of(StringUtils.split(value,",")).getRaw();
     }
 
-    @Override
-    public String tag() {
-        return "td";
-    }
+
 
     public static final String TD_VALUE_RULE = "(?!,).+(?<!,)";
 

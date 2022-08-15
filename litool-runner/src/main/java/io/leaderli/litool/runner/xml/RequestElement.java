@@ -34,8 +34,5 @@ public class RequestElement extends SaxBean implements ElementExecutor<RequestEl
         return entryList;
     }
 
-    @Override
-    public String tag() {
-        return "request";
-    }
+
 }

@@ -20,10 +20,6 @@ public class EchoElement extends BaseEventElement<EchoElement, EchoElementExecut
     }
 
 
-    @Override
-    public String tag() {
-        return "echo";
-    }
 
 
 }

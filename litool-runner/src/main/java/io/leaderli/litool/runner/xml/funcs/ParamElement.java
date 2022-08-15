@@ -36,11 +36,6 @@ public class ParamElement extends SaxBeanWithID {
         super.end_check(parseErrorMsgs);
     }
 
-    @Override
-    public String tag() {
-        return "param";
-    }
-
     public String getType() {
         return type;
     }

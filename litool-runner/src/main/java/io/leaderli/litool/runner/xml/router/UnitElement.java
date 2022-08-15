@@ -21,10 +21,6 @@ public class UnitElement extends TaskElement<UnitElement, UnitElementExecutor> {
         taskList.add(assignElement);
     }
 
-    @Override
-    public String tag() {
-        return "unit";
-    }
 
     public String getLabel() {
         return label;

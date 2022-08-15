@@ -32,10 +32,6 @@ public class ResponseElement extends SaxBean implements ElementExecutor<Response
         return entryList;
     }
 
-    @Override
-    public String tag() {
-        return "response";
-    }
 
 
 

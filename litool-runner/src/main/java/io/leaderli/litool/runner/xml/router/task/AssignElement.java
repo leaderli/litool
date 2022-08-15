@@ -20,10 +20,6 @@ public class AssignElement extends BaseElement<AssignElement, AssignElementExecu
         this.value = bodyEvent.description();
     }
 
-    @Override
-    public String tag() {
-        return "assign";
-    }
 
     public Expression getName() {
         return name;

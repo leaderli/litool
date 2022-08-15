@@ -62,10 +62,7 @@ public class FuncElement extends SaxBeanWithID {
 
     }
 
-    @Override
-    public String tag() {
-        return "func";
-    }
+
 
     public String getLabel() {
         return label;

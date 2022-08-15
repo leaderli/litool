@@ -18,10 +18,7 @@ public class RootBean extends NoBodyAndAttributeSaxBean {
         super("root");
     }
 
-    @Override
-    public String tag() {
-        return "root";
-    }
+
 
 
     public NoBean getNoBean() {

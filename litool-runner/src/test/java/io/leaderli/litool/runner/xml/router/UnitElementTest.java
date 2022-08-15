@@ -2,11 +2,15 @@ package io.leaderli.litool.runner.xml.router;
 
 import io.leaderli.litool.core.event.ILiEventListener;
 import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.dom.LiDomUtil;
+import io.leaderli.litool.dom.XmlMapConvert;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.adapter.RunnerGson;
 import io.leaderli.litool.runner.event.UnitErrorEvent;
 import io.leaderli.litool.runner.xml.MainElement;
+import org.dom4j.DocumentException;
+import org.dom4j.dom.DOMElement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +50,14 @@ class UnitElementTest {
 
         Assertions.assertEquals("003", skill);
 
-        System.out.println(RunnerGson.GSON.toJson(mainElement));
     }
 
+    @Test
+    void test2() throws DocumentException {
+        DOMElement mainElement = LiDomUtil.getDOMRootByPath("unit_error.xml");
+
+        Map<String, Object> read = XmlMapConvert.read(mainElement);
+        System.out.println(RunnerGson.GSON.toJson(read));
+
+    }
 }

@@ -36,10 +36,7 @@ public class SequenceElement extends SaxBean implements ElementExecutor<Sequence
         }
     }
 
-    @Override
-    public String tag() {
-        return "sequence";
-    }
+
 
     public String getName() {
         return name;

@@ -81,8 +81,4 @@ public class CoordinateElement extends BaseElement<CoordinateElement, Coordinate
 
 
 
-    @Override
-    public String tag() {
-        return "coordinate";
-    }
 }
