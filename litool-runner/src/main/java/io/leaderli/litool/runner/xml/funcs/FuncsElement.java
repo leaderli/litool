@@ -47,10 +47,7 @@ public class FuncsElement extends SaxBean implements ElementExecutor<FuncsElemen
         }
     }
 
-    @Override
-    public String tag() {
-        return "funcs";
-    }
+
 
 
     public FuncList getFuncList() {
