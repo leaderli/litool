@@ -238,7 +238,9 @@ public class ReflectUtil {
      */
     public static <T> Constructor<T> getConstructor(Class<T> cls) {
 
-        return getConstructors(cls).first().get();
+        return getConstructors(cls)
+                .filter(constructor -> constructor.getParameterTypes().length == 0)
+                .first().get();
     }
 
     /**

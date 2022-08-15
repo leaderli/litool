@@ -291,6 +291,10 @@ class ReflectUtilTest {
 
     static class ConstructorBean {
 
+
+        private ConstructorBean(String name) {
+
+        }
         private ConstructorBean() {
 
         }
