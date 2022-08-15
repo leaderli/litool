@@ -1,7 +1,6 @@
 package io.leaderli.litool.dom;
 
 
-import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.resource.ResourceUtil;
 import org.dom4j.DocumentException;
@@ -95,7 +94,16 @@ public class LiDomUtil {
      */
     public static DOMElement selectSingleNode(DOMElement element, String xpath) {
 
-        return Lino.of(element.selectSingleNode(xpath)).cast(DOMElement.class).get();
+        return (DOMElement) element.selectSingleNode(xpath);
+    }
+
+    public static Lira<DOMElement> elements(DOMElement element) {
+
+        return Lira.of(element.elements()).cast(DOMElement.class);
+    }
+
+    public static DOMElement element(DOMElement element, String name) {
+        return (DOMElement) element.element(name);
     }
 
     public static void prettyPrint(Node node) {

@@ -16,7 +16,7 @@ public class ModelCheckVisitor extends VisitorAdapter {
     }
 
     public void func(String name, String id) {
-        Lino<FuncElement> find_func = mainElement.getFuncs().getFuncList().lira().first(func -> StringUtils.equals(name, func.getName()));
+        Lino<FuncElement> find_func = mainElement.getFuncs().funcList.lira().first(func -> StringUtils.equals(name, func.getName()));
         addErrorMsgs(find_func.present(), String.format("func [%s] not exists%s", name, id));
     }
 

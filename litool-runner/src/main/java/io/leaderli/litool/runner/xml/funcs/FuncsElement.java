@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class FuncsElement implements SaxBean, ElementExecutor<FuncsElement, FuncsElementExecutor> {
 
-    private FuncList funcList = new FuncList();
+    public final FuncList funcList = new FuncList();
 
     public void addFunc(FuncElement funcElement) {
         funcList.add(funcElement);
@@ -29,7 +29,7 @@ public class FuncsElement implements SaxBean, ElementExecutor<FuncsElement, Func
         for (FuncElement funcElement : funcList.lira()) {
             String id = funcElement.id();
             id = Lino.of(id).filter(StringUtils::isNotBlank).map(i -> " id:" + i).get("");
-            List<String> map = funcElement.getParamList().lira()
+            List<String> map = funcElement.getParams().lira()
                     .map(ParamElement::getExpression)
                     .filter(expr -> expr.getModel() == VariablesModel.FUNC)
                     .map(Expression::getName)
@@ -48,13 +48,6 @@ public class FuncsElement implements SaxBean, ElementExecutor<FuncsElement, Func
         return "funcs";
     }
 
-    public FuncList getFuncList() {
-        return funcList;
-    }
-
-    public void setFuncList(FuncList funcList) {
-        this.funcList = funcList;
-    }
 
     @Override
     public FuncsElementExecutor executor() {

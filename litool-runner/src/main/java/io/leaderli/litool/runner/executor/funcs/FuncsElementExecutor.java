@@ -28,7 +28,7 @@ public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
     private void init() {
 
 
-        for (FuncElement funcElement : element.getFuncList().lira()) {
+        for (FuncElement funcElement : element.funcList.lira()) {
 
             String name = funcElement.getName();
 
@@ -38,7 +38,7 @@ public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
                 scope = funcElement.getInstruct().getScope();
             }
             // param model scope
-            Lino<FuncScope> first = funcElement.getParamList()
+            Lino<FuncScope> first = funcElement.getParams()
                     .lira()
                     .map(ParamElement::getExpression)
                     .map(expr -> {

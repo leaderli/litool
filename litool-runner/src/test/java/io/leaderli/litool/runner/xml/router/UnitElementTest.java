@@ -4,6 +4,7 @@ import io.leaderli.litool.core.event.ILiEventListener;
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
+import io.leaderli.litool.runner.adapter.RunnerGson;
 import io.leaderli.litool.runner.event.UnitErrorEvent;
 import io.leaderli.litool.runner.xml.MainElement;
 import org.junit.jupiter.api.Assertions;
@@ -21,7 +22,7 @@ class UnitElementTest {
     @Test
     void test() {
         SaxEventInterceptor<MainElement> interceptor = new SaxEventInterceptor<>(MainElement.class);
-        MainElement element = interceptor.parse("unit_error.xml");
+        MainElement mainElement = interceptor.parse("unit_error.xml");
 
         Map<String, String> request = new HashMap<>();
         request.put("bfzType", "1");
@@ -40,10 +41,12 @@ class UnitElementTest {
         };
 //        System.out.println(listener.componentType());
         context.registerListener(listener);
-        element.executor().visit(context);
+        mainElement.executor().visit(context);
         CharSequence skill = context.getResponse("skill");
 
         Assertions.assertEquals("003", skill);
+
+        System.out.println(RunnerGson.GSON.toJson(mainElement));
     }
 
 }

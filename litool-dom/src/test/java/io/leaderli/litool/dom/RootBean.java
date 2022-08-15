@@ -32,4 +32,7 @@ public class RootBean implements NoBodyAndAttributeSaxBean {
     public void addBean(Bean bean) {
         this.beans.add(bean);
     }
+
+
+
 }
