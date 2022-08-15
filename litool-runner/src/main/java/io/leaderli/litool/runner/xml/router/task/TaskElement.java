@@ -8,6 +8,10 @@ public abstract class TaskElement<R extends SaxBean & ElementExecutor<R, T>, T e
 
     protected TaskList taskList = new TaskList();
 
+    public TaskElement(String tag) {
+        super(tag);
+    }
+
     public TaskList getTaskList() {
         return taskList;
     }

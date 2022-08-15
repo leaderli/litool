@@ -7,9 +7,13 @@ import io.leaderli.litool.dom.sax.SaxBean;
  * @author leaderli
  * @since 2022/8/11
  */
-public class Sax implements SaxBean {
+public class Sax extends SaxBean {
 
     Color color;
+
+    public Sax() {
+        super("");
+    }
 
 
     public void setColor(Color color) {
@@ -22,6 +26,6 @@ public class Sax implements SaxBean {
 
             return Lino.of(Color.valueOf(value.toUpperCase()));
         }
-        return SaxBean.super.complexField(parameterType, value);
+        return super.complexField(parameterType, value);
     }
 }

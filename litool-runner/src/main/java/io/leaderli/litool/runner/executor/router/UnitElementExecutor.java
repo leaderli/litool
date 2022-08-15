@@ -39,7 +39,7 @@ public class UnitElementExecutor extends BaseElementExecutor<UnitElement> {
         } catch (Exception e) {
             //TODO 这里逻辑有问题
             context.setTemp(TempNameEnum.unit_state.name(), UnitStateConstant.ERROR);
-            context.publishEvent(new UnitErrorEvent(element.id(), e));
+            context.publishEvent(new UnitErrorEvent(element.getId(), e));
         }
     }
 }

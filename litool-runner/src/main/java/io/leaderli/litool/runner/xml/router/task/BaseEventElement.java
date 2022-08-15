@@ -10,6 +10,10 @@ public abstract class BaseEventElement<B extends BaseEventElement<B, EXE, E>, EX
 
     protected LongExpression longExpression;
 
+    public BaseEventElement(String tag) {
+        super(tag);
+    }
+
     public LongExpression getLongExpression() {
         return longExpression;
     }

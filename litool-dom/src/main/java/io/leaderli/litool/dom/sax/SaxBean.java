@@ -1,24 +1,32 @@
 package io.leaderli.litool.dom.sax;
 
-import org.dom4j.dom.DOMElement;
-
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author leaderli
  * @since 2022/7/9 10:32 AM
  * <p>
  * 用于指定名称 {@link #tag()} 的复杂成员变量
  */
-public interface SaxBean extends SaxEventHandler {
+public abstract class SaxBean implements SaxEventHandler {
 
-    default String id() {
-        return "";
+    protected String id = "";
+
+    public final String tag;
+
+    protected SaxBean(String tag) {
+        this.tag = tag;
     }
 
-    default String tag() {
+
+    public String getId() {
+        return id;
+    }
+
+    public String tag() {
         return this.getClass().getSimpleName().toLowerCase();
     }
 
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

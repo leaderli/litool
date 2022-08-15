@@ -23,6 +23,10 @@ public class CoordinateElement extends BaseElement<CoordinateElement, Coordinate
 
     private TdList tdList = new TdList();
 
+    public CoordinateElement() {
+        super("coordinate");
+    }
+
     public void addTd(TdElement tdElement) {
         tdList.add(tdElement);
     }
@@ -30,7 +34,7 @@ public class CoordinateElement extends BaseElement<CoordinateElement, Coordinate
     @Override
     public void end_check(List<String> parseErrorMsgs) {
 
-        String id = id();
+        String id = getId();
         id = Lino.of(id).filter(StringUtils::isNotBlank).map(i -> " id:" + i).get("");
         Lira<TdElement> tdElements = tdList.lira();
         Lira<List<String>> lira = tdElements.map(TdElement::getValue);

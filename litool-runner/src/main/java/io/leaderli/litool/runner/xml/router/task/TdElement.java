@@ -8,9 +8,13 @@ import io.leaderli.litool.dom.sax.SaxBean;
 
 import java.util.List;
 
-public class TdElement implements SaxBean {
+public class TdElement extends SaxBean {
 
     private List<String> value;
+
+    public TdElement() {
+        super("td");
+    }
 
 
     public List<String> getValue() {

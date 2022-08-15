@@ -17,12 +17,18 @@ import java.util.List;
  * @since 2022/7/24
  */
 
-public class MainElement implements SaxBean, ElementExecutor<MainElement, MainElementExecutor> {
+public class MainElement extends SaxBean implements ElementExecutor<MainElement, MainElementExecutor> {
 
     private RequestElement request;
     private ResponseElement response;
     private FuncsElement funcs;
     private RouterElement router;
+    public MainElement() {
+        super("main");
+    }
+    public MainElement(String tag) {
+        super(tag);
+    }
 
     public RequestElement getRequest() {
         return request;

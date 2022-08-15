@@ -9,9 +9,13 @@ import io.leaderli.litool.runner.executor.router.RouterElementExecutor;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RouterElement implements SaxBean, ElementExecutor<RouterElement, RouterElementExecutor> {
+public class RouterElement extends SaxBean implements ElementExecutor<RouterElement, RouterElementExecutor> {
 
     private SequenceList sequenceList = new SequenceList();
+
+    public RouterElement() {
+        super("router");
+    }
 
     public void addSequence(SequenceElement sequenceElement) {
         sequenceList.add(sequenceElement);
@@ -19,7 +23,7 @@ public class RouterElement implements SaxBean, ElementExecutor<RouterElement, Ro
 
     @Override
     public void end(EndEvent endEvent) {
-        SaxBean.super.end(endEvent);
+       super.end(endEvent);
 
         LiAssertUtil.assertFalse(sequenceList.lira().size() == 0, "the sequenceList of route is empty");
 

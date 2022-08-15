@@ -15,6 +15,10 @@ public class ParamElement extends SaxBeanWithID {
     private String type = "str";
     private Expression expression;
 
+    public ParamElement() {
+        super("param");
+    }
+
     @Override
     public void body(BodyEvent bodyEvent) {
         String expr = bodyEvent.description();

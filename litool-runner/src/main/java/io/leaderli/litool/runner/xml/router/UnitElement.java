@@ -9,6 +9,10 @@ public class UnitElement extends TaskElement<UnitElement, UnitElementExecutor> {
 
     private String label;
 
+    public UnitElement() {
+        super("unit");
+    }
+
     public void addIf(IfElement ifElement) {
         taskList.add(ifElement);
     }

@@ -6,6 +6,10 @@ public class GotoElement extends BaseElement<GotoElement, GotoElementExecutor> {
 
     private GotoDestination next;
 
+    public GotoElement() {
+        super("goto");
+    }
+
     @Override
     public String tag() {
         return "goto";

@@ -13,9 +13,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class FuncsElement implements SaxBean, ElementExecutor<FuncsElement, FuncsElementExecutor> {
+public class FuncsElement extends SaxBean implements ElementExecutor<FuncsElement, FuncsElementExecutor> {
 
     public final FuncList funcList = new FuncList();
+
+    public FuncsElement() {
+        super("funcs");
+    }
 
     public void addFunc(FuncElement funcElement) {
         funcList.add(funcElement);
@@ -27,7 +31,7 @@ public class FuncsElement implements SaxBean, ElementExecutor<FuncsElement, Func
         Set<String> nameSet = new HashSet<>();
         Set<String> labelSet = new HashSet<>();
         for (FuncElement funcElement : funcList.lira()) {
-            String id = funcElement.id();
+            String id = funcElement.getId();
             id = Lino.of(id).filter(StringUtils::isNotBlank).map(i -> " id:" + i).get("");
             List<String> map = funcElement.getParams().lira()
                     .map(ParamElement::getExpression)
@@ -48,6 +52,10 @@ public class FuncsElement implements SaxBean, ElementExecutor<FuncsElement, Func
         return "funcs";
     }
 
+
+    public FuncList getFuncList() {
+        return funcList;
+    }
 
     @Override
     public FuncsElementExecutor executor() {

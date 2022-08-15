@@ -7,6 +7,10 @@ public class EchoElement extends BaseEventElement<EchoElement, EchoElementExecut
 
     private int level = EchoEvent.DEBUG;
 
+    public EchoElement() {
+        super("echo");
+    }
+
     public Integer getLevel() {
         return level;
     }

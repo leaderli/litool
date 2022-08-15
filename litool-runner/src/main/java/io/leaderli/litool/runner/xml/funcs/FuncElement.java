@@ -25,6 +25,10 @@ public class FuncElement extends SaxBeanWithID {
 
     private ParamList params = new ParamList();
 
+    public FuncElement() {
+        super("func");
+    }
+
     public void addParam(ParamElement paramElement) {
         params.add(paramElement);
     }

@@ -11,10 +11,14 @@ import java.util.Objects;
  * @author leaderli
  * @since 2022/7/23
  */
-public class ResponseElement implements SaxBean, ElementExecutor<ResponseElement, ResponseElementExecutor> {
+public class ResponseElement extends SaxBean implements ElementExecutor<ResponseElement, ResponseElementExecutor> {
 
 
-    public EntryList entryList = new EntryList();
+    public final EntryList entryList = new EntryList();
+
+    public ResponseElement() {
+        super("response");
+    }
 
     public void addEntry(EntryElement element) {
         entryList.lira().iterator().forEachRemaining(entry -> {
@@ -22,6 +26,10 @@ public class ResponseElement implements SaxBean, ElementExecutor<ResponseElement
             LiAssertUtil.assertFalse(Objects.equals(entry.getLabel(), element.getLabel()), "duplicate label of " + element.getLabel());
         });
         this.entryList.add(element);
+    }
+
+    public EntryList getEntryList() {
+        return entryList;
     }
 
     @Override

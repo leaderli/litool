@@ -18,6 +18,10 @@ public class EntryElement extends SaxBeanWithID {
     private String def = "";
     private String type = "str";
 
+    public EntryElement() {
+        super("");
+    }
+
     @Override
     public void body(BodyEvent bodyEvent) {
 
@@ -41,7 +45,7 @@ public class EntryElement extends SaxBeanWithID {
     @Override
     public String toString() {
         return "EntryElement{" +
-                "id='" + id() + '\'' +
+                "id='" + getId() + '\'' +
                 ", label='" + label + '\'' +
                 ", key='" + key + '\'' +
                 ", def='" + def + '\'' +

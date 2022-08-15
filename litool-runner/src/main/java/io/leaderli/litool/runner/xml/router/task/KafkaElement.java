@@ -7,6 +7,10 @@ public class KafkaElement extends BaseEventElement<KafkaElement, KafkaElementExe
 
     private String topic = "";
 
+    public KafkaElement() {
+        super("kafka");
+    }
+
 
     public String getTopic() {
         return topic;

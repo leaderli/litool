@@ -7,12 +7,16 @@ import io.leaderli.litool.dom.sax.SaxList;
  * @author leaderli
  * @since 2022/7/8 9:55 PM
  */
-public class Bean implements SaxBean {
+public class Bean extends SaxBean {
     private String name;
     public double version = 0;
 
 
     public SaxList<Bean> saxList = new BeanSaxList();
+
+    public Bean() {
+        super("bean");
+    }
 
 
     public String getName() {

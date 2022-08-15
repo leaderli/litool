@@ -11,6 +11,10 @@ public class IfElement extends TaskElement<IfElement, IfElementExecutor> {
 
     private Expression cond = new Expression(true, LITERAL);
 
+    public IfElement() {
+        super("if");
+    }
+
     public void addAssign(AssignElement element) {
         taskList.add(element);
     }

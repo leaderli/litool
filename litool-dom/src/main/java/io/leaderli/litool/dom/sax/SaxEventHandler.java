@@ -35,11 +35,11 @@ public interface SaxEventHandler {
         // 查找set（优先级更高) 或 add 方法 填充属性
         // set 一般用于设置SaxBean， add 一般用于添加 SaxList
 
-        String fieldName = startEvent.name;
+        String tag = startEvent.name;
 
         MethodScanner methodScanner = MethodScanner.of(getClass(), false, method ->
 
-                StringUtils.equalsAnyIgnoreCase(method.getName(), "set" + fieldName, "add" + fieldName)
+                StringUtils.equalsAnyIgnoreCase(method.getName(), "set" + tag, "add" + tag)
                         && method.getParameterCount() == 1
                         && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, method.getParameterTypes()[0]));
 
@@ -53,16 +53,17 @@ public interface SaxEventHandler {
             // 使用 set 注入属性应当是唯一的
             if (method.getName().startsWith("set")) {
                 methodScanner = MethodScanner.of(getClass(), false, get ->
-                        StringUtils.equalsAnyIgnoreCase(get.getName(), "get" + fieldName)
+                        StringUtils.equalsAnyIgnoreCase(get.getName(), "get" + tag)
                                 && get.getParameterCount() == 0
                                 && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, get.getReturnType()));
                 methodScanner.scan().first().ifPresent(get -> {
 
-                    LiAssertUtil.assertTrue(ReflectUtil.getMethodValue(get, this).absent(), String.format("%s:%s already inited", getClass().getSimpleName(), fieldName));
+                    LiAssertUtil.assertTrue(ReflectUtil.getMethodValue(get, this).absent(), String.format("%s:%s already inited", getClass().getSimpleName(), tag));
                 });
 
 
             }
+            // saxBean 都有一个 包含 tag 的构造器
             ReflectUtil.newInstance(method.getParameterTypes()[0]).cast(SaxBean.class).ifPresent(sax -> {
                 SaxBeanAdapter saxBeanAdapter = SaxBeanAdapter.of(sax);
                 // 成员变量在执行到 end 时可以确保已经加载好，此时通过回调函数再注入到实例中
