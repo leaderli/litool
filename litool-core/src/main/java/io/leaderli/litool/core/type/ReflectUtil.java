@@ -197,10 +197,11 @@ public class ReflectUtil {
      */
     public static <T> Lino<T> newInstance(Class<T> cls) {
         Objects.requireNonNull(cls);
-        Constructor<T> constructor = getConstructor(cls);
+        return getConstructor(cls).throwable_map(constructor -> {
+            setAccessible(constructor);
+            return constructor.newInstance();
+        });
 
-        setAccessible(constructor);
-        return Lino.of(constructor).throwable_map(Constructor::newInstance);
 
     }
 
@@ -236,11 +237,11 @@ public class ReflectUtil {
      * @param <T> 泛型
      * @return 获取无参构造器
      */
-    public static <T> Constructor<T> getConstructor(Class<T> cls) {
+    public static <T> Lino<Constructor<T>> getConstructor(Class<T> cls) {
 
         return getConstructors(cls)
                 .filter(constructor -> constructor.getParameterTypes().length == 0)
-                .first().get();
+                .first();
     }
 
     /**
