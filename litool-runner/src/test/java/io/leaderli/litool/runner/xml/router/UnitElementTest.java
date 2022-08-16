@@ -8,7 +8,6 @@ import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.json.GsonUtil;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.ContextInfo;
-import io.leaderli.litool.runner.adapter.RunnerGson;
 import io.leaderli.litool.runner.event.BeginEvent;
 import io.leaderli.litool.runner.event.EndEvent;
 import io.leaderli.litool.runner.event.UnitErrorEvent;
@@ -54,12 +53,17 @@ class UnitElementTest {
         DOMElement mainElement = LiDomUtil.getDOMRootByPath("unit_error.xml");
 
         Map<String, Object> read = XmlMapConvert.read(mainElement);
-        System.out.println(RunnerGson.GSON.toJson(read));
+
+        String write = XmlMapConvert.write(read).asXML();
+
+        read = XmlMapConvert.read(LiDomUtil.getDOMRootByString(write));
+
+        Assertions.assertEquals(write, XmlMapConvert.write(read).asXML());
 
     }
 
 
-//    @Test
+    //    @Test
     void unit_long() {
 
         SaxEventInterceptor<MainElement> interceptor = new SaxEventInterceptor<>(MainElement.class);
