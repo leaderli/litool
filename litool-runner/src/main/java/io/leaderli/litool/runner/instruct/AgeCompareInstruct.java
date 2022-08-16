@@ -26,11 +26,11 @@ public class AgeCompareInstruct implements Instruct {
         LocalDate date = LocalDate.parse(birthday, yyyyMMdd);
         LocalDate now = LocalDate.now();
 
-        return op.apply(date, now.minusYears(year_int));
+        return !op.apply(date, now.minusYears(year_int));
     }
 
     @Override
     public String name() {
-        return null;
+        return "age_compare";
     }
 }

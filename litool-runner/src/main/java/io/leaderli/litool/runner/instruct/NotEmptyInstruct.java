@@ -15,7 +15,7 @@ public class NotEmptyInstruct implements Instruct {
 
     @Override
     public String name() {
-        return null;
+        return "not_empty";
     }
 
 }
