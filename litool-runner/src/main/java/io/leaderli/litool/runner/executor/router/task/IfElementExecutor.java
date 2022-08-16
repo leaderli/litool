@@ -41,16 +41,6 @@ public class IfElementExecutor extends BaseElementExecutor<IfElement> {
         if (!expressionValue) {
             context.interrupt.set(Interrupt.BREAK_LOOP);
         }
-//        if (expressionValue) {
-//            for (BaseElementExecutor<?> executor : executors) {
-//                Integer unitState = context.getTemp(TempNameEnum.unit_state.name());
-//                if (unitState == UnitStateConstant.INTERRUPT) {
-//                    break;
-//                }
-//
-//                executor.visit(context);
-//            }
-//        }
     }
 
     @Override

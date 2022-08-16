@@ -12,10 +12,6 @@ import java.util.List;
  * @since 2022/8/9 4:48 PM
  */
 public class MainElementExecutor extends BaseElementExecutor<MainElement> {
-//    final ContextVisitor request;
-//    final ContextVisitor response;
-//    final ContextVisitor funcs;
-//    final ContextVisitor router;
 
     final ImmutableList<ContextVisitor> contextVisitors;
 

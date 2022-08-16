@@ -13,7 +13,6 @@ import java.util.List;
  */
 public abstract class BaseElementExecutor<S extends SaxBean> extends ContextVisitor {
     public final S element;
-    private final VisitorStack checkVisitors = new VisitorStack();
 
     public BaseElementExecutor(S element) {
         this.element = element;
