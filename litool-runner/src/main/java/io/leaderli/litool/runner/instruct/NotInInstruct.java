@@ -16,7 +16,7 @@ public class NotInInstruct implements Instruct {
 
     @Override
     public String name() {
-        return "notin";
+        return "not_in";
     }
 
 }

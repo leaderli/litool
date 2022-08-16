@@ -20,6 +20,6 @@ public class OrInstruct implements Instruct {
 
     @Override
     public String name() {
-        return null;
+        return "or";
     }
 }

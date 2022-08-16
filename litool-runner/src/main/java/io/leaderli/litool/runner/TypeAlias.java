@@ -18,6 +18,7 @@ public class TypeAlias {
 
     static {
         put("int", Integer.class, Integer::valueOf);
+        put("double", Double.class, Double::valueOf);
         put("str", String.class, s -> s);
         put("boolean", Boolean.class, Boolean::valueOf);
         put("op", OperatorEnum.class, OperatorEnum::get);

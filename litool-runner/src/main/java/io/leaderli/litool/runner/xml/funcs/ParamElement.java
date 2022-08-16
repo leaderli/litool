@@ -13,7 +13,7 @@ import java.util.List;
 public class ParamElement extends SaxBeanWithID {
 
     private String type = "str";
-    private Expression expression;
+    private Expression expression = new Expression("", VariablesModel.LITERAL);
 
     public ParamElement() {
         super("param");
