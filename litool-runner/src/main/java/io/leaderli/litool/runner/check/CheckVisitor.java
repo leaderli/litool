@@ -1,11 +1,11 @@
 package io.leaderli.litool.runner.check;
 
+import io.leaderli.litool.core.type.MethodScanner;
+import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.dom.sax.SaxBean;
-import io.leaderli.litool.runner.Expression;
-import io.leaderli.litool.runner.LongExpression;
-import io.leaderli.litool.runner.xml.router.task.CoordinateElement;
-import io.leaderli.litool.runner.xml.router.task.GotoDestination;
-import io.leaderli.litool.runner.xml.router.task.IfElement;
+
+import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * @author leaderli
@@ -21,46 +21,30 @@ public abstract class CheckVisitor extends VisitorAdapter {
         visit(visitor);
     }
 
+    private final Map<? extends Class<?>, Method> specific_check;
+
+    protected CheckVisitor() {
+        specific_check = MethodScanner.of(getClass(), false, method -> {
+            return "check".equals(method.getName())
+                    && method.getReturnType() == void.class
+                    && method.getParameterTypes().length == 2
+                    && method.getParameterTypes()[1] == SaxBean.class
+                    && method.getParameterTypes()[0] != Object.class
+                    ;
+        }).scan().toMap(m -> m.getParameterTypes()[0], m -> m);
+
+    }
+
     protected void visit(CheckVisitor visitor) {
 
     }
 
 
-
     public final void check(Object obj, SaxBean saxBean) {
 
-        if (obj instanceof Expression) {
-            check((Expression) obj, saxBean);
-        } else if (obj instanceof CoordinateElement) {
-            check((CoordinateElement) obj, saxBean);
-        } else if (obj instanceof GotoDestination) {
-            check((GotoDestination) obj, saxBean);
-        } else if (obj instanceof LongExpression) {
-            check((LongExpression) obj, saxBean);
-        } else if (obj instanceof IfElement) {
-            check((IfElement) obj, saxBean);
-        }
-    }
-
-    public void check(IfElement ifElement, SaxBean saxBean) {
-
-    }
-
-    public void check(Expression expression, SaxBean saxBean) {
-
-    }
-
-    public void check(LongExpression longExpression, SaxBean saxBean) {
-
-    }
-
-    public void check(CoordinateElement coordinate, SaxBean saxBean) {
-
-    }
-
-    public void check(GotoDestination gotoDestination, SaxBean saxBean) {
-
-
+        // 调用于obj类型相同的校验器进行校验
+        Method method = specific_check.get(obj.getClass());
+        ReflectUtil.getMethodValue(method, this, obj, saxBean);
     }
 
     /**
