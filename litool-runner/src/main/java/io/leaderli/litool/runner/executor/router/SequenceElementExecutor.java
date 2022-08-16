@@ -2,15 +2,18 @@ package io.leaderli.litool.runner.executor.router;
 
 import io.leaderli.litool.core.collection.ImmutableList;
 import io.leaderli.litool.runner.Context;
-import io.leaderli.litool.runner.TempNameEnum;
-import io.leaderli.litool.runner.constant.UnitStateConstant;
+import io.leaderli.litool.runner.ContextVisitor;
+import io.leaderli.litool.runner.Interrupt;
+import io.leaderli.litool.runner.event.UnitErrorEvent;
 import io.leaderli.litool.runner.executor.BaseElementExecutor;
 import io.leaderli.litool.runner.xml.router.SequenceElement;
 import io.leaderli.litool.runner.xml.router.UnitElement;
 
+import java.util.List;
+
 public class SequenceElementExecutor extends BaseElementExecutor<SequenceElement> {
 
-    private ImmutableList<UnitElementExecutor> unitExecutors;
+    private ImmutableList<ContextVisitor> unitExecutors;
 
     public SequenceElementExecutor(SequenceElement element) {
         super(element);
@@ -21,15 +24,18 @@ public class SequenceElementExecutor extends BaseElementExecutor<SequenceElement
         unitExecutors = ImmutableList.of(element.getUnitList().lira().map(UnitElement::executor));
     }
 
-    @Override
-    public void visit(Context context) {
-        for (UnitElementExecutor unitExecutor : unitExecutors) {
-            Integer unitState = context.getTemp(TempNameEnum.unit_state.name());
-            if (unitState == UnitStateConstant.INTERRUPT) {
-                break;
-            }
 
-            unitExecutor.visit(context);
+    @Override
+    public List<ContextVisitor> visit() {
+        return unitExecutors.copy();
+    }
+    @Override
+    public boolean notify(Context context) {
+        if (context.interrupt.allow(Interrupt.ERROR)) {
+            context.publishEvent(new UnitErrorEvent(element.getId(), (Throwable) context.interruptObj));
+            context.interrupt.disable(Interrupt.ERROR);
+            return true;
         }
+        return false;
     }
 }

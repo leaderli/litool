@@ -5,8 +5,12 @@ import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.dom.LiDomUtil;
 import io.leaderli.litool.dom.XmlMapConvert;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
+import io.leaderli.litool.json.GsonUtil;
 import io.leaderli.litool.runner.Context;
+import io.leaderli.litool.runner.ContextInfo;
 import io.leaderli.litool.runner.adapter.RunnerGson;
+import io.leaderli.litool.runner.event.BeginEvent;
+import io.leaderli.litool.runner.event.EndEvent;
 import io.leaderli.litool.runner.event.UnitErrorEvent;
 import io.leaderli.litool.runner.xml.MainElement;
 import org.dom4j.DocumentException;
@@ -32,20 +36,13 @@ class UnitElementTest {
         request.put("bfzType", "1");
 
         Context context = new Context(request);
-        //noinspection Convert2Lambda
-        ILiEventListener<UnitErrorEvent> listener = new ILiEventListener<UnitErrorEvent>() {
-
-            @Override
-            public void listen(UnitErrorEvent source) {
-
-                LiTuple2<String, Throwable> tuple = source.getSource().get();
-//                tuple._2.printStackTrace();
-//                System.out.println(tuple);
-            }
-        };
+        ILiEventListener<UnitErrorEvent> listener = new UnitErrorEventILiEventListener();
 //        System.out.println(listener.componentType());
         context.registerListener(listener);
         mainElement.executor().visit(context);
+//        context.visit(mainElement.executor());
+//        mainElement.executor().visit(context);
+        System.out.println(context.origin_request_or_response);
         CharSequence skill = context.getResponse("skill");
 
         Assertions.assertEquals("003", skill);
@@ -59,5 +56,68 @@ class UnitElementTest {
         Map<String, Object> read = XmlMapConvert.read(mainElement);
         System.out.println(RunnerGson.GSON.toJson(read));
 
+    }
+
+
+//    @Test
+    void unit_long() {
+
+        SaxEventInterceptor<MainElement> interceptor = new SaxEventInterceptor<>(MainElement.class);
+        MainElement mainElement = interceptor.parse("unit_long.xml");
+
+        Map<String, String> request = new HashMap<>();
+        request.put("bfzType", "1");
+
+        ContextInfo contextInfo = new ContextInfo();
+        Context context = new Context(request);
+        context.registerListener(new BeginEventILiEventListener(contextInfo));
+        context.registerListener(new UnitErrorEventILiEventListener());
+        context.registerListener(new EndEventILiEventListener(contextInfo));
+
+        mainElement.executor().visit(context);
+//        context.visit(mainElement.executor());
+
+        GsonUtil.print(context.origin_request_or_response);
+        GsonUtil.print(contextInfo);
+
+
+    }
+
+    private static class UnitErrorEventILiEventListener implements ILiEventListener<UnitErrorEvent> {
+
+        @Override
+        public void listen(UnitErrorEvent source) {
+
+            LiTuple2<String, Throwable> tuple = source.getSource().get();
+//                tuple._2.printStackTrace();
+//                System.out.println(tuple);
+        }
+    }
+
+    private static class BeginEventILiEventListener implements ILiEventListener<BeginEvent> {
+        private final ContextInfo info;
+
+        public BeginEventILiEventListener(ContextInfo contextInfo) {
+            this.info = contextInfo;
+        }
+
+        @Override
+        public void listen(BeginEvent source) {
+
+            info.setElapse(System.currentTimeMillis());
+        }
+    }
+
+    private static class EndEventILiEventListener implements ILiEventListener<EndEvent> {
+        private final ContextInfo info;
+
+        public EndEventILiEventListener(ContextInfo contextInfo) {
+            this.info = contextInfo;
+        }
+
+        @Override
+        public void listen(EndEvent source) {
+            info.setElapse(System.currentTimeMillis() - info.getElapse());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package io.leaderli.litool.runner;
 
+import io.leaderli.litool.core.bit.BitPermission;
 import io.leaderli.litool.core.collection.ImmutableMap;
 import io.leaderli.litool.core.event.ILiEventListener;
 import io.leaderli.litool.core.event.LiEventBus;
@@ -22,8 +23,11 @@ public class Context {
      * 用于缓存无需重复计算的func的计算结果
      */
     public final Map<String, Object> func_result_cache = new HashMap<>();
+    public final LiEventBus bus = new LiEventBus();
+    public BitPermission interrupt = new BitPermission();
+    public Object interruptObj = new Object();
     /**
-     * @see io.leaderli.litool.runner.executor.FuncsElementExecutor
+     * @see io.leaderli.litool.runner.executor.funcs.FuncsElementExecutor
      */
     private ImmutableMap<String, IFunc> funcFactory;
     private ImmutableMap<String, Object> readonly_request;
@@ -32,15 +36,16 @@ public class Context {
      */
     private TempContainer temp = new TempContainer();
 
-    public final LiEventBus bus = new LiEventBus();
-
     public Context(Map<String, String> origin_request) {
         this.origin_request_or_response.putAll(origin_request);
     }
 
-    public void visit(ContextVisitor contextVisitor) {
-        contextVisitor.visit(this);
-    }
+//    public void visit(ContextVisitor contextVisitor) {
+////        publishEvent(BeginEvent.of());
+//        contextVisitor.visit(this);
+////        publishEvent(EndEvent.of());
+//
+//    }
 
 
     @SuppressWarnings("unchecked")

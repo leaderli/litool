@@ -3,11 +3,16 @@ package io.leaderli.litool.runner;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.util.ConsoleUtil;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
+import io.leaderli.litool.runner.event.EchoEvent;
+import io.leaderli.litool.runner.event.EchoListener;
 import io.leaderli.litool.runner.executor.MainElementExecutor;
+import io.leaderli.litool.runner.instruct.BetweenTimeInstruct;
+import io.leaderli.litool.runner.instruct.TimeInstruct;
 import io.leaderli.litool.runner.xml.MainElement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.text.DateFormatSymbols;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +44,7 @@ public class RunnerTest {
         request.put("bfzType", "1");
 
         Context context = new Context(request);
+
         executor.visit(context);
         CharSequence skill = context.getResponse("skill");
         assertTrue(StringUtils.equals(skill, "001"));
@@ -69,8 +75,19 @@ public class RunnerTest {
         request.put("_env", "local_test");
         request.put("_testTime", "2300");
 
+//        System.out.println(new TimeInstruct().invoke("HHmm", "2300", "local_test"));
+//        System.out.println(new BetweenTimeInstruct().invoke("2230","0700","2300"));
         Context context = new Context(request);
+        context.registerListener(new EchoListener() {
+            @Override
+            public void listen(EchoEvent source) {
+                System.out.println(source.getSource().get()._2);
+            }
+        });
+        System.out.println(context.origin_request_or_response);
         executor.visit(context);
+        System.out.println(context.origin_request_or_response);
+
         CharSequence skill = context.getResponse("skill");
         assertTrue(StringUtils.equals(skill, "sequence_a"));
     }

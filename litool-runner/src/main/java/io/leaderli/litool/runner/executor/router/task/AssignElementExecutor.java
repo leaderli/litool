@@ -10,7 +10,7 @@ public class AssignElementExecutor extends BaseElementExecutor<AssignElement> {
     }
 
     @Override
-    public void visit(Context context) {
+    public void execute(Context context) {
         context.setResponse(element.getName().getName(), element.getValue());
     }
 }

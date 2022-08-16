@@ -45,7 +45,7 @@ public class ImmutableList<T> implements Iterable<T> {
     @SuppressWarnings("unchecked")
     public static <T> ImmutableList<T> of(Iterable<T> iterable) {
         Lira<T> lira = Lira.of(iterable);
-        if(lira.absent()){
+        if (lira.absent()) {
             return none();
         }
         return new ImmutableList<>((T[]) lira.toArray());
@@ -82,5 +82,9 @@ public class ImmutableList<T> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return ArrayIter.of(elements);
+    }
+
+    public List<T> copy() {
+        return CollectionUtils.of(elements);
     }
 }

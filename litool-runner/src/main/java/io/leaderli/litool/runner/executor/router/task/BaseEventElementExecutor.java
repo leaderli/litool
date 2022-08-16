@@ -17,7 +17,7 @@ public abstract class BaseEventElementExecutor<B extends BaseEventElement<B, ?, 
     }
 
     @Override
-    public final void visit(Context context) {
+    public final void execute(Context context) {
 
 
         String message = StrSubstitution.replace(element.getLongExpression().getExpr()

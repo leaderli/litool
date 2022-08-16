@@ -19,7 +19,7 @@ public class RequestElementExecutor extends BaseElementExecutor<RequestElement> 
     }
 
     @Override
-    public void visit(Context context) {
+    public void execute(Context context) {
         Map<String, Object> parserRequest = new HashMap<>();
         element.entryList.lira().forEach(entry -> {
 

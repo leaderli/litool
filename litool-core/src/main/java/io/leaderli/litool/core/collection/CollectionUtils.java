@@ -53,6 +53,14 @@ public class CollectionUtils {
     }
 
     @SafeVarargs
+    public static <T> List<T> of(T... elements) {
+
+        List<T> arrayList = new ArrayList<>();
+        Collections.addAll(arrayList, elements);
+        return arrayList;
+    }
+
+    @SafeVarargs
     public static List<List<Object>> cartesianProduct(List<Object>... elements) {
 
         if (elements == null || elements.length == 0) {
