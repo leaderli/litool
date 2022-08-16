@@ -58,6 +58,7 @@ public class MethodScanner {
                     .filter(MethodUtil::notObjectMethod)
                     .filter(filter);
 
+
         }
         return Lira.none();
     }
