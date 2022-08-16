@@ -31,6 +31,7 @@ public class ExpressionCheckVisitor extends CheckVisitor {
         modelCheckVisitor.setParseErrorMsgs(this.parseErrorMsgs);
     }
 
+    @Override
     public void check(Expression expression, SaxBean saxBean) {
 
 
@@ -59,6 +60,7 @@ public class ExpressionCheckVisitor extends CheckVisitor {
         }
     }
 
+    @Override
     public void check(IfElement ifElement, SaxBean saxBean) {
         IfElementExpressionCheckVisitor visitor = new IfElementExpressionCheckVisitor(ifElement);
         visitor.setMainElement(mainElement);
@@ -66,6 +68,7 @@ public class ExpressionCheckVisitor extends CheckVisitor {
         visitor.visit();
     }
 
+    @Override
     public void check(LongExpression longExpression, SaxBean saxBean) {
 
         // 依次对占位符进行校验
@@ -76,6 +79,7 @@ public class ExpressionCheckVisitor extends CheckVisitor {
     }
 
 
+    @Override
     public void check(CoordinateElement coordinate, SaxBean saxBean) {
         CoordinateExpressionElementCheckVisitor visitor = new CoordinateExpressionElementCheckVisitor(coordinate);
         visitor.setMainElement(mainElement);

@@ -18,6 +18,7 @@ public class IfElementExpressionCheckVisitor extends ElementCheckVisitor<IfEleme
         visit(element, visitor, false);
     }
 
+    @Override
     public void check(Expression expression, SaxBean saxBean) {
         Inner inner = new Inner();
         ExpressionCheckVisitor visitor = new ExpressionCheckVisitor(inner);

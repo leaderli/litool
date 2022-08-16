@@ -89,8 +89,8 @@ class UnitElementTest {
         public void listen(UnitErrorEvent source) {
 
             LiTuple2<String, Throwable> tuple = source.getSource().get();
-//                tuple._2.printStackTrace();
-//                System.out.println(tuple);
+                tuple._2.printStackTrace();
+                System.out.println(tuple);
         }
     }
 
