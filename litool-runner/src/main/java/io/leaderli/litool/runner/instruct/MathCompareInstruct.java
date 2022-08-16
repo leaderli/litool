@@ -5,7 +5,7 @@ import io.leaderli.litool.runner.constant.OperatorEnum;
 public class MathCompareInstruct implements Instruct {
 
     @Override
-    public Object apply(Object[] objects) {
+    public Object apply(Class<?> type, Object[] objects) {
         return invoke((OperatorEnum) objects[0], (Number) objects[1], (Number) objects[2]);
     }
 

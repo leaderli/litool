@@ -7,7 +7,6 @@ import io.leaderli.litool.runner.TypeAlias;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author leaderli
@@ -30,13 +29,13 @@ public interface Instruct {
                 .filter(f -> f.getDeclaringClass() == cls)
                 .filter(f -> INVOKE_METHOD_NAME.equals(f.getName()));
 
-        LiAssertUtil.assertTrue(methods.present(), "don't have invoke method");
-        Class<?> returnType = methods.first().get().getReturnType();
-        LiAssertUtil.assertTrue(TypeAlias.support(returnType), "invoke  returnType is unsupported");
+        LiAssertUtil.assertTrue(methods.present(), getClass() + " don't have invoke method");
+//        Class<?> returnType = methods.first().get().getReturnType();
 
         for (Method method : methods) {
 
-            LiAssertUtil.assertTrue(returnType == method.getReturnType(), "all invoke method must have same returnType");
+            LiAssertUtil.assertTrue(TypeAlias.support(method.getReturnType()), "invoke  returnType is unsupported");
+//            LiAssertUtil.assertTrue(returnType == method.getReturnType(), "all invoke method must have same returnType");
 
             for (int i = 0; i < method.getParameterTypes().length; i++) {
 
@@ -57,7 +56,7 @@ public interface Instruct {
 
     }
 
-    Object apply(Object[] objects);
+    Object apply(Class<?> type, Object[] objects);
 
     String name();
 

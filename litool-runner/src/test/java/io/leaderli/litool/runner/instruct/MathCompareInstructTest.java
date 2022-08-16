@@ -15,8 +15,8 @@ class MathCompareInstructTest {
 
         MathCompareInstruct compare = new MathCompareInstruct();
 
-        Assertions.assertTrue((boolean) compare.apply(new Object[]{OperatorEnum.EQUALS, 1, 1}));
-        Assertions.assertTrue((boolean) compare.apply(new Object[]{OperatorEnum.EQUALS, 1.0, 1.0}));
+        Assertions.assertTrue((boolean) compare.apply(Boolean.class, new Object[]{OperatorEnum.EQUALS, 1, 1}));
+        Assertions.assertTrue((boolean) compare.apply(Boolean.class, new Object[]{OperatorEnum.EQUALS, 1.0, 1.0}));
 
     }
 

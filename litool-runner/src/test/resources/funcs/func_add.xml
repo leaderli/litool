@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<funcs>
+
+    <func name="add1" label="add1" instruct="add">
+        <param type="int">1</param>
+        <param type="int">1</param>
+    </func>
+    <func name="add2" label="add2" instruct="add" type="double">
+        <param type="double">1</param>
+        <param type="double">1</param>
+    </func>
+</funcs>
