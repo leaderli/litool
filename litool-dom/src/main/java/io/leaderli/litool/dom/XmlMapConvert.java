@@ -4,7 +4,7 @@ import org.dom4j.Attribute;
 import org.dom4j.dom.DOMElement;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public class XmlMapConvert {
 
     public static Map<String, Object> read(DOMElement dom) {
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         for (Attribute attribute : dom.attributes()) {
             map.put(attribute.getName(), attribute.getValue());
         }
@@ -36,5 +36,13 @@ public class XmlMapConvert {
         }
         return map;
 
+    }
+
+    public static DOMElement write(Map<String, Object> map) {
+        String tag = (String) map.remove($NAME);
+        String body= (String) map.remove($BODY);
+
+        DOMElement element = new DOMElement(tag);
+        return null;
     }
 }

@@ -2,7 +2,8 @@ package io.leaderli.litool.runner.xml.funcs;
 
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
-import io.leaderli.litool.runner.InstructAdapter;
+import io.leaderli.litool.runner.TypeAlias;
+import io.leaderli.litool.runner.instruct.Instruct;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,17 +34,13 @@ class FuncElementTest {
         List<FuncElement> funcs = dfs.parse("funcs/func_add.xml").funcList.lira().getRaw();
 
 
-        InstructAdapter instruct = (InstructAdapter) funcs.get(0).getInstruct();
+        Instruct instruct =  funcs.get(0).getInstruct();
 
-        Assertions.assertEquals(Integer.class, instruct.type);
-        InstructAdapter finalInstruct = instruct;
-        Assertions.assertThrows(ClassCastException.class, () -> {
-            finalInstruct.apply(null, new Object[]{1.0, 1});
-        });
-        instruct = (InstructAdapter) funcs.get(1).getInstruct();
-        Assertions.assertEquals(Double.class, instruct.type);
+        Instruct finalInstruct = instruct;
+        Assertions.assertThrows(ClassCastException.class, () -> finalInstruct.apply(TypeAlias.getType(funcs.get(0).getType()), new Object[]{1.0, 1}));
+        instruct =  funcs.get(1).getInstruct();
 
-        Assertions.assertEquals(0.0,instruct.apply(null, new Object[]{1.0, 1.0}));
+        Assertions.assertEquals(0.0,instruct.apply(TypeAlias.getType(funcs.get(1).getType()), new Object[]{1.0, 1.0}));
 
 //        Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("the func name [$switch86] is not match [a-zA-Z0-9_]+ at"));
 

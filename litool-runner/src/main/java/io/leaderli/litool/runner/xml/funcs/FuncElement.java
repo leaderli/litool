@@ -6,7 +6,6 @@ import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.dom.sax.EndEvent;
-import io.leaderli.litool.runner.InstructAdapter;
 import io.leaderli.litool.runner.InstructContainer;
 import io.leaderli.litool.runner.TypeAlias;
 import io.leaderli.litool.runner.instruct.Instruct;
@@ -89,8 +88,8 @@ public class FuncElement extends SaxBeanWithID {
     }
 
     public void setInstruct(Instruct instruct) {
+        this.instruct = instruct;
         Class<?> returnType = instruct.getInstructMethod().first().get().getReturnType();
-        this.instruct = new InstructAdapter(instruct, type);
         String type = Lira.of(TypeAlias.ALIAS.entrySet())
                 .filter(entry -> entry.getValue() == returnType)
                 .map(Map.Entry::getKey)
@@ -106,9 +105,6 @@ public class FuncElement extends SaxBeanWithID {
     public void setType(String type) {
         LiAssertUtil.assertTrue(TypeAlias.ALIAS.containsKey(type), String.format("the func type [%s] is unsupported", type));
         this.type = type;
-        if (this.instruct instanceof InstructAdapter) {
-            this.instruct = ((InstructAdapter) this.instruct).newType(this.type);
-        }
     }
 
     public ParamList getParams() {
