@@ -5,7 +5,7 @@ import io.leaderli.litool.core.text.StringUtils;
 public class NotEmptyInstruct implements Instruct {
 
     @Override
-    public Object apply(Object[] objects) {
+    public Object apply(Class<?> type, Object[] objects) {
         return invoke((String) objects[0]);
     }
 

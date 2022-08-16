@@ -13,7 +13,6 @@ public class GotoElementExecutor extends BaseElementExecutor<GotoElement> {
 
     @Override
     public void execute(Context context) {
-//        context.setTemp(TempNameEnum.sequence_name.name(), element.getNext().next);
         context.interrupt.set(Interrupt.GOTO);
         context.interruptObj = element.getNext().next;
     }

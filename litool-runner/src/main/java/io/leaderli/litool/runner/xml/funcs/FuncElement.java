@@ -6,6 +6,7 @@ import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.dom.sax.EndEvent;
+import io.leaderli.litool.runner.InstructAdapter;
 import io.leaderli.litool.runner.InstructContainer;
 import io.leaderli.litool.runner.TypeAlias;
 import io.leaderli.litool.runner.instruct.Instruct;
@@ -37,7 +38,10 @@ public class FuncElement extends SaxBeanWithID {
     public void end(EndEvent endEvent) {
         super.end(endEvent);
 
-        Method method = this.instruct.getInstructMethod();
+        Method method = this.instruct.getInstructMethod()
+                .filter(m -> m.getReturnType() == TypeAlias.getType(type))
+                .first()
+                .get();
 
         final Class<?>[] paramListTypes = params.lira()
                 .map(p -> TypeAlias.getType(p.getType())).cast(Class.class)
@@ -63,7 +67,6 @@ public class FuncElement extends SaxBeanWithID {
     }
 
 
-
     public String getLabel() {
         return label;
     }
@@ -86,11 +89,10 @@ public class FuncElement extends SaxBeanWithID {
     }
 
     public void setInstruct(Instruct instruct) {
-        this.instruct = instruct;
-//        Method invoke = InstructContainer.getInnerMethodByAlias(this.instruct).getInstructMethod();
-//        LiAssertUtil.assertTrue(invoke != null, String.format("the inner func [%s] is unsupported", instruct));
+        Class<?> returnType = instruct.getInstructMethod().first().get().getReturnType();
+        this.instruct = new InstructAdapter(instruct, type);
         String type = Lira.of(TypeAlias.ALIAS.entrySet())
-                .filter(entry -> entry.getValue() == this.instruct.getInstructMethod().getReturnType())
+                .filter(entry -> entry.getValue() == returnType)
                 .map(Map.Entry::getKey)
                 .first()
                 .get();
@@ -104,6 +106,9 @@ public class FuncElement extends SaxBeanWithID {
     public void setType(String type) {
         LiAssertUtil.assertTrue(TypeAlias.ALIAS.containsKey(type), String.format("the func type [%s] is unsupported", type));
         this.type = type;
+        if (this.instruct instanceof InstructAdapter) {
+            this.instruct = ((InstructAdapter) this.instruct).newType(this.type);
+        }
     }
 
     public ParamList getParams() {

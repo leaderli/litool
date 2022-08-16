@@ -4,7 +4,7 @@ import io.leaderli.litool.core.meta.Lira;
 
 public class OrInstruct implements Instruct {
     @Override
-    public Object apply(Object[] objects) {
+    public Object apply(Class<?> type, Object[] objects) {
         return invoke(Lira.of(objects).cast(Boolean.class).toArray(Boolean.class));
     }
 

@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 public class DateCompareInstruct implements Instruct {
 
     @Override
-    public Object apply(Object[] objects) {
+    public Object apply(Class<?> type, Object[] objects) {
         return invoke((OperatorEnum) objects[0], (String) objects[1], (String) objects[2]);
     }
 

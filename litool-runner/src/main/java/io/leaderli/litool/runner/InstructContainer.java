@@ -1,17 +1,15 @@
 package io.leaderli.litool.runner;
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.type.ClassScanner;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.runner.instruct.Instruct;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
 public class InstructContainer {
 
     private static final Map<String, Instruct> ALIAS_METHOD;
-    private static final Map<String, Method> NAME_INSTRUCT = new HashMap<>();
 
     static {
         ALIAS_METHOD = scanner();
@@ -31,6 +29,16 @@ public class InstructContainer {
 
     public static Instruct getInnerMethodByAlias(String alias) {
         return ALIAS_METHOD.get(alias);
+    }
+
+    /**
+     * 提供注册指令的功能
+     *
+     * @param instruct 指令
+     */
+    public static void registerInstruct(Instruct instruct) {
+        LiAssertUtil.assertFalse(ALIAS_METHOD.containsKey(instruct.name()), String.format("instruct %s already exists", instruct.name()));
+        ALIAS_METHOD.put(instruct.name(), instruct);
     }
 
 

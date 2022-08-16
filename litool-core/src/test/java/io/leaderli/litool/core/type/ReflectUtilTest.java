@@ -155,7 +155,7 @@ class ReflectUtilTest {
     void getConstructors() throws InvocationTargetException, IllegalAccessException, InstantiationException {
 
 
-        Constructor<ConstructorBean> constructor = ReflectUtil.getConstructor(ConstructorBean.class);
+        Constructor<ConstructorBean> constructor = ReflectUtil.getConstructor(ConstructorBean.class).get();
         constructor.setAccessible(true);
         ConstructorBean constructorBean = constructor.newInstance();
         Assertions.assertNotNull(constructorBean);

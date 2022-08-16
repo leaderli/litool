@@ -6,8 +6,8 @@ import org.joda.time.DateTime;
 public class NowInstruct implements Instruct {
 
     @Override
-    public Object apply(Object[] objects) {
-        return invoke((String)objects[0], (String)objects[1], (String) objects[2]);
+    public Object apply(Class<?> type, Object[] objects) {
+        return invoke((String) objects[0], (String) objects[1], (String) objects[2]);
     }
 
     public String invoke(String formatStr, String currentDate, String test) {

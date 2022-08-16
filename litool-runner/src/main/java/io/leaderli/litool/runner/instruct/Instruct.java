@@ -1,6 +1,7 @@
 package io.leaderli.litool.runner.instruct;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.runner.TypeAlias;
 
@@ -13,7 +14,6 @@ import java.util.Arrays;
  */
 public interface Instruct {
 
-// TODO 写测试类
     // 实际执行调用的方法名
     String INVOKE_METHOD_NAME = "invoke";
 
@@ -23,37 +23,40 @@ public interface Instruct {
      * @return 返回 invoke 方法
      * @see TypeAlias#support(Class)
      */
-    default Method getInstructMethod() {
+    default Lira<Method> getInstructMethod() {
         Class<? extends Instruct> cls = getClass();
-        Method method =
-                ReflectUtil.getMethods(cls)
-                        .filter(f -> f.getDeclaringClass() == cls)
-                        .filter(f -> INVOKE_METHOD_NAME.equals(f.getName()))
-                        .first()
-                        .assertNotNone("don't have invoke method").get();
+        Lira<Method> methods = ReflectUtil.getMethods(cls)
+                .filter(f -> f.getDeclaringClass() == cls)
+                .filter(f -> INVOKE_METHOD_NAME.equals(f.getName()));
+
+        LiAssertUtil.assertTrue(methods.present(), getClass() + " don't have invoke method");
+//        Class<?> returnType = methods.first().get().getReturnType();
+
+        for (Method method : methods) {
+
+            LiAssertUtil.assertTrue(TypeAlias.support(method.getReturnType()), "invoke  returnType is unsupported");
+//            LiAssertUtil.assertTrue(returnType == method.getReturnType(), "all invoke method must have same returnType");
+
+            for (int i = 0; i < method.getParameterTypes().length; i++) {
 
 
-        LiAssertUtil.assertTrue(TypeAlias.support(method.getReturnType()), "invoke  returnType is unsupported");
+                Class<?> parameterType = method.getParameterTypes()[i];
+                Class<?> temp = parameterType;
+                if (temp.isArray()) {
+                    // 仅允许最后一位为数组参数
+                    LiAssertUtil.assertTrue(i == method.getParameterTypes().length - 1, String.format("invoke arr parameterType is only support on the last: %s", Arrays.toString(method.getParameterTypes())));
+                    temp = temp.getComponentType();
 
-        for (int i = 0; i < method.getParameterTypes().length; i++) {
-
-
-            Class<?> parameterType = method.getParameterTypes()[i];
-            Class<?> temp = parameterType;
-            if (temp.isArray()) {
-                // 仅允许最后一位为数组参数
-                LiAssertUtil.assertTrue(i == method.getParameterTypes().length - 1, String.format("invoke arr parameterType is only support on the last: %s", Arrays.toString(method.getParameterTypes())));
-                temp = temp.getComponentType();
+                }
+                LiAssertUtil.assertTrue(TypeAlias.ALIAS.containsValue(temp), String.format("invoke parameterType [%s] is unsupported", parameterType));
 
             }
-            LiAssertUtil.assertTrue(TypeAlias.ALIAS.containsValue(temp), String.format("invoke parameterType [%s] is unsupported", parameterType));
-
         }
-        return method;
+        return methods;
 
     }
 
-    Object apply(Object[] objects);
+    Object apply(Class<?> type, Object[] objects);
 
     String name();
 

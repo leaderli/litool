@@ -32,23 +32,6 @@ public class UnitElementExecutor extends BaseElementExecutor<UnitElement> {
         return executors.copy();
     }
 
-//    @Override
-//    public void visit(Context context) {
-//        context.setTemp(TempNameEnum.unit_state.name(), UnitStateConstant.CONTINUE);
-//        try {
-//            for (BaseElementExecutor<?> executor : executors) {
-//                Integer unitState = context.getTemp(TempNameEnum.unit_state.name());
-//                if (unitState < UnitStateConstant.CONTINUE) {
-//                    break;
-//                }
-//                executor.visit(context);
-//            }
-//        } catch (Exception e) {
-//            //TODO 这里逻辑有问题
-//            context.setTemp(TempNameEnum.unit_state.name(), UnitStateConstant.ERROR);
-//            context.publishEvent(new UnitErrorEvent(element.getId(), e));
-//        }
-//    }
 
 
     private static class UnitElementExecutorWrapper extends ContextVisitor {
@@ -61,7 +44,6 @@ public class UnitElementExecutor extends BaseElementExecutor<UnitElement> {
 
         @Override
         protected void execute(Context context) {
-//            contextVisitor.visit(context);
             throw new UnsupportedOperationException();
         }
 
