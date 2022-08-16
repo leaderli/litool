@@ -37,7 +37,7 @@ public class FuncElement extends SaxBeanWithID {
     public void end(EndEvent endEvent) {
         super.end(endEvent);
 
-        Method method = this.instruct.getInstructMethod();
+        Method method = this.instruct.getInstructMethod().first().get();
 
         final Class<?>[] paramListTypes = params.lira()
                 .map(p -> TypeAlias.getType(p.getType())).cast(Class.class)
@@ -61,7 +61,6 @@ public class FuncElement extends SaxBeanWithID {
         LiAssertUtil.assertTrue(Objects.deepEquals(paramListTypes, methodParameterTypes), () -> String.format("the func [%s] parameterType is  not match clazz [%s] parameterType \r\n\t%s\r\n\t%s\r\n", name, instruct.name(), Arrays.toString(paramListTypes), Arrays.toString(method.getParameterTypes())));
 
     }
-
 
 
     public String getLabel() {
@@ -90,7 +89,7 @@ public class FuncElement extends SaxBeanWithID {
 //        Method invoke = InstructContainer.getInnerMethodByAlias(this.instruct).getInstructMethod();
 //        LiAssertUtil.assertTrue(invoke != null, String.format("the inner func [%s] is unsupported", instruct));
         String type = Lira.of(TypeAlias.ALIAS.entrySet())
-                .filter(entry -> entry.getValue() == this.instruct.getInstructMethod().getReturnType())
+                .filter(entry -> entry.getValue() == this.instruct.getInstructMethod().first().get().getReturnType())
                 .map(Map.Entry::getKey)
                 .first()
                 .get();
