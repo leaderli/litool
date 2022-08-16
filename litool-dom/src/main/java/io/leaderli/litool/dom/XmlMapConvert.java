@@ -1,10 +1,13 @@
 package io.leaderli.litool.dom;
 
+import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.ClassUtil;
 import org.dom4j.Attribute;
 import org.dom4j.dom.DOMElement;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +23,7 @@ public class XmlMapConvert {
 
     public static Map<String, Object> read(DOMElement dom) {
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         for (Attribute attribute : dom.attributes()) {
             map.put(attribute.getName(), attribute.getValue());
         }
@@ -36,5 +39,22 @@ public class XmlMapConvert {
         }
         return map;
 
+    }
+
+    @SuppressWarnings("unchecked")
+    public static DOMElement write(Map<String, Object> map) {
+        String tag = (String) map.remove($NAME);
+        String body = (String) map.remove($BODY);
+        DOMElement element = new DOMElement(tag);
+        element.setText(body);
+        Lira<Map<String, Object>> children = Lino.of(map.remove($CHILD)).toLira()
+                .cast(String.class, Object.class);
+
+        for (Map<String, Object> child : children) {
+            element.appendChild(write(child));
+        }
+        ClassUtil.filterCanCast(map, String.class, String.class)
+                .forEach(element::setAttribute);
+        return element;
     }
 }

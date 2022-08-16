@@ -58,7 +58,7 @@ public class IFunc {
 
                 })
                 .toArray();
-        return funcElement.getInstruct().apply(null, params);
+        return funcElement.getInstruct().apply(TypeAlias.getType(funcElement.getType()), params);
     }
 
 }
