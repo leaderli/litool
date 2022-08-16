@@ -6,10 +6,10 @@ public class MathCompareInstruct implements Instruct {
 
     @Override
     public Object apply(Class<?> type, Object[] objects) {
-        return invoke((OperatorEnum) objects[0], (Number) objects[1], (Number) objects[2]);
+        return invokeNumber((OperatorEnum) objects[0], (Number) objects[1], (Number) objects[2]);
     }
 
-    public Boolean invoke(OperatorEnum op, Number left, Number right) {
+    public Boolean invokeNumber(OperatorEnum op, Number left, Number right) {
         return op.apply(left, right);
     }
 
