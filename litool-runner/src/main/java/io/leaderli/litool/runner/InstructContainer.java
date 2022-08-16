@@ -31,6 +31,11 @@ public class InstructContainer {
         return ALIAS_METHOD.get(alias);
     }
 
+    /**
+     * 提供注册指令的功能
+     *
+     * @param instruct 指令
+     */
     public static void registerInstruct(Instruct instruct) {
         LiAssertUtil.assertFalse(ALIAS_METHOD.containsKey(instruct.name()), String.format("instruct %s already exists", instruct.name()));
         ALIAS_METHOD.put(instruct.name(), instruct);
