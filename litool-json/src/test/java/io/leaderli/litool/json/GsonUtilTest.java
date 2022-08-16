@@ -20,6 +20,8 @@ class GsonUtilTest {
         Assertions.assertEquals("1", gson.toJson(EnumTest.A));
         Assertions.assertEquals(gson.fromJson("1", EnumTest.class), EnumTest.A);
 
+        Assertions.assertEquals("1",GsonUtil.toJson(1));
+
     }
 
 

@@ -24,7 +24,7 @@ public class Context {
      */
     public final Map<String, Object> func_result_cache = new HashMap<>();
     public final LiEventBus bus = new LiEventBus();
-    public BitPermission interrupt = new BitPermission();
+    public BitPermission<Interrupt> interrupt = new BitPermission<>(Interrupt.class);
     public Object interruptObj = new Object();
     /**
      * @see io.leaderli.litool.runner.executor.funcs.FuncsElementExecutor

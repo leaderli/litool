@@ -1,13 +1,15 @@
 package io.leaderli.litool.core.bit;
 
+import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author leaderli
@@ -29,18 +31,26 @@ public class BitStatus {
     public static BitStatus of(Class<?> stateClass) {
         Map<Integer, BitStatusEnum> bitStatusMap = BitStatusEnum.getBitStatusMap();
         BitStatus bitStatus = new BitStatus();
-        Stream.of(stateClass.getDeclaredFields())
-                .filter(field -> Modifier.isStatic(field.getModifiers()) && Modifier.isFinal(field.getModifiers()))
-                .filter(field -> ObjectsUtil.sameAny(field.getType(), int.class, Integer.class))
-                .forEach(field ->
-                        ReflectUtil.getFieldValue(null, field)
-                                .cast(Integer.class)
-                                .map(bitStatusMap::get)
-                                .ifPresent(statusEnum ->
-                                        bitStatus.statuses.put(statusEnum, field.getName())
-                                )
-                );
+
+        Lira<Field> sorted = ReflectUtil.getFields(stateClass)
+                .filter(field -> Modifier.isStatic(field.getModifiers())
+                        && Modifier.isFinal(field.getModifiers())
+                        && ObjectsUtil.sameAny(field.getType(), int.class, Integer.class))
+                .sort((o1, o2) -> ModifierUtil.priority(o2) - ModifierUtil.priority(o1));
+
+        for (Field field : sorted) {
+
+            ReflectUtil.getFieldValue(null, field)
+                    .cast(Integer.class)
+                    .map(bitStatusMap::get)
+                    .ifPresent(statusEnum ->
+                            bitStatus.statuses.putIfAbsent(statusEnum, field.getName())
+                    );
+        }
+
         return bitStatus;
+
+
     }
 
     /**

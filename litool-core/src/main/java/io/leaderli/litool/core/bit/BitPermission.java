@@ -4,16 +4,21 @@ package io.leaderli.litool.core.bit;
  * @author leaderli
  * @since 2022/8/16
  */
-public class BitPermission {
+public class BitPermission<T> {
 
+    private final Class<T> status_class;
 
     // 存储目前的权限状态
     private int state;
 
+    public BitPermission(Class<T> status_class) {
+        this.status_class = status_class;
+    }
+
     /**
      * 重新设置权限
      */
-    public void set(int permission) {
+    public void init(int permission) {
         state = permission;
     }
 
@@ -34,14 +39,14 @@ public class BitPermission {
     /**
      * 是否拥某些权限
      */
-    public boolean allow(int permission) {
+    public boolean have(int permission) {
         return (state & permission) == permission;
     }
 
     /**
      * 是否禁用了某些权限
      */
-    public boolean notAllow(int permission) {
+    public boolean miss(int permission) {
         return (state & permission) == 0;
     }
 
@@ -57,8 +62,13 @@ public class BitPermission {
         return state == 0;
     }
 
-    public boolean allow() {
-        return  !none();
+    public boolean any() {
+        return !none();
+    }
+
+    @Override
+    public String toString() {
+        return status_class.getSimpleName() + ":" + BitStatus.of(status_class).beauty(state);
     }
 }
 

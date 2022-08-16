@@ -3,6 +3,9 @@ package io.leaderli.litool.core.bit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Modifier;
+
+
 /**
  * @author leaderli
  * @since 2022/6/16 8:45 AM
@@ -24,15 +27,10 @@ class BitStatusTest {
         Assertions.assertEquals("", bitStatus.beauty(0));
 
         Assertions.assertEquals("A", bitStatus.beauty(0b001 | 0b100));
-    }
-
-    @Test
-    void test() {
-
-        BitStatus bitStatus = BitStatus.of(TestMask.class);
-
         Assertions.assertTrue(bitStatus.toString().contains("0001"));
 
+
+        Assertions.assertEquals("FINAL",BitStatus.of(Modifier.class).beauty(Modifier.FINAL));
     }
 
     public interface TestMask {

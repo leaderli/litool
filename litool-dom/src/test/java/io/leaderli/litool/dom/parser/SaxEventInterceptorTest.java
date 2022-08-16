@@ -7,7 +7,6 @@ import io.leaderli.litool.core.type.MethodScanner;
 import io.leaderli.litool.dom.RootBean;
 import io.leaderli.litool.dom.sax.IgnoreSaxBeanWithMsg;
 import io.leaderli.litool.dom.sax.SaxBean;
-import io.leaderli.litool.json.GsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -61,7 +60,6 @@ class SaxEventInterceptorTest {
 
         Assertions.assertTrue(ignoreSaxBean.msgs.toString().contains("<yyyy>"));
 
-        GsonUtil.print(root);
     }
 
     @Test

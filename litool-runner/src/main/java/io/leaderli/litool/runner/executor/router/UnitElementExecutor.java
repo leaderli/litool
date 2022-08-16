@@ -52,7 +52,7 @@ public class UnitElementExecutor extends BaseElementExecutor<UnitElement> {
             try {
                 contextVisitor.visit(context);
             } catch (Throwable throwable) {
-                context.interrupt.set(Interrupt.ERROR);
+                context.interrupt.init(Interrupt.ERROR);
                 context.interruptObj = throwable;
             }
         }

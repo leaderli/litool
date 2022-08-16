@@ -25,4 +25,15 @@ class ModifierUtilTest {
         Assertions.assertFalse(ModifierUtil.isStatic(ModifierUtilTest.class.getDeclaredMethod("isPublic")));
         Assertions.assertTrue(ModifierUtil.isStatic(ModifierUtilTest.class.getDeclaredMethod("m1")));
     }
+
+    @Test
+    void test() throws NoSuchMethodException {
+
+
+        Assertions.assertEquals(4, ModifierUtil.priority(ModifierUtilTest.class.getMethod("toString")));
+        Assertions.assertEquals(2, ModifierUtil.priority(Object.class.getDeclaredMethod("finalize")));
+        Assertions.assertEquals(0, ModifierUtil.priority(Object.class.getDeclaredMethod("registerNatives")));
+        Assertions.assertEquals(1, ModifierUtil.priority(ModifierUtilTest.class.getDeclaredMethod("test")));
+
+    }
 }

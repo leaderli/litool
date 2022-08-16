@@ -19,6 +19,7 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/7/12
  */
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 class ReflectUtilTest {
 
     static {
@@ -204,6 +205,7 @@ class ReflectUtilTest {
         Assertions.assertEquals(String.class, ReflectUtil.getGenericInterfacesType(consumer.getClass(), Consumer.class).get());
     }
 
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     @Test
     void getGenericSuperclassType() {
 

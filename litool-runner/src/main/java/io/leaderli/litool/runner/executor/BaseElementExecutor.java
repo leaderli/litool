@@ -30,7 +30,7 @@ public abstract class BaseElementExecutor<S extends SaxBean> extends ContextVisi
         this.execute(context);
         for (ContextVisitor contextVisitor : contextVisitors) {
 
-            if (context.interrupt.allow()) {
+            if (context.interrupt.any()) {
 
                 if (!notify(context)) {
                     return;

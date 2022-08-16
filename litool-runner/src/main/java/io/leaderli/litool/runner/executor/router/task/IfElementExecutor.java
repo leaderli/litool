@@ -27,7 +27,7 @@ public class IfElementExecutor extends BaseElementExecutor<IfElement> {
 
     @Override
     public boolean notify(Context context) {
-        if (context.interrupt.allow(Interrupt.BREAK_LOOP)) {
+        if (context.interrupt.have(Interrupt.BREAK_LOOP)) {
             context.interrupt.disable(Interrupt.BREAK_LOOP);
         }
         return false;
@@ -39,7 +39,7 @@ public class IfElementExecutor extends BaseElementExecutor<IfElement> {
         Boolean expressionValue = (Boolean) context.getExpressionValue(cond);
 
         if (!expressionValue) {
-            context.interrupt.set(Interrupt.BREAK_LOOP);
+            context.interrupt.init(Interrupt.BREAK_LOOP);
         }
     }
 

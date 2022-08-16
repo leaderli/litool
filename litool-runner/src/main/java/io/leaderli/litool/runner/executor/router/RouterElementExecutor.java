@@ -39,7 +39,7 @@ public class RouterElementExecutor extends BaseElementExecutor<RouterElement> {
 
     @Override
     public boolean notify(Context context) {
-        if (context.interrupt.allow(Interrupt.GOTO)) {
+        if (context.interrupt.have(Interrupt.GOTO)) {
             context.interrupt.disable(Interrupt.GOTO);
             sequenceExecutorMap.get((String) context.interruptObj).visit(context);
         }

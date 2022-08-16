@@ -31,7 +31,7 @@ public class SequenceElementExecutor extends BaseElementExecutor<SequenceElement
     }
     @Override
     public boolean notify(Context context) {
-        if (context.interrupt.allow(Interrupt.ERROR)) {
+        if (context.interrupt.have(Interrupt.ERROR)) {
             context.publishEvent(new UnitErrorEvent(element.getId(), (Throwable) context.interruptObj));
             context.interrupt.disable(Interrupt.ERROR);
             return true;

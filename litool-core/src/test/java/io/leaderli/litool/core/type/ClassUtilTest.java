@@ -214,7 +214,7 @@ class ClassUtilTest {
 
         Type genericInterface = Param.class.getGenericInterfaces()[0];
 
-        Assertions.assertNotNull(Lino.of(String.class).cast(ParameterizedType.class).get());
+        Assertions.assertNull(Lino.of(String.class).cast(ParameterizedType.class).get());
 
     }
 
