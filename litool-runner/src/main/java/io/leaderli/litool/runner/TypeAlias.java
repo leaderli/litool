@@ -1,6 +1,7 @@
 package io.leaderli.litool.runner;
 
 import io.leaderli.litool.runner.constant.OperatorEnum;
+import io.leaderli.litool.runner.constant.DateUnitEnum;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class TypeAlias {
         put("str", String.class, s -> s);
         put("boolean", Boolean.class, Boolean::valueOf);
         put("op", OperatorEnum.class, OperatorEnum::get);
+        put("date_unit", DateUnitEnum.class, DateUnitEnum::get);
     }
 
     public static <T> void put(String key, Class<T> type, Function<String, T> function) {

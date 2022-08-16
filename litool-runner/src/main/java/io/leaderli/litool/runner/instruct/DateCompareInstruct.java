@@ -18,7 +18,7 @@ public class DateCompareInstruct implements Instruct {
         }
         DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate leftDate = LocalDate.parse(left, yyyyMMdd);
-        LocalDate rightDate = LocalDate.parse(left, yyyyMMdd);
+        LocalDate rightDate = LocalDate.parse(right, yyyyMMdd);
 
         return op.apply(leftDate, rightDate);
     }

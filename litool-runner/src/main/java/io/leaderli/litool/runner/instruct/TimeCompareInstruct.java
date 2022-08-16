@@ -18,14 +18,14 @@ public class TimeCompareInstruct implements Instruct {
         }
         DateTimeFormatter HHmm = DateTimeFormatter.ofPattern("HHmm");
         LocalTime leftTime = LocalTime.parse(left, HHmm);
-        LocalTime rightTime = LocalTime.parse(left, HHmm);
+        LocalTime rightTime = LocalTime.parse(right, HHmm);
 
         return op.apply(leftTime, rightTime);
     }
 
     @Override
     public String name() {
-        return "date_compare";
+        return "time_compare";
     }
 
 }
