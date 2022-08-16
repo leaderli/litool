@@ -31,11 +31,9 @@ public abstract class BaseElementExecutor<S extends SaxBean> extends ContextVisi
         this.execute(context);
         for (ContextVisitor contextVisitor : contextVisitors) {
 
-//            System.out.println(contextVisitor);
             if (context.interrupt.allow()) {
 
                 if (!notify(context)) {
-//                    contextVisitor.visit0(context);
                     return;
                 }
             }
@@ -43,7 +41,11 @@ public abstract class BaseElementExecutor<S extends SaxBean> extends ContextVisi
             if (context.interrupt.none()) {
                 contextVisitor.visit(context);
             }
+
         }
+
+        // 一些 executor 没有子 executor，或者是子 executor 最后一个抛出事件
+        notify(context);
     }
 
     public boolean notify(Context context) {

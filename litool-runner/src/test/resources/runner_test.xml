@@ -75,6 +75,7 @@
             <unit label="百夫长">
                 <if cond="func_a()">
                     <assign name="skill">001</assign>
+                    <echo>123123</echo>
                     <goto next="sequence_c"/>
                 </if>
                 <if cond="func_b()">
