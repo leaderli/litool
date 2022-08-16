@@ -6,13 +6,10 @@ import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.event.EchoEvent;
 import io.leaderli.litool.runner.event.EchoListener;
 import io.leaderli.litool.runner.executor.MainElementExecutor;
-import io.leaderli.litool.runner.instruct.BetweenTimeInstruct;
-import io.leaderli.litool.runner.instruct.TimeInstruct;
 import io.leaderli.litool.runner.xml.MainElement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.text.DateFormatSymbols;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -122,5 +119,43 @@ public class RunnerTest {
         executor.visit(context);
         CharSequence skill = context.getResponse("skill");
         assertTrue(StringUtils.equals(skill, "042"));
+    }
+
+    /**
+     * 单位公务卡 0800-1900工作时间 2300-0700夜间
+     */
+    @Test
+    void test6() {
+        Map<String, String> request = new HashMap<>();
+        request.put("phoneType", "201");
+        request.put("_env", "local_test");
+        request.put("_testTime", "1200");
+
+        Context context = new Context(request);
+        executor.visit(context);
+        CharSequence skill = context.getResponse("skill");
+        assertTrue(StringUtils.equals(skill, "080"));
+
+        request.put("_testTime", "0000");
+        context = new Context(request);
+        executor.visit(context);
+        skill = context.getResponse("skill");
+        assertTrue(StringUtils.equals(skill, "030"));
+    }
+
+    /**
+     * 超高端白金卡
+     */
+    @Test
+    void test7() {
+        Map<String, String> request = new HashMap<>();
+        request.put("custType", "3");
+        request.put("_env", "local_test");
+        request.put("_testTime", "1200");
+
+        Context context = new Context(request);
+        executor.visit(context);
+        CharSequence skill = context.getResponse("skill");
+        assertTrue(StringUtils.equals(skill, "053"));
     }
 }

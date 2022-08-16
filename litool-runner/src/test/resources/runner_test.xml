@@ -7,7 +7,9 @@
         <entry label="86开关">switch86</entry>
         <entry label="语种标识">language</entry>
         <entry label="分行内呼标识">isBankInline</entry>
-
+        <entry label="来电类型">phoneType</entry>
+        <entry label="客户类型">custType</entry>
+        <entry label="挂失情景点">lostFlag</entry>
     </request>
     <response>
         <entry label="坐席队列">skill</entry>
@@ -69,6 +71,39 @@
             <param type="boolean">bank_inline()</param>
             <param type="boolean">0800_1900()</param>
         </func>
+        <func name="unit_official" label="单位公务卡" instruct="in" type="boolean">
+            <param type="str">$phoneType</param>
+            <param type="str">201</param>
+        </func>
+        <func name="unit_official_night_time" label="单位公务卡夜间" instruct="and" type="boolean">
+            <param type="boolean">unit_official()</param>
+            <param type="boolean">2230_0700()</param>
+        </func>
+        <func name="unit_official_work_time" label="单位公务卡工作时间" instruct="and" type="boolean">
+            <param type="boolean">unit_official()</param>
+            <param type="boolean">0800_1900()</param>
+        </func>
+        <func name="super_platinum" label="超高端白金卡" instruct="in" type="boolean">
+            <param type="str">$custType</param>
+            <param type="str">3</param>
+        </func>
+        <func name="platinum_cust" label="白金客户" instruct="in" type="boolean">
+            <param type="str">$custType</param>
+            <param type="str">2</param>
+        </func>
+        <func name="platinum" label="白金相关" instruct="and" type="boolean">
+            <param type="boolean">platinum_cust()</param>
+            <param type="boolean">bank_inline()</param>
+            <param type="boolean">unit_official()</param>
+        </func>
+        <func name="platinum_no_card_lost" label="白金进线无卡挂失" instruct="in" type="boolean">
+            <param type="str">$lostFlag</param>
+            <param type="str">2</param>
+        </func>
+        <func name="standard_no_card_lost" label="普线进线无卡挂失" instruct="in" type="boolean">
+            <param type="str">$lostFlag</param>
+            <param type="str">1</param>
+        </func>
     </funcs>
     <router>
         <sequence name="main" label="主流程">
@@ -83,7 +118,7 @@
                     <goto next="sequence_c"/>
                 </if>
             </unit>
-            <unit label="夜间">
+            <unit label="夜间相关">
                 <if cond="switch86_time()">
                     <goto next="sequence_a"/>
                 </if>
@@ -104,6 +139,39 @@
                     <goto next="sequence_c"/>
                 </if>
             </unit>
+            <unit label="单位公务卡">
+                <if cond="unit_official_night_time()">
+                    <assign name="skill">030</assign>
+                    <goto next="sequence_c"/>
+                </if>
+                <if cond="unit_official_work_time()">
+                    <assign name="skill">080</assign>
+                    <goto next="sequence_c"/>
+                </if>
+            </unit>
+            <unit label="超高端白金卡">
+                <if cond="super_platinum()">
+                    <assign name="skill">053</assign>
+                    <goto next="sequence_c"/>
+                </if>
+            </unit>
+            <unit label="白金相关">
+                <if cond="platinum()">
+                    <goto next="sequence_b"/>
+                </if>
+            </unit>
+            <unit label="白金进线无卡挂失">
+                <if cond="platinum_no_card_lost()">
+                    <assign name="skill">030</assign>
+                    <goto next="sequence_c"/>
+                </if>
+            </unit>
+            <unit label="普线进线无卡挂失">
+                <if cond="standard_no_card_lost()">
+                    <assign name="skill">007</assign>
+                    <goto next="sequence_c"/>
+                </if>
+            </unit>
         </sequence>
         <sequence name="sequence_a" label="夜间">
             <unit label="123">
@@ -115,7 +183,10 @@
         </sequence>
         <sequence name="sequence_b" label="白金">
             <unit label="123">
-
+                <if cond="">
+                    <assign name="skill">sequence_b</assign>
+                    <echo>夜间</echo>
+                </if>
             </unit>
         </sequence>
         <sequence name="sequence_c" label="转换">
