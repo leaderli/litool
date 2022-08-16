@@ -9,7 +9,6 @@ import io.leaderli.litool.runner.xml.router.task.GotoDestination;
 public class GotoElementCheckVisitor extends CheckVisitor {
 
 
-    @Override
     public void check(GotoDestination gotoDestination, SaxBean saxBean) {
         Lino<SequenceElement> first = mainElement.getRouter().getSequenceList().lira()
                 .first(sequenceElement -> StringUtils.equals(sequenceElement.getName(), gotoDestination.next));
