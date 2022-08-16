@@ -9,6 +9,7 @@
         <entry label="分行内呼标识">isBankInline</entry>
         <entry label="来电类型">phoneType</entry>
         <entry label="客户类型">custType</entry>
+        <entry label="挂失情景点">lostFlag</entry>
     </request>
     <response>
         <entry label="坐席队列">skill</entry>
@@ -86,6 +87,23 @@
             <param type="str">$custType</param>
             <param type="str">3</param>
         </func>
+        <func name="platinum_cust" label="白金客户" instruct="in" type="boolean">
+            <param type="str">$custType</param>
+            <param type="str">2</param>
+        </func>
+        <func name="platinum" label="白金相关" instruct="and" type="boolean">
+            <param type="boolean">platinum_cust()</param>
+            <param type="boolean">bank_inline()</param>
+            <param type="boolean">unit_official()</param>
+        </func>
+        <func name="platinum_no_card_lost" label="白金进线无卡挂失" instruct="in" type="boolean">
+            <param type="str">$lostFlag</param>
+            <param type="str">2</param>
+        </func>
+        <func name="standard_no_card_lost" label="普线进线无卡挂失" instruct="in" type="boolean">
+            <param type="str">$lostFlag</param>
+            <param type="str">1</param>
+        </func>
     </funcs>
     <router>
         <sequence name="main" label="主流程">
@@ -143,8 +161,14 @@
                 </if>
             </unit>
             <unit label="白金进线无卡挂失">
-                <if cond="platinum_no_card_lost">
+                <if cond="platinum_no_card_lost()">
                     <assign name="skill">030</assign>
+                    <goto next="sequence_c"/>
+                </if>
+            </unit>
+            <unit label="普线进线无卡挂失">
+                <if cond="standard_no_card_lost()">
+                    <assign name="skill">007</assign>
                     <goto next="sequence_c"/>
                 </if>
             </unit>
