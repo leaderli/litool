@@ -21,14 +21,6 @@ class ObjectsUtilTest {
         assert !ObjectsUtil.sameAny(3, 1, 2);
     }
 
-    @Test
-    void test() {
-
-        System.out.println(Integer.class.isAssignableFrom(Number.class));
-        System.out.println(int.class.isAssignableFrom(Number.class));
-        System.out.println(Number.class.isAssignableFrom(Integer.class));
-        System.out.println(Number.class.isAssignableFrom(int.class));
-    }
 
 
     @Test

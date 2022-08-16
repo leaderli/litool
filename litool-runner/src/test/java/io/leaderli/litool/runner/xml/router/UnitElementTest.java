@@ -36,12 +36,8 @@ class UnitElementTest {
 
         Context context = new Context(request);
         ILiEventListener<UnitErrorEvent> listener = new UnitErrorEventILiEventListener();
-//        System.out.println(listener.componentType());
         context.registerListener(listener);
         mainElement.executor().visit(context);
-//        context.visit(mainElement.executor());
-//        mainElement.executor().visit(context);
-        System.out.println(context.origin_request_or_response);
         CharSequence skill = context.getResponse("skill");
 
         Assertions.assertEquals("003", skill);

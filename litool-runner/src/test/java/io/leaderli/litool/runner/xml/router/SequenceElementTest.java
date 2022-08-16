@@ -14,7 +14,6 @@ class SequenceElementTest {
         SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
         MainElement element = dfs.parse("router/unit_label_duplicate.xml");
 
-        System.out.println(dfs.getParseErrorMsgs());
         assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "duplicate label of"));
     }
 

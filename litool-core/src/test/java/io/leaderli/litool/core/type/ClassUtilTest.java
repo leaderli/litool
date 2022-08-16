@@ -214,16 +214,8 @@ class ClassUtilTest {
 
         Type genericInterface = Param.class.getGenericInterfaces()[0];
 
-        ParameterizedType cast1 = Lino.of(String.class).cast(ParameterizedType.class).get();
-        System.out.println(cast1);
+        Assertions.assertNotNull(Lino.of(String.class).cast(ParameterizedType.class).get());
 
-    }
-    private class Param implements Function<String,String>{
-
-        @Override
-        public String apply(String s) {
-            return null;
-        }
     }
 
     @Test
@@ -240,7 +232,6 @@ class ClassUtilTest {
             Map<CharSequence, Number> actual = ClassUtil.filterCanCast(map, String.class, int.class);
         });
     }
-
 
     @Test
     void addInterface() {
@@ -294,6 +285,14 @@ class ClassUtilTest {
             return s;
         }
 
+    }
+
+    private class Param implements Function<String, String> {
+
+        @Override
+        public String apply(String s) {
+            return null;
+        }
     }
 
 }
