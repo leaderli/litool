@@ -12,14 +12,14 @@ class DatePlusInstructTest {
     @Test
     public void date_plus() {
         Instruct instruct = InstructContainer.getInnerMethodByAlias("date_plus");
-        Object apply = instruct.apply(new Object[]{"20220101", DateUnitEnum.YEAR, 20});
+        Object apply = instruct.apply(String.class, new Object[]{"20220101", DateUnitEnum.YEAR, 20});
         assertEquals(apply, "20420101");
     }
 
     @Test
     public void date_plus_error() {
         Instruct instruct = InstructContainer.getInnerMethodByAlias("date_plus");
-        assertThrows(IllegalArgumentException.class, () -> instruct.apply(new Object[]{"202201011", DateUnitEnum.YEAR, 20}));
+        assertThrows(IllegalArgumentException.class, () -> instruct.apply(String.class, new Object[]{"202201011", DateUnitEnum.YEAR, 20}));
     }
 
 }

@@ -11,10 +11,10 @@ class AgeCompareInstructTest {
     @Test
     public void age_compare() {
         Instruct age_compare = InstructContainer.getInnerMethodByAlias("age_compare");
-        Object apply = age_compare.apply(new Object[]{OperatorEnum.GREATER_THAN, "19900101", "20"});
+        Object apply = age_compare.apply(Boolean.class, new Object[]{OperatorEnum.GREATER_THAN, "19900101", "20"});
         assertTrue((Boolean) apply);
 
-        apply = age_compare.apply(new Object[]{OperatorEnum.GREATER_THAN, "19900101", "40"});
+        apply = age_compare.apply(Boolean.class, new Object[]{OperatorEnum.GREATER_THAN, "19900101", "40"});
         assertFalse((Boolean) apply);
     }
 

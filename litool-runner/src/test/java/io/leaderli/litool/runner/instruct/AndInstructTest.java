@@ -10,10 +10,10 @@ class AndInstructTest {
     @Test
     public void and() {
         Instruct instruct = InstructContainer.getInnerMethodByAlias("and");
-        Object apply = instruct.apply(new Object[]{true, false});
+        Object apply = instruct.apply(Boolean.class, new Object[]{true, false});
         assertFalse((Boolean) apply);
 
-        apply = instruct.apply(new Object[]{true, true});
+        apply = instruct.apply(Boolean.class, new Object[]{true, true});
         assertTrue((Boolean) apply);
     }
 
