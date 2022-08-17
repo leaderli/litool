@@ -5,7 +5,6 @@ import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.dom.LiDomUtil;
 import io.leaderli.litool.dom.XmlMapConvert;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
-import io.leaderli.litool.json.GsonUtil;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.ContextInfo;
 import io.leaderli.litool.runner.event.BeginEvent;
@@ -77,8 +76,8 @@ class UnitElementTest {
         mainElement.executor().visit(context);
 //        context.visit(mainElement.executor());
 
-        GsonUtil.print(context.origin_request_or_response);
-        GsonUtil.print(contextInfo);
+//        GsonUtil.print(context.origin_request_or_response);
+//        GsonUtil.print(contextInfo);
 
 
     }

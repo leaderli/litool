@@ -1,7 +1,11 @@
 package io.leaderli.litool.runner.instruct;
 
 import io.leaderli.litool.core.text.StringUtils;
-import org.joda.time.DateTime;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class NowInstruct implements Instruct {
 
@@ -18,8 +22,9 @@ public class NowInstruct implements Instruct {
         if (StringUtils.equals(test, "local_test")) {
             return currentDate;
         }
-        return DateTime.now().toString(formatStr);
+        return LocalDate.now().format(DateTimeFormatter.ofPattern(formatStr));
     }
+
 
     @Override
     public String name() {
