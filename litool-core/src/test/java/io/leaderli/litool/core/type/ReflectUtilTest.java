@@ -27,6 +27,20 @@ class ReflectUtilTest {
 
     }
 
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    void testGetClass() throws NoSuchFieldException, NoSuchMethodException {
+
+        Assertions.assertEquals(String.class, ReflectUtil.getClass(LittleBean.class.getDeclaredField("name")));
+        Assertions.assertEquals(int.class, ReflectUtil.getClass(LittleBean.class.getDeclaredField("age")));
+        Assertions.assertNull(ReflectUtil.getClass((Field) null));
+
+        Assertions.assertEquals(void.class, ReflectUtil.getClass(LittleBean.class.getDeclaredMethod("m3")));
+        Assertions.assertEquals(LittleBean.class, ReflectUtil.getClass(LittleBean.class.getConstructor()));
+
+
+    }
+
     @Test
     void getField() {
 
@@ -119,8 +133,10 @@ class ReflectUtilTest {
 
     @Test
     void findAnnotations() {
+
         NotNull annotation = (NotNull) ReflectUtil.findAnnotations(TestBean.class).first().get();
         Assertions.assertEquals("1", annotation.value());
+        Assertions.assertSame(annotation, ReflectUtil.getAnnotation(TestBean.class, NotNull.class).get());
 
         Assertions.assertEquals(0, ReflectUtil.findAnnotations(TestBean.class, an -> an.annotationType() != NotNull.class).size());
     }
@@ -297,6 +313,7 @@ class ReflectUtilTest {
         private ConstructorBean(String name) {
 
         }
+
         private ConstructorBean() {
 
         }

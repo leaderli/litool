@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.io.PrintStream;
@@ -108,6 +109,10 @@ public class ConsoleUtil {
      */
     public static void print_format(String pattern, Object... arguments) {
         CONSOLE.println(MessageFormat.format(pattern, arguments));
+    }
+
+    public static void printArray(Object arr) {
+        System.out.println(ArrayUtils.toString(arr));
     }
 
 }

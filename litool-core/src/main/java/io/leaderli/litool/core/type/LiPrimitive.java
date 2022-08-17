@@ -28,6 +28,7 @@ public class LiPrimitive {
         ZERO_VALUE.put(int.class, INT);
         ZERO_VALUE.put(long.class, LONG);
         ZERO_VALUE.put(short.class, SHORT);
+        ZERO_VALUE.put(void.class, null);
 
         ZERO_VALUE.put(Boolean.class, BOOLEAN);
         ZERO_VALUE.put(Byte.class, BYTE);

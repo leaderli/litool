@@ -4,11 +4,9 @@ import io.leaderli.litool.core.collection.LiIterator;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
-import io.leaderli.litool.core.meta.LiBox;
-import io.leaderli.litool.core.meta.LiConstant;
-import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.meta.*;
 import io.leaderli.litool.core.type.ClassUtil;
+import jdk.nashorn.internal.ir.LiteralNode;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -240,6 +238,7 @@ public abstract class SomeRa<T> implements Lira<T> {
         return distinct(Object::equals);
 
     }
+
     @Override
     public Lira<T> distinct(EqualComparator<T> equalComparator) {
 
@@ -247,6 +246,7 @@ public abstract class SomeRa<T> implements Lira<T> {
         return new DistinctRa<>(this, equalComparator);
 
     }
+
     @Override
     public Lira<T> sort() {
         return sort(null);
@@ -315,6 +315,18 @@ public abstract class SomeRa<T> implements Lira<T> {
 
         this.subscribe(new ConsumerSubscriberRa<>(e -> e.map(keyMapping).ifPresent(key -> result.put(key, e.map(valueMapping).get()))));
 
+        return result;
+    }
+
+    @Override
+    public <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> tuple2Function) {
+        Map<K, V> result = new HashMap<>();
+        this.subscribe(new ConsumerSubscriberRa<>(e ->
+                        e.map(tuple2Function)
+                                .filter(tuple2 -> tuple2._1 != null)
+                                .ifPresent(tuple2 -> result.put(tuple2._1, tuple2._2))
+                )
+        );
         return result;
     }
 

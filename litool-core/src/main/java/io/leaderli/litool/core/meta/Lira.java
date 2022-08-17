@@ -304,5 +304,15 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapping, Function<? super T, ? extends V> valueMapping);
 
+    /**
+     * key 为 null 的值 会被忽略掉，value 为 null 不会
+     *
+     * @param tuple2Function 转换 key, value 的函数
+     * @param <K>            key 泛型
+     * @param <V>            value 泛型
+     * @return 返回 map
+     */
+    <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> tuple2Function);
+
 
 }

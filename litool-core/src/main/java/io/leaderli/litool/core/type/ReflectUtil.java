@@ -260,11 +260,15 @@ public class ReflectUtil {
 
     }
 
+    public static <T extends Annotation>Lino<T> getAnnotation(AnnotatedElement annotatedElement, Class<T> an) {
+        return Lira.of(annotatedElement.getAnnotationsByType(an)).first();
+    }
+
     /**
      * @param cls 类
      * @return #findAnnotations(Class, Function)
      */
-    public static Lira<Annotation> findAnnotations(Class<?> cls) {
+    public static Lira<Annotation> findAnnotations(AnnotatedElement cls) {
         return findAnnotations(cls, null);
     }
 
@@ -274,7 +278,7 @@ public class ReflectUtil {
      * @return 获取所有注解，包括重复注解，忽略重复注解的容器注解
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static Lira<Annotation> findAnnotations(Class<?> cls, Function<? super Annotation, ?> filter) {
+    public static Lira<Annotation> findAnnotations(AnnotatedElement cls, Function<? super Annotation, ?> filter) {
 
 
         if (cls == null) {
@@ -303,9 +307,9 @@ public class ReflectUtil {
      * @param cls  类
      * @param mark 标记注解类
      * @return 查找类的所有注解中被 mark 注解的注解
-     * @see #findAnnotations(Class, Function)
+     * @see #findAnnotations(AnnotatedElement, Function)
      */
-    public static Lira<Annotation> findAnnotationsWithMark(Class<?> cls, Class<? extends Annotation> mark) {
+    public static Lira<Annotation> findAnnotationsWithMark(AnnotatedElement cls, Class<? extends Annotation> mark) {
 
         return findAnnotations(cls, annotation -> annotation.annotationType().isAnnotationPresent(mark));
     }
@@ -519,5 +523,26 @@ public class ReflectUtil {
                 .map(TypeUtil::getClass);
 
 
+    }
+
+    public static <T> Class<T> getClass(Constructor<T> constructor) {
+        if (constructor == null) {
+            return null;
+        }
+        return constructor.getDeclaringClass();
+    }
+
+    public static Class<?> getClass(Method method) {
+        if (method == null) {
+            return null;
+        }
+        return method.getReturnType();
+    }
+
+    public static Class<?> getClass(Field field) {
+        if (field == null) {
+            return null;
+        }
+        return field.getType();
     }
 }

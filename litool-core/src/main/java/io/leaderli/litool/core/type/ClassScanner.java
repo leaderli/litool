@@ -14,6 +14,7 @@ import io.leaderli.litool.core.text.StrPool;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collections;
@@ -125,13 +126,20 @@ public class ClassScanner {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T> Lira<Class<T>> getSubTypesOf(Class<?> packageCLass, Class<T> cls) {
+    public static <T> Lira<Class<T>> getSubTypesOf(Class<?> packageClass, Class<T> cls) {
 
 
-        ClassScanner classScanner = new ClassScanner(packageCLass.getPackage().getName(), find -> ClassUtil.isAssignableFromOrIsWrapper(cls, find) && cls != find);
+        ClassScanner classScanner = new ClassScanner(packageClass.getPackage().getName(), find -> ClassUtil.isAssignableFromOrIsWrapper(cls, find) && cls != find);
         classScanner.scan();
 
         return (Lira) Lira.of(classScanner.classes);
+
+    }
+
+    public static Lira<Class<?>> getClassOfAnnotated(Class<?> packageClass, Class<? extends Annotation> annotationType) {
+        ClassScanner classScanner = new ClassScanner(packageClass.getPackage().getName(), find -> find.isAnnotationPresent(annotationType));
+        classScanner.scan();
+        return Lira.of(classScanner.classes);
 
     }
 

@@ -1,6 +1,8 @@
 package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.exception.UnsupportedTypeException;
+import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.test.cartesian.Cartesian;
 
 import java.lang.reflect.Array;
 import java.time.LocalTime;
@@ -64,11 +66,11 @@ public class ObjectsUtil {
             return ((String) left).compareTo((String) right);
         }
 
-        if(left instanceof Boolean){
+        if (left instanceof Boolean) {
             return ((Boolean) left).compareTo((Boolean) right);
         }
-        if( left.getClass().isArray()){
-            return compareNumber(Array.getLength(left),Array.getLength(right));
+        if (left.getClass().isArray()) {
+            return compareNumber(Array.getLength(left), Array.getLength(right));
         }
         if (left instanceof ChronoLocalDate) {
             return ((ChronoLocalDate) left).compareTo((ChronoLocalDate) right);
@@ -82,5 +84,8 @@ public class ObjectsUtil {
         throw new UnsupportedTypeException(left.getClass());
 
     }
+
+
+
 
 }
