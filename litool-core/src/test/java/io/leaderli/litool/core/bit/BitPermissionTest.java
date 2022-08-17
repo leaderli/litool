@@ -25,7 +25,7 @@ class BitPermissionTest {
         Assertions.assertEquals("Modifier:", bit.toString());
         bit.init(123);
 
-        Assertions.assertEquals("Modifier:PUBLIC|PRIVATE|STATIC|PARAMETER_MODIFIERS|SYNCHRONIZED|BRIDGE", bit.toString());
+        Assertions.assertEquals("Modifier:PUBLIC|PRIVATE|STATIC|FINAL|SYNCHRONIZED|VOLATILE", bit.toString());
         Assertions.assertTrue(bit.any());
         Assertions.assertFalse(bit.only(Modifier.FINAL));
         Assertions.assertTrue(bit.have(Modifier.PUBLIC));
