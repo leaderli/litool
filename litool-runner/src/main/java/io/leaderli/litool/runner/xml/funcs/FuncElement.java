@@ -11,7 +11,6 @@ import io.leaderli.litool.runner.TypeAlias;
 import io.leaderli.litool.runner.instruct.Instruct;
 import io.leaderli.litool.runner.xml.SaxBeanWithID;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -37,31 +36,31 @@ public class FuncElement extends SaxBeanWithID {
     public void end(EndEvent endEvent) {
         super.end(endEvent);
 
-        Method method = this.instruct.getInstructMethod()
-                .filter(m -> m.getReturnType() == TypeAlias.getType(type))
-                .first()
-                .get();
-
         final Class<?>[] paramListTypes = params.lira()
                 .map(p -> TypeAlias.getType(p.getType())).cast(Class.class)
                 .toArray(Class.class);
+        boolean present = this.instruct.getInstructMethod()
+                .filter(m -> m.getReturnType() == TypeAlias.getType(type))
+                .filter(method -> {
+                    Class<?>[] methodParameterTypes = method.getParameterTypes();
 
-        Class<?>[] methodParameterTypes = method.getParameterTypes();
+                    if (methodParameterTypes.length > 0) {
+                        final Class<?> lastParameterType = methodParameterTypes[methodParameterTypes.length - 1];
+                        // 当实际方法最后一位为可选参数时，将其平铺成与标签 param 类型数组数量相同的数组
+                        if (lastParameterType.isArray()) {
 
-        if (methodParameterTypes.length > 0) {
-            final Class<?> lastParameterType = methodParameterTypes[methodParameterTypes.length - 1];
-            // 当实际方法最后一位为可选参数时，将其平铺成与标签 param 类型数组数量相同的数组
-            if (lastParameterType.isArray()) {
+                            Class<?>[] flat = new Class[paramListTypes.length - methodParameterTypes.length + 1];
+                            for (int i = 0; i < flat.length; i++) {
+                                flat[i] = lastParameterType.getComponentType();
+                            }
+                            methodParameterTypes = ArrayUtils.combination(ArrayUtils.sub(methodParameterTypes, 0, -1), flat);
+                        }
+                    }
+                    return Objects.deepEquals(paramListTypes, methodParameterTypes);
+                }).present();
 
-                Class<?>[] flat = new Class[paramListTypes.length - methodParameterTypes.length + 1];
-                for (int i = 0; i < flat.length; i++) {
-                    flat[i] = lastParameterType.getComponentType();
-                }
-                methodParameterTypes = ArrayUtils.combination(ArrayUtils.sub(methodParameterTypes, 0, -1), flat);
-            }
-        }
 
-        LiAssertUtil.assertTrue(Objects.deepEquals(paramListTypes, methodParameterTypes), () -> String.format("the func [%s] parameterType is  not match clazz [%s] parameterType \r\n\t%s\r\n\t%s\r\n", name, instruct.name(), Arrays.toString(paramListTypes), Arrays.toString(method.getParameterTypes())));
+        LiAssertUtil.assertTrue(present, () -> String.format("the func [%s] parameterType %s is  not match clazz [%s]", name, Arrays.toString(paramListTypes), instruct.name()));
 
     }
 

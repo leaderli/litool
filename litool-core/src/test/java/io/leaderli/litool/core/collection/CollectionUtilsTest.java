@@ -27,10 +27,10 @@ public class CollectionUtilsTest {
 
     @Test
     public void testCartesianProduct() {
-        List<List<Object>> lists = CollectionUtils.cartesianProduct(Arrays.asList(1, 2, 3), Arrays.asList(4, 5, 6));
-        Assertions.assertEquals(lists.toString(), "[[1, 4], [1, 5], [1, 6], [2, 4], [2, 5], [2, 6], [3, 4], [3, 5], [3, 6]]");
+        List<List<Object>> lists = CollectionUtils.cartesian(Arrays.asList(1, 2, 3), Arrays.asList(4, 5, 6));
+        Assertions.assertEquals("[[1, 4], [1, 5], [1, 6], [2, 4], [2, 5], [2, 6], [3, 4], [3, 5], [3, 6]]",lists.toString());
 
-        List<List<Object>> lists2 = CollectionUtils.cartesianProduct(Arrays.asList(1, 2), Arrays.asList("-", "*"), Arrays.asList("a", "b"));
+        List<List<Object>> lists2 = CollectionUtils.cartesian(Arrays.asList(1, 2), Arrays.asList("-", "*"), Arrays.asList("a", "b"));
         Assertions.assertEquals("[[1, -, a], [1, -, b], [1, *, a], [1, *, b], [2, -, a], [2, -, b], [2, *, a], [2, *, b]]", lists2.toString());
     }
 

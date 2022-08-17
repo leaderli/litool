@@ -5,7 +5,7 @@ import io.leaderli.litool.core.type.ClassUtil;
 
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -60,34 +60,55 @@ public class CollectionUtils {
         return arrayList;
     }
 
+    /**
+     * 笛卡尔积
+     *
+     * @param elements 元素集合
+     * @return 返回多个元素的笛卡尔积
+     */
     @SafeVarargs
-    public static List<List<Object>> cartesianProduct(List<Object>... elements) {
+    public static List<List<Object>> cartesian(List<Object>... elements) {
 
         if (elements == null || elements.length == 0) {
             return emptyList();
         }
-        List<List<Object>> x = Lira.of(elements[0]).map(Arrays::asList).getRaw();
+        Lira<List<Object>> cartesian = Lira.of(elements[0]).map(e -> {
+            List<Object> left = new ArrayList<>();
+            left.add(e);
+            return left;
+        });
 
         for (int i = 1; i < elements.length; i++) {
 
-            List<Object> y = elements[i];
+            List<Object> right = elements[i];
 
-            x = x.stream()
-                    .map(li ->
+            cartesian = cartesian
+                    .map(left ->
 
 
-                            Lira.of(y)
-                                    .map(e -> {
-                                        List<Object> raw = Lira.of(li).getRaw();
-                                        raw.add(e);
-                                        return raw;
+                            Lira.of(right)
+                                    .map(r -> {
+
+                                        List<Object> leftCopy = new ArrayList<>(left);
+
+                                        leftCopy.add(r);
+                                        System.out.println(leftCopy);
+                                        return leftCopy;
+
+                                    })
+                                    .flatMap(new Function<List<Object>, Iterator<?>>() {
+                                        @Override
+                                        public Iterator<?> apply(List<Object> objects) {
+                                            System.out.println(objects);
+                                            return null;
+                                        }
                                     })
                                     .getRaw()
-                    )
-                    .flatMap(List::stream).collect(Collectors.toList());
+                    );
+
         }
 
-        return x;
+        return cartesian.getRaw();
     }
 
     /**

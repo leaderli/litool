@@ -26,6 +26,16 @@ class FuncElementTest {
         Assertions.assertTrue(dfs.getParseErrorMsgs().get(1).startsWith("instruct [$1] is unsupported at "));
 
     }
+    @Test
+    void func_math() {
+        SaxEventInterceptor<FuncsElement> dfs = new SaxEventInterceptor<>(FuncsElement.class);
+
+        List<FuncElement> funcs = dfs.parse("funcs/func_math.xml").funcList.lira().getRaw();
+
+        Assertions.assertTrue(dfs.getParseErrorMsgs().isEmpty());
+
+
+    }
 
     @Test
     void func_add() {
@@ -55,7 +65,8 @@ class FuncElementTest {
         FuncElement funcElement = dfs.parse("funcs/func_param_error.xml");
 
 
-        Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("the func [switch86] parameterType is  not match clazz [in] parameterType "));
+
+        Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("the func [switch86] parameterType [class java.lang.String, class java.lang.Integer] is  not match clazz [in]"));
 
     }
 
