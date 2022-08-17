@@ -783,10 +783,11 @@ public class ArrayUtils {
      * @param <T>    泛型
      * @return 截取后的数组
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] sub(T[] origin, int from, int to) {
 
-        if (origin == null) {
+        Class<T> componentType = ClassUtil.getComponentType(origin);
+
+        if (componentType == null) {
             return null;
         }
 
@@ -800,9 +801,119 @@ public class ArrayUtils {
             from = length + from;
         }
         if (from < 0 || from >= length || to <= from) {
-            return (T[]) ClassUtil.newArray(origin.getClass().getComponentType(), 0);
+            return ClassUtil.newArray(componentType, 0);
         }
 
         return Arrays.copyOfRange(origin, from, to);
+    }
+
+    @SafeVarargs
+    public static <T> T[] append(T[] origin, T... add) {
+        if (origin == null) {
+            return add;
+        }
+        return add(origin, origin.length, add);
+    }
+
+    @SafeVarargs
+    public static <T> T[] add(T[] origin, int position, T... add) {
+
+        Class<T> componentType = ClassUtil.getComponentType(origin);
+        if (componentType == null) {
+            return add;
+        }
+        if (add == null || add.length == 0) {
+            return origin;
+        }
+        int length = origin.length;
+        T[] arr = ClassUtil.newArray(componentType, length + add.length);
+
+        if (position < 0) {
+            position = length + position;
+
+            if (position < 0) {
+                position = 0;
+            }
+        }
+        if (position >= length) {
+            System.arraycopy(origin, 0, arr, 0, length);
+//            System.out.println(Arrays.toString(arr));
+            System.arraycopy(add, 0, arr, length, add.length);
+//            System.out.println(Arrays.toString(arr));
+        } else {
+            System.arraycopy(origin, 0, arr, 0, position);
+            System.arraycopy(add, 0, arr, position, add.length);
+            System.arraycopy(origin, position, arr, position + add.length, length - position);
+        }
+
+
+        return arr;
+    }
+
+    @SuppressWarnings("unchecked")
+    @SafeVarargs
+    public static <T> T[] of(T... arr) {
+        Class<?> componentType = arr.getClass().getComponentType();
+        if (componentType.isPrimitive()) {
+            T[] ts = (T[]) ClassUtil.newArray(componentType, arr.length);
+            System.arraycopy(arr, 0, ts, 0, ts.length);
+        }
+        return arr;
+    }
+
+//    public static Integer[] of(int... arr) {
+//        Integer[] integers = ClassUtil.newArray(Integer.class, arr.length);
+//        for (int i = 0; i < integers.length; i++) {
+//            integers[i] = arr[i];
+//        }
+//        return integers;
+//    }
+//
+//    public static Double[] of(double... arr) {
+//        Double[] doubles = ClassUtil.newArray(Double.class, arr.length);
+//        for (int i = 0; i < doubles.length; i++) {
+//            doubles[i] = arr[i];
+//        }
+//        return doubles;
+//    }
+
+
+    public static boolean isArray(Object arr) {
+
+        if (arr == null) {
+            return false;
+        }
+        return arr.getClass().isArray();
+
+    }
+
+    public static String toString(Object obj) {
+
+        if (isArray(obj)) {
+
+            Object[] arr = (Object[]) obj;
+
+
+            StringBuilder sb = new StringBuilder("[");
+            boolean empty = true;
+            for (Object o : arr) {
+                sb.append(toString(o));
+                sb.append(", ");
+            }
+            String str = sb.toString();
+            if (str.equals("[")) {
+                return "[]";
+            } else {
+                str = str.replaceAll(", $", "]");
+                return str;
+            }
+//            for (Object o : arr) {
+//
+//                toString(obj);
+//            }
+
+        }
+        return String.valueOf(obj);
+
     }
 }

@@ -5,7 +5,6 @@ import io.leaderli.litool.core.type.ClassUtil;
 
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -66,49 +65,39 @@ public class CollectionUtils {
      * @param elements 元素集合
      * @return 返回多个元素的笛卡尔积
      */
-    @SafeVarargs
-    public static List<List<Object>> cartesian(List<Object>... elements) {
-
+    @SuppressWarnings("ConstantConditions")
+    public static Object[][] cartesian(Object[]... elements) {
         if (elements == null || elements.length == 0) {
-            return emptyList();
-        }
-        Lira<List<Object>> cartesian = Lira.of(elements[0]).map(e -> {
-            List<Object> left = new ArrayList<>();
-            left.add(e);
-            return left;
-        });
-
-        for (int i = 1; i < elements.length; i++) {
-
-            List<Object> right = elements[i];
-
-            cartesian = cartesian
-                    .map(left ->
-
-
-                            Lira.of(right)
-                                    .map(r -> {
-
-                                        List<Object> leftCopy = new ArrayList<>(left);
-
-                                        leftCopy.add(r);
-                                        System.out.println(leftCopy);
-                                        return leftCopy;
-
-                                    })
-                                    .flatMap(new Function<List<Object>, Iterator<?>>() {
-                                        @Override
-                                        public Iterator<?> apply(List<Object> objects) {
-                                            System.out.println(objects);
-                                            return null;
-                                        }
-                                    })
-                                    .getRaw()
-                    );
-
+            return new Object[0][0];
         }
 
-        return cartesian.getRaw();
+        Object[] head = elements[0];
+        if (head == null) {
+            return new Object[0][];
+        }
+
+        Object[][] result = new Object[head.length][];
+
+        for (int i = 0; i < result.length; i++) {
+            result[i] = new Object[]{head[i]};
+        }
+
+
+        while ((elements = ArrayUtils.sub(elements, 1, 0)).length > 0) {
+            Object[] right = elements[0];
+            Object[][] temps = new Object[result.length * right.length][];
+
+            int i = 0;
+            for (Object[] left : result) {
+
+                for (Object r : right) {
+                    temps[i++] = ArrayUtils.append(left, r);
+                }
+            }
+            result = temps;
+
+        }
+        return result;
     }
 
     /**

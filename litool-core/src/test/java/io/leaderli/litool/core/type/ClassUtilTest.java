@@ -18,7 +18,19 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/6/17
  */
+@SuppressWarnings("ConstantConditions")
 class ClassUtilTest {
+
+    @Test
+    void getComponentType() {
+
+        Assertions.assertNull(ClassUtil.getComponentType(null));
+        Assertions.assertEquals(Integer.class,ClassUtil.getComponentType(new Integer[]{}));
+        Object[] objects = new Integer[]{};
+        Assertions.assertEquals(Integer.class,ClassUtil.getComponentType(objects));
+
+    }
+
     @Test
     void testGetClass() {
 
@@ -157,6 +169,7 @@ class ClassUtilTest {
     @Test
     public void newArray() {
 
+
         Assertions.assertSame(Integer[].class, ClassUtil.newArray(Integer.class, 0).getClass());
         Assertions.assertSame(Integer[].class, ClassUtil.newArray(int.class, 0).getClass());
         Assertions.assertSame(int[][].class, ClassUtil.newArray(int[].class, 0).getClass());
@@ -171,10 +184,10 @@ class ClassUtilTest {
         Assertions.assertThrows(NullPointerException.class, () -> ClassUtil.newArray(null, 0));
 
 
-        Assertions.assertNull(ClassUtil.newArray(null));
-        Assertions.assertNull(ClassUtil.newArray(1));
-        Assertions.assertEquals(1, ClassUtil.newArray(new int[]{1})[0]);
-        Assertions.assertEquals(1, ClassUtil.newArray(new Integer[]{1})[0]);
+        Assertions.assertNull(ClassUtil.toArray(null));
+        Assertions.assertNull(ClassUtil.toArray(1));
+        Assertions.assertEquals(1, ClassUtil.toArray(new int[]{1})[0]);
+        Assertions.assertEquals(1, ClassUtil.toArray(new Integer[]{1})[0]);
 
     }
 

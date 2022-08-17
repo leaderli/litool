@@ -80,4 +80,5 @@ public class TypeUtil {
         }
         return Objects.equals(left, right);
     }
+
 }

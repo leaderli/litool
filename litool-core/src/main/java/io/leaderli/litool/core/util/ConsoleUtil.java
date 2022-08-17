@@ -109,4 +109,5 @@ public class ConsoleUtil {
     public static void print_format(String pattern, Object... arguments) {
         CONSOLE.println(MessageFormat.format(pattern, arguments));
     }
+
 }

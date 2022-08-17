@@ -27,11 +27,14 @@ public class CollectionUtilsTest {
 
     @Test
     public void testCartesianProduct() {
-        List<List<Object>> lists = CollectionUtils.cartesian(Arrays.asList(1, 2, 3), Arrays.asList(4, 5, 6));
-        Assertions.assertEquals("[[1, 4], [1, 5], [1, 6], [2, 4], [2, 5], [2, 6], [3, 4], [3, 5], [3, 6]]",lists.toString());
-
-        List<List<Object>> lists2 = CollectionUtils.cartesian(Arrays.asList(1, 2), Arrays.asList("-", "*"), Arrays.asList("a", "b"));
-        Assertions.assertEquals("[[1, -, a], [1, -, b], [1, *, a], [1, *, b], [2, -, a], [2, -, b], [2, *, a], [2, *, b]]", lists2.toString());
+        Object[][] lists = CollectionUtils.cartesian(ArrayUtils.of(1, 2, 3), ArrayUtils.of(4, 5, 6));
+        Assertions.assertEquals("[[1, 4], [1, 5], [1, 6], [2, 4], [2, 5], [2, 6], [3, 4], [3, 5], [3, 6]]", ArrayUtils.toString(lists));
+        lists = CollectionUtils.cartesian(ArrayUtils.of(1, 2), ArrayUtils.of("-", "*"), ArrayUtils.of("a", "b"));
+        Assertions.assertEquals("[[1, -, a], [1, -, b], [1, *, a], [1, *, b], [2, -, a], [2, -, b], [2, *, a], [2, *, b]]", ArrayUtils.toString(lists));
+        lists = CollectionUtils.cartesian(ArrayUtils.of(1, 2));
+        Assertions.assertEquals("[[1], [2]]", ArrayUtils.toString(lists));
+        lists = CollectionUtils.cartesian((Object[]) null);
+        Assertions.assertEquals("[]", ArrayUtils.toString(lists));
     }
 
     @Test
@@ -47,7 +50,7 @@ public class CollectionUtilsTest {
     }
 
     @Test
-   public void emptyList() {
+    public void emptyList() {
         List<Object> actual = CollectionUtils.emptyList();
         Assertions.assertEquals(0, actual.size());
         actual.add(0);
@@ -77,7 +80,7 @@ public class CollectionUtilsTest {
         Assertions.assertEquals(5, CollectionUtils.union(a, b).size());
         Assertions.assertEquals(3, CollectionUtils.union(a, Lira.none()).size());
         Assertions.assertEquals(5, CollectionUtils.union(new Integer[]{1, 2, 3}, new Integer[]{3, 4, 5}).size());
-        Assertions.assertEquals(3, CollectionUtils.union(null,new Integer[]{3, 4, 5}).size());
+        Assertions.assertEquals(3, CollectionUtils.union(null, new Integer[]{3, 4, 5}).size());
     }
 
 

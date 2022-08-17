@@ -53,7 +53,7 @@ public class LiIterator<T> implements IterableIter<T>, Enumeration<T> {
         if (obj.getClass().isArray()) {
             int length = Array.getLength(obj);
 
-            return of(ClassUtil.newArray(obj));
+            return of(ClassUtil.toArray(obj));
         }
 
         return NoneIter.of();

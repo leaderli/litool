@@ -124,17 +124,20 @@ public class ClassUtil {
         return PRIMITIVE_WRAPPER_MAP.containsKey(cls) || PRIMITIVE_WRAPPER_MAP.containsValue(cls);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T[] newArray(Object arr) {
-        if (arr == null || arr.getClass().getComponentType() == null) {
-            return null;
 
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[] toArray(Object arr) {
+
+        Class<?> componentType = getComponentType(arr);
+        if (componentType == null) {
+            return null;
         }
         int length = Array.getLength(arr);
-        Object[] objects = newArray(arr.getClass().getComponentType(), length);
+        T[] objects = (T[]) newArray(componentType, length);
 
         for (int i = 0; i < length; i++) {
-            objects[i] = Array.get(arr, i);
+            objects[i] = (T) Array.get(arr, i);
         }
 
         return (T[]) objects;
@@ -290,5 +293,22 @@ public class ClassUtil {
                         .throwable_map(m -> m.invoke(aop, params), Throwable::printStackTrace)
                         .get();
         return _interface.cast(Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{_interface}, invocationHandler));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> getComponentType(Object obj) {
+
+        if (obj == null) {
+            return null;
+        }
+        return (Class<T>) obj.getClass().getComponentType();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> getComponentType(T[] arr) {
+        if (arr == null) {
+            return null;
+        }
+        return (Class<T>) arr.getClass().getComponentType();
     }
 }
