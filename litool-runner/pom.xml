@@ -31,11 +31,11 @@
             <artifactId>litool-dom</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.leaderli.litool</groupId>
-            <artifactId>litool-json</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.leaderli.litool</groupId>-->
+<!--            <artifactId>litool-json</artifactId>-->
+<!--            <version>${project.parent.version}</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>joda-time</groupId>
