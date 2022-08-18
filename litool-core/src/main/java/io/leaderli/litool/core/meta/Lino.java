@@ -10,7 +10,10 @@ import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiPrimitive;
 import io.leaderli.litool.core.util.BooleanUtil;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -23,7 +26,7 @@ import java.util.function.Supplier;
  * <p>
  * 当且仅当value的值 {@link #present()} 时，才会实际对其进行方法调用
  */
-public interface Lino<T> extends LiValue {
+public interface Lino<T> extends LiValue,Supplier<T> {
 
 
     /**
@@ -84,6 +87,7 @@ public interface Lino<T> extends LiValue {
         return new Some<>(value);
     }
 
+
     /**
      * 需要注意的是，所有窄化 extend 的操作，是只需要读取操作，不允许写操作的，因为 Lino 不涉及更新值，所以此处是安全的，也因此我们是无法窄化 super
      *
@@ -97,6 +101,7 @@ public interface Lino<T> extends LiValue {
         return (Lino<T>) value;
 
     }
+
 
     /**
      * 当为 none 时 直接抛出异常
@@ -146,6 +151,7 @@ public interface Lino<T> extends LiValue {
      */
     Lino<T> filter(Function<? super T, ?> function);
 
+    @Override
     T get();
 
     T get(T other);
@@ -185,6 +191,13 @@ public interface Lino<T> extends LiValue {
      */
     <R> Lino<R> map(Function<? super T, ? extends R> mapping);
 
+    /**
+     * @param mapping 返回 Lino 的转换函数
+     * @param <R>     转换后的泛型
+     * @return 返回转换后的 Lino ,会自动将 mapping 执行后的  Lino 展开
+     */
+    <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapping);
+
     <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapping);
 
     /**
@@ -194,6 +207,7 @@ public interface Lino<T> extends LiValue {
     Lino<T> nest(Consumer<? super Lino<T>> consumer);
 
     Lino<T> debug();
+
     Lino<T> debug(Consumer<T> debug);
 
     /**
@@ -227,6 +241,14 @@ public interface Lino<T> extends LiValue {
      * @see LiConstant#WHEN_THROW
      */
     <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping);
+
+    /**
+     * @param mapping 返回 Lino 的转换函数
+     * @param <R>     转换后的泛型
+     * @return 返回转换后的 Lino ,会自动将 mapping 执行后的  Lino 展开
+     * @see #throwable_map(ThrowableFunction)
+     */
+    <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapping);
 
     /**
      * @param mapping   转换函数
@@ -380,6 +402,12 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
+        public <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapping) {
+
+            return map(mapping).map(Supplier::get);
+        }
+
+        @Override
         public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapping) {
             return map(mapping).map(r -> LiTuple.of(value, r));
         }
@@ -429,6 +457,11 @@ public interface Lino<T> extends LiValue {
         @Override
         public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping) {
             return throwable_map(mapping, LiConstant.WHEN_THROW);
+        }
+
+        @Override
+        public <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapping) {
+            return throwable_map(mapping).map(Supplier::get);
         }
 
         @Override
@@ -597,6 +630,11 @@ public interface Lino<T> extends LiValue {
         }
 
         @Override
+        public <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapping) {
+            return Lino.none();
+        }
+
+        @Override
         public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapping) {
             return none();
         }
@@ -610,11 +648,13 @@ public interface Lino<T> extends LiValue {
         public Lino<T> debug() {
             return this;
         }
+
         @Override
         public Lino<T> debug(Consumer<T> debug) {
 
             return this;
         }
+
         @Override
         public Lino<T> or(T other) {
             return of(other);
@@ -639,6 +679,11 @@ public interface Lino<T> extends LiValue {
         @Override
         public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping) {
             return none();
+        }
+
+        @Override
+        public <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapping) {
+            return Lino.none();
         }
 
         @Override

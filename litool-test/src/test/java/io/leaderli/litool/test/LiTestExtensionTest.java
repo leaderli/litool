@@ -11,6 +11,11 @@ class LiTestExtensionTest {
 
 
     @LiTest
+    void test() {
+        System.out.println("test");
+
+    }
+    @LiTest
     void test(int age,int size) {
 
         ConsoleUtil.print(age,size);

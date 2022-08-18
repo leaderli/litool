@@ -14,6 +14,7 @@ import io.leaderli.litool.core.util.BooleanUtil;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -203,6 +204,15 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     <R> Lira<R> map(Function<? super T, ? extends R> mapper);
 
     /**
+     * @param mapper 返回 Lino 的转换函数
+     * @param <R>    转换后的泛型
+     * @return 返回转换后的 Lira ,会自动将 mapping 执行后的  Lino 展开
+     */
+    default <R> Lira<R> unzip(Function<? super T, Supplier<? extends R>> mapper) {
+        return map(mapper).map(Supplier::get);
+    }
+
+    /**
      * @param n 跳过多少个元素
      * @return 截掉前 n 位元素
      */
@@ -217,6 +227,16 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @see LiConstant#WHEN_THROW
      */
     <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
+
+    /**
+     * @param mapper 返回 Lino 的转换函数
+     * @param <R>    转换后的泛型
+     * @return 返回转换后的 Lira ,会自动将 mapping 执行后的  Lino 展开
+     * @see #throwable_map(ThrowableFunction)
+     */
+    default <R> Lira<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper) {
+        return throwable_map(mapper).map(Supplier::get);
+    }
 
     /**
      * @param mapper    转换函数

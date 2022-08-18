@@ -14,6 +14,14 @@ class LinoTest {
 
 
     @Test
+    void unzip() {
+
+        Assertions.assertEquals(1, Lino.of(1).unzip(l -> Lino.of(1)).get());
+        Assertions.assertNull(Lino.of(1).filter(i -> i > 2).unzip(l -> Lino.of(1)).get());
+
+    }
+
+    @Test
     void narrow() {
         Lino<CharSequence> narrow = Lino.narrow(Lino.<String>of(null));
         Assertions.assertSame(narrow, Lino.none());
