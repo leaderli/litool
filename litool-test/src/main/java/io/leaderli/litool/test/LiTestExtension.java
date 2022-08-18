@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * @author leaderli
  * @since 2022/8/18
  */
-public class MyTestExtension implements TestTemplateInvocationContextProvider {
+public class LiTestExtension implements TestTemplateInvocationContextProvider {
 
 
     @Override
@@ -32,6 +32,7 @@ public class MyTestExtension implements TestTemplateInvocationContextProvider {
         List<TestTemplateInvocationContext> list = new ArrayList<>();
         list.add(new MyTestTemplateInvocationContext(1, 1,1));
         list.add(new MyTestTemplateInvocationContext(2, 2,2));
+        list.add(new MyTestTemplateInvocationContext(3, 3,3));
         list.add(new MyTestTemplateInvocationContext(3, 3,3));
 
         return list.stream();

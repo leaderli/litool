@@ -1,17 +1,22 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.util.ConsoleUtil;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * @author leaderli
- * @since 2022/8/17
+ * @since 2022/8/18 10:46 AM
  */
-public class MyTestTest {
+class LiTestExtensionTest {
 
 
-    @MyTest
+    @LiTest
     void test(int age,int size) {
 
         ConsoleUtil.print(age,size);
+        Assertions.assertEquals(1,age);
     }
+
+
+
 }

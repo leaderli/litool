@@ -3,6 +3,7 @@ package io.leaderli.litool.core.test.cartesian;
 import com.google.gson.Gson;
 import io.leaderli.litool.core.type.ReflectUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.lang.reflect.Field;
 
@@ -57,8 +58,8 @@ class CartesianTest {
 
     }
 
-//    @Test
-//    @ValueSource
+    @Test
+    @ValueSource
     void cartesian() {
         Cartesian<A> cartesian = new Cartesian<>(A.class);
 
