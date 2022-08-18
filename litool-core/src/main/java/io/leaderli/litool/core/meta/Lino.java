@@ -7,7 +7,7 @@ import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.condition.LiIf;
 import io.leaderli.litool.core.type.ClassUtil;
-import io.leaderli.litool.core.type.LiPrimitive;
+import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.Enumeration;
@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  * <p>
  * 当且仅当value的值 {@link #present()} 时，才会实际对其进行方法调用
  */
-public interface Lino<T> extends LiValue,Supplier<T> {
+public interface Lino<T> extends LiValue, Supplier<T> {
 
 
     /**
@@ -491,32 +491,8 @@ public interface Lino<T> extends LiValue,Supplier<T> {
                 if (!componentType.isPrimitive()) {
                     return Lira.of(((Object[]) this.value));
                 }
+                return Lira.of(PrimitiveEnum.toWrapperArray(this.value));
 
-                if (componentType == boolean.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((boolean[]) this.value));
-                }
-                if (componentType == byte.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((byte[]) this.value));
-                }
-                if (componentType == char.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((char[]) this.value));
-                }
-                if (componentType == double.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((double[]) this.value));
-                }
-                if (componentType == float.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((float[]) this.value));
-                }
-                if (componentType == int.class) {
-
-                    return Lira.of(LiPrimitive.toWrapperArray((int[]) this.value));
-                }
-                if (componentType == long.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((long[]) this.value));
-                }
-                if (componentType == short.class) {
-                    return Lira.of(LiPrimitive.toWrapperArray((short[]) this.value));
-                }
             }
 
             if (this.value instanceof Iterable) {

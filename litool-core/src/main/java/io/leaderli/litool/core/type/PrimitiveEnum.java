@@ -6,16 +6,66 @@ package io.leaderli.litool.core.type;
  */
 public enum PrimitiveEnum {
 
-    BYTE,
-    BOOLEAN,
-    CHAR,
-    DOUBLE,
-    FLOAT,
-    LONG,
-    INT,
-    SHORT,
-    VOID,
-    OBJECT;
+    BYTE() {
+        @Override
+        public Object[] _toWrapperArray(Object obj) {
+            return LiPrimitive.toWrapperArray((byte[]) obj);
+        }
+    },
+    BOOLEAN {
+        @Override
+        public Object[] _toWrapperArray(Object obj) {
+            return LiPrimitive.toWrapperArray((boolean[]) obj);
+        }
+    },
+    CHAR {
+        @Override
+        public Object[] _toWrapperArray(Object obj) {
+            return LiPrimitive.toWrapperArray((char[]) obj);
+        }
+    },
+    DOUBLE {
+        @Override
+        public Object[] _toWrapperArray(Object obj) {
+            return LiPrimitive.toWrapperArray((double[]) obj);
+        }
+    },
+    FLOAT {
+        @Override
+        public Object[] _toWrapperArray(Object obj) {
+            return LiPrimitive.toWrapperArray((float[]) obj);
+        }
+    },
+    LONG {
+        @Override
+        public Object[] _toWrapperArray(Object obj) {
+            return LiPrimitive.toWrapperArray((long[]) obj);
+        }
+    },
+    INT {
+        @Override
+        public Object[] _toWrapperArray(Object obj) {
+            return LiPrimitive.toWrapperArray((int[]) obj);
+        }
+    },
+    SHORT {
+        @Override
+        public Object[] _toWrapperArray(Object obj) {
+            return LiPrimitive.toWrapperArray((short[]) obj);
+        }
+    },
+    VOID {
+        @Override
+        public Object[] _toWrapperArray(Object obj) {
+            return new Object[0];
+        }
+    },
+    OBJECT {
+        @Override
+        public Object[] _toWrapperArray(Object obj) {
+            return (Object[]) obj;
+        }
+    };
 
     public static PrimitiveEnum get(Object cls) {
         return get(ClassUtil.getClass(cls));
@@ -50,10 +100,26 @@ public enum PrimitiveEnum {
         if (cls == Short.class) {
             return SHORT;
         }
-        if( cls == Void.class){
+        if (cls == Void.class) {
             return VOID;
         }
 
         return OBJECT;
     }
+
+    protected abstract Object[] _toWrapperArray(Object obj);
+
+    public static Object[] toWrapperArray(Object obj) {
+
+        if (obj == null) {
+            return new Object[0];
+        }
+        if (obj.getClass().isArray()) {
+
+            return PrimitiveEnum.get(obj.getClass().getComponentType())._toWrapperArray(obj);
+        }
+        return new Object[]{obj};
+    }
+
+
 }
