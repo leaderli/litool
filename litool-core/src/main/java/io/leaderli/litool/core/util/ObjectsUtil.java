@@ -1,8 +1,6 @@
 package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.exception.UnsupportedTypeException;
-import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.test.cartesian.Cartesian;
 
 import java.lang.reflect.Array;
 import java.time.LocalTime;

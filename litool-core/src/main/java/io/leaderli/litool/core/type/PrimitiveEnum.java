@@ -1,71 +1,23 @@
 package io.leaderli.litool.core.type;
 
+import java.lang.reflect.Array;
+
 /**
  * @author leaderli
  * @since 2022/8/17 6:53 PM
  */
 public enum PrimitiveEnum {
 
-    BYTE() {
-        @Override
-        public Object[] _toWrapperArray(Object obj) {
-            return LiPrimitive.toWrapperArray((byte[]) obj);
-        }
-    },
-    BOOLEAN {
-        @Override
-        public Object[] _toWrapperArray(Object obj) {
-            return LiPrimitive.toWrapperArray((boolean[]) obj);
-        }
-    },
-    CHAR {
-        @Override
-        public Object[] _toWrapperArray(Object obj) {
-            return LiPrimitive.toWrapperArray((char[]) obj);
-        }
-    },
-    DOUBLE {
-        @Override
-        public Object[] _toWrapperArray(Object obj) {
-            return LiPrimitive.toWrapperArray((double[]) obj);
-        }
-    },
-    FLOAT {
-        @Override
-        public Object[] _toWrapperArray(Object obj) {
-            return LiPrimitive.toWrapperArray((float[]) obj);
-        }
-    },
-    LONG {
-        @Override
-        public Object[] _toWrapperArray(Object obj) {
-            return LiPrimitive.toWrapperArray((long[]) obj);
-        }
-    },
-    INT {
-        @Override
-        public Object[] _toWrapperArray(Object obj) {
-            return LiPrimitive.toWrapperArray((int[]) obj);
-        }
-    },
-    SHORT {
-        @Override
-        public Object[] _toWrapperArray(Object obj) {
-            return LiPrimitive.toWrapperArray((short[]) obj);
-        }
-    },
-    VOID {
-        @Override
-        public Object[] _toWrapperArray(Object obj) {
-            return new Object[0];
-        }
-    },
-    OBJECT {
-        @Override
-        public Object[] _toWrapperArray(Object obj) {
-            return (Object[]) obj;
-        }
-    };
+    BYTE,
+    BOOLEAN,
+    CHAR,
+    DOUBLE,
+    FLOAT,
+    LONG,
+    INT,
+    SHORT,
+    VOID,
+    OBJECT;
 
     public static PrimitiveEnum get(Object cls) {
         return get(ClassUtil.getClass(cls));
@@ -107,18 +59,32 @@ public enum PrimitiveEnum {
         return OBJECT;
     }
 
-    protected abstract Object[] _toWrapperArray(Object obj);
 
     public static Object[] toWrapperArray(Object obj) {
 
         if (obj == null) {
-            return new Object[0];
+            return null;
         }
         if (obj.getClass().isArray()) {
 
-            return PrimitiveEnum.get(obj.getClass().getComponentType())._toWrapperArray(obj);
+            Class<?> componentType = obj.getClass().getComponentType();
+            if (componentType.isPrimitive()) {
+
+                int length = Array.getLength(obj);
+                Object[] newArr = (Object[]) Array.newInstance(ClassUtil.primitiveToWrapper(componentType), length);
+
+
+                for (int i = 0; i < length; i++) {
+
+                    newArr[i] = Array.get(obj, i);
+                }
+
+                return newArr;
+
+            }
+            return (Object[]) obj;
         }
-        return new Object[]{obj};
+        return null;
     }
 
 

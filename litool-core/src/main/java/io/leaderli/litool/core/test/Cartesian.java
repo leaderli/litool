@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.test.cartesian;
+package io.leaderli.litool.core.test;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.meta.Lino;

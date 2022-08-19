@@ -1,6 +1,9 @@
-package io.leaderli.litool.core.test.cartesian;
+package io.leaderli.litool.core.cartesian;
 
 import com.google.gson.Gson;
+import io.leaderli.litool.core.test.Cartesian;
+import io.leaderli.litool.core.test.IntValues;
+import io.leaderli.litool.core.test.Valuable;
 import io.leaderli.litool.core.type.ReflectUtil;
 import org.junit.jupiter.api.Test;
 

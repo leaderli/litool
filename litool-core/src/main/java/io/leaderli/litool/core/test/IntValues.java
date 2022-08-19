@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.test.cartesian;
+package io.leaderli.litool.core.test;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,9 +7,12 @@ import java.lang.annotation.Target;
 
 /**
  * @author leaderli
- * @since 2022/8/17 7:30 PM
+ * @since 2022/8/17 7:32 PM
  */
+
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface Valuable {
+@Valuable
+@Target(ElementType.FIELD)
+public @interface IntValues {
+    int[] value();
 }

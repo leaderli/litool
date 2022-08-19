@@ -26,7 +26,7 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
         }
 
         Method testMethod = context.getTestMethod().get();
-        return isAnnotated(testMethod, ParameterizedTest.class);
+        return isAnnotated(testMethod, LiTest.class);
     }
 
     @Override

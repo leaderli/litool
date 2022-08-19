@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.test.cartesian;
+package io.leaderli.litool.core.test;
 
 import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.LiTuple;
