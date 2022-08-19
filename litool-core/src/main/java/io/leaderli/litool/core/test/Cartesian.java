@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.test;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
-import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
@@ -41,7 +40,7 @@ public class Cartesian<T> {
         Lira<Field> fields = ReflectUtil.getFields(cls)
                 .filter(f -> !ModifierUtil.isFinal(f));
         Object[][] objects = fields
-                .map(this::cartesian)
+                .map(field1 -> CartesianUtil.cartesian(field1))
                 .toArray(Object[].class);
 
         for (Field field : fields) {
@@ -68,27 +67,6 @@ public class Cartesian<T> {
             return obj;
         });
     }
-
-
-    private Object[] cartesian(Field field) {
-
-        Class<?> type = field.getType();
-
-
-        Lino<IntValues> values = ReflectUtil.getAnnotation(field, IntValues.class);
-        if (values.absent()) {
-            return new Object[]{ReflectUtil.getFieldValue(instance, field)};
-        } else {
-
-
-            values.get().value();
-        }
-
-        return null;
-
-    };
-
-    ;
 
 
 }
