@@ -260,7 +260,14 @@ public class ReflectUtil {
 
     }
 
-    public static <T extends Annotation>Lino<T> getAnnotation(AnnotatedElement annotatedElement, Class<T> an) {
+    public static <T extends Annotation> Lino<T> getAnnotation(Annotation annotation, Class<T> an) {
+
+        return Lino.of(annotation)
+                .map(Annotation::annotationType)
+                .unzip(type -> getAnnotation(type, an));
+    }
+
+    public static <T extends Annotation> Lino<T> getAnnotation(AnnotatedElement annotatedElement, Class<T> an) {
         return Lira.of(annotatedElement.getAnnotationsByType(an)).first();
     }
 

@@ -2,7 +2,7 @@ package io.leaderli.litool.core.cartesian;
 
 import com.google.gson.Gson;
 import io.leaderli.litool.core.test.Cartesian;
-import io.leaderli.litool.core.test.IntValues;
+import io.leaderli.litool.core.test.DoubleValues;
 import io.leaderli.litool.core.test.Valuable;
 import io.leaderli.litool.core.type.ReflectUtil;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class CartesianTest {
 
         private String name;
 
-        @IntValues({-1, 18, 100})
+        @DoubleValues({-1, 18, 100})
         private int age;
         private boolean red;
         public boolean hello;

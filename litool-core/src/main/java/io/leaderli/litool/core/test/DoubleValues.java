@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Valuable(IntCartesian.class)
+@Valuable(DoubleCartesian.class)
 @Target(ElementType.FIELD)
-public @interface IntValues {
-    int[] value();
+public @interface DoubleValues {
+    double[] value();
 }
 

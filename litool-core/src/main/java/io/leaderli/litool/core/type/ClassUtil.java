@@ -21,26 +21,6 @@ import java.util.stream.Collectors;
  */
 public class ClassUtil {
 
-    /**
-     * 基础类型和其包装类型的映射
-     */
-    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>();
-    private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>();
-
-    static {
-        PRIMITIVE_WRAPPER_MAP.put(Boolean.TYPE, Boolean.class);
-        PRIMITIVE_WRAPPER_MAP.put(Byte.TYPE, Byte.class);
-        PRIMITIVE_WRAPPER_MAP.put(Character.TYPE, Character.class);
-        PRIMITIVE_WRAPPER_MAP.put(Short.TYPE, Short.class);
-        PRIMITIVE_WRAPPER_MAP.put(Integer.TYPE, Integer.class);
-        PRIMITIVE_WRAPPER_MAP.put(Long.TYPE, Long.class);
-        PRIMITIVE_WRAPPER_MAP.put(Double.TYPE, Double.class);
-        PRIMITIVE_WRAPPER_MAP.put(Float.TYPE, Float.class);
-        PRIMITIVE_WRAPPER_MAP.put(Void.TYPE, Void.class);
-
-        PRIMITIVE_WRAPPER_MAP.forEach((k, v) -> WRAPPER_PRIMITIVE_MAP.put(v, k));
-    }
-
 
     /**
      * @param def 实例
@@ -82,7 +62,7 @@ public class ClassUtil {
                 convertedClass = getArrayClass(cls.getComponentType());
             } else {
 
-                convertedClass = WRAPPER_PRIMITIVE_MAP.get(cls);
+                convertedClass = PrimitiveEnum.WRAPPER_PRIMITIVE_MAP.get(cls);
             }
         }
         if (convertedClass != null) {
@@ -123,7 +103,7 @@ public class ClassUtil {
      */
     public static boolean isPrimitiveOrWrapper(Class<?> cls) {
 
-        return PRIMITIVE_WRAPPER_MAP.containsKey(cls) || PRIMITIVE_WRAPPER_MAP.containsValue(cls);
+        return PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.containsKey(cls) || PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.containsValue(cls);
     }
 
 
@@ -142,7 +122,7 @@ public class ClassUtil {
             objects[i] = (T) Array.get(arr, i);
         }
 
-        return (T[]) objects;
+        return objects;
     }
 
     /**
@@ -165,7 +145,7 @@ public class ClassUtil {
         if (cls != null) {
 
             if (cls.isPrimitive()) {
-                convertedClass = PRIMITIVE_WRAPPER_MAP.get(cls);
+                convertedClass = PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.get(cls);
             } else if (cls.isArray()) {
                 convertedClass = Array.newInstance(cls.getComponentType(), 0).getClass();
 

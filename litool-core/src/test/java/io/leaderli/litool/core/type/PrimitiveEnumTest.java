@@ -10,6 +10,19 @@ import org.junit.jupiter.api.Test;
 class PrimitiveEnumTest {
 
     @Test
+    void  to() {
+
+        System.out.println(PrimitiveEnum.VOID);
+    }
+    @Test
+    void def() {
+
+        Assertions.assertEquals(0, PrimitiveEnum.def(int.class));
+        Assertions.assertEquals(0, PrimitiveEnum.def(Integer.class));
+        Assertions.assertNull(PrimitiveEnum.def(String.class));
+    }
+
+    @Test
     void toWrapperArray() {
         Assertions.assertSame(Boolean.class, PrimitiveEnum.toWrapperArray(new boolean[]{}).getClass().getComponentType());
         Assertions.assertSame(Byte.class, PrimitiveEnum.toWrapperArray(new byte[]{}).getClass().getComponentType());
