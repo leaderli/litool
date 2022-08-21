@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Valuable(IntCartesian.class)
+@Valuable(LongCartesian.class)
 @Target({ElementType.FIELD,ElementType.PARAMETER})
-public @interface IntValues {
-    int[] value();
+public @interface LongValues {
+    long[] value();
 }
 

@@ -11,9 +11,8 @@ import java.lang.annotation.Target;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Valuable(IntCartesian.class)
-@Target({ElementType.FIELD,ElementType.PARAMETER})
-public @interface IntValues {
-    int[] value();
+@Valuable(ObjectCartesian.class)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+public @interface ObjectValues {
 }
 

@@ -36,8 +36,11 @@ public class CollectionUtilsTest {
         lists = CollectionUtils.cartesian((Object[]) null);
         Assertions.assertEquals("[]", ArrayUtils.toString(lists));
 
+        lists = CollectionUtils.cartesian(new Object[]{null});
+        Assertions.assertEquals("[[null]]", ArrayUtils.toString(lists));
+        lists = CollectionUtils.cartesian(ArrayUtils.of(1, 1), ArrayUtils.of(1, 1));
+        Assertions.assertEquals(1, lists.length);
 
-//        Assertions.assertEquals("[[1], [2]]",ArrayUtils.toString(CollectionUtils.cartesian(ArrayUtils.of(1, 2), ArrayUtils.of())));
 
     }
 

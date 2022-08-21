@@ -22,12 +22,7 @@
             <artifactId>litool-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.leaderli.litool</groupId>
-            <artifactId>litool-json</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>

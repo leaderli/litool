@@ -2,7 +2,6 @@ package io.leaderli.litool.core.collection;
 
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
-import org.omg.CORBA.RepositoryIdHelper;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -76,7 +75,11 @@ public class CollectionUtils {
         if (head == null) {
             return new Object[0][];
         }
+        head = Arrays.stream(head).distinct().toArray();
 
+        if (head.length == 0) {
+            head = new Object[]{null};
+        }
         Object[][] result = new Object[head.length][];
 
         for (int i = 0; i < result.length; i++) {
@@ -85,7 +88,7 @@ public class CollectionUtils {
 
 
         while ((elements = ArrayUtils.sub(elements, 1, 0)).length > 0) {
-            Object[] right = elements[0];
+            Object[] right = Lira.of(elements[0]).distinct().toArray();
             Object[][] temps = new Object[result.length * right.length][];
 
             int i = 0;

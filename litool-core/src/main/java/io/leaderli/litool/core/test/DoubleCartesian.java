@@ -8,7 +8,7 @@ import io.leaderli.litool.core.type.PrimitiveEnum;
  */
 class DoubleCartesian implements CartesianFunction<DoubleValues, Double> {
     @Override
-    public Double[] apply(DoubleValues intValues) {
+    public Double[] apply(DoubleValues intValues, CartesianContext context) {
         double[] value = intValues.value();
         if (value.length > 0) {
             return (Double[]) PrimitiveEnum.toWrapperArray(value);

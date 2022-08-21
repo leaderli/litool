@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.cartesian;
 
 import com.google.gson.Gson;
-import io.leaderli.litool.core.test.Cartesian;
+import io.leaderli.litool.core.test.CartesianObject;
 import io.leaderli.litool.core.test.DoubleValues;
 import io.leaderli.litool.core.test.Valuable;
 import io.leaderli.litool.core.type.ReflectUtil;
@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
  * @author leaderli
  * @since 2022/8/17 7:36 PM
  */
-class CartesianTest {
+class CartesianObjectTest {
     static class A {
 
         private String name;
@@ -63,7 +63,7 @@ class CartesianTest {
 //    @Test
 //    @ValueSource
     void cartesian() {
-        Cartesian<A> cartesian = new Cartesian<>(A.class);
+        CartesianObject<A> cartesian = new CartesianObject<>(A.class,null);
 
         Gson gson = new Gson();
         for (A a : cartesian.cartesian()) {

@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Valuable(IntCartesian.class)
-@Target({ElementType.FIELD,ElementType.PARAMETER})
-public @interface IntValues {
-    int[] value();
+@Valuable(BooleanCartesian.class)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+public @interface BooleanValues {
+    boolean[] value() default {true, false};
 }
 

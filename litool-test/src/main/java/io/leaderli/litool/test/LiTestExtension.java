@@ -1,7 +1,8 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.test.CartesianMethod;
 import org.junit.jupiter.api.extension.*;
-import org.junit.jupiter.params.ParameterizedTest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -37,7 +38,11 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
         String displayName = extensionContext.getDisplayName();
 
         List<TestTemplateInvocationContext> list = new ArrayList<>();
-        list.add(new MyTestTemplateInvocationContext(3, 3, 3));
+
+        Lira<Object[]> cartesian = new CartesianMethod(templateMethod, null).cartesian();
+        for (Object[] parameters : cartesian) {
+            list.add(new MyTestTemplateInvocationContext(parameters));
+        }
 
         return list.stream();
     }
@@ -77,8 +82,6 @@ class MyCartesianProductResolver implements ParameterResolver {
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
-        System.out.println("resolve:" + parameters[parameterContext.getIndex()]);
-        System.out.println(Arrays.toString(parameterContext.getParameter().getAnnotations()));
         return parameters[parameterContext.getIndex()];
     }
 }

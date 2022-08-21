@@ -11,14 +11,16 @@ import java.lang.reflect.Field;
  * @author leaderli
  * @since 2022/8/17 7:16 PM
  */
-public class Cartesian<T> {
+public class CartesianObject<T> {
 
     public final Class<T> cls;
     public final T instance;
+    public final CartesianContext context;
 
-    public Cartesian(Class<T> cls) {
+    public CartesianObject(Class<T> cls, CartesianContext context) {
         this.cls = cls;
         this.instance = ReflectUtil.newInstance(cls).get();
+        this.context = context;
     }
 
     /**
@@ -39,22 +41,13 @@ public class Cartesian<T> {
 
         Lira<Field> fields = ReflectUtil.getFields(cls)
                 .filter(f -> !ModifierUtil.isFinal(f));
+
         Object[][] objects = fields
-                .map(field1 -> CartesianUtil.cartesian(field1))
+                .map(field -> CartesianUtil.cartesian(field, context))
                 .toArray(Object[].class);
-
-        for (Field field : fields) {
-
-            System.out.println(ReflectUtil.findAnnotations(field));
-            System.out.println(ReflectUtil.findAnnotationsWithMark(field, Valuable.class));
-
-        }
-//        System.out.println(objects.length);
-//        System.out.println(ArrayUtils.toString(objects));
 
         Object[][] cartesian = CollectionUtils.cartesian(objects);
 
-//        System.out.println(ArrayUtils.toString(cartesian));
         return Lira.of(cartesian).map(arr -> {
 
             T obj = ReflectUtil.newInstance(cls).get();
