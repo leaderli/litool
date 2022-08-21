@@ -49,12 +49,24 @@ public enum PrimitiveEnum {
         this.wrapper = wrapper;
     }
 
-    public static PrimitiveEnum get(Object cls) {
-        return get(ClassUtil.getClass(cls));
+    public static boolean isNumber(Object number) {
+        return isNumber(get(number));
+    }
+
+    public static boolean isNumber(Class<?> number) {
+
+        return isNumber(get(number));
+    }
+
+    public static boolean isNumber(PrimitiveEnum number) {
+        return EnumUtil.sameAny(number, BYTE, FLOAT, DOUBLE, LONG, INT, SHORT);
+    }
+
+    public static PrimitiveEnum get(Object obj) {
+        return get(ClassUtil.getClass(obj));
     }
 
     public static PrimitiveEnum get(Class<?> cls) {
-
         cls = ClassUtil.primitiveToWrapper(cls);
 
         if (cls == Byte.class) {

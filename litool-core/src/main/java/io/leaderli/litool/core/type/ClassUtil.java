@@ -38,7 +38,6 @@ public class ClassUtil {
     }
 
 
-
     /**
      * @param cls 实际类型
      * @param <T> 泛型，其为实际类型的父类或实际类型
@@ -105,7 +104,6 @@ public class ClassUtil {
 
         return PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.containsKey(cls) || PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.containsValue(cls);
     }
-
 
 
     @SuppressWarnings("unchecked")
@@ -208,6 +206,25 @@ public class ClassUtil {
         }
 
         return null;
+    }
+
+    public static Object castNumber(Double num, PrimitiveEnum primitiveEnum) {
+        switch (primitiveEnum) {
+            case BYTE:
+                return num.byteValue();
+            case FLOAT:
+                return num.floatValue();
+            case DOUBLE:
+                return num;
+            case LONG:
+                return num.longValue();
+            case INT:
+                return num.intValue();
+            case SHORT:
+                return num.shortValue();
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     public static boolean _instanceof(Object son, Class<?> father) {

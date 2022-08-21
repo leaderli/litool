@@ -1,6 +1,7 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.test.CartesianContext;
 import io.leaderli.litool.core.test.CartesianMethod;
 import org.junit.jupiter.api.extension.*;
 
@@ -39,7 +40,7 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
 
         List<TestTemplateInvocationContext> list = new ArrayList<>();
 
-        Lira<Object[]> cartesian = new CartesianMethod(templateMethod, null).cartesian();
+        Lira<Object[]> cartesian = new CartesianMethod(templateMethod, new CartesianContext()).cartesian();
         for (Object[] parameters : cartesian) {
             list.add(new MyTestTemplateInvocationContext(parameters));
         }

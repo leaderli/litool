@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.test;
 
+import com.google.gson.Gson;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ReflectUtil;
 import org.junit.jupiter.api.Assertions;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * @author leaderli
@@ -15,10 +17,11 @@ import java.util.Arrays;
  */
 class CartesianUtilTest {
 
+    CartesianContext context = new CartesianContext();
     @Test
     void test() {
 
-        CartesianObject<TestA> testACartesian = new CartesianObject<>(TestA.class, null);
+        CartesianObject<TestA> testACartesian = new CartesianObject<>(TestA.class, field -> CartesianUtil.cartesian(field, context));
 
         Lira<TestA> cartesian = testACartesian.cartesian();
 
@@ -37,21 +40,49 @@ class CartesianUtilTest {
 
         Field field = ReflectUtil.getField(TestA.class, "age").get();
 
-        Assertions.assertEquals("[1, 2, 1]", Arrays.toString(CartesianUtil.cartesian(field, null)));
+        Assertions.assertEquals("[1, 2, 1]", Arrays.toString(CartesianUtil.cartesian(field, context)));
         field = ReflectUtil.getField(TestA.class, "height").get();
-        Assertions.assertEquals("[180, 173]", Arrays.toString(CartesianUtil.cartesian(field, null)));
+        Assertions.assertEquals("[180, 173]", Arrays.toString(CartesianUtil.cartesian(field, context)));
 
 
         Parameter[] haves = ReflectUtil.getMethod(TestA.class, "have").get().getParameters();
-        Assertions.assertEquals("[10, 20]", Arrays.toString(CartesianUtil.cartesian(haves[0], null)));
-        Assertions.assertEquals(8, CartesianUtil.cartesian(haves[1], null).length);
+        Assertions.assertEquals("[10, 20]", Arrays.toString(CartesianUtil.cartesian(haves[0], context)));
+        Assertions.assertEquals(8, CartesianUtil.cartesian(haves[1], context).length);
 
         Parameter only = ReflectUtil.getMethod(TestA.class, "only").get().getParameters()[0];
 
 
-        Assertions.assertEquals("[null]", Arrays.toString(CartesianUtil.cartesian(only, null)));
+        Assertions.assertEquals("[null]", Arrays.toString(CartesianUtil.cartesian(only, context)));
     }
 
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Test
+    void cartesianByTemplate() {
+
+        //language=JSON
+        String json = "{\n" +
+                "  \"height\": " +
+                "188,\n" +
+                "  \"gender\": [\n" +
+                "    true,\n" +
+                "    false\n" +
+                "  ],\n" +
+                "  \"age\": [\n" +
+                "    1,\n" +
+                "    2\n" +
+                "  ]\n" +
+                "}";
+
+        Gson gson = new Gson();
+        Map map = gson.fromJson(json, Map.class);
+
+        for (Object o : CartesianUtil.cartesianByTemplate(TestA.class, map)) {
+
+            System.out.println(gson.toJson(o));
+        }
+
+    }
 
     private static class TestA {
 

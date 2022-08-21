@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.test;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ReflectUtil;
 import org.junit.jupiter.api.Assertions;
@@ -16,11 +18,14 @@ class CartesianMethodTest {
 
     Method method = ReflectUtil.getMethod(getClass(), "have").get();
 
+    CartesianContext context = new CartesianContext();
+
     @Test
     void test() {
 
+        System.out.println(((Integer[])new Gson().fromJson("[1,2,3]", TypeToken.getArray(Integer.class).getType())));
 
-        CartesianMethod cartesianMethod = new CartesianMethod(method, null);
+        CartesianMethod cartesianMethod = new CartesianMethod(method, context);
         Lira<Object[]> parametersLira = cartesianMethod.cartesian();
 
         for (Object[] parameters : parametersLira) {

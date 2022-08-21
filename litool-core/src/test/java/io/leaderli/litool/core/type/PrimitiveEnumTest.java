@@ -10,10 +10,14 @@ import org.junit.jupiter.api.Test;
 class PrimitiveEnumTest {
 
     @Test
-    void  to() {
+    void isNumber() {
 
-        System.out.println(PrimitiveEnum.VOID);
+        Assertions.assertTrue(PrimitiveEnum.isNumber(1));
+        Assertions.assertTrue(PrimitiveEnum.isNumber(1.0));
+        Assertions.assertTrue(PrimitiveEnum.isNumber(1.f));
+        Assertions.assertFalse(PrimitiveEnum.isNumber((Object) null));
     }
+
     @Test
     void def() {
 
@@ -36,7 +40,7 @@ class PrimitiveEnumTest {
         Assertions.assertSame(String.class, PrimitiveEnum.toWrapperArray(new String[]{}).getClass().getComponentType());
         Assertions.assertNull(PrimitiveEnum.toWrapperArray(""));
         Assertions.assertNull(PrimitiveEnum.toWrapperArray(null));
-        Assertions.assertSame(2,PrimitiveEnum.toWrapperArray(new int[]{1,2}).length);
+        Assertions.assertSame(2, PrimitiveEnum.toWrapperArray(new int[]{1, 2}).length);
     }
 
     @Test

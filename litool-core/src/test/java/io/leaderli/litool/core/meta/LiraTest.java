@@ -168,6 +168,11 @@ class LiraTest {
         Assertions.assertEquals("{}", Lira.of(LiTuple.of(null, null)).toMap(l->l).toString());
     }
 
+    @Test
+    void map() {
+
+        Assertions.assertTrue(Lira.of(1).map(i->null).absent());
+    }
 
     @Test
     void toArray() {

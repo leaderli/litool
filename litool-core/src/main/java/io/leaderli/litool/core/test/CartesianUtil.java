@@ -1,16 +1,14 @@
 package io.leaderli.litool.core.test;
 
-import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.ReflectUtil;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,8 +17,6 @@ import java.util.Map;
  */
 public class CartesianUtil {
 
-
-    private static final Map<Valuable, CartesianFunction<Annotation, Object>> CARTESIAN_FUNCTION_MAP = new HashMap<>();
 
     private static <T> Object[] cartesian(Class<T> type, AnnotatedElement annotatedElement, CartesianContext context) {
 
@@ -35,15 +31,13 @@ public class CartesianUtil {
                     return cartesianFunction2GenericType == ClassUtil.primitiveToWrapper(type);
                 })
                 .first()
-                .map(an ->
-
-                        {
+                .map(an -> {
 
                             if (an instanceof ObjectValues) {
 
-                                return new CartesianObject<>(type, context).cartesian().toArray();
+                                return new CartesianObject<>(type, field -> CartesianUtil.cartesian(field, context)).cartesian().toArray();
                             }
-                            return provideByValuable(an, context);
+                            return context.provideByValuable(an);
                         }
 
                 )
@@ -71,22 +65,53 @@ public class CartesianUtil {
         return (T[]) arr;
     }
 
-    /**
-     * @param mark 被 {@link Valuable} 注解的注解
-     * @return 使用  {@link Valuable#value()} 的 apply 函数，返回一个数组
-     * @see CartesianFunction#apply(Annotation, CartesianContext)
-     */
-    @SuppressWarnings("unchecked")
-    public static Object[] provideByValuable(Annotation mark, CartesianContext context) {
+
+    private static Object convertToType(Object item, Class<?> type) {
+
+        if (ClassUtil._instanceof(item, type)) {
+            return item;
+        }
+        if (item instanceof Double) {
+
+            PrimitiveEnum primitiveEnum = PrimitiveEnum.get(type);
+            if (PrimitiveEnum.isNumber(primitiveEnum)) {
+                return ClassUtil.castNumber((Double) item, primitiveEnum);
+            }
+        }
+        return null;
+
+    }
+
+    public static <T> Lira<T> cartesianByTemplate(Class<T> cls, Map<String, Object> template) {
+
+        CartesianObject<T> cartesianObject = new CartesianObject<>(cls, field -> {
+            Object val = template.get(field.getName());
+            if (val == null) {
+                return null;
+            }
+
+            Class<?> type = field.getType();
+            Object[] result = null;
+            if (val instanceof Iterable) {
+                Object[] objects = Lira.of((Iterable<?>) val).map(item -> convertToType(item, type)).toArray();
+                if (objects.length > 0) {
+                    result = objects;
+                }
+            } else if (val.getClass().isArray()) {
+                Object[] objects = Lira.of(ClassUtil.toArray(val)).map(item -> convertToType(item, type)).toArray();
+                if (objects.length > 0) {
+                    result = objects;
+                }
+            } else {
+                Object single = convertToType(val, type);
+                if (single != null) {
+                    result = new Object[]{single};
+                }
+            }
+            return result;
+        });
+        return cartesianObject.cartesian();
 
 
-        Valuable valuable = mark.annotationType().getAnnotation(Valuable.class);
-        return CARTESIAN_FUNCTION_MAP
-                .computeIfAbsent(valuable, an -> {
-
-                    Class<? extends CartesianFunction<?, ?>> value = an.value();
-                    return (CartesianFunction<Annotation, Object>) RuntimeExceptionTransfer.get(value::newInstance);
-                })
-                .apply(mark, context);
     }
 }

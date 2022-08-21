@@ -6,6 +6,7 @@ import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 
 import java.lang.reflect.Field;
+import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -13,15 +14,17 @@ import java.lang.reflect.Field;
  */
 public class CartesianObject<T> {
 
-    public final Class<T> cls;
-    public final T instance;
-    public final CartesianContext context;
+    private final Class<T> cls;
+    private final T instance;
+    private final Function<Field, Object[]> fieldValueProvider;
 
-    public CartesianObject(Class<T> cls, CartesianContext context) {
+
+    public CartesianObject(Class<T> cls, Function<Field, Object[]> fieldValueProvider) {
         this.cls = cls;
         this.instance = ReflectUtil.newInstance(cls).get();
-        this.context = context;
+        this.fieldValueProvider = fieldValueProvider;
     }
+
 
     /**
      * @return 所有成员变量有区分度的取值集合的笛卡尔集组成的所有实例
@@ -40,10 +43,15 @@ public class CartesianObject<T> {
         }
 
         Lira<Field> fields = ReflectUtil.getFields(cls)
-                .filter(f -> !ModifierUtil.isFinal(f));
+                .filter(f -> !ModifierUtil.isFinal(f))
+                .filter(f -> {
+                    Object[] apply = fieldValueProvider.apply(f);
+                    return apply != null && apply.length > 0;
+                });
+
 
         Object[][] objects = fields
-                .map(field -> CartesianUtil.cartesian(field, context))
+                .map(fieldValueProvider)
                 .toArray(Object[].class);
 
         Object[][] cartesian = CollectionUtils.cartesian(objects);
