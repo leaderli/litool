@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<main>
-    <request>
-        <entry label="渠道">CHANNEL</entry>
-        <entry label="编号" type="int" def="1">ID</entry>
+<main id="0">
+    <request id="1">
+        <entry label="渠道" id="2">CHANNEL</entry>
+        <entry label="编号" type="int" def="1" id="3">ID</entry>
     </request>
-
-    <response>
-        <entry label="渠道">CHANNEL</entry>
-        <entry label="编号" type="int" def="1">ID</entry>
+    <response id="4">
+        <entry label="渠道" id="5">CHANNEL</entry>
+        <entry label="编号" type="int" def="1" id="6">ID</entry>
     </response>
-    <funcs>
-
-        <func name="func_a" label="func_a" instruct="in" type="boolean">
-            <param type="str">$CHANNEL</param>
-            <param type="str">IVR</param>
+    <funcs id="7">
+        <func name="func_a" label="func_a" instruct="in" type="boolean" id="8">
+            <param type="str" id="9">$CHANNEL</param>
+            <param type="str" id="10">IVR</param>
         </func>
     </funcs>
-    <router>
-        <sequence name="sequence_a" label="主流程">
-            <unit label="判断1">
-                <assign name="CHANNEL">123</assign>
+    <router id="11">
+        <sequence name="sequence_a" label="主流程" id="12">
+            <unit label="判断1" id="13">
+                <assign name="CHANNEL" id="14">123</assign>
             </unit>
         </sequence>
     </router>

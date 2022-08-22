@@ -6,16 +6,16 @@ import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.dom.sax.EndEvent;
+import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.InstructContainer;
 import io.leaderli.litool.runner.TypeAlias;
 import io.leaderli.litool.runner.instruct.Instruct;
-import io.leaderli.litool.runner.xml.SaxBeanWithID;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
-public class FuncElement extends SaxBeanWithID {
+public class FuncElement extends SaxBean {
 
     private String label;
     private String name;

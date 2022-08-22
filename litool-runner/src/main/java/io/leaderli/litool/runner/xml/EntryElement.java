@@ -5,13 +5,14 @@ import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.text.StringConvert;
 import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.dom.sax.EndEvent;
+import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.TypeAlias;
 
 /**
  * @author leaderli
  * @since 2022/7/24
  */
-public class EntryElement extends SaxBeanWithID {
+public class EntryElement extends SaxBean {
 
     private String label;
     private String key;

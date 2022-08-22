@@ -1,8 +1,11 @@
 package io.leaderli.litool.runner.xml;
 
+import io.leaderli.litool.core.event.ILiEventListener;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
+import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.Context;
 import io.leaderli.litool.runner.ContextVisitor;
+import io.leaderli.litool.runner.event.VisitorEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +29,14 @@ class MainElementTest {
 
         Assertions.assertEquals(0, dfs.getParseErrorMsgs().size());
         Context context = new Context(request);
+        context.registerListener(new ILiEventListener<VisitorEvent>(){
+            @Override
+            public void listen(VisitorEvent source) {
+
+                SaxBean x = source.getSource().get();
+                System.out.println(x.tag+" "+x.getId());
+            }
+        });
         ContextVisitor executor = main.executor();
         executor.visit(context);
 
