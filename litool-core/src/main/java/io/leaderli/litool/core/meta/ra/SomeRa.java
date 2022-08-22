@@ -6,7 +6,6 @@ import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.*;
 import io.leaderli.litool.core.type.ClassUtil;
-import jdk.nashorn.internal.ir.LiteralNode;
 
 import java.util.*;
 import java.util.function.Consumer;

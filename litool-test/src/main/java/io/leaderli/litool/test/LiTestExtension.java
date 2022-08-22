@@ -21,6 +21,10 @@ import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
 public class LiTestExtension implements TestTemplateInvocationContextProvider {
 
 
+    /**
+     * @param context junit 插件上下文
+     * @return 是否支持运行 junit
+     */
     @Override
     public boolean supportsTestTemplate(ExtensionContext context) {
         if (!context.getTestMethod().isPresent()) {
@@ -41,6 +45,7 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
         List<TestTemplateInvocationContext> list = new ArrayList<>();
 
         Lira<Object[]> cartesian = new CartesianMethod(templateMethod, new CartesianContext()).cartesian();
+        // 返回多个 junit 执行案例
         for (Object[] parameters : cartesian) {
             list.add(new MyTestTemplateInvocationContext(parameters));
         }
@@ -57,11 +62,18 @@ class MyTestTemplateInvocationContext implements TestTemplateInvocationContext {
         this.parameters = parameters;
     }
 
+    /**
+     * @param invocationIndex 执行案例编号
+     * @return 执行案例展示名
+     */
     @Override
     public String getDisplayName(int invocationIndex) {
         return "li:" + Arrays.toString(parameters);
     }
 
+    /**
+     * @return 执行案例的插件，可用于执行 {@link org.junit.jupiter.api.BeforeAll} ，填充参数等行为
+     */
     @Override
     public List<Extension> getAdditionalExtensions() {
         return Collections.singletonList(new MyCartesianProductResolver(parameters));
