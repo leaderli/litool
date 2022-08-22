@@ -11,6 +11,6 @@ public class AssignElementExecutor extends BaseElementExecutor<AssignElement> {
 
     @Override
     public void execute(Context context) {
-        context.setResponse(element.getName().getName(), element.getValue());
+        context.setResponse(element.getName().getName(), context.getExpressionValue(element.getValue()));
     }
 }

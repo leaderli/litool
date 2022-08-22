@@ -5,11 +5,12 @@ import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.runner.Expression;
 import io.leaderli.litool.runner.constant.VariablesModel;
 import io.leaderli.litool.runner.executor.router.task.AssignElementExecutor;
+import io.leaderli.litool.runner.util.ExpressionUtil;
 
 public class AssignElement extends BaseElement<AssignElement, AssignElementExecutor> {
 
     private Expression name;
-    private String value;
+    private Expression value;
 
     public AssignElement() {
         super("assign");
@@ -17,7 +18,7 @@ public class AssignElement extends BaseElement<AssignElement, AssignElementExecu
 
     @Override
     public void body(BodyEvent bodyEvent) {
-        this.value = bodyEvent.description();
+        this.value = ExpressionUtil.getExpression(bodyEvent.description());
     }
 
 
@@ -29,11 +30,11 @@ public class AssignElement extends BaseElement<AssignElement, AssignElementExecu
         this.name = name;
     }
 
-    public String getValue() {
+    public Expression getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Expression value) {
         this.value = value;
     }
 
