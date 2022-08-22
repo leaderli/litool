@@ -29,14 +29,7 @@ class MainElementTest {
 
         Assertions.assertEquals(0, dfs.getParseErrorMsgs().size());
         Context context = new Context(request);
-        context.registerListener(new ILiEventListener<VisitorEvent>(){
-            @Override
-            public void listen(VisitorEvent source) {
 
-                SaxBean x = source.getSource().get();
-                System.out.println(x.tag+" "+x.getId());
-            }
-        });
         ContextVisitor executor = main.executor();
         executor.visit(context);
 
