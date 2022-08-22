@@ -27,6 +27,14 @@ public class IfElement extends TaskElement<IfElement, IfElementExecutor> {
         taskList.add(element);
     }
 
+    public void addCoordinate(GotoElement element) {
+        taskList.add(element);
+    }
+
+    public void addKafka(GotoElement element) {
+        taskList.add(element);
+    }
+
 
     public Expression getCond() {
         return cond;
