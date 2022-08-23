@@ -18,6 +18,7 @@ import java.util.Map;
 class CartesianUtilTest {
 
     CartesianContext context = new CartesianContext();
+
     @Test
     void test() {
 
@@ -78,10 +79,8 @@ class CartesianUtilTest {
         Map map = gson.fromJson(json, Map.class);
 
 
-        for (Object o : CartesianUtil.cartesianByTemplate(TestA.class, map)) {
-
-            System.out.println(gson.toJson(o));
-        }
+        int size = CartesianUtil.cartesianByTemplate(TestA.class, map).size();
+        Assertions.assertEquals(4, size);
 
     }
 
