@@ -77,6 +77,7 @@ class CartesianUtilTest {
         Gson gson = new Gson();
         Map map = gson.fromJson(json, Map.class);
 
+
         for (Object o : CartesianUtil.cartesianByTemplate(TestA.class, map)) {
 
             System.out.println(gson.toJson(o));
