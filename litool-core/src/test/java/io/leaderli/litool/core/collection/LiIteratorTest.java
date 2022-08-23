@@ -29,7 +29,8 @@ class LiIteratorTest {
 
         Assertions.assertTrue(LiIterator.of(Arrays.asList(1, 2)).hasNext());
         Assertions.assertEquals(1, LiIterator.of(Arrays.asList(1, 2)).next());
-        Assertions.assertThrows(IllegalStateException.class, LiIterator.of(Arrays.asList(1, 2))::remove);
+
+        Assertions.assertThrows(Throwable.class, LiIterator.of(Arrays.asList(1, 2))::remove);
 
         Assertions.assertThrows(NoSuchElementException.class, LiIterator.of((Enumeration<Integer>) null)::next);
         Assertions.assertFalse(LiIterator.of(1).hasNext());
