@@ -23,10 +23,7 @@ public class ClassLoaderUtil {
     public static ClassLoader getClassLoader() {
         ClassLoader classLoader = getContextClassLoader();
         if (classLoader == null) {
-            classLoader = sun.misc.ClassLoaderUtil.class.getClassLoader();
-            if (null == classLoader) {
-                classLoader = getSystemClassLoader();
-            }
+            classLoader = getSystemClassLoader();
         }
         return classLoader;
     }
