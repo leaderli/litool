@@ -11,8 +11,7 @@ import io.leaderli.litool.runner.executor.router.task.CoordinateElementExecutor;
 
 import java.util.List;
 
-import static io.leaderli.litool.runner.constant.VariablesModel.REQUEST;
-import static io.leaderli.litool.runner.constant.VariablesModel.RESPONSE;
+import static io.leaderli.litool.runner.constant.VariablesModel.*;
 
 
 public class CoordinateElement extends BaseElement<CoordinateElement, CoordinateElementExecutor>{
@@ -59,7 +58,7 @@ public class CoordinateElement extends BaseElement<CoordinateElement, Coordinate
     }
 
     private void assertExpression(VariablesModel model) {
-        LiAssertUtil.assertTrue(model == REQUEST || model == RESPONSE,"coordinate params expression must be request or response ");
+        LiAssertUtil.assertTrue(model == REQUEST || model == RESPONSE || model == LITERAL,"coordinate params expression must be request or response or literal");
     }
 
     public Expression getY() {
