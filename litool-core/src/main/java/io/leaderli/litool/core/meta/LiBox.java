@@ -1,12 +1,13 @@
 package io.leaderli.litool.core.meta;
 
 import java.util.Objects;
+import java.util.function.BiFunction;
 
 /**
+ * wraps an instance for easy updating of values in lambda expressions
+ *
  * @author leaderli
  * @since 2022/6/16
- * <p>
- * 装箱一个实例，方便在lambda表达式中更新值
  */
 public class LiBox<T> implements LiValue {
 
@@ -22,30 +23,47 @@ public class LiBox<T> implements LiValue {
     }
 
     /**
-     * @param <T> 泛型
-     * @return 返回一个  {@code value = null } 的实例
+     * @param <T> the type of value
+     * @return return an instance that {@code value = null }
      */
     public static <T> LiBox<T> none() {
         return new LiBox<>();
     }
 
+    /**
+     * @param value the  instance libox wraps
+     * @param <T>   the type of value
+     * @return return an instance that  contains value
+     */
     public static <T> LiBox<T> of(T value) {
         return new LiBox<>(value);
     }
 
+    /**
+     * @param value update instance value
+     */
     public void value(T value) {
         this.value = value;
     }
 
+    /**
+     * @return return instance value
+     */
     public T value() {
         return this.value;
     }
 
+    /**
+     * @return this and set instance to null
+     */
     public LiBox<T> reset() {
         this.value = null;
         return this;
     }
 
+    /**
+     * @return {@code Lino.of(this.value)}
+     */
     public Lino<T> lino() {
         return Lino.of(this.value);
     }
@@ -78,5 +96,19 @@ public class LiBox<T> implements LiValue {
     @Override
     public String name() {
         return "box";
+    }
+
+    /**
+     * @param function update {{@link #value}} by call {@link BiFunction#apply(Object, Object)}，
+     *                 if function is null or it's parameter contains null , the function will
+     *                 not be called
+     * @param right    the second parameter of  function, the first parameter is {@link #value}
+     * @see java.util.function.BiFunction
+     */
+    public void apply(BiFunction<T, T, T> function, T right) {
+
+        if (function != null && value != null && right != null) {
+            this.value = function.apply(value, right);
+        }
     }
 }

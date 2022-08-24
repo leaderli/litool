@@ -7,6 +7,7 @@ import io.leaderli.litool.core.resource.ResourceUtil;
 import io.leaderli.litool.core.text.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.*;
 
@@ -25,10 +26,14 @@ public class LiYamlConfig {
 
 
         Yaml yaml = new Yaml();
-        ResourceUtil.getResourceFile(f -> StringUtils.endsWithAny(f.getName(), ".yml", ".yaml"))
-                .forEach(f -> {
-                    RuntimeExceptionTransfer.run(() -> yaml.load(new FileInputStream(f)));
-                });
+        for (File file : ResourceUtil.getResourceFile(LiYamlConfig::isYamlFile)) {
+            RuntimeExceptionTransfer.run(() -> yaml.load(new FileInputStream(file)));
+        }
+
+    }
+
+    public static boolean isYamlFile(File file) {
+        return StringUtils.endsWithAny(file.getName(), ".yml", ".yaml");
     }
 
     /**
@@ -44,7 +49,7 @@ public class LiYamlConfig {
 
         LiBox<Map<String, Object>> box = LiBox.of(new HashMap<>());
         ResourceUtil.getResourceFile(f -> nameList.contains(f.getName()))
-                .sort(Comparator.comparingInt(f -> nameList.indexOf(f.getName())))
+                .sorted(Comparator.comparingInt(f -> nameList.indexOf(f.getName())))
                 .throwable_map(f -> (Map<?, ?>) new Yaml().load(new FileInputStream(f)))
                 .forThrowableEach(f -> box.value(LiMapUtil.merge(box.value(), f)));
 

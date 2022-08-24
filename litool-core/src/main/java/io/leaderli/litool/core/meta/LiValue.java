@@ -7,7 +7,7 @@ package io.leaderli.litool.core.meta;
 public interface LiValue {
 
     /**
-     * @return 值是否不存在
+     * @return value does not exist
      * @see #present()
      */
     default boolean absent() {
@@ -15,15 +15,14 @@ public interface LiValue {
     }
 
     /**
-     * @return 值是否存在
+     * @return whether the value exists
      */
     boolean present();
 
     /**
-     * @return 实现类的简称
+     * @return short name of the implementation class
      */
     String name();
 
-    String toString();
 
 }

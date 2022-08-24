@@ -47,7 +47,7 @@ public class FuncsElementExecutor extends BaseElementExecutor<FuncsElement> {
                         }
                         return expr.getModel().scope;
                     })
-                    .sort((o1, o2) -> o2.level - o1.level)
+                    .sorted((o1, o2) -> o2.level - o1.level)
                     .first();
             if (first.present()) {
                 scope = first.get().level > scope.level ? first.get() : scope;

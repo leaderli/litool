@@ -27,10 +27,10 @@ class LiraTest {
     void narrow() {
 
         Lira<CharSequence> narrow1 = Lira.narrow(Lira.of("123", "456"));
-        Assertions.assertEquals(narrow1.getRaw().toString(), "[123, 456]");
+        Assertions.assertEquals(narrow1.get().toString(), "[123, 456]");
 
         Lira<String> cast = narrow1.cast(String.class);
-        Assertions.assertEquals(cast.getRaw().toString(), "[123, 456]");
+        Assertions.assertEquals(cast.get().toString(), "[123, 456]");
 
     }
 
@@ -83,7 +83,7 @@ class LiraTest {
         Assertions.assertNotSame(Lira.none(), Lira.of(1));
         Assertions.assertNotSame(Lira.of(1), Lira.of(1));
 
-        Assertions.assertEquals("[1, 2]", Lira.of("1", null, "2").getRaw().toString());
+        Assertions.assertEquals("[1, 2]", Lira.of("1", null, "2").get().toString());
 
 
     }
@@ -102,6 +102,26 @@ class LiraTest {
     }
 
     @Test
+    void reduce() {
+
+        Assertions.assertEquals(6, Lira.of(1, 2, 3).reduce(Integer::sum).get());
+        Assertions.assertEquals(6, Lira.of(null, 1, 2, 3).reduce(Integer::sum).get());
+        Assertions.assertNull(Lira.of(null, 1, 2, 3).reduce(null).get());
+
+        Assertions.assertEquals(6, Lira.of(1, 2, 3).reduce(0, Integer::sum).get());
+        Assertions.assertEquals(6, Lira.of(1, 2, 3).reduce(null, Integer::sum).get());
+        Assertions.assertEquals(7, Lira.of(1, 2, 3).reduce(1, Integer::sum).get());
+        Assertions.assertNull(Lira.of(null, 1, 2, 3).reduce(1, null).get());
+        Assertions.assertNull(Lira.of(1, 2, 3).reduce(1, (a, b) -> {
+            if (b == 3) {
+                return null;
+            }
+            return a + b;
+        }).get());
+
+    }
+
+    @Test
     void get() {
 
         Assertions.assertTrue(Lira.none().get().isEmpty());
@@ -115,8 +135,8 @@ class LiraTest {
 
         Lira<String> none = Lira.none();
 
-        Assertions.assertEquals("1", none.or("1").getRaw().get(0));
-        Assertions.assertEquals("1", Lira.of("1", "2").or(Arrays.asList("5", "4")).getRaw().get(0));
+        Assertions.assertEquals("1", none.or("1").get().get(0));
+        Assertions.assertEquals("1", Lira.of("1", "2").or(Arrays.asList("5", "4")).get().get(0));
 
 
         Assertions.assertSame(0, Lira.of(1, 2).filter(i -> i > 3).size());
@@ -138,11 +158,11 @@ class LiraTest {
     @Test
     void sort() {
 
-        Assertions.assertSame(1, Lira.of(2, 1).sort().first().get());
-        Assertions.assertSame(3, Lira.of(2, 1, 3).sort((o1, o2) -> o2 - o1).first().get());
+        Assertions.assertSame(1, Lira.of(2, 1).sorted().first().get());
+        Assertions.assertSame(3, Lira.of(2, 1, 3).sorted((o1, o2) -> o2 - o1).first().get());
 
-        Assertions.assertSame(2, Lira.of(2, 1).sort().last().get());
-        Assertions.assertSame(1, Lira.of(2, 1, 3).sort((o1, o2) -> o2 - o1).last().get());
+        Assertions.assertSame(2, Lira.of(2, 1).sorted().last().get());
+        Assertions.assertSame(1, Lira.of(2, 1, 3).sorted((o1, o2) -> o2 - o1).last().get());
     }
 
     @Test
@@ -164,14 +184,14 @@ class LiraTest {
         Assertions.assertEquals("{}", Lira.of(LiTuple.of(null, null)).toMap(LiTuple2::_1, LiTuple2::_2).toString());
 
         Assertions.assertEquals("{1=2}", Lira.of(LiTuple.of(1, 2)).toMap(l -> l).toString());
-        Assertions.assertNull(Lira.of(LiTuple.of(1, null)).toMap(l->l).get(1));
-        Assertions.assertEquals("{}", Lira.of(LiTuple.of(null, null)).toMap(l->l).toString());
+        Assertions.assertNull(Lira.of(LiTuple.of(1, null)).toMap(l -> l).get(1));
+        Assertions.assertEquals("{}", Lira.of(LiTuple.of(null, null)).toMap(l -> l).toString());
     }
 
     @Test
     void map() {
 
-        Assertions.assertTrue(Lira.of(1).map(i->null).absent());
+        Assertions.assertTrue(Lira.of(1).map(i -> null).absent());
     }
 
     @Test
@@ -180,7 +200,7 @@ class LiraTest {
         Assertions.assertDoesNotThrow(
                 () -> {
 
-                    Number[] nums = Lira.of(1, 2, 3).toArray(Integer.class);
+                    Number[] nums = Lira.of(1, 2, 3, 4.0).toArray(Integer.class);
                     Number[] nums2 = Lira.of(1, 2, 3).toArray(int.class);
                 }
         );
@@ -208,7 +228,7 @@ class LiraTest {
         List<String> linos = Lira.of("1 2 3")
                 .map(s -> s.split(" "))
                 .flatMap(ArrayIter::of)
-                .getRaw();
+                .get();
 
 
         Assertions.assertEquals(3, linos.size());
@@ -216,7 +236,7 @@ class LiraTest {
                 .map(s -> s.split(" "))
                 .<String>flatMap()
                 .filter(f -> !f.equals("2"))
-                .getRaw();
+                .get();
         Assertions.assertEquals(2, linos.size());
 
     }

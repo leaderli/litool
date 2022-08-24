@@ -32,7 +32,7 @@ class SaxEventInterceptorTest {
                         && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, method.getParameterTypes()[0]));
 
         Lino<Method> first = methodScanner.scan()
-                .sort((m1, m2) -> m2.getName().compareTo(m1.getName()))
+                .sorted((m1, m2) -> m2.getName().compareTo(m1.getName()))
                 .first();
 
         Assertions.assertEquals("addBean", first.get().getName());

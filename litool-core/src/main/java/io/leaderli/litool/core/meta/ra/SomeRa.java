@@ -95,7 +95,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public List<T> get() {
+    public List<T> getRaw() {
         List<T> result = new ArrayList<>();
         this.subscribe(new ConsumerSubscriberRa<>(result::add));
 
@@ -137,7 +137,7 @@ public abstract class SomeRa<T> implements Lira<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return getRaw().iterator();
+        return get().iterator();
     }
 
     @Override
@@ -201,7 +201,7 @@ public abstract class SomeRa<T> implements Lira<T> {
 
     @Override
     public Lira<T> or(Iterator<? extends T> others) {
-        List<T> raw = getRaw();
+        List<T> raw = get();
         if (raw.isEmpty()) {
             return Lira.of(others);
         }
@@ -214,17 +214,41 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public Lino<T> reduce(BinaryOperator<T> binaryOperator) {
+    public Lino<T> reduce(BinaryOperator<T> accumulator) {
 
-        LiBox<T> liBox = LiBox.none();
-        this.subscribe(new ConsumerSubscriberRa<>(t -> {
-            if (liBox.absent()) {
-                liBox.value(t);
+        if (accumulator == null) {
+            return Lino.none();
+        }
+        LiBox<T> box = LiBox.none();
+        this.subscribe(new BiConsumerSubscriberRa<>((t, sub) -> {
+            if (box.absent()) {
+                box.value(t);
             } else {
-                binaryOperator.apply(liBox.value(), t);
+                box.apply(accumulator, t);
+                if (box.absent()) {
+                    sub.cancel();
+                }
             }
         }));
-        return liBox.lino();
+        return box.lino();
+    }
+
+    @Override
+    public Lino<T> reduce(T identity, BinaryOperator<T> accumulator) {
+
+
+        if (accumulator == null) {
+            return Lino.none();
+        }
+        LiBox<T> box = LiBox.of(identity);
+        this.subscribe(new ConsumerSubscriberRa<>(t -> {
+            if (box.absent()) {
+                box.value(t);
+            } else {
+                box.apply(accumulator, t);
+            }
+        }));
+        return box.lino();
     }
 
     @Override
@@ -239,10 +263,10 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public Lira<T> debug(Consumer<T> debug) {
-        List<T> raw = getRaw();
+    public Lira<T> debug(Consumer<T> action) {
+        List<T> raw = get();
 
-        raw.forEach(debug);
+        raw.forEach(action);
         return Lira.of(raw);
     }
 
@@ -255,38 +279,37 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public Lira<T> distinct(EqualComparator<T> equalComparator) {
+    public Lira<T> distinct(EqualComparator<T> comparator) {
 
 
-        return new DistinctRa<>(this, equalComparator);
+        return new DistinctRa<>(this, comparator);
 
     }
 
     @Override
-    public Lira<T> sort() {
-        return sort(null);
+    public Lira<T> sorted() {
+        return sorted(null);
     }
 
     @Override
-    public Lira<T> sort(Comparator<? super T> comparator) {
+    public Lira<T> sorted(Comparator<? super T> comparator) {
 
-        List<T> raw = getRaw();
+        List<T> raw = get();
         raw.sort(comparator);
         return Lira.of(raw);
     }
 
 
-
     @Override
-    public void forThrowableEach(ThrowableConsumer<? super T> consumer) {
-        forThrowableEach(consumer, Throwable::printStackTrace);
+    public void forThrowableEach(ThrowableConsumer<? super T> action) {
+        forThrowableEach(action, Throwable::printStackTrace);
     }
 
     @Override
-    public void forThrowableEach(ThrowableConsumer<? super T> consumer, Consumer<Throwable> whenThrow) {
+    public void forThrowableEach(ThrowableConsumer<? super T> action, Consumer<Throwable> whenThrow) {
 
-        ThrowableConsumer<? super T> finalConsumer = consumer == null ? t -> {
-        } : consumer;
+        ThrowableConsumer<? super T> finalConsumer = action == null ? t -> {
+        } : action;
         this.subscribe(new SubscriberRa<T>() {
 
             @Override
@@ -313,7 +336,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public List<T> getRaw() {
+    public List<T> get() {
 
         List<T> result = new ArrayList<>();
         this.subscribe(new ConsumerSubscriberRa<>(result::add));
@@ -321,20 +344,30 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapping, Function<? super T, ? extends V> valueMapping) {
+    public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
 
         Map<K, V> result = new HashMap<>();
 
-        this.subscribe(new ConsumerSubscriberRa<>(e -> Lino.of(e).map(keyMapping).ifPresent(key -> result.put(key, Lino.of(e).map(valueMapping).get()))));
+        this.subscribe(new ConsumerSubscriberRa<>(e ->
+                Lino.of(e)
+                        .map(keyMapper)
+                        .ifPresent(key ->
+                                {
+                                    V value = Lino.of(e).map(valueMapper).get();
+                                    result.put(key, value);
+                                }
+                        ))
+        );
 
         return result;
     }
 
     @Override
-    public <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> tuple2Function) {
+    public <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> mapper) {
         Map<K, V> result = new HashMap<>();
         this.subscribe(new ConsumerSubscriberRa<>(e ->
-                        Lino.of(e).map(tuple2Function)
+                        Lino.of(e)
+                                .map(mapper)
                                 .filter(tuple2 -> tuple2._1 != null)
                                 .ifPresent(tuple2 -> result.put(tuple2._1, tuple2._2))
                 )
@@ -344,9 +377,7 @@ public abstract class SomeRa<T> implements Lira<T> {
 
     @Override
     public String toString() {
-//        return getRaw();
-        return getRaw().toString();
-//        return StringUtils.join(",", getRaw());
+        return get().toString();
     }
 
 

@@ -36,7 +36,7 @@ public class BitStatus {
                 .filter(field -> Modifier.isStatic(field.getModifiers())
                         && Modifier.isFinal(field.getModifiers())
                         && ObjectsUtil.sameAny(field.getType(), int.class, Integer.class))
-                .sort((o1, o2) -> ModifierUtil.priority(o2) - ModifierUtil.priority(o1));
+                .sorted((o1, o2) -> ModifierUtil.priority(o2) - ModifierUtil.priority(o1));
 
         for (Field field : sorted) {
 

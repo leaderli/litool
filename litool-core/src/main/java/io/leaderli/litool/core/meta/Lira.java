@@ -28,21 +28,25 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Lira<?> NONE = new ArrayRa<>(Collections.emptyIterator());
 
     /**
-     * @param value 值
-     * @param <T>   泛型
-     * @return 窄化一个宽泛的泛型， {@code <? extends T> } 转换为  {@code  <T> }
+     * Returns the narrow type lira, convert {@code <? extends T>} to {@code  <T>}
+     *
+     * @param lira the lira with wild type
+     * @param <T>  the type of the lira
+     * @return the narrow type lira
      */
     @SuppressWarnings("unchecked")
-    static <T> Lira<T> narrow(Lira<? extends T> value) {
+    static <T> Lira<T> narrow(Lira<? extends T> lira) {
 
-        return (Lira<T>) value;
+        return (Lira<T>) lira;
 
     }
 
     /**
-     * @param elements 数组
-     * @param <T>      数组泛型
-     * @return 返回一个新的实例
+     * Returns the new lira consisting the elements
+     *
+     * @param elements an array
+     * @param <T>      the type of array
+     * @return the new lira
      */
     @SafeVarargs
     static <T> Lira<T> of(T... elements) {
@@ -56,8 +60,11 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * @param <T> 泛型
-     * @return 返回全局唯一的空 Lira
+     * Returns the uniq none lira that not consisting any element
+     *
+     * @param <T> the type of lira
+     * @return the uniq  none lira
+     * @see #NONE
      */
     @SuppressWarnings("unchecked")
     static <T> Lira<T> none() {
@@ -66,9 +73,11 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * @param iterator 迭代器
-     * @param <T>      迭代器泛型
-     * @return 返回一个新的实例
+     * Returns an lira that consisting elements provided by given iterator
+     *
+     * @param iterator the iterator that provide  elements
+     * @param <T>      the type of elements returned by this iterator
+     * @return the new lira
      */
     static <T> Lira<T> of(Iterator<? extends T> iterator) {
 
@@ -81,18 +90,22 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * @param iterable 迭代器
-     * @param <T>      迭代器泛型
-     * @return 返回一个新的实例
+     * Returns an lira that consisting elements provided by given iterable
+     *
+     * @param iterable the iterator that provide  elements
+     * @param <T>      the type of elements returned by this iterable
+     * @return the new lira
      */
     static <T> Lira<T> of(Iterable<? extends T> iterable) {
         return of(LiIterator.of(iterable));
     }
 
     /**
-     * @param iterableIter 迭代器
-     * @param <T>          迭代器泛型
-     * @return 返回一个新的实例
+     * Returns an lira that consisting elements provided by given iterableIter
+     *
+     * @param iterableIter the iterableIter that provide  elements
+     * @param <T>          the type of elements returned by this iterableIter
+     * @return the new lira
      */
     static <T> Lira<T> of(IterableIter<? extends T> iterableIter) {
 
@@ -100,25 +113,31 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * @param type 可转换的类型
-     * @param <R>  可转换的类型的泛型
-     * @return 若集合的元素 可以转换为 type 类型 ，则返回 转换后的类型，否则返回 {@link #none()}
+     * filter element that can be cast
+     *
+     * @param type the class or interface represented by elements
+     * @param <R>  the generic parameter of {@code type}
+     * @return this
      */
     <R> Lira<R> cast(Class<? extends R> type);
 
+
     /**
-     * @param <K>       key 的泛型
-     * @param <V>       value 的泛型
-     * @param keyType   map 的 key 的类型
-     * @param valueType map 的 value 的类型
-     * @return 当 {@link Lino#get()} 的值为 map 时，且其 key 和 value 的类型可以转换为 keyType valueType 时，
-     * 则返回泛型 {@code Lira<Map<K,V>>} 的 Lira，否则返回 {@link #none()}
+     * filter element that can be cast to map , and  the map key, value can be cast
+     *
+     * @param <K>       the generic parameter of casted map key type
+     * @param <V>       the generic parameter of casted map value type
+     * @param keyType   the type of casted map key
+     * @param valueType the type of casted map value
+     * @return this
      */
     <K, V> Lira<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType);
 
     /**
-     * @param t 元素
-     * @return 是否包含 t
+     * Returns if this lira contains the specified element
+     *
+     * @param t element whose presence in this lira is to be tested
+     * @return if this lira contains the specified element
      */
     boolean contains(T t);
 
@@ -155,7 +174,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
 
     /**
-     * @return 返回 底层元素的一份拷贝
+     * return an {@code List} consisting of the elements
+     *
+     * @return the new list
      */
     List<T> get();
 
@@ -267,76 +288,194 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Lira<T> or(Iterable<? extends T> others);
 
 
-    Lino<T> reduce(BinaryOperator<T> binaryOperator);
+    /**
+     * Performs a reduction on the element of this lira, using the associative accumulation functions,
+     * and returns the reduced value. this is equivalent to:
+     * <pre> {@code
+     *     T result =  null
+     *     for (T element : this stream){
+     *          if(result == null){
+     *              result = element;
+     *          }else{
+     *             result = accumulator.apply(result, element)
+     *             if(result == null){
+     *                 return null;
+     *             }
+     *          }
+     *     }
+     *     return result;
+     * }</pre>
+     *
+     * <p>This is a terminal operation
+     *
+     * @param accumulator an associative non-interfering stateless function for combining two values
+     * @return the result of reduction
+     */
+    Lino<T> reduce(BinaryOperator<T> accumulator);
+
+    /**
+     * Performs a reduction on the element of this lira, using the associative accumulation functions,
+     * and returns the reduced value. this is equivalent to:
+     * <pre> {@code
+     *     T result =  identify
+     *     for (T element : this stream){
+     *             result = accumulator.apply(result, element)
+     *             if(result == null){
+     *                 return null;
+     *             }
+     *     }
+     *     return result;
+     * }</pre>
+     *
+     * <p>This is a terminal operation
+     *
+     * @param identity    the identity value for the accumulating function
+     * @param accumulator an associative non-interfering stateless function for combining two values
+     * @return the result of reduction
+     */
+    Lino<T> reduce(T identity, BinaryOperator<T> accumulator);
 
 
     /**
-     * @return 返回底层元素的数量
+     * @return the number of elements in this list
      */
     int size();
 
+    /**
+     * Performs an {@code System.out.println(element)} for each element of this lira
+     *
+     * @return this
+     * @see #debug(Consumer)
+     */
     Lira<T> debug();
 
-    Lira<T> debug(Consumer<T> out);
+    /**
+     * Performs an action  for each element of this lira
+     *
+     * @param action a  action to perform on the elements
+     * @return this
+     */
+    Lira<T> debug(Consumer<T> action);
 
     /**
-     * @return 去重，根据 equals 方法
+     * return this lira that consisting of the distinct elements (according to {@link Object#equals(Object)})
+     *
+     * @return this
      */
     Lira<T> distinct();
 
     /**
-     * @param equalComparator 重写判断是否唯一的比较器
-     * @return 去重
+     * Return this that consisting of the distinct elements according to {@code EqualComparator}
+     *
+     * @param comparator a {@code EqualComparator}  to be used to compare lira elements is equals
+     * @return this
      */
-    Lira<T> distinct(EqualComparator<T> equalComparator);
+    Lira<T> distinct(EqualComparator<T> comparator);
 
-    Lira<T> sort();
+    /**
+     * Returns a lira consisting of the elements of this lira ,sorted  according to natural order
+     *
+     * @return the new lira
+     */
+    Lira<T> sorted();
 
-    Lira<T> sort(Comparator<? super T> comparator);
+    /**
+     * Returns a lira consisting of the elements of this lira ,sorted  according to  the provided {@code Comparator}
+     *
+     * @return the new lira
+     */
+    Lira<T> sorted(Comparator<? super T> comparator);
 
 
-    void forThrowableEach(ThrowableConsumer<? super T> consumer);
+    /**
+     * <p>This is a terminal operation
+     * <p>
+     * when exception occur , it will perform Throwable on {@link LiConstant#WHEN_THROW} action
+     *
+     * @param action a  catchable action to perform on the elements
+     */
+    void forThrowableEach(ThrowableConsumer<? super T> action);
 
-    void forThrowableEach(ThrowableConsumer<? super T> consumer, Consumer<Throwable> whenThrow);
+    /**
+     * <p>This is a terminal operation
+     *
+     * @param action    a  catchable action to perform on the elements
+     * @param whenThrow use to perform on {@code action} throw an Throwable
+     */
+    void forThrowableEach(ThrowableConsumer<? super T> action, Consumer<Throwable> whenThrow);
 
+    /**
+     * @return the new stream
+     * @see Stream
+     */
     default Stream<T> stream() {
-        return getRaw().stream();
+        return get().stream();
     }
 
     /**
-     * @return 返回被 lino 包裹的实际元素的一个新的 list
+     * return an {@code List} consisting of the elements
+     *
+     * @return the new list
+     * @deprecated use {@link #get()}
      */
+    @Deprecated
     List<T> getRaw();
 
 
+    /**
+     * Returns an array containing the elements of this stream.
+     *
+     * <p>This is a terminal operation
+     *
+     * @return an array containing the elements of this  lira
+     */
     default Object[] toArray() {
-        return getRaw().toArray();
+        return get().toArray();
     }
 
+    /**
+     * Returns an typed array containing the typed elements  in this lira
+     *
+     * <p>This is a terminal operation
+     *
+     * @param type the array type
+     * @return an array containing the elements in this lira
+     */
     default T[] toArray(Class<? extends T> type) {
-        return getRaw().toArray((T[]) ClassUtil.newArray(type, 0));
+        return cast(type).get().toArray((T[]) ClassUtil.newArray(type, 0));
     }
 
     /**
-     * key 为 null 的值 会被忽略掉，value 为 null 不会
+     * Returns a map  consisting of the results of applying the given function to the elements of this stream
+     * using {@code keyMapper.apply(element), valueMapper.apply(element)} as key, value
      *
-     * @param keyMapping   转换 key 的函数
-     * @param valueMapping 转换 value 的函数
-     * @param <K>          key 泛型
-     * @param <V>          value 泛型
-     * @return 返回 map
+     * <p> the {@code key == null } entry will be  removed
+     *
+     * <p>This is a terminal operation
+     *
+     * @param keyMapper   a stateless function apply to each element
+     * @param valueMapper a stateless function apply to each element
+     * @param <K>         the type of  {@code Map} key
+     * @param <V>         the type of  {@code Map} value
+     * @return the new map
      */
-    <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapping, Function<? super T, ? extends V> valueMapping);
+
+    <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper);
 
     /**
-     * key 为 null 的值 会被忽略掉，value 为 null 不会
+     * Returns a map  consisting of the results of applying the given function to the elements of this stream
+     * using {@code LiTuple2.-1, LiTuple2.-2} as key, value
      *
-     * @param tuple2Function 转换 key, value 的函数
-     * @param <K>            key 泛型
-     * @param <V>            value 泛型
-     * @return 返回 map
+     * <p> the {@code key == null } entry will be  removed
+     *
+     * <p>This is a terminal operation
+     *
+     * @param mapper a stateless function apply to each element
+     * @param <K>    the type of  {@code Map} key
+     * @param <V>    the type of  {@code Map} value
+     * @return the new map
      */
-    <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> tuple2Function);
+    <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> mapper);
 
 
 }

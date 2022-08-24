@@ -45,7 +45,7 @@ public interface SaxEventHandler {
 
 
         Lino<Method> find = methodScanner.scan()
-                .sort((m1, m2) -> m2.getName().compareTo(m1.getName()))
+                .sorted((m1, m2) -> m2.getName().compareTo(m1.getName()))
                 .first();
 
         if (find.present()) {
@@ -56,10 +56,8 @@ public interface SaxEventHandler {
                         StringUtils.equalsAnyIgnoreCase(get.getName(), "get" + tag)
                                 && get.getParameterCount() == 0
                                 && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, get.getReturnType()));
-                methodScanner.scan().first().ifPresent(get -> {
-
-                    LiAssertUtil.assertTrue(ReflectUtil.getMethodValue(get, this).absent(), String.format("%s:%s already inited", getClass().getSimpleName(), tag));
-                });
+                methodScanner.scan().first()
+                        .ifPresent(get -> LiAssertUtil.assertTrue(ReflectUtil.getMethodValue(get, this).absent(), String.format("%s:%s already inited", getClass().getSimpleName(), tag)));
 
 
             }

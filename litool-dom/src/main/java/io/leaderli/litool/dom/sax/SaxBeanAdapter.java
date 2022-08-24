@@ -16,6 +16,7 @@ import java.util.function.Consumer;
 public class SaxBeanAdapter implements Runnable, SaxEventHandler {
 
 
+    public static Consumer<Throwable> WHEN_THROWS;
     public final SaxBean origin;
     /**
      * 用于在 {@link EndEvent} 中回调，用来执行参数校验，赋值复杂元素等
@@ -51,7 +52,10 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
         try {
             consumer.accept(saxEvent);
         } catch (Throwable throwable) {
-//            throwable.printStackTrace();
+
+            if (WHEN_THROWS != null) {
+                WHEN_THROWS.accept(throwable);
+            }
             Throwable cause = ExceptionUtil.getCause(throwable);
             Locator locator = saxEvent.locator;
 
