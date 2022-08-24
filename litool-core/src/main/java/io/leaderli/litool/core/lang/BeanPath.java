@@ -51,9 +51,9 @@ public class BeanPath {
     /**
      * @param expression key 的表达式
      */
+    @SuppressWarnings("unchecked")
     private void build(String expression) {
 
-        //noinspection unchecked
         build(expression, new Function[]{});
     }
 
