@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class ConsoleUtil {
 
 
-    public static final String LINE_SEPARATOR = java.security.AccessController.doPrivileged(new sun.security.action.GetPropertyAction("line.separator"));
+    public static final String LINE_SEPARATOR = System.lineSeparator();
     public static PrintStream CONSOLE = System.out;
 
     /**
