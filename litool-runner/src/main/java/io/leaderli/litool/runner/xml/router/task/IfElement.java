@@ -27,7 +27,7 @@ public class IfElement extends TaskElement<IfElement, IfElementExecutor> {
         taskList.add(element);
     }
 
-    public void addCoordinate(GotoElement element) {
+    public void addCoordinate(CoordinateElement element) {
         taskList.add(element);
     }
 
