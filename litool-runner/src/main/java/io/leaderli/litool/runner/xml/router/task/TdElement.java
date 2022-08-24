@@ -29,7 +29,7 @@ public class TdElement extends SaxBean {
     public void body(BodyEvent bodyEvent) {
         String value = bodyEvent.description();
         LiAssertUtil.assertTrue(value.matches(TD_VALUE_RULE),String.format("the td value %s is not match %s",value, TD_VALUE_RULE));
-        this.value = Lira.of(StringUtils.split(value,",")).getRaw();
+        this.value = Lira.of(StringUtils.split(value,",")).get();
     }
 
 

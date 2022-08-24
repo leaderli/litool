@@ -38,7 +38,7 @@ public class FuncsElement extends SaxBean implements ElementExecutor<FuncsElemen
                     .filter(expr -> expr.getModel() == VariablesModel.FUNC)
                     .map(Expression::getName)
                     .filter(paramName -> !nameSet.contains(paramName))
-                    .map(paramName -> String.format("error reference [%s]:[%s] can only use func ref defined before this.", paramName, funcElement.getName())).getRaw();
+                    .map(paramName -> String.format("error reference [%s]:[%s] can only use func ref defined before this.", paramName, funcElement.getName())).get();
             SaxEventHandler.addErrorMsgs(parseErrorMsgs, map.isEmpty(), StringUtils.join("\n", map.toArray()) + id);
 
             SaxEventHandler.addErrorMsgs(parseErrorMsgs, nameSet.add(funcElement.getName()), String.format("duplicate name of %s%s", funcElement.getName(), id));

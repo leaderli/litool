@@ -6713,7 +6713,7 @@ public class StringUtils implements StrPool {
 
 
         StringJoiner joiner = new StringJoiner(Lino.of(delimiter).get(" "));
-        Lira.of(elements).getRaw().stream().map(String::valueOf).forEach(joiner::add);
+        Lira.of(elements).get().stream().map(String::valueOf).forEach(joiner::add);
         return joiner.toString();
     }
 
@@ -8576,7 +8576,7 @@ public class StringUtils implements StrPool {
                 .toLira(Field.class)
                 .filter(field -> !Modifier.isStatic(field.getModifiers()))
                 .map(f -> f.getName() + " = " + ReflectUtil.getFieldValue(o, f).get())
-                .getRaw());
+                .get());
 
 
     }

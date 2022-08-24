@@ -136,8 +136,8 @@ public class CollectionUtils {
     public static <T> Lira<T> xor(Lira<T> a, Lira<T> b) {
 
 
-        List<T> union = union(a, b).getRaw();
-        List<T> intersection = intersection(a, b).getRaw();
+        List<T> union = union(a, b).get();
+        List<T> intersection = intersection(a, b).get();
 
 
         union.removeIf(intersection::contains);
@@ -158,7 +158,7 @@ public class CollectionUtils {
 
         List<T> result = new ArrayList<>();
 
-        List<T> raw = b.getRaw();
+        List<T> raw = b.get();
 
         a.forEach(t -> {
 
@@ -192,7 +192,7 @@ public class CollectionUtils {
     public static <T> Lira<T> union(Lira<T> a, Lira<T> b) {
 
 
-        List<T> raw = a.getRaw();
+        List<T> raw = a.get();
 
         b.forEach(raw::add);
 

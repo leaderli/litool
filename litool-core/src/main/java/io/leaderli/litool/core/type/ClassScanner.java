@@ -161,7 +161,7 @@ public class ClassScanner {
      * @since 5.7.5
      */
     public Set<Class<?>> scan(boolean forceScanJavaClassPaths) {
-        for (URL url : ResourceUtil.getResourcesLira(this.packagePath).getRaw()) {
+        for (URL url : ResourceUtil.getResourcesLira(this.packagePath).get()) {
             switch (url.getProtocol()) {
                 case "file":
                     scanFile(new File(URLUtil.decode(url.getFile(), this.charset.name())), null);
@@ -185,7 +185,7 @@ public class ClassScanner {
      */
     private void scanJavaClassPaths() {
         final Lira<String> javaClassPaths = ClassUtil.getJavaClassPaths();
-        for (String classPath : javaClassPaths.getRaw()) {
+        for (String classPath : javaClassPaths.get()) {
             // bug修复，由于路径中空格和中文导致的Jar找不到
             classPath = URLUtil.decode(classPath, CharsetUtil.systemCharsetName());
 

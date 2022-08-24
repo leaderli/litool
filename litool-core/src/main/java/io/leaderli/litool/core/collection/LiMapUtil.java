@@ -116,7 +116,7 @@ public class LiMapUtil {
 
         if (value instanceof List) {
 
-            return Lira.of((List<?>) value).<T>cast(listItemType).getRaw();
+            return Lira.of((List<?>) value).<T>cast(listItemType).get();
         }
         return new ArrayList<>();
     }

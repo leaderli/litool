@@ -214,7 +214,7 @@ class LinoTest {
 
 
         String[] value = {"1", "2"};
-        Assertions.assertEquals("1", Lino.of(value).toLira(CharSequence.class).getRaw().get(0));
+        Assertions.assertEquals("1", Lino.of(value).toLira(CharSequence.class).get().get(0));
 
 
         Assertions.assertSame(Lino.of(null).toLira(Object.class), Lira.none());
@@ -231,8 +231,8 @@ class LinoTest {
         Assertions.assertEquals("[]", Lino.of(Arrays.asList(1, 2)).toLira(String.class).get().toString());
 
 
-        Assertions.assertEquals(1, Lino.of(new int[]{1, 2}).toLira(Object.class).getRaw().get(0));
-        Assertions.assertEquals(1, Lino.of(1).toLira(Object.class).getRaw().get(0));
+        Assertions.assertEquals(1, Lino.of(new int[]{1, 2}).toLira(Object.class).get().get(0));
+        Assertions.assertEquals(1, Lino.of(1).toLira(Object.class).get().get(0));
 
 
     }

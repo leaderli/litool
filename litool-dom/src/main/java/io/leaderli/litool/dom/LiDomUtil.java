@@ -73,7 +73,7 @@ public class LiDomUtil {
      */
     public static List<DOMElement> selectNodes(DOMElement element) {
 
-        return Lira.of(element.selectNodes("child::*")).cast(DOMElement.class).getRaw();
+        return Lira.of(element.selectNodes("child::*")).cast(DOMElement.class).get();
 
     }
 
@@ -84,7 +84,7 @@ public class LiDomUtil {
      */
     public static List<DOMElement> selectNodes(DOMElement element, String xpath) {
 
-        return Lira.of(element.selectNodes(xpath)).cast(DOMElement.class).getRaw();
+        return Lira.of(element.selectNodes(xpath)).cast(DOMElement.class).get();
     }
 
     /**

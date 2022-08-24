@@ -30,7 +30,7 @@ class FuncElementTest {
     void func_math() {
         SaxEventInterceptor<FuncsElement> dfs = new SaxEventInterceptor<>(FuncsElement.class);
 
-        List<FuncElement> funcs = dfs.parse("funcs/func_math.xml").funcList.lira().getRaw();
+        List<FuncElement> funcs = dfs.parse("funcs/func_math.xml").funcList.lira().get();
 
         Assertions.assertTrue(dfs.getParseErrorMsgs().isEmpty());
 
@@ -41,7 +41,7 @@ class FuncElementTest {
     void func_add() {
         SaxEventInterceptor<FuncsElement> dfs = new SaxEventInterceptor<>(FuncsElement.class);
 
-        List<FuncElement> funcs = dfs.parse("funcs/func_add.xml").funcList.lira().getRaw();
+        List<FuncElement> funcs = dfs.parse("funcs/func_add.xml").funcList.lira().get();
 
 
         Instruct instruct =  funcs.get(0).getInstruct();

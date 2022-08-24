@@ -27,7 +27,7 @@ public class CoordinateElementExecutor extends BaseElementExecutor<CoordinateEle
                 .map(TdElement::getValue);
         Lira<String> firstLine = tdLira.first().toLira(String.class);
         def = firstLine.first().get();
-        List<String> x_axis = firstLine.skip(1).getRaw();
+        List<String> x_axis = firstLine.skip(1).get();
         Map<String,Map<String,String>> map = new HashMap<>();
         for (List<String> line : tdLira.skip(1)) {
             HashMap<String, String> xMap = new HashMap<>();

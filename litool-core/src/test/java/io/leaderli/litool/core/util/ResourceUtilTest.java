@@ -32,7 +32,7 @@ class ResourceUtilTest {
         Lira<URL> resourcesLira = ResourceUtil.getResourcesLira("io/leaderli");
 
         Assertions.assertEquals(2, resourcesLira.size());
-//        LiPrintUtil.println(LiResourceUtil.getResourceIter("").getRaw());
+//        LiPrintUtil.println(LiResourceUtil.getResourceIter("").get());
 //
 //        EnumerationIter.of(LiClassLoaderUtil.getClassLoader().getResources("")).forEachRemaining(
 //                System.out::println
@@ -41,7 +41,7 @@ class ResourceUtilTest {
 //        Assertions.assertNotNull(LiResourceUtil.getResourceAsStream("/"));
 //
 //
-////        System.out.println(LiResourceUtil.getResourcesFile(null).getRaw());
+////        System.out.println(LiResourceUtil.getResourcesFile(null).get());
 //        LiIterator.of(LiClassLoaderUtil.getClassLoader().getResources(""))
 //                .forEachRemaining(System.out::println);
 //        Assertions.assertEquals(1, LiResourceUtil.getResourceFile(null).size());

@@ -85,7 +85,7 @@ public class ClassUtil {
      */
     public static List<String> getAppJars() {
 
-        return getJavaClassPaths().filter(f -> f.endsWith(FileNameUtil.EXT_JAR)).getRaw();
+        return getJavaClassPaths().filter(f -> f.endsWith(FileNameUtil.EXT_JAR)).get();
 
     }
 
