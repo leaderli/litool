@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.meta.Lino;
-
 /**
  * 跳过前几个元素
  *
@@ -33,7 +31,7 @@ public class SkipRa<T> extends DefaultSomeRa<T> {
 
 
         @Override
-        public void next(Lino<? extends T> t) {
+        public void next(T t) {
             if (skip < 1) {
 
                 this.actualSubscriber.next(t);

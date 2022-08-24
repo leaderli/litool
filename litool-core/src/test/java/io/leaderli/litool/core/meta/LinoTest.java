@@ -227,7 +227,7 @@ class LinoTest {
         Lira<Integer> lira = of.toLira(Integer.class);
         Assertions.assertEquals(2, lira.size());
 
-        Assertions.assertEquals("[Some(1), Some(2)]", Lino.of(Arrays.asList(1, 2)).toLira(Integer.class).get().toString());
+        Assertions.assertEquals("[1, 2]", Lino.of(Arrays.asList(1, 2)).toLira(Integer.class).get().toString());
         Assertions.assertEquals("[]", Lino.of(Arrays.asList(1, 2)).toLira(String.class).get().toString());
 
 

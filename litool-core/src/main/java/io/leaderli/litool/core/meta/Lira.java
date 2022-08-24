@@ -12,6 +12,7 @@ import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -156,7 +157,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     /**
      * @return 返回 底层元素的一份拷贝
      */
-    List<Lino<T>> get();
+    List<T> get();
 
     /**
      * @param index 角标
@@ -265,6 +266,10 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     Lira<T> or(Iterable<? extends T> others);
 
+
+    Lino<T> reduce(BinaryOperator<T> binaryOperator);
+
+
     /**
      * @return 返回底层元素的数量
      */
@@ -289,7 +294,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
     Lira<T> sort(Comparator<? super T> comparator);
 
-    void forEachLino(Consumer<Lino<? super T>> consumer);
 
     void forThrowableEach(ThrowableConsumer<? super T> consumer);
 

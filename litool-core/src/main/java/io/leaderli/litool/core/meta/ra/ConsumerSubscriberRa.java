@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.meta.Lino;
-
 import java.util.function.Consumer;
 
 /**
@@ -11,9 +9,9 @@ import java.util.function.Consumer;
  * @since 2022/6/27
  */
 public class ConsumerSubscriberRa<T> implements SubscriberRa<T> {
-    private final Consumer<? super Lino<T>> consumer;
+    private final Consumer<? super T> consumer;
 
-    public ConsumerSubscriberRa(Consumer<? super Lino<T>> consumer) {
+    public ConsumerSubscriberRa(Consumer<? super T> consumer) {
         if (consumer == null) {
             consumer = lino -> {
             };
@@ -28,8 +26,8 @@ public class ConsumerSubscriberRa<T> implements SubscriberRa<T> {
     }
 
     @Override
-    public void next(Lino<? extends T> t) {
-        consumer.accept(Lino.narrow(t));
+    public void next(T t) {
+        consumer.accept(t);
     }
 
 

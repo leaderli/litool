@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
 import io.leaderli.litool.core.lang.EqualComparator;
-import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.type.ClassUtil;
 
 import java.util.ArrayList;
@@ -79,11 +78,11 @@ public class DistinctRa<T> extends DefaultSomeRa<T> {
 
 
         @Override
-        public void next(Lino<? extends T> lino) {
-            DistinctWrapper<T> only = new DistinctWrapper<>(lino.get(), equalComparator);
+        public void next(T t) {
+            DistinctWrapper<T> only = new DistinctWrapper<>(t, equalComparator);
             if (!list.contains(only)) {
                 list.add(only);
-                this.actualSubscriber.next(lino);
+                this.actualSubscriber.next(t);
             }
         }
 

@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.meta.Lino;
-
 import java.util.function.BiConsumer;
 
 /**
@@ -14,12 +12,12 @@ public class BiConsumerSubscriberRa<T> implements SubscriberRa<T> {
     /**
      * 该消费者仅保留 {@link CancelSubscriptionRa#cancel()} 操作，不允许使用 {@link SubscriptionRa#request()}
      */
-    private final BiConsumer<? super Lino<T>, CancelSubscriptionRa> consumer;
+    private final BiConsumer<? super T, CancelSubscriptionRa> consumer;
     private SubscriptionRa prevSubscription;
 
-    public BiConsumerSubscriberRa(BiConsumer<? super Lino<T>, CancelSubscriptionRa> consumer) {
+    public BiConsumerSubscriberRa(BiConsumer<? super T, CancelSubscriptionRa> consumer) {
         if (consumer == null) {
-            consumer = (BiConsumer<Lino<T>, CancelSubscriptionRa>) (lino, raSubscription) -> {
+            consumer = (BiConsumer<T, CancelSubscriptionRa>) (lino, raSubscription) -> {
 
             };
         }
@@ -34,8 +32,8 @@ public class BiConsumerSubscriberRa<T> implements SubscriberRa<T> {
     }
 
     @Override
-    public void next(Lino<? extends T> t) {
-        consumer.accept(Lino.narrow(t), this.prevSubscription);
+    public void next(T t) {
+        consumer.accept(t, this.prevSubscription);
     }
 
 

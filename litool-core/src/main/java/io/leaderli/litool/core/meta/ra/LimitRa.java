@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.meta.Lino;
-
 /**
  * 限制元素的个数
  *
@@ -33,7 +31,7 @@ public class LimitRa<T> extends DefaultSomeRa<T> {
 
 
         @Override
-        public void next(Lino<? extends T> t) {
+        public void next(T t) {
             if (limit < 1) {
                 this.cancel();
 

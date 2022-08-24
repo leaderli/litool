@@ -93,7 +93,7 @@ class LiraTest {
 
         Assertions.assertTrue(Lira.of(1, 2, 3).filter(i -> i > 4).absent());
         Assertions.assertSame(2, Lira.of(1, 2, 3).filter(i -> i > 1).size());
-        Assertions.assertSame(2, Lira.of(1, 2, 3).filter(i -> i > 1).get().get(0).get());
+        Assertions.assertSame(2, Lira.of(1, 2, 3).filter(i -> i > 1).get().get(0));
 
         Lira.of(1, 2, 3).filter();
         Assertions.assertEquals(3, Lira.of(1, 2, 3).filter().size());

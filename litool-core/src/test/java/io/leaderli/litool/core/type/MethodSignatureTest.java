@@ -3,10 +3,6 @@ package io.leaderli.litool.core.type;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Method;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author leaderli
  * @since 2022/7/27 6:49 AM

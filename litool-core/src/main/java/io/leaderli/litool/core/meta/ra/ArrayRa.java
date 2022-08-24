@@ -1,9 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.meta.Lino;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -49,7 +46,9 @@ public final class ArrayRa<T> extends SomeRa<T> {
 
             for (T t : arr) {
 
-                Lino.of(t).nest(actualSubscriber::next);
+                if (t != null) {
+                    actualSubscriber.next(t);
+                }
                 // 通过 onSubscribe 将 Subscription 传递给订阅者，由订阅者来调用 cancel方法从而实现提前结束循环
                 if (canceled) {
                     return;

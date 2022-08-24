@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.meta.Lino;
-
 /**
  * @author leaderli
  * @since 2022/6/27
@@ -15,7 +13,7 @@ public interface SubscriberRa<T> {
      *
      * @param t 消息
      */
-    void next(Lino<? extends T> t);
+    void next(T t);
 
 
     /**

@@ -38,8 +38,8 @@ public class ThrowableMapRa<T, R> extends SomeRa<R> {
 
 
         @Override
-        public void next(Lino<? extends T> t) {
-            t.throwable_map(mapper, whenThrow).nest(this.actualSubscriber::next);
+        public void next(T t) {
+            Lino.of(t).throwable_map(mapper, whenThrow).ifPresent(this.actualSubscriber::next);
         }
 
     }

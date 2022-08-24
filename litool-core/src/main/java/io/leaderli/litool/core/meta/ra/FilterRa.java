@@ -37,10 +37,8 @@ public class FilterRa<T> extends DefaultSomeRa<T> {
         }
 
         @Override
-        public void next(Lino<? extends T> t) {
-
-            t.filter(filter).nest(this.actualSubscriber::next);
-
+        public void next(T t) {
+            Lino.of(t).filter(filter).ifPresent(this.actualSubscriber::next);
         }
 
     }

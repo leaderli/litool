@@ -1,13 +1,8 @@
 package io.leaderli.litool.core.util;
 
-import com.google.gson.Gson;
 import io.leaderli.litool.core.exception.UnsupportedTypeException;
-import io.leaderli.litool.core.meta.ra.DefaultSomeRa;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Field;
-import java.util.Arrays;
 
 /**
  * @author leaderli

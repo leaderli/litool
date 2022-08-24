@@ -8,6 +8,7 @@ import io.leaderli.litool.core.meta.*;
 import io.leaderli.litool.core.type.ClassUtil;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -46,7 +47,8 @@ public abstract class SomeRa<T> implements Lira<T> {
 
         LiBox<Integer> exits = LiBox.none();
         this.subscribe(new BiConsumerSubscriberRa<>((lino, s) ->
-                lino
+
+                Lino.of(lino)
                         .contain(t)
                         .ifPresent(v1 -> {
                             exits.value(1);
@@ -72,7 +74,7 @@ public abstract class SomeRa<T> implements Lira<T> {
         LiBox<T> value = LiBox.none();
 
         this.subscribe(new BiConsumerSubscriberRa<>((v, s) -> {
-            value.value(v.get());
+            value.value(v);
             s.cancel();
         }));
         return value.lino();
@@ -83,7 +85,7 @@ public abstract class SomeRa<T> implements Lira<T> {
 
         LiBox<T> value = LiBox.none();
 
-        this.subscribe(new ConsumerSubscriberRa<>(v -> value.value(v.get())));
+        this.subscribe(new ConsumerSubscriberRa<>(value::value));
         return value.lino();
     }
 
@@ -93,8 +95,8 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
-    public List<Lino<T>> get() {
-        List<Lino<T>> result = new ArrayList<>();
+    public List<T> get() {
+        List<T> result = new ArrayList<>();
         this.subscribe(new ConsumerSubscriberRa<>(result::add));
 
         return result;
@@ -118,10 +120,10 @@ public abstract class SomeRa<T> implements Lira<T> {
             }
 
             @Override
-            public void next(Lino<? extends T> t) {
+            public void next(T t) {
 
                 if (count.value() == index) {
-                    result.value(t.get());
+                    result.value(t);
                     prevSubscription.cancel();
                 }
                 count.value(count.value() + 1);
@@ -140,7 +142,7 @@ public abstract class SomeRa<T> implements Lira<T> {
 
     @Override
     public void forEach(Consumer<? super T> consumer) {
-        this.subscribe(new ConsumerSubscriberRa<>((v) -> consumer.accept(v.get())));
+        this.subscribe(new ConsumerSubscriberRa<>(consumer));
     }
 
     @Override
@@ -212,6 +214,20 @@ public abstract class SomeRa<T> implements Lira<T> {
     }
 
     @Override
+    public Lino<T> reduce(BinaryOperator<T> binaryOperator) {
+
+        LiBox<T> liBox = LiBox.none();
+        this.subscribe(new ConsumerSubscriberRa<>(t -> {
+            if (liBox.absent()) {
+                liBox.value(t);
+            } else {
+                binaryOperator.apply(liBox.value(), t);
+            }
+        }));
+        return liBox.lino();
+    }
+
+    @Override
     public int size() {
         return this.get().size();
     }
@@ -259,10 +275,7 @@ public abstract class SomeRa<T> implements Lira<T> {
         return Lira.of(raw);
     }
 
-    @Override
-    public void forEachLino(Consumer<Lino<? super T>> consumer) {
-        this.subscribe(new ConsumerSubscriberRa<>(consumer));
-    }
+
 
     @Override
     public void forThrowableEach(ThrowableConsumer<? super T> consumer) {
@@ -283,9 +296,9 @@ public abstract class SomeRa<T> implements Lira<T> {
             }
 
             @Override
-            public void next(Lino<? extends T> t) {
+            public void next(T t) {
                 try {
-                    finalConsumer.accept(t.get());
+                    finalConsumer.accept(t);
                 } catch (Throwable e) {
                     whenThrow.accept(e);
                 }
@@ -303,7 +316,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     public List<T> getRaw() {
 
         List<T> result = new ArrayList<>();
-        this.subscribe(new ConsumerSubscriberRa<>(v -> result.add(v.get())));
+        this.subscribe(new ConsumerSubscriberRa<>(result::add));
         return result;
     }
 
@@ -312,7 +325,7 @@ public abstract class SomeRa<T> implements Lira<T> {
 
         Map<K, V> result = new HashMap<>();
 
-        this.subscribe(new ConsumerSubscriberRa<>(e -> e.map(keyMapping).ifPresent(key -> result.put(key, e.map(valueMapping).get()))));
+        this.subscribe(new ConsumerSubscriberRa<>(e -> Lino.of(e).map(keyMapping).ifPresent(key -> result.put(key, Lino.of(e).map(valueMapping).get()))));
 
         return result;
     }
@@ -321,7 +334,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     public <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> tuple2Function) {
         Map<K, V> result = new HashMap<>();
         this.subscribe(new ConsumerSubscriberRa<>(e ->
-                        e.map(tuple2Function)
+                        Lino.of(e).map(tuple2Function)
                                 .filter(tuple2 -> tuple2._1 != null)
                                 .ifPresent(tuple2 -> result.put(tuple2._1, tuple2._2))
                 )

@@ -35,12 +35,10 @@ public class FlatMapRa<T, R> extends SomeRa<R> {
 
 
         @Override
-        public void next(Lino<? extends T> t) {
+        public void next(T t) {
 
             // 展开迭代器，依次对非空元素执行下一步操作
-            t.map(mapper).ifPresent(it -> it.forEachRemaining(v -> {
-                Lino.of(v).nest(this.actualSubscriber::next);
-            }));
+            Lino.of(t).map(mapper).ifPresent(it -> it.forEachRemaining(this.actualSubscriber::next));
         }
 
     }
