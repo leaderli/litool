@@ -12,6 +12,9 @@ class ModifierUtilTest {
     static void m1() {
 
     }
+    private static void m2() {
+
+    }
 
     @Test
     void isPublic() throws NoSuchMethodException {
@@ -32,7 +35,7 @@ class ModifierUtilTest {
 
         Assertions.assertEquals(4, ModifierUtil.priority(ModifierUtilTest.class.getMethod("toString")));
         Assertions.assertEquals(2, ModifierUtil.priority(Object.class.getDeclaredMethod("finalize")));
-        Assertions.assertEquals(0, ModifierUtil.priority(Object.class.getDeclaredMethod("registerNatives")));
+        Assertions.assertEquals(0, ModifierUtil.priority(ModifierUtilTest.class.getDeclaredMethod("m2")));
         Assertions.assertEquals(1, ModifierUtil.priority(ModifierUtilTest.class.getDeclaredMethod("test")));
 
     }

@@ -70,7 +70,7 @@ class StringUtilsTest {
             outmock();
         } catch (Exception e) {
             Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, Lino.class).contains("Lino$Some.map("));
-            Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, StringUtilsTest.class).contains("lambda$mock$"));
+            Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, StringUtilsTest.class).contains("StringUtilsTest.lambda"));
             Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, null).length() > 0);
         }
         Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, Lino.class).contains("Some.throwable_map(")));
