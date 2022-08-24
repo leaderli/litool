@@ -861,22 +861,6 @@ public class ArrayUtils {
         return arr;
     }
 
-//    public static Integer[] of(int... arr) {
-//        Integer[] integers = ClassUtil.newArray(Integer.class, arr.length);
-//        for (int i = 0; i < integers.length; i++) {
-//            integers[i] = arr[i];
-//        }
-//        return integers;
-//    }
-//
-//    public static Double[] of(double... arr) {
-//        Double[] doubles = ClassUtil.newArray(Double.class, arr.length);
-//        for (int i = 0; i < doubles.length; i++) {
-//            doubles[i] = arr[i];
-//        }
-//        return doubles;
-//    }
-
 
     public static boolean isArray(Object arr) {
 
@@ -907,11 +891,6 @@ public class ArrayUtils {
                 str = str.replaceAll(", $", "]");
                 return str;
             }
-//            for (Object o : arr) {
-//
-//                toString(obj);
-//            }
-
         }
         return String.valueOf(obj);
 

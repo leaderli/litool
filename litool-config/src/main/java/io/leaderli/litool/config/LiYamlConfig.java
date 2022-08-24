@@ -1,6 +1,7 @@
 package io.leaderli.litool.config;
 
 import io.leaderli.litool.core.collection.LiMapUtil;
+import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.resource.ResourceUtil;
 import io.leaderli.litool.core.text.StringUtils;
@@ -17,35 +18,37 @@ public class LiYamlConfig {
 
 
     /**
-     * 校验资源目录下的所有 yml 文件 的是否可以被正确加载
+     * Check all yaml file under classpath if the format is correct.
+     * it will throw {@link RuntimeException} if format is incorrect.
      */
     public static void checkYamlFormat() {
 
 
         Yaml yaml = new Yaml();
-        ResourceUtil.getResourceFile(f -> StringUtils.endsWithAny(f.getName(), ".yml", ".yaml")).forThrowableEach(f -> yaml.load(new FileInputStream(f)), e -> {
-            throw new IllegalStateException(e);
-        });
+        ResourceUtil.getResourceFile(f -> StringUtils.endsWithAny(f.getName(), ".yml", ".yaml"))
+                .forEach(f -> {
+                    RuntimeExceptionTransfer.run(() -> yaml.load(new FileInputStream(f)));
+                });
     }
 
     /**
-     * @param names 多个配置文件名称
-     * @return 合并多个yml配置项，后面的优先级更高
+     * need to call {@link #checkYamlFormat()} first
+     *
+     * @param names multi yaml file name
+     * @return merged multi yaml configuration ,  the latter have high priority
      * @see LiMapUtil#merge(Map, Map)
      */
     public static Map<String, Object> loadResourcesYmlFiles(String... names) {
 
-        List<String> strings = Arrays.asList(names);
+        List<String> nameList = Arrays.asList(names);
 
-        LiBox<Map<String, Object>> result = LiBox.of(new HashMap<>());
-        ResourceUtil.getResourceFile(f -> strings.contains(f.getName()))
-                .sort(Comparator.comparingInt(f -> strings.indexOf(f.getName())))
-                .forThrowableEach(
-                        f -> result.value(LiMapUtil.merge(result.value(), new Yaml().load(new FileInputStream(f)))),
-                        e -> {
-                            throw new IllegalStateException(e);
-                        });
-        return result.value();
+        LiBox<Map<String, Object>> box = LiBox.of(new HashMap<>());
+        ResourceUtil.getResourceFile(f -> nameList.contains(f.getName()))
+                .sort(Comparator.comparingInt(f -> nameList.indexOf(f.getName())))
+                .throwable_map(f -> (Map<?, ?>) new Yaml().load(new FileInputStream(f)))
+                .forThrowableEach(f -> box.value(LiMapUtil.merge(box.value(), f)));
+
+        return box.value();
     }
 
 }
