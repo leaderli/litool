@@ -6,7 +6,6 @@ import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,29 +13,30 @@ import java.util.stream.Collectors;
 /**
  * @author leaderli
  * @since 2022/6/15 10:37 AM
+ * <p>
+ * Use constant names to represent binary
  */
 public class BitStatus {
 
-    private final Map<BitStatusEnum, String> statuses = new EnumMap<>(BitStatusEnum.class);
+    private final Map<BitStatusEnum, String> bit_name = new EnumMap<>(BitStatusEnum.class);
 
     private BitStatus() {
-
-
     }
 
     /**
-     * @param stateClass 有状态标记的类
-     * @return 根据 class 中的 int 静态常量属性标记状态 ，int 的值 需要满足 {@link BitUtil#onlyOneBit(int)}
+     * @param statusConstant the class  who contain constants with represent status
+     * @return a new BitStatus
      */
-    public static BitStatus of(Class<?> stateClass) {
+    public static BitStatus of(Class<?> statusConstant) {
         Map<Integer, BitStatusEnum> bitStatusMap = BitStatusEnum.getBitStatusMap();
         BitStatus bitStatus = new BitStatus();
 
-        Lira<Field> sorted = ReflectUtil.getFields(stateClass)
-                .filter(field -> Modifier.isStatic(field.getModifiers())
-                        && Modifier.isFinal(field.getModifiers())
-                        && ObjectsUtil.sameAny(field.getType(), int.class, Integer.class))
-                .sorted((o1, o2) -> ModifierUtil.priority(o2) - ModifierUtil.priority(o1));
+        Lira<Field> sorted = ReflectUtil.getFields(statusConstant)
+                .filter(field -> ObjectsUtil.sameAny(field.getType(), int.class, Integer.class)
+                        && ModifierUtil.isPublic(field)
+                        && ModifierUtil.isFinal(field)
+                        && ModifierUtil.isStatic(field)
+                );
 
         for (Field field : sorted) {
 
@@ -44,7 +44,7 @@ public class BitStatus {
                     .cast(Integer.class)
                     .map(bitStatusMap::get)
                     .ifPresent(statusEnum ->
-                            bitStatus.statuses.putIfAbsent(statusEnum, field.getName())
+                            bitStatus.bit_name.putIfAbsent(statusEnum, field.getName())
                     );
         }
 
@@ -54,23 +54,52 @@ public class BitStatus {
     }
 
     /**
-     * @param status 实际的状态值
-     * @return 根据状态值，输出各状态的属性名称，状态属性名称根据其位置从右向左输出，使用竖线分割
+     * According to the state value, output the attribute name of each state.
+     * The state attribute name is output from right to left according to its
+     * position, and is separated by a vertical line.
+     * <p>
+     * eg:
+     * <pre>
+     *     PUBLIC|STATIC|INTERFACE|ABSTRACT
+     * </pre>
+     *
+     * @param bit_status the status represented by binary
+     * @return The value corresponding to the key in the  {@link #bit_name}
      */
-    public String beauty(int status) {
+    public String beauty(int bit_status) {
 
 
-        return this.statuses.keySet().stream()
-                .filter(bit -> bit.match(status))
-                .map(this.statuses::get)
+        return this.bit_name.keySet().stream()
+                .filter(bit -> bit.match(bit_status))
+                .map(this.bit_name::get)
                 .collect(Collectors.joining("|"));
 
 
     }
 
+    /**
+     * eg:
+     * {@link java.lang.reflect.Modifier}
+     * <pre>
+     * 0000 0000 0000 0000 0000 0000 0000 0001 PUBLIC
+     * 0000 0000 0000 0000 0000 0000 0000 0010 PRIVATE
+     * 0000 0000 0000 0000 0000 0000 0000 0100 PROTECTED
+     * 0000 0000 0000 0000 0000 0000 0000 1000 STATIC
+     * 0000 0000 0000 0000 0000 0000 0001 0000 FINAL
+     * 0000 0000 0000 0000 0000 0000 0010 0000 SYNCHRONIZED
+     * 0000 0000 0000 0000 0000 0000 0100 0000 VOLATILE
+     * 0000 0000 0000 0000 0000 0000 1000 0000 TRANSIENT
+     * 0000 0000 0000 0000 0000 0001 0000 0000 NATIVE
+     * 0000 0000 0000 0000 0000 0010 0000 0000 INTERFACE
+     * 0000 0000 0000 0000 0000 0100 0000 0000 ABSTRACT
+     * 0000 0000 0000 0000 0000 1000 0000 0000 STRICT
+     * </pre>
+     *
+     * @return Comparison table for all states
+     */
     @Override
     public String toString() {
 
-        return statuses.entrySet().stream().map(e -> e.getKey() + " " + e.getValue()).collect(Collectors.joining(System.lineSeparator()));
+        return bit_name.entrySet().stream().map(e -> e.getKey() + " " + e.getValue()).collect(Collectors.joining(System.lineSeparator()));
     }
 }

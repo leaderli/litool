@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
 
 
-    Lira<?> NONE = new ArraySome<>(Collections.emptyIterator());
+    Lira<?> NONE_INSTANCE = new ArraySome<>(Collections.emptyIterator());
 
     /**
      * Returns the narrow type lira, convert {@code <? extends T>} to {@code  <T>}
@@ -64,11 +64,11 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      *
      * @param <T> the type of lira
      * @return the uniq  none lira
-     * @see #NONE
+     * @see #NONE_INSTANCE
      */
     @SuppressWarnings("unchecked")
     static <T> Lira<T> none() {
-        return (Lira<T>) NONE;
+        return (Lira<T>) NONE_INSTANCE;
 
     }
 
@@ -111,6 +111,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
 
         return of((Iterator<? extends T>) iterableIter);
     }
+
 
     /**
      * filter element that can be cast
