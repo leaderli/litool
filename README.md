@@ -1,5 +1,5 @@
 # litool  hello
 
-## [core](../readme.md)
+## [core](litool-core/README.md)
 
 
