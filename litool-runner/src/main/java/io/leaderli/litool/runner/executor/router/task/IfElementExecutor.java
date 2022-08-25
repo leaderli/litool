@@ -39,7 +39,7 @@ public class IfElementExecutor extends BaseElementExecutor<IfElement> {
         Boolean expressionValue = (Boolean) context.getExpressionValue(cond);
 
         if (!expressionValue) {
-            context.interrupt.init(Interrupt.BREAK_LOOP);
+            context.interrupt.set(Interrupt.BREAK_LOOP);
         }
     }
 

@@ -1,74 +1,110 @@
 package io.leaderli.litool.core.bit;
 
 /**
+ * Use binary to express permissions, use bitwise operations to modify permissions
+ *
  * @author leaderli
  * @since 2022/8/16
  */
 public class BitPermission<T> {
 
-    private final Class<T> status_class;
+    /**
+     * Constant class used to represent permission state
+     * <p>
+     * eg:
+     * <pre>
+     *    Modifier.FINAL
+     * </pre>
+     */
+    private final Class<T> permission_constant_class;
 
-    // 存储目前的权限状态
-    private int state;
+    /**
+     * A int to hold the permission token, save permission with binary position. 1 means permission, 0 means no permission
+     */
+    private int permissions;
 
-    public BitPermission(Class<T> status_class) {
-        this.status_class = status_class;
+
+    public BitPermission(Class<T> permission_constant_class) {
+        this.permission_constant_class = permission_constant_class;
     }
 
     /**
-     * 重新设置权限
+     * Set the permissions
+     *
+     * @param permissions {@link #permissions}
      */
-    public void init(int permission) {
-        state = permission;
+    public void set(int permissions) {
+        this.permissions = permissions;
     }
 
     /**
-     * 添加一项或多项权限
+     * Add one or more permission
+     *
+     * @param permissions {@link #permissions}
      */
-    public void enable(int permission) {
-        state |= permission;
+    public void enable(int permissions) {
+        this.permissions |= permissions;
     }
 
     /**
-     * 删除一项或多项权限
+     * Remove one or more permission
+     *
+     * @param permissions {@link #permissions}
      */
-    public void disable(int permission) {
-        state &= ~permission;
+    public void disable(int permissions) {
+        this.permissions &= ~permissions;
     }
 
     /**
-     * 是否拥某些权限
+     * Have the permissions
+     *
+     * @param permissions {@link #permissions}
+     * @return have the permissions
      */
-    public boolean have(int permission) {
-        return (state & permission) == permission;
+    public boolean have(int permissions) {
+        return (this.permissions & permissions) == permissions;
     }
 
     /**
-     * 是否禁用了某些权限
+     * Don't have the permissions
+     *
+     * @param permissions {@link #permissions}
+     * @return don't have the permissions
      */
-    public boolean miss(int permission) {
-        return (state & permission) == 0;
+    public boolean miss(int permissions) {
+        return (this.permissions & permissions) == 0;
     }
 
     /**
-     * 是否仅仅拥有某些权限
+     * only have the permissions
+     *
+     * @param permissions {@link #permissions}
+     * @return {@code this.permissions == permissions}
      */
-    public boolean only(int permission) {
-        return state == permission;
+    public boolean only(int permissions) {
+        return this.permissions == permissions;
     }
 
 
+    /**
+     * Don't have any permission
+     *
+     * @return {@code permissions == 0 }
+     */
     public boolean none() {
-        return state == 0;
+        return permissions == 0;
     }
 
+    /**
+     * @return {@code permissions != 0 }
+     */
     public boolean any() {
-        return !none();
+        return permissions != 0;
     }
 
     @Override
     public String toString() {
-        return status_class.getSimpleName() + ":" + BitStatus.of(status_class).beauty(state);
+        return permission_constant_class.getSimpleName() + ":" + BitStatus.of(permission_constant_class).beauty(permissions);
     }
 }
 
