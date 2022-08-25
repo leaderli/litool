@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.type;
 
-import io.leaderli.litool.core.bit.BitStatus;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.meta.LiTuple;
@@ -9,7 +8,10 @@ import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.io.File;
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +116,7 @@ public class ClassUtil {
             return null;
         }
         int length = Array.getLength(arr);
-        T[] objects = (T[]) newArray(componentType, length);
+        T[] objects = (T[]) newWrapperArray(componentType, length);
 
         for (int i = 0; i < length; i++) {
             objects[i] = (T) Array.get(arr, i);
@@ -130,7 +132,7 @@ public class ClassUtil {
      * @return 返回一个指定长度的数组，因为基础类型无法使用声明为泛型，因此所有 基础类型都会被转换为包装类数组
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] newArray(Class<? extends T> componentType, int length) {
+    public static <T> T[] newWrapperArray(Class<? extends T> componentType, int length) {
         return (T[]) Array.newInstance(primitiveToWrapper(componentType), length);
     }
 
@@ -244,28 +246,29 @@ public class ClassUtil {
      */
     public static boolean isAssignableFromOrIsWrapper(Class<?> father, Class<?> son) {
 
+        if (father == null || son == null) {
+            return false;
+        }
 
-        if (father != null && son != null) {
 
-            if (father.isArray()) {
+        if (father.isArray()) {
 
-                if (son.isArray()) {
+            if (son.isArray()) {
 
-                    //对于数组，基础类型的数组无法进行强转,所以这里不能将 基础类型 视作可以继承自其包装类
-                    father = father.getComponentType();
-                    son = son.getComponentType();
-                    if (father.isPrimitive() || son.isPrimitive()) {
-                        return father == son;
-                    }
-                    return father.isAssignableFrom(son);
+                //对于数组，基础类型的数组无法进行强转,所以这里不能将 基础类型 视作可以继承自其包装类
+                father = father.getComponentType();
+                son = son.getComponentType();
+                if (father.isPrimitive() || son.isPrimitive()) {
+                    return father == son;
                 }
-            } else {
-
-                if (father.isAssignableFrom(son)) {
-                    return true;
-                }
-                return primitiveToWrapper(son) == primitiveToWrapper(father);
+                return father.isAssignableFrom(son);
             }
+        } else {
+
+            if (father.isAssignableFrom(son)) {
+                return true;
+            }
+            return primitiveToWrapper(son) == primitiveToWrapper(father);
         }
         return false;
     }
@@ -281,7 +284,6 @@ public class ClassUtil {
      */
     public static <T> T addInterface(Class<T> _interface, Object aop) {
 
-        BitStatus bitStatus = BitStatus.of(Modifier.class);
 
         LiAssertUtil.assertTrue(_interface.isInterface(), "only support interface");
         LiAssertUtil.assertTrue(_interface.getTypeParameters().length == 0, "not support interface with generic of :  " + _interface.toGenericString());

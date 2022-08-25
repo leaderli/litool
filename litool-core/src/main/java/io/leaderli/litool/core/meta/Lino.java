@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.collection.EnumerationIter;
+import io.leaderli.litool.core.collection.EnumerationItr;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
@@ -262,7 +262,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @param <R> 泛型
      * @return 返回 LiCase 实例
      */
-    <R> LiIf<? super T, R> toIf();
+    <R> LiIf<T, R> toIf();
 
     /**
      * 支持的转换的类型有
@@ -273,7 +273,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      *
      * @return 根据实际值的类型，将数组或集合转换为 {@link Lira}
      */
-    Lira<?> toLira();
+    Lira<Object> toLira();
 
     /**
      * @param <R>  泛型
@@ -478,12 +478,12 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public <R> LiIf<? super T, R> toIf() {
+        public <R> LiIf<T, R> toIf() {
             return LiIf.of(this);
         }
 
         @Override
-        public Lira<?> toLira() {
+        public Lira<Object> toLira() {
             Class<?> valueClass = this.value.getClass();
             if (valueClass.isArray()) {
                 Class<?> componentType = valueClass.getComponentType();
@@ -502,7 +502,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
                 return Lira.of((Iterator<?>) this.value);
             }
             if (this.value instanceof Enumeration) {
-                return Lira.of((Iterator<?>) EnumerationIter.of((Enumeration<?>) this.value));
+                return Lira.of((Iterator<?>) EnumerationItr.of((Enumeration<?>) this.value));
             }
 
             return Lira.of(this.value);
@@ -668,12 +668,12 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public <R> LiIf<? super T, R> toIf() {
+        public <R> LiIf<T, R> toIf() {
             return LiIf.of();
         }
 
         @Override
-        public Lira<?> toLira() {
+        public Lira<Object> toLira() {
             return Lira.none();
         }
 

@@ -1,9 +1,7 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.collection.ArrayIter;
+import io.leaderli.litool.core.collection.ArrayItr;
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.meta.ra.Subscriber;
-import io.leaderli.litool.core.meta.ra.Subscription;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,34 +16,6 @@ class LiraTest {
 
 
     @Test
-    void error() {
-
-        Lira.of(1, 0, 3, 0).filter(f -> 4 / f).subscribe(new Subscriber<Integer>() {
-            @Override
-            public void onSubscribe(Subscription subscription) {
-                subscription.request();
-
-            }
-
-            @Override
-            public void next(Integer integer) {
-
-                System.out.println(integer);
-            }
-
-            @Override
-            public void onComplete() {
-                System.out.println("complete");
-            }
-
-//            @Override
-//            public void onError(Throwable t, CancelSubscription cancel) {
-//                System.out.println(t.getLocalizedMessage());
-//            }
-        });
-    }
-
-    @Test
     void getIndex() {
 
         Assertions.assertEquals(1, Lira.of(1, 2, 3).get(0).get());
@@ -58,10 +28,10 @@ class LiraTest {
     void narrow() {
 
         Lira<CharSequence> narrow1 = Lira.narrow(Lira.of("123", "456"));
-        Assertions.assertEquals(narrow1.get().toString(), "[123, 456]");
+        Assertions.assertEquals("[123, 456]", narrow1.get().toString());
 
         Lira<String> cast = narrow1.cast(String.class);
-        Assertions.assertEquals(cast.get().toString(), "[123, 456]");
+        Assertions.assertEquals("[123, 456]", cast.get().toString());
 
     }
 
@@ -259,7 +229,7 @@ class LiraTest {
 
         List<String> linos = Lira.of("1 2 3")
                 .map(s -> s.split(" "))
-                .flatMap(ArrayIter::of)
+                .flatMap(ArrayItr::of)
                 .get();
 
 

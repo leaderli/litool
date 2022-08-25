@@ -51,7 +51,7 @@ class ClassUtilTest {
     }
 
     @Test
-    public void narrow() {
+    void narrow() {
 
 
         Assertions.assertDoesNotThrow(() -> {
@@ -60,7 +60,7 @@ class ClassUtilTest {
     }
 
     @Test
-    public void primitiveToWrapper() {
+    void primitiveToWrapper() {
         Assertions.assertNull(ClassUtil.primitiveToWrapper(null));
         Assertions.assertSame(ClassUtil.primitiveToWrapper(int.class), Integer.class);
         Assertions.assertSame(ClassUtil.primitiveToWrapper(void.class), Void.class);
@@ -75,7 +75,7 @@ class ClassUtilTest {
     }
 
     @Test
-    public void wrapperToPrimitive() {
+    void wrapperToPrimitive() {
         Assertions.assertNull(ClassUtil.wrapperToPrimitive(null));
         Assertions.assertSame(ClassUtil.wrapperToPrimitive(Integer.class), int.class);
         Assertions.assertSame(ClassUtil.wrapperToPrimitive(Void.class), void.class);
@@ -90,7 +90,7 @@ class ClassUtilTest {
     }
 
     @Test
-    public void isAssignableFromOrIsWrapper() {
+    void isAssignableFromOrIsWrapper() {
 
         Assertions.assertFalse(ClassUtil.isAssignableFromOrIsWrapper(null, null));
         Assertions.assertFalse(ClassUtil.isAssignableFromOrIsWrapper(null, String.class));
@@ -118,7 +118,7 @@ class ClassUtilTest {
     }
 
     @Test
-    public void _instanceof() {
+    void _instanceof() {
 
         Assertions.assertFalse(ClassUtil._instanceof(null, null));
         Assertions.assertFalse(ClassUtil._instanceof(null, Integer.class));
@@ -138,7 +138,7 @@ class ClassUtilTest {
     }
 
     @Test
-    public void getArrayClass() {
+    void getArrayClass() {
 
         Assertions.assertSame(ClassUtil.getArrayClass(int.class), int[].class);
         Assertions.assertSame(ClassUtil.getArrayClass(Integer.class), Integer[].class);
@@ -152,7 +152,7 @@ class ClassUtilTest {
     }
 
     @Test
-    public void getAppJars() {
+    void getAppJars() {
 
         Assertions.assertTrue("file:/".matches("^[^/]++/$"));
         Assertions.assertTrue("jar:file:/".matches("^[^/]++/$"));
@@ -167,21 +167,21 @@ class ClassUtilTest {
 
 
     @Test
-    public void newArray() {
+    void newArray() {
 
 
-        Assertions.assertSame(Integer[].class, ClassUtil.newArray(Integer.class, 0).getClass());
-        Assertions.assertSame(Integer[].class, ClassUtil.newArray(int.class, 0).getClass());
-        Assertions.assertSame(int[][].class, ClassUtil.newArray(int[].class, 0).getClass());
-        Assertions.assertSame(Integer[][].class, ClassUtil.newArray(Integer[].class, 0).getClass());
+        Assertions.assertSame(Integer[].class, ClassUtil.newWrapperArray(Integer.class, 0).getClass());
+        Assertions.assertSame(Integer[].class, ClassUtil.newWrapperArray(int.class, 0).getClass());
+        Assertions.assertSame(int[][].class, ClassUtil.newWrapperArray(int[].class, 0).getClass());
+        Assertions.assertSame(Integer[][].class, ClassUtil.newWrapperArray(Integer[].class, 0).getClass());
 
-        CharSequence[] strings = ClassUtil.newArray(String.class, 1);
+        CharSequence[] strings = ClassUtil.newWrapperArray(String.class, 1);
         Assertions.assertEquals(1, strings.length);
 
-        Assertions.assertTrue(ClassUtil.isAssignableFromOrIsWrapper(CharSequence[].class, ClassUtil.newArray(String.class, 0).getClass()));
+        Assertions.assertTrue(ClassUtil.isAssignableFromOrIsWrapper(CharSequence[].class, ClassUtil.newWrapperArray(String.class, 0).getClass()));
 
 
-        Assertions.assertThrows(NullPointerException.class, () -> ClassUtil.newArray(null, 0));
+        Assertions.assertThrows(NullPointerException.class, () -> ClassUtil.newWrapperArray(null, 0));
 
 
         Assertions.assertNull(ClassUtil.toArray(null));
@@ -193,7 +193,7 @@ class ClassUtilTest {
 
 
     @Test
-    public void cast() {
+    void cast() {
 
         Object a = "123";
         Assertions.assertEquals("123", ClassUtil.cast(a, String.class));
@@ -232,7 +232,7 @@ class ClassUtilTest {
     }
 
     @Test
-    public void filterCanCastMap() {
+    void filterCanCastMap() {
 
         HashMap<Object, Object> map = new HashMap<>();
         map.put("1", "1");
@@ -262,11 +262,7 @@ class ClassUtilTest {
 
     }
 
-    @Test
-    void test() {
 
-
-    }
 
     @Test
     void isPrimitiveOrWrapper() {
@@ -300,7 +296,7 @@ class ClassUtilTest {
 
     }
 
-    private class Param implements Function<String, String> {
+    private static class Param implements Function<String, String> {
 
         @Override
         public String apply(String s) {

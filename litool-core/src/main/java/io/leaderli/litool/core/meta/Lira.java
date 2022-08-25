@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.collection.ArrayIter;
-import io.leaderli.litool.core.collection.IterableIter;
+import io.leaderli.litool.core.collection.ArrayItr;
+import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.LiIterator;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
@@ -55,7 +55,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
             return none();
         }
 
-        return of((Iterator<? extends T>) ArrayIter.of(elements));
+        return of((Iterator<? extends T>) ArrayItr.of(elements));
 
     }
 
@@ -103,13 +103,13 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
     /**
      * Returns an lira that consisting elements provided by given iterableIter
      *
-     * @param iterableIter the iterableIter that provide  elements
+     * @param iterableItr the iterableIter that provide  elements
      * @param <T>          the type of elements returned by this iterableIter
      * @return the new lira
      */
-    static <T> Lira<T> of(IterableIter<? extends T> iterableIter) {
+    static <T> Lira<T> of(IterableItr<? extends T> iterableItr) {
 
-        return of((Iterator<? extends T>) iterableIter);
+        return of((Iterator<? extends T>) iterableItr);
     }
 
 
@@ -447,7 +447,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      * @return an array containing the elements in this lira
      */
     default T[] toArray(Class<? extends T> type) {
-        return cast(type).get().toArray((T[]) ClassUtil.newArray(type, 0));
+        return cast(type).get().toArray((T[]) ClassUtil.newWrapperArray(type, 0));
     }
 
     /**

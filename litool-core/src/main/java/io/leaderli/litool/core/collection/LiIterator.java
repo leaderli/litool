@@ -2,7 +2,6 @@ package io.leaderli.litool.core.collection;
 
 import io.leaderli.litool.core.type.ClassUtil;
 
-import java.lang.reflect.Array;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -11,9 +10,7 @@ import java.util.NoSuchElementException;
  * @author leaderli
  * @since 2022/7/17
  */
-public class LiIterator<T> implements IterableIter<T>, Enumeration<T> {
-
-    private static final LiIterator<?> NONE = new LiIterator<>(NoneIter.of());
+public class LiIterator<T> implements IterableItr<T>, Enumeration<T> {
 
 
     private final Iterator<T> iterator;
@@ -35,10 +32,10 @@ public class LiIterator<T> implements IterableIter<T>, Enumeration<T> {
      * @see #of(Object[])
      */
     @SuppressWarnings("unchecked")
-    public static <T> IterableIter<T> of(Object obj) {
+    public static <T> IterableItr<T> of(Object obj) {
 
         if (obj == null) {
-            return NoneIter.of();
+            return NoneItr.of();
         }
         if (obj instanceof Iterator) {
             return of((Iterator<T>) obj);
@@ -51,32 +48,31 @@ public class LiIterator<T> implements IterableIter<T>, Enumeration<T> {
         }
 
         if (obj.getClass().isArray()) {
-            int length = Array.getLength(obj);
 
             return of(ClassUtil.toArray(obj));
         }
 
-        return NoneIter.of();
+        return NoneItr.of();
 
     }
 
-    public static <T> IterableIter<T> of(Iterator<T> iterator) {
+    public static <T> IterableItr<T> of(Iterator<T> iterator) {
         return new LiIterator<>(iterator);
     }
 
-    public static <T> IterableIter<T> of(Iterable<T> iterable) {
+    public static <T> IterableItr<T> of(Iterable<T> iterable) {
         if (iterable == null) {
-            return NoneIter.of();
+            return NoneItr.of();
         }
         return new LiIterator<>(iterable.iterator());
     }
 
-    public static <T> IterableIter<T> of(Enumeration<T> enumeration) {
-        return new LiIterator<>(EnumerationIter.of(enumeration));
+    public static <T> IterableItr<T> of(Enumeration<T> enumeration) {
+        return new LiIterator<>(EnumerationItr.of(enumeration));
     }
 
-    public static <T> IterableIter<T> of(T[] arr) {
-        return new LiIterator<>(ArrayIter.of(arr));
+    public static <T> IterableItr<T> of(T[] arr) {
+        return new LiIterator<>(ArrayItr.of(arr));
     }
 
 

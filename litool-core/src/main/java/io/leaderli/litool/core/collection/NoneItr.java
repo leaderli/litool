@@ -6,17 +6,17 @@ import java.util.NoSuchElementException;
  * @author leaderli
  * @since 2022/7/18
  */
-public class NoneIter<T> implements IterableIter<T> {
+public class NoneItr<T> implements IterableItr<T> {
 
-    private static final NoneIter<?> NONE = new NoneIter<>();
+    private static final NoneItr<?> NONE = new NoneItr<>();
 
-    private NoneIter() {
+    private NoneItr() {
 
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> NoneIter<T> of() {
-        return (NoneIter<T>) NONE;
+    public static <T> NoneItr<T> of() {
+        return (NoneItr<T>) NONE;
     }
 
     @Override

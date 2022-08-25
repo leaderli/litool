@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 public class ImmutableList<T> implements Iterable<T> {
 
-    private static ImmutableList<?> NONE = new ImmutableList<>(new Object[0]);
+    private static final ImmutableList<?> NONE_INSTANCE = new ImmutableList<>(new Object[0]);
     private final int size;
     private final T[] elements;
 
@@ -31,7 +31,7 @@ public class ImmutableList<T> implements Iterable<T> {
 
     @SuppressWarnings("unchecked")
     public static <T> ImmutableList<T> none() {
-        return (ImmutableList<T>) NONE;
+        return (ImmutableList<T>) NONE_INSTANCE;
     }
 
     @SafeVarargs
@@ -81,7 +81,7 @@ public class ImmutableList<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return ArrayIter.of(elements);
+        return ArrayItr.of(elements);
     }
 
     public List<T> copy() {

@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
  * @author leaderli
  * @since 2022/7/17
  */
-class ArrayIterTest {
+class ArrayItrTest {
 
 
     @SuppressWarnings("ConfusingArgumentToVarargsMethod")
@@ -17,25 +17,25 @@ class ArrayIterTest {
     void test() {
 
 
-        ArrayIter<?> none = ArrayIter.of((Object[]) null);
+        ArrayItr<?> none = ArrayItr.of((Object[]) null);
         Assertions.assertFalse(none.hasNext());
-        none = ArrayIter.of();
+        none = ArrayItr.of();
         Assertions.assertFalse(none.hasNext());
 
-        none = ArrayIter.of((Object) null);
+        none = ArrayItr.of((Object) null);
         Assertions.assertTrue(none.hasNext());
 
-        none = ArrayIter.of(null);
+        none = ArrayItr.of(null);
         Assertions.assertFalse(none.hasNext());
 
-        ArrayIter<Integer> iter = ArrayIter.of(1, 2);
+        ArrayItr<Integer> iter = ArrayItr.of(1, 2);
         iter.forEachRemaining(s -> {
 
         });
         Assertions.assertFalse(iter.hasNext());
 
 
-        iter = ArrayIter.of(1, 2, 3);
+        iter = ArrayItr.of(1, 2, 3);
 
         iter.next();
         Assertions.assertTrue(iter.hasNext());

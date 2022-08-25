@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.collection;
 
+import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.type.ClassUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,17 +13,50 @@ import java.util.Arrays;
  */
 class ArrayUtilsTest {
 
+
     @Test
-    void union() {
+    void arraycopy() {
+
+        long[] a = new long[]{1};
+
+        long[] c = ArrayUtils.arraycopy(a);
+
+        Assertions.assertArrayEquals(a, c);
+
+        Assertions.assertThrows(NullPointerException.class, () -> ArrayUtils.arraycopy(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ArrayUtils.arraycopy("1"));
+
+
+    }
+
+    @Test
+    void combination() {
+
         int[] a = new int[]{1};
         int[] b = new int[]{2};
+
         Assertions.assertEquals("[1, 2]", Arrays.toString(ArrayUtils.combination(a, b)));
+        Assertions.assertArrayEquals(new int[]{1, 2}, ArrayUtils.combination(a, b));
+
+        a = null;
+        Assertions.assertNotSame(b, ArrayUtils.combination(a, b));
+        Assertions.assertArrayEquals(b, ArrayUtils.combination(a, b));
+
+
+        a = new int[]{1};
+        b = null;
+        Assertions.assertNotSame(a, ArrayUtils.combination(a, b));
+        Assertions.assertArrayEquals(a, ArrayUtils.combination(a, b));
+
+        Assertions.assertThrows(AssertException.class, () -> ArrayUtils.combination(null, null));
+
+
     }
 
 
     @Test
     void add() {
-        Assertions.assertEquals(0, ArrayUtils.append(null, ClassUtil.newArray(Object.class, 0)).length);
+        Assertions.assertEquals(0, ArrayUtils.append(null, ClassUtil.newWrapperArray(Object.class, 0)).length);
 
         Assertions.assertEquals("[1]", Arrays.toString(ArrayUtils.append(null, 1)));
         Assertions.assertEquals("[1]", Arrays.toString(ArrayUtils.add(null, 1, 1)));
@@ -61,13 +95,17 @@ class ArrayUtilsTest {
         Assertions.assertEquals("3", ArrayUtils.sub(original, -1, 0)[0]);
         Assertions.assertEquals("2", ArrayUtils.sub(original, -2, 0)[0]);
 
+        Assertions.assertEquals(2, ArrayUtils.sub(new int[]{1,2,3}, -2, 0)[0]);
+
+
     }
 
     @Test
     void testToString() {
 
-        Assertions.assertEquals("null",ArrayUtils.toString(null));
-        Assertions.assertEquals("[]",ArrayUtils.toString(new Object[]{}));
+        Assertions.assertEquals("null", ArrayUtils.toString(null));
+        Assertions.assertEquals("[]", ArrayUtils.toString(new Object[]{}));
+        Assertions.assertEquals("[1, 2]", ArrayUtils.toString(new int[]{1, 2}));
 
     }
 }

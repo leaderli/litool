@@ -118,7 +118,7 @@ public class CollectionUtils {
         }
         Class<?> componentType = originalArray.getClass().getComponentType();
         int length = Array.getLength(originalArray);
-        Object[] array = ClassUtil.newArray(componentType, length);
+        Object[] array = ClassUtil.newWrapperArray(componentType, length);
 
         for (int i = 0; i < length; i++) {
             array[i] = Array.get(originalArray, i);

@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 class LinoTest {
 
 
-
     @Test
     void unzip() {
 
@@ -28,11 +27,11 @@ class LinoTest {
         Assertions.assertSame(narrow, Lino.none());
 
         Lino<CharSequence> narrow1 = Lino.narrow(Lino.of("123"));
-        Assertions.assertSame(narrow1.get(), "123");
+        Assertions.assertSame("123", narrow1.get());
 
         Lino<String> cast = narrow1.cast(String.class);
 
-        Assertions.assertSame(cast.get(), "123");
+        Assertions.assertSame("123", cast.get());
         Lino<Integer> integerLino = narrow1.cast(Integer.class);
         Assertions.assertSame(integerLino, Lino.none());
     }
@@ -69,7 +68,7 @@ class LinoTest {
     }
 
     @Test
-    public void filter() {
+    void filter() {
 
         Lino<Boolean> simple = Lino.of(false);
 
@@ -163,13 +162,14 @@ class LinoTest {
         Assertions.assertEquals("/ by zero", cause.getMessage());
     }
 
+    @SuppressWarnings("all")
     @Test
-    public void ifThrowablePresent() {
+    void ifThrowablePresent() {
         Throwable cause = Assertions.assertThrows(RuntimeException.class, () -> Lino.of(0).ifThrowablePresent(in -> {
             TimeUnit.MICROSECONDS.sleep(1);
             @SuppressWarnings("unused") int i = 1 / in;
 
-        })).getCause();
+        }).absent()).getCause();
 
         Assertions.assertEquals("/ by zero", cause.getMessage());
 
@@ -181,12 +181,12 @@ class LinoTest {
     }
 
     @Test
-    public void equals() {
+    void equals() {
 
         Assertions.assertEquals(Lino.of(1), Lino.of(1));
         Assertions.assertNotEquals(Lino.of(2), Lino.of(1));
-        Assertions.assertNotEquals(Lino.of(2), null);
-        Assertions.assertNotEquals(Lino.of(2), 2);
+        Assertions.assertNotEquals(null, Lino.of(2));
+        Assertions.assertNotEquals(2, Lino.of(2));
         Assertions.assertSame(Lino.of(null), Lino.none());
 
     }

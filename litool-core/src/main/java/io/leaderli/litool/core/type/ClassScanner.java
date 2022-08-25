@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
-import io.leaderli.litool.core.collection.EnumerationIter;
+import io.leaderli.litool.core.collection.EnumerationItr;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.function.Filter;
 import io.leaderli.litool.core.io.FileUtil;
@@ -162,13 +162,10 @@ public class ClassScanner {
      */
     public Set<Class<?>> scan(boolean forceScanJavaClassPaths) {
         for (URL url : ResourceUtil.getResourcesLira(this.packagePath).get()) {
-            switch (url.getProtocol()) {
-                case "file":
-                    scanFile(new File(URLUtil.decode(url.getFile(), this.charset.name())), null);
-                    break;
-                case "jar":
-                    scanJar(URLUtil.getJarFile(url));
-                    break;
+            if ("file".equals(url.getProtocol())) {
+                scanFile(new File(URLUtil.decode(url.getFile(), this.charset.name())), null);
+            } else if ("jar".equals(url.getProtocol())) {
+                scanJar(URLUtil.getJarFile(url));
             }
         }
 
@@ -203,9 +200,10 @@ public class ClassScanner {
         if (file.isFile()) {
             final String fileName = file.getAbsolutePath();
             if (fileName.endsWith(FileUtil.CLASS_EXT)) {
+
                 final String className = fileName//
                         // 8为classes长度，fileName.length() - 6为".class"的长度
-                        .substring(rootDir.length(), fileName.length() - 6)//
+                        .substring(rootDir == null ? 0 : rootDir.length(), fileName.length() - 6)//
                         .replace(File.separatorChar, CharPool.DOT);//
                 //加入满足条件的类
                 addIfAccept(className);
@@ -253,12 +251,10 @@ public class ClassScanner {
         Class<?> clazz = null;
         try {
             clazz = Class.forName(className, this.initialize, loader);
-        } catch (NoClassDefFoundError | ClassNotFoundException e) {
-            // 由于依赖库导致的类无法加载，直接跳过此类
-        } catch (UnsupportedClassVersionError e) {
+        } catch (NoClassDefFoundError | ClassNotFoundException | UnsupportedClassVersionError e) {
+
             // 版本导致的不兼容的类，跳过
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            // 由于依赖库导致的类无法加载，直接跳过此类
         }
         return clazz;
     }
@@ -274,16 +270,14 @@ public class ClassScanner {
         }
         int classLen = className.length();
         int packageLen = this.packageName.length();
+        //检查类名是否以指定包名为前缀，包名后加.（避免类似于cn.hutool.A和cn.hutool.ATest这类类名引起的歧义）
         if (classLen == packageLen) {
             //类名和包名长度一致，用户可能传入的包名是类名
             if (className.equals(this.packageName)) {
                 addIfAccept(loadClass(className));
             }
-        } else if (classLen > packageLen) {
-            //检查类名是否以指定包名为前缀，包名后加.（避免类似于cn.hutool.A和cn.hutool.ATest这类类名引起的歧义）
-            if (".".equals(this.packageNameWithDot) || className.startsWith(this.packageNameWithDot)) {
-                addIfAccept(loadClass(className));
-            }
+        } else if (classLen > packageLen && (".".equals(this.packageNameWithDot) || className.startsWith(this.packageNameWithDot))) {
+            addIfAccept(loadClass(className));
         }
     }
 
@@ -293,11 +287,8 @@ public class ClassScanner {
      * @param clazz 类
      */
     private void addIfAccept(Class<?> clazz) {
-        if (null != clazz) {
-            Filter<Class<?>> classFilter = this.classFilter;
-            if (classFilter == null || classFilter.accept(clazz)) {
-                this.classes.add(clazz);
-            }
+        if (null != clazz && (classFilter == null || classFilter.accept(clazz))) {
+            this.classes.add(clazz);
         }
     }
 
@@ -308,16 +299,12 @@ public class ClassScanner {
      */
     private void scanJar(JarFile jar) {
         String name;
-        EnumerationIter<JarEntry> jarEntryEnumerationIter = new EnumerationIter<>(jar.entries());
+        EnumerationItr<JarEntry> jarEntryEnumerationIter = new EnumerationItr<>(jar.entries());
         for (JarEntry entry : jarEntryEnumerationIter) {
             name = StringUtils.removeStart(entry.getName(), StrPool.SLASH);
-            if (StringUtils.isEmpty(packagePath) || name.startsWith(this.packagePath)) {
-                if (name.endsWith(FileUtil.CLASS_EXT) && !entry.isDirectory()) {
-                    final String className = name//
-                            .substring(0, name.length() - 6)//
-                            .replace(CharPool.SLASH, CharPool.DOT);//
-                    addIfAccept(loadClass(className));
-                }
+            if ((StringUtils.isEmpty(packagePath) || name.startsWith(this.packagePath)) && name.endsWith(FileUtil.CLASS_EXT) && !entry.isDirectory()) {
+                final String className = name.substring(0, name.length() - 6).replace(CharPool.SLASH, CharPool.DOT);
+                addIfAccept(loadClass(className));
             }
         }
     }

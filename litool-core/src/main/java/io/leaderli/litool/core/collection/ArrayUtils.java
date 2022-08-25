@@ -16,10 +16,12 @@
  */
 package io.leaderli.litool.core.collection;
 
+import io.leaderli.litool.core.exception.AssertException;
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.type.ClassUtil;
+import io.leaderli.litool.core.type.PrimitiveEnum;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
 
 /**
  * <p>Operations on arrays, primitive arrays (like {@code int[]}) and
@@ -744,46 +746,77 @@ public class ArrayUtils {
         }
     }
 
-    public static int[] combination(int[] a, int[] b) {
-        if (a == null || a.length == 0) {
-            return b;
-        }
-        if (b == null || b.length == 0) {
-            return a;
-        }
-        int len = a.length + b.length;
+    // -----------------------------------------------------------------------------------------------
+    // ------------------------------------------------leaderli---------------------------------------
+    // -----------------------------------------------------------------------------------------------
 
-        int[] union = Arrays.copyOf(a, len);
+    /**
+     * @param origin an array
+     * @param <T>    the type of array
+     * @return clone a new array
+     * @throws IllegalArgumentException if the object argument is not arr
+     * @throws NullPointerException     if the object argument is null
+     */
 
-        System.arraycopy(b, 0, union, a.length, b.length);
-        return union;
+    @SuppressWarnings("unchecked")
+    public static <T> T arraycopy(T origin) {
 
-    }
-
-    public static <T> T[] combination(T[] a, T[] b) {
-        if (a == null || a.length == 0) {
-            return b;
-        }
-        if (b == null || b.length == 0) {
-            return a;
-        }
-        int len = a.length + b.length;
-
-        T[] union = Arrays.copyOf(a, len);
-
-        System.arraycopy(b, 0, union, a.length, b.length);
-        return union;
-
+        int length = Array.getLength(origin);
+        T target = (T) Array.newInstance(origin.getClass().getComponentType(), length);
+        System.arraycopy(origin, 0, target, 0, length);
+        return target;
     }
 
     /**
-     * @param origin 原始数组
-     * @param from   起始位置，支持负数，表示从后开始计算的为止
-     * @param to     结束为止，支持负数，表示从后开始计算的为止，当为0时，表示数组的长度
-     * @param <T>    泛型
-     * @return 截取后的数组
+     * Returns  the combination of  two array.
+     * <p>
+     *
+     * @param a   an array
+     * @param b   an array
+     * @param <T> the type of  array
+     * @return an new combined array
+     * @throws AssertException when param is not array or both param is null
      */
-    public static <T> T[] sub(T[] origin, int from, int to) {
+    @SuppressWarnings({"unchecked", "java:S2259"})
+    public static <T> T combination(T a, T b) {
+
+        LiAssertUtil.assertTrue(isArray(a) || isArray(b), "there is no array");
+
+        int a_len;
+        int b_len;
+
+
+        if (a == null || (a_len = Array.getLength(a)) == 0) {
+            return arraycopy(b);
+        }
+        if (b == null || (b_len = Array.getLength(b)) == 0) {
+            return arraycopy(a);
+        }
+
+        T union = (T) Array.newInstance(ClassUtil.getComponentType(a), a_len + b_len);
+        System.arraycopy(a, 0, union, 0, a_len);
+        System.arraycopy(b, 0, union, a_len, b_len);
+
+        return union;
+    }
+
+    /**
+     * Returns a array that is a sub of  origin array. The sub begins at the
+     * specified {@code  beginIndex} and extends to the element at index {@code endIndex - 1}.
+     * Thus the length of the sub is {@code  endIndex - beginIndex}.
+     *
+     * @param origin     an array
+     * @param beginIndex the beginning index, Negative numbers are supported, indicating
+     *                   the position calculated from the back
+     *                   Negative numbers are supported, indicating the position calculated from the back
+     * @param endIndex   the ending index, Negative number are supported, indicating
+     *                   the position calculated from the back. zero number are supported,
+     *                   indicating {@code endIndex = origin.length}
+     * @param <T>        the type of array class
+     * @return new sub array
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T sub(T origin, int beginIndex, int endIndex) {
 
         Class<T> componentType = ClassUtil.getComponentType(origin);
 
@@ -791,20 +824,26 @@ public class ArrayUtils {
             return null;
         }
 
-        int length = origin.length;
-        if (to < 1) {
-            to = length + to;
-        } else if (to > length) {
-            to = length;
+        int length = Array.getLength(origin);
+        if (endIndex < 1) {
+            endIndex = length + endIndex;
+        } else if (endIndex > length) {
+            endIndex = length;
         }
-        if (from < 0) {
-            from = length + from;
+        if (beginIndex < 0) {
+            beginIndex = length + beginIndex;
         }
-        if (from < 0 || from >= length || to <= from) {
-            return ClassUtil.newArray(componentType, 0);
-        }
+        T sub;
+        if (beginIndex < 0 || beginIndex >= length || endIndex <= beginIndex) {
+            sub = (T) Array.newInstance(componentType, 0);
+        } else {
+            sub = (T) Array.newInstance(componentType, endIndex - beginIndex);
 
-        return Arrays.copyOfRange(origin, from, to);
+            System.arraycopy(origin, beginIndex, sub, 0, endIndex - beginIndex);
+        }
+        return sub;
+
+
     }
 
     @SafeVarargs
@@ -826,7 +865,7 @@ public class ArrayUtils {
             return origin;
         }
         int length = origin.length;
-        T[] arr = ClassUtil.newArray(componentType, length + add.length);
+        T[] arr = ClassUtil.newWrapperArray(componentType, length + add.length);
 
         if (position < 0) {
             position = length + position;
@@ -837,9 +876,7 @@ public class ArrayUtils {
         }
         if (position >= length) {
             System.arraycopy(origin, 0, arr, 0, length);
-//            System.out.println(Arrays.toString(arr));
             System.arraycopy(add, 0, arr, length, add.length);
-//            System.out.println(Arrays.toString(arr));
         } else {
             System.arraycopy(origin, 0, arr, 0, position);
             System.arraycopy(add, 0, arr, position, add.length);
@@ -855,7 +892,7 @@ public class ArrayUtils {
     public static <T> T[] of(T... arr) {
         Class<?> componentType = arr.getClass().getComponentType();
         if (componentType.isPrimitive()) {
-            T[] ts = (T[]) ClassUtil.newArray(componentType, arr.length);
+            T[] ts = (T[]) ClassUtil.newWrapperArray(componentType, arr.length);
             System.arraycopy(arr, 0, ts, 0, ts.length);
         }
         return arr;
@@ -875,11 +912,10 @@ public class ArrayUtils {
 
         if (isArray(obj)) {
 
-            Object[] arr = (Object[]) obj;
+            Object[] arr = PrimitiveEnum.toWrapperArray(obj);
 
 
             StringBuilder sb = new StringBuilder("[");
-            boolean empty = true;
             for (Object o : arr) {
                 sb.append(toString(o));
                 sb.append(", ");

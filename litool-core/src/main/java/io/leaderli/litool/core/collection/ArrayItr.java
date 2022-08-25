@@ -6,26 +6,26 @@ import java.util.NoSuchElementException;
  * @author leaderli
  * @since 2022/7/17
  */
-public class ArrayIter<T> implements IterableIter<T> {
+public class ArrayItr<T> implements IterableItr<T> {
 
 
-    private static final ArrayIter<?> NONE = new ArrayIter<>(null);
+    private static final ArrayItr<?> NONE = new ArrayItr<>(null);
     private T[] arr;
     private int index = 0;
 
-    private ArrayIter(T[] arr) {
+    private ArrayItr(T[] arr) {
 
         this.arr = arr;
     }
 
     @SuppressWarnings("unchecked")
     @SafeVarargs
-    public static <T> ArrayIter<T> of(T... arr) {
+    public static <T> ArrayItr<T> of(T... arr) {
         if (arr == null || arr.length == 0) {
-            return (ArrayIter<T>) NONE;
+            return (ArrayItr<T>) NONE;
         }
 
-        return new ArrayIter<>(arr);
+        return new ArrayItr<>(arr);
     }
 
     @Override

@@ -7,20 +7,20 @@ import java.util.NoSuchElementException;
  * @author leaderli
  * @since 2022/7/17
  */
-public class EnumerationIter<T> implements IterableIter<T>, Enumeration<T> {
+public class EnumerationItr<T> implements IterableItr<T>, Enumeration<T> {
 
 
     private final Enumeration<T> enumeration;
 
-    public EnumerationIter(Enumeration<T> enumeration) {
+    public EnumerationItr(Enumeration<T> enumeration) {
         this.enumeration = enumeration;
     }
 
 
-    public static <T> EnumerationIter<T> of(Enumeration<T> enumeration) {
+    public static <T> EnumerationItr<T> of(Enumeration<T> enumeration) {
 
 
-        return new EnumerationIter<>(enumeration);
+        return new EnumerationItr<>(enumeration);
     }
 
     @Override
@@ -44,6 +44,12 @@ public class EnumerationIter<T> implements IterableIter<T>, Enumeration<T> {
         return enumeration.nextElement();
     }
 
+    /**
+     * Returns the next element of this enumeration if this enumeration
+     *
+     * @return the next element
+     * @throws NoSuchElementException if not {@link  #hasNext()}
+     */
     @Override
     public T next() {
 
