@@ -15,7 +15,7 @@ public interface Publisher<T> {
 
 
     /**
-     * Request {@link Publisher <T>} to start streaming data
+     * Request {@link Publisher} to start streaming data
      * <p>
      * This is a "factory method" and can be call multi times, each time starting a new  {@link  Subscription}
      * <p>

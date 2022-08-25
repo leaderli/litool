@@ -7,7 +7,6 @@ package io.leaderli.litool.core.meta.ra;
  * <p>
  * After signaling demand:
  * <p>
- * <p>
  * Demand can be signaled via {@link Subscription#request()} whenever the {@link Subscriber} instance is capable of handling more.
  *
  * @param <T> the type of element signaled.
@@ -41,8 +40,10 @@ public interface Subscriber<T> {
     }
 
     /**
+     * invoked when response to notification has throw error, can use {@link CancelSubscription#cancel()} to cancel the demand
+     *
      * @param t      the element signaled
-     * @param cancel
+     * @param cancel use to cancel demand
      */
     default void onError(Throwable t, CancelSubscription cancel) {
         t.printStackTrace();

@@ -385,6 +385,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
     /**
      * Returns a lira consisting of the elements of this lira ,sorted  according to  the provided {@code Comparator}
      *
+     * @param comparator the provided {@link Comparator}
      * @return the new lira
      */
     Lira<T> sorted(Comparator<? super T> comparator);

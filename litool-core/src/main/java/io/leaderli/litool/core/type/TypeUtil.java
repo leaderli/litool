@@ -39,7 +39,11 @@ public class TypeUtil {
     }
 
     /**
-     * 泛型标记
+     * Return two TypeVariable typeName is equals
+     *
+     * @param left  a TypeVariable
+     * @param right a TypeVariable
+     * @return two TypeVariable typeName is equals
      */
     public static boolean equals(TypeVariable<?> left, TypeVariable<?> right) {
         return Objects.equals(left.getTypeName(), right.getTypeName());
