@@ -1,6 +1,8 @@
 package io.leaderli.litool.core.bit;
 
 
+import io.leaderli.litool.core.collection.ArrayUtils;
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.util.Arrays;
@@ -8,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * use int to represent status, each enum  BX  represent the position X on binary position
+ * use int to represent status, each enum BX represent the position X on binary position
  * eg:
  * <pre>
  *     0001 B1
@@ -76,10 +78,15 @@ public enum BitStatusEnum {
     }
 
     /**
-     * @param status 状态
-     * @return 该枚举值代表的状态位匹配
+     * Return the {@link  BitStatusEnum} that exists on the status binary
+     *
+     * @param status a int value represent status
+     * @return a lira of exist BX
      */
-    public boolean match(int status) {
-        return (status & this.value) == this.value;
+    public static Lira<BitStatusEnum> of(int status) {
+
+        BitStatusEnum[] values = values();
+        ArrayUtils.reverse(values);
+        return Lira.of(values).filter(b -> (b.value & status) == b.value);
     }
 }

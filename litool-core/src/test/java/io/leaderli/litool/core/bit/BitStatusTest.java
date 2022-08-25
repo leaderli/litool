@@ -22,7 +22,7 @@ class BitStatusTest {
 
         Assertions.assertEquals("", bitStatus.beauty(16));
         Assertions.assertEquals("", bitStatus.beauty(4));
-        Assertions.assertEquals("A|B|C", bitStatus.beauty(123));
+        Assertions.assertEquals("C|B|A", bitStatus.beauty(123));
         Assertions.assertEquals("A", bitStatus.beauty(1));
         Assertions.assertEquals("", bitStatus.beauty(0));
 

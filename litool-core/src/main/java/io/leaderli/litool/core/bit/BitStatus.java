@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.bit;
 
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
@@ -68,11 +69,8 @@ public class BitStatus {
      */
     public String beauty(int bit_status) {
 
-
-        return this.bit_name.keySet().stream()
-                .filter(bit -> bit.match(bit_status))
-                .map(this.bit_name::get)
-                .collect(Collectors.joining("|"));
+        Lira<String> map = BitStatusEnum.of(bit_status).map(this.bit_name::get);
+        return StringUtils.join("|", map);
 
 
     }

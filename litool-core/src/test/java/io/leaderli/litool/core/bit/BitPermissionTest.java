@@ -22,7 +22,7 @@ class BitPermissionTest {
     @Test
     void set() {
         bit.set(123);
-        Assertions.assertEquals("Modifier:PUBLIC|PRIVATE|STATIC|FINAL|SYNCHRONIZED|VOLATILE", bit.toString());
+        Assertions.assertEquals("Modifier:VOLATILE|SYNCHRONIZED|FINAL|STATIC|PRIVATE|PUBLIC", bit.toString());
         bit.set(0);
         Assertions.assertEquals("Modifier:", bit.toString());
 

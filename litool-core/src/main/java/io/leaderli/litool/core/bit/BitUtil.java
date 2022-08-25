@@ -1,6 +1,8 @@
 package io.leaderli.litool.core.bit;
 
 /**
+ * binary tool
+ *
  * @author leaderli
  * @since 2022/6/16 11:37 AM
  */
@@ -8,15 +10,17 @@ public class BitUtil {
 
 
     /**
-     * @param x 数字
-     * @return 已二进制表示时，仅包含一个1，包括符号位s
+     * Return The binary expression of int has only single '1'
+     *
+     * @param binary a int value
+     * @return The binary expression of int has only single '1'
      */
-    public static boolean onlyOneBit(int x) {
+    public static boolean onlyOneBit(int binary) {
 
-        if (x < 1 && x > Integer.MIN_VALUE) {
+        if (binary < 1 && binary > Integer.MIN_VALUE) {
             return false;
         }
-        return (x & (x - 1)) == 0;
+        return (binary & (binary - 1)) == 0;
     }
 
 

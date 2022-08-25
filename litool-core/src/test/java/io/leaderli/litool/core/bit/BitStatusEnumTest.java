@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.bit;
 
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,8 +23,8 @@ class BitStatusEnumTest {
         Assertions.assertEquals("0001", StringUtils.ljust(Integer.toBinaryString(BitStatusEnum.B1.value), 4, "0"));
         Assertions.assertEquals("00010000", StringUtils.ljust(Integer.toBinaryString(BitStatusEnum.B5.value), 8, "0"));
 
-        assert BitStatusEnum.B1.match(0b111);
-        assert !BitStatusEnum.B1.match(0b100);
+//        assert BitStatusEnum.B1.match(0b111);
+//        assert !BitStatusEnum.B1.match(0b100);
 
     }
 
@@ -31,10 +32,8 @@ class BitStatusEnumTest {
     void getBitStatusMap() {
         Set<Integer> integers = BitStatusEnum.getBitStatusMap().keySet();
         assert integers.size() == 32;
-        for (Integer value : integers) {
-            assert BitUtil.onlyOneBit(value);
 
-        }
+        Assertions.assertSame(32, Lira.of(integers).filter(BitUtil::onlyOneBit).size());
     }
 
     @Test
@@ -47,4 +46,9 @@ class BitStatusEnumTest {
         Assertions.assertEquals("[0000 0000 0000 0000 0000 0000 0000 0001, 0000 0000 0000 0000 0000 0000 0000 0010]", status.keySet().toString());
     }
 
+    @Test
+    void convertStatusToEnum() {
+
+        Assertions.assertSame(BitStatusEnum.B1, BitStatusEnum.of(1).get(0).get());
+    }
 }
