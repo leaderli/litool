@@ -6,25 +6,25 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/6/27
  */
-public class SkipRa<T> extends DefaultSomeRa<T> {
+public class Skip<T> extends DefaultSome<T> {
     private final int skip;
 
-    public SkipRa(PublisherRa<T> prevPublisher, int skip) {
+    public Skip(Publisher<T> prevPublisher, int skip) {
         super(prevPublisher);
         this.skip = skip;
     }
 
     @Override
-    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new SkipSubscriberRa<>(actualSubscriber, skip));
+    public void subscribe(Subscriber<? super T> actualSubscriber) {
+        prevPublisher.subscribe(new SkipSubscriber<>(actualSubscriber, skip));
 
     }
 
-    private static class SkipSubscriberRa<T> extends IntermediateSubscriberRa<T, T> {
+    private static class SkipSubscriber<T> extends IntermediateSubscriber<T, T> {
 
         private int skip;
 
-        private SkipSubscriberRa(SubscriberRa<? super T> actualSubscriber, int skip) {
+        private SkipSubscriber(Subscriber<? super T> actualSubscriber, int skip) {
             super(actualSubscriber);
             this.skip = skip;
         }

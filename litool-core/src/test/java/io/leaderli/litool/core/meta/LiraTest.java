@@ -2,6 +2,8 @@ package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.ArrayIter;
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.ra.Subscriber;
+import io.leaderli.litool.core.meta.ra.Subscription;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +15,35 @@ import java.util.*;
  */
 class LiraTest {
 
+
+
+    @Test
+    void error() {
+
+        Lira.of(1, 0, 3, 0).filter(f -> 4 / f).subscribe(new Subscriber<Integer>() {
+            @Override
+            public void onSubscribe(Subscription subscription) {
+                subscription.request();
+
+            }
+
+            @Override
+            public void next(Integer integer) {
+
+                System.out.println(integer);
+            }
+
+            @Override
+            public void onComplete() {
+                System.out.println("complete");
+            }
+
+//            @Override
+//            public void onError(Throwable t, CancelSubscription cancel) {
+//                System.out.println(t.getLocalizedMessage());
+//            }
+        });
+    }
 
     @Test
     void getIndex() {
@@ -191,6 +222,7 @@ class LiraTest {
     @Test
     void map() {
 
+        System.out.println(Lira.of(1, 2, 0).throwable_map(i -> 4 / i));
         Assertions.assertTrue(Lira.of(1).map(i -> null).absent());
     }
 

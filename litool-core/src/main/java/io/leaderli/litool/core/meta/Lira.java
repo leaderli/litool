@@ -6,8 +6,8 @@ import io.leaderli.litool.core.collection.LiIterator;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
-import io.leaderli.litool.core.meta.ra.ArrayRa;
-import io.leaderli.litool.core.meta.ra.PublisherRa;
+import io.leaderli.litool.core.meta.ra.ArraySome;
+import io.leaderli.litool.core.meta.ra.Publisher;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.util.BooleanUtil;
 
@@ -22,10 +22,10 @@ import java.util.stream.Stream;
  * @author leaderli
  * @since 2022/6/19
  */
-public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
+public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
 
 
-    Lira<?> NONE = new ArrayRa<>(Collections.emptyIterator());
+    Lira<?> NONE = new ArraySome<>(Collections.emptyIterator());
 
     /**
      * Returns the narrow type lira, convert {@code <? extends T>} to {@code  <T>}
@@ -84,7 +84,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
         Iterator<? extends T> iter = LiIterator.of(iterator);
         if (iter.hasNext()) {
 
-            return new ArrayRa<>(iter);
+            return new ArraySome<>(iter);
         }
         return none();
     }
@@ -369,6 +369,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @param comparator a {@code EqualComparator}  to be used to compare lira elements is equals
      * @return this
+     * TODO 通过 onComplete 实现中间状态
      */
     Lira<T> distinct(EqualComparator<T> comparator);
 
@@ -376,6 +377,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * Returns a lira consisting of the elements of this lira ,sorted  according to natural order
      *
      * @return the new lira
+     * <p>
+     * TODO 通过 onComplete 实现中间状态
      */
     Lira<T> sorted();
 

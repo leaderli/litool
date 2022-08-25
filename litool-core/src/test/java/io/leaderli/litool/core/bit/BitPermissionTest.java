@@ -34,4 +34,36 @@ class BitPermissionTest {
         Assertions.assertTrue(bit.miss(Modifier.FINAL));
 
     }
+
+    @Test
+    void init() {
+    }
+
+    @Test
+    void enable() {
+    }
+
+    @Test
+    void disable() {
+    }
+
+    @Test
+    void have() {
+    }
+
+    @Test
+    void miss() {
+    }
+
+    @Test
+    void only() {
+    }
+
+    @Test
+    void none() {
+    }
+
+    @Test
+    void any() {
+    }
 }

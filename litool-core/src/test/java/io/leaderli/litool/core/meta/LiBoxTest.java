@@ -10,14 +10,18 @@ import org.junit.jupiter.api.Test;
 class LiBoxTest {
 
     @Test
-    public void test() {
-
+    void value() {
 
         LiBox<String> none = LiBox.none();
         assert none.lino().absent();
 
         none.value("123");
         assert none.lino().present();
+
+    }
+
+    @Test
+    public void apply() {
 
 
         LiBox<String> str = new LiBox<>("hello");

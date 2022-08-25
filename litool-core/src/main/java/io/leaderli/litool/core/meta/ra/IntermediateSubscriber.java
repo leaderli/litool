@@ -6,11 +6,11 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/6/22
  */
-public abstract class IntermediateSubscriberRa<T, R> implements SubscriberRa<T>, SubscriptionRa {
-    protected final SubscriberRa<? super R> actualSubscriber;
-    private SubscriptionRa prevSubscription;
+public abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Subscription {
+    protected final Subscriber<? super R> actualSubscriber;
+    private Subscription prevSubscription;
 
-    public IntermediateSubscriberRa(SubscriberRa<? super R> actualSubscriber) {
+    public IntermediateSubscriber(Subscriber<? super R> actualSubscriber) {
         this.actualSubscriber = actualSubscriber;
     }
 
@@ -27,7 +27,7 @@ public abstract class IntermediateSubscriberRa<T, R> implements SubscriberRa<T>,
     }
 
     @Override
-    public void onSubscribe(SubscriptionRa prevSubscription) {
+    public void onSubscribe(Subscription prevSubscription) {
         this.prevSubscription = prevSubscription;
         actualSubscriber.onSubscribe(this);
     }
@@ -35,6 +35,11 @@ public abstract class IntermediateSubscriberRa<T, R> implements SubscriberRa<T>,
 
     @Override
     public void onComplete() {
+        this.actualSubscriber.onComplete();
+    }
 
+    @Override
+    public void onError(Throwable t, CancelSubscription cancel) {
+        this.actualSubscriber.onError(t,cancel);
     }
 }

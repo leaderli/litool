@@ -3,10 +3,11 @@ package io.leaderli.litool.core.meta.ra;
 /**
  * @author leaderli
  * @since 2022/6/29
+ * It is used to cancel demand
  */
-public interface CancelSubscriptionRa {
+public interface CancelSubscription {
     /**
-     * 取消操作
+     * Request the {@link Publisher} to stop sending data
      */
     void cancel();
 }

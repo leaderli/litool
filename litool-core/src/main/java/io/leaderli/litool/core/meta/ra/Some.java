@@ -18,7 +18,7 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/6/28
  */
-public abstract class SomeRa<T> implements Lira<T> {
+public abstract class Some<T> implements Lira<T> {
 
 
     @Override
@@ -46,7 +46,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     public boolean contains(T t) {
 
         LiBox<Integer> exits = LiBox.none();
-        this.subscribe(new BiConsumerSubscriberRa<>((lino, s) ->
+        this.subscribe(new BiConsumerSubscriber<>((lino, s) ->
 
                 Lino.of(lino)
                         .contain(t)
@@ -60,7 +60,7 @@ public abstract class SomeRa<T> implements Lira<T> {
 
     @Override
     public Lira<T> filter(Function<? super T, ?> filter) {
-        return new FilterRa<>(this, filter);
+        return new Filter<>(this, filter);
 
     }
 
@@ -73,7 +73,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     public Lino<T> first() {
         LiBox<T> value = LiBox.none();
 
-        this.subscribe(new BiConsumerSubscriberRa<>((v, s) -> {
+        this.subscribe(new BiConsumerSubscriber<>((v, s) -> {
             value.value(v);
             s.cancel();
         }));
@@ -85,7 +85,7 @@ public abstract class SomeRa<T> implements Lira<T> {
 
         LiBox<T> value = LiBox.none();
 
-        this.subscribe(new ConsumerSubscriberRa<>(value::value));
+        this.subscribe(new ConsumerSubscriber<>(value::value));
         return value.lino();
     }
 
@@ -97,7 +97,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     @Override
     public List<T> getRaw() {
         List<T> result = new ArrayList<>();
-        this.subscribe(new ConsumerSubscriberRa<>(result::add));
+        this.subscribe(new ConsumerSubscriber<>(result::add));
 
         return result;
     }
@@ -110,11 +110,11 @@ public abstract class SomeRa<T> implements Lira<T> {
         }
         LiBox<Integer> count = LiBox.of(0);
         LiBox<T> result = LiBox.none();
-        this.subscribe(new SubscriberRa<T>() {
-            private SubscriptionRa prevSubscription;
+        this.subscribe(new Subscriber<T>() {
+            private Subscription prevSubscription;
 
             @Override
-            public void onSubscribe(SubscriptionRa prevSubscription) {
+            public void onSubscribe(Subscription prevSubscription) {
                 this.prevSubscription = prevSubscription;
                 prevSubscription.request();
             }
@@ -142,38 +142,38 @@ public abstract class SomeRa<T> implements Lira<T> {
 
     @Override
     public void forEach(Consumer<? super T> consumer) {
-        this.subscribe(new ConsumerSubscriberRa<>(consumer));
+        this.subscribe(new ConsumerSubscriber<>(consumer));
     }
 
     @Override
     public Lira<T> limit(int n) {
         if (n >= 0) {
-            return new LimitRa<>(this, n);
+            return new Limit<>(this, n);
         }
         return this;
     }
 
     @Override
     public <R> Lira<R> flatMap() {
-        return new FlatMapRa<>(this, LiIterator::of);
+        return new FlatMap<>(this, LiIterator::of);
     }
 
     @Override
     public <R> Lira<R> flatMap(Function<? super T, Iterator<? extends R>> mapper) {
 
-        return new FlatMapRa<>(this, mapper);
+        return new FlatMap<>(this, mapper);
     }
 
     @Override
     public <R> Lira<R> map(Function<? super T, ? extends R> mapper) {
-        return new MapRa<>(this, mapper);
+        return new MapSome<>(this, mapper);
 
     }
 
     @Override
     public Lira<T> skip(int n) {
         if (n > 0) {
-            return new SkipRa<>(this, n);
+            return new Skip<>(this, n);
         }
 
         return this;
@@ -181,14 +181,14 @@ public abstract class SomeRa<T> implements Lira<T> {
 
     @Override
     public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
-        return new ThrowableMapRa<>(this, mapper, LiConstant.WHEN_THROW);
+        return new ThrowableMap<>(this, mapper, LiConstant.WHEN_THROW);
 
 
     }
 
     @Override
     public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
-        return new ThrowableMapRa<>(this, mapper, whenThrow);
+        return new ThrowableMap<>(this, mapper, whenThrow);
 
     }
 
@@ -220,7 +220,7 @@ public abstract class SomeRa<T> implements Lira<T> {
             return Lino.none();
         }
         LiBox<T> box = LiBox.none();
-        this.subscribe(new BiConsumerSubscriberRa<>((t, sub) -> {
+        this.subscribe(new BiConsumerSubscriber<>((t, sub) -> {
             if (box.absent()) {
                 box.value(t);
             } else {
@@ -241,7 +241,7 @@ public abstract class SomeRa<T> implements Lira<T> {
             return Lino.none();
         }
         LiBox<T> box = LiBox.of(identity);
-        this.subscribe(new ConsumerSubscriberRa<>(t -> {
+        this.subscribe(new ConsumerSubscriber<>(t -> {
             if (box.absent()) {
                 box.value(t);
             } else {
@@ -282,7 +282,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     public Lira<T> distinct(EqualComparator<T> comparator) {
 
 
-        return new DistinctRa<>(this, comparator);
+        return new Distinct<>(this, comparator);
 
     }
 
@@ -310,10 +310,10 @@ public abstract class SomeRa<T> implements Lira<T> {
 
         ThrowableConsumer<? super T> finalConsumer = action == null ? t -> {
         } : action;
-        this.subscribe(new SubscriberRa<T>() {
+        this.subscribe(new Subscriber<T>() {
 
             @Override
-            public void onSubscribe(SubscriptionRa prevSubscription) {
+            public void onSubscribe(Subscription prevSubscription) {
                 prevSubscription.request();
 
             }
@@ -339,7 +339,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     public List<T> get() {
 
         List<T> result = new ArrayList<>();
-        this.subscribe(new ConsumerSubscriberRa<>(result::add));
+        this.subscribe(new ConsumerSubscriber<>(result::add));
         return result;
     }
 
@@ -348,7 +348,7 @@ public abstract class SomeRa<T> implements Lira<T> {
 
         Map<K, V> result = new HashMap<>();
 
-        this.subscribe(new ConsumerSubscriberRa<>(e ->
+        this.subscribe(new ConsumerSubscriber<>(e ->
                 Lino.of(e)
                         .map(keyMapper)
                         .ifPresent(key ->
@@ -365,7 +365,7 @@ public abstract class SomeRa<T> implements Lira<T> {
     @Override
     public <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> mapper) {
         Map<K, V> result = new HashMap<>();
-        this.subscribe(new ConsumerSubscriberRa<>(e ->
+        this.subscribe(new ConsumerSubscriber<>(e ->
                         Lino.of(e)
                                 .map(mapper)
                                 .filter(tuple2 -> tuple2._1 != null)

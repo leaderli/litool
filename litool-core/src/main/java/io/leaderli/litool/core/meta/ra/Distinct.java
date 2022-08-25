@@ -11,18 +11,18 @@ import java.util.List;
  * @author leaderli
  * @since 2022/7/18
  */
-public class DistinctRa<T> extends DefaultSomeRa<T> {
+public class Distinct<T> extends DefaultSome<T> {
 
     private final EqualComparator<T> equalComparator;
 
-    protected DistinctRa(PublisherRa<T> prevPublisher, EqualComparator<T> equalComparator) {
+    protected Distinct(Publisher<T> prevPublisher, EqualComparator<T> equalComparator) {
         super(prevPublisher);
         this.equalComparator = equalComparator;
     }
 
     @Override
-    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new DistinctSubscriberRa<>(actualSubscriber, equalComparator));
+    public void subscribe(Subscriber<? super T> actualSubscriber) {
+        prevPublisher.subscribe(new DistinctSubscriber<>(actualSubscriber, equalComparator));
     }
 
     private static class DistinctWrapper<T> implements Comparator<T> {
@@ -65,13 +65,13 @@ public class DistinctRa<T> extends DefaultSomeRa<T> {
         }
     }
 
-    private static class DistinctSubscriberRa<T> extends IntermediateSubscriberRa<T, T> {
+    private static class DistinctSubscriber<T> extends IntermediateSubscriber<T, T> {
 
         private final EqualComparator<T> equalComparator;
 
         private List<DistinctWrapper<T>> list = new ArrayList<>();
 
-        private DistinctSubscriberRa(SubscriberRa<? super T> actualSubscriber, EqualComparator<T> equalComparator) {
+        private DistinctSubscriber(Subscriber<? super T> actualSubscriber, EqualComparator<T> equalComparator) {
             super(actualSubscriber);
             this.equalComparator = equalComparator;
         }

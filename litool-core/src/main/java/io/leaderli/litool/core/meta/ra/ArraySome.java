@@ -8,12 +8,12 @@ import java.util.List;
  * @author leaderli
  * @since 2022/7/16
  */
-public final class ArrayRa<T> extends SomeRa<T> {
+public final class ArraySome<T> extends Some<T> {
 
     private final T[] arr;
 
     @SuppressWarnings("unchecked")
-    public ArrayRa(Iterator<? extends T> values) {
+    public ArraySome(Iterator<? extends T> values) {
 
         List<T> list = new ArrayList<>();
         values.forEachRemaining(list::add);
@@ -22,18 +22,18 @@ public final class ArrayRa<T> extends SomeRa<T> {
 
 
     @Override
-    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
-        actualSubscriber.onSubscribe(new ArraySubscriptionRa(actualSubscriber));
+    public void subscribe(Subscriber<? super T> actualSubscriber) {
+        actualSubscriber.onSubscribe(new ArraySubscription(actualSubscriber));
     }
 
-    private final class ArraySubscriptionRa implements SubscriptionRa {
+    private final class ArraySubscription implements Subscription {
 
-        private final SubscriberRa<? super T> actualSubscriber;
+        private final Subscriber<? super T> actualSubscriber;
 
 
         private boolean canceled;
 
-        public ArraySubscriptionRa(SubscriberRa<? super T> actualSubscriber) {
+        public ArraySubscription(Subscriber<? super T> actualSubscriber) {
             this.actualSubscriber = actualSubscriber;
         }
 
@@ -47,7 +47,12 @@ public final class ArrayRa<T> extends SomeRa<T> {
             for (T t : arr) {
 
                 if (t != null) {
-                    actualSubscriber.next(t);
+                    try {
+
+                        actualSubscriber.next(t);
+                    } catch (Throwable throwable) {
+                        actualSubscriber.onError(throwable, this);
+                    }
                 }
                 // 通过 onSubscribe 将 Subscription 传递给订阅者，由订阅者来调用 cancel方法从而实现提前结束循环
                 if (canceled) {

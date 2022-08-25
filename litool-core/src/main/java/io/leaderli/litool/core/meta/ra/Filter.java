@@ -13,26 +13,26 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-public class FilterRa<T> extends DefaultSomeRa<T> {
+public class Filter<T> extends DefaultSome<T> {
 
 
     private final Function<? super T, ?> filter;
 
-    public FilterRa(PublisherRa<T> prevPublisher, Function<? super T, ?> filter) {
+    public Filter(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
         super(prevPublisher);
         this.filter = filter;
     }
 
     @Override
-    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new FilterSubscriberRa(actualSubscriber));
+    public void subscribe(Subscriber<? super T> actualSubscriber) {
+        prevPublisher.subscribe(new FilterSubscriber(actualSubscriber));
 
     }
 
 
-    private final class FilterSubscriberRa extends IntermediateSubscriberRa<T, T> {
+    private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
 
-        public FilterSubscriberRa(SubscriberRa<? super T> actualSubscriber) {
+        public FilterSubscriber(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 

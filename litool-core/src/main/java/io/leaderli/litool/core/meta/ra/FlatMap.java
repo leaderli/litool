@@ -9,27 +9,27 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/7/18
  */
-public class FlatMapRa<T, R> extends SomeRa<R> {
+public class FlatMap<T, R> extends Some<R> {
 
 
     private final Function<? super T, Iterator<? extends R>> mapper;
-    private final PublisherRa<T> prevPublisher;
+    private final Publisher<T> prevPublisher;
 
-    public FlatMapRa(PublisherRa<T> prevPublisher, Function<? super T, Iterator<? extends R>> mapper) {
+    public FlatMap(Publisher<T> prevPublisher, Function<? super T, Iterator<? extends R>> mapper) {
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }
 
     @Override
-    public void subscribe(SubscriberRa<? super R> actualSubscriber) {
-        prevPublisher.subscribe(new FlatMapSubscriberRa(actualSubscriber));
+    public void subscribe(Subscriber<? super R> actualSubscriber) {
+        prevPublisher.subscribe(new FlatMapSubscriber(actualSubscriber));
 
     }
 
-    private class FlatMapSubscriberRa extends IntermediateSubscriberRa<T, R> {
+    private class FlatMapSubscriber extends IntermediateSubscriber<T, R> {
 
 
-        private FlatMapSubscriberRa(SubscriberRa<? super R> actualSubscriber) {
+        private FlatMapSubscriber(Subscriber<? super R> actualSubscriber) {
             super(actualSubscriber);
         }
 
