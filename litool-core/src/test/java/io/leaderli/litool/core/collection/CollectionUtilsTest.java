@@ -14,38 +14,12 @@ import java.util.List;
  */
 public class CollectionUtilsTest {
 
-    @Test
-
-    public void test1() {
-
-    }
-
-
-    @Test
-    public void testCartesianProduct() {
-        Object[][] lists = CollectionUtils.cartesian(ArrayUtils.of(1, 2, 3), ArrayUtils.of(4, 5, 6));
-        Assertions.assertEquals("[[1, 4], [1, 5], [1, 6], [2, 4], [2, 5], [2, 6], [3, 4], [3, 5], [3, 6]]", ArrayUtils.toString(lists));
-        lists = CollectionUtils.cartesian(ArrayUtils.of(1, 2), ArrayUtils.of("-", "*"), ArrayUtils.of("a", "b"));
-        Assertions.assertEquals("[[1, -, a], [1, -, b], [1, *, a], [1, *, b], [2, -, a], [2, -, b], [2, *, a], [2, *, b]]", ArrayUtils.toString(lists));
-        lists = CollectionUtils.cartesian(ArrayUtils.of(1, 2));
-        Assertions.assertEquals("[[1], [2]]", ArrayUtils.toString(lists));
-        lists = CollectionUtils.cartesian((Object[]) null);
-        Assertions.assertEquals("[]", ArrayUtils.toString(lists));
-
-        lists = CollectionUtils.cartesian(new Object[]{null});
-        Assertions.assertEquals("[[null]]", ArrayUtils.toString(lists));
-        lists = CollectionUtils.cartesian(ArrayUtils.of(1, 1), ArrayUtils.of(1, 1));
-        Assertions.assertEquals(1, lists.length);
-
-
-    }
 
     @Test
     public void toWrapperArray() {
         Assertions.assertNull(CollectionUtils.toWrapperArray(null));
         Assertions.assertNull(CollectionUtils.toWrapperArray(1));
-        Assertions.assertSame(Integer[].class, CollectionUtils.toWrapperArray(new int[]{1}).getClass());
-        Assertions.assertSame(String[].class, CollectionUtils.toWrapperArray(new String[]{"1"}).getClass());
+        Assertions.assertArrayEquals(new Integer[]{1}, CollectionUtils.toWrapperArray(new int[]{1}));
         String[] ss = {"1"};
         Assertions.assertNotSame(ss, CollectionUtils.toWrapperArray(ss));
         Assertions.assertEquals(Arrays.toString(ss), Arrays.toString(CollectionUtils.toWrapperArray(ss)));
@@ -122,10 +96,43 @@ public class CollectionUtilsTest {
     @Test
     void of() {
 
-        Assertions.assertTrue(CollectionUtils.of((Object) null).isEmpty());
+        Assertions.assertTrue(CollectionUtils.of().isEmpty());
+        Assertions.assertTrue(CollectionUtils.of((Object[]) null).isEmpty());
+        Assertions.assertSame(1, CollectionUtils.of(1).size());
     }
+
     @Test
     void cartesian() {
+        Object[][] lists;
+
+        lists = CollectionUtils.cartesian((Object[][]) null);
+        Assertions.assertEquals("[]", ArrayUtils.toString(lists));
+
+        lists = CollectionUtils.cartesian((Object[]) null);
+        Assertions.assertEquals("[]", ArrayUtils.toString(lists));
+
+        lists = CollectionUtils.cartesian(null, new Object[]{1, 2});
+        Assertions.assertEquals("[]", ArrayUtils.toString(lists));
+
+        lists = CollectionUtils.cartesian(new Object[]{1, 2}, null);
+        Assertions.assertEquals("[]", ArrayUtils.toString(lists));
+
+        lists = CollectionUtils.cartesian(new Object[]{}, new Object[]{1, 2});
+        Assertions.assertEquals("[]", ArrayUtils.toString(lists));
+
+        lists = CollectionUtils.cartesian(ArrayUtils.of(1, 2, 3), ArrayUtils.of(4, 5, 6));
+        Assertions.assertEquals("[[1, 4], [1, 5], [1, 6], [2, 4], [2, 5], [2, 6], [3, 4], [3, 5], [3, 6]]", ArrayUtils.toString(lists));
+        lists = CollectionUtils.cartesian(ArrayUtils.of(1, 2), ArrayUtils.of("-", "*"), ArrayUtils.of("a", "b"));
+        Assertions.assertEquals("[[1, -, a], [1, -, b], [1, *, a], [1, *, b], [2, -, a], [2, -, b], [2, *, a], [2, *, b]]", ArrayUtils.toString(lists));
+        lists = CollectionUtils.cartesian(ArrayUtils.of(1, 2));
+        Assertions.assertEquals("[[1], [2]]", ArrayUtils.toString(lists));
+
+        lists = CollectionUtils.cartesian(new Object[]{null});
+        Assertions.assertEquals("[[null]]", ArrayUtils.toString(lists));
+        lists = CollectionUtils.cartesian(ArrayUtils.of(1, 1), ArrayUtils.of(1, 1));
+        Assertions.assertEquals(1, lists.length);
+
+
     }
 
     @Test

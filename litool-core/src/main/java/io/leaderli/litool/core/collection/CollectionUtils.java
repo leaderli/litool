@@ -67,15 +67,18 @@ public class CollectionUtils {
     public static <T> List<T> of(T... elements) {
 
         List<T> arrayList = new ArrayList<>();
-        Collections.addAll(arrayList, elements);
+        if (elements != null) {
+            Collections.addAll(arrayList, elements);
+        }
         return arrayList;
     }
 
     /**
-     * 笛卡尔积
+     * Return Cartesian Product, return {new Object[0][]} if
+     * any element is null or empty array
      *
-     * @param elements 元素集合
-     * @return 返回多个元素的笛卡尔积
+     * @param elements the elements of cartesian
+     * @return return cartesian of elements
      */
     @SuppressWarnings("ConstantConditions")
     public static Object[][] cartesian(Object[]... elements) {
@@ -89,9 +92,7 @@ public class CollectionUtils {
         }
         head = Arrays.stream(head).distinct().toArray();
 
-        if (head.length == 0) {
-            head = new Object[]{null};
-        }
+
         Object[][] result = new Object[head.length][];
 
         for (int i = 0; i < result.length; i++) {
@@ -100,6 +101,9 @@ public class CollectionUtils {
 
 
         while ((elements = ArrayUtils.subArray(elements, 1, 0)).length > 0) {
+            if (result.length == 0) {
+                return new Object[0][];
+            }
             Object[] right = Lira.of(elements[0]).distinct().toArray();
             Object[][] temps = new Object[result.length * right.length][];
 
@@ -117,23 +121,24 @@ public class CollectionUtils {
     }
 
     /**
-     * @param originalArray 数组
-     * @return 如果 originalArray 不是数组 返回 null , 如果 数组是基础类型的数组，则返回其包装类，其他则进行强转
-     * return null if  originalArray is null or not arr ;
-     * if arr is primitive arr , return the wrapper arr.
-     * otherwise cast to arr
+     * Return the wrapper array when it is a primitive array
+     * <p>
+     * Return null if  obj is null or is not arr. if arr
+     *
+     * @param obj an obj
+     * @return an array
      */
-    public static Object[] toWrapperArray(Object originalArray) {
+    public static Object[] toWrapperArray(Object obj) {
 
-        if (originalArray == null || !originalArray.getClass().isArray()) {
+        if (obj == null || !obj.getClass().isArray()) {
             return null;
         }
-        Class<?> componentType = originalArray.getClass().getComponentType();
-        int length = Array.getLength(originalArray);
+        Class<?> componentType = obj.getClass().getComponentType();
+        int length = Array.getLength(obj);
         Object[] array = ClassUtil.newWrapperArray(componentType, length);
 
         for (int i = 0; i < length; i++) {
-            array[i] = Array.get(originalArray, i);
+            array[i] = Array.get(obj, i);
         }
 
         return array;
