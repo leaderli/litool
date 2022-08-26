@@ -115,12 +115,15 @@ public class CollectionUtilsTest {
 
     @Test
     void testEmptyList() {
+
+        Assertions.assertTrue(CollectionUtils.emptyList().isEmpty());
     }
 
     @Test
     void of() {
-    }
 
+        Assertions.assertTrue(CollectionUtils.of((Object) null).isEmpty());
+    }
     @Test
     void cartesian() {
     }

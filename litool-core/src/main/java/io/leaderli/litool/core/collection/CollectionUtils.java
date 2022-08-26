@@ -26,13 +26,15 @@ public class CollectionUtils {
     }
 
     /**
-     * @param list 集合
-     * @param <T>  集合元素的泛型
-     * @return 返回集合中重复的元素集合
+     * Return the element that appears multiple times
+     *
+     * @param iterable provide elements by {@link  Iterable#iterator()}
+     * @param <T>      the type of elements returned by this iterable
+     * @return a lira consists the element that appears multiple times
      */
-    public static <T> Lira<T> getDuplicateElements(Iterable<? extends T> list) {
+    public static <T> Lira<T> getDuplicateElements(Iterable<? extends T> iterable) {
 
-        if (isEmpty(list)) {
+        if (isEmpty(iterable)) {
             return Lira.none();
         }
 
@@ -40,7 +42,7 @@ public class CollectionUtils {
 
         Set<T> unique = new HashSet<>();
 
-        for (T t : list) {
+        for (T t : iterable) {
             System.out.println(t);
             if (!unique.add(t)) {
                 duplicate.add(t);
@@ -51,8 +53,10 @@ public class CollectionUtils {
     }
 
     /**
-     * @param <T> 泛型
-     * @return 返回一个空的 ArrayList
+     * Return a new empty ArrayList
+     *
+     * @param <T> the type of elements in this list
+     * @return a new empty ArrayList
      */
     public static <T> List<T> emptyList() {
 
