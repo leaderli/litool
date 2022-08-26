@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.collection.ArrayItr;
+import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -229,7 +229,7 @@ class LiraTest {
 
         List<String> linos = Lira.of("1 2 3")
                 .map(s -> s.split(" "))
-                .flatMap(ArrayItr::of)
+                .flatMap(IterableItr::of)
                 .get();
 
 

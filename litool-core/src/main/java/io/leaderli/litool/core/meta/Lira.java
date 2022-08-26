@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.collection.ArrayItr;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.LiIterator;
 import io.leaderli.litool.core.function.ThrowableConsumer;
@@ -55,7 +54,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
             return none();
         }
 
-        return of((Iterator<? extends T>) ArrayItr.of(elements));
+        return of((Iterator<? extends T>) IterableItr.of(elements));
 
     }
 

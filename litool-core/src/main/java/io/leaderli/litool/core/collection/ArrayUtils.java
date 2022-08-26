@@ -816,7 +816,7 @@ public class ArrayUtils {
      * @return new sub array
      */
     @SuppressWarnings("unchecked")
-    public static <T> T sub(T origin, int beginIndex, int endIndex) {
+    public static <T> T subArray(T origin, int beginIndex, int endIndex) {
 
         Class<T> componentType = ClassUtil.getComponentType(origin);
 
@@ -825,14 +825,9 @@ public class ArrayUtils {
         }
 
         int length = Array.getLength(origin);
-        if (endIndex < 1) {
-            endIndex = length + endIndex;
-        } else if (endIndex > length) {
-            endIndex = length;
-        }
-        if (beginIndex < 0) {
-            beginIndex = length + beginIndex;
-        }
+        beginIndex = correctBeginIndex(beginIndex, length);
+        endIndex = correctEndIndex(endIndex, length);
+
         T sub;
         if (beginIndex < 0 || beginIndex >= length || endIndex <= beginIndex) {
             sub = (T) Array.newInstance(componentType, 0);
@@ -846,41 +841,140 @@ public class ArrayUtils {
 
     }
 
-    @SafeVarargs
-    public static <T> T[] append(T[] origin, T... add) {
-        if (origin == null) {
-            return add;
+
+    /**
+     * Return a non-negative end index. If index exceeds bounds, use bounds value
+     *
+     * @param endIndex   the end index may be negative
+     * @param arr_length the length of arr
+     * @return a non-negative end index
+     */
+    private static int correctEndIndex(int endIndex, int arr_length) {
+        if (arr_length <= 0) {
+            return 0;
         }
-        return add(origin, origin.length, add);
+        if (endIndex > arr_length) {
+            return arr_length;
+        }
+        if (endIndex < 1) {
+            endIndex += arr_length;
+
+            if (endIndex < 0) {
+                return 0;
+            }
+        }
+        return endIndex;
     }
 
+    /**
+     * Return a non-negative end index. If index exceeds bounds, use bounds value
+     *
+     * @param beginIndex the end index may be negative
+     * @param arr_length the length of arr
+     * @return a non-negative begin index
+     */
+    private static int correctBeginIndex(int beginIndex, int arr_length) {
+        if (arr_length < 1) {
+            return 0;
+        }
+        if (beginIndex < 0) {
+            beginIndex += arr_length;
+
+            if (beginIndex < 0) {
+                return 0;
+            }
+        }
+        return beginIndex;
+    }
+
+    /**
+     * Returns a array that is a removed of  origin array. The remove begins at the
+     * specified {@code  beginIndex} and extends to the element at index {@code endIndex - 1}.
+     * Thus the length of the sub is {@code  origin.length - (endIndex - beginIndex)}.
+     *
+     * @param origin     an array
+     * @param beginIndex the beginning index, Negative numbers are supported, indicating
+     *                   the position calculated from the back
+     *                   Negative numbers are supported, indicating the position calculated from the back
+     * @param endIndex   the ending index, Negative number are supported, indicating
+     *                   the position calculated from the back. zero number are supported,
+     *                   indicating {@code endIndex = origin.length}
+     * @param <T>        the type of array class
+     * @return new removed array
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T remove(T origin, int beginIndex, int endIndex) {
+
+        Class<T> componentType = ClassUtil.getComponentType(origin);
+
+        if (componentType == null) {
+            return null;
+        }
+
+        int length = Array.getLength(origin);
+        endIndex = correctEndIndex(endIndex, length);
+        beginIndex = correctBeginIndex(beginIndex, length);
+
+        T removed;
+        if (beginIndex < 0 || endIndex <= beginIndex) {
+            removed = origin;
+        } else if (beginIndex >= length) {
+            removed = (T) Array.newInstance(componentType, 0);
+        } else {
+            removed = (T) Array.newInstance(componentType, length - (endIndex - beginIndex));
+
+            System.arraycopy(origin, 0, removed, 0, beginIndex);
+            System.arraycopy(origin, endIndex, removed, beginIndex, length - endIndex);
+        }
+        return removed;
+    }
+
+
+    /**
+     * Returns a array that append a array after origin array.
+     *
+     * @param origin an array
+     * @param <T>    the type of elements
+     * @return new appended array
+     */
     @SafeVarargs
-    public static <T> T[] add(T[] origin, int position, T... add) {
+    public static <T> T[] add(T[] origin, T... add) {
+        return insert(origin, Integer.MAX_VALUE, add);
+    }
+
+    /**
+     * Returns a array that insert a array into origin array.
+     * The insert begins at the specified {@code  beginIndex}
+     *
+     * @param origin     an array
+     * @param beginIndex the beginning index, Negative numbers are supported, indicating
+     *                   the position calculated from the back
+     *                   Negative numbers are supported, indicating the position calculated from the back
+     * @param <T>        the type of elements
+     * @return new inserted array
+     */
+
+    @SafeVarargs
+    public static <T> T[] insert(T[] origin, int beginIndex, T... add) {
 
         Class<T> componentType = ClassUtil.getComponentType(origin);
         if (componentType == null) {
-            return add;
+            return arraycopy(add);
         }
         if (add == null || add.length == 0) {
-            return origin;
+            return arraycopy(origin);
         }
         int length = origin.length;
         T[] arr = ClassUtil.newWrapperArray(componentType, length + add.length);
 
-        if (position < 0) {
-            position = length + position;
-
-            if (position < 0) {
-                position = 0;
-            }
-        }
-        if (position >= length) {
+        beginIndex = correctBeginIndex(beginIndex, length);
+        if (beginIndex >= length) {
             System.arraycopy(origin, 0, arr, 0, length);
             System.arraycopy(add, 0, arr, length, add.length);
         } else {
-            System.arraycopy(origin, 0, arr, 0, position);
-            System.arraycopy(add, 0, arr, position, add.length);
-            System.arraycopy(origin, position, arr, position + add.length, length - position);
+            System.arraycopy(origin, 0, arr, 0, beginIndex);
+            System.arraycopy(add, 0, arr, beginIndex, add.length);
+            System.arraycopy(origin, beginIndex, arr, beginIndex + add.length, length - beginIndex);
         }
 
 
@@ -899,6 +993,12 @@ public class ArrayUtils {
     }
 
 
+    /**
+     * Return whether a object is array
+     *
+     * @param arr a object
+     * @return whether a object is array
+     */
     public static boolean isArray(Object arr) {
 
         if (arr == null) {
@@ -908,6 +1008,12 @@ public class ArrayUtils {
 
     }
 
+    /**
+     * Return string value of elements
+     *
+     * @param obj a object
+     * @return string value of elements
+     */
     public static String toString(Object obj) {
 
         if (isArray(obj)) {
@@ -916,17 +1022,17 @@ public class ArrayUtils {
 
 
             StringBuilder sb = new StringBuilder("[");
-            for (Object o : arr) {
-                sb.append(toString(o));
-                sb.append(", ");
+            for (int i = 0; i < arr.length; i++) {
+
+                String element = toString(arr[i]);
+
+                if (i == arr.length - 1) {
+                    sb.append(element);
+                } else {
+                    sb.append(element).append(", ");
+                }
             }
-            String str = sb.toString();
-            if (str.equals("[")) {
-                return "[]";
-            } else {
-                str = str.replaceAll(", $", "]");
-                return str;
-            }
+            return sb.append("]").toString();
         }
         return String.valueOf(obj);
 

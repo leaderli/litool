@@ -53,7 +53,7 @@ public class FuncElement extends SaxBean {
                             for (int i = 0; i < flat.length; i++) {
                                 flat[i] = lastParameterType.getComponentType();
                             }
-                            methodParameterTypes = ArrayUtils.combination(ArrayUtils.sub(methodParameterTypes, 0, -1), flat);
+                            methodParameterTypes = ArrayUtils.combination(ArrayUtils.subArray(methodParameterTypes, 0, -1), flat);
                         }
                     }
                     return Objects.deepEquals(paramListTypes, methodParameterTypes);

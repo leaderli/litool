@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,11 +17,6 @@ public class CollectionUtilsTest {
     @Test
 
     public void test1() {
-        List<String> items =
-                Arrays.asList("apple", "apple", "banana",
-                        "apple", "orange", "banana", "papaya");
-
-        Assertions.assertEquals("[apple, apple, banana]", CollectionUtils.getDuplicateElement(items).toString());
 
     }
 
@@ -102,4 +98,48 @@ public class CollectionUtilsTest {
 
 
     }
+
+    @Test
+    void isEmpty() {
+
+        Assertions.assertTrue(CollectionUtils.isEmpty(null));
+        Assertions.assertTrue(CollectionUtils.isEmpty(Collections.emptyList()));
+        Assertions.assertFalse(CollectionUtils.isEmpty(Collections.singletonList(1)));
+    }
+
+    @Test
+    void getDuplicateElements() {
+        List<String> items = Arrays.asList("apple", "apple", "banana", "apple", "orange", "banana", "papaya");
+        Assertions.assertEquals(2, CollectionUtils.getDuplicateElements(items).size());
+    }
+
+    @Test
+    void testEmptyList() {
+    }
+
+    @Test
+    void of() {
+    }
+
+    @Test
+    void cartesian() {
+    }
+
+    @Test
+    void testToWrapperArray() {
+    }
+
+    @Test
+    void testXor() {
+    }
+
+    @Test
+    void testIntersection() {
+    }
+
+    @Test
+    void testUnion() {
+    }
+
+
 }

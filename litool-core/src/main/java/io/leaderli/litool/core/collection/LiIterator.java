@@ -72,7 +72,7 @@ public class LiIterator<T> implements IterableItr<T>, Enumeration<T> {
     }
 
     public static <T> IterableItr<T> of(T[] arr) {
-        return new LiIterator<>(ArrayItr.of(arr));
+        return new LiIterator<>(IterableItr.of(arr));
     }
 
 

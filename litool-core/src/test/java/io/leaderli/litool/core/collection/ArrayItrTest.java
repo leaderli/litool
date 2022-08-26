@@ -12,44 +12,53 @@ import java.util.NoSuchElementException;
 class ArrayItrTest {
 
 
-    @SuppressWarnings("ConfusingArgumentToVarargsMethod")
     @Test
-    void test() {
+    void of() {
 
 
-        ArrayItr<?> none = ArrayItr.of((Object[]) null);
-        Assertions.assertFalse(none.hasNext());
-        none = ArrayItr.of();
-        Assertions.assertFalse(none.hasNext());
+        IterableItr<?> none = IterableItr.of((Object[]) null);
+        Assertions.assertSame(NoneItr.of(), none);
+        none = IterableItr.of();
+        Assertions.assertSame(NoneItr.of(), none);
 
-        none = ArrayItr.of((Object) null);
-        Assertions.assertTrue(none.hasNext());
+        none = IterableItr.of((Object) null);
+        Assertions.assertNull(none.next());
 
-        none = ArrayItr.of(null);
-        Assertions.assertFalse(none.hasNext());
+        none = IterableItr.of((Object[]) null);
+        Assertions.assertSame(NoneItr.of(), none);
 
-        ArrayItr<Integer> iter = ArrayItr.of(1, 2);
+
+    }
+
+    @Test
+    void hasNext() {
+        IterableItr<Integer> iter = IterableItr.of(1, 2);
+        Assertions.assertTrue(iter.hasNext());
         iter.forEachRemaining(s -> {
 
         });
         Assertions.assertFalse(iter.hasNext());
 
+    }
 
-        iter = ArrayItr.of(1, 2, 3);
+    @Test
+    void next() {
 
-        iter.next();
-        Assertions.assertTrue(iter.hasNext());
+        IterableItr<?> iter = IterableItr.of(1, 2, 3);
 
-        iter.remove();
-        Assertions.assertTrue(iter.hasNext());
-        iter.remove();
-        Assertions.assertFalse(iter.hasNext());
-        iter.remove();
-        Assertions.assertFalse(iter.hasNext());
+        Assertions.assertEquals(1, iter.next());
+        Assertions.assertEquals(2, iter.next());
+        Assertions.assertEquals(3, iter.next());
+
 
         Assertions.assertThrows(NoSuchElementException.class, iter::next);
 
 
+    }
+
+    @Test
+    void remove() {
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> IterableItr.of().remove());
     }
 
 }

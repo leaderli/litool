@@ -7,14 +7,22 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 /**
+ * <p> Operations on collection
+ *
  * @author leaderli
  * @since 2022/7/20
  */
 public class CollectionUtils {
+    /**
+     * Return an iterable has element
+     *
+     * @param iterable an iterable
+     * @return an iterable has element
+     */
     public static boolean isEmpty(Iterable<?> iterable) {
-        if (iterable == null) return false;
+        if (iterable == null) return true;
         Iterator<?> iterator = iterable.iterator();
-        return iterator.hasNext();
+        return !iterator.hasNext();
     }
 
     /**
@@ -22,24 +30,24 @@ public class CollectionUtils {
      * @param <T>  集合元素的泛型
      * @return 返回集合中重复的元素集合
      */
-    public static <T> List<T> getDuplicateElement(Collection<? extends T> list) {
+    public static <T> Lira<T> getDuplicateElements(Iterable<? extends T> list) {
 
-        if (list == null || list.isEmpty()) {
-            return emptyList();
+        if (isEmpty(list)) {
+            return Lira.none();
         }
 
-        List<T> duplicate = new ArrayList<>();
+        Set<T> duplicate = new HashSet<>();
 
         Set<T> unique = new HashSet<>();
 
         for (T t : list) {
+            System.out.println(t);
             if (!unique.add(t)) {
                 duplicate.add(t);
             }
         }
 
-        return duplicate;
-
+        return Lira.of(duplicate);
     }
 
     /**
@@ -87,7 +95,7 @@ public class CollectionUtils {
         }
 
 
-        while ((elements = ArrayUtils.sub(elements, 1, 0)).length > 0) {
+        while ((elements = ArrayUtils.subArray(elements, 1, 0)).length > 0) {
             Object[] right = Lira.of(elements[0]).distinct().toArray();
             Object[][] temps = new Object[result.length * right.length][];
 
@@ -95,7 +103,7 @@ public class CollectionUtils {
             for (Object[] left : result) {
 
                 for (Object r : right) {
-                    temps[i++] = ArrayUtils.append(left, r);
+                    temps[i++] = ArrayUtils.add(left, r);
                 }
             }
             result = temps;
