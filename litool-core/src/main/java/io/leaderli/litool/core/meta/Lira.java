@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.IterableItr;
-import io.leaderli.litool.core.collection.LiIterator;
+import io.leaderli.litool.core.collection.IteratorProxy;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
@@ -50,11 +50,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
     @SafeVarargs
     static <T> Lira<T> of(T... elements) {
 
-        if (elements == null || elements.length == 0 || (elements.length == 1) && elements[0] == null) {
-            return none();
-        }
-
-        return of((Iterator<? extends T>) IterableItr.of(elements));
+        return of(IterableItr.ofs(elements));
 
     }
 
@@ -80,12 +76,8 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      */
     static <T> Lira<T> of(Iterator<? extends T> iterator) {
 
-        Iterator<? extends T> iter = LiIterator.of(iterator);
-        if (iter.hasNext()) {
+        return of(IterableItr.of(iterator));
 
-            return new ArraySome<>(iter);
-        }
-        return none();
     }
 
     /**
@@ -96,19 +88,23 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      * @return the new lira
      */
     static <T> Lira<T> of(Iterable<? extends T> iterable) {
-        return of(LiIterator.of(iterable));
+        return of(IterableItr.of(iterable));
     }
 
     /**
      * Returns an lira that consisting elements provided by given iterableIter
      *
      * @param iterableItr the iterableIter that provide  elements
-     * @param <T>          the type of elements returned by this iterableIter
+     * @param <T>         the type of elements returned by this iterableIter
      * @return the new lira
      */
     static <T> Lira<T> of(IterableItr<? extends T> iterableItr) {
 
-        return of((Iterator<? extends T>) iterableItr);
+        if (iterableItr.hasNext()) {
+
+            return new ArraySome<>(iterableItr);
+        }
+        return none();
     }
 
 
@@ -206,7 +202,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      *
      * @param <R> 迭代器的值类型
      * @return 展开后的 lira
-     * @see LiIterator
+     * @see IteratorProxy
      * @see #flatMap(Function)
      */
     <R> Lira<R> flatMap();
@@ -423,7 +419,9 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      * @deprecated use {@link #get()}
      */
     @Deprecated
-    List<T> getRaw();
+    default List<T> getRaw(){
+        return get();
+    }
 
 
     /**

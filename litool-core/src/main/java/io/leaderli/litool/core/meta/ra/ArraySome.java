@@ -16,7 +16,11 @@ public final class ArraySome<T> extends Some<T> {
     public ArraySome(Iterator<? extends T> values) {
 
         List<T> list = new ArrayList<>();
-        values.forEachRemaining(list::add);
+        values.forEachRemaining(v -> {
+            if (v != null) {
+                list.add(v);
+            }
+        });
         this.arr = (T[]) list.toArray();
     }
 

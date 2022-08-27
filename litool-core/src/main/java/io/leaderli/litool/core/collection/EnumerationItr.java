@@ -4,10 +4,13 @@ import java.util.Enumeration;
 import java.util.NoSuchElementException;
 
 /**
+ * Make Enumeration behave like  {@link IterableItr}.
+ *
+ * @param <T> the type of elements returned by the  EnumerationItr
  * @author leaderli
  * @since 2022/7/17
  */
-public class EnumerationItr<T> implements IterableItr<T>, Enumeration<T> {
+public class EnumerationItr<T> implements IterableItr<T> {
 
 
     private final Enumeration<T> enumeration;
@@ -16,26 +19,18 @@ public class EnumerationItr<T> implements IterableItr<T>, Enumeration<T> {
         this.enumeration = enumeration;
     }
 
+    /**
+     * Returns {@code true} if the enumerationItr has more elements.
+     * (In other words, returns {@code true} if {@link #next} would
+     * return an element rather than throwing an exception.)
+     *
+     * @return {@code true} if the enumerationItr has more elements
+     */
     @Override
     public boolean hasNext() {
-        return hasMoreElements();
-    }
-
-    @Override
-    public boolean hasMoreElements() {
         return enumeration.hasMoreElements();
     }
 
-    @Override
-    public T nextElement() {
-
-
-        if (hasNext()) {
-            return enumeration.nextElement();
-        }
-        throw new NoSuchElementException();
-
-    }
 
     /**
      * Returns the next element of this enumeration if this enumeration
@@ -46,13 +41,12 @@ public class EnumerationItr<T> implements IterableItr<T>, Enumeration<T> {
     @Override
     public T next() {
 
-        return nextElement();
+        if (hasNext()) {
+            return enumeration.nextElement();
+        }
+        throw new NoSuchElementException();
 
     }
-    static <T> EnumerationItr<T> of(Enumeration<T> enumeration) {
 
-
-        return new EnumerationItr<>(enumeration);
-    }
 
 }

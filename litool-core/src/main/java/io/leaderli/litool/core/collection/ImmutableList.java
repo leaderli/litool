@@ -81,7 +81,7 @@ public class ImmutableList<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return IterableItr.of(elements);
+        return IterableItr.ofs(elements);
     }
 
     public List<T> copy() {

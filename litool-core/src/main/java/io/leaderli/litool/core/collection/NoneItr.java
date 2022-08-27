@@ -18,6 +18,12 @@ public class NoneItr<T> implements IterableItr<T> {
 
     }
 
+    /**
+     * Return {@link  #NONE}
+     *
+     * @param <T> the type of  {@link  IterableItr}
+     * @return {@link #NONE}
+     */
     @SuppressWarnings("unchecked")
     public static <T> NoneItr<T> of() {
         return (NoneItr<T>) NONE;
@@ -33,11 +39,20 @@ public class NoneItr<T> implements IterableItr<T> {
         return NONE == obj;
     }
 
+    /**
+     * @return false
+     */
     @Override
     public boolean hasNext() {
         return false;
     }
 
+    /**
+     * always throw  {@link NoSuchElementException}
+     *
+     * @return noting
+     * @throws NoSuchElementException always throw
+     */
     @Override
     public T next() {
         throw new NoSuchElementException();

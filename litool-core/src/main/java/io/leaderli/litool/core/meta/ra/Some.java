@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.collection.LiIterator;
+import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
@@ -94,13 +94,6 @@ public abstract class Some<T> implements Lira<T> {
         return filter(filter).first();
     }
 
-    @Override
-    public List<T> getRaw() {
-        List<T> result = new ArrayList<>();
-        this.subscribe(new ConsumerSubscriber<>(result::add));
-
-        return result;
-    }
 
     @Override
     public Lino<T> get(int index) {
@@ -155,7 +148,7 @@ public abstract class Some<T> implements Lira<T> {
 
     @Override
     public <R> Lira<R> flatMap() {
-        return new FlatMap<>(this, LiIterator::of);
+        return new FlatMap<>(this, IterableItr::of);
     }
 
     @Override
@@ -328,15 +321,12 @@ public abstract class Some<T> implements Lira<T> {
 
             }
 
-            @Override
-            public void onComplete() {
 
-            }
         });
     }
 
     @Override
-    public List<T> get() {
+    public final List<T> get() {
 
         List<T> result = new ArrayList<>();
         this.subscribe(new ConsumerSubscriber<>(result::add));

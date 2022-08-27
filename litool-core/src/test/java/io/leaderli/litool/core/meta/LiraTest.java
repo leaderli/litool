@@ -229,7 +229,7 @@ class LiraTest {
 
         List<String> linos = Lira.of("1 2 3")
                 .map(s -> s.split(" "))
-                .flatMap(IterableItr::of)
+                .flatMap(IterableItr::ofs)
                 .get();
 
 
