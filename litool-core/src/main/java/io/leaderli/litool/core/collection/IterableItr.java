@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.collection;
 
+import java.util.Enumeration;
 import java.util.Iterator;
 
 /**
@@ -29,5 +30,9 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
             return NoneItr.of();
         }
         return new ArrayItr<>(elements);
+    }
+
+    static <T> IterableItr<T> of(Enumeration<T> enumeration) {
+        return EnumerationItr.of(enumeration);
     }
 }

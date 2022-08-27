@@ -12,11 +12,11 @@ import java.util.List;
  * @author leaderli
  * @since 2022/1/22
  */
-public class CollectionUtilsTest {
+class CollectionUtilsTest {
 
 
     @Test
-    public void toWrapperArray() {
+    void toWrapperArray() {
         Assertions.assertNull(CollectionUtils.toWrapperArray(null));
         Assertions.assertNull(CollectionUtils.toWrapperArray(1));
         Assertions.assertArrayEquals(new Integer[]{1}, CollectionUtils.toWrapperArray(new int[]{1}));
@@ -27,48 +27,59 @@ public class CollectionUtilsTest {
     }
 
     @Test
-    public void emptyList() {
+    void emptyList() {
         List<Object> actual = CollectionUtils.emptyList();
         Assertions.assertEquals(0, actual.size());
         actual.add(0);
         Assertions.assertEquals(1, actual.size());
         actual.remove(0);
         Assertions.assertEquals(0, actual.size());
+        Assertions.assertTrue(CollectionUtils.emptyList().isEmpty());
 
     }
 
 
     @Test
-    public void intersection() {
+    void intersection() {
 
 
         Lira<Integer> a = Lira.of(Arrays.asList(1, 2, 3));
         Lira<Integer> b = Lira.of(Arrays.asList(3, 4, 5));
         Assertions.assertEquals(1, CollectionUtils.intersection(a, b).size());
         Assertions.assertEquals(0, CollectionUtils.intersection(a, Lira.none()).size());
+        Assertions.assertEquals(0, CollectionUtils.intersection(null, null).size());
+        Assertions.assertEquals(0, CollectionUtils.intersection(Collections.singletonList(1), null).size());
+        Assertions.assertEquals(0, CollectionUtils.intersection(null,Collections.singletonList(1)).size());
     }
 
     @Test
-    public void union() {
+    void union() {
 
 
         Lira<Integer> a = Lira.of(Arrays.asList(1, 2, 3));
         Lira<Integer> b = Lira.of(Arrays.asList(3, 4, 5));
+
         Assertions.assertEquals(5, CollectionUtils.union(a, b).size());
         Assertions.assertEquals(3, CollectionUtils.union(a, Lira.none()).size());
         Assertions.assertEquals(5, CollectionUtils.union(new Integer[]{1, 2, 3}, new Integer[]{3, 4, 5}).size());
         Assertions.assertEquals(3, CollectionUtils.union(null, new Integer[]{3, 4, 5}).size());
+        Assertions.assertEquals(2, CollectionUtils.union(null, Arrays.asList(1, 2)).size());
+        Assertions.assertEquals(0, CollectionUtils.union((Iterable<Object>) null, null).size());
     }
 
 
     @Test
-    public void xor() {
+    void xor() {
 
 
         Lira<Integer> a = Lira.of(Arrays.asList(1, 2, 3));
         Lira<Integer> b = Lira.of(Arrays.asList(3, 4, 5));
         Assertions.assertEquals(4, CollectionUtils.xor(a, b).size());
         Assertions.assertEquals(3, CollectionUtils.xor(a, Lira.none()).size());
+        b = Lira.of(Arrays.asList(4, 4, 4));
+        Assertions.assertEquals(4, CollectionUtils.xor(a, b).size());
+        Assertions.assertEquals(3, CollectionUtils.xor(a, null).size());
+        Assertions.assertEquals(0, CollectionUtils.xor(null, null).size());
 
 
     }
@@ -85,12 +96,6 @@ public class CollectionUtilsTest {
     void getDuplicateElements() {
         List<String> items = Arrays.asList("apple", "apple", "banana", "apple", "orange", "banana", "papaya");
         Assertions.assertEquals(2, CollectionUtils.getDuplicateElements(items).size());
-    }
-
-    @Test
-    void testEmptyList() {
-
-        Assertions.assertTrue(CollectionUtils.emptyList().isEmpty());
     }
 
     @Test
@@ -133,22 +138,6 @@ public class CollectionUtilsTest {
         Assertions.assertEquals(1, lists.length);
 
 
-    }
-
-    @Test
-    void testToWrapperArray() {
-    }
-
-    @Test
-    void testXor() {
-    }
-
-    @Test
-    void testIntersection() {
-    }
-
-    @Test
-    void testUnion() {
     }
 
 

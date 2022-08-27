@@ -7,6 +7,10 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
+ * convert obj to a suitable iterator
+ * support
+ *
+ * @param <T> the type of elements returned by the iterator
  * @author leaderli
  * @since 2022/7/17
  */
@@ -56,22 +60,22 @@ public class LiIterator<T> implements IterableItr<T>, Enumeration<T> {
 
     }
 
-    public static <T> IterableItr<T> of(Iterator<T> iterator) {
+    private static <T> IterableItr<T> of(Iterator<T> iterator) {
         return new LiIterator<>(iterator);
     }
 
-    public static <T> IterableItr<T> of(Iterable<T> iterable) {
+    private static <T> IterableItr<T> of(Iterable<T> iterable) {
         if (iterable == null) {
             return NoneItr.of();
         }
         return new LiIterator<>(iterable.iterator());
     }
 
-    public static <T> IterableItr<T> of(Enumeration<T> enumeration) {
-        return new LiIterator<>(EnumerationItr.of(enumeration));
+    private static <T> IterableItr<T> of(Enumeration<T> enumeration) {
+        return new LiIterator<>(IterableItr.of(enumeration));
     }
 
-    public static <T> IterableItr<T> of(T[] arr) {
+    private static <T> IterableItr<T> of(T[] arr) {
         return new LiIterator<>(IterableItr.of(arr));
     }
 
@@ -83,16 +87,16 @@ public class LiIterator<T> implements IterableItr<T>, Enumeration<T> {
 
     @Override
     public boolean hasNext() {
-        return iterator != null && iterator.hasNext();
+        return iterator.hasNext();
     }
 
     @Override
     public T next() {
 
-        if (!hasNext()) {
-            throw new NoSuchElementException();
+        if (hasNext()) {
+            return iterator.next();
         }
-        return iterator.next();
+        throw new NoSuchElementException();
     }
 
     @Override

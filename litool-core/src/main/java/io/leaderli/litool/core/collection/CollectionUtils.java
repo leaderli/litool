@@ -145,38 +145,41 @@ public class CollectionUtils {
     }
 
     /**
-     * @param a   集合
-     * @param b   集合
-     * @param <T> 集合泛型
-     * @return 两个集合的异或
+     * Return the xor of two lira
+     *
+     * @param a   a lira
+     * @param b   another lira
+     * @param <T> the  type of lira element
+     * @return xor of two lira
      */
-    public static <T> Lira<T> xor(Lira<T> a, Lira<T> b) {
+    public static <T> Lira<T> xor(Iterable<T> a, Iterable<T> b) {
 
-
-        List<T> union = union(a, b).get();
+        Lira<T> union = union(a, b);
         List<T> intersection = intersection(a, b).get();
-
-
-        union.removeIf(intersection::contains);
-
-        return Lira.of(union);
-
+        return union.filter(e -> !intersection.contains(e));
     }
 
 
     /**
-     * @param a   集合
-     * @param b   集合
-     * @param <T> 集合泛型
-     * @return 两个集合的交集
+     * Return intersection of two lira
+     *
+     * @param a   a lira
+     * @param b   another lira
+     * @param <T> the type of lira
+     * @return intersection of two lira
      */
-    public static <T> Lira<T> intersection(Lira<T> a, Lira<T> b) {
+    public static <T> Lira<T> intersection(Iterable<T> a, Iterable<T> b) {
 
 
         List<T> result = new ArrayList<>();
 
-        List<T> raw = b.get();
 
+        List<T> raw = Lira.of(b).get();
+
+
+        if (a == null) {
+            return Lira.none();
+        }
         a.forEach(t -> {
 
             if (raw.contains(t)) {
@@ -190,10 +193,13 @@ public class CollectionUtils {
     }
 
     /**
-     * @param a   集合
-     * @param b   集合
-     * @param <T> 集合泛型
-     * @return 两个集合的并集
+     * Return the union of two array
+     *
+     * @param a   a array
+     * @param b   another array
+     * @param <T> the type of array
+     * @return the union of two array
+     * @see #union(Iterable, Iterable)
      */
     public static <T> Lira<T> union(T[] a, T[] b) {
 
@@ -201,15 +207,22 @@ public class CollectionUtils {
     }
 
     /**
-     * @param a   集合
-     * @param b   集合
-     * @param <T> 集合泛型
-     * @return 两个集合的并集
+     * Return the union of two array
+     *
+     * @param a   a array
+     * @param b   another array
+     * @param <T> the type of array
+     * @return the union of two array
+     * @see #union(Iterable, Iterable)
      */
-    public static <T> Lira<T> union(Lira<T> a, Lira<T> b) {
+    public static <T> Lira<T> union(Iterable<T> a, Iterable<T> b) {
 
 
-        List<T> raw = a.get();
+        Lira<T> left = Lira.of(a).distinct();
+        if (b == null) {
+            return left;
+        }
+        List<T> raw = left.get();
 
         b.forEach(raw::add);
 

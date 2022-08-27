@@ -23,6 +23,16 @@ public class NoneItr<T> implements IterableItr<T> {
         return (NoneItr<T>) NONE;
     }
 
+    /**
+     * Return obj is {@link  #NONE}
+     *
+     * @param obj a obj
+     * @return obi is {@link  #NONE}
+     */
+    public static boolean same(Object obj) {
+        return NONE == obj;
+    }
+
     @Override
     public boolean hasNext() {
         return false;

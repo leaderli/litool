@@ -12,15 +12,8 @@ public class EnumerationItr<T> implements IterableItr<T>, Enumeration<T> {
 
     private final Enumeration<T> enumeration;
 
-    public EnumerationItr(Enumeration<T> enumeration) {
+    EnumerationItr(Enumeration<T> enumeration) {
         this.enumeration = enumeration;
-    }
-
-
-    public static <T> EnumerationItr<T> of(Enumeration<T> enumeration) {
-
-
-        return new EnumerationItr<>(enumeration);
     }
 
     @Override
@@ -30,18 +23,18 @@ public class EnumerationItr<T> implements IterableItr<T>, Enumeration<T> {
 
     @Override
     public boolean hasMoreElements() {
-        return enumeration != null && enumeration.hasMoreElements();
+        return enumeration.hasMoreElements();
     }
 
     @Override
     public T nextElement() {
 
 
-        if (!hasNext()) {
-            throw new NoSuchElementException();
+        if (hasNext()) {
+            return enumeration.nextElement();
         }
+        throw new NoSuchElementException();
 
-        return enumeration.nextElement();
     }
 
     /**
@@ -56,6 +49,10 @@ public class EnumerationItr<T> implements IterableItr<T>, Enumeration<T> {
         return nextElement();
 
     }
+    static <T> EnumerationItr<T> of(Enumeration<T> enumeration) {
 
+
+        return new EnumerationItr<>(enumeration);
+    }
 
 }

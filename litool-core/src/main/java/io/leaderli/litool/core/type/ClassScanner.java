@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
-import io.leaderli.litool.core.collection.EnumerationItr;
+import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.function.Filter;
 import io.leaderli.litool.core.io.FileUtil;
@@ -299,8 +299,8 @@ public class ClassScanner {
      */
     private void scanJar(JarFile jar) {
         String name;
-        EnumerationItr<JarEntry> jarEntryEnumerationIter = new EnumerationItr<>(jar.entries());
-        for (JarEntry entry : jarEntryEnumerationIter) {
+        Iterable<JarEntry> jarEntryEnumerationItr = IterableItr.of(jar.entries());
+        for (JarEntry entry : jarEntryEnumerationItr) {
             name = StringUtils.removeStart(entry.getName(), StrPool.SLASH);
             if ((StringUtils.isEmpty(packagePath) || name.startsWith(this.packagePath)) && name.endsWith(FileUtil.CLASS_EXT) && !entry.isDirectory()) {
                 final String className = name.substring(0, name.length() - 6).replace(CharPool.SLASH, CharPool.DOT);
