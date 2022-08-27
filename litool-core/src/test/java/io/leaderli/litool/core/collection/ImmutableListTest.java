@@ -14,9 +14,14 @@ class ImmutableListTest {
 
 
     @Test
-    void test() {
+    void of() {
+
         Assertions.assertSame(ImmutableList.none(), ImmutableList.of((Object[]) null));
         Assertions.assertSame(ImmutableList.none(), ImmutableList.of(Collections.emptyList()));
+    }
+
+    @Test
+    void test() {
 
         ImmutableList<Integer> list = ImmutableList.of(Arrays.asList(1, 2));
 

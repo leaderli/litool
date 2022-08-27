@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * Provide a immutable list
+ *
+ * @param <T> the type of elements
  * @author leaderli
  * @since 2022/8/11
  */
@@ -19,8 +22,7 @@ public class ImmutableList<T> implements Iterable<T> {
 
     @SuppressWarnings("unchecked")
     private ImmutableList(List<T> list) {
-        this.elements = (T[]) list.toArray();
-        this.size = list.size();
+        this((T[]) list.toArray());
     }
 
 
@@ -34,6 +36,13 @@ public class ImmutableList<T> implements Iterable<T> {
         return (ImmutableList<T>) NONE_INSTANCE;
     }
 
+    /**
+     * Return ImmutableList consist of elements provide by arr
+     *
+     * @param arr a arr
+     * @param <T> the type of elements in ImmutableList
+     * @return new ImmutableList
+     */
     @SafeVarargs
     public static <T> ImmutableList<T> of(T... arr) {
         if (arr == null || arr.length == 0) {
@@ -42,6 +51,13 @@ public class ImmutableList<T> implements Iterable<T> {
         return new ImmutableList<>(arr);
     }
 
+    /**
+     * Return ImmutableList consist of elements provide by  iterable
+     *
+     * @param iterable a iterable provide elements
+     * @param <T>      the type of elements in ImmutableList
+     * @return new ImmutableList
+     */
     @SuppressWarnings("unchecked")
     public static <T> ImmutableList<T> of(Iterable<T> iterable) {
         Lira<T> lira = Lira.of(iterable);
