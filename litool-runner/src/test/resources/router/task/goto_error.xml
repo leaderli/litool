@@ -7,7 +7,7 @@
         <entry label="坐席队列">skill</entry>
     </response>
     <funcs>
-        <func name="in" label="当前时间" instruct="in" >
+        <func name="in" label="当前时间" instruct="in">
             <param type="str">1</param>
         </func>
     </funcs>

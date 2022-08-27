@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Valuable(ShortCartesian.class)
-@Target({ElementType.FIELD,ElementType.PARAMETER})
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface ShortValues {
-    short[] value();
+short[] value();
 }
 

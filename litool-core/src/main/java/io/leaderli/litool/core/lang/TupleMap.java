@@ -15,97 +15,97 @@ import java.util.function.Predicate;
  */
 public class TupleMap<K, V> implements LiValue {
 
-    private final List<LiTuple2<K, V>> paris = new ArrayList<>();
+private final List<LiTuple2<K, V>> paris = new ArrayList<>();
 
-    public static <K, V> TupleMap<K, V> of(K k, V v) {
-        TupleMap<K, V> of = of();
-        return of.putKeyValue(k, v);
-    }
+public static <K, V> TupleMap<K, V> of(K k, V v) {
+    TupleMap<K, V> of = of();
+    return of.putKeyValue(k, v);
+}
 
-    public static <K, V> TupleMap<K, V> of() {
+public static <K, V> TupleMap<K, V> of() {
 
-        return new TupleMap<>();
-    }
+    return new TupleMap<>();
+}
 
-    public TupleMap<K, V> putKeyValue(K key, V value) {
+public TupleMap<K, V> putKeyValue(K key, V value) {
 
-        removeByKey(key);
-        paris.add(LiTuple.of(key, value));
-        return this;
+    removeByKey(key);
+    paris.add(LiTuple.of(key, value));
+    return this;
 
-    }
+}
 
-    public void removeByKey(K key) {
-        paris.removeIf(tuple -> Objects.equals(key, tuple._1));
-    }
+public void removeByKey(K key) {
+    paris.removeIf(tuple -> Objects.equals(key, tuple._1));
+}
 
-    public Lino<V> getValueByKey(K key) {
+public Lino<V> getValueByKey(K key) {
 
-        for (LiTuple2<K, V> tuple : paris) {
+    for (LiTuple2<K, V> tuple : paris) {
 
-            if (Objects.equals(key, tuple._1)) {
+        if (Objects.equals(key, tuple._1)) {
 
-                return Lino.of(tuple._2);
-            }
+            return Lino.of(tuple._2);
         }
-        return Lino.none();
     }
+    return Lino.none();
+}
 
-    public Lino<K> getKeyByValue(V value) {
-        for (LiTuple2<K, V> tuple : paris) {
+public Lino<K> getKeyByValue(V value) {
+    for (LiTuple2<K, V> tuple : paris) {
 
-            if (Objects.equals(value, tuple._2)) {
+        if (Objects.equals(value, tuple._2)) {
 
-                return Lino.of(tuple._1);
-            }
+            return Lino.of(tuple._1);
         }
-        return Lino.none();
     }
+    return Lino.none();
+}
 
-    public TupleMap<K, V> putValueKey(V value, K key) {
-        removeByValue(value);
-        paris.add(LiTuple.of(key, value));
+public TupleMap<K, V> putValueKey(V value, K key) {
+    removeByValue(value);
+    paris.add(LiTuple.of(key, value));
 
-        return this;
+    return this;
 
-    }
+}
 
-    public void removeByValue(V value) {
-        paris.removeIf(tuple -> Objects.equals(value, tuple._2));
-    }
+public void removeByValue(V value) {
+    paris.removeIf(tuple -> Objects.equals(value, tuple._2));
+}
 
 
-    public void clear() {
-        paris.clear();
-    }
+public void clear() {
+    paris.clear();
+}
 
-    public void removeIf(Predicate<LiTuple2<K, V>> predicate) {
-        paris.removeIf(predicate);
-    }
+public void removeIf(Predicate<LiTuple2<K, V>> predicate) {
+    paris.removeIf(predicate);
+}
 
-    public Lira<K> keySet() {
-        return Lira.of(paris).map(LiTuple2::_1);
-    }
+public Lira<K> keySet() {
+    return Lira.of(paris).map(LiTuple2::_1);
+}
 
-    public Lira<V> ValueSet() {
-        return Lira.of(paris).map(LiTuple2::_2);
-    }
+public Lira<V> ValueSet() {
+    return Lira.of(paris).map(LiTuple2::_2);
+}
 
-    public Lira<LiTuple2<K, V>> entrySet() {
-        return Lira.of(paris);
-    }
+public Lira<LiTuple2<K, V>> entrySet() {
+    return Lira.of(paris);
+}
 
-    @Override
-    public boolean present() {
-        return size() > 0;
-    }
+@Override
+public boolean present() {
+    return size() > 0;
+}
 
-    public int size() {
-        return paris.size();
-    }
+public int size() {
+    return paris.size();
+}
 
-    @Override
-    public String name() {
-        return "tuple_map";
-    }
+@Override
+public String name() {
+    return "tuple_map";
+}
 }

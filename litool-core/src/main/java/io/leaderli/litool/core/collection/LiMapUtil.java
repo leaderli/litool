@@ -10,8 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LiMapUtil {
 /**
+ * a handy tool of map
+ */
+public class LiMapUtil {
+
+/**
+ * Merge to map
+ *
  * @param low  低优先级 map
  * @param high 高优先级 map
  * @return 一个新的 map，  他包包含 low 和 high 所有的 key， 其对应的 value

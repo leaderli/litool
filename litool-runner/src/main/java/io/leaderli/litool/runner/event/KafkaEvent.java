@@ -11,7 +11,7 @@ import io.leaderli.litool.core.meta.LiTuple2;
 public final class KafkaEvent extends LiEventObject<LiTuple2<String, String>> {
 
 
-    public KafkaEvent(String topic, String source) {
-        super(LiTuple.of(topic, source));
-    }
+public KafkaEvent(String topic, String source) {
+    super(LiTuple.of(topic, source));
+}
 }

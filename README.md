@@ -6,5 +6,6 @@ some handy tools
 
 ## [core](litool-core/README.md)
 
-core is an better alternative of optional on java 8, which aims to reduce the NullPointException
+core is an better alternative of optional on java 8, which aims to reduce the
+NullPointException
 

@@ -14,19 +14,19 @@ import java.util.HashMap;
 class ResponseElementTest {
 
 
-    @Test
-    void test() {
+@Test
+void test() {
 
-        SaxEventInterceptor<ResponseElement> dfs = new SaxEventInterceptor<>(ResponseElement.class);
-        ResponseElement responseElement = dfs.parse("response.xml");
+    SaxEventInterceptor<ResponseElement> dfs = new SaxEventInterceptor<>(ResponseElement.class);
+    ResponseElement responseElement = dfs.parse("response.xml");
 
-        Context context = new Context(new HashMap<>());
-        responseElement.executor().visit(context);
-
-
-        Assertions.assertEquals("", context.getResponse("CHANNEL"));
-        Assertions.assertEquals(1, (int) context.getResponse("ID"));
+    Context context = new Context(new HashMap<>());
+    responseElement.executor().visit(context);
 
 
-    }
+    Assertions.assertEquals("", context.getResponse("CHANNEL"));
+    Assertions.assertEquals(1, (int) context.getResponse("ID"));
+
+
+}
 }

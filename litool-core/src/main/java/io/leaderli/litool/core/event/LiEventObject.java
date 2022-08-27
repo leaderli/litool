@@ -9,20 +9,20 @@ import io.leaderli.litool.core.meta.Lino;
 public class LiEventObject<T> {
 
 
-    private final T source;
+private final T source;
 
-    public LiEventObject(T source) {
-        this.source = source;
-    }
+public LiEventObject(T source) {
+    this.source = source;
+}
 
-    public final Lino<T> getSource() {
-        return Lino.of(source);
-    }
+public final Lino<T> getSource() {
+    return Lino.of(source);
+}
 
 
-    public final String toString() {
+public final String toString() {
 
-        return getClass().getName() + "[source=" + source + "]";
-    }
+    return getClass().getName() + "[source=" + source + "]";
+}
 
 }

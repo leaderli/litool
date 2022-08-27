@@ -6,12 +6,12 @@ package io.leaderli.litool.dom.sax;
  */
 public abstract class NoBodyAndAttributeSaxBean extends NoAttributeSaxBean {
 
-    public NoBodyAndAttributeSaxBean(String tag) {
-        super(tag);
-    }
+protected NoBodyAndAttributeSaxBean(String tag) {
+    super(tag);
+}
 
-    @Override
-    public void body(BodyEvent bodyEvent) {
-    }
+@Override
+public void body(BodyEvent bodyEvent) {
+}
 
 }

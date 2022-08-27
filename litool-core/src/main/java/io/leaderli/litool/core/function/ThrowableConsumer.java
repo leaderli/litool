@@ -8,5 +8,5 @@ package io.leaderli.litool.core.function;
 @FunctionalInterface
 public interface ThrowableConsumer<T> {
 
-    void accept(T t) throws Throwable;
+void accept(T t) throws Throwable;
 }

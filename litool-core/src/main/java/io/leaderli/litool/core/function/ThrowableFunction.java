@@ -9,6 +9,6 @@ package io.leaderli.litool.core.function;
 public interface ThrowableFunction<T, R> {
 
 
-    R apply(T t) throws Throwable;
+R apply(T t) throws Throwable;
 
 }

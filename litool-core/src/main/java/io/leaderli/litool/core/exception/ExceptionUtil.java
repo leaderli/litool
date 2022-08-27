@@ -7,16 +7,16 @@ package io.leaderli.litool.core.exception;
 public class ExceptionUtil {
 
 
-    public static Throwable getCause(Throwable throwable) {
+public static Throwable getCause(Throwable throwable) {
 
-        while (throwable != null) {
-            Throwable cause = throwable.getCause();
+    while (throwable != null) {
+        Throwable cause = throwable.getCause();
 
-            if (cause == null) {
-                return throwable;
-            }
-            throwable = cause;
+        if (cause == null) {
+            return throwable;
         }
-        return null;
+        throwable = cause;
     }
+    return null;
+}
 }

@@ -6,19 +6,19 @@ public enum FuncScope {
     CONTEXT(1),
     RUNTIME(2);
 
-    FuncScope(int level) {
-        this.level = level;
-    }
+public final int level;
 
-    public final int level;
+FuncScope(int level) {
+    this.level = level;
+}
 
-    public static FuncScope getFuncScope(int level) {
-        for (FuncScope funcScope : values()) {
-            if (funcScope.level == level) {
-                return funcScope;
-            }
+public static FuncScope getFuncScope(int level) {
+    for (FuncScope funcScope : values()) {
+        if (funcScope.level == level) {
+            return funcScope;
         }
-        return CONTEXT;
     }
+    return CONTEXT;
+}
 
 }

@@ -12,28 +12,28 @@ import java.util.NoSuchElementException;
 class ArrayItr<T> implements IterableItr<T> {
 
 
-    private final T[] arr;
-    /**
-     * The index of current {@code ArrayItr}
-     */
-    private int index = 0;
+private final T[] arr;
+/**
+ * The index of current {@code ArrayItr}
+ */
+private int index = 0;
 
-    ArrayItr(T[] arr) {
-        this.arr = arr;
+ArrayItr(T[] arr) {
+    this.arr = arr;
+}
+
+
+@Override
+public boolean hasNext() {
+    return index < arr.length;
+}
+
+@Override
+public T next() {
+    if (hasNext()) {
+        return arr[index++];
     }
-
-
-    @Override
-    public boolean hasNext() {
-        return index < arr.length;
-    }
-
-    @Override
-    public T next() {
-        if (hasNext()) {
-            return arr[index++];
-        }
-        throw new NoSuchElementException();
-    }
+    throw new NoSuchElementException();
+}
 
 }

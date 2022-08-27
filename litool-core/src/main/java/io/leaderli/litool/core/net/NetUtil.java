@@ -10,16 +10,16 @@ import java.net.InetAddress;
  */
 public class NetUtil {
 
-    /**
-     * @param address IP地址
-     * @return 查看IP地址是否可以访问
-     */
-    public static boolean pingable(String address) {
+/**
+ * @param address IP地址
+ * @return 查看IP地址是否可以访问
+ */
+public static boolean pingable(String address) {
 
-        return Lino.of(address)
-                .throwable_map(InetAddress::getByName)
-                .throwable_map(net -> net.isReachable(10000))
-                .get(false);
+    return Lino.of(address)
+            .throwable_map(InetAddress::getByName)
+            .throwable_map(net -> net.isReachable(10000))
+            .get(false);
 
-    }
+}
 }

@@ -11,38 +11,39 @@ import java.util.Set;
 
 public class RouterElement extends SaxBean implements ElementExecutor<RouterElement, RouterElementExecutor> {
 
-    private SequenceList sequenceList = new SequenceList();
+private SequenceList sequenceList = new SequenceList();
 
-    public RouterElement() {
-        super("router");
+public RouterElement() {
+    super("router");
+}
+
+public void addSequence(SequenceElement sequenceElement) {
+    sequenceList.add(sequenceElement);
+}
+
+@Override
+public void end(EndEvent endEvent) {
+    super.end(endEvent);
+
+    LiAssertUtil.assertFalse(sequenceList.lira().size() == 0, "the sequenceList of route is empty");
+
+    Set<String> nameSet = new HashSet<>();
+    Set<String> labelSet = new HashSet<>();
+    for (SequenceElement sequenceElement : sequenceList.lira()) {
+        LiAssertUtil.assertTrue(nameSet.add(sequenceElement.getName()),
+                "duplicate name of " + sequenceElement.getName());
+        LiAssertUtil.assertTrue(labelSet.add(sequenceElement.getLabel()),
+                "duplicate label of " + sequenceElement.getLabel());
     }
-
-    public void addSequence(SequenceElement sequenceElement) {
-        sequenceList.add(sequenceElement);
-    }
-
-    @Override
-    public void end(EndEvent endEvent) {
-       super.end(endEvent);
-
-        LiAssertUtil.assertFalse(sequenceList.lira().size() == 0, "the sequenceList of route is empty");
-
-        Set<String> nameSet = new HashSet<>();
-        Set<String> labelSet = new HashSet<>();
-        for (SequenceElement sequenceElement : sequenceList.lira()) {
-            LiAssertUtil.assertTrue(nameSet.add(sequenceElement.getName()), "duplicate name of " + sequenceElement.getName());
-            LiAssertUtil.assertTrue(labelSet.add(sequenceElement.getLabel()), "duplicate label of " + sequenceElement.getLabel());
-        }
-    }
+}
 
 
+public SequenceList getSequenceList() {
+    return sequenceList;
+}
 
-    public SequenceList getSequenceList() {
-        return sequenceList;
-    }
-
-    public void setSequenceList(SequenceList sequenceList) {
-        this.sequenceList = sequenceList;
-    }
+public void setSequenceList(SequenceList sequenceList) {
+    this.sequenceList = sequenceList;
+}
 
 }

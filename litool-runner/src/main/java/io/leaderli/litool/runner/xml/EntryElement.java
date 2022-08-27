@@ -14,75 +14,77 @@ import io.leaderli.litool.runner.TypeAlias;
  */
 public class EntryElement extends SaxBean {
 
-    private String label;
-    private String key;
-    private String def = "";
-    private String type = "str";
+private String label;
+private String key;
+private String def = "";
+private String type = "str";
 
-    public EntryElement() {
-        super("");
-    }
+public EntryElement() {
+    super("");
+}
 
-    @Override
-    public void body(BodyEvent bodyEvent) {
-
-
-        String key = bodyEvent.description();
-        LiAssertUtil.assertTrue(key.matches(LiConstant.ATTRIBUTE_NAME_RULE), String.format("the entry key %s is not match %s", key, LiConstant.ATTRIBUTE_NAME_RULE));
-        this.key = key;
-    }
-
-    @Override
-    public void end(EndEvent endEvent) {
-        super.end(endEvent);
-        StringConvert.parser(TypeAlias.getType(this.type), def).assertNotNone(String.format("the def value %s cannot satisfied the entry type %s", def, type));
-    }
+@Override
+public void body(BodyEvent bodyEvent) {
 
 
-    @Override
-    public String toString() {
-        return "EntryElement{" +
-                "id='" + getId() + '\'' +
-                ", label='" + label + '\'' +
-                ", key='" + key + '\'' +
-                ", def='" + def + '\'' +
-                ", type='" + type + '\'' +
-                '}';
-    }
+    String description = bodyEvent.description();
+    LiAssertUtil.assertTrue(description.matches(LiConstant.ATTRIBUTE_NAME_RULE), String.format("the entry key %s is " +
+            "not match %s", description, LiConstant.ATTRIBUTE_NAME_RULE));
+    this.key = description;
+}
 
-    public String getLabel() {
-        return label;
-    }
+@Override
+public void end(EndEvent endEvent) {
+    super.end(endEvent);
+    StringConvert.parser(TypeAlias.getType(this.type), def).assertNotNone(String.format("the def value %s cannot " +
+            "satisfied the entry type %s", def, type));
+}
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
 
-    public String getKey() {
-        return key;
-    }
+@Override
+public String toString() {
+    return "EntryElement{" +
+            "id='" + getId() + '\'' +
+            ", label='" + label + '\'' +
+            ", key='" + key + '\'' +
+            ", def='" + def + '\'' +
+            ", type='" + type + '\'' +
+            '}';
+}
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+public String getLabel() {
+    return label;
+}
 
-    public String getDef() {
-        return def;
-    }
+public void setLabel(String label) {
+    this.label = label;
+}
 
-    public void setDef(String def) {
+public String getKey() {
+    return key;
+}
 
-        this.def = def;
-    }
+public void setKey(String key) {
+    this.key = key;
+}
 
-    public String getType() {
-        return type;
-    }
+public String getDef() {
+    return def;
+}
 
-    public void setType(String type) {
+public void setDef(String def) {
 
-        LiAssertUtil.assertTrue(TypeAlias.support(type), String.format("the entry type  %s is unsupported ", type));
-        this.type = type;
-    }
+    this.def = def;
+}
+
+public String getType() {
+    return type;
+}
+
+public void setType(String type) {
+
+    LiAssertUtil.assertTrue(TypeAlias.support(type), String.format("the entry type  %s is unsupported ", type));
+    this.type = type;
+}
 
 }

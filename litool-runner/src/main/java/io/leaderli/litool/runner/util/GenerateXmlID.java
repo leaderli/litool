@@ -15,33 +15,30 @@ import java.io.InputStream;
  */
 public class GenerateXmlID {
 
-    public static String generate(String xml) throws DocumentException {
+public static InputStream generateByPath(String path) throws DocumentException {
 
-        DOMElement root = LiDomUtil.getDOMRootByString(xml);
-        VisitorSupport support = new MyVisitorSupport();
-        support.visit(root);
-        return LiDomUtil.pretty(root);
+    DOMElement main = LiDomUtil.getDOMRootByPath(path);
+    return ResourceUtil.createContentStream(generate(main.asXML()));
+}
 
-    }
+public static String generate(String xml) throws DocumentException {
 
-    public static InputStream generateByPath(String path) throws DocumentException {
+    DOMElement root = LiDomUtil.getDOMRootByString(xml);
+    VisitorSupport support = new MyVisitorSupport();
+    support.visit(root);
+    return LiDomUtil.pretty(root);
 
-        DOMElement main = LiDomUtil.getDOMRootByPath(path);
-        return ResourceUtil.createContentStream(generate(main.asXML()));
-    }
+}
 
-    private static class MyVisitorSupport extends VisitorSupport {
-        private int id;
+private static class MyVisitorSupport extends VisitorSupport {
+    private int id;
 
-        public MyVisitorSupport() {
-        }
-
-        @Override
-        public void visit(Element node) {
-            node.addAttribute("id", "" + id++);
-            for (Element element : node.elements()) {
-                visit(element);
-            }
+    @Override
+    public void visit(Element node) {
+        node.addAttribute("id", "" + id++);
+        for (Element element : node.elements()) {
+            visit(element);
         }
     }
+}
 }

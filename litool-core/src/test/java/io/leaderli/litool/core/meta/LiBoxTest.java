@@ -9,50 +9,50 @@ import org.junit.jupiter.api.Test;
  */
 class LiBoxTest {
 
-    @Test
-    void value() {
+@Test
+void value() {
 
-        LiBox<String> none = LiBox.none();
-        assert none.lino().absent();
+    LiBox<String> none = LiBox.none();
+    Assertions.assertTrue(none.lino().absent());
 
-        none.value("123");
-        assert none.lino().present();
+    none.value("123");
+    assert none.lino().present();
 
-    }
+}
 
-    @Test
-    public void apply() {
-
-
-        LiBox<String> str = new LiBox<>("hello");
-
-        str.apply((s, s2) -> s + s2, "456");
-        Assertions.assertEquals("hello456", str.value());
-
-        str.apply(null, "123");
-        Assertions.assertEquals("hello456", str.value());
-
-        str.apply((s, s2) -> s + s2, null);
-        Assertions.assertEquals("hello456", str.value());
-
-        str.apply((s, s2) -> null, null);
-        Assertions.assertEquals("hello456", str.value());
-
-        str.apply((s, s2) -> null, "1");
-        Assertions.assertTrue(str.absent());
+@Test
+void apply() {
 
 
-        str.reset();
+    LiBox<String> str = new LiBox<>("hello");
 
-        str.apply(null, "hello");
-        Assertions.assertTrue(str.absent());
+    str.apply((s, s2) -> s + s2, "456");
+    Assertions.assertEquals("hello456", str.value());
+
+    str.apply(null, "123");
+    Assertions.assertEquals("hello456", str.value());
+
+    str.apply((s, s2) -> s + s2, null);
+    Assertions.assertEquals("hello456", str.value());
+
+    str.apply((s, s2) -> null, null);
+    Assertions.assertEquals("hello456", str.value());
+
+    str.apply((s, s2) -> null, "1");
+    Assertions.assertTrue(str.absent());
 
 
-        LiBox<Integer> num = LiBox.none();
-        num.apply(Integer::sum, 2);
-        Assertions.assertTrue(num.absent());
+    str.reset();
+
+    str.apply(null, "hello");
+    Assertions.assertTrue(str.absent());
 
 
-    }
+    LiBox<Integer> num = LiBox.none();
+    num.apply(Integer::sum, 2);
+    Assertions.assertTrue(num.absent());
+
+
+}
 
 }

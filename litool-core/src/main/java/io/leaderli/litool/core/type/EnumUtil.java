@@ -7,13 +7,13 @@ package io.leaderli.litool.core.type;
 public class EnumUtil {
 
 
-    @SafeVarargs
-    public static <T extends Enum<?>> boolean sameAny(T origin, T... compares) {
-        for (T compare : compares) {
-            if (compare == origin) {
-                return true;
-            }
+@SafeVarargs
+public static <T extends Enum<?>> boolean sameAny(T origin, T... compares) {
+    for (T compare : compares) {
+        if (compare == origin) {
+            return true;
         }
-        return false;
     }
+    return false;
+}
 }

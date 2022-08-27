@@ -7,5 +7,5 @@ package io.leaderli.litool.core.function;
 @FunctionalInterface
 public interface ThrowableRunner {
 
-    void run() throws Throwable;
+void run() throws Throwable;
 }

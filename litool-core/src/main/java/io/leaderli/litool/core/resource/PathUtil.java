@@ -12,16 +12,16 @@ import java.util.regex.Pattern;
 public class PathUtil {
 
 
-    private static final String FILE_SIMPLE_NAME_REGEX = "^.*?([^/]+)$";
-    static final Pattern pattern = Pattern.compile(FILE_SIMPLE_NAME_REGEX);
+private static final String FILE_SIMPLE_NAME_REGEX = "^.*?([^/]+)$";
+static final Pattern pattern = Pattern.compile(FILE_SIMPLE_NAME_REGEX);
 
-    /**
-     * @param path 文件路径
-     * @return 获取文件名
-     */
-    public static Lino<String> get_file_name(String path) {
+/**
+ * @param path 文件路径
+ * @return 获取文件名
+ */
+public static Lino<String> get_file_name(String path) {
 
-        return Lino.of(path).map(pattern::matcher).filter(Matcher::find).map(m -> m.group(1));
+    return Lino.of(path).map(pattern::matcher).filter(Matcher::find).map(m -> m.group(1));
 
-    }
+}
 }

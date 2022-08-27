@@ -8,43 +8,43 @@ import io.leaderli.litool.core.meta.Lino;
  */
 public class CancelRunnableLink<T> extends SomeLink<T, T> {
 
-    private final Runnable runnable;
+private final Runnable runnable;
 
 
-    public CancelRunnableLink(PublisherLink<T> prevPublisher, final Runnable runnable) {
-        super(prevPublisher);
-        this.runnable = runnable;
+public CancelRunnableLink(PublisherLink<T> prevPublisher, final Runnable runnable) {
+    super(prevPublisher);
+    this.runnable = runnable;
+}
+
+
+@Override
+public void subscribe(SubscriberLink<T> actualSubscriber) {
+    prevPublisher.subscribe(new CancelRunnableSubscriberLink(actualSubscriber));
+}
+
+
+private class CancelRunnableSubscriberLink extends SameTypeIntermediateSubscriberLink<T> implements ErrorLink {
+
+
+    protected CancelRunnableSubscriberLink(SubscriberLink<T> actualSubscriber) {
+        super(actualSubscriber);
     }
 
 
     @Override
-    public void subscribe(SubscriberLink<T> actualSubscriber) {
-        prevPublisher.subscribe(new CancelRunnableSubscriberLink(actualSubscriber));
+    public void next(T value) {
+
+        this.actualSubscriber.next(value);
     }
 
+    @Override
+    public void onCancel(Lino<T> lino) {
+        runnable.run();
 
-    private class CancelRunnableSubscriberLink extends SameTypeIntermediateSubscriberLink<T> implements ErrorLink {
+        if (this.actualSubscriber instanceof ErrorLink) {
+            this.actualSubscriber.onCancel(lino);
 
-
-        protected CancelRunnableSubscriberLink(SubscriberLink<T> actualSubscriber) {
-            super(actualSubscriber);
-        }
-
-
-        @Override
-        public void next(T value) {
-
-            this.actualSubscriber.next(value);
-        }
-
-        @Override
-        public void onCancel(Lino<T> lino) {
-            runnable.run();
-
-            if (this.actualSubscriber instanceof ErrorLink) {
-                this.actualSubscriber.onCancel(lino);
-
-            }
         }
     }
+}
 }

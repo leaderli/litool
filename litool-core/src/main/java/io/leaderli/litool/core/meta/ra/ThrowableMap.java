@@ -13,41 +13,41 @@ import java.util.function.Consumer;
  * @since 2022/6/27
  */
 public class ThrowableMap<T, R> extends Some<R> {
-    private final ThrowableFunction<? super T, ? extends R> mapper;
-    private final Publisher<T> prevPublisher;
-    private final Consumer<Throwable> whenThrow;
+private final ThrowableFunction<? super T, ? extends R> mapper;
+private final Publisher<T> prevPublisher;
 
-    public ThrowableMap(Publisher<T> prevPublisher, ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
-        this.prevPublisher = prevPublisher;
-        this.mapper = mapper;
-        this.whenThrow = whenThrow;
+
+public ThrowableMap(Publisher<T> prevPublisher, ThrowableFunction<? super T, ? extends R> mapper,
+                    Consumer<Throwable> whenThrow) {
+    this.prevPublisher = prevPublisher;
+    this.mapper = mapper;
+}
+
+@Override
+public void subscribe(Subscriber<? super R> actualSubscriber) {
+    prevPublisher.subscribe(new ThrowableMapSubscriber(actualSubscriber));
+
+}
+
+private class ThrowableMapSubscriber extends IntermediateSubscriber<T, R> {
+
+
+    private ThrowableMapSubscriber(Subscriber<? super R> actualSubscriber) {
+        super(actualSubscriber);
     }
+
 
     @Override
-    public void subscribe(Subscriber<? super R> actualSubscriber) {
-        prevPublisher.subscribe(new ThrowableMapSubscriber(actualSubscriber));
-
+    public void next(T t) {
+        Lino.of(t).map(m -> {
+            try {
+                return mapper.apply(m);
+            } catch (Throwable throwable) {
+                this.actualSubscriber.onError(throwable, this);
+            }
+            return null;
+        }).ifPresent(this.actualSubscriber::next);
     }
 
-    private class ThrowableMapSubscriber extends IntermediateSubscriber<T, R> {
-
-
-        private ThrowableMapSubscriber(Subscriber<? super R> actualSubscriber) {
-            super(actualSubscriber);
-        }
-
-
-        @Override
-        public void next(T t) {
-            Lino.of(t).map(m -> {
-                try {
-                    return mapper.apply(m);
-                } catch (Throwable throwable) {
-                    this.actualSubscriber.onError(throwable, this);
-                }
-                return null;
-            }).ifPresent(this.actualSubscriber::next);
-        }
-
-    }
+}
 }

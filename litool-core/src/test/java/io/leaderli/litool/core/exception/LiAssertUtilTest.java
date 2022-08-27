@@ -7,29 +7,29 @@ import org.junit.jupiter.api.Test;
  * @author leaderli
  * @since 2022/1/22
  */
-public class LiAssertUtilTest {
+class LiAssertUtilTest {
 
 
-    @SuppressWarnings("all")
-    @Test
-    public void test() {
+@SuppressWarnings("all")
+@Test
+void test() {
 
-        Assertions.assertThrows(AssertException.class, () -> {
-            LiAssertUtil.assertTrue(false);
-        });
+    Assertions.assertThrows(AssertException.class, () -> {
+        LiAssertUtil.assertTrue(false);
+    });
 
-        AssertException thrown = Assertions.assertThrows(AssertException.class, () -> {
-            LiAssertUtil.assertTrue(false, "123");
-        });
-        Assertions.assertEquals(thrown.getMessage(), "123");
+    AssertException thrown = Assertions.assertThrows(AssertException.class, () -> {
+        LiAssertUtil.assertTrue(false, "123");
+    });
+    Assertions.assertEquals(thrown.getMessage(), "123");
 
-        Assertions.assertThrows(AssertException.class, () -> {
-            LiAssertUtil.assertFalse(true);
-        });
+    Assertions.assertThrows(AssertException.class, () -> {
+        LiAssertUtil.assertFalse(true);
+    });
 
-        thrown = Assertions.assertThrows(AssertException.class, () -> {
-            LiAssertUtil.assertFalse(true, "123");
-        });
-        Assertions.assertEquals(thrown.getMessage(), "123");
-    }
+    thrown = Assertions.assertThrows(AssertException.class, () -> {
+        LiAssertUtil.assertFalse(true, "123");
+    });
+    Assertions.assertEquals(thrown.getMessage(), "123");
+}
 }

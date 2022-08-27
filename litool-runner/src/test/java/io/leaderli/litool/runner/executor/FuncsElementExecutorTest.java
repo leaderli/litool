@@ -14,18 +14,18 @@ import java.util.HashMap;
 
 class FuncsElementExecutorTest {
 
-    @Test
-    void funcScope() {
-        SaxEventInterceptor<FuncsElement> dfs = new SaxEventInterceptor<>(FuncsElement.class);
-        FuncsElement funcsElement = dfs.parse("funcs/funcs_funcScope.xml");
+@Test
+void funcScope() {
+    SaxEventInterceptor<FuncsElement> dfs = new SaxEventInterceptor<>(FuncsElement.class);
+    FuncsElement funcsElement = dfs.parse("funcs/funcs_funcScope.xml");
 
-        Context context = new Context(new HashMap<>());
-new FuncsElementExecutor(funcsElement).visit(context);
+    Context context = new Context(new HashMap<>());
+    new FuncsElementExecutor(funcsElement).visit(context);
 
-        ImmutableMap<String, IFunc> funcContainer = context.getFuncFactory();
-        Assertions.assertSame(funcContainer.get("func_a").funcScope, FuncScope.RUNTIME);
-        Assertions.assertSame(funcContainer.get("func_b").funcScope, FuncScope.RUNTIME);
-        Assertions.assertSame(funcContainer.get("func_c").funcScope, FuncScope.CONTEXT);
-        Assertions.assertSame(funcContainer.get("func_d").funcScope, FuncScope.CONSTANT);
-    }
+    ImmutableMap<String, IFunc> funcContainer = context.getFuncFactory();
+    Assertions.assertSame(FuncScope.RUNTIME, funcContainer.get("func_a").funcScope);
+    Assertions.assertSame(FuncScope.RUNTIME, funcContainer.get("func_b").funcScope);
+    Assertions.assertSame(FuncScope.CONTEXT, funcContainer.get("func_c").funcScope);
+    Assertions.assertSame(FuncScope.CONSTANT, funcContainer.get("func_d").funcScope);
+}
 }

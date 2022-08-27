@@ -14,16 +14,16 @@ import java.io.InputStream;
  */
 class GenerateXmlIDTest {
 
-    @Test
-    void test() throws DocumentException {
+@Test
+void test() throws DocumentException {
 
-        InputStream inputStream = GenerateXmlID.generateByPath("main.xml");
+    InputStream inputStream = GenerateXmlID.generateByPath("main.xml");
 
-        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
-        MainElement main = dfs.parse(inputStream);
-        Assertions.assertEquals("2", main.getRequest().entryList.lira().first().get().getId());
+    SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
+    MainElement main = dfs.parse(inputStream);
+    Assertions.assertEquals("2", main.getRequest().entryList.lira().first().get().getId());
 
 
-    }
+}
 
 }

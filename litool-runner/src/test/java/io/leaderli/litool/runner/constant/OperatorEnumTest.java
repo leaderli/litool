@@ -9,21 +9,21 @@ import org.junit.jupiter.api.Test;
  */
 class OperatorEnumTest {
 
-    @Test
-    void test() {
+@Test
+void test() {
 
-        Assertions.assertTrue(OperatorEnum.EQUALS.apply(1, 1));
-        Assertions.assertTrue(OperatorEnum.GREATER_THAN.apply(2, 1));
-        Assertions.assertTrue(OperatorEnum.GREATER_THAN_OR_EQUALS.apply(1, 1));
-        Assertions.assertTrue(OperatorEnum.LESS_THAN.apply(1, 2));
-        Assertions.assertTrue(OperatorEnum.LESS_THAN_OR_EQUALS.apply(1, 1));
+    Assertions.assertTrue(OperatorEnum.EQUALS.apply(1, 1));
+    Assertions.assertTrue(OperatorEnum.GREATER_THAN.apply(2, 1));
+    Assertions.assertTrue(OperatorEnum.GREATER_THAN_OR_EQUALS.apply(1, 1));
+    Assertions.assertTrue(OperatorEnum.LESS_THAN.apply(1, 2));
+    Assertions.assertTrue(OperatorEnum.LESS_THAN_OR_EQUALS.apply(1, 1));
 
-        Assertions.assertFalse(OperatorEnum.EQUALS.apply(1, 2));
-        Assertions.assertFalse(OperatorEnum.GREATER_THAN.apply(1, 2));
-        Assertions.assertFalse(OperatorEnum.GREATER_THAN_OR_EQUALS.apply(1, 2));
-        Assertions.assertFalse(OperatorEnum.LESS_THAN.apply(1, 1));
-        Assertions.assertFalse(OperatorEnum.LESS_THAN_OR_EQUALS.apply(2, 1));
+    Assertions.assertFalse(OperatorEnum.EQUALS.apply(1, 2));
+    Assertions.assertFalse(OperatorEnum.GREATER_THAN.apply(1, 2));
+    Assertions.assertFalse(OperatorEnum.GREATER_THAN_OR_EQUALS.apply(1, 2));
+    Assertions.assertFalse(OperatorEnum.LESS_THAN.apply(1, 1));
+    Assertions.assertFalse(OperatorEnum.LESS_THAN_OR_EQUALS.apply(2, 1));
 
-    }
+}
 
 }

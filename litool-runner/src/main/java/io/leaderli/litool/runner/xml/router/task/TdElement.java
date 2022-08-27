@@ -10,30 +10,28 @@ import java.util.List;
 
 public class TdElement extends SaxBean {
 
-    private List<String> value;
-
-    public TdElement() {
-        super("td");
-    }
+public static final String TD_VALUE_RULE = "(?!,).+(?<!,)";
+private List<String> value;
 
 
-    public List<String> getValue() {
-        return value;
-    }
+public TdElement() {
+    super("td");
+}
 
-    public void setValue(List<String> value) {
-        this.value = value;
-    }
+public List<String> getValue() {
+    return value;
+}
 
-    @Override
-    public void body(BodyEvent bodyEvent) {
-        String value = bodyEvent.description();
-        LiAssertUtil.assertTrue(value.matches(TD_VALUE_RULE),String.format("the td value %s is not match %s",value, TD_VALUE_RULE));
-        this.value = Lira.of(StringUtils.split(value,",")).get();
-    }
+public void setValue(List<String> value) {
+    this.value = value;
+}
 
-
-
-    public static final String TD_VALUE_RULE = "(?!,).+(?<!,)";
+@Override
+public void body(BodyEvent bodyEvent) {
+    String description = bodyEvent.description();
+    LiAssertUtil.assertTrue(description.matches(TD_VALUE_RULE), String.format("the td value %s is not match %s",
+            description, TD_VALUE_RULE));
+    this.value = Lira.of(StringUtils.split(description, ",")).get();
+}
 
 }

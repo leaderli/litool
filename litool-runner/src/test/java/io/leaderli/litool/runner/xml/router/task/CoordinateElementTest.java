@@ -12,68 +12,71 @@ import java.util.HashMap;
 
 class CoordinateElementTest {
 
-    @Test
-    void success() {
-        SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
+@Test
+void success() {
+    SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
 
-        CoordinateElement coordinateElement = dfs.parse("router/task/coordinate.xml");
+    CoordinateElement coordinateElement = dfs.parse("router/task/coordinate.xml");
 
-        Context context = new Context(new HashMap<>());
-        context.setResponse("Skill","2");
-        context.setResponse("Code","2");
-        coordinateElement.executor().visit(context);
-        Object value = context.getTemp(TempNameEnum.coordinate.name());
-        Assertions.assertEquals(value, "3");
-    }
+    Context context = new Context(new HashMap<>());
+    context.setResponse("Skill", "2");
+    context.setResponse("Code", "2");
+    coordinateElement.executor().visit(context);
+    Object value = context.getTemp(TempNameEnum.coordinate.name());
+    Assertions.assertEquals("3", value);
+}
 
-    @Test
-    void def_success() {
-        SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
+@Test
+void def_success() {
+    SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
 
-        CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_def.xml");
+    CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_def.xml");
 
-        Context context = new Context(new HashMap<>());
-        context.setResponse("Skill","1");
-        context.setResponse("Code","1");
-        coordinateElement.executor().visit(context);
-        Object value = context.getTemp(TempNameEnum.coordinate.name());
-        Assertions.assertEquals(value, "1");
-    }
-    @Test
-    void error() {
-        SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
+    Context context = new Context(new HashMap<>());
+    context.setResponse("Skill", "1");
+    context.setResponse("Code", "1");
+    coordinateElement.executor().visit(context);
+    Object value = context.getTemp(TempNameEnum.coordinate.name());
+    Assertions.assertEquals("1", value);
+}
 
-        CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_error.xml");
+@Test
+void error() {
+    SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
 
-        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "coordinate td should have same size "));
-    }
+    CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_error.xml");
 
-    @Test
-    void td_error() {
-        SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
+    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "coordinate td should have same size" +
+            " "));
+}
 
-        CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_td_error.xml");
+@Test
+void td_error() {
+    SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
 
-        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "the td value ,1,2 is not match"));
-        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(2), "the td value 2, is not match"));
-    }
+    CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_td_error.xml");
 
-    @Test
-    void td_size_error() {
-        SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
+    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "the td value ,1,2 is not match"));
+    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(2), "the td value 2, is not match"));
+}
 
-        CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_td_size_error.xml");
+@Test
+void td_size_error() {
+    SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
 
-        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "coordinate td should have two or more"));
-    }
+    CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_td_size_error.xml");
 
-    @Test
-    void x_y_duplicate_error() {
-        SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
+    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "coordinate td should have two or " +
+            "more"));
+}
 
-        CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_x_y_duplicate_error.xml");
+@Test
+void x_y_duplicate_error() {
+    SaxEventInterceptor<CoordinateElement> dfs = new SaxEventInterceptor<>(CoordinateElement.class);
 
-        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "x-coordinate should not repeated"));
-        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(1), "y-coordinate should not repeated"));
-    }
+    CoordinateElement coordinateElement = dfs.parse("router/task/coordinate_x_y_duplicate_error.xml");
+
+    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "x-coordinate should not repeated"));
+    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(1), "y-coordinate should not repeated"));
+}
 }

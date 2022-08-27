@@ -4,8 +4,8 @@ import io.leaderli.litool.dom.sax.SaxList;
 
 
 public class TdList extends SaxList<TdElement> {
-    @Override
-    public Class<TdElement> componentType() {
-        return TdElement.class;
-    }
+@Override
+public Class<TdElement> componentType() {
+    return TdElement.class;
+}
 }

@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Valuable(FloatCartesian.class)
-@Target({ElementType.FIELD,ElementType.PARAMETER})
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface FloatValues {
-    float[] value();
+float[] value();
 }
 

@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 class NoneItrTest {
 
 
-    @Test
-    void same() {
-        Assertions.assertTrue(NoneItr.same(NoneItr.of()));
+@Test
+void same() {
+    Assertions.assertTrue(NoneItr.same(NoneItr.of()));
 
-    }
+}
 
 
 }

@@ -15,25 +15,25 @@ import java.util.Map;
 class AssignElementExecutorTest {
 
 
-    @Test
-    void visit() {
-        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
-        MainElement element = dfs.parse("router/task/assign.xml");
+@Test
+void visit() {
+    SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
+    MainElement element = dfs.parse("router/task/assign.xml");
 
-        Map<String, String> request = new HashMap<>();
-        Context context = new Context(request);
-        element.executor().visit(context);
+    Map<String, String> request = new HashMap<>();
+    Context context = new Context(request);
+    element.executor().visit(context);
 
-        Assertions.assertEquals("1", context.getResponse("skill"));
-    }
+    Assertions.assertEquals("1", context.getResponse("skill"));
+}
 
-    @Test
-    void name_error() {
-        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
-        MainElement element = dfs.parse("router/task/assign_error_name.xml");
+@Test
+void name_error() {
+    SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
+    MainElement element = dfs.parse("router/task/assign_error_name.xml");
 
-        List<String> list = new ArrayList<>();
-        element.end_check(list);
-        Assertions.assertTrue(StringUtils.equals(list.get(0), "response variable [abc] not exists"));
-    }
+    List<String> list = new ArrayList<>();
+    element.end_check(list);
+    Assertions.assertTrue(StringUtils.equals(list.get(0), "response variable [abc] not exists"));
+}
 }

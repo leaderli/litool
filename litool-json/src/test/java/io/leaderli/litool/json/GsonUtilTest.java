@@ -12,50 +12,50 @@ import java.lang.reflect.Type;
  */
 class GsonUtilTest {
 
-    @Test
-    void toJson() {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(EnumTest.class, new EnumTestTypeAdapter());
-        Gson gson = gsonBuilder.create();
-        Assertions.assertEquals("1", gson.toJson(EnumTest.A));
-        Assertions.assertEquals(gson.fromJson("1", EnumTest.class), EnumTest.A);
+@Test
+void toJson() {
+    GsonBuilder gsonBuilder = new GsonBuilder();
+    gsonBuilder.registerTypeAdapter(EnumTest.class, new EnumTestTypeAdapter());
+    Gson gson = gsonBuilder.create();
+    Assertions.assertEquals("1", gson.toJson(EnumTest.A));
+    Assertions.assertEquals(EnumTest.A, gson.fromJson("1", EnumTest.class));
 
-        Assertions.assertEquals("1",GsonUtil.toJson(1));
+    Assertions.assertEquals("1", GsonUtil.toJson(1));
 
+}
+
+
+enum EnumTest {
+    A(1);
+
+    final int value;
+
+    EnumTest(int value) {
+        this.value = value;
     }
 
-
-    enum EnumTest {
-        A(1);
-
-        final int value;
-
-        EnumTest(int value) {
-            this.value = value;
-        }
-
-        static EnumTest get(int i) {
-            for (EnumTest enumTest : values()) {
-                if (enumTest.value == i) {
-                    return enumTest;
-                }
+    static EnumTest get(int i) {
+        for (EnumTest enumTest : values()) {
+            if (enumTest.value == i) {
+                return enumTest;
             }
-            return A;
         }
+        return A;
+    }
+}
+
+static class EnumTestTypeAdapter implements JsonTypeAdapter<EnumTest> {
+
+    @Override
+    public EnumTest deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        return EnumTest.get(json.getAsInt());
     }
 
-    static class EnumTestTypeAdapter implements JsonTypeAdapter<EnumTest> {
+    @Override
+    public JsonElement serialize(EnumTest src, Type typeOfSrc, JsonSerializationContext context) {
 
-        @Override
-        public EnumTest deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return EnumTest.get(json.getAsInt());
-        }
-
-        @Override
-        public JsonElement serialize(EnumTest src, Type typeOfSrc, JsonSerializationContext context) {
-
-            return context.serialize(src.value);
-        }
+        return context.serialize(src.value);
     }
+}
 
 }

@@ -14,24 +14,24 @@ import java.lang.reflect.Method;
 class CartesianMethodTest {
 
 
-    Method method = ReflectUtil.getMethod(getClass(), "have").get();
+Method method = ReflectUtil.getMethod(getClass(), "have").get();
 
-    CartesianContext context = new CartesianContext();
+CartesianContext context = new CartesianContext();
 
-    @Test
-    void test() {
+@Test
+void test() {
 
 
-        CartesianMethod cartesianMethod = new CartesianMethod(method, context);
-        Lira<Object[]> parametersLira = cartesianMethod.cartesian();
+    CartesianMethod cartesianMethod = new CartesianMethod(method, context);
+    Lira<Object[]> parametersLira = cartesianMethod.cartesian();
 
-        for (Object[] parameters : parametersLira) {
-            Assertions.assertDoesNotThrow(() -> ReflectUtil.getMethodValue(method, this, parameters));
-        }
-
+    for (Object[] parameters : parametersLira) {
+        Assertions.assertDoesNotThrow(() -> ReflectUtil.getMethodValue(method, this, parameters));
     }
 
-    public int have(@IntValues({10, 20}) int length, @IntValues({3, 4}) int width, @ObjectValues Class<?> ignore) {
-        return length * width;
-    }
+}
+
+public int have(@IntValues({10, 20}) int length, @IntValues({3, 4}) int width, @ObjectValues Class<?> ignore) {
+    return length * width;
+}
 }

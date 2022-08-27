@@ -9,34 +9,35 @@ import org.junit.jupiter.api.Test;
  */
 class ModifierUtilTest {
 
-    static void m1() {
+static void m1() {
 
-    }
-    private static void m2() {
+}
 
-    }
+private static void m2() {
 
-    @Test
-    void isPublic() throws NoSuchMethodException {
+}
 
-        Assertions.assertFalse(ModifierUtil.isPublic(ModifierUtilTest.class.getDeclaredMethod("isPublic")));
-        Assertions.assertTrue(ModifierUtil.isPublic(ModifierUtilTest.class.getMethod("getClass")));
-    }
+@Test
+void isPublic() throws NoSuchMethodException {
 
-    @Test
-    void isStatic() throws NoSuchMethodException {
-        Assertions.assertFalse(ModifierUtil.isStatic(ModifierUtilTest.class.getDeclaredMethod("isPublic")));
-        Assertions.assertTrue(ModifierUtil.isStatic(ModifierUtilTest.class.getDeclaredMethod("m1")));
-    }
+    Assertions.assertFalse(ModifierUtil.isPublic(ModifierUtilTest.class.getDeclaredMethod("isPublic")));
+    Assertions.assertTrue(ModifierUtil.isPublic(ModifierUtilTest.class.getMethod("getClass")));
+}
 
-    @Test
-    void test() throws NoSuchMethodException {
+@Test
+void isStatic() throws NoSuchMethodException {
+    Assertions.assertFalse(ModifierUtil.isStatic(ModifierUtilTest.class.getDeclaredMethod("isPublic")));
+    Assertions.assertTrue(ModifierUtil.isStatic(ModifierUtilTest.class.getDeclaredMethod("m1")));
+}
+
+@Test
+void test() throws NoSuchMethodException {
 
 
-        Assertions.assertEquals(4, ModifierUtil.priority(ModifierUtilTest.class.getMethod("toString")));
-        Assertions.assertEquals(2, ModifierUtil.priority(Object.class.getDeclaredMethod("finalize")));
-        Assertions.assertEquals(0, ModifierUtil.priority(ModifierUtilTest.class.getDeclaredMethod("m2")));
-        Assertions.assertEquals(1, ModifierUtil.priority(ModifierUtilTest.class.getDeclaredMethod("test")));
+    Assertions.assertEquals(4, ModifierUtil.priority(ModifierUtilTest.class.getMethod("toString")));
+    Assertions.assertEquals(2, ModifierUtil.priority(Object.class.getDeclaredMethod("finalize")));
+    Assertions.assertEquals(0, ModifierUtil.priority(ModifierUtilTest.class.getDeclaredMethod("m2")));
+    Assertions.assertEquals(1, ModifierUtil.priority(ModifierUtilTest.class.getDeclaredMethod("test")));
 
-    }
+}
 }

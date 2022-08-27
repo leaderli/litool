@@ -6,15 +6,15 @@ package io.leaderli.litool.core.meta.link;
  */
 public interface SubscriptionLink<T> {
 
-    /**
-     * 请求数据
-     */
-    void request();
+/**
+ * 请求数据
+ */
+void request();
 
-    /**
-     * 请求数据
-     *
-     * @param t 新的实例
-     */
-    void request(T t);
+/**
+ * 请求数据
+ *
+ * @param t 新的实例
+ */
+void request(T t);
 }

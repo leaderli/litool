@@ -7,12 +7,12 @@ import io.leaderli.litool.core.type.PrimitiveEnum;
  * @since 2022/8/20
  */
 class IntCartesian implements CartesianFunction<IntValues, Integer> {
-    @Override
-    public Integer[] apply(IntValues intValues, CartesianContext context) {
-        int[] value = intValues.value();
-        if (value.length > 0) {
-            return (Integer[]) PrimitiveEnum.toWrapperArray(value);
-        }
-        return CartesianUtil.cartesian(Integer.class);
+@Override
+public Integer[] apply(IntValues intValues, CartesianContext context) {
+    int[] value = intValues.value();
+    if (value.length > 0) {
+        return (Integer[]) PrimitiveEnum.toWrapperArray(value);
     }
+    return CartesianUtil.cartesian(Integer.class);
+}
 }

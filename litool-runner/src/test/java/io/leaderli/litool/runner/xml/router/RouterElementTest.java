@@ -9,20 +9,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RouterElementTest {
 
-    @Test
-    void duplicate_name() {
-        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
-        MainElement element = dfs.parse("router/sequence_name_duplicate.xml");
+@Test
+void duplicate_name() {
+    SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
+    MainElement element = dfs.parse("router/sequence_name_duplicate.xml");
 
-        assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "duplicate name of"));
-    }
+    assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "duplicate name of"));
+}
 
-    @Test
-    void duplicate_label() {
-        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
-        MainElement element = dfs.parse("router/sequence_label_duplicate.xml");
+@Test
+void duplicate_label() {
+    SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
+    MainElement element = dfs.parse("router/sequence_label_duplicate.xml");
 
-        assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "duplicate label of"));
-    }
+    assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "duplicate label of"));
+}
 
 }

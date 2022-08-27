@@ -14,60 +14,60 @@ import java.util.function.Function;
  */
 public class CartesianObject<T> {
 
-    private final Class<T> cls;
-    private final T instance;
-    private final Function<Field, Object[]> fieldValueProvider;
+private final Class<T> cls;
+private final T instance;
+private final Function<Field, Object[]> fieldValueProvider;
 
 
-    public CartesianObject(Class<T> cls, Function<Field, Object[]> fieldValueProvider) {
-        this.cls = cls;
-        this.instance = ReflectUtil.newInstance(cls).get();
-        this.fieldValueProvider = fieldValueProvider;
+public CartesianObject(Class<T> cls, Function<Field, Object[]> fieldValueProvider) {
+    this.cls = cls;
+    this.instance = ReflectUtil.newInstance(cls).get();
+    this.fieldValueProvider = fieldValueProvider;
+}
+
+
+/**
+ * @return 所有成员变量有区分度的取值集合的笛卡尔集组成的所有实例
+ */
+
+public Lira<T> cartesian() {
+
+    if (cls == null || cls.getSuperclass() != Object.class) {
+        return Lira.none();
     }
 
 
-    /**
-     * @return 所有成员变量有区分度的取值集合的笛卡尔集组成的所有实例
-     */
-
-    public Lira<T> cartesian() {
-
-        if (cls == null || cls.getSuperclass() != Object.class) {
-            return Lira.none();
-        }
-
-
-        // 无默认构造器
-        if (instance == null) {
-            return Lira.none();
-        }
-
-        Lira<Field> fields = ReflectUtil.getFields(cls)
-                .filter(f -> !ModifierUtil.isFinal(f))
-                .filter(f -> {
-                    Object[] apply = fieldValueProvider.apply(f);
-                    return apply != null && apply.length > 0;
-                });
-
-
-        Object[][] objects = fields
-                .map(fieldValueProvider)
-                .toArray(Object[].class);
-
-        Object[][] cartesian = CollectionUtils.cartesian(objects);
-
-        return Lira.of(cartesian).map(arr -> {
-
-            T obj = ReflectUtil.newInstance(cls).get();
-
-            int i = 0;
-            for (Field field : fields) {
-
-                ReflectUtil.setFieldValue(obj, field, arr[i++]);
-            }
-            return obj;
-        });
+    // 无默认构造器
+    if (instance == null) {
+        return Lira.none();
     }
+
+    Lira<Field> fields = ReflectUtil.getFields(cls)
+            .filter(f -> !ModifierUtil.isFinal(f))
+            .filter(f -> {
+                Object[] apply = fieldValueProvider.apply(f);
+                return apply != null && apply.length > 0;
+            });
+
+
+    Object[][] objects = fields
+            .map(fieldValueProvider)
+            .toArray(Object[].class);
+
+    Object[][] cartesian = CollectionUtils.cartesian(objects);
+
+    return Lira.of(cartesian).map(arr -> {
+
+        T obj = ReflectUtil.newInstance(cls).get();
+
+        int i = 0;
+        for (Field field : fields) {
+
+            ReflectUtil.setFieldValue(obj, field, arr[i++]);
+        }
+        return obj;
+    });
+}
 
 
 }

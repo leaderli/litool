@@ -15,238 +15,244 @@ import java.util.function.Function;
  */
 public class BeanPath {
 
-    private static final short STATE_BEGIN = 0;
-    private static final short STATE_KEY = 1;
-    private static final short STATE_KEY_END = 2;
-    private static final short STATE_ARRAY = 3;
-    private static final short STATE_ARRAY_END = 4;
+private static final short STATE_BEGIN = 0;
+private static final short STATE_KEY = 1;
+private static final short STATE_KEY_END = 2;
+private static final short STATE_ARRAY = 3;
+private static final short STATE_ARRAY_END = 4;
 
-    private static final char ARR_BEGIN = '[';
-    private static final char ARR_END = ']';
-    private static final char VARIABLE_SPLIT = '.';
+private static final char ARR_BEGIN = '[';
+private static final char ARR_END = ']';
+private static final char VARIABLE_SPLIT = '.';
 
 
-    private final int start_state;
-    private final List<Function<Lino<Object>, Lino<Object>>> path = new ArrayList<>();
+private final int start_state;
+private final List<Function<Lino<Object>, Lino<Object>>> path =
+        new ArrayList<>();
 
-    public BeanPath() {
+public BeanPath() {
 
-        this.start_state = STATE_BEGIN;
+    this.start_state = STATE_BEGIN;
 
+}
+
+public BeanPath(int state) {
+
+    this.start_state = state;
+
+}
+
+public static Lino<Object> parse(Map<String, ?> obj, String expression) {
+
+    BeanPath beanPath = new BeanPath();
+    beanPath.build(expression);
+    return beanPath.parse(obj);
+}
+
+/**
+ * @param expression key 的表达式
+ */
+@SuppressWarnings("unchecked")
+private void build(String expression) {
+
+    Function<Lino<?>, Lino<?>>[] filters = new Function[0];
+    build(expression, filters);
+}
+
+/**
+ * @param map 数据源
+ * @return 根据 {@link #path} 找到的数据
+ */
+public Lino<Object> parse(Map<String, ?> map) {
+    Lino<Object> of = Lino.of(map);
+
+    for (Function<Lino<Object>, Lino<Object>> linoLinoFunction : path) {
+
+        of = linoLinoFunction.apply(of);
     }
 
-    public BeanPath(int state) {
+    return of;
+}
 
-        this.start_state = state;
+/**
+ * 合法的表达式可以如下
+ * <ul>
+ *     <li>key1</li>
+ *     <li>key1.key2</li>
+ *     <li>key1[0]</li>
+ *     <li>key1[0].key2</li>
+ *     <li>key1[0][0]</li>
+ *     <li></li>
+ * </ul>
+ * <p>
+ * 其中表达数组或容器的标记，可以附加过滤器
+ *
+ * @param expression key的表达式
+ * @param filters    针对 [index] list的过滤器，每个filter 对应一个 [index]
+ */
+@SuppressWarnings({"unchecked"})
+private void build(String expression, Function<Lino<?>, Lino<?>>... filters) {
 
-    }
-
-    public static Lino<Object> parse(Map<String, ?> obj, String expression) {
-
-        BeanPath beanPath = new BeanPath();
-        beanPath.build(expression);
-        return beanPath.parse(obj);
-    }
-
-    /**
-     * @param expression key 的表达式
-     */
-    @SuppressWarnings("unchecked")
-    private void build(String expression) {
-
-        build(expression, new Function[]{});
-    }
-
-    /**
-     * @param map 数据源
-     * @return 根据 {@link #path} 找到的数据
-     */
-    public Lino<Object> parse(Map<String, ?> map) {
-        Lino<Object> of = Lino.of(map);
-
-        for (Function<Lino<Object>, Lino<Object>> linoLinoFunction : path) {
-
-            of = linoLinoFunction.apply(of);
-        }
-
-        return of;
-    }
-
-    /**
-     * 合法的表达式可以如下
-     * <ul>
-     *     <li>key1</li>
-     *     <li>key1.key2</li>
-     *     <li>key1[0]</li>
-     *     <li>key1[0].key2</li>
-     *     <li>key1[0][0]</li>
-     *     <li></li>
-     * </ul>
-     * <p>
-     * 其中表达数组或容器的标记，可以附加过滤器
-     *
-     * @param expression key的表达式
-     * @param filters    针对 [index] list的过滤器，每个filter 对应一个 [index]
-     */
-    @SuppressWarnings({"unchecked"})
-    private void build(String expression, Function<Lino<?>, Lino<?>>... filters) {
-
-        Objects.requireNonNull(expression, " expression is null");
+    Objects.requireNonNull(expression, " expression is null");
 
 
-        int filter_index = 0;
-        int state = this.start_state;
+    int filter_index = 0;
+    int state = this.start_state;
 
-        StringBuilder temp = new StringBuilder();
-        for (char ch : expression.toCharArray()) {
+    StringBuilder temp = new StringBuilder();
+    for (char ch : expression.toCharArray()) {
 
-            switch (state) {
-                case STATE_BEGIN:
+        switch (state) {
+            case STATE_BEGIN:
 
-                    if (ch == VARIABLE_SPLIT || ch == ARR_BEGIN || ch == ARR_END) {
-                        throw new BeginIllegalStateException();
-                    }
+                if (ch == VARIABLE_SPLIT || ch == ARR_BEGIN || ch == ARR_END) {
+                    throw new BeginIllegalStateException();
+                }
+                temp.append(ch);
+                state = STATE_KEY;
+                break;
+
+            case STATE_KEY:
+
+
+                if (ch == VARIABLE_SPLIT) {
+                    this.setKeyFunction(temp);
+                    temp = new StringBuilder();
+                    state = STATE_KEY_END;
+                } else if (ch == ARR_BEGIN) {
+                    this.setKeyFunction(temp);
+                    temp = new StringBuilder();
+                    state = STATE_ARRAY;
+                } else if (ch == ARR_END) {
+                    throw new IllegalStateException("key] it's not a valid " +
+                            "expression");
+                } else {
                     temp.append(ch);
-                    state = STATE_KEY;
-                    break;
+                }
+                break;
+            case STATE_KEY_END:
+                if (ch == VARIABLE_SPLIT || ch == ARR_BEGIN || ch == ARR_END) {
+                    throw new KeyEndIllegalStateException();
+                }
+                temp.append(ch);
+                state = STATE_KEY;
+                break;
+            case STATE_ARRAY:
 
-                case STATE_KEY:
+                if (ch >= '0' && ch <= '9') {
 
-
-                    if (ch == VARIABLE_SPLIT) {
-                        this.setKeyFunction(temp);
-                        temp = new StringBuilder();
-                        state = STATE_KEY_END;
-                    } else if (ch == ARR_BEGIN) {
-                        this.setKeyFunction(temp);
-                        temp = new StringBuilder();
-                        state = STATE_ARRAY;
-                    } else if (ch == ARR_END) {
-                        throw new IllegalStateException("key] it's not a valid expression");
-                    } else {
-                        temp.append(ch);
-                    }
-                    break;
-                case STATE_KEY_END:
-                    if (ch == VARIABLE_SPLIT || ch == ARR_BEGIN || ch == ARR_END) {
-                        throw new KeyEndIllegalStateException();
-                    }
                     temp.append(ch);
+                } else if (ch == ARR_END) {
+
+                    int index = StringConvert.parser(temp.toString(), -1);
+
+                    Function<Lino<?>, Lino<?>> filter = null;
+                    if (filter_index < filters.length) {
+
+                        filter = filters[filter_index];
+                        filter_index++;
+
+
+                    }
+
+                    this.setArrFunction(index, filter);
+
+                    temp = new StringBuilder();
+                    state = STATE_ARRAY_END;
+
+                } else {
+                    throw new IllegalStateException("[index] only support " +
+                            "number");
+                }
+                break;
+
+            case STATE_ARRAY_END:
+                if (ch == VARIABLE_SPLIT) {
                     state = STATE_KEY;
-                    break;
-                case STATE_ARRAY:
+                } else if (ch == ARR_BEGIN) {
+                    state = STATE_ARRAY;
+                } else {
 
-                    if (ch >= '0' && ch <= '9') {
+                    throw new ArrayEndIllegalStateException();
 
-                        temp.append(ch);
-                    } else if (ch == ARR_END) {
-
-                        int index = StringConvert.parser(temp.toString(), -1);
-
-                        Function<Lino<?>, Lino<?>> filter = null;
-                        if (filter_index < filters.length) {
-
-                            filter = filters[filter_index];
-                            filter_index++;
-
-
-                        }
-
-                        this.setArrFunction(index, filter);
-
-                        temp = new StringBuilder();
-                        state = STATE_ARRAY_END;
-
-                    } else {
-                        throw new IllegalStateException("[index] only support number");
-                    }
-                    break;
-
-                case STATE_ARRAY_END:
-                    if (ch == VARIABLE_SPLIT) {
-                        state = STATE_KEY;
-                    } else if (ch == ARR_BEGIN) {
-                        state = STATE_ARRAY;
-                    } else {
-
-                        throw new ArrayEndIllegalStateException();
-
-                    }
-                    break;
-                default:
-                    throw new UnsupportedOperationException(String.format("state %d not support", state));
-
-            }
-
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException(String.format("state " +
+                        "%d not support", state));
 
         }
 
-        if (state == STATE_KEY && temp.length() > 0) {
 
-            setKeyFunction(temp);
-            state = STATE_BEGIN;
-        }
-
-        if (state != STATE_BEGIN && state != STATE_ARRAY_END) {
-            throw new NotCompleteIllegalStateException();
-        }
     }
 
-    private void setKeyFunction(StringBuilder key) {
-        path.add(map -> map.cast(Map.class).map(m -> m.get(key.toString())));
+    if (state == STATE_KEY && temp.length() > 0) {
+
+        setKeyFunction(temp);
+        state = STATE_BEGIN;
     }
 
-    private void setArrFunction(int index, Function<Lino<?>, Lino<?>> filter) {
-        Function<Lino<Object>, Lino<Object>> filterWrapper;
-        if (filter == null) {
-
-            filterWrapper = m -> m
-                    .isArray()
-                    .toLira(Object.class)
-                    .get(index);
-        } else {
-            filterWrapper = m -> m
-                    .isArray()
-                    .toLira(Object.class)
-                    .filter(item -> filter.apply(Lino.of(item)))
-                    .get(index);
-        }
-        path.add(filterWrapper);
+    if (state != STATE_BEGIN && state != STATE_ARRAY_END) {
+        throw new NotCompleteIllegalStateException();
     }
+}
 
-    @SafeVarargs
-    public static Lino<Object> parse(Map<String, ?> obj, String expression, Function<Lino<?>, Lino<?>>... filters) {
+private void setKeyFunction(StringBuilder key) {
+    path.add(map -> map.cast(Map.class).map(m -> m.get(key.toString())));
+}
 
-        BeanPath beanPath = new BeanPath();
-        beanPath.build(expression, filters);
-        return beanPath.parse(obj);
+private void setArrFunction(int index, Function<Lino<?>, Lino<?>> filter) {
+    Function<Lino<Object>, Lino<Object>> filterWrapper;
+    if (filter == null) {
+
+        filterWrapper = m -> m
+                .isArray()
+                .toLira(Object.class)
+                .get(index);
+    } else {
+        filterWrapper = m -> m
+                .isArray()
+                .toLira(Object.class)
+                .filter(item -> filter.apply(Lino.of(item)))
+                .get(index);
     }
+    path.add(filterWrapper);
+}
 
-    public static class BeginIllegalStateException extends IllegalStateException {
+@SafeVarargs
+public static Lino<Object> parse(Map<String, ?> obj, String expression,
+                                 Function<Lino<?>, Lino<?>>... filters) {
 
-        public BeginIllegalStateException() {
-            super("expression cannot start with  '.','[',']' ");
-        }
+    BeanPath beanPath = new BeanPath();
+    beanPath.build(expression, filters);
+    return beanPath.parse(obj);
+}
+
+public static class BeginIllegalStateException extends IllegalStateException {
+
+    public BeginIllegalStateException() {
+        super("expression cannot start with  '.','[',']' ");
     }
+}
 
-    public static class KeyEndIllegalStateException extends IllegalStateException {
+public static class KeyEndIllegalStateException extends IllegalStateException {
 
-        public KeyEndIllegalStateException() {
-            super("expression after . cannot union with  '.','[',']' ");
-        }
+    public KeyEndIllegalStateException() {
+        super("expression after . cannot union with  '.','[',']' ");
     }
+}
 
-    public static class ArrayEndIllegalStateException extends IllegalStateException {
+public static class ArrayEndIllegalStateException extends IllegalStateException {
 
-        public ArrayEndIllegalStateException() {
-            super("expression after ] only can union with  '.','[' ");
-        }
+    public ArrayEndIllegalStateException() {
+        super("expression after ] only can union with  '.','[' ");
     }
+}
 
-    public static class NotCompleteIllegalStateException extends IllegalStateException {
+public static class NotCompleteIllegalStateException extends IllegalStateException {
 
-        public NotCompleteIllegalStateException() {
-            super("expression is not complete");
-        }
+    public NotCompleteIllegalStateException() {
+        super("expression is not complete");
     }
+}
 }

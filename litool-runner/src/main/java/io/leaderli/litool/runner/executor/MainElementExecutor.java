@@ -13,21 +13,21 @@ import java.util.List;
  */
 public class MainElementExecutor extends BaseElementExecutor<MainElement> {
 
-    final ImmutableList<ContextVisitor> contextVisitors;
+final ImmutableList<ContextVisitor> contextVisitors;
 
-    public MainElementExecutor(MainElement mainElement) {
-        super(mainElement);
-        ContextVisitor request = mainElement.getRequest().executor();
-        ContextVisitor response = mainElement.getResponse().executor();
-        FuncsElementExecutor funcs = mainElement.getFuncs().executor();
-        ContextVisitor router = mainElement.getRouter().executor();
-        contextVisitors = ImmutableList.of(request, response, funcs, router);
+public MainElementExecutor(MainElement mainElement) {
+    super(mainElement);
+    ContextVisitor request = mainElement.getRequest().executor();
+    ContextVisitor response = mainElement.getResponse().executor();
+    FuncsElementExecutor funcs = mainElement.getFuncs().executor();
+    ContextVisitor router = mainElement.getRouter().executor();
+    contextVisitors = ImmutableList.of(request, response, funcs, router);
 
-    }
+}
 
 
-    @Override
-    public List<ContextVisitor> visit() {
-        return contextVisitors.toList();
-    }
+@Override
+public List<ContextVisitor> visit() {
+    return contextVisitors.toList();
+}
 }

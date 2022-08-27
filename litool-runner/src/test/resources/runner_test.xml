@@ -20,17 +20,20 @@
             <param type="str">$_testTime</param>
             <param type="str">$_env</param>
         </func>
-        <func name="2230_0700" label="2230到0700" instruct="between_time" type="boolean">
+        <func name="2230_0700" label="2230到0700" instruct="between_time"
+              type="boolean">
             <param type="str">2230</param>
             <param type="str">0700</param>
             <param type="str">time()</param>
         </func>
-        <func name="0900_1730" label="0900到1730" instruct="between_time" type="boolean">
+        <func name="0900_1730" label="0900到1730" instruct="between_time"
+              type="boolean">
             <param type="str">0900</param>
             <param type="str">1730</param>
             <param type="str">time()</param>
         </func>
-        <func name="0800_1900" label="0800到1900" instruct="between_time" type="boolean">
+        <func name="0800_1900" label="0800到1900" instruct="between_time"
+              type="boolean">
             <param type="str">0800</param>
             <param type="str">1900</param>
             <param type="str">time()</param>
@@ -47,7 +50,8 @@
             <param type="str">$switch86</param>
             <param type="str">0</param>
         </func>
-        <func name="switch86_time" label="夜间开关 2230到0700" instruct="and" type="boolean">
+        <func name="switch86_time" label="夜间开关 2230到0700" instruct="and"
+              type="boolean">
             <param type="boolean">switch86()</param>
             <param type="boolean">2230_0700()</param>
         </func>
@@ -55,7 +59,8 @@
             <param type="str">$language</param>
             <param type="str">1</param>
         </func>
-        <func name="language_time" label="英语语种 0900到1730" instruct="and" type="boolean">
+        <func name="language_time" label="英语语种 0900到1730" instruct="and"
+              type="boolean">
             <param type="boolean">language()</param>
             <param type="boolean">0900_1730()</param>
         </func>
@@ -63,31 +68,38 @@
             <param type="str">$isBankInline</param>
             <param type="str">1</param>
         </func>
-        <func name="bank_inline_night_time" label="分行内呼夜间" instruct="and" type="boolean">
+        <func name="bank_inline_night_time" label="分行内呼夜间" instruct="and"
+              type="boolean">
             <param type="boolean">bank_inline()</param>
             <param type="boolean">2230_0700()</param>
         </func>
-        <func name="bank_inline_work_time" label="分行内呼工作时间" instruct="and" type="boolean">
+        <func name="bank_inline_work_time" label="分行内呼工作时间"
+              instruct="and" type="boolean">
             <param type="boolean">bank_inline()</param>
             <param type="boolean">0800_1900()</param>
         </func>
-        <func name="unit_official" label="单位公务卡" instruct="in" type="boolean">
+        <func name="unit_official" label="单位公务卡" instruct="in"
+              type="boolean">
             <param type="str">$phoneType</param>
             <param type="str">201</param>
         </func>
-        <func name="unit_official_night_time" label="单位公务卡夜间" instruct="and" type="boolean">
+        <func name="unit_official_night_time" label="单位公务卡夜间"
+              instruct="and" type="boolean">
             <param type="boolean">unit_official()</param>
             <param type="boolean">2230_0700()</param>
         </func>
-        <func name="unit_official_work_time" label="单位公务卡工作时间" instruct="and" type="boolean">
+        <func name="unit_official_work_time" label="单位公务卡工作时间"
+              instruct="and" type="boolean">
             <param type="boolean">unit_official()</param>
             <param type="boolean">0800_1900()</param>
         </func>
-        <func name="super_platinum" label="超高端白金卡" instruct="in" type="boolean">
+        <func name="super_platinum" label="超高端白金卡" instruct="in"
+              type="boolean">
             <param type="str">$custType</param>
             <param type="str">3</param>
         </func>
-        <func name="platinum_cust" label="白金客户" instruct="in" type="boolean">
+        <func name="platinum_cust" label="白金客户" instruct="in"
+              type="boolean">
             <param type="str">$custType</param>
             <param type="str">2</param>
         </func>
@@ -96,11 +108,13 @@
             <param type="boolean">bank_inline()</param>
             <param type="boolean">unit_official()</param>
         </func>
-        <func name="platinum_no_card_lost" label="白金进线无卡挂失" instruct="in" type="boolean">
+        <func name="platinum_no_card_lost" label="白金进线无卡挂失"
+              instruct="in" type="boolean">
             <param type="str">$lostFlag</param>
             <param type="str">2</param>
         </func>
-        <func name="standard_no_card_lost" label="普线进线无卡挂失" instruct="in" type="boolean">
+        <func name="standard_no_card_lost" label="普线进线无卡挂失"
+              instruct="in" type="boolean">
             <param type="str">$lostFlag</param>
             <param type="str">1</param>
         </func>

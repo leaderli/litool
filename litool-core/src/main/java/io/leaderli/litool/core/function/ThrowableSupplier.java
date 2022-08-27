@@ -8,5 +8,5 @@ package io.leaderli.litool.core.function;
 @FunctionalInterface
 public interface ThrowableSupplier<T> {
 
-    T get() throws Throwable;
+T get() throws Throwable;
 }

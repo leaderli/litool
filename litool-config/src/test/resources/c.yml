@@ -1,8 +1,9 @@
 int: 1
 list:
-   - 1
+  - 1
   - 2
   - 3
+  - !!int a
 map:
   k1: k1
   k2: k2

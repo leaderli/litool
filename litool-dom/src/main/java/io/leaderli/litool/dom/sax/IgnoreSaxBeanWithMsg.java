@@ -10,15 +10,15 @@ import java.util.List;
 public class IgnoreSaxBeanWithMsg extends IgnoreSaxBean {
 
 
-    public final List<String> msgs = new ArrayList<>();
+public final List<String> msgs = new ArrayList<>();
 
 
-    @Override
-    public void end(EndEvent endEvent) {
+@Override
+public void end(EndEvent endEvent) {
 
-        int begin = endEvent.locator.getLineNumber();
-        int end = endEvent.locator.getLineNumber();
-        this.msgs.add(String.format("ignore <%s> between line %d - %d ", endEvent.name, begin, end));
-    }
+    int begin = endEvent.locator.getLineNumber();
+    int end = endEvent.locator.getLineNumber();
+    this.msgs.add(String.format("ignore <%s> between line %d - %d ", endEvent.name, begin, end));
+}
 
 }

@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Valuable(DoubleCartesian.class)
-@Target({ElementType.FIELD,ElementType.PARAMETER})
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface DoubleValues {
-    double[] value();
+double[] value();
 }
 

@@ -14,24 +14,22 @@ import java.net.URL;
 class ResourceUtilTest {
 
 
+@Test
+void getResource() {
 
 
-    @Test
-    void getResource() {
+    Assertions.assertEquals(ResourceUtil.getResource("/"), ResourceUtil.getResource(""));
+    Assertions.assertEquals(ResourceUtil.getResource("/"), ResourceUtil.getResource(null));
+    Assertions.assertEquals(ResourceUtil.getResource("/", ResourceUtil.class), ResourceUtil.getResource(""));
+    Assertions.assertNotEquals(ResourceUtil.getResource("", ResourceUtil.class), ResourceUtil.getResource(""));
+}
 
+@Test
+void getResourceIter() {
 
-        Assertions.assertEquals(ResourceUtil.getResource("/"), ResourceUtil.getResource(""));
-        Assertions.assertEquals(ResourceUtil.getResource("/"), ResourceUtil.getResource(null));
-        Assertions.assertEquals(ResourceUtil.getResource("/", ResourceUtil.class), ResourceUtil.getResource(""));
-        Assertions.assertNotEquals(ResourceUtil.getResource("", ResourceUtil.class), ResourceUtil.getResource(""));
-    }
+    Lira<URL> resourcesLira = ResourceUtil.getResourcesLira("io/leaderli");
 
-    @Test
-    void getResourceIter() {
-
-        Lira<URL> resourcesLira = ResourceUtil.getResourcesLira("io/leaderli");
-
-        Assertions.assertEquals(2, resourcesLira.size());
+    Assertions.assertEquals(2, resourcesLira.size());
 //        LiPrintUtil.println(LiResourceUtil.getResourceIter("").get());
 //
 //        EnumerationIter.of(LiClassLoaderUtil.getClassLoader().getResources("")).forEachRemaining(
@@ -47,5 +45,5 @@ class ResourceUtilTest {
 //        Assertions.assertEquals(1, LiResourceUtil.getResourceFile(null).size());
 
 
-    }
+}
 }

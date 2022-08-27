@@ -7,16 +7,13 @@ import org.junit.jupiter.api.Test;
 
 class IfElementTest {
 
-    @Test
-    void test() {
-        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
-        MainElement element = dfs.parse("if_error.xml");
+@Test
+void test() {
+    SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
+    MainElement element = dfs.parse("if_error.xml");
 
-        Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("cond expression [time] only support boolean"));
+    Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).startsWith("cond expression [time] only support boolean"));
 
-    }
+}
 
-    @Test
-    void visit() {
-    }
 }

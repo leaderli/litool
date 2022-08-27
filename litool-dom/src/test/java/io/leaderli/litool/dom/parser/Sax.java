@@ -9,23 +9,23 @@ import io.leaderli.litool.dom.sax.SaxBean;
  */
 public class Sax extends SaxBean {
 
-    Color color;
+Color color;
 
-    public Sax() {
-        super("");
+public Sax() {
+    super("");
+}
+
+
+public void setColor(Color color) {
+    this.color = color;
+}
+
+@Override
+public Lino<?> complexField(Class<?> parameterType, String value) {
+    if (parameterType == Color.class) {
+
+        return Lino.of(Color.valueOf(value.toUpperCase()));
     }
-
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    @Override
-    public Lino<?> complexField(Class<?> parameterType, String value) {
-        if (parameterType == Color.class) {
-
-            return Lino.of(Color.valueOf(value.toUpperCase()));
-        }
-        return super.complexField(parameterType, value);
-    }
+    return super.complexField(parameterType, value);
+}
 }

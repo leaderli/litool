@@ -5,53 +5,53 @@ import io.leaderli.litool.runner.util.ExpressionUtil;
 
 public class Expression {
 
-    private Object name;
-    private VariablesModel model;
+private Object name;
+private VariablesModel model;
 
-    public Expression() {
-    }
+public Expression() {
+}
 
-    public Expression(String expr) {
-        Expression expression = ExpressionUtil.getExpression(expr);
-        this.name = expression.getName();
-        this.model = expression.getModel();
-    }
+public Expression(String expr) {
+    Expression expression = ExpressionUtil.getExpression(expr);
+    this.name = expression.getName();
+    this.model = expression.getModel();
+}
 
-    public Expression(Object name, VariablesModel model) {
-        this.name = name;
-        this.model = model;
-    }
+public String getName() {
+    return name + "";
+}
 
-    public void setObject(Object obj) {
-        this.name = obj;
-    }
+public void setName(String name) {
+    this.name = name;
+}
 
-    public Object getObject() {
-        return name;
-    }
+public VariablesModel getModel() {
+    return model;
+}
 
-    public String getName() {
-        return name + "";
-    }
+public void setModel(VariablesModel model) {
+    this.model = model;
+}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+public Expression(Object name, VariablesModel model) {
+    this.name = name;
+    this.model = model;
+}
 
-    public VariablesModel getModel() {
-        return model;
-    }
+public Object getObject() {
+    return name;
+}
 
-    public void setModel(VariablesModel model) {
-        this.model = model;
-    }
+public void setObject(Object obj) {
+    this.name = obj;
+}
 
-    public Object apply(Context context) {
-        return model.apply(context, name);
-    }
+public Object apply(Context context) {
+    return model.apply(context, name);
+}
 
-    @Override
-    public String toString() {
-        return this.model + ":" + this.name;
-    }
+@Override
+public String toString() {
+    return this.model + ":" + this.name;
+}
 }

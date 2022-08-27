@@ -6,19 +6,19 @@ import io.leaderli.litool.runner.executor.ElementExecutor;
 
 public abstract class TaskElement<R extends SaxBean & ElementExecutor<R, T>, T extends BaseElementExecutor<R>> extends BaseElement<R, T> {
 
-    protected TaskList taskList = new TaskList();
+protected TaskList taskList = new TaskList();
 
-    public TaskElement(String tag) {
-        super(tag);
-    }
+protected TaskElement(String tag) {
+    super(tag);
+}
 
-    public TaskList getTaskList() {
-        return taskList;
-    }
+public TaskList getTaskList() {
+    return taskList;
+}
 
-    public void setTaskList(TaskList taskList) {
-        this.taskList = taskList;
-    }
+public void setTaskList(TaskList taskList) {
+    this.taskList = taskList;
+}
 
 
 }

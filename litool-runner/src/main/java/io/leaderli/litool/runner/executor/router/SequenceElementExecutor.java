@@ -13,29 +13,29 @@ import java.util.List;
 
 public class SequenceElementExecutor extends BaseElementExecutor<SequenceElement> {
 
-    private ImmutableList<ContextVisitor> unitExecutors;
+private ImmutableList<ContextVisitor> unitExecutors;
 
-    public SequenceElementExecutor(SequenceElement element) {
-        super(element);
-        init();
-    }
+public SequenceElementExecutor(SequenceElement element) {
+    super(element);
+    init();
+}
 
-    private void init() {
-        unitExecutors = ImmutableList.of(element.getUnitList().lira().map(UnitElement::executor));
-    }
+private void init() {
+    unitExecutors = ImmutableList.of(element.getUnitList().lira().map(UnitElement::executor));
+}
 
+@Override
+public boolean notify(Context context) {
+    if (context.interrupt.have(Interrupt.ERROR)) {
+        context.publishEvent(new UnitErrorEvent(element.getId(), (Throwable) context.interruptObj));
+        context.interrupt.disable(Interrupt.ERROR);
+        return true;
+    }
+    return false;
+}
 
-    @Override
-    public List<ContextVisitor> visit() {
-        return unitExecutors.toList();
-    }
-    @Override
-    public boolean notify(Context context) {
-        if (context.interrupt.have(Interrupt.ERROR)) {
-            context.publishEvent(new UnitErrorEvent(element.getId(), (Throwable) context.interruptObj));
-            context.interrupt.disable(Interrupt.ERROR);
-            return true;
-        }
-        return false;
-    }
+@Override
+public List<ContextVisitor> visit() {
+    return unitExecutors.toList();
+}
 }

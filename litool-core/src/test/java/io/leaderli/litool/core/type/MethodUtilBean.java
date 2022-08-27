@@ -6,7 +6,7 @@ package io.leaderli.litool.core.type;
  */
 public class MethodUtilBean {
 
-    public void test() {
-        
-    }
+public void test() {
+
+}
 }

@@ -26,14 +26,6 @@ private void init() {
 }
 
 @Override
-public boolean notify(Context context) {
-    if (context.interrupt.have(Interrupt.BREAK_LOOP)) {
-        context.interrupt.disable(Interrupt.BREAK_LOOP);
-    }
-    return false;
-}
-
-@Override
 public void execute(Context context) {
     Expression cond = element.getCond();
     boolean expressionValue = (Boolean) context.getExpressionValue(cond);
@@ -41,6 +33,14 @@ public void execute(Context context) {
     if (!expressionValue) {
         context.interrupt.set(Interrupt.BREAK_LOOP);
     }
+}
+
+@Override
+public boolean notify(Context context) {
+    if (context.interrupt.have(Interrupt.BREAK_LOOP)) {
+        context.interrupt.disable(Interrupt.BREAK_LOOP);
+    }
+    return false;
 }
 
 @Override

@@ -14,14 +14,14 @@ package io.leaderli.litool.core.meta.ra;
 public interface Publisher<T> {
 
 
-    /**
-     * Request {@link Publisher} to start streaming data
-     * <p>
-     * This is a "factory method" and can be call multi times, each time starting a new  {@link  Subscription}
-     * <p>
-     * Each {@link Subscription} will work for only a single {@link Subscriber}
-     *
-     * @param subscriber the  {@link Subscriber} will consume signal from this {@link Publisher}
-     */
-    void subscribe(Subscriber<? super T> subscriber);
+/**
+ * Request {@link Publisher} to start streaming data
+ * <p>
+ * This is a "factory method" and can be call multi times, each time starting a new  {@link  Subscription}
+ * <p>
+ * Each {@link Subscription} will work for only a single {@link Subscriber}
+ *
+ * @param subscriber the  {@link Subscriber} will consume signal from this {@link Publisher}
+ */
+void subscribe(Subscriber<? super T> subscriber);
 }

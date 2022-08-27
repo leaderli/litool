@@ -13,15 +13,16 @@ import java.util.Map;
  */
 public class ResponseElementExecutor extends BaseElementExecutor<ResponseElement> {
 
-    public ResponseElementExecutor(ResponseElement requestElement) {
-        super(requestElement);
-    }
+public ResponseElementExecutor(ResponseElement requestElement) {
+    super(requestElement);
+}
 
 
-    @Override
-    public void execute(Context context) {
-        Map<String, Object> response = element.entryList.lira().toMap(EntryElement::getKey, e -> TypeAlias.parser(e.getType(), null, e.getDef()));
-        context.origin_request_or_response.putAll(response);
+@Override
+public void execute(Context context) {
+    Map<String, Object> response = element.entryList.lira().toMap(EntryElement::getKey,
+            e -> TypeAlias.parser(e.getType(), null, e.getDef()));
+    context.origin_request_or_response.putAll(response);
 
-    }
+}
 }

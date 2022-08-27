@@ -13,48 +13,47 @@ import java.util.Map;
  */
 public abstract class CheckVisitor extends VisitorAdapter {
 
-    public final void check(CheckVisitor visitor) {
+private final Map<Class<?>, Method> specific_check;
 
-        visitor.setMainElement(mainElement);
-        visitor.setParseErrorMsgs(this.parseErrorMsgs);
-        visitor.init();
-        visit(visitor);
-    }
-
-    private final Map<? extends Class<?>, Method> specific_check;
-
-    protected CheckVisitor() {
-        specific_check = MethodScanner.of(getClass(), false, method -> {
-            return "check".equals(method.getName())
+protected CheckVisitor() {
+    MethodScanner scanner = MethodScanner.of(getClass(), false, method ->
+            "check".equals(method.getName())
                     && method.getReturnType() == void.class
                     && method.getParameterTypes().length == 2
                     && method.getParameterTypes()[1] == SaxBean.class
-                    && method.getParameterTypes()[0] != Object.class
-                    ;
-        }).scan().toMap(m -> m.getParameterTypes()[0], m -> m);
+                    && method.getParameterTypes()[0] != Object.class);
+    specific_check = scanner.scan().toMap(m -> m.getParameterTypes()[0],
+            m -> m);
 
-    }
+}
 
-    protected void visit(CheckVisitor visitor) {
+public final void check(CheckVisitor visitor) {
 
-    }
+    visitor.setMainElement(mainElement);
+    visitor.setParseErrorMsgs(this.parseErrorMsgs);
+    visitor.init();
+    visit(visitor);
+}
 
-
-    public final void check(Object obj, SaxBean saxBean) {
-
-        // 调用于obj类型相同的校验器进行校验
-        Method method = specific_check.get(obj.getClass());
-        ReflectUtil.getMethodValue(method, this, obj, saxBean);
-    }
-
-    /**
-     * 在设置了 {@link #mainElement} 和 {@link #parseErrorMsgs} 后的初始化动作
-     *
-     * @see ExpressionCheckVisitor
-     */
-    protected void init() {
+/**
+ * 在设置了 {@link #mainElement} 和 {@link #parseErrorMsgs} 后的初始化动作
+ *
+ * @see ExpressionCheckVisitor
+ */
+protected void init() {
 
 
-    }
+}
+
+protected void visit(CheckVisitor visitor) {
+
+}
+
+public final void check(Object obj, SaxBean saxBean) {
+
+    // 调用于obj类型相同的校验器进行校验
+    Method method = specific_check.get(obj.getClass());
+    ReflectUtil.getMethodValue(method, this, obj, saxBean);
+}
 
 }

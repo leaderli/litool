@@ -7,7 +7,7 @@ import java.util.List;
 
 public enum DateUnitEnum {
 
-    YEAR("y"){
+    YEAR("y") {
         @Override
         public LocalDate plus(LocalDate date, Integer gap) {
             return date.plusYears(gap);
@@ -56,27 +56,26 @@ public enum DateUnitEnum {
         }
     };
 
-    DateUnitEnum(String... strings) {
-        this.strings = Arrays.asList(strings);
-    }
+private static final DateTimeFormatter dft = DateTimeFormatter.ofPattern("yyyyMMdd");
+private final List<String> strings;
 
-    public final List<String> strings;
+DateUnitEnum(String... strings) {
+    this.strings = Arrays.asList(strings);
+}
 
-    private static DateTimeFormatter dft = DateTimeFormatter.ofPattern("yyyyMMdd");
-
-    public static DateUnitEnum get(String unit) {
-        for (DateUnitEnum dateUnitEnum : values()) {
-            if (dateUnitEnum.strings.contains(unit)) {
-                return dateUnitEnum;
-            }
+public static DateUnitEnum get(String unit) {
+    for (DateUnitEnum dateUnitEnum : values()) {
+        if (dateUnitEnum.strings.contains(unit)) {
+            return dateUnitEnum;
         }
-        throw new UnsupportedOperationException(String.format("TimeUnitEnum unsupported [%s]", unit));
     }
+    throw new UnsupportedOperationException(String.format("TimeUnitEnum unsupported [%s]", unit));
+}
 
-    public abstract LocalDate plus(LocalDate date, Integer gap);
+public abstract LocalDate plus(LocalDate date, Integer gap);
 
-    public abstract LocalDate minus(LocalDate date, Integer gap);
+public abstract LocalDate minus(LocalDate date, Integer gap);
 
-    public abstract Integer get(LocalDate date);
+public abstract Integer get(LocalDate date);
 
 }

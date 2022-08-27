@@ -12,26 +12,26 @@ import io.leaderli.litool.core.type.ReflectUtil;
  */
 public interface ILiEventListener<T> extends ComponentType<T> {
 
-    /**
-     * @param source 事件中包含的数据对象
-     * @see LiEventBus#push(LiEventObject)
-     */
-    void listen(T source);
+/**
+ * @param source 事件中包含的数据对象
+ * @see LiEventBus#push(LiEventObject)
+ */
+void listen(T source);
 
-    /**
-     * @return 是否在监听后卸载监听器
-     * @see LiEventBus#unRegisterListener(ILiEventListener)
-     * @see LiEventBus#push(LiEventObject)
-     */
-    default boolean removeIf() {
-        return false;
-    }
+/**
+ * @return 是否在监听后卸载监听器
+ * @see LiEventBus#unRegisterListener(ILiEventListener)
+ * @see LiEventBus#push(LiEventObject)
+ */
+default boolean removeIf() {
+    return false;
+}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    default Class<T> componentType(){
-        return (Class<T>) ReflectUtil.getGenericInterfacesType(getClass(),ILiEventListener.class).get();
-    }
+@SuppressWarnings("unchecked")
+@Override
+default Class<T> componentType() {
+    return (Class<T>) ReflectUtil.getGenericInterfacesType(getClass(), ILiEventListener.class).get();
+}
 
 
 }

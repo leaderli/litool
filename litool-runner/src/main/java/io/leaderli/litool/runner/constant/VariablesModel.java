@@ -44,30 +44,30 @@ public enum VariablesModel implements BiFunction<Context, Object, Object> {
         }
     };
 
-    public final int type;
-    public final FuncScope scope;
+public final int type;
+public final FuncScope scope;
 
-    VariablesModel(int type, FuncScope scope) {
-        this.type = type;
-        this.scope = scope;
-    }
+VariablesModel(int type, FuncScope scope) {
+    this.type = type;
+    this.scope = scope;
+}
 
-    public boolean matchAny(VariablesModel... models) {
-        for (VariablesModel model : models) {
-            if (this == model) {
-                return true;
-            }
+public static VariablesModel getVariableModel(int modelType) {
+    for (VariablesModel model : values()) {
+        if (model.type == modelType) {
+            return model;
         }
-        return false;
     }
+    return LITERAL;
+}
 
-    public static VariablesModel getVariableModel(int modelType) {
-        for (VariablesModel model : values()) {
-            if (model.type == modelType) {
-                return model;
-            }
+public boolean matchAny(VariablesModel... models) {
+    for (VariablesModel model : models) {
+        if (this == model) {
+            return true;
         }
-        return LITERAL;
     }
+    return false;
+}
 
 }

@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
  */
 class LiShortTest {
 
-    @Test
-    void or() {
+@Test
+void or() {
 
-        Assertions.assertEquals(3, LiShort.of("123").or(String::length).or(s -> 10).get());
-        Assertions.assertNull(LiShort.of((String) null).or(String::length).or(s -> 10).get());
-        Assertions.assertEquals(3, LiShort.of((String) null).or(String::length).or(s -> 10).def(3).get());
-    }
+    Assertions.assertEquals(3, LiShort.of("123").or(String::length).or(s -> 10).get());
+    Assertions.assertNull(LiShort.of((String) null).or(String::length).or(s -> 10).get());
+    Assertions.assertEquals(3, LiShort.of((String) null).or(String::length).or(s -> 10).def(3).get());
+}
 }

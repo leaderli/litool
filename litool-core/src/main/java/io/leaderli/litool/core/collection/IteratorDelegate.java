@@ -13,32 +13,32 @@ import java.util.NoSuchElementException;
 public class IteratorDelegate<T> implements IterableItr<T> {
 
 
-    private final Iterator<T> delegate;
+private final Iterator<T> delegate;
 
 
-    IteratorDelegate(Iterator<T> delegate) {
+IteratorDelegate(Iterator<T> delegate) {
 
-        this.delegate = delegate;
+    this.delegate = delegate;
+}
+
+
+@Override
+public boolean hasNext() {
+    return delegate.hasNext();
+}
+
+@Override
+public T next() {
+
+    if (hasNext()) {
+        return delegate.next();
     }
+    throw new NoSuchElementException();
+}
 
-
-    @Override
-    public boolean hasNext() {
-        return delegate.hasNext();
-    }
-
-    @Override
-    public T next() {
-
-        if (hasNext()) {
-            return delegate.next();
-        }
-        throw new NoSuchElementException();
-    }
-
-    @Override
-    public void remove() {
-        delegate.remove();
-    }
+@Override
+public void remove() {
+    delegate.remove();
+}
 
 }

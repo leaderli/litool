@@ -3,137 +3,137 @@ package io.leaderli.litool.core.event;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LiEventObjectStoreTest {
+class LiEventObjectStoreTest {
 
 
-    @Test
-    void getPublisher() {
+@Test
+void getPublisher() {
 
 
-        LiEventBus eventStore = new LiEventBus();
+    LiEventBus eventStore = new LiEventBus();
 
-        eventStore.registerListener(new TestLiEventListener());
-        eventStore.registerListener(new TestLiEventListener2());
+    eventStore.registerListener(new TestLiEventListener());
+    eventStore.registerListener(new TestLiEventListener2());
 
-        Assertions.assertThrows(AssertionError.class, () -> {
+    Assertions.assertThrows(AssertionError.class, () -> {
 
-            eventStore.push(new TestLiEventObject("456"));
-            eventStore.push(null);
-        });
+        eventStore.push(new TestLiEventObject("456"));
+        eventStore.push(null);
+    });
+
+}
+
+@Test
+void test1() {
+
+    LiEventBus liEventBus = new LiEventBus();
+
+    TempListener listener = new TempListener(true);
+    Assertions.assertEquals(0, listener.count);
+    liEventBus.registerListener(listener);
+    liEventBus.push(new TestLiEventObject("123"));
+    Assertions.assertEquals(1, listener.count);
+    liEventBus.push(new TestLiEventObject("123"));
+    Assertions.assertEquals(1, listener.count);
+}
+
+@Test
+void test2() {
+    LiEventBus liEventBus = new LiEventBus();
+
+
+    TempListener listener = new TempListener(false);
+    Assertions.assertEquals(0, listener.count);
+    liEventBus.registerListener(listener);
+    liEventBus.push(new TestLiEventObject("123"));
+    Assertions.assertEquals(1, listener.count);
+    liEventBus.push(new TestLiEventObject("123"));
+    Assertions.assertEquals(2, listener.count);
+}
+
+private static class TestLiEventObject extends LiEventObject<String> {
+
+    public TestLiEventObject(String source) {
+        super(source);
+    }
+}
+
+private static class TestLiEventListener implements ILiEventListener<TestLiEventObject> {
+
+
+    @Override
+    public void listen(TestLiEventObject source) {
+        assert source.getSource().get().equals("123");
 
     }
 
-    @Test
-    void test1() {
+    @Override
+    public Class<TestLiEventObject> componentType() {
+        return TestLiEventObject.class;
+    }
+}
 
-        LiEventBus liEventBus = new LiEventBus();
+@SuppressWarnings("all")
+private static class TestLiEventListener2 implements ILiEventListener<TestLiEventObject> {
 
-        TempListener listener = new TempListener(true);
-        Assertions.assertEquals(0, listener.count);
-        liEventBus.registerListener(listener);
-        liEventBus.push(new TestLiEventObject("123"));
-        Assertions.assertEquals(1, listener.count);
-        liEventBus.push(new TestLiEventObject("123"));
-        Assertions.assertEquals(1, listener.count);
+
+    @Override
+    public void listen(TestLiEventObject source) {
+
+        Assertions.assertEquals(source.getSource().get(), "123");
+
     }
 
-    @Test
-    void test2() {
-        LiEventBus liEventBus = new LiEventBus();
+    @Override
+    public Class<TestLiEventObject> componentType() {
+        return TestLiEventObject.class;
+    }
+}
 
+@SuppressWarnings("all")
+private static class TestListenerLi implements ILiEventListener<String> {
 
-        TempListener listener = new TempListener(false);
-        Assertions.assertEquals(0, listener.count);
-        liEventBus.registerListener(listener);
-        liEventBus.push(new TestLiEventObject("123"));
-        Assertions.assertEquals(1, listener.count);
-        liEventBus.push(new TestLiEventObject("123"));
-        Assertions.assertEquals(2, listener.count);
+    @Override
+    public void listen(String source) {
+
+        assert source.equals("123");
     }
 
-    private static class TestLiEventObject extends LiEventObject<String> {
+    @Override
+    public Class<String> componentType() {
+        return String.class;
+    }
+}
 
-        public TestLiEventObject(String source) {
-            super(source);
-        }
+static class TempListener implements ILiEventListener<TestLiEventObject> {
+
+    int count;
+
+    boolean remove;
+
+    TempListener(boolean remove) {
+        this.remove = remove;
     }
 
-    private static class TestLiEventListener implements ILiEventListener<TestLiEventObject> {
+    @Override
+    public void listen(TestLiEventObject source) {
 
+        Assertions.assertEquals("Some(123)",
+                source.getSource().toString());
+        count++;
 
-        @Override
-        public void listen(TestLiEventObject source) {
-            assert source.getSource().get().equals("123");
-
-        }
-
-        @Override
-        public Class<TestLiEventObject> componentType() {
-            return TestLiEventObject.class;
-        }
     }
 
-    @SuppressWarnings("all")
-    private static class TestLiEventListener2 implements ILiEventListener<TestLiEventObject> {
-
-
-        @Override
-        public void listen(TestLiEventObject source) {
-
-            Assertions.assertEquals(source.getSource().get(), "123");
-
-        }
-
-        @Override
-        public Class<TestLiEventObject> componentType() {
-            return TestLiEventObject.class;
-        }
+    @Override
+    public boolean removeIf() {
+        return remove;
     }
 
-    @SuppressWarnings("all")
-    private static class TestListenerLi implements ILiEventListener<String> {
-
-        @Override
-        public void listen(String source) {
-
-            assert source.equals("123");
-        }
-
-        @Override
-        public Class<String> componentType() {
-            return String.class;
-        }
+    @Override
+    public Class<TestLiEventObject> componentType() {
+        return TestLiEventObject.class;
     }
-
-    static class TempListener implements ILiEventListener<TestLiEventObject> {
-
-        int count;
-
-        boolean remove;
-
-        TempListener(boolean remove) {
-            this.remove = remove;
-        }
-
-        @Override
-        public Class<TestLiEventObject> componentType() {
-            return TestLiEventObject.class;
-        }
-
-        @Override
-        public void listen(TestLiEventObject source) {
-
-            Assertions.assertEquals("Some(123)",
-                    source.getSource().toString());
-            count++;
-
-        }
-
-        @Override
-        public boolean removeIf() {
-            return remove;
-        }
-    }
+}
 
 
 }

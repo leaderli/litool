@@ -12,17 +12,16 @@ import java.lang.reflect.Method;
  */
 class MethodScannerTest {
 
-    @Test
-    void test() {
+@Test
+void test() {
 
-        MethodScanner methodScanner = new MethodScanner(MethodScannerTest.class, true, null);
+    MethodScanner methodScanner = new MethodScanner(MethodScannerTest.class, true, null);
 
-        Lira<Method> scan = methodScanner.scan();
-        Assertions.assertEquals("test", scan.first().get().getName());
+    Lira<Method> scan = methodScanner.scan();
+    Assertions.assertEquals("test", scan.first().get().getName());
 
 
-
-    }
+}
 
 
 }

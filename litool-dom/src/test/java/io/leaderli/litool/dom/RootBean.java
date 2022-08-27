@@ -10,30 +10,27 @@ import io.leaderli.litool.dom.sax.SaxList;
 public class RootBean extends NoBodyAndAttributeSaxBean {
 
 
-    public SaxList<Bean> beans = new BeanSaxList();
+public SaxList<Bean> beans = new BeanSaxList();
 
-    private NoBean noBean;
+private NoBean noBean;
 
-    public RootBean() {
-        super("root");
-    }
-
-
+public RootBean() {
+    super("root");
+}
 
 
-    public NoBean getNoBean() {
-        return noBean;
-    }
+public NoBean getNoBean() {
+    return noBean;
+}
 
-    public void setNoBean(NoBean noBean) {
-        this.noBean = noBean;
-    }
+public void setNoBean(NoBean noBean) {
+    this.noBean = noBean;
+}
 
 
-    public void addBean(Bean bean) {
-        this.beans.add(bean);
-    }
-
+public void addBean(Bean bean) {
+    this.beans.add(bean);
+}
 
 
 }

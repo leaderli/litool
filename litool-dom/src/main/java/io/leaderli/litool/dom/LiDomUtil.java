@@ -24,118 +24,118 @@ import java.util.List;
 public class LiDomUtil {
 
 
-    @SuppressWarnings("java:S106")
-    private static final PrintStream LOGGER = System.out;
+@SuppressWarnings("java:S106")
+private static final PrintStream LOGGER = System.out;
 
-    public static DOMElement getDOMRootByPath(String path) throws DocumentException {
-        return (DOMElement) getDOMDocumentByPath(path).getRootElement();
+public static DOMElement getDOMRootByPath(String path) throws DocumentException {
+    return (DOMElement) getDOMDocumentByPath(path).getRootElement();
 
+}
+
+public static DOMDocument getDOMDocumentByPath(String path) throws DocumentException {
+    return (DOMDocument) getSAXReader().read(ResourceUtil.getResourceAsStream(path));
+
+}
+
+private static SAXReader getSAXReader() {
+    SAXReader saxReader = new SAXReader(DOMDocumentFactory.getInstance(), false);
+    try {
+        saxReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+    } catch (SAXException e) {
+        e.printStackTrace();
     }
+    return saxReader;
+}
 
-    public static DOMDocument getDOMDocumentByPath(String path) throws DocumentException {
-        return (DOMDocument) getSAXReader().read(ResourceUtil.getResourceAsStream(path));
+public static DOMElement getDOMRootByInputStream(InputStream inputStream) throws DocumentException {
+    return (DOMElement) getDOMDocumentByInputStream(inputStream).getRootElement();
 
-    }
+}
 
-    private static SAXReader getSAXReader() {
-        SAXReader saxReader = new SAXReader(DOMDocumentFactory.getInstance(), false);
-        try {
-            saxReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        }
-        return saxReader;
-    }
+public static DOMDocument getDOMDocumentByInputStream(InputStream inputStream) throws DocumentException {
+    return (DOMDocument) getSAXReader().read(inputStream);
 
-    public static DOMElement getDOMRootByInputStream(InputStream inputStream) throws DocumentException {
-        return (DOMElement) getDOMDocumentByInputStream(inputStream).getRootElement();
+}
 
-    }
+public static DOMElement getDOMRootByString(String xml) throws DocumentException {
+    return (DOMElement) getDOMDocumentByString(xml).getRootElement();
 
-    public static DOMDocument getDOMDocumentByInputStream(InputStream inputStream) throws DocumentException {
-        return (DOMDocument) getSAXReader().read(inputStream);
+}
 
-    }
+public static DOMDocument getDOMDocumentByString(String xml) throws DocumentException {
+    return (DOMDocument) getSAXReader().read(new StringReader(xml));
 
-    public static DOMElement getDOMRootByString(String xml) throws DocumentException {
-        return (DOMElement) getDOMDocumentByString(xml).getRootElement();
+}
 
-    }
+/**
+ * @param element a {@code DOMElement}
+ * @return all child node of element
+ */
+public static List<DOMElement> selectNodes(DOMElement element) {
 
-    public static DOMDocument getDOMDocumentByString(String xml) throws DocumentException {
-        return (DOMDocument) getSAXReader().read(new StringReader(xml));
+    return Lira.of(element.selectNodes("child::*")).cast(DOMElement.class).get();
 
-    }
+}
 
-    /**
-     * @param element a {@code DOMElement}
-     * @return all child node of element
-     */
-    public static List<DOMElement> selectNodes(DOMElement element) {
+/**
+ * @param element a {@code DOMElement}
+ * @param xpath   -
+ * @return the child node query by xpath from element
+ */
+public static List<DOMElement> selectNodes(DOMElement element, String xpath) {
 
-        return Lira.of(element.selectNodes("child::*")).cast(DOMElement.class).get();
+    return Lira.of(element.selectNodes(xpath)).cast(DOMElement.class).get();
+}
 
-    }
+/**
+ * @param element a {@code DOMElement}
+ * @param xpath   -
+ * @return the first child node query by xpath from element
+ */
+public static DOMElement selectSingleNode(DOMElement element, String xpath) {
 
-    /**
-     * @param element a {@code DOMElement}
-     * @param xpath   -
-     * @return the child node query by xpath from element
-     */
-    public static List<DOMElement> selectNodes(DOMElement element, String xpath) {
+    return (DOMElement) element.selectSingleNode(xpath);
+}
 
-        return Lira.of(element.selectNodes(xpath)).cast(DOMElement.class).get();
-    }
+public static Lira<DOMElement> elements(DOMElement element) {
 
-    /**
-     * @param element a {@code DOMElement}
-     * @param xpath   -
-     * @return the first child node query by xpath from element
-     */
-    public static DOMElement selectSingleNode(DOMElement element, String xpath) {
+    return Lira.of(element.elements()).cast(DOMElement.class);
+}
 
-        return (DOMElement) element.selectSingleNode(xpath);
-    }
+public static DOMElement element(DOMElement element, String name) {
+    return (DOMElement) element.element(name);
+}
 
-    public static Lira<DOMElement> elements(DOMElement element) {
-
-        return Lira.of(element.elements()).cast(DOMElement.class);
-    }
-
-    public static DOMElement element(DOMElement element, String name) {
-        return (DOMElement) element.element(name);
-    }
-
-    public static void prettyPrint(Node node) {
-        try {
-            //document
-            StringWriter writer = new StringWriter();
-            XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
-            xmlWriter.write(node);
-            xmlWriter.close();
-            LOGGER.println(writer);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * @param node the xml node
-     * @return the pretty format content of node
-     */
-    public static String pretty(Node node) {
+public static void prettyPrint(Node node) {
+    try {
+        //document
         StringWriter writer = new StringWriter();
         XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
-        try {
-            xmlWriter.write(node);
-            xmlWriter.close();
-            return writer.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
+        xmlWriter.write(node);
+        xmlWriter.close();
+        LOGGER.println(writer);
+
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+
+}
+
+/**
+ * @param node the xml node
+ * @return the pretty format content of node
+ */
+public static String pretty(Node node) {
+    StringWriter writer = new StringWriter();
+    XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
+    try {
+        xmlWriter.write(node);
+        xmlWriter.close();
+        return writer.toString();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    return "";
+}
 
 }

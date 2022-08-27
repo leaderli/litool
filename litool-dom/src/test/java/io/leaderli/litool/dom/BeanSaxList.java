@@ -9,10 +9,8 @@ import io.leaderli.litool.dom.sax.SaxList;
 class BeanSaxList extends SaxList<Bean> {
 
 
-
-
-    @Override
-    public Class<Bean> componentType() {
-        return Bean.class;
-    }
+@Override
+public Class<Bean> componentType() {
+    return Bean.class;
+}
 }

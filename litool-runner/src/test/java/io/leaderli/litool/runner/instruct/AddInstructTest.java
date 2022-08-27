@@ -9,14 +9,14 @@ import org.junit.jupiter.api.Test;
  */
 class AddInstructTest {
 
-    @Test
-    void test() {
-        AddInstruct add = new AddInstruct();
+@Test
+void test() {
+    AddInstruct add = new AddInstruct();
 
-        Assertions.assertEquals(1, (int) add.apply(Integer.class, new Object[]{2, 1}));
-        Assertions.assertEquals(0.0, (double) add.apply(Double.class, new Object[]{1.0, 1.0}));
+    Assertions.assertEquals(1, (int) add.apply(Integer.class, new Object[]{2, 1}));
+    Assertions.assertEquals(0.0, (double) add.apply(Double.class, new Object[]{1.0, 1.0}));
 
 
-    }
+}
 
 }

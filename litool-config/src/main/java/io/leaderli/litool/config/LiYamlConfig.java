@@ -8,7 +8,7 @@ import io.leaderli.litool.core.text.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -18,42 +18,42 @@ import java.util.*;
 public class LiYamlConfig {
 
 
-    /**
-     * Check all yaml file under classpath if the format is correct.
-     * it will throw {@link RuntimeException} if format is incorrect.
-     */
-    public static void checkYamlFormat() {
+/**
+ * Check all yaml file under classpath if the format is correct.
+ * it will throw {@link RuntimeException} if format is incorrect.
+ */
+public static void checkYamlFormat() {
 
 
-        Yaml yaml = new Yaml();
-        for (File file : ResourceUtil.getResourceFile(LiYamlConfig::isYamlFile)) {
-            RuntimeExceptionTransfer.run(() -> yaml.load(new FileInputStream(file)));
-        }
-
+    Yaml yaml = new Yaml();
+    for (File file : ResourceUtil.getResourceFile(LiYamlConfig::isYamlFile)) {
+        RuntimeExceptionTransfer.run(() -> yaml.load(Files.newInputStream(file.toPath())));
     }
 
-    public static boolean isYamlFile(File file) {
-        return StringUtils.endsWithAny(file.getName(), ".yml", ".yaml");
-    }
+}
 
-    /**
-     * need to call {@link #checkYamlFormat()} first
-     *
-     * @param names multi yaml file name
-     * @return merged multi yaml configuration ,  the latter have high priority
-     * @see LiMapUtil#merge(Map, Map)
-     */
-    public static Map<String, Object> loadResourcesYmlFiles(String... names) {
+public static boolean isYamlFile(File file) {
+    return StringUtils.endsWithAny(file.getName(), ".yml", ".yaml");
+}
 
-        List<String> nameList = Arrays.asList(names);
+/**
+ * need to call {@link #checkYamlFormat()} first
+ *
+ * @param names multi yaml file name
+ * @return merged multi yaml configuration ,  the latter have high priority
+ * @see LiMapUtil#merge(Map, Map)
+ */
+public static Map<String, Object> loadResourcesYmlFiles(String... names) {
 
-        LiBox<Map<String, Object>> box = LiBox.of(new HashMap<>());
-        ResourceUtil.getResourceFile(f -> nameList.contains(f.getName()))
-                .sorted(Comparator.comparingInt(f -> nameList.indexOf(f.getName())))
-                .throwable_map(f -> (Map<?, ?>) new Yaml().load(new FileInputStream(f)))
-                .forThrowableEach(f -> box.value(LiMapUtil.merge(box.value(), f)));
+    List<String> nameList = Arrays.asList(names);
 
-        return box.value();
-    }
+    LiBox<Map<String, Object>> box = LiBox.of(new HashMap<>());
+    ResourceUtil.getResourceFile(f -> nameList.contains(f.getName()))
+            .sorted(Comparator.comparingInt(f -> nameList.indexOf(f.getName())))
+            .throwable_map(f -> (Map<?, ?>) new Yaml().load(Files.newInputStream(f.toPath())))
+            .forThrowableEach(f -> box.value(LiMapUtil.merge(box.value(), f)));
+
+    return box.value();
+}
 
 }

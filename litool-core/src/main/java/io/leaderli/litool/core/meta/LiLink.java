@@ -24,192 +24,192 @@ import java.util.function.Supplier;
  */
 public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
 
-    /**
-     * @return 返回一个值为 1 的实例
-     */
-    static LiLink<Integer> of() {
+/**
+ * @return 返回一个值为 1 的实例
+ */
+static LiLink<Integer> of() {
 
-        return new ValueLink<>(1);
-    }
+    return new ValueLink<>(1);
+}
 
-    /**
-     * @param <T> 泛型
-     * @return 返回一个新的实例
-     */
-    static <T> LiLink<T> none() {
+/**
+ * @param <T> 泛型
+ * @return 返回一个新的实例
+ */
+static <T> LiLink<T> none() {
 
-        return new ValueLink<>(null);
-    }
+    return new ValueLink<>(null);
+}
 
-    /**
-     * @param value 实例
-     * @param <T>   泛型
-     * @return 返回一个新的实例
-     */
-    static <T> LiLink<T> of(T value) {
+/**
+ * @param value 实例
+ * @param <T>   泛型
+ * @return 返回一个新的实例
+ */
+static <T> LiLink<T> of(T value) {
 
-        return new ValueLink<>(value);
-    }
+    return new ValueLink<>(value);
+}
 
-    /**
-     * 新的 liLink 是否执行，取决于之前的链条执行结果。
-     * 如果后续有 request(R r)，也只会停留在 map 处，而不会请求到链条头节点
-     *
-     * @param mapper 转换函数
-     * @param <R>    转换后的泛型
-     * @return 返回一个新的LiLink
-     */
-    <R> LiLink<R> map(Function<? super T, ? extends R> mapper);
-
-
-    /**
-     * 新的 liLink 是否执行，取决于之前的链条执行结果。
-     * 如果后续有 request(R r)，也只会停留在 union 处，而不会请求到链条头节点
-     *
-     * @param value 新值
-     * @param <R>   转换后的泛型
-     * @return 返回一个新的LiLink
-     */
-    <R> LiLink<R> union(R value);
-
-    /**
-     * 新的 liLink 是否执行，取决于之前的链条执行结果。
-     * 如果后续有 request(R r)，也只会停留在 union 处，而不会请求到链条头节点
-     *
-     * @param supplier 新值
-     * @param <R>      转换后的泛型
-     * @return 返回一个新的LiLink
-     */
-    <R> LiLink<R> union(Supplier<R> supplier);
-
-    /**
-     * 当返回 false 时 ，跳过执行后续的  filter,then, 执行最近的 连续的 error 节点，并且终止执行
-     *
-     * @param filter 过滤器
-     * @return this
-     * @see BooleanUtil#parse(Object)
-     */
-    LiLink<T> then(Function<? super T, ?> filter);
-
-    /**
-     * @param supplier 过滤器
-     * @return this
-     * @see #then(Function)
-     */
-    LiLink<T> then(Supplier<?> supplier);
-
-    /**
-     * 未中断链条时执行，且继续执行下一个节点，该节点不会捕获异常，
-     *
-     * @param consumer 消费者
-     * @return this
-     */
-    LiLink<T> then(Consumer<? super T> consumer);
-
-    /**
-     * 未中断链条时执行，且继续执行下一个节点，该节点不会捕获异常，
-     *
-     * @param runnable 运行函数
-     * @return this
-     */
-    LiLink<T> then(Runnable runnable);
+/**
+ * 新的 liLink 是否执行，取决于之前的链条执行结果。
+ * 如果后续有 request(R r)，也只会停留在 map 处，而不会请求到链条头节点
+ *
+ * @param mapper 转换函数
+ * @param <R>    转换后的泛型
+ * @return 返回一个新的LiLink
+ */
+<R> LiLink<R> map(Function<? super T, ? extends R> mapper);
 
 
-    /**
-     * 当抛出异常时，中断链条执行
-     *
-     * @param filter 过滤器
-     * @return this
-     * @see #then(Function)
-     */
-    LiLink<T> throwable_then(ThrowableFunction<? super T, ?> filter);
+/**
+ * 新的 liLink 是否执行，取决于之前的链条执行结果。
+ * 如果后续有 request(R r)，也只会停留在 union 处，而不会请求到链条头节点
+ *
+ * @param value 新值
+ * @param <R>   转换后的泛型
+ * @return 返回一个新的LiLink
+ */
+<R> LiLink<R> union(R value);
 
-    /**
-     * 当抛出异常时，中断链条执行
-     *
-     * @param filter 过滤器
-     * @return this
-     * @see #then(Supplier)
-     */
-    LiLink<T> throwable_then(ThrowableSupplier<?> filter);
+/**
+ * 新的 liLink 是否执行，取决于之前的链条执行结果。
+ * 如果后续有 request(R r)，也只会停留在 union 处，而不会请求到链条头节点
+ *
+ * @param supplier 新值
+ * @param <R>      转换后的泛型
+ * @return 返回一个新的LiLink
+ */
+<R> LiLink<R> union(Supplier<R> supplier);
 
-    /**
-     * 当抛出异常时，中断链条执行
-     *
-     * @param consumer 消费者
-     * @return this
-     * @see #then(Consumer)
-     */
-    LiLink<T> throwable_then(ThrowableConsumer<? super T> consumer);
+/**
+ * 当返回 false 时 ，跳过执行后续的  filter,then, 执行最近的 连续的 error 节点，并且终止执行
+ *
+ * @param filter 过滤器
+ * @return this
+ * @see BooleanUtil#parse(Object)
+ */
+LiLink<T> then(Function<? super T, ?> filter);
 
-    /**
-     * 当抛出异常时，中断链条执行
-     *
-     * @param runner 运行函数
-     * @return this
-     * @see #then(Runnable)
-     */
-    LiLink<T> throwable_then(ThrowableRunner runner);
+/**
+ * @param supplier 过滤器
+ * @return this
+ * @see #then(Function)
+ */
+LiLink<T> then(Supplier<?> supplier);
+
+/**
+ * 未中断链条时执行，且继续执行下一个节点，该节点不会捕获异常，
+ *
+ * @param consumer 消费者
+ * @return this
+ */
+LiLink<T> then(Consumer<? super T> consumer);
+
+/**
+ * 未中断链条时执行，且继续执行下一个节点，该节点不会捕获异常，
+ *
+ * @param runnable 运行函数
+ * @return this
+ */
+LiLink<T> then(Runnable runnable);
 
 
-    /**
-     * 当链条失败时执行
-     *
-     * @param runnable 执行函数
-     * @return this
-     */
-    LiLink<T> error(Runnable runnable);
+/**
+ * 当抛出异常时，中断链条执行
+ *
+ * @param filter 过滤器
+ * @return this
+ * @see #then(Function)
+ */
+LiLink<T> throwable_then(ThrowableFunction<? super T, ?> filter);
 
-    /**
-     * 当链条失败且 value 不为 null 时执行
-     *
-     * @param consumer 消费者
-     * @return this
-     */
-    CancelConsumerLink<T> error(Consumer<? super T> consumer);
+/**
+ * 当抛出异常时，中断链条执行
+ *
+ * @param filter 过滤器
+ * @return this
+ * @see #then(Supplier)
+ */
+LiLink<T> throwable_then(ThrowableSupplier<?> filter);
 
-    /**
-     * 当链条失败时执行，无视异常
-     *
-     * @param runnable 执行函数
-     * @return this
-     * @see LiConstant#WHEN_THROW
-     */
-    LiLink<T> throwable_error(ThrowableRunner runnable);
+/**
+ * 当抛出异常时，中断链条执行
+ *
+ * @param consumer 消费者
+ * @return this
+ * @see #then(Consumer)
+ */
+LiLink<T> throwable_then(ThrowableConsumer<? super T> consumer);
 
-    /**
-     * 当链条失败且 value 不为 null 时执行，无视异常
-     *
-     * @param consumer 消费者
-     * @return this
-     * @see LiConstant#WHEN_THROW
-     */
-    CancelConsumerLink<T> throwable_error(ThrowableConsumer<? super T> consumer);
+/**
+ * 当抛出异常时，中断链条执行
+ *
+ * @param runner 运行函数
+ * @return this
+ * @see #then(Runnable)
+ */
+LiLink<T> throwable_then(ThrowableRunner runner);
 
-    /**
-     * @return 链条是否正确执行完成，没有任何 error 节点执行
-     */
-    @Override
-    boolean present();
 
-    @Override
-    String name();
+/**
+ * 当链条失败时执行
+ *
+ * @param runnable 执行函数
+ * @return this
+ */
+LiLink<T> error(Runnable runnable);
 
-    void request(T t);
+/**
+ * 当链条失败且 value 不为 null 时执行
+ *
+ * @param consumer 消费者
+ * @return this
+ */
+CancelConsumerLink<T> error(Consumer<? super T> consumer);
 
-    /**
-     * @param onFinally 最后一个消费者
-     * @see #present()
-     */
-    void onFinally(Consumer<Boolean> onFinally);
+/**
+ * 当链条失败时执行，无视异常
+ *
+ * @param runnable 执行函数
+ * @return this
+ * @see LiConstant#WHEN_THROW
+ */
+LiLink<T> throwable_error(ThrowableRunner runnable);
 
-    /**
-     * 触发执行动作
-     *
-     * @see #present()
-     */
-    @Override
-    void run();
+/**
+ * 当链条失败且 value 不为 null 时执行，无视异常
+ *
+ * @param consumer 消费者
+ * @return this
+ * @see LiConstant#WHEN_THROW
+ */
+CancelConsumerLink<T> throwable_error(ThrowableConsumer<? super T> consumer);
+
+/**
+ * @return 链条是否正确执行完成，没有任何 error 节点执行
+ */
+@Override
+boolean present();
+
+@Override
+String name();
+
+void request(T t);
+
+/**
+ * @param onFinally 最后一个消费者
+ * @see #present()
+ */
+void onFinally(Consumer<Boolean> onFinally);
+
+/**
+ * 触发执行动作
+ *
+ * @see #present()
+ */
+@Override
+void run();
 
 
 }

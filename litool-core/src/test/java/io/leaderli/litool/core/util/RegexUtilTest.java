@@ -11,20 +11,20 @@ import java.util.regex.Pattern;
  */
 class RegexUtilTest {
 
-    @Test
-    void delAll() {
-        Assertions.assertEquals("", RegexUtil.delAll(Pattern.compile("\\d"), "123"));
-        Assertions.assertEquals("123", RegexUtil.delAll(Pattern.compile("\\D"), "123"));
-        Assertions.assertNull(RegexUtil.delAll(Pattern.compile("\\d"), null));
-        Assertions.assertEquals("123", RegexUtil.delAll(null, "123"));
-    }
+@Test
+void delAll() {
+    Assertions.assertEquals("", RegexUtil.delAll(Pattern.compile("\\d"), "123"));
+    Assertions.assertEquals("123", RegexUtil.delAll(Pattern.compile("\\D"), "123"));
+    Assertions.assertNull(RegexUtil.delAll(Pattern.compile("\\d"), null));
+    Assertions.assertEquals("123", RegexUtil.delAll(null, "123"));
+}
 
-    @Test
-    void contains() {
+@Test
+void contains() {
 
-        Assertions.assertTrue(RegexUtil.contains(Pattern.compile("\\d"), "123"));
-        Assertions.assertFalse(RegexUtil.contains(Pattern.compile("\\D"), "123"));
-        Assertions.assertFalse(RegexUtil.contains(null, "123"));
-        Assertions.assertFalse(RegexUtil.contains(Pattern.compile("\\D"), null));
-    }
+    Assertions.assertTrue(RegexUtil.contains(Pattern.compile("\\d"), "123"));
+    Assertions.assertFalse(RegexUtil.contains(Pattern.compile("\\D"), "123"));
+    Assertions.assertFalse(RegexUtil.contains(null, "123"));
+    Assertions.assertFalse(RegexUtil.contains(Pattern.compile("\\D"), null));
+}
 }

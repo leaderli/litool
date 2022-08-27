@@ -10,69 +10,69 @@ import java.util.List;
  */
 public final class ArraySome<T> extends Some<T> {
 
-    private final T[] arr;
+private final T[] arr;
 
-    @SuppressWarnings("unchecked")
-    public ArraySome(Iterator<? extends T> values) {
+@SuppressWarnings("unchecked")
+public ArraySome(Iterator<? extends T> values) {
 
-        List<T> list = new ArrayList<>();
-        values.forEachRemaining(v -> {
-            if (v != null) {
-                list.add(v);
-            }
-        });
-        this.arr = (T[]) list.toArray();
+    List<T> list = new ArrayList<>();
+    values.forEachRemaining(v -> {
+        if (v != null) {
+            list.add(v);
+        }
+    });
+    this.arr = (T[]) list.toArray();
+}
+
+
+@Override
+public void subscribe(Subscriber<? super T> actualSubscriber) {
+    actualSubscriber.onSubscribe(new ArraySubscription(actualSubscriber));
+}
+
+private final class ArraySubscription implements Subscription {
+
+    private final Subscriber<? super T> actualSubscriber;
+
+
+    private boolean canceled;
+
+    public ArraySubscription(Subscriber<? super T> actualSubscriber) {
+        this.actualSubscriber = actualSubscriber;
     }
-
 
     @Override
-    public void subscribe(Subscriber<? super T> actualSubscriber) {
-        actualSubscriber.onSubscribe(new ArraySubscription(actualSubscriber));
-    }
-
-    private final class ArraySubscription implements Subscription {
-
-        private final Subscriber<? super T> actualSubscriber;
-
-
-        private boolean canceled;
-
-        public ArraySubscription(Subscriber<? super T> actualSubscriber) {
-            this.actualSubscriber = actualSubscriber;
+    public void request() {
+        if (canceled) {
+            return;
         }
 
-        @Override
-        public void request() {
+
+        for (T t : arr) {
+
+            if (t != null) {
+                try {
+
+                    actualSubscriber.next(t);
+                } catch (Throwable throwable) {
+                    actualSubscriber.onError(throwable, this);
+                }
+            }
+            // 通过 onSubscribe 将 Subscription 传递给订阅者，由订阅者来调用 cancel方法从而实现提前结束循环
             if (canceled) {
                 return;
             }
 
-
-            for (T t : arr) {
-
-                if (t != null) {
-                    try {
-
-                        actualSubscriber.next(t);
-                    } catch (Throwable throwable) {
-                        actualSubscriber.onError(throwable, this);
-                    }
-                }
-                // 通过 onSubscribe 将 Subscription 传递给订阅者，由订阅者来调用 cancel方法从而实现提前结束循环
-                if (canceled) {
-                    return;
-                }
-
-            }
-
-            actualSubscriber.onComplete();
         }
 
-        @Override
-        public void cancel() {
-            canceled = true;
-        }
+        actualSubscriber.onComplete();
     }
+
+    @Override
+    public void cancel() {
+        canceled = true;
+    }
+}
 
 
 }

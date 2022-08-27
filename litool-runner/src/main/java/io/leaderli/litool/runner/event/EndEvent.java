@@ -9,15 +9,14 @@ import io.leaderli.litool.core.event.LiEventObject;
 public final class EndEvent extends LiEventObject<Void> {
 
 
-    private EndEvent() {
-        super(null);
-    }
+private static final EndEvent INSTANCE = new EndEvent();
 
 
-    private final static EndEvent INSTANCE = new EndEvent();
+private EndEvent() {
+    super(null);
+}
 
-
-    public static EndEvent of() {
-        return INSTANCE;
-    }
+public static EndEvent of() {
+    return INSTANCE;
+}
 }
