@@ -27,7 +27,7 @@ public class SequenceElementExecutor extends BaseElementExecutor<SequenceElement
 
     @Override
     public List<ContextVisitor> visit() {
-        return unitExecutors.copy();
+        return unitExecutors.toList();
     }
     @Override
     public boolean notify(Context context) {

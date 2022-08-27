@@ -10,35 +10,35 @@ import java.util.NoSuchElementException;
  * @author leaderli
  * @since 2022/7/17
  */
-public class IteratorProxy<T> implements IterableItr<T> {
+public class IteratorDelegate<T> implements IterableItr<T> {
 
 
-    private final Iterator<T> iterator;
+    private final Iterator<T> delegate;
 
 
-    IteratorProxy(Iterator<T> iterator) {
+    IteratorDelegate(Iterator<T> delegate) {
 
-        this.iterator = iterator;
+        this.delegate = delegate;
     }
 
 
     @Override
     public boolean hasNext() {
-        return iterator.hasNext();
+        return delegate.hasNext();
     }
 
     @Override
     public T next() {
 
         if (hasNext()) {
-            return iterator.next();
+            return delegate.next();
         }
         throw new NoSuchElementException();
     }
 
     @Override
     public void remove() {
-        iterator.remove();
+        delegate.remove();
     }
 
 }

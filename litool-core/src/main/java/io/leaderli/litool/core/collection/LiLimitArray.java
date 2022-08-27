@@ -1,38 +1,44 @@
 package io.leaderli.litool.core.collection;
 
 /**
- * 一个简单的定长的 List , 其中不包括 null 或者重复元素
+ * a fixed-length  list, which excluding null or duplicate element。
+ * when add  element that match the rules, it will add to the head of {@link #elements}
+ * after all {@link #elements} move one right
  *
- * @param <T> 泛型
+ * @param <T> the type of {@link  #elements}
  */
 public class LiLimitArray<T> {
 
     public final int size;
-    private final Object[] data;
+    private final Object[] elements;
 
     public LiLimitArray(int size) {
         this.size = size;
-        data = new Object[size];
+        elements = new Object[size];
     }
 
 
     /**
      * 当元素不为 null ， 且不包含该元素时，新增一个元素，原所有元素会右移一位，最后一位元素会直接被覆盖
+     * when the element is not null and not {@link  #contains(Object)}, the
+     * element will add to {@link  #elements} header after move all elements  one right
      *
-     * @param t 新元素
+     * @param t the element
      * @see #contains(Object)
      */
     public void add(T t) {
-        if (t == null || contains(t)) {
+        if (t == null || contains(t) || size == 0) {
             return;
         }
-        System.arraycopy(data, 0, data, 1, size - 1);
-        data[0] = t;
+        System.arraycopy(elements, 0, elements, 1, size - 1);
+        elements[0] = t;
     }
 
     /**
-     * @param t 元素
-     * @return 元素是否存在
+     * Return {@code true} if {@link  #elements} contains element
+     *
+     * @param t the element
+     * @return {@code true} if {@link  #elements} contains element
      * <p>
      * 当  {@code t == null} 时 返回 false
      */
@@ -41,7 +47,7 @@ public class LiLimitArray<T> {
             return false;
         }
         for (int i = 0; i < size; i++) {
-            if (t.equals(data[i])) {
+            if (t.equals(elements[i])) {
                 return true;
             }
         }
@@ -49,10 +55,12 @@ public class LiLimitArray<T> {
     }
 
     /**
-     * 删除查找到的元素，同时将右边所有元素左移一位
+     * remove found element
+     * <p>
+     * Return {@code true} if  remove element
      *
-     * @param t 需要删除的元素
-     * @return 是否删除了元素
+     * @param t the element
+     * @return {@code true} if  remove element
      */
     public boolean remove(T t) {
         if (t == null) {
@@ -60,7 +68,7 @@ public class LiLimitArray<T> {
         }
         for (int i = 0; i < size; i++) {
 
-            if (t.equals(data[i])) {
+            if (t.equals(elements[i])) {
                 fastRemove(i);
                 return true;
             }
@@ -71,9 +79,8 @@ public class LiLimitArray<T> {
     private void fastRemove(int index) {
         int numMoved = size - index - 1;
         if (numMoved > 0)
-            System.arraycopy(data, index + 1, data, index,
-                    numMoved);
-        data[size - 1] = null;
+            System.arraycopy(elements, index + 1, elements, index, numMoved);
+        elements[size - 1] = null;
     }
 
 

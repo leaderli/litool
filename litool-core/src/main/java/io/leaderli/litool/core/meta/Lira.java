@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.IterableItr;
-import io.leaderli.litool.core.collection.IteratorProxy;
+import io.leaderli.litool.core.collection.IteratorDelegate;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
@@ -202,7 +202,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      *
      * @param <R> 迭代器的值类型
      * @return 展开后的 lira
-     * @see IteratorProxy
+     * @see IteratorDelegate
      * @see #flatMap(Function)
      */
     <R> Lira<R> flatMap();

@@ -28,6 +28,6 @@ public class MainElementExecutor extends BaseElementExecutor<MainElement> {
 
     @Override
     public List<ContextVisitor> visit() {
-        return contextVisitors.copy();
+        return contextVisitors.toList();
     }
 }

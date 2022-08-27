@@ -32,7 +32,7 @@ class IterableItrTest {
 
 
         obj = Arrays.asList(1, 1);
-        Assertions.assertSame(IteratorProxy.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(IteratorDelegate.class, IterableItr.of(obj).getClass());
 
         obj = enumeration();
         Assertions.assertSame(EnumerationItr.class, IterableItr.of(obj).getClass());
@@ -49,7 +49,7 @@ class IterableItrTest {
         obj = new HashMap<>();
         Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
         ((HashMap<String, String>) obj).put("1", "1");
-        Assertions.assertSame(IteratorProxy.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(IteratorDelegate.class, IterableItr.of(obj).getClass());
 
 
         Object temp = obj;

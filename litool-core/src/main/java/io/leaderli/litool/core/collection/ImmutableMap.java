@@ -6,58 +6,75 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * A ImmutableMap which contains a map, all method are delegated throw {@link  #delegate}
+ *
+ * @param <K> the type of key
+ * @param <V> the type of value
  * @author leaderli
  * @since 2022/7/24
  */
 public class ImmutableMap<K, V> {
 
-    private final Map<K, V> map;
+    private final Map<K, V> delegate;
 
-    private ImmutableMap(Map<K, V> map) {
-        if (map == null) {
-            map = new HashMap<>();
+    private ImmutableMap(Map<K, V> delegate) {
+        if (delegate == null) {
+            delegate = new HashMap<>();
         }
-        this.map = new HashMap<>(map);
+        this.delegate = new HashMap<>(delegate);
     }
 
+    /**
+     * Provide ImmutableMap instance which contains a copy of {@code  map}
+     *
+     * @param map a map
+     * @param <K> the type of key
+     * @param <V> the type of value
+     * @return a ImmutableMap
+     */
     public static <K, V> ImmutableMap<K, V> of(Map<K, V> map) {
         return new ImmutableMap<>(map);
     }
 
     public int size() {
-        return map.size();
+        return delegate.size();
     }
 
     public boolean isEmpty() {
-        return map.isEmpty();
+        return delegate.isEmpty();
     }
 
     public boolean containsKey(K key) {
-        return map.containsKey(key);
+        return delegate.containsKey(key);
     }
 
     public boolean containsValue(V value) {
-        return map.containsValue(value);
+        return delegate.containsValue(value);
     }
 
     public V get(K key) {
-        return map.get(key);
+        return delegate.get(key);
     }
 
     public Set<K> keySet() {
-        return map.keySet();
+        return delegate.keySet();
     }
 
     public Collection<V> values() {
-        return map.values();
+        return delegate.values();
     }
 
     public V getOrDefault(K key, V defaultValue) {
-        return map.getOrDefault(key, defaultValue);
+        return delegate.getOrDefault(key, defaultValue);
     }
 
-    public Map<K, V> copy() {
+    /**
+     * Return a clone of {@link  #delegate}
+     *
+     * @return a clone of {@link  #delegate}
+     */
+    public Map<K, V> toMap() {
 
-        return new HashMap<>(this.map);
+        return new HashMap<>(this.delegate);
     }
 }

@@ -68,14 +68,26 @@ public class ImmutableList<T> implements Iterable<T> {
 
     }
 
+    /**
+     * @return the size of  {@link  #elements}
+     */
     public int size() {
         return size;
     }
 
+    /**
+     * @return the size of {@link  #elements} is {@code  0}
+     */
     public boolean isEmpty() {
-        return size > 0;
+        return size == 0;
     }
 
+    /**
+     * Return {@code  true} if the element in elements
+     *
+     * @param element the test element
+     * @return the element in elements
+     */
     public boolean contains(T element) {
         for (T t : elements) {
             if (Objects.equals(element, t)) {
@@ -85,7 +97,19 @@ public class ImmutableList<T> implements Iterable<T> {
         return false;
     }
 
+    /**
+     * Return the element at specified index of elements.
+     *
+     * @param index the index of elements, Negative numbers are supported, indicating
+     *              the position calculated from the back
+     * @return the element at specified index of elements
+     * @throws IndexOutOfBoundsException if index is out of bounds
+     */
     public T get(int index) {
+
+        if (index < 0) {
+            index = size + index;
+        }
         return elements[index];
     }
 
@@ -95,12 +119,25 @@ public class ImmutableList<T> implements Iterable<T> {
         return Arrays.toString(elements);
     }
 
+
+    /**
+     * Return the  {@link ArrayItr} if not {@link  #isEmpty()}
+     * otherwise return {@link  NoneItr}
+     *
+     * @return a  iterator
+     */
     @Override
     public Iterator<T> iterator() {
         return IterableItr.ofs(elements);
     }
 
-    public List<T> copy() {
+    /**
+     * Return a new {@link  java.util.ArrayList} which consist the elements provide
+     * by {@link  #elements}
+     *
+     * @return convert to {@link  java.util.ArrayList}
+     */
+    public List<T> toList() {
         return CollectionUtils.of(elements);
     }
 }

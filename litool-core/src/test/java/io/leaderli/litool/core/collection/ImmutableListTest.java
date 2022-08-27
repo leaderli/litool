@@ -3,7 +3,6 @@ package io.leaderli.litool.core.collection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -20,26 +19,51 @@ class ImmutableListTest {
         Assertions.assertSame(ImmutableList.none(), ImmutableList.of(Collections.emptyList()));
     }
 
+
     @Test
-    void test() {
-
-        ImmutableList<Integer> list = ImmutableList.of(Arrays.asList(1, 2));
-
-        Assertions.assertEquals(1, list.get(0));
-        Assertions.assertEquals(2, list.get(1));
-        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> list.get(2));
-
-        Assertions.assertTrue(list.contains(1));
-        Assertions.assertTrue(list.contains(2));
-        Assertions.assertFalse(list.contains(3));
-
-
-        ImmutableList<Integer> of = ImmutableList.of(1, 2, 3);
-        of.iterator().next();
-        Assertions.assertEquals(3, of.get(2));
-        for (Integer integer : of) {
-            Assertions.assertTrue(integer < 4);
-        }
+    void size() {
+        Assertions.assertSame(0, ImmutableList.none().size());
+        Assertions.assertSame(2, ImmutableList.of(1, 2).size());
     }
 
+    @Test
+    void isEmpty() {
+
+        Assertions.assertSame(true, ImmutableList.none().isEmpty());
+        Assertions.assertSame(false, ImmutableList.of(1, 2).isEmpty());
+    }
+
+    @Test
+    void contains() {
+
+        Assertions.assertTrue(ImmutableList.of(1, 2).contains(1));
+        Assertions.assertTrue(ImmutableList.of(null, 2).contains(null));
+        Assertions.assertFalse(ImmutableList.of(1, 2).contains(3));
+        Assertions.assertFalse(ImmutableList.of(1, 2).contains(null));
+    }
+
+    @Test
+    void get() {
+        Assertions.assertSame(1, ImmutableList.of(1, 2).get(0));
+        Assertions.assertSame(1, ImmutableList.of(1, 2).get(-2));
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> ImmutableList.of(1, 2).get(2));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> ImmutableList.of(1, 2).get(-3));
+    }
+
+
+    @Test
+    void iterator() {
+        Assertions.assertSame(NoneItr.of(), ImmutableList.none().iterator());
+        Assertions.assertSame(ArrayItr.class, ImmutableList.of(1).iterator().getClass());
+    }
+
+    @Test
+    void toList() {
+
+
+        Assertions.assertTrue(ImmutableList.none().toList().isEmpty());
+        Assertions.assertEquals("[1, 2]", ImmutableList.of(1, 2).toList().toString());
+
+    }
 }

@@ -869,7 +869,7 @@ public class ArrayUtils {
     /**
      * Return a non-negative end index. If index exceeds bounds, use bounds value
      *
-     * @param beginIndex the end index may be negative
+     * @param beginIndex the begin index may be negative
      * @param arr_length the length of arr
      * @return a non-negative begin index
      */
@@ -949,7 +949,6 @@ public class ArrayUtils {
      * @param origin     an array
      * @param beginIndex the beginning index, Negative numbers are supported, indicating
      *                   the position calculated from the back
-     *                   Negative numbers are supported, indicating the position calculated from the back
      * @param <T>        the type of elements
      * @return new inserted array
      */

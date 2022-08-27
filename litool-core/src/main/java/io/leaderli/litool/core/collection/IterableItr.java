@@ -113,7 +113,7 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
     }
 
     /**
-     * Returns an {@link  IteratorProxy} over elements of type {@code T}.
+     * Returns an {@link  IteratorDelegate} over elements of type {@code T}.
      * null or empty iterator will always return {@link  NoneItr#of()}
      *
      * @param iterator an iterator
@@ -125,11 +125,11 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
         if (iterator == null || !iterator.hasNext()) {
             return NoneItr.of();
         }
-        return new IteratorProxy<>(iterator);
+        return new IteratorDelegate<>(iterator);
     }
 
     /**
-     * Returns an {@link  IteratorProxy} over elements of type {@code T}.
+     * Returns an {@link  IteratorDelegate} over elements of type {@code T}.
      * null or empty iterable will always return {@link  NoneItr#of()}
      *
      * @param iterable an iterable
@@ -145,7 +145,7 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
     }
 
     /**
-     * Returns an {@link  IteratorProxy} over map of type {@code K,V}.
+     * Returns an {@link  IteratorDelegate} over map of type {@code K,V}.
      * null or empty map will always return {@link  NoneItr#of()}
      *
      * @param map an  map
