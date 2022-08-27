@@ -55,7 +55,7 @@ class IterableItrTest {
         Object temp = obj;
         Assertions.assertThrows(ClassCastException.class, () -> {
             IterableItr<String> cast = IterableItr.of(temp);
-            cast.nextElement();
+            String s = cast.nextElement();
         });
 
 
