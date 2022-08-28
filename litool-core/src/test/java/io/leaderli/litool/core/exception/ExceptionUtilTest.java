@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.exception;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -19,9 +20,18 @@ void getCause() throws NoSuchMethodException {
     } catch (Throwable throwable) {
 
         Throwable cause = ExceptionUtil.getCause(throwable);
-        assert cause instanceof ArithmeticException;
+        Assertions.assertEquals("test", cause.getStackTrace()[0].getMethodName());
+        Assertions.assertInstanceOf(ArithmeticException.class, cause);
     }
 
+    try {
+        test2();
+    } catch (Throwable throwable) {
+
+        Throwable cause = ExceptionUtil.getCause(throwable, getClass());
+        Assertions.assertEquals("test2", cause.getStackTrace()[0].getMethodName());
+        Assertions.assertInstanceOf(RuntimeException.class, cause);
+    }
 
     Method me = ExceptionUtilTest.class.getDeclaredMethod("test");
     Runnable runnable = () -> {
@@ -37,7 +47,8 @@ void getCause() throws NoSuchMethodException {
     } catch (Throwable throwable) {
 
         Throwable cause = ExceptionUtil.getCause(throwable);
-        assert cause instanceof ArithmeticException;
+        Assertions.assertEquals("test", cause.getStackTrace()[0].getMethodName());
+        Assertions.assertInstanceOf(ArithmeticException.class, cause);
     }
 
 }
@@ -49,6 +60,16 @@ void test() {
     int a = 1 / 0;
 
 
+}
+
+void test2() {
+
+    try {
+
+        test();
+    } catch (Throwable throwable) {
+        throw new RuntimeException(throwable);
+    }
 }
 
 }
