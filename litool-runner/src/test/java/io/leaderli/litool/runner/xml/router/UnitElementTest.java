@@ -85,9 +85,9 @@ void unit_long() {
 private static class UnitErrorEventILiEventListener implements ILiEventListener<UnitErrorEvent> {
 
     @Override
-    public void listen(UnitErrorEvent source) {
+    public void listen(UnitErrorEvent event) {
 
-        LiTuple2<String, Throwable> tuple = source.getSource().get();
+        LiTuple2<String, Throwable> tuple = event.getSource().get();
 //                tuple._2.printStackTrace();
 //                System.out.println(tuple);
     }
@@ -101,7 +101,7 @@ private static class BeginEventILiEventListener implements ILiEventListener<Begi
     }
 
     @Override
-    public void listen(BeginEvent source) {
+    public void listen(BeginEvent event) {
 
         info.setElapse(System.currentTimeMillis());
     }
@@ -115,7 +115,7 @@ private static class EndEventILiEventListener implements ILiEventListener<EndEve
     }
 
     @Override
-    public void listen(EndEvent source) {
+    public void listen(EndEvent event) {
         info.setElapse(System.currentTimeMillis() - info.getElapse());
     }
 }

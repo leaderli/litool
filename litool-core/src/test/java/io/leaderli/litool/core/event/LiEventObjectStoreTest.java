@@ -62,8 +62,8 @@ private static class TestLiEventListener implements ILiEventListener<TestLiEvent
 
 
     @Override
-    public void listen(TestLiEventObject source) {
-        assert source.getSource().get().equals("123");
+    public void listen(TestLiEventObject event) {
+        assert event.getSource().get().equals("123");
 
     }
 
@@ -78,9 +78,9 @@ private static class TestLiEventListener2 implements ILiEventListener<TestLiEven
 
 
     @Override
-    public void listen(TestLiEventObject source) {
+    public void listen(TestLiEventObject event) {
 
-        Assertions.assertEquals(source.getSource().get(), "123");
+        Assertions.assertEquals(event.getSource().get(), "123");
 
     }
 
@@ -94,9 +94,9 @@ private static class TestLiEventListener2 implements ILiEventListener<TestLiEven
 private static class TestListenerLi implements ILiEventListener<String> {
 
     @Override
-    public void listen(String source) {
+    public void listen(String event) {
 
-        assert source.equals("123");
+        assert event.equals("123");
     }
 
     @Override
@@ -116,17 +116,19 @@ static class TempListener implements ILiEventListener<TestLiEventObject> {
     }
 
     @Override
-    public void listen(TestLiEventObject source) {
+    public void listen(TestLiEventObject event) {
 
         Assertions.assertEquals("Some(123)",
-                source.getSource().toString());
+                event.getSource().toString());
         count++;
 
     }
 
     @Override
-    public boolean removeIf() {
-        return remove;
+    public void after(LiEventBusBehavior<TestLiEventObject> eventBusBehavior) {
+        if (remove) {
+            eventBusBehavior.unRegisterListener(this);
+        }
     }
 
     @Override

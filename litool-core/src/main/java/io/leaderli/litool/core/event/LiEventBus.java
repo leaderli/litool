@@ -3,46 +3,53 @@ package io.leaderli.litool.core.event;
 import java.util.List;
 
 /**
- * 用来注册 与卸载 {@link ILiEventListener}
+ * Dispatches events to listeners, and provides ways for listeners to register and unregister themselves
  * <p>
- * 当推送事件时 {@link #push(LiEventObject)} , 所有注册的监听器都会收到该事件 {@link ILiEventListener#listen(Object)}
+ * The LiEventBus allows publish-listen-style communication between components without requiring the
+ * components to explicitly register with one another
+ * <p>
+ * when an event is pushed , all registered listeners listen for this particular event will receive the event
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class LiEventBus {
+public class LiEventBus implements LiEventBusBehavior {
 
 private final LiEventMap liEventMap = new LiEventMap();
 
 
+/**
+ * @param listener a listener
+ */
 public void registerListener(ILiEventListener listener) {
-    //noinspection unchecked
     liEventMap.put(listener.componentType(), listener);
 }
 
+@Override
 public void unRegisterListener(ILiEventListener listener) {
     liEventMap.remove(listener);
 }
 
 /**
- * 推送事件，触发 {@link ILiEventListener#listen(Object)} ,
- * 当 {@link ILiEventListener#removeIf()} 为 true 时， 移除监听器
- *
- * @param liEvent 推送的事件
- * @param <T>     推送事件的泛型
+ * @param event the pushed event
+ * @param <T>   the type of pushed event
+ * @see ILiEventListener
+ * @see ILiEventListener#before(Object)
  * @see ILiEventListener#listen(Object)
- * @see ILiEventListener#removeIf()
+ * @see ILiEventListener#after(LiEventBusBehavior)
  */
-public <T extends LiEventObject> void push(T liEvent) {
-    if (liEvent == null) {
+public <T> void push(T event) {
+    if (event == null) {
         return;
     }
-    Class<T> cls = (Class<T>) liEvent.getClass();
+    Class<T> cls = (Class<T>) event.getClass();
     List<ILiEventListener<T>> listeners = liEventMap.get(cls);
-    listeners.forEach(listener -> {
-        listener.listen(liEvent);
-        if (listener.removeIf()) {
-            liEventMap.remove(listener);
+    for (ILiEventListener<T> listener : listeners) {
+        if (listener.before(event)) {
+            listener.listen(event);
+            listener.after(this);
         }
-    });
+
+    }
 }
+
 
 }

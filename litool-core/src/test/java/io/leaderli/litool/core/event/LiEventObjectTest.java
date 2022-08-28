@@ -8,7 +8,7 @@ class LiEventObjectTest {
 
 
 @Test
-void test() {
+void getSource() {
 
     Assertions.assertTrue(new LiEventObject<>(null).getSource().absent());
 

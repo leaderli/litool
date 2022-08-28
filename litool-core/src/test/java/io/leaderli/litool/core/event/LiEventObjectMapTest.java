@@ -55,7 +55,7 @@ private static class TempEventObject extends LiEventObject<String> {
 private static class Temp implements ILiEventListener<TempEventObject> {
 
     @Override
-    public void listen(TempEventObject source) {
+    public void listen(TempEventObject event) {
 
     }
 

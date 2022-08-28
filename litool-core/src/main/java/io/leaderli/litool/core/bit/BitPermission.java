@@ -1,7 +1,9 @@
 package io.leaderli.litool.core.bit;
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
+
 /**
- * Use binary to express permissions, use bitwise operations to modify permissions
+ * Use non-negative binary to express permissions, use bitwise operations to modify permissions
  *
  * @author leaderli
  * @since 2022/8/16
@@ -19,7 +21,8 @@ public class BitPermission<T> {
 private final Class<T> permission_constant_class;
 
 /**
- * A int to hold the permission token, save permission with binary position. 1 means permission, 0 means no permission
+ * A non-negative int to hold the permission token, save permission with binary position. 1 means permission, 0 means
+ * no permission
  */
 private int permissions;
 
@@ -34,7 +37,12 @@ public BitPermission(Class<T> permission_constant_class) {
  * @param permissions {@link #permissions}
  */
 public void set(int permissions) {
+    non_negative(permissions);
     this.permissions = permissions;
+}
+
+private void non_negative(int permissions) {
+    LiAssertUtil.assertTrue(permissions > -1);
 }
 
 /**
@@ -43,6 +51,7 @@ public void set(int permissions) {
  * @param permissions {@link #permissions}
  */
 public void enable(int permissions) {
+    non_negative(permissions);
     this.permissions |= permissions;
 }
 
@@ -52,6 +61,7 @@ public void enable(int permissions) {
  * @param permissions {@link #permissions}
  */
 public void disable(int permissions) {
+    non_negative(permissions);
     this.permissions &= ~permissions;
 }
 
@@ -62,6 +72,9 @@ public void disable(int permissions) {
  * @return have the permissions
  */
 public boolean have(int permissions) {
+    if (permissions < 0) {
+        return false;
+    }
     return (this.permissions & permissions) == permissions;
 }
 
@@ -72,6 +85,9 @@ public boolean have(int permissions) {
  * @return don't have the permissions
  */
 public boolean miss(int permissions) {
+    if (permissions < 0) {
+        return true;
+    }
     return (this.permissions & permissions) == 0;
 }
 
@@ -96,10 +112,10 @@ public boolean none() {
 }
 
 /**
- * @return {@code permissions != 0 }
+ * @return {@code permissions > 0 }
  */
 public boolean any() {
-    return permissions != 0;
+    return permissions > 0;
 }
 
 @Override

@@ -4,7 +4,8 @@ package io.leaderli.litool.core.event;
 import io.leaderli.litool.core.meta.Lino;
 
 /**
- * 所有的 event 发生时都伴随着一个事件对象
+ * A event with source , used to trigger specific
+ * behavior on the particular type
  */
 public class LiEventObject<T> {
 
@@ -15,11 +16,18 @@ public LiEventObject(T source) {
     this.source = source;
 }
 
+/**
+ * used to avoid null pointer because some source may be null
+ * suggest use {@link  ILiEventObjectListener} to listen
+ *
+ * @return a lino wrapper
+ */
 public final Lino<T> getSource() {
     return Lino.of(source);
 }
 
 
+@Override
 public final String toString() {
 
     return getClass().getName() + "[source=" + source + "]";

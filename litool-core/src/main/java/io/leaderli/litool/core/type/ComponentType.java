@@ -1,15 +1,19 @@
 package io.leaderli.litool.core.type;
 
 /**
- * 显式的实现该接口，用于表明你将要用到的泛型
+ * Explicitly implement this interface indicate the generics you will use
  *
- * @param <T> 泛型
+ * @param <T> the type of indicate
  */
 public interface ComponentType<T> {
 
 /**
- * @return 返回你将要使用的泛型
+ * @return the class of you indicate oine
  */
-Class<T> componentType();
+@SuppressWarnings("unchecked")
+default Class<T> componentType() {
+    return (Class<T>) ReflectUtil.getGenericInterfacesType(getClass(), ComponentType.class).get();
+}
+
 
 }

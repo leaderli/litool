@@ -28,8 +28,8 @@ void success() {
     LiBox<LiTuple2<Integer, String>> echos = LiBox.none();
     context.registerListener(new ILiEventListener<EchoEvent>() {
         @Override
-        public void listen(EchoEvent source) {
-            echos.value(source.getSource().get());
+        public void listen(EchoEvent event) {
+            echos.value(event.getSource().get());
         }
 
         @Override
