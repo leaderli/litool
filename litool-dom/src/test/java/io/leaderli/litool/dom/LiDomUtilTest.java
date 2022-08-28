@@ -12,6 +12,7 @@ class LiDomUtilTest {
 
 @Test
 void test() throws DocumentException {
+
     DOMElement dom = LiDomUtil.getDOMRootByPath("/test1.xml");
 
     assertEquals(dom.asXML(), "<test>\n" +
