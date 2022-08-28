@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.text;
 
 
-import io.leaderli.litool.core.io.FileUtil;
+import io.leaderli.litool.core.io.FileNameUtil;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -176,6 +176,6 @@ public static String systemCharsetName() {
  * @since 3.1.2
  */
 public static Charset systemCharset() {
-    return FileUtil.isWindows() ? CHARSET_GBK : defaultCharset();
+    return FileNameUtil.isWindows() ? CHARSET_GBK : defaultCharset();
 }
 }

@@ -23,8 +23,6 @@ package io.leaderli.litool.core.meta;
    G E N E R A T O R   C R A F T E D
 \*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*/
 
-import io.leaderli.litool.core.lang.TupleMap;
-
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Comparator;
@@ -238,9 +236,6 @@ public <U> U apply(BiFunction<? super T1, ? super T2, ? extends U> f) {
 }
 
 
-public TupleMap<T1, T2> toLiTupleMap() {
-    return TupleMap.of(this._1, this._2);
-}
 // -- Object
 
 @Override

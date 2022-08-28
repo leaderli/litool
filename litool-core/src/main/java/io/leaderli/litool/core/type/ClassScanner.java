@@ -3,7 +3,7 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
-import io.leaderli.litool.core.io.FileUtil;
+import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.net.URLUtil;
 import io.leaderli.litool.core.resource.ResourceUtil;
@@ -202,7 +202,7 @@ private void scanJavaClassPaths() {
 private void scanFile(File file, String rootDir) {
     if (file.isFile()) {
         final String fileName = file.getAbsolutePath();
-        if (fileName.endsWith(FileUtil.CLASS_EXT)) {
+        if (fileName.endsWith(FileNameUtil.EXT_CLASS)) {
 
             final String className = fileName//
                     // 8为classes长度，fileName.length() - 6为".class"的长度
@@ -210,7 +210,7 @@ private void scanFile(File file, String rootDir) {
                     .replace(File.separatorChar, CharPool.DOT);//
             //加入满足条件的类
             addIfAccept(className);
-        } else if (fileName.endsWith(FileUtil.JAR_FILE_EXT)) {
+        } else if (fileName.endsWith(FileNameUtil.EXT_JAR)) {
 
             RuntimeExceptionTransfer.run(() -> scanJar(new JarFile(file)));
         }
@@ -306,7 +306,7 @@ private void scanJar(JarFile jar) {
     Iterable<JarEntry> jarEntryEnumerationItr = IterableItr.of(jar.entries());
     for (JarEntry entry : jarEntryEnumerationItr) {
         name = StringUtils.removeStart(entry.getName(), StrPool.SLASH);
-        if ((StringUtils.isEmpty(packagePath) || name.startsWith(this.packagePath)) && name.endsWith(FileUtil.CLASS_EXT) && !entry.isDirectory()) {
+        if ((StringUtils.isEmpty(packagePath) || name.startsWith(this.packagePath)) && name.endsWith(FileNameUtil.EXT_CLASS) && !entry.isDirectory()) {
             final String className = name.substring(0, name.length() - 6).replace(CharPool.SLASH, CharPool.DOT);
             addIfAccept(loadClass(className));
         }

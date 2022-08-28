@@ -3,10 +3,11 @@ package io.leaderli.litool.core.lang;
 import io.leaderli.litool.core.meta.Lino;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,12 +17,25 @@ import java.util.Map;
 class BeanPathTest {
 
 
+@ParameterizedTest
+@ValueSource(strings = {"", " ", ".", "key1.", "key1..a", "[", "]", "[]", "a[", "a]", "a[]", "a[a]"})
+void valid_build(String expression) {
+    Assertions.assertThrows(IllegalStateException.class, () -> BeanPath.parse(null, expression));
+
+}
+
+@ParameterizedTest
+@ValueSource(strings = {"key", "key1.key2", "key1[0]", "key1[0].key2", "key1[0][0]", "[0]", "[0][0]", "[0].key"})
+void illegal_build(String expression) {
+    Assertions.assertDoesNotThrow(() -> BeanPath.parse(null, expression));
+}
+
 @Test
-void test() {
+void build() {
 
 
     Assertions.assertThrows(BeanPath.BeginIllegalStateException.class, () -> BeanPath.parse(null, "."));
-    Assertions.assertThrows(BeanPath.BeginIllegalStateException.class, () -> BeanPath.parse(null, "["));
+    Assertions.assertThrows(BeanPath.NotCompleteIllegalStateException.class, () -> BeanPath.parse(null, "["));
     Assertions.assertThrows(BeanPath.BeginIllegalStateException.class, () -> BeanPath.parse(null, "]"));
 
     Assertions.assertThrows(BeanPath.KeyEndIllegalStateException.class, () -> BeanPath.parse(null, "abc.."));
@@ -44,13 +58,14 @@ void test() {
 
 }
 
+
 @Test
-void test2() {
+void parse() {
 
     Map<String, Object> origin = new HashMap<>();
     origin.put("123", "123");
     origin.put("list", Arrays.asList(1, 2, 3));
-    origin.put("list2", Arrays.asList(Arrays.asList(1, 2), Arrays.asList(11, 12, 13)));
+    origin.put("list2", Arrays.asList(Arrays.asList(1, 2), Arrays.asList(11, 12, 13, 14.0, 15.0)));
     origin.put("map", new HashMap<>(origin));
     origin.put("list3", Arrays.asList(new HashMap<>(origin), new HashMap<>(origin)));
     origin.put("list4", new int[]{1, 2, 3});
@@ -59,28 +74,21 @@ void test2() {
     Assertions.assertEquals(3, BeanPath.parse(origin, "list[2]").get());
     Assertions.assertEquals(Lino.none(), BeanPath.parse(origin, "list[3]"));
     Assertions.assertEquals(12, BeanPath.parse(origin, "list2[1][1]").get());
-    Assertions.assertEquals(Lino.none(), BeanPath.parse(origin, "list2[1][3]"));
-    Assertions.assertEquals(Lino.none(), BeanPath.parse(origin, "list2[3][3]"));
+    Assertions.assertEquals(Lino.none(), BeanPath.parse(origin, "list2[1][5]"));
+    Assertions.assertEquals(Lino.none(), BeanPath.parse(origin, "list2[3][5]"));
 
     Assertions.assertEquals(3, BeanPath.parse(origin, "list4[2]").get());
 
     Assertions.assertEquals("123", BeanPath.parse(origin, "map.123").get());
-    Assertions.assertEquals(12, BeanPath.parse(origin, "map.list2[1][1]").get());
-    Assertions.assertEquals(Lino.none(), BeanPath.parse(null, "map.list2[1][1]"));
+    Assertions.assertEquals(12,
+            BeanPath.parse(origin, "map.list2[1][1]").get());
+    Assertions.assertEquals(Lino.none(), BeanPath.parse(null, "map.list2[1][1" +
+            "]"));
     Assertions.assertEquals(Lino.none(), BeanPath.parse(null, "map[0]"));
 
-    Assertions.assertEquals(3,
-            BeanPath.parse(origin, "list[0]", lino -> lino.cast(Integer.class).filter(i -> i > 2)).get());
-    Assertions.assertEquals(12, BeanPath.parse(origin, "list2[0][1]",
-            lino -> lino.cast(List.class).filter(l -> l.size() > 2)).get());
-    Assertions.assertEquals(13, BeanPath.parse(origin, "list2[0][1]",
-            lino -> lino.cast(List.class).filter(l -> l.size() > 2),
-            lino -> lino.cast(Integer.class).filter(i -> i > 11)).get());
-
-    Assertions.assertEquals("123", BeanPath.parse(origin, "list3[0].123").get());
-    Assertions.assertEquals(13, BeanPath.parse(origin, "list3[0].list2[0][1]", null,
-            lino -> lino.cast(List.class).filter(l -> l.size() > 2),
-            lino -> lino.cast(Integer.class).filter(i -> i > 11)).get());
+    Assertions.assertEquals(12, BeanPath.parse(origin, "list2[0][1]", l -> l.toLira().size() > 2).get());
+    Assertions.assertEquals(15.0, BeanPath.parse(origin, "list2[0][1]", l -> l.toLira().size() > 2,
+            l -> l.cast(Double.class)).get());
 
 }
 
