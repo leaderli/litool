@@ -3,7 +3,6 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
-import io.leaderli.litool.core.function.Filter;
 import io.leaderli.litool.core.io.FileUtil;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.net.URLUtil;
@@ -20,6 +19,7 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -51,7 +51,7 @@ private final String packagePath;
 /**
  * 过滤器
  */
-private final Filter<Class<?>> classFilter;
+private final Predicate<Class<?>> classFilter;
 /**
  * 编码
  */
@@ -92,7 +92,7 @@ public ClassScanner(String packageName) {
  * @param packageName 包名，所有包传入""或者null
  * @param classFilter 过滤器，无需传入null
  */
-public ClassScanner(String packageName, Filter<Class<?>> classFilter) {
+public ClassScanner(String packageName, Predicate<Class<?>> classFilter) {
     this(packageName, classFilter, CharsetUtil.CHARSET_UTF_8);
 }
 
@@ -104,7 +104,7 @@ public ClassScanner(String packageName, Filter<Class<?>> classFilter) {
  * @param classFilter 过滤器，无需传入null
  * @param charset     编码
  */
-public ClassScanner(String packageName, Filter<Class<?>> classFilter, Charset charset) {
+public ClassScanner(String packageName, Predicate<Class<?>> classFilter, Charset charset) {
     packageName = StringUtils.stripToEmpty(packageName);
     this.packageName = packageName;
     this.packageNameWithDot = StringUtils.appendIfMissing(packageName, StrPool.DOT);
@@ -291,7 +291,7 @@ private void addIfAccept(String className) {
  * @param clazz 类
  */
 private void addIfAccept(Class<?> clazz) {
-    if (null != clazz && (classFilter == null || classFilter.accept(clazz))) {
+    if (null != clazz && (classFilter == null || classFilter.test(clazz))) {
         this.classes.add(clazz);
     }
 }

@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.stream;
 
 
-import io.leaderli.litool.core.function.SinkFunction;
 import io.leaderli.litool.core.meta.Lino;
 
 public abstract class Sink<T, R> implements SinkFunction<T, R> {

@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.function;
+package io.leaderli.litool.core.stream;
 
 public interface SinkFunction<T, R> {
 
