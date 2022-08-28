@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.event;
 
-import java.util.List;
-
 /**
  * Dispatches events to listeners, and provides ways for listeners to register and unregister themselves
  * <p>
@@ -34,21 +32,29 @@ public void unRegisterListener(ILiEventListener listener) {
  * @see ILiEventListener
  * @see ILiEventListener#before(Object)
  * @see ILiEventListener#listen(Object)
+ * @see ILiEventListener#onError(Throwable)
  * @see ILiEventListener#after(LiEventBusBehavior)
  */
 public <T> void push(T event) {
     if (event == null) {
         return;
     }
-    Class<T> cls = (Class<T>) event.getClass();
-    List<ILiEventListener<T>> listeners = liEventMap.get(cls);
-    for (ILiEventListener<T> listener : listeners) {
+    Class<T> eventType = (Class<T>) event.getClass();
+    liEventMap.compute(eventType, listener -> {
+
         if (listener.before(event)) {
-            listener.listen(event);
+
+            try {
+
+                listener.listen(event);
+            } catch (Throwable throwable) {
+                listener.onError(throwable);
+                return;
+            }
             listener.after(this);
         }
 
-    }
+    });
 }
 
 

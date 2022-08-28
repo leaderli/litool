@@ -18,7 +18,7 @@ public LiEventObject(T source) {
 
 /**
  * used to avoid null pointer because some source may be null
- * suggest use {@link  ILiEventObjectListener} to listen
+ * suggest use {@link  ILiEventObjectListener} to listen the event pushed by {@link LiEventBus#push(Object)}
  *
  * @return a lino wrapper
  */
