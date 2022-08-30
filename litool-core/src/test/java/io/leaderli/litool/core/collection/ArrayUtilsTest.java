@@ -164,4 +164,10 @@ void testToString() {
     Assertions.assertEquals("[[1, 2]]", ArrayUtils.toString(new int[][]{{1, 2}}));
 
 }
+
+@Test
+void toArray() {
+
+    Assertions.assertArrayEquals(new Integer[]{1, 2}, ArrayUtils.toArray(Arrays.asList(1, 2)));
+}
 }

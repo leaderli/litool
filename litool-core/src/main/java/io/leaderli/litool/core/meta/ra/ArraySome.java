@@ -1,23 +1,15 @@
 package io.leaderli.litool.core.meta.ra;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * @author leaderli
  * @since 2022/7/16
  */
 public final class ArraySome<T> extends Some<T> {
 
-private final T[] arr;
+private final Iterable<? extends T> arr;
 
-@SuppressWarnings("unchecked")
-public ArraySome(Iterator<? extends T> values) {
-
-    List<T> list = new ArrayList<>();
-    values.forEachRemaining(list::add);
-    this.arr = (T[]) list.toArray();
+public ArraySome(Iterable<? extends T> values) {
+    this.arr = values;
 }
 
 
@@ -40,24 +32,22 @@ private final class ArraySubscription implements Subscription {
     @Override
     public void request() {
         if (canceled) {
+            actualSubscriber.onComplete();
             return;
         }
 
-
         for (T t : arr) {
 
-            try {
 
-                if (t == null) {
-                    actualSubscriber.next();
-                } else {
-                    actualSubscriber.next(t);
-                }
+            try {
+                SubscriberUtil.next(actualSubscriber, t);
             } catch (Throwable throwable) {
                 actualSubscriber.onError(throwable, this);
             }
             // 通过 onSubscribe 将 Subscription 传递给订阅者，由订阅者来调用 cancel方法从而实现提前结束循环
             if (canceled) {
+                actualSubscriber.onComplete();
+
                 return;
             }
 

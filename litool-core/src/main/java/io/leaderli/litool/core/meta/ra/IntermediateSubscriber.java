@@ -30,12 +30,13 @@ public final void cancel() {
 public void onSubscribe(Subscription prevSubscription) {
     this.prevSubscription = prevSubscription;
     actualSubscriber.onSubscribe(this);
+
 }
 
 
 @Override
-public void next() {
-    this.actualSubscriber.next();
+public void onNull() {
+    this.actualSubscriber.onNull();
 }
 
 @Override

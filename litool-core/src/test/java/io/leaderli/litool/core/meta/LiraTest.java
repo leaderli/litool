@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import org.junit.jupiter.api.Assertions;
@@ -15,9 +16,27 @@ class LiraTest {
 
 
 @Test
+void until() {
+
+    Assertions.assertEquals(2, Lira.of(1, 2, 3).until(i -> i > 1).last().get());
+    Assertions.assertEquals(2, Lira.of(1, null, 2, 3).until(i -> i > 1).last().get());
+
+}
+
+@Test
+void untilNull() {
+    Assertions.assertEquals(3, Lira.of(1, 2, 3).untilNull(i -> i > 1).last().get());
+    Assertions.assertEquals(1, Lira.of(1, null, 2, 3).untilNull(i -> i > 1).last().get());
+
+
+}
+
+@Test
 void nullable() {
 
-    System.out.println(Lira.of(null, 1).nullable(() -> 100));
+    Assertions.assertArrayEquals(new Integer[]{100, 1}, Lira.of(null, 1).nullable(() -> 100).toArray());
+    Assertions.assertArrayEquals(new Integer[]{1}, Lira.of(null, 1).filter().nullable(() -> 100).toArray());
+    Assertions.assertEquals(1, Lira.of(1, null).size());
 
 }
 
@@ -91,6 +110,19 @@ void of() {
     Assertions.assertNotSame(Lira.of(1), Lira.of(1));
 
     Assertions.assertEquals("[1, 2]", Lira.of("1", null, "2").get().toString());
+
+
+    Lira<Integer> loop = Lira.of(() -> new Generator<Integer>() {
+        int i = 0;
+
+        @Override
+        public Integer next() {
+            return i++;
+        }
+    });
+
+    Assertions.assertEquals(4, loop.limit(5).last().get());
+    Assertions.assertEquals(4, loop.limit(5).last().get());
 
 
 }

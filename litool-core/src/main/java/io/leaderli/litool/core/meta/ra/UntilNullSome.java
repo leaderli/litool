@@ -13,14 +13,11 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-public class FilterSome<T> extends PublisherSome<T> {
+public class UntilNullSome<T> extends PublisherSome<T> {
 
 
-private final Function<? super T, ?> filter;
-
-public FilterSome(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
+public UntilNullSome(Publisher<T> prevPublisher) {
     super(prevPublisher);
-    this.filter = filter;
 }
 
 @Override
@@ -38,12 +35,12 @@ private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
 
     @Override
     public void next(T t) {
-        Lino.of(t).filter(filter).ifPresent(this.actualSubscriber::next);
+        actualSubscriber.next(t);
     }
 
     @Override
     public void onNull() {
-        //  filter will avoid null element
+        cancel();
     }
 }
 }

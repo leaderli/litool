@@ -31,13 +31,8 @@ private class NullableSubscriber extends IntermediateSubscriber<T, T> {
     }
 
     @Override
-    public void next() {
-        T t = supplier.get();
-        if (t == null) {
-            this.actualSubscriber.next();
-        } else {
-            this.actualSubscriber.next(t);
-        }
+    public void onNull() {
+        SubscriberUtil.next(actualSubscriber, supplier.get());
     }
 }
 }

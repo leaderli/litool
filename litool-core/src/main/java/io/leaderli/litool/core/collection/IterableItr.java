@@ -2,10 +2,8 @@ package io.leaderli.litool.core.collection;
 
 import io.leaderli.litool.core.type.ClassUtil;
 
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Provides a synthetic interface with both {@link Iterable} and {@link Iterator}
@@ -19,10 +17,10 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
  * make obj behave like {@link  IterableItr}, support :
  * <ul>
  *     <li>{@link  IterableItr} </li>
- *     <li>{@link  IterableItr}</li>
  *     <li>{@link  Iterator}</li>
  *     <li>{@link  Iterable}</li>
  *     <li>{@link  Enumeration}</li>
+ *     <li>{@link  Map}</li>
  *     <li>Array</li>
  * </ul>
  * <p>
@@ -31,105 +29,41 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
  * @param obj a obj
  * @param <T> the type of elements {@link  IterableItr} provide
  * @return a {@link  IterableItr}
- * @see #of(Iterator)
- * @see #of(Iterable)
- * @see #of(Enumeration)
- * @see #ofs(Object[])
  */
 @SuppressWarnings("unchecked")
 static <T> IterableItr<T> of(Object obj) {
     if (obj == null) {
         return NoneItr.of();
     }
+    T[] arr = null;
     if (obj instanceof IterableItr) {
-        return (IterableItr<T>) obj;
+        arr = ArrayUtils.toArray(((IterableItr<T>) obj).iterator());
     }
     if (obj instanceof Iterator) {
-        return of((Iterator<T>) obj);
+        arr = ArrayUtils.toArray((Iterator<T>) obj);
     }
     if (obj instanceof Iterable) {
-        return of((Iterable<T>) obj);
+        arr = ArrayUtils.toArray((Iterable<T>) obj);
     }
     if (obj instanceof Enumeration) {
-        return of((Enumeration<T>) obj);
+        arr = ArrayUtils.toArray((Enumeration<T>) obj);
+    }
+    if (obj instanceof Stream) {
+        arr = ArrayUtils.toArray((Stream<T>) obj);
     }
 
     if (obj instanceof Map) {
 
-        return (IterableItr<T>) of((Map<?, ?>) obj);
+        arr = (T[]) ArrayUtils.toArray(((Map<?, ?>) obj).entrySet());
     }
 
     if (obj.getClass().isArray()) {
 
-        return ofs(ClassUtil.toArray(obj));
+        arr = ClassUtil.toArray(obj);
     }
 
-    return NoneItr.of();
-}
+    return ofs(arr);
 
-/**
- * Returns an {@link  IteratorDelegate} over elements of type {@code T}.
- * null or empty iterator will always return {@link  NoneItr#of()}
- *
- * @param iterator an iterator
- * @param <T>      the type of elements that iterator provide
- * @return Returns an LiIterator over the elements that iterator provide of type {@code T}.
- */
-static <T> IterableItr<T> of(Iterator<T> iterator) {
-
-    if (iterator == null || !iterator.hasNext()) {
-        return NoneItr.of();
-    }
-    return new IteratorDelegate<>(iterator);
-}
-
-/**
- * Returns an {@link  IteratorDelegate} over elements of type {@code T}.
- * null or empty iterable will always return {@link  NoneItr#of()}
- *
- * @param iterable an iterable
- * @param <T>      the type of elements that iterable provide
- * @return Returns an LiIterator over the elements that iterable provide of type {@code T}.
- */
-static <T> IterableItr<T> of(Iterable<T> iterable) {
-
-    if (iterable == null) {
-        return NoneItr.of();
-    }
-    return of(iterable.iterator());
-}
-
-/**
- * Returns an {@link  EnumerationItr} over elements of type {@code T}.
- * null or empty enumeration will always return {@link  NoneItr#of()}
- *
- * @param enumeration an enumeration
- * @param <T>         the type of elements that enumeration provide
- * @return Returns an iterator over the elements that enumeration provide of type {@code T}.
- */
-static <T> IterableItr<T> of(Enumeration<T> enumeration) {
-
-    if (enumeration == null || !enumeration.hasMoreElements()) {
-        return NoneItr.of();
-    }
-    return new EnumerationItr<>(enumeration);
-}
-
-/**
- * Returns an {@link  IteratorDelegate} over map of type {@code K,V}.
- * null or empty map will always return {@link  NoneItr#of()}
- *
- * @param map an  map
- * @param <K> the type of  map key
- * @param <V> the type of  map value
- * @return Returns an LiIterator over the entry that map provide of type {@code K,V}.
- */
-static <K, V> IterableItr<Map.Entry<K, V>> of(Map<K, V> map) {
-
-    if (map == null || map.isEmpty()) {
-        return NoneItr.of();
-    }
-    return of(map.entrySet());
 }
 
 /**
@@ -148,10 +82,6 @@ static <T> IterableItr<T> ofs(T... elements) {
     return new ArrayItr<>(elements);
 }
 
-@Override
-default Iterator<T> iterator() {
-    return this;
-}
 
 /**
  * Returns {@code true} if the enumerationItr has more elements.
@@ -174,5 +104,51 @@ default boolean hasMoreElements() {
  */
 default T nextElement() {
     return next();
+}
+
+/**
+ * Make arrays behave like  {@link IterableItr}.
+ *
+ * @param <T> the type of elements returned by the ArrayItr
+ * @author leaderli
+ * @since 2022/7/17
+ */
+class ArrayItr<T> implements IterableItr<T> {
+
+
+    private final T[] arr;
+    /**
+     * The index of current {@code ArrayItr}
+     */
+    private int index = 0;
+
+    ArrayItr(T[] arr) {
+        this.arr = arr;
+    }
+
+    @SuppressWarnings("unchecked")
+    ArrayItr(List<T> list) {
+        this.arr = (T[]) list.toArray();
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new ArrayItr<>(arr);
+    }
+
+    @Override
+    public boolean hasNext() {
+        return index < arr.length;
+    }
+
+    @Override
+    public T next() {
+        if (hasNext()) {
+            return arr[index++];
+        }
+        throw new NoSuchElementException();
+    }
+
+
 }
 }

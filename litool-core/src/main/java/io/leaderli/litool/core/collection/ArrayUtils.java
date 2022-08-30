@@ -22,6 +22,11 @@ import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * <p>Operations on arrays, primitive arrays (like {@code int[]}) and
@@ -1050,5 +1055,65 @@ public static String toString(Object obj) {
     }
     return String.valueOf(obj);
 
+}
+
+/**
+ * Returns an array over the elements that iterable provide of type {@code T}.
+ *
+ * @param iterable an iterable
+ * @param <T>      the type of elements that iterable provide
+ * @return Returns an array over the elements that iterable provide of type {@code T}.
+ */
+@SuppressWarnings("unchecked")
+public static <T> T[] toArray(Iterable<T> iterable) {
+    List<T> list = new ArrayList<>();
+    iterable.forEach(list::add);
+    return (T[]) list.toArray();
+}
+
+/**
+ * Returns an array over the elements that stream provide of type {@code T}.
+ *
+ * @param stream an stream
+ * @param <T>    the type of elements that stream provide
+ * @return Returns an array over the elements that stream provide of type {@code T}.
+ */
+@SuppressWarnings("unchecked")
+public static <T> T[] toArray(Stream<T> stream) {
+    return (T[]) stream.toArray();
+}
+
+/**
+ * Returns an array over the elements that iterator provide of type {@code T}.
+ *
+ * @param iterator an iterator
+ * @param <T>      the type of elements that iterator provide
+ * @return Returns an array over the elements that iterator provide of type {@code T}.
+ */
+@SuppressWarnings("unchecked")
+public static <T> T[] toArray(Iterator<T> iterator) {
+    List<T> list = new ArrayList<>();
+    iterator.forEachRemaining(list::add);
+
+    return (T[]) list.toArray();
+}
+
+/**
+ * Returns an array over the elements that enumeration provide of type {@code T}.
+ *
+ * @param enumeration an enumeration
+ * @param <T>         the type of elements that enumeration provide
+ * @return Returns an array over the elements that enumeration provide of type {@code T}.
+ */
+
+@SuppressWarnings("unchecked")
+public static <T> T[] toArray(Enumeration<T> enumeration) {
+    List<T> list = new ArrayList<>();
+
+    while (enumeration.hasMoreElements()) {
+        list.add(enumeration.nextElement());
+    }
+
+    return (T[]) list.toArray();
 }
 }

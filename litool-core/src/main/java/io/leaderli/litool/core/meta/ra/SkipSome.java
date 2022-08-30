@@ -40,5 +40,14 @@ private static class SkipSubscriber<T> extends IntermediateSubscriber<T, T> {
         }
     }
 
+    @Override
+    public void onNull() {
+        if (skip < 1) {
+
+            this.actualSubscriber.onNull();
+        } else {
+            skip--;
+        }
+    }
 }
 }

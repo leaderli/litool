@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 public class ConsumerSubscriber<T> implements Subscriber<T> {
 private final Consumer<? super T> consumer;
 
+
 public ConsumerSubscriber(Consumer<? super T> consumer) {
     if (consumer == null) {
         consumer = lino -> {

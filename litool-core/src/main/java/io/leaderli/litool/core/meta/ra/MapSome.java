@@ -10,8 +10,7 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/6/27
  */
-public class
-MapSome<T, R> extends Some<R> {
+public class MapSome<T, R> extends Some<R> {
 private final Function<? super T, ? extends R> mapper;
 private final Publisher<T> prevPublisher;
 

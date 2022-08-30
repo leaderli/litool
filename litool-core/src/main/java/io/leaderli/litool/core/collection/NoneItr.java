@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.collection;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
@@ -56,5 +57,10 @@ public boolean hasNext() {
 @Override
 public T next() {
     throw new NoSuchElementException();
+}
+
+@Override
+public Iterator<T> iterator() {
+    return of();
 }
 }

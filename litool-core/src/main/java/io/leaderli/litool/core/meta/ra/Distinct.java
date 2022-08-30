@@ -85,5 +85,14 @@ private static class DistinctSubscriber<T> extends IntermediateSubscriber<T, T> 
         }
     }
 
+    @Override
+    public void onNull() {
+
+        if (!list.contains(null)) {
+            list.add(null);
+            this.actualSubscriber.onNull();
+        }
+    }
+
 }
 }

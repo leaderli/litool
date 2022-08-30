@@ -41,5 +41,11 @@ private class FlatMapSubscriber extends IntermediateSubscriber<T, R> {
         Lino.of(t).map(mapper).ifPresent(it -> it.forEachRemaining(this.actualSubscriber::next));
     }
 
+    @Override
+    public void onNull() {
+
+        // flat null  will return empty
+    }
+
 }
 }

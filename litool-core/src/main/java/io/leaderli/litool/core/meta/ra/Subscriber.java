@@ -28,17 +28,17 @@ void onSubscribe(Subscription subscription);
 
 /**
  * Data notification sent by the {@link Publisher} in response to request
- * to {@link Subscription#request()}, when the element is not null
+ * to {@link Subscription#request()} when the element is not null
  *
  * @param t the element signaled
  */
 void next(T t);
 
 /**
- * Data notification sent by the {@link Publisher} in response to request to {@link Subscription#request()}
- * it's similar to {@link  #next(Object)}, when the element is null
+ * Data notification sent by the {@link Publisher} in response to request
+ * to {@link Subscription#request()} when the element is null
  */
-default void next() {
+default void onNull() {
 
 }
 
@@ -58,7 +58,6 @@ default void onComplete() {
  * @param cancel use to cancel demand
  */
 default void onError(Throwable t, CancelSubscription cancel) {
-    t.printStackTrace();
 }
 
 }

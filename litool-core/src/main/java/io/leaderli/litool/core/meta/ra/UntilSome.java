@@ -13,12 +13,12 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-public class FilterSome<T> extends PublisherSome<T> {
+public class UntilSome<T> extends PublisherSome<T> {
 
 
 private final Function<? super T, ?> filter;
 
-public FilterSome(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
+public UntilSome(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
     super(prevPublisher);
     this.filter = filter;
 }
@@ -38,7 +38,12 @@ private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
 
     @Override
     public void next(T t) {
-        Lino.of(t).filter(filter).ifPresent(this.actualSubscriber::next);
+        actualSubscriber.next(t);
+        boolean present = BooleanUtil.parse(filter.apply(t));
+        if (present) {
+            cancel();
+        }
+
     }
 
     @Override

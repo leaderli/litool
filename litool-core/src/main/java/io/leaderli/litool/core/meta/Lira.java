@@ -1,17 +1,21 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.IterableItr;
-import io.leaderli.litool.core.collection.IteratorDelegate;
+import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.ra.ArraySome;
+import io.leaderli.litool.core.meta.ra.DebugConsumer;
 import io.leaderli.litool.core.meta.ra.Publisher;
 import io.leaderli.litool.core.meta.ra.Subscriber;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.util.BooleanUtil;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -25,7 +29,7 @@ import java.util.stream.Stream;
 public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
 
 
-Lira<?> NONE_INSTANCE = new ArraySome<>(Collections.emptyIterator());
+Lira<?> NONE_INSTANCE = new ArraySome<>(NoneItr.of());
 
 /**
  * Returns the narrow type lira, convert {@code <? extends T>} to {@code  <T>}
@@ -56,19 +60,16 @@ static <T> Lira<T> of(T... elements) {
 }
 
 /**
- * Returns an lira that consisting elements provided by given iterableIter
+ * Returns an lira that consisting elements provided by given stream
  *
- * @param iterableItr the iterableIter that provide  elements
- * @param <T>         the type of elements returned by this iterableIter
+ * @param stream the stream that provide  elements
+ * @param <T>    the type of elements returned by this stream
  * @return the new lira
  */
-static <T> Lira<T> of(IterableItr<? extends T> iterableItr) {
+static <T> Lira<T> of(Stream<? extends T> stream) {
 
-    if (iterableItr.hasNext()) {
+    return of(IterableItr.of(stream));
 
-        return new ArraySome<>(iterableItr);
-    }
-    return none();
 }
 
 /**
@@ -98,6 +99,22 @@ static <T> Lira<T> of(Iterator<? extends T> iterator) {
 }
 
 /**
+ * Returns an lira that consisting elements provided by given iterableIter
+ *
+ * @param iterableItr the iterableIter that provide  elements
+ * @param <T>         the type of elements returned by this iterableIter
+ * @return the new lira
+ */
+static <T> Lira<T> of(IterableItr<? extends T> iterableItr) {
+
+    if (iterableItr != null && iterableItr.hasNext()) {
+
+        return new ArraySome<>(iterableItr);
+    }
+    return none();
+}
+
+/**
  * Returns an lira that consisting elements provided by given iterable
  *
  * @param iterable the iterator that provide  elements
@@ -105,7 +122,11 @@ static <T> Lira<T> of(Iterator<? extends T> iterator) {
  * @return the new lira
  */
 static <T> Lira<T> of(Iterable<? extends T> iterable) {
-    return of(IterableItr.of(iterable));
+
+    if (iterable == null || !iterable.iterator().hasNext()) {
+        return none();
+    }
+    return new ArraySome<>(iterable);
 }
 
 /**
@@ -184,7 +205,6 @@ Lira<T> limit(int n);
  *
  * @param <R> 迭代器的值类型
  * @return 展开后的 lira
- * @see IteratorDelegate
  * @see #flatMap(Function)
  */
 <R> Lira<R> flatMap();
@@ -206,8 +226,16 @@ default <R> Lira<R> unzip(Function<? super T, Supplier<? extends R>> mapper) {
 }
 
 /**
+ * @param filter cancel signal push
+ * @return this
+ */
+Lira<T> until(Function<? super T, ?> filter);
+
+Lira<T> untilNull(Function<? super T, ?> filter);
+
+/**
  * @param supplier get a result
- * @return a result if call {@link  Subscriber#next()}
+ * @return a result if call {@link  Subscriber#onNull()}
  */
 Lira<T> nullable(Supplier<? extends T> supplier);
 
@@ -271,6 +299,7 @@ Lira<T> or(Iterator<? extends T> others);
  */
 Lira<T> or(Iterable<? extends T> others);
 
+
 /**
  * Performs a reduction on the element of this lira, using the associative accumulation functions,
  * and returns the reduced value. this is equivalent to:
@@ -327,7 +356,7 @@ int size();
  * Performs an {@code System.out.println(element)} for each element of this lira
  *
  * @return this
- * @see #debug(Consumer)
+ * @see #debug(DebugConsumer)
  */
 Lira<T> debug();
 
@@ -337,7 +366,7 @@ Lira<T> debug();
  * @param action a  action to perform on the elements
  * @return this
  */
-Lira<T> debug(Consumer<T> action);
+Lira<T> debug(DebugConsumer<T> action);
 
 /**
  * return this lira that consisting of the distinct elements (according to {@link Object#equals(Object)})

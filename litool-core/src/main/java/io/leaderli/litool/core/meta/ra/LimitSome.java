@@ -41,5 +41,15 @@ private static final class LimitSubscriber<T> extends IntermediateSubscriber<T, 
         }
     }
 
+    @Override
+    public void onNull() {
+        if (limit < 1) {
+            this.cancel();
+
+        } else {
+            this.actualSubscriber.onNull();
+            limit--;
+        }
+    }
 }
 }

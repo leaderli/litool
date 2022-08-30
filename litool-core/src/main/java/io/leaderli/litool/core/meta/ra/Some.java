@@ -4,7 +4,10 @@ import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
-import io.leaderli.litool.core.meta.*;
+import io.leaderli.litool.core.meta.LiBox;
+import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
 
 import java.util.*;
@@ -66,13 +69,7 @@ public Lira<T> filter() {
 
 @Override
 public Lino<T> first() {
-    LiBox<T> value = LiBox.none();
-
-    this.subscribe(new BiConsumerSubscriber<>((v, s) -> {
-        value.value(v);
-        s.cancel();
-    }));
-    return value.lino();
+    return get(0);
 }
 
 @Override
@@ -95,9 +92,9 @@ public Lino<T> get(int index) {
     if (index < 0) {
         return Lino.none();
     }
-    LiBox<Integer> count = LiBox.of(0);
     LiBox<T> result = LiBox.none();
     this.subscribe(new Subscriber<T>() {
+        int count = 0;
         private Subscription prevSubscription;
 
         @Override
@@ -109,11 +106,11 @@ public Lino<T> get(int index) {
         @Override
         public void next(T t) {
 
-            if (count.value() == index) {
+            if (count == index) {
                 result.value(t);
                 prevSubscription.cancel();
             }
-            count.value(count.value() + 1);
+            count++;
 
         }
 
@@ -125,6 +122,7 @@ public Lino<T> get(int index) {
 @Override
 public Iterator<T> iterator() {
     return get().iterator();
+
 }
 
 @Override
@@ -157,6 +155,17 @@ public <R> Lira<R> map(Function<? super T, ? extends R> mapper) {
 
 }
 
+@Override
+public Lira<T> until(Function<? super T, ?> filter) {
+    return new UntilSome<>(this, filter);
+}
+
+@Override
+public Lira<T> untilNull(Function<? super T, ?> filter) {
+    return new UntilNullSome<>(this);
+}
+
+@Override
 public Lira<T> nullable(Supplier<? extends T> supplier) {
     return new NullableSome<>(this, supplier);
 
@@ -173,14 +182,14 @@ public Lira<T> skip(int n) {
 
 @Override
 public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
-    return new ThrowableMap<>(this, mapper, LiConstant.WHEN_THROW);
+    return new ThrowableMap<>(this, mapper);
 
 
 }
 
 @Override
 public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
-    return new ThrowableMap<>(this, mapper, whenThrow);
+    return new ThrowableMap<>(this, mapper);
 
 }
 
@@ -255,11 +264,10 @@ public Lira<T> debug() {
 }
 
 @Override
-public Lira<T> debug(Consumer<T> action) {
-    List<T> raw = get();
+public Lira<T> debug(DebugConsumer<T> action) {
 
-    raw.forEach(action);
-    return Lira.of(raw);
+
+    return new DebugSome<>(this, action);
 }
 
 @Override
@@ -374,6 +382,5 @@ public <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extend
 public String toString() {
     return get().toString();
 }
-
 
 }

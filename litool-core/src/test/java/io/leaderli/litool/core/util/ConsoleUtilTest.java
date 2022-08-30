@@ -38,11 +38,11 @@ void print() {
 
     out.reset();
     ConsoleUtil.print(1, null, 1, Arrays.asList(1, null));
-    Assertions.assertEquals("1 1 [1, null]" + LINE_SEPARATOR, out.toString());
+    Assertions.assertEquals("1  1 [1, null]" + LINE_SEPARATOR, out.toString());
 
     out.reset();
     ConsoleUtil.print(null, null, 1, Arrays.asList(1, null));
-    Assertions.assertEquals("1 [1, null]" + LINE_SEPARATOR, out.toString());
+    Assertions.assertEquals("  1 [1, null]" + LINE_SEPARATOR, out.toString());
 
     out.reset();
     ConsoleUtil.print_format("a {0}", 2, 3);

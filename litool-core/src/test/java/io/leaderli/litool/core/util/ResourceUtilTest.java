@@ -50,6 +50,7 @@ void getResourceIter() {
 
 }
 
+@SuppressWarnings("resource")
 @Test
 void createContentStream() throws IOException {
 
@@ -61,9 +62,7 @@ void createContentStream() throws IOException {
 
 @Test
 void getResourceFile() {
-    System.out.println(ResourceUtil.getResourceFile(null));
-    System.out.println(ResourceUtil.getResourceFile(f -> true));
-    Assertions.assertTrue(ResourceUtil.getResourceFile(null).absent());
+//    Assertions.assertTrue(ResourceUtil.getResourceFile(null).absent());
     Assertions.assertEquals(2, ResourceUtil.getResourcesLira("").size());
 }
 
@@ -75,11 +74,4 @@ void getResourcesLira() {
     Assertions.assertEquals(2, ResourceUtil.getResourcesLira("").size());
 }
 
-@Test
-void lineStrOfResourcesFile() {
-}
-
-@Test
-void getResourceAsStream() {
-}
 }

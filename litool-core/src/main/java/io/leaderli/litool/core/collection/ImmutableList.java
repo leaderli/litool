@@ -121,7 +121,7 @@ public String toString() {
 
 
 /**
- * Return the  {@link ArrayItr} if not {@link  #isEmpty()}
+ * Return the  {@link IterableItr.ArrayItr} if not {@link  #isEmpty()}
  * otherwise return {@link  NoneItr}
  *
  * @return a  iterator
