@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.Generator;
-import io.leaderli.litool.core.collection.Generators;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.ra.Subscriber;
@@ -17,36 +16,6 @@ import java.util.*;
  */
 class LiraTest {
 
-
-    @Test
-    void range() {
-
-        LiBox<Generator> box = LiBox.of(Generators.range());
-        new IntegerSubscriber(box).forEachRemaining(System.out::println);
-
-//        Lira.of(box.value()).subscribe(new IntegerSubscriber(box));
-//        Lira.of(box.value()).subscribe(new IntegerSubscriber(box));
-//        Lira.of(box.value()).subscribe(new IntegerSubscriber(box));
-//        Lira.of(box.value()).subscribe(new IntegerSubscriber(box));
-
-    }
-
-    @Test
-    void sleep() {
-
-//        Generator<Long> currentTimeMillis = System::currentTimeMillis;
-//        for (Long currentTimeMilli : currentTimeMillis) {
-//            System.out.println(currentTimeMilli);
-//        }
-//        Lira.of(currentTimeMillis).sleep(1000).forEach(System.out::println);
-
-        Lira<Integer> limit = Lira.of(Generators.range());
-        for (Integer integer : limit) {
-            System.out.println("li->" + integer);
-        }
-        System.out.println(limit);
-
-    }
 
     @Test
     void until() {
@@ -343,6 +312,7 @@ class LiraTest {
         public void onComplete(Iterator<?> iterator) {
             box.value((Generator<T>) iterator);
         }
+
 
         @Override
         public boolean hasNext() {
