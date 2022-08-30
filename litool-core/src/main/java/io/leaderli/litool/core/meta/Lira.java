@@ -201,7 +201,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
     Lira<T> limit(int n);
 
     /**
-     * 使用 LiIterator 作为迭代器
+     * 使用 {@link  Iterator}作为迭代器
      *
      * @param <R> 迭代器的值类型
      * @return 展开后的 lira
