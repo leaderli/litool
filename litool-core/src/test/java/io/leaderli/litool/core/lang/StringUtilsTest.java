@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -58,7 +57,8 @@ void join() {
     Assertions.assertEquals("", StringUtils.join(" ", (Object[]) null));
     Assertions.assertEquals("", StringUtils.join(" ", (Object) null));
     Assertions.assertEquals("1 2", StringUtils.join(null, 1, 2));
-    Assertions.assertEquals("", StringUtils.join(null, Collections.singletonList(null)));
+    Assertions.assertEquals(" 1", StringUtils.join(null, Arrays.asList(null, 1)));
+    Assertions.assertEquals(",1", StringUtils.join(",", Arrays.asList(null, 1)));
     Assertions.assertEquals("1 2", StringUtils.join(null, Arrays.asList(1, 2)));
 }
 

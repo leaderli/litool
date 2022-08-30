@@ -17,6 +17,7 @@
 package io.leaderli.litool.core.text;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
+import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.lang.RegExUtils;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
@@ -6718,11 +6719,20 @@ public static String join0(String delimiter, Object[] elements) {
     return join(delimiter, Lino.of(elements).map(Arrays::asList).get());
 }
 
+public static String join(String delimiter, Iterator<?> elements) {
+
+
+    IterableItr.of(elements);
+    StringJoiner joiner = new StringJoiner(Lino.of(delimiter).get(" "));
+    Lira.of(elements).get().stream().map(String::valueOf).forEach(joiner::add);
+    return joiner.toString();
+}
+
 public static String join(String delimiter, Iterable<?> elements) {
 
 
     StringJoiner joiner = new StringJoiner(Lino.of(delimiter).get(" "));
-    Lira.of(elements).get().stream().map(String::valueOf).forEach(joiner::add);
+    Lira.of(elements).map(String::valueOf).nullable(() -> "").forEach(joiner::add);
     return joiner.toString();
 }
 

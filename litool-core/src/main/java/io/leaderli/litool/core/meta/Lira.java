@@ -7,6 +7,7 @@ import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.ra.ArraySome;
 import io.leaderli.litool.core.meta.ra.Publisher;
+import io.leaderli.litool.core.meta.ra.Subscriber;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.util.BooleanUtil;
 
@@ -203,6 +204,12 @@ Lira<T> limit(int n);
 default <R> Lira<R> unzip(Function<? super T, Supplier<? extends R>> mapper) {
     return map(mapper).map(Supplier::get);
 }
+
+/**
+ * @param supplier get a result
+ * @return a result if call {@link  Subscriber#next()}
+ */
+Lira<T> nullable(Supplier<? extends T> supplier);
 
 /**
  * @param mapper 转换函数

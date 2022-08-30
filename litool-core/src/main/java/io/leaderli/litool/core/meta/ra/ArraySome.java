@@ -16,11 +16,7 @@ private final T[] arr;
 public ArraySome(Iterator<? extends T> values) {
 
     List<T> list = new ArrayList<>();
-    values.forEachRemaining(v -> {
-        if (v != null) {
-            list.add(v);
-        }
-    });
+    values.forEachRemaining(list::add);
     this.arr = (T[]) list.toArray();
 }
 
@@ -50,13 +46,15 @@ private final class ArraySubscription implements Subscription {
 
         for (T t : arr) {
 
-            if (t != null) {
-                try {
+            try {
 
+                if (t == null) {
+                    actualSubscriber.next();
+                } else {
                     actualSubscriber.next(t);
-                } catch (Throwable throwable) {
-                    actualSubscriber.onError(throwable, this);
                 }
+            } catch (Throwable throwable) {
+                actualSubscriber.onError(throwable, this);
             }
             // 通过 onSubscribe 将 Subscription 传递给订阅者，由订阅者来调用 cancel方法从而实现提前结束循环
             if (canceled) {

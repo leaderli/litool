@@ -2,12 +2,14 @@ package io.leaderli.litool.config;
 
 import io.leaderli.litool.core.collection.LiMapUtil;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
+import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.resource.ResourceUtil;
 import io.leaderli.litool.core.text.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -32,8 +34,16 @@ public static void checkYamlFormat() {
 
 }
 
+public static boolean isYamlFile(URL url) {
+    return isYamlFile(url.getFile());
+}
+
+public static boolean isYamlFile(String fileName) {
+    return StringUtils.equalsAny(FileNameUtil.extName(fileName), "yml", "yaml");
+}
+
 public static boolean isYamlFile(File file) {
-    return StringUtils.endsWithAny(file.getName(), ".yml", ".yaml");
+    return isYamlFile(file.getName());
 }
 
 /**

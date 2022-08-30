@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * {@link Lira} 的有值实现类，采用响应式编程思路，仅在实际获取值的方法操作中才会对底层元素进行各种操作;
@@ -153,6 +154,11 @@ public <R> Lira<R> flatMap(Function<? super T, Iterator<? extends R>> mapper) {
 @Override
 public <R> Lira<R> map(Function<? super T, ? extends R> mapper) {
     return new MapSome<>(this, mapper);
+
+}
+
+public Lira<T> nullable(Supplier<? extends T> supplier) {
+    return new NullableSome<>(this, supplier);
 
 }
 

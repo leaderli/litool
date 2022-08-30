@@ -13,13 +13,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * a  utilities  of  resource such as {@link  File}, {@link  InputStream}
+ */
 public class ResourceUtil {
 
+/**
+ * {@link  StandardCharsets#UTF_8}
+ */
 public static final Charset DEFAULT_CHARACTER_ENCODING = StandardCharsets.UTF_8;
 
 /**
- * @param string 字符,需要为 UTF-8 格式
- * @return 字符转换为流
+ * Return  an inputStream create by string
+ *
+ * @param string a  string of charset {@link  #DEFAULT_CHARACTER_ENCODING}
+ * @return an inputStream create by string
  */
 public static InputStream createContentStream(String string) {
     if (string == null) {
@@ -28,6 +36,12 @@ public static InputStream createContentStream(String string) {
     return (new ByteArrayInputStream(string.getBytes(DEFAULT_CHARACTER_ENCODING)));
 }
 
+/**
+ * Return a lira of resource files , include subdirectories
+ *
+ * @param fileFilter the filter of {@link  File}
+ * @return a lira of files
+ */
 public static Lira<File> getResourceFile(FileFilter fileFilter) {
 
     return getResourcesLira("")
@@ -38,6 +52,12 @@ public static Lira<File> getResourceFile(FileFilter fileFilter) {
 
 }
 
+/**
+ * Return a lira consist of {@link  URL} according to  {@link  ClassLoader#getResources(String)}
+ *
+ * @param resource the name of resource
+ * @return a lira consist of {@link  URL}
+ */
 public static Lira<URL> getResourcesLira(String resource) {
 
     return Lino.of(resource).throwable_map(ClassLoaderUtil.getClassLoader()::getResources).toLira(URL.class);

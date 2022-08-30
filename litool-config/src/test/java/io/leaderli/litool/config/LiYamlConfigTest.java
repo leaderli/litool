@@ -1,7 +1,11 @@
 package io.leaderli.litool.config;
 
+import io.leaderli.litool.core.resource.ResourceUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.net.MalformedURLException;
 
 /**
  * @author leaderli
@@ -11,6 +15,11 @@ class LiYamlConfigTest {
 
 @Test
 void checkYamlFormat() {
+    System.out.println(ResourceUtil.getResourceFile(null));
+
+    System.out.println(ResourceUtil.getResourcesLira(""));
+    System.out.println(ResourceUtil.getResourceFile(f -> true));
+
     Assertions.assertThrows(RuntimeException.class, LiYamlConfig::checkYamlFormat);
 }
 
@@ -22,6 +31,16 @@ void loadResourcesYmlFiles() {
     Assertions.assertEquals("b", LiYamlConfig.loadResourcesYmlFiles("a.yml", "b.yml").get("value"));
 
 
+}
+
+@Test
+void isYamlFile() throws MalformedURLException {
+    Assertions.assertFalse(LiYamlConfig.isYamlFile("yml"));
+    Assertions.assertTrue(LiYamlConfig.isYamlFile("1.yml"));
+    Assertions.assertFalse(LiYamlConfig.isYamlFile(new File("yml")));
+    Assertions.assertTrue(LiYamlConfig.isYamlFile(new File("1.yml")));
+    Assertions.assertFalse(LiYamlConfig.isYamlFile(new File("yml").toURI().toURL()));
+    Assertions.assertTrue(LiYamlConfig.isYamlFile(new File("1.yml").toURI().toURL()));
 }
 
 }

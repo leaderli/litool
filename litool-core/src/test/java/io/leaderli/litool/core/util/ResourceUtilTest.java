@@ -5,6 +5,8 @@ import io.leaderli.litool.core.resource.ResourceUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 /**
@@ -27,6 +29,7 @@ void getResource() {
 @Test
 void getResourceIter() {
 
+
     Lira<URL> resourcesLira = ResourceUtil.getResourcesLira("io/leaderli");
 
     Assertions.assertEquals(2, resourcesLira.size());
@@ -45,5 +48,38 @@ void getResourceIter() {
 //        Assertions.assertEquals(1, LiResourceUtil.getResourceFile(null).size());
 
 
+}
+
+@Test
+void createContentStream() throws IOException {
+
+    InputStream contentStream = ResourceUtil.createContentStream(null);
+    Assertions.assertEquals(0, contentStream.available());
+    contentStream = ResourceUtil.createContentStream("hello");
+    Assertions.assertEquals(5, contentStream.available());
+}
+
+@Test
+void getResourceFile() {
+    System.out.println(ResourceUtil.getResourceFile(null));
+    System.out.println(ResourceUtil.getResourceFile(f -> true));
+    Assertions.assertTrue(ResourceUtil.getResourceFile(null).absent());
+    Assertions.assertEquals(2, ResourceUtil.getResourcesLira("").size());
+}
+
+@Test
+void getResourcesLira() {
+
+
+    Assertions.assertTrue(ResourceUtil.getResourcesLira(null).absent());
+    Assertions.assertEquals(2, ResourceUtil.getResourcesLira("").size());
+}
+
+@Test
+void lineStrOfResourcesFile() {
+}
+
+@Test
+void getResourceAsStream() {
 }
 }

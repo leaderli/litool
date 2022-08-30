@@ -34,6 +34,11 @@ public void onSubscribe(Subscription prevSubscription) {
 
 
 @Override
+public void next() {
+    this.actualSubscriber.next();
+}
+
+@Override
 public void onComplete() {
     this.actualSubscriber.onComplete();
 }

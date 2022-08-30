@@ -15,6 +15,13 @@ class LiraTest {
 
 
 @Test
+void nullable() {
+
+    System.out.println(Lira.of(null, 1).nullable(() -> 100));
+
+}
+
+@Test
 void getIndex() {
 
     Assertions.assertEquals(1, Lira.of(1, 2, 3).get(0).get());
