@@ -9,9 +9,9 @@ package io.leaderli.litool.core.event;
  */
 public interface LiEventBusBehavior<T> {
 
-/**
- * @param listener the listener to be removed
- * @see LiEventBus#unRegisterListener(ILiEventListener)
- */
-void unRegisterListener(ILiEventListener<T> listener);
+    /**
+     * @param listener the listener to be removed
+     * @see LiEventBus#unRegisterListener(ILiEventListener)
+     */
+    void unRegisterListener(ILiEventListener<T> listener);
 }

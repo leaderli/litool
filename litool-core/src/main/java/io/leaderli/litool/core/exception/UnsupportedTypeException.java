@@ -9,9 +9,9 @@ import java.lang.reflect.Type;
  * @since 2022/8/13 9:34 AM
  */
 public class UnsupportedTypeException extends RuntimeException {
-public UnsupportedTypeException(Type type) {
+    public UnsupportedTypeException(Type type) {
 
-    super(type.getClass() + ":" + type.getTypeName());
-}
+        super(type.getClass() + ":" + type.getTypeName());
+    }
 
 }

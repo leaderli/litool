@@ -9,10 +9,10 @@ package io.leaderli.litool.core.function;
 
 @FunctionalInterface
 public interface ThrowableRunner {
-/**
- * Performs an action
- *
- * @throws Throwable error
- */
-void run() throws Throwable;
+    /**
+     * Performs an action
+     *
+     * @throws Throwable error
+     */
+    void run() throws Throwable;
 }

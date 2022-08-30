@@ -14,24 +14,24 @@ import java.util.Map;
  */
 public class RequestElementExecutor extends BaseElementExecutor<RequestElement> {
 
-public RequestElementExecutor(RequestElement requestElement) {
-    super(requestElement);
-}
+    public RequestElementExecutor(RequestElement requestElement) {
+        super(requestElement);
+    }
 
-@Override
-public void execute(Context context) {
-    Map<String, Object> parserRequest = new HashMap<>();
-    element.entryList.lira().forEach(entry -> {
+    @Override
+    public void execute(Context context) {
+        Map<String, Object> parserRequest = new HashMap<>();
+        element.entryList.lira().forEach(entry -> {
 
-        String text = entry.getKey();
-        String value = (String) context.origin_request_or_response.getOrDefault(text, entry.getDef());
-        Object parserValue = TypeAlias.parser(entry.getType(), value, entry.getDef());
+            String text = entry.getKey();
+            String value = (String) context.origin_request_or_response.getOrDefault(text, entry.getDef());
+            Object parserValue = TypeAlias.parser(entry.getType(), value, entry.getDef());
 
-        parserRequest.put(text, parserValue);
-    });
+            parserRequest.put(text, parserValue);
+        });
 
-    context.origin_request_or_response.clear();
-    context.setReadonly_request(ImmutableMap.of(parserRequest));
+        context.origin_request_or_response.clear();
+        context.setReadonly_request(ImmutableMap.of(parserRequest));
 
-}
+    }
 }

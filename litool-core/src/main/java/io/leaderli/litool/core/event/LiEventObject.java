@@ -10,27 +10,27 @@ import io.leaderli.litool.core.meta.Lino;
 public class LiEventObject<T> {
 
 
-private final T source;
+    private final T source;
 
-public LiEventObject(T source) {
-    this.source = source;
-}
+    public LiEventObject(T source) {
+        this.source = source;
+    }
 
-/**
- * used to avoid null pointer because some source may be null
- * suggest use {@link  ILiEventObjectListener} to listen the event pushed by {@link LiEventBus#push(Object)}
- *
- * @return a lino wrapper
- */
-public final Lino<T> getSource() {
-    return Lino.of(source);
-}
+    /**
+     * used to avoid null pointer because some source may be null
+     * suggest use {@link  ILiEventObjectListener} to listen the event pushed by {@link LiEventBus#push(Object)}
+     *
+     * @return a lino wrapper
+     */
+    public final Lino<T> getSource() {
+        return Lino.of(source);
+    }
 
 
-@Override
-public final String toString() {
+    @Override
+    public final String toString() {
 
-    return getClass().getName() + "[source=" + source + "]";
-}
+        return getClass().getName() + "[source=" + source + "]";
+    }
 
 }

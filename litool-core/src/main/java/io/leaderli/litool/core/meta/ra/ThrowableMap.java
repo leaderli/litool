@@ -12,39 +12,39 @@ import io.leaderli.litool.core.meta.Lino;
  * @since 2022/6/27
  */
 public class ThrowableMap<T, R> extends Some<R> {
-private final ThrowableFunction<? super T, ? extends R> mapper;
-private final Publisher<T> prevPublisher;
+    private final ThrowableFunction<? super T, ? extends R> mapper;
+    private final Publisher<T> prevPublisher;
 
 
-public ThrowableMap(Publisher<T> prevPublisher, ThrowableFunction<? super T, ? extends R> mapper) {
-    this.prevPublisher = prevPublisher;
-    this.mapper = mapper;
-}
-
-@Override
-public void subscribe(Subscriber<? super R> actualSubscriber) {
-    prevPublisher.subscribe(new ThrowableMapSubscriber(actualSubscriber));
-
-}
-
-private class ThrowableMapSubscriber extends IntermediateSubscriber<T, R> {
-
-
-    private ThrowableMapSubscriber(Subscriber<? super R> actualSubscriber) {
-        super(actualSubscriber);
+    public ThrowableMap(Publisher<T> prevPublisher, ThrowableFunction<? super T, ? extends R> mapper) {
+        this.prevPublisher = prevPublisher;
+        this.mapper = mapper;
     }
-
 
     @Override
-    public void next(T t) {
-        SubscriberUtil.next(actualSubscriber, RuntimeExceptionTransfer.get(() -> mapper.apply(t)));
-        try {
-            SubscriberUtil.next(actualSubscriber, mapper.apply(t));
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+    public void subscribe(Subscriber<? super R> actualSubscriber) {
+        prevPublisher.subscribe(new ThrowableMapSubscriber(actualSubscriber));
+
     }
 
+    private class ThrowableMapSubscriber extends IntermediateSubscriber<T, R> {
 
-}
+
+        private ThrowableMapSubscriber(Subscriber<? super R> actualSubscriber) {
+            super(actualSubscriber);
+        }
+
+
+        @Override
+        public void next(T t) {
+            SubscriberUtil.next(actualSubscriber, RuntimeExceptionTransfer.get(() -> mapper.apply(t)));
+            try {
+                SubscriberUtil.next(actualSubscriber, mapper.apply(t));
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
+    }
 }

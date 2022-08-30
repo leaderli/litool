@@ -14,15 +14,15 @@ import java.util.List;
  */
 public abstract class SaxList<S extends SaxBean> implements ComponentType<S> {
 
-private final List<S> children = new ArrayList<>();
+    private final List<S> children = new ArrayList<>();
 
 
-public void add(S t) {
-    children.add(t);
-}
+    public void add(S t) {
+        children.add(t);
+    }
 
-public Lira<S> lira() {
-    return Lira.of(children);
-}
+    public Lira<S> lira() {
+        return Lira.of(children);
+    }
 
 }

@@ -7,7 +7,7 @@ package io.leaderli.litool.core.exception;
  */
 public class RuntimeExceptionTransferException extends RuntimeException {
 
-public RuntimeExceptionTransferException(Throwable throwable) {
-    super(throwable);
-}
+    public RuntimeExceptionTransferException(Throwable throwable) {
+        super(throwable);
+    }
 }

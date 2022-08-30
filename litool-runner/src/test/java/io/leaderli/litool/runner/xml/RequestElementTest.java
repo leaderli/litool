@@ -16,39 +16,39 @@ import java.util.Map;
 class RequestElementTest {
 
 
-@Test
-void test() {
-    SaxEventInterceptor<RequestElement> dfs = new SaxEventInterceptor<>(RequestElement.class);
+    @Test
+    void test() {
+        SaxEventInterceptor<RequestElement> dfs = new SaxEventInterceptor<>(RequestElement.class);
 
-    RequestElement requestElement = dfs.parse("request.xml");
+        RequestElement requestElement = dfs.parse("request.xml");
 
-    Map<String, String> request = new HashMap<>();
-    request.put("CHANNEL", "IVR");
+        Map<String, String> request = new HashMap<>();
+        request.put("CHANNEL", "IVR");
 
 
-    Context context = new Context(request);
-    requestElement.executor().visit(context);
+        Context context = new Context(request);
+        requestElement.executor().visit(context);
 //        requestElement.visit(context);
 //        context.visit(requestElement);
 
 //        new RequestElementExecutor(requestElement).visit(context);
 
 
-    Assertions.assertEquals("IVR", context.getRequest("CHANNEL"));
-    Assertions.assertEquals(1, (int) context.getRequest("ID"));
+        Assertions.assertEquals("IVR", context.getRequest("CHANNEL"));
+        Assertions.assertEquals(1, (int) context.getRequest("ID"));
 
 
-}
+    }
 
-@Test
-void error() {
-    SaxEventInterceptor<RequestElement> dfs = new SaxEventInterceptor<>(RequestElement.class);
+    @Test
+    void error() {
+        SaxEventInterceptor<RequestElement> dfs = new SaxEventInterceptor<>(RequestElement.class);
 
-    RequestElement requestElement = dfs.parse("request_error.xml");
+        RequestElement requestElement = dfs.parse("request_error.xml");
 
 
-    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "duplicate key of CHANNEL "));
-    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(1), "duplicate label of 渠道 "));
-}
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "duplicate key of CHANNEL "));
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(1), "duplicate label of 渠道 "));
+    }
 
 }

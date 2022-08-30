@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
  */
 class MethodSignatureTest {
 
-@Test
-void same() throws NoSuchMethodException {
-    MethodSignature notify = new MethodSignature("notify", void.class, new Class[]{});
+    @Test
+    void same() throws NoSuchMethodException {
+        MethodSignature notify = new MethodSignature("notify", void.class, new Class[]{});
 
-    Assertions.assertTrue(notify.same(Object.class.getMethod("notify")));
-    Assertions.assertFalse(notify.same(Object.class.getMethod("notifyAll")));
-}
+        Assertions.assertTrue(notify.same(Object.class.getMethod("notify")));
+        Assertions.assertFalse(notify.same(Object.class.getMethod("notifyAll")));
+    }
 }

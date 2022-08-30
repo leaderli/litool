@@ -12,22 +12,25 @@ import org.junit.jupiter.api.Test;
  */
 class EntryElementTest {
 
-@Test
-void type_error() {
-    LiConstant.WHEN_THROW = null;
-    SaxEventInterceptor<RequestElement> dfs = new SaxEventInterceptor<>(RequestElement.class);
+    @Test
+    void type_error() {
+        LiConstant.WHEN_THROW = null;
+        SaxEventInterceptor<RequestElement> dfs = new SaxEventInterceptor<>(RequestElement.class);
 
-    RequestElement requestElement = dfs.parse("entry.xml");
+        RequestElement requestElement = dfs.parse("entry.xml");
 
 
-    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "the entry type  fuck is unsupported" +
-            "  "));
-    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(1), "the def value a cannot satisfied " +
-            "the entry type int "));
-    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(2), "the def value a cannot satisfied " +
-            "the entry type int "));
-    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(3), "the entry key $ID is not match " +
-            "[a-zA-Z0-9_]+ "));
-}
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "the entry type  fuck is " +
+                "unsupported" +
+                "  "));
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(1), "the def value a cannot " +
+                "satisfied " +
+                "the entry type int "));
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(2), "the def value a cannot " +
+                "satisfied " +
+                "the entry type int "));
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(3), "the entry key $ID is not match " +
+                "[a-zA-Z0-9_]+ "));
+    }
 
 }

@@ -9,19 +9,19 @@ import io.leaderli.litool.core.meta.Lino;
  * 前后类型相同
  */
 public abstract class SameTypeIntermediateSubscriberLink<T> extends IntermediateSubscriberLink<T, T> {
-protected SameTypeIntermediateSubscriberLink(SubscriberLink<T> actualSubscriber) {
-    super(actualSubscriber);
-}
+    protected SameTypeIntermediateSubscriberLink(SubscriberLink<T> actualSubscriber) {
+        super(actualSubscriber);
+    }
 
 
-@Override
-public void onCancel(Lino<T> lino) {
-    this.actualSubscriber.onCancel(lino);
-}
+    @Override
+    public void onCancel(Lino<T> lino) {
+        this.actualSubscriber.onCancel(lino);
+    }
 
 
-@Override
-public void request(T t) {
-    this.prevSubscription.request(t);
-}
+    @Override
+    public void request(T t) {
+        this.prevSubscription.request(t);
+    }
 }

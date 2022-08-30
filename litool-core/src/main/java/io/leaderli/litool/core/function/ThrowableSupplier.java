@@ -10,11 +10,11 @@ package io.leaderli.litool.core.function;
 
 @FunctionalInterface
 public interface ThrowableSupplier<T> {
-/**
- * Gets a result.
- *
- * @return a result
- * @throws Throwable error
- */
-T get() throws Throwable;
+    /**
+     * Gets a result.
+     *
+     * @return a result
+     * @throws Throwable error
+     */
+    T get() throws Throwable;
 }

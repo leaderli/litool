@@ -36,31 +36,31 @@ public enum OperatorEnum {
         }
     };
 
-private final String[] operations;
+    private final String[] operations;
 
-OperatorEnum(String... operations) {
-    this.operations = operations;
-}
+    OperatorEnum(String... operations) {
+        this.operations = operations;
+    }
 
-public static OperatorEnum get(String op) {
+    public static OperatorEnum get(String op) {
 
-    for (OperatorEnum operatorEnum : values()) {
-        for (String operation : operatorEnum.operations) {
-            if (operation.equals(op)) {
-                return operatorEnum;
+        for (OperatorEnum operatorEnum : values()) {
+            for (String operation : operatorEnum.operations) {
+                if (operation.equals(op)) {
+                    return operatorEnum;
+                }
             }
         }
+        throw new UnsupportedOperationException(String.format("OperatorEnum unsupported [%s]", op));
     }
-    throw new UnsupportedOperationException(String.format("OperatorEnum unsupported [%s]", op));
-}
 
-public final <T> boolean apply(T left, T right) {
+    public final <T> boolean apply(T left, T right) {
 
-    int compare = ObjectsUtil.compare(left, right);
+        int compare = ObjectsUtil.compare(left, right);
 
-    return apply(compare);
+        return apply(compare);
 
-}
+    }
 
-public abstract boolean apply(int compare);
+    public abstract boolean apply(int compare);
 }

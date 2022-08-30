@@ -12,76 +12,76 @@ import java.util.Objects;
  * @since 2022/6/16 1:02 PM
  */
 public class ObjectsUtil {
-public static void requireNotNull(Object... objects) {
-    for (Object object : objects) {
-        if (object == null) {
-            throw new RuntimeException();
+    public static void requireNotNull(Object... objects) {
+        for (Object object : objects) {
+            if (object == null) {
+                throw new RuntimeException();
+            }
         }
     }
-}
 
-public static void requireNotNull(String msg, Object... objects) {
-    for (Object object : objects) {
-        if (object == null) {
-            throw new RuntimeException(msg);
+    public static void requireNotNull(String msg, Object... objects) {
+        for (Object object : objects) {
+            if (object == null) {
+                throw new RuntimeException(msg);
+            }
         }
     }
-}
 
-public static boolean sameAny(Object origin, Object... compares) {
+    public static boolean sameAny(Object origin, Object... compares) {
 
 
-    for (Object compare : compares) {
-        if (compare == origin) {
-            return true;
+        for (Object compare : compares) {
+            if (compare == origin) {
+                return true;
+            }
         }
-    }
-    return false;
+        return false;
 
-}
-
-public static <T> int compare(T left, T right) {
-
-    if (left == null && right == null) {
-
-        return 0;
-    }
-    Objects.requireNonNull(left);
-    Objects.requireNonNull(right);
-
-    if (left instanceof Number) {
-        return compareNumber((Number) left, (Number) right);
     }
 
-    if (left instanceof String) {
-        return ((String) left).compareTo((String) right);
+    public static <T> int compare(T left, T right) {
+
+        if (left == null && right == null) {
+
+            return 0;
+        }
+        Objects.requireNonNull(left);
+        Objects.requireNonNull(right);
+
+        if (left instanceof Number) {
+            return compareNumber((Number) left, (Number) right);
+        }
+
+        if (left instanceof String) {
+            return ((String) left).compareTo((String) right);
+        }
+
+        if (left instanceof Boolean) {
+            return ((Boolean) left).compareTo((Boolean) right);
+        }
+        if (left.getClass().isArray()) {
+            return compareNumber(Array.getLength(left), Array.getLength(right));
+        }
+        if (left instanceof ChronoLocalDate) {
+            return ((ChronoLocalDate) left).compareTo((ChronoLocalDate) right);
+        }
+
+        if (left instanceof LocalTime) {
+            return ((LocalTime) left).compareTo((LocalTime) right);
+        }
+
+
+        throw new UnsupportedTypeException(left.getClass());
+
     }
 
-    if (left instanceof Boolean) {
-        return ((Boolean) left).compareTo((Boolean) right);
+    private static int compareNumber(Number a, Number b) {
+
+        Double aa = a.doubleValue();
+        Double bb = b.doubleValue();
+        return aa.compareTo(bb);
     }
-    if (left.getClass().isArray()) {
-        return compareNumber(Array.getLength(left), Array.getLength(right));
-    }
-    if (left instanceof ChronoLocalDate) {
-        return ((ChronoLocalDate) left).compareTo((ChronoLocalDate) right);
-    }
-
-    if (left instanceof LocalTime) {
-        return ((LocalTime) left).compareTo((LocalTime) right);
-    }
-
-
-    throw new UnsupportedTypeException(left.getClass());
-
-}
-
-private static int compareNumber(Number a, Number b) {
-
-    Double aa = a.doubleValue();
-    Double bb = b.doubleValue();
-    return aa.compareTo(bb);
-}
 
 
 }

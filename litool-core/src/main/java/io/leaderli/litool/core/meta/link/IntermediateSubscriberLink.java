@@ -7,25 +7,25 @@ package io.leaderli.litool.core.meta.link;
  * @since 2022/6/22
  */
 public abstract class IntermediateSubscriberLink<T, R> implements SubscriberLink<T>, SubscriptionLink<R> {
-protected final SubscriberLink<R> actualSubscriber;
-protected SubscriptionLink<T> prevSubscription;
+    protected final SubscriberLink<R> actualSubscriber;
+    protected SubscriptionLink<T> prevSubscription;
 
-protected IntermediateSubscriberLink(SubscriberLink<R> actualSubscriber) {
-    this.actualSubscriber = actualSubscriber;
-}
-
-
-@Override
-public void onSubscribe(SubscriptionLink<T> prevSubscription) {
-    this.prevSubscription = prevSubscription;
-    actualSubscriber.onSubscribe(this);
-}
+    protected IntermediateSubscriberLink(SubscriberLink<R> actualSubscriber) {
+        this.actualSubscriber = actualSubscriber;
+    }
 
 
-@Override
-public void request() {
-    this.prevSubscription.request();
-}
+    @Override
+    public void onSubscribe(SubscriptionLink<T> prevSubscription) {
+        this.prevSubscription = prevSubscription;
+        actualSubscriber.onSubscribe(this);
+    }
+
+
+    @Override
+    public void request() {
+        this.prevSubscription.request();
+    }
 
 
 }

@@ -21,54 +21,54 @@ import java.util.Map;
 class SaxEventInterceptorTest {
 
 
-@Test
-void test() {
+    @Test
+    void test() {
 
-    String methodName = "bean";
-    MethodScanner methodScanner = MethodScanner.of(RootBean.class, false, method ->
+        String methodName = "bean";
+        MethodScanner methodScanner = MethodScanner.of(RootBean.class, false, method ->
 
-            StringUtils.equalsAnyIgnoreCase(method.getName(), "set" + methodName, "add" + methodName)
-                    && method.getParameterCount() == 1
-                    && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, method.getParameterTypes()[0]));
+                StringUtils.equalsAnyIgnoreCase(method.getName(), "set" + methodName, "add" + methodName)
+                        && method.getParameterCount() == 1
+                        && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, method.getParameterTypes()[0]));
 
-    Lino<Method> first = methodScanner.scan()
-            .sorted((m1, m2) -> m2.getName().compareTo(m1.getName()))
-            .first();
+        Lino<Method> first = methodScanner.scan()
+                .sorted((m1, m2) -> m2.getName().compareTo(m1.getName()))
+                .first();
 
-    Assertions.assertEquals("addBean", first.get().getName());
-
-
-}
-
-@Test
-void parse() {
-
-    Map<String, String> map = new HashMap<>();
-    map.put("123", "abc");
-
-    SaxEventInterceptor<RootBean> dfs = new SaxEventInterceptor<>(RootBean.class);
-    RootBean root = dfs.parse("bean.xml");
-
-    Assertions.assertTrue(root.beans.lira().first().present());
-    Assertions.assertEquals("no", root.getNoBean().getName());
-    Assertions.assertEquals("abc", map.get(root.getNoBean().body));
+        Assertions.assertEquals("addBean", first.get().getName());
 
 
-    IgnoreSaxBeanWithMsg ignoreSaxBean = new IgnoreSaxBeanWithMsg();
-    dfs = new SaxEventInterceptor<>(RootBean.class, ignoreSaxBean);
-    dfs.parse("bean.xml");
+    }
 
-    Assertions.assertTrue(ignoreSaxBean.msgs.toString().contains("<yyyy>"));
+    @Test
+    void parse() {
 
-}
+        Map<String, String> map = new HashMap<>();
+        map.put("123", "abc");
 
-@Test
-void complex() {
-    SaxEventInterceptor<Sax> dfs = new SaxEventInterceptor<>(Sax.class);
-    Sax sax = dfs.parse("sax_complex_field.xml");
+        SaxEventInterceptor<RootBean> dfs = new SaxEventInterceptor<>(RootBean.class);
+        RootBean root = dfs.parse("bean.xml");
 
-    Assertions.assertSame(Color.RED, sax.color);
-}
+        Assertions.assertTrue(root.beans.lira().first().present());
+        Assertions.assertEquals("no", root.getNoBean().getName());
+        Assertions.assertEquals("abc", map.get(root.getNoBean().body));
+
+
+        IgnoreSaxBeanWithMsg ignoreSaxBean = new IgnoreSaxBeanWithMsg();
+        dfs = new SaxEventInterceptor<>(RootBean.class, ignoreSaxBean);
+        dfs.parse("bean.xml");
+
+        Assertions.assertTrue(ignoreSaxBean.msgs.toString().contains("<yyyy>"));
+
+    }
+
+    @Test
+    void complex() {
+        SaxEventInterceptor<Sax> dfs = new SaxEventInterceptor<>(Sax.class);
+        Sax sax = dfs.parse("sax_complex_field.xml");
+
+        Assertions.assertSame(Color.RED, sax.color);
+    }
 
 
 }

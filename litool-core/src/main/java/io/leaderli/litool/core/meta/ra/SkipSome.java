@@ -7,47 +7,47 @@ package io.leaderli.litool.core.meta.ra;
  * @since 2022/6/27
  */
 public class SkipSome<T> extends PublisherSome<T> {
-private final int skip;
+    private final int skip;
 
-public SkipSome(Publisher<T> prevPublisher, int skip) {
-    super(prevPublisher);
-    this.skip = skip;
-}
-
-@Override
-public void subscribe(Subscriber<? super T> actualSubscriber) {
-    prevPublisher.subscribe(new SkipSubscriber<>(actualSubscriber, skip));
-
-}
-
-private static class SkipSubscriber<T> extends IntermediateSubscriber<T, T> {
-
-    private int skip;
-
-    private SkipSubscriber(Subscriber<? super T> actualSubscriber, int skip) {
-        super(actualSubscriber);
+    public SkipSome(Publisher<T> prevPublisher, int skip) {
+        super(prevPublisher);
         this.skip = skip;
     }
 
-
     @Override
-    public void next(T t) {
-        if (skip < 1) {
+    public void subscribe(Subscriber<? super T> actualSubscriber) {
+        prevPublisher.subscribe(new SkipSubscriber<>(actualSubscriber, skip));
 
-            this.actualSubscriber.next(t);
-        } else {
-            skip--;
-        }
     }
 
-    @Override
-    public void onNull() {
-        if (skip < 1) {
+    private static class SkipSubscriber<T> extends IntermediateSubscriber<T, T> {
 
-            this.actualSubscriber.onNull();
-        } else {
-            skip--;
+        private int skip;
+
+        private SkipSubscriber(Subscriber<? super T> actualSubscriber, int skip) {
+            super(actualSubscriber);
+            this.skip = skip;
+        }
+
+
+        @Override
+        public void next(T t) {
+            if (skip < 1) {
+
+                this.actualSubscriber.next(t);
+            } else {
+                skip--;
+            }
+        }
+
+        @Override
+        public void onNull() {
+            if (skip < 1) {
+
+                this.actualSubscriber.onNull();
+            } else {
+                skip--;
+            }
         }
     }
-}
 }

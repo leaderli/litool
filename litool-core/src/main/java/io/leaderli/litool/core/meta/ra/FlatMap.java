@@ -12,40 +12,40 @@ import java.util.function.Function;
 public class FlatMap<T, R> extends Some<R> {
 
 
-private final Function<? super T, Iterator<? extends R>> mapper;
-private final Publisher<T> prevPublisher;
+    private final Function<? super T, Iterator<? extends R>> mapper;
+    private final Publisher<T> prevPublisher;
 
-public FlatMap(Publisher<T> prevPublisher, Function<? super T, Iterator<? extends R>> mapper) {
-    this.prevPublisher = prevPublisher;
-    this.mapper = mapper;
-}
-
-@Override
-public void subscribe(Subscriber<? super R> actualSubscriber) {
-    prevPublisher.subscribe(new FlatMapSubscriber(actualSubscriber));
-
-}
-
-private class FlatMapSubscriber extends IntermediateSubscriber<T, R> {
-
-
-    private FlatMapSubscriber(Subscriber<? super R> actualSubscriber) {
-        super(actualSubscriber);
-    }
-
-
-    @Override
-    public void next(T t) {
-
-        // 展开迭代器，依次对非空元素执行下一步操作
-        Lino.of(t).map(mapper).ifPresent(it -> it.forEachRemaining(this.actualSubscriber::next));
+    public FlatMap(Publisher<T> prevPublisher, Function<? super T, Iterator<? extends R>> mapper) {
+        this.prevPublisher = prevPublisher;
+        this.mapper = mapper;
     }
 
     @Override
-    public void onNull() {
+    public void subscribe(Subscriber<? super R> actualSubscriber) {
+        prevPublisher.subscribe(new FlatMapSubscriber(actualSubscriber));
 
-        // flat null  will return empty
     }
 
-}
+    private class FlatMapSubscriber extends IntermediateSubscriber<T, R> {
+
+
+        private FlatMapSubscriber(Subscriber<? super R> actualSubscriber) {
+            super(actualSubscriber);
+        }
+
+
+        @Override
+        public void next(T t) {
+
+            // 展开迭代器，依次对非空元素执行下一步操作
+            Lino.of(t).map(mapper).ifPresent(it -> it.forEachRemaining(this.actualSubscriber::next));
+        }
+
+        @Override
+        public void onNull() {
+
+            // flat null  will return empty
+        }
+
+    }
 }

@@ -4,9 +4,9 @@ import io.leaderli.litool.dom.sax.SaxList;
 
 public class FuncList extends SaxList<FuncElement> {
 
-@Override
-public Class<FuncElement> componentType() {
-    return FuncElement.class;
-}
+    @Override
+    public Class<FuncElement> componentType() {
+        return FuncElement.class;
+    }
 
 }

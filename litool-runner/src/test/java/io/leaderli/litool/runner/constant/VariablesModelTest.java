@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 class VariablesModelTest {
 
 
-@Test
-void test() {
+    @Test
+    void test() {
 
-    Assertions.assertThrows(UnsupportedOperationException.class, () -> VariablesModel.ERROR.apply(null, null));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> VariablesModel.ERROR.apply(null, null));
 
-}
+    }
 
 }

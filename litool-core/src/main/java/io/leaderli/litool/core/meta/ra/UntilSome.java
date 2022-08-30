@@ -16,39 +16,39 @@ import java.util.function.Function;
 public class UntilSome<T> extends PublisherSome<T> {
 
 
-private final Function<? super T, ?> filter;
+    private final Function<? super T, ?> filter;
 
-public UntilSome(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
-    super(prevPublisher);
-    this.filter = filter;
-}
-
-@Override
-public void subscribe(Subscriber<? super T> actualSubscriber) {
-    prevPublisher.subscribe(new FilterSubscriber(actualSubscriber));
-
-}
-
-
-private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
-
-    public FilterSubscriber(Subscriber<? super T> actualSubscriber) {
-        super(actualSubscriber);
+    public UntilSome(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
+        super(prevPublisher);
+        this.filter = filter;
     }
 
     @Override
-    public void next(T t) {
-        actualSubscriber.next(t);
-        boolean present = BooleanUtil.parse(filter.apply(t));
-        if (present) {
-            cancel();
+    public void subscribe(Subscriber<? super T> actualSubscriber) {
+        prevPublisher.subscribe(new FilterSubscriber(actualSubscriber));
+
+    }
+
+
+    private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
+
+        public FilterSubscriber(Subscriber<? super T> actualSubscriber) {
+            super(actualSubscriber);
         }
 
-    }
+        @Override
+        public void next(T t) {
+            actualSubscriber.next(t);
+            boolean present = BooleanUtil.parse(filter.apply(t));
+            if (present) {
+                cancel();
+            }
 
-    @Override
-    public void onNull() {
-        //  filter will avoid null element
+        }
+
+        @Override
+        public void onNull() {
+            //  filter will avoid null element
+        }
     }
-}
 }

@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
 @Valuable(BooleanCartesian.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface BooleanValues {
-boolean[] value() default {true, false};
+    boolean[] value() default {true, false};
 }
 

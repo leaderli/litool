@@ -11,15 +11,15 @@ import org.junit.jupiter.api.Test;
  */
 class IgnoreSaxBeanWithMsgTest {
 
-@Test
-void test() {
-    SaxEventInterceptor<RootBean> dfs;
+    @Test
+    void test() {
+        SaxEventInterceptor<RootBean> dfs;
 
-    IgnoreSaxBeanWithMsg ignoreSaxBean = new IgnoreSaxBeanWithMsg();
-    dfs = new SaxEventInterceptor<>(RootBean.class, ignoreSaxBean);
-    dfs.parse("bean.xml");
+        IgnoreSaxBeanWithMsg ignoreSaxBean = new IgnoreSaxBeanWithMsg();
+        dfs = new SaxEventInterceptor<>(RootBean.class, ignoreSaxBean);
+        dfs.parse("bean.xml");
 
-    Assertions.assertTrue(ignoreSaxBean.msgs.toString().contains("<yyyy>"));
+        Assertions.assertTrue(ignoreSaxBean.msgs.toString().contains("<yyyy>"));
 
-}
+    }
 }

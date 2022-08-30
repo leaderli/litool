@@ -7,28 +7,28 @@ import io.leaderli.litool.runner.xml.router.task.TaskElement;
 
 public class UnitElement extends TaskElement<UnitElement, UnitElementExecutor> {
 
-private String label;
+    private String label;
 
-public UnitElement() {
-    super("unit");
-}
+    public UnitElement() {
+        super("unit");
+    }
 
-public void addIf(IfElement ifElement) {
-    taskList.add(ifElement);
-}
+    public void addIf(IfElement ifElement) {
+        taskList.add(ifElement);
+    }
 
-public void addAssign(AssignElement assignElement) {
-    taskList.add(assignElement);
-}
+    public void addAssign(AssignElement assignElement) {
+        taskList.add(assignElement);
+    }
 
 
-public String getLabel() {
-    return label;
-}
+    public String getLabel() {
+        return label;
+    }
 
-public void setLabel(String label) {
-    this.label = label;
-}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
 
 }

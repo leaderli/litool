@@ -12,29 +12,29 @@ import java.util.function.Supplier;
  */
 public class TypeMap {
 
-private final Map<Class<?>, Object> proxy = new HashMap<>();
+    private final Map<Class<?>, Object> proxy = new HashMap<>();
 
-public <T> Lino<T> computeIfAbsent(Class<T> type, Supplier<T> supplier) {
-    return this.get(type).or(() -> this.put(type, supplier.get()));
-}
+    public <T> Lino<T> computeIfAbsent(Class<T> type, Supplier<T> supplier) {
+        return this.get(type).or(() -> this.put(type, supplier.get()));
+    }
 
-@SuppressWarnings("unchecked")
-public <T> Lino<T> get(Class<T> type) {
-    // 基本类型在 LiTypeMap 会被装箱，因此需要使用其包装类去查找
-    return Lino.of((T) this.proxy.get(ClassUtil.primitiveToWrapper(type)));
-}
+    @SuppressWarnings("unchecked")
+    public <T> Lino<T> get(Class<T> type) {
+        // 基本类型在 LiTypeMap 会被装箱，因此需要使用其包装类去查找
+        return Lino.of((T) this.proxy.get(ClassUtil.primitiveToWrapper(type)));
+    }
 
-public <T> T put(Class<T> type, T value) {
-    this.proxy.put(ClassUtil.primitiveToWrapper(type), value);
-    return value;
-}
+    public <T> T put(Class<T> type, T value) {
+        this.proxy.put(ClassUtil.primitiveToWrapper(type), value);
+        return value;
+    }
 
-public <T> void remove(Class<T> type) {
-    this.proxy.remove(type);
-}
+    public <T> void remove(Class<T> type) {
+        this.proxy.remove(type);
+    }
 
-@Override
-public String toString() {
-    return this.proxy.toString();
-}
+    @Override
+    public String toString() {
+        return this.proxy.toString();
+    }
 }

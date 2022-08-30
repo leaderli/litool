@@ -9,12 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SequenceElementTest {
 
-@Test
-void duplicate_unit() {
-    SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
-    MainElement element = dfs.parse("router/unit_label_duplicate.xml");
+    @Test
+    void duplicate_unit() {
+        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
+        MainElement element = dfs.parse("router/unit_label_duplicate.xml");
 
-    assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "duplicate label of"));
-}
+        assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "duplicate label of"));
+    }
 
 }

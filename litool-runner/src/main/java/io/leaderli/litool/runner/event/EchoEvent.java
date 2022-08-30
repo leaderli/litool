@@ -10,11 +10,11 @@ import io.leaderli.litool.core.meta.LiTuple2;
  */
 public final class EchoEvent extends LiEventObject<LiTuple2<Integer, String>> {
 
-public static final int ERROR = 0;
-public static final int DEBUG = 1;
-public static final int INFO = 2;
+    public static final int ERROR = 0;
+    public static final int DEBUG = 1;
+    public static final int INFO = 2;
 
-public EchoEvent(int level, String source) {
-    super(LiTuple.of(level, source));
-}
+    public EchoEvent(int level, String source) {
+        super(LiTuple.of(level, source));
+    }
 }

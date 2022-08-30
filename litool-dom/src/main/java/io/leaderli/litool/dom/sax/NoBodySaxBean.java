@@ -5,11 +5,11 @@ package io.leaderli.litool.dom.sax;
  * @since 2022/7/24
  */
 public abstract class NoBodySaxBean extends SaxBean {
-protected NoBodySaxBean(String tag) {
-    super(tag);
-}
+    protected NoBodySaxBean(String tag) {
+        super(tag);
+    }
 
-@Override
-public void body(BodyEvent bodyEvent) {
-}
+    @Override
+    public void body(BodyEvent bodyEvent) {
+    }
 }

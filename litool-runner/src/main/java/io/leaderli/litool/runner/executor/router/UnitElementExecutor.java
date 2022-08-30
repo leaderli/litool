@@ -13,46 +13,47 @@ import java.util.List;
 
 public class UnitElementExecutor extends BaseElementExecutor<UnitElement> {
 
-private ImmutableList<ContextVisitor> executors;
+    private ImmutableList<ContextVisitor> executors;
 
-public UnitElementExecutor(UnitElement element) {
-    super(element);
-    init();
-}
+    public UnitElementExecutor(UnitElement element) {
+        super(element);
+        init();
+    }
 
-private void init() {
-    Lira<ContextVisitor> map = element.getTaskList().lira().map(ElementExecutor::executor).map(UnitElementExecutorWrapper::new);
-    executors = ImmutableList.of(map);
-}
-
-@Override
-public List<ContextVisitor> visit() {
-    return executors.toList();
-}
-
-
-private static class UnitElementExecutorWrapper extends ContextVisitor {
-
-    private final ContextVisitor contextVisitor;
-
-    private UnitElementExecutorWrapper(ContextVisitor contextVisitor) {
-        this.contextVisitor = contextVisitor;
+    private void init() {
+        Lira<ContextVisitor> map =
+                element.getTaskList().lira().map(ElementExecutor::executor).map(UnitElementExecutorWrapper::new);
+        executors = ImmutableList.of(map);
     }
 
     @Override
-    protected void execute(Context context) {
-        throw new UnsupportedOperationException();
+    public List<ContextVisitor> visit() {
+        return executors.toList();
     }
 
-    @Override
-    @SuppressWarnings("java:S1181")
-    public void visit(Context context) {
-        try {
-            contextVisitor.visit(context);
-        } catch (Throwable throwable) {
-            context.interrupt.set(Interrupt.ERROR);
-            context.interruptObj = throwable;
+
+    private static class UnitElementExecutorWrapper extends ContextVisitor {
+
+        private final ContextVisitor contextVisitor;
+
+        private UnitElementExecutorWrapper(ContextVisitor contextVisitor) {
+            this.contextVisitor = contextVisitor;
+        }
+
+        @Override
+        protected void execute(Context context) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        @SuppressWarnings("java:S1181")
+        public void visit(Context context) {
+            try {
+                contextVisitor.visit(context);
+            } catch (Throwable throwable) {
+                context.interrupt.set(Interrupt.ERROR);
+                context.interruptObj = throwable;
+            }
         }
     }
-}
 }

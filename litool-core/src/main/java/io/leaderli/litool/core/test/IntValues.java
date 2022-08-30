@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
 @Valuable(IntCartesian.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface IntValues {
-int[] value();
+    int[] value();
 }
 

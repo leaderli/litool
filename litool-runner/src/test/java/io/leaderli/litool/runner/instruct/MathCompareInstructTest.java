@@ -10,14 +10,14 @@ import org.junit.jupiter.api.Test;
  */
 class MathCompareInstructTest {
 
-@Test
-void test() {
+    @Test
+    void test() {
 
-    MathCompareInstruct compare = new MathCompareInstruct();
+        MathCompareInstruct compare = new MathCompareInstruct();
 
-    Assertions.assertTrue((boolean) compare.apply(Boolean.class, new Object[]{OperatorEnum.EQUALS, 1, 1}));
-    Assertions.assertTrue((boolean) compare.apply(Boolean.class, new Object[]{OperatorEnum.EQUALS, 1.0, 1.0}));
+        Assertions.assertTrue((boolean) compare.apply(Boolean.class, new Object[]{OperatorEnum.EQUALS, 1, 1}));
+        Assertions.assertTrue((boolean) compare.apply(Boolean.class, new Object[]{OperatorEnum.EQUALS, 1.0, 1.0}));
 
-}
+    }
 
 }

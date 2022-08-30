@@ -15,6 +15,6 @@ import java.util.function.Function;
 @Valuable(FactoryCartesian.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface FactoryValues {
-Class<? extends Function<CartesianContext, Object[]>> value();
+    Class<? extends Function<CartesianContext, Object[]>> value();
 }
 

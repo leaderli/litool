@@ -9,13 +9,13 @@ import io.leaderli.litool.core.event.LiEventObject;
 public final class BeginEvent extends LiEventObject<Void> {
 
 
-private static final BeginEvent INSTANCE = new BeginEvent();
+    private static final BeginEvent INSTANCE = new BeginEvent();
 
-private BeginEvent() {
-    super(null);
-}
+    private BeginEvent() {
+        super(null);
+    }
 
-public static BeginEvent of() {
-    return INSTANCE;
-}
+    public static BeginEvent of() {
+        return INSTANCE;
+    }
 }

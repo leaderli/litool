@@ -6,9 +6,9 @@ package io.leaderli.litool.core.meta.ra;
  */
 public abstract class PublisherSome<T> extends Some<T> {
 
-protected final Publisher<T> prevPublisher;
+    protected final Publisher<T> prevPublisher;
 
-protected PublisherSome(Publisher<T> prevPublisher) {
-    this.prevPublisher = prevPublisher;
-}
+    protected PublisherSome(Publisher<T> prevPublisher) {
+        this.prevPublisher = prevPublisher;
+    }
 }

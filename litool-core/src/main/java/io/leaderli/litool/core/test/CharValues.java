@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
 @Valuable(CharCartesian.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface CharValues {
-char[] value();
+    char[] value();
 }
 

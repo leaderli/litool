@@ -5,19 +5,19 @@ import io.leaderli.litool.runner.executor.router.task.EchoElementExecutor;
 
 public class EchoElement extends BaseEventElement<EchoElement, EchoElementExecutor, EchoEvent> {
 
-private int level = EchoEvent.DEBUG;
+    private int level = EchoEvent.DEBUG;
 
-public EchoElement() {
-    super("echo");
-}
+    public EchoElement() {
+        super("echo");
+    }
 
-public Integer getLevel() {
-    return level;
-}
+    public Integer getLevel() {
+        return level;
+    }
 
-public void setLevel(Integer level) {
-    this.level = level;
-}
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
 
 
 }

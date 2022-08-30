@@ -15,7 +15,7 @@ import java.util.Set;
 @API(status = API.Status.STABLE)
 @interface NotNull {
 
-String value();
+    String value();
 
 
 }
@@ -23,9 +23,9 @@ String value();
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER, ElementType.TYPE})
 @interface NotNulls {
-NotNull[] value();
+    NotNull[] value();
 
-String name() default "123";
+    String name() default "123";
 }
 
 /**
@@ -35,23 +35,23 @@ String name() default "123";
 class ClassScannerTest {
 
 
-@Test
-void scan() {
-    Set<Class<?>> scan =
-            new ClassScanner(this.getClass().getPackage().getName()).scan();
-    Assertions.assertTrue(scan.contains(NotNull.class));
-    Assertions.assertTrue(scan.contains(NotNulls.class));
-}
+    @Test
+    void scan() {
+        Set<Class<?>> scan =
+                new ClassScanner(this.getClass().getPackage().getName()).scan();
+        Assertions.assertTrue(scan.contains(NotNull.class));
+        Assertions.assertTrue(scan.contains(NotNulls.class));
+    }
 
 
-@SuppressWarnings("rawtypes")
-@Test
-void getSubTypesOf() {
+    @SuppressWarnings("rawtypes")
+    @Test
+    void getSubTypesOf() {
 
-    Lira<Class<Lino>> subTypesOf =
-            ClassScanner.getSubTypesOf(Lino.class.getPackage().getName(),
-                    Lino.class);
-    Assertions.assertEquals(2, subTypesOf.size());
-}
+        Lira<Class<Lino>> subTypesOf =
+                ClassScanner.getSubTypesOf(Lino.class.getPackage().getName(),
+                        Lino.class);
+        Assertions.assertEquals(2, subTypesOf.size());
+    }
 
 }

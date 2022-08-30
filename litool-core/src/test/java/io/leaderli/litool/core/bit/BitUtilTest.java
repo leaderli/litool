@@ -9,17 +9,17 @@ import org.junit.jupiter.api.Test;
  */
 class BitUtilTest {
 
-@Test
-void isPositivePower2() {
+    @Test
+    void isPositivePower2() {
 
-    assert !BitUtil.onlyOneBit(1 >> 1);
-    assert !BitUtil.onlyOneBit(1 >> 2);
+        assert !BitUtil.onlyOneBit(1 >> 1);
+        assert !BitUtil.onlyOneBit(1 >> 2);
 
-    Assertions.assertTrue(BitUtil.onlyOneBit(1));
-    assert BitUtil.onlyOneBit(1 << 2);
-    assert BitUtil.onlyOneBit(1 << 31);
+        Assertions.assertTrue(BitUtil.onlyOneBit(1));
+        assert BitUtil.onlyOneBit(1 << 2);
+        assert BitUtil.onlyOneBit(1 << 31);
 
-    assert !BitUtil.onlyOneBit((1 << 2) + 1);
+        assert !BitUtil.onlyOneBit((1 << 2) + 1);
 
-}
+    }
 }

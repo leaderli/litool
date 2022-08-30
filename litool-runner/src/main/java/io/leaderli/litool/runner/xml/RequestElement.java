@@ -14,27 +14,27 @@ import java.util.Objects;
 public class RequestElement extends SaxBean implements ElementExecutor<RequestElement, RequestElementExecutor> {
 
 
-public final EntryList entryList = new EntryList();
+    public final EntryList entryList = new EntryList();
 
-public RequestElement() {
-    super("request");
-}
+    public RequestElement() {
+        super("request");
+    }
 
 
-public void addEntry(EntryElement element) {
+    public void addEntry(EntryElement element) {
 
-    entryList.lira().iterator().forEachRemaining(entry -> {
-        LiAssertUtil.assertFalse(Objects.equals(entry.getKey(), element.getKey()),
-                "duplicate key of " + element.getKey());
-        LiAssertUtil.assertFalse(Objects.equals(entry.getLabel(), element.getLabel()),
-                "duplicate label of " + element.getLabel());
-    });
-    this.entryList.add(element);
-}
+        entryList.lira().iterator().forEachRemaining(entry -> {
+            LiAssertUtil.assertFalse(Objects.equals(entry.getKey(), element.getKey()),
+                    "duplicate key of " + element.getKey());
+            LiAssertUtil.assertFalse(Objects.equals(entry.getLabel(), element.getLabel()),
+                    "duplicate label of " + element.getLabel());
+        });
+        this.entryList.add(element);
+    }
 
-public EntryList getEntryList() {
-    return entryList;
-}
+    public EntryList getEntryList() {
+        return entryList;
+    }
 
 
 }

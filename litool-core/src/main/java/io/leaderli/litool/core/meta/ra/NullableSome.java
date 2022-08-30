@@ -7,32 +7,32 @@ import java.util.function.Supplier;
  * @since 2022/8/30 7:25 PM
  */
 public class NullableSome<T> extends PublisherSome<T> {
-private final Supplier<? extends T> supplier;
+    private final Supplier<? extends T> supplier;
 
-public NullableSome(Publisher<T> prevPublisher, Supplier<? extends T> supplier) {
-    super(prevPublisher);
-    this.supplier = supplier;
-}
-
-@Override
-public void subscribe(Subscriber<? super T> actualSubscriber) {
-    prevPublisher.subscribe(new NullableSubscriber(actualSubscriber));
-
-}
-
-private class NullableSubscriber extends IntermediateSubscriber<T, T> {
-    public NullableSubscriber(Subscriber<? super T> actualSubscriber) {
-        super(actualSubscriber);
+    public NullableSome(Publisher<T> prevPublisher, Supplier<? extends T> supplier) {
+        super(prevPublisher);
+        this.supplier = supplier;
     }
 
     @Override
-    public void next(T t) {
-        this.actualSubscriber.next(t);
+    public void subscribe(Subscriber<? super T> actualSubscriber) {
+        prevPublisher.subscribe(new NullableSubscriber(actualSubscriber));
+
     }
 
-    @Override
-    public void onNull() {
-        SubscriberUtil.next(actualSubscriber, supplier.get());
+    private class NullableSubscriber extends IntermediateSubscriber<T, T> {
+        public NullableSubscriber(Subscriber<? super T> actualSubscriber) {
+            super(actualSubscriber);
+        }
+
+        @Override
+        public void next(T t) {
+            this.actualSubscriber.next(t);
+        }
+
+        @Override
+        public void onNull() {
+            SubscriberUtil.next(actualSubscriber, supplier.get());
+        }
     }
-}
 }

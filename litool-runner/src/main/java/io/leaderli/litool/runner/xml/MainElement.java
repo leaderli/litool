@@ -19,58 +19,58 @@ import java.util.List;
 
 public class MainElement extends SaxBean implements ElementExecutor<MainElement, MainElementExecutor> {
 
-private RequestElement request;
-private ResponseElement response;
-private FuncsElement funcs;
-private RouterElement router;
+    private RequestElement request;
+    private ResponseElement response;
+    private FuncsElement funcs;
+    private RouterElement router;
 
-public MainElement() {
-    super("main");
-}
+    public MainElement() {
+        super("main");
+    }
 
-public RequestElement getRequest() {
-    return request;
-}
+    public RequestElement getRequest() {
+        return request;
+    }
 
-public void setRequest(RequestElement request) {
-    this.request = request;
-}
+    public void setRequest(RequestElement request) {
+        this.request = request;
+    }
 
-public ResponseElement getResponse() {
-    return response;
-}
+    public ResponseElement getResponse() {
+        return response;
+    }
 
-public void setResponse(ResponseElement response) {
-    this.response = response;
-}
+    public void setResponse(ResponseElement response) {
+        this.response = response;
+    }
 
-public FuncsElement getFuncs() {
-    return funcs;
-}
+    public FuncsElement getFuncs() {
+        return funcs;
+    }
 
-public void setFuncs(FuncsElement funcs) {
-    this.funcs = funcs;
-}
+    public void setFuncs(FuncsElement funcs) {
+        this.funcs = funcs;
+    }
 
-public RouterElement getRouter() {
-    return router;
-}
+    public RouterElement getRouter() {
+        return router;
+    }
 
-public void setRouter(RouterElement router) {
-    this.router = router;
-}
+    public void setRouter(RouterElement router) {
+        this.router = router;
+    }
 
 
-@Override
-public void end_check(List<String> parseErrorMsgs) {
-    // 递归校验所有表达式是否合法
-    MainCheckVisitor mainCheckVisitor = new MainCheckVisitor(this, parseErrorMsgs);
+    @Override
+    public void end_check(List<String> parseErrorMsgs) {
+        // 递归校验所有表达式是否合法
+        MainCheckVisitor mainCheckVisitor = new MainCheckVisitor(this, parseErrorMsgs);
 
-    // 校验表达式
-    ExpressionCheckVisitor expressionCheckVisitor = new ExpressionCheckVisitor(new ModelCheckVisitor());
-    mainCheckVisitor.check(expressionCheckVisitor);
+        // 校验表达式
+        ExpressionCheckVisitor expressionCheckVisitor = new ExpressionCheckVisitor(new ModelCheckVisitor());
+        mainCheckVisitor.check(expressionCheckVisitor);
 
-    mainCheckVisitor.check(new GotoElementCheckVisitor());
+        mainCheckVisitor.check(new GotoElementCheckVisitor());
 
-}
+    }
 }

@@ -12,11 +12,11 @@ package io.leaderli.litool.core.function;
 @FunctionalInterface
 public interface ThrowableConsumer<T> {
 
-/**
- * Performs this operation on the given argument.
- *
- * @param t the input argument
- * @throws Throwable error
- */
-void accept(T t) throws Throwable;
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param t the input argument
+     * @throws Throwable error
+     */
+    void accept(T t) throws Throwable;
 }

@@ -4,19 +4,19 @@ import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
 
 public class NotInInstruct implements Instruct {
-@Override
-public Object apply(Class<?> type, Object[] objects) {
-    return invoke((String) objects[0], Lira.of(objects).skip(1).cast(String.class).toArray(String.class));
-}
+    @Override
+    public Object apply(Class<?> type, Object[] objects) {
+        return invoke((String) objects[0], Lira.of(objects).skip(1).cast(String.class).toArray(String.class));
+    }
 
-public Boolean invoke(String str, String... searchStrings) {
+    public Boolean invoke(String str, String... searchStrings) {
 
-    return StringUtils.equalsAny(str, searchStrings);
-}
+        return StringUtils.equalsAny(str, searchStrings);
+    }
 
-@Override
-public String name() {
-    return "not_in";
-}
+    @Override
+    public String name() {
+        return "not_in";
+    }
 
 }

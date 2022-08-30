@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
 @Valuable(ShortCartesian.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface ShortValues {
-short[] value();
+    short[] value();
 }
 

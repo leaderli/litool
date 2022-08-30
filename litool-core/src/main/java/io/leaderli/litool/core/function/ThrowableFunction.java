@@ -14,13 +14,13 @@ package io.leaderli.litool.core.function;
 
 public interface ThrowableFunction<T, R> {
 
-/**
- * Applies this function to the given argument
- *
- * @param t the  function argument
- * @return the function result
- * @throws Throwable error
- */
-R apply(T t) throws Throwable;
+    /**
+     * Applies this function to the given argument
+     *
+     * @param t the  function argument
+     * @return the function result
+     * @throws Throwable error
+     */
+    R apply(T t) throws Throwable;
 
 }

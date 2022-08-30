@@ -9,26 +9,27 @@ import org.xml.sax.helpers.LocatorImpl;
  */
 public abstract class SaxEvent {
 
-public final Locator locator;
-public final String name;
+    public final Locator locator;
+    public final String name;
 
-protected SaxEvent(Locator locator, String name) {
+    protected SaxEvent(Locator locator, String name) {
 
-    //保持一个当前 locator 的快照
-    this.locator = new LocatorImpl(locator);
-    this.name = name;
-}
+        //保持一个当前 locator 的快照
+        this.locator = new LocatorImpl(locator);
+        this.name = name;
+    }
 
-@Override
-public String toString() {
+    @Override
+    public String toString() {
 
-    return String.format("%s(%s)%d,%d", this.getClass().getSimpleName(), this.description(), locator.getLineNumber(),
-            locator.getColumnNumber());
-}
+        return String.format("%s(%s)%d,%d", this.getClass().getSimpleName(), this.description(),
+                locator.getLineNumber(),
+                locator.getColumnNumber());
+    }
 
-protected String description() {
-    return name;
-}
+    protected String description() {
+        return name;
+    }
 
 
 }

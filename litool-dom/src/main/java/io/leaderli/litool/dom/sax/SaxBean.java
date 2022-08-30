@@ -8,20 +8,20 @@ package io.leaderli.litool.dom.sax;
  */
 public abstract class SaxBean implements SaxEventHandler {
 
-public final String tag;
-protected String id = "";
+    public final String tag;
+    protected String id = "";
 
-protected SaxBean(String tag) {
-    this.tag = tag;
-}
-
-
-public String getId() {
-    return id;
-}
+    protected SaxBean(String tag) {
+        this.tag = tag;
+    }
 
 
-public void setId(String id) {
-    this.id = id;
-}
+    public String getId() {
+        return id;
+    }
+
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

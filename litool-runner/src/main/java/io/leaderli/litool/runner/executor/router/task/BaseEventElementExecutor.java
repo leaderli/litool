@@ -12,21 +12,21 @@ import io.leaderli.litool.runner.xml.router.task.BaseEventElement;
  * @since 2022/8/14
  */
 public abstract class BaseEventElementExecutor<B extends BaseEventElement<B, ?, E>, E extends LiEventObject<?>> extends BaseElementExecutor<B> {
-protected BaseEventElementExecutor(B element) {
-    super(element);
-}
+    protected BaseEventElementExecutor(B element) {
+        super(element);
+    }
 
-@Override
-public final void execute(Context context) {
+    @Override
+    public final void execute(Context context) {
 
 
-    String message = StrSubstitution.replace(element.getLongExpression().getExpr()
-            , expr -> ExpressionUtil.getExpression(expr).apply(context) + "");
-    LiEventObject<?> e = newEvent(message);
-    context.publishEvent(e);
+        String message = StrSubstitution.replace(element.getLongExpression().getExpr()
+                , expr -> ExpressionUtil.getExpression(expr).apply(context) + "");
+        LiEventObject<?> e = newEvent(message);
+        context.publishEvent(e);
 
-}
+    }
 
-public abstract E newEvent(String message);
+    public abstract E newEvent(String message);
 
 }

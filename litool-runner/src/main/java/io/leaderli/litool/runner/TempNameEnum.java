@@ -15,12 +15,12 @@ public enum TempNameEnum {
     sequence_name(String.class, "");
 
 
-public final Class<?> type;
-public final Object def;
+    public final Class<?> type;
+    public final Object def;
 
-<T> TempNameEnum(Class<T> type, T def) {
-    this.type = type;
-    this.def = def;
-}
+    <T> TempNameEnum(Class<T> type, T def) {
+        this.type = type;
+        this.def = def;
+    }
 
 }

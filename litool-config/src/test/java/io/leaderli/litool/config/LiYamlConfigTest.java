@@ -13,34 +13,34 @@ import java.net.MalformedURLException;
  */
 class LiYamlConfigTest {
 
-@Test
-void checkYamlFormat() {
-    System.out.println(ResourceUtil.getResourceFile(null));
+    @Test
+    void checkYamlFormat() {
+        System.out.println(ResourceUtil.getResourceFile(null));
 
-    System.out.println(ResourceUtil.getResourcesLira(""));
-    System.out.println(ResourceUtil.getResourceFile(f -> true));
+        System.out.println(ResourceUtil.getResourcesLira(""));
+        System.out.println(ResourceUtil.getResourceFile(f -> true));
 
-    Assertions.assertThrows(RuntimeException.class, LiYamlConfig::checkYamlFormat);
-}
+        Assertions.assertThrows(RuntimeException.class, LiYamlConfig::checkYamlFormat);
+    }
 
-@Test
-void loadResourcesYmlFiles() {
+    @Test
+    void loadResourcesYmlFiles() {
 
-    Assertions.assertEquals(7, LiYamlConfig.loadResourcesYmlFiles("b.yml", "a.yml").size());
-    Assertions.assertEquals("a", LiYamlConfig.loadResourcesYmlFiles("b.yml", "a.yml").get("value"));
-    Assertions.assertEquals("b", LiYamlConfig.loadResourcesYmlFiles("a.yml", "b.yml").get("value"));
+        Assertions.assertEquals(7, LiYamlConfig.loadResourcesYmlFiles("b.yml", "a.yml").size());
+        Assertions.assertEquals("a", LiYamlConfig.loadResourcesYmlFiles("b.yml", "a.yml").get("value"));
+        Assertions.assertEquals("b", LiYamlConfig.loadResourcesYmlFiles("a.yml", "b.yml").get("value"));
 
 
-}
+    }
 
-@Test
-void isYamlFile() throws MalformedURLException {
-    Assertions.assertFalse(LiYamlConfig.isYamlFile("yml"));
-    Assertions.assertTrue(LiYamlConfig.isYamlFile("1.yml"));
-    Assertions.assertFalse(LiYamlConfig.isYamlFile(new File("yml")));
-    Assertions.assertTrue(LiYamlConfig.isYamlFile(new File("1.yml")));
-    Assertions.assertFalse(LiYamlConfig.isYamlFile(new File("yml").toURI().toURL()));
-    Assertions.assertTrue(LiYamlConfig.isYamlFile(new File("1.yml").toURI().toURL()));
-}
+    @Test
+    void isYamlFile() throws MalformedURLException {
+        Assertions.assertFalse(LiYamlConfig.isYamlFile("yml"));
+        Assertions.assertTrue(LiYamlConfig.isYamlFile("1.yml"));
+        Assertions.assertFalse(LiYamlConfig.isYamlFile(new File("yml")));
+        Assertions.assertTrue(LiYamlConfig.isYamlFile(new File("1.yml")));
+        Assertions.assertFalse(LiYamlConfig.isYamlFile(new File("yml").toURI().toURL()));
+        Assertions.assertTrue(LiYamlConfig.isYamlFile(new File("1.yml").toURI().toURL()));
+    }
 
 }

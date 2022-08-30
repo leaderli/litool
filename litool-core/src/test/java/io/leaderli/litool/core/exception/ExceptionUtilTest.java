@@ -13,63 +13,63 @@ import java.lang.reflect.Method;
 class ExceptionUtilTest {
 
 
-@Test
-void getCause() throws NoSuchMethodException {
-    try {
-        test();
-    } catch (Throwable throwable) {
-
-        Throwable cause = ExceptionUtil.getCause(throwable);
-        Assertions.assertEquals("test", cause.getStackTrace()[0].getMethodName());
-        Assertions.assertInstanceOf(ArithmeticException.class, cause);
-    }
-
-    try {
-        test2();
-    } catch (Throwable throwable) {
-
-        Throwable cause = ExceptionUtil.getCause(throwable, getClass());
-        Assertions.assertEquals("test2", cause.getStackTrace()[0].getMethodName());
-        Assertions.assertInstanceOf(RuntimeException.class, cause);
-    }
-
-    Method me = ExceptionUtilTest.class.getDeclaredMethod("test");
-    Runnable runnable = () -> {
+    @Test
+    void getCause() throws NoSuchMethodException {
         try {
-            me.invoke(this);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+            test();
+        } catch (Throwable throwable) {
+
+            Throwable cause = ExceptionUtil.getCause(throwable);
+            Assertions.assertEquals("test", cause.getStackTrace()[0].getMethodName());
+            Assertions.assertInstanceOf(ArithmeticException.class, cause);
         }
-    };
 
-    try {
-        runnable.run();
-    } catch (Throwable throwable) {
+        try {
+            test2();
+        } catch (Throwable throwable) {
 
-        Throwable cause = ExceptionUtil.getCause(throwable);
-        Assertions.assertEquals("test", cause.getStackTrace()[0].getMethodName());
-        Assertions.assertInstanceOf(ArithmeticException.class, cause);
+            Throwable cause = ExceptionUtil.getCause(throwable, getClass());
+            Assertions.assertEquals("test2", cause.getStackTrace()[0].getMethodName());
+            Assertions.assertInstanceOf(RuntimeException.class, cause);
+        }
+
+        Method me = ExceptionUtilTest.class.getDeclaredMethod("test");
+        Runnable runnable = () -> {
+            try {
+                me.invoke(this);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        try {
+            runnable.run();
+        } catch (Throwable throwable) {
+
+            Throwable cause = ExceptionUtil.getCause(throwable);
+            Assertions.assertEquals("test", cause.getStackTrace()[0].getMethodName());
+            Assertions.assertInstanceOf(ArithmeticException.class, cause);
+        }
+
     }
 
-}
-
-@SuppressWarnings({"divzero", "NumericOverflow"})
-void test() {
+    @SuppressWarnings({"divzero", "NumericOverflow"})
+    void test() {
 
 
-    int a = 1 / 0;
+        int a = 1 / 0;
 
 
-}
-
-void test2() {
-
-    try {
-
-        test();
-    } catch (Throwable throwable) {
-        throw new RuntimeException(throwable);
     }
-}
+
+    void test2() {
+
+        try {
+
+            test();
+        } catch (Throwable throwable) {
+            throw new RuntimeException(throwable);
+        }
+    }
 
 }

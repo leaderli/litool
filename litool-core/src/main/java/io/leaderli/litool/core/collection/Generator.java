@@ -7,9 +7,9 @@ import java.util.Iterator;
  * @since 2022/8/30
  */
 public interface Generator<T> extends Iterator<T> {
-@Override
-default boolean hasNext() {
-    return true;
-}
+    @Override
+    default boolean hasNext() {
+        return true;
+    }
 
 }

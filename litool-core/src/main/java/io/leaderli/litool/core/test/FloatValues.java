@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
 @Valuable(FloatCartesian.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface FloatValues {
-float[] value();
+    float[] value();
 }
 

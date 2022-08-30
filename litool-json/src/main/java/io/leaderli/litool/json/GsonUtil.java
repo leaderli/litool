@@ -10,16 +10,16 @@ import io.leaderli.litool.core.util.ConsoleUtil;
  */
 public class GsonUtil {
 
-public static final Gson GSON = new Gson();
-public static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson GSON = new Gson();
+    public static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
 
-public static String toJson(Object obj) {
+    public static String toJson(Object obj) {
 
-    return GSON.toJson(obj);
-}
+        return GSON.toJson(obj);
+    }
 
-public static void print(Object src) {
-    ConsoleUtil.print(PRETTY_GSON.toJson(src));
-}
+    public static void print(Object src) {
+        ConsoleUtil.print(PRETTY_GSON.toJson(src));
+    }
 
 }

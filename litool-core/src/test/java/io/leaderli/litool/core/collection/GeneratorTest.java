@@ -9,26 +9,26 @@ import org.junit.jupiter.api.Test;
  */
 class GeneratorTest {
 
-@Test
-void test() {
-    Generator<Integer> stream = new Generator<Integer>() {
+    @Test
+    void test() {
+        Generator<Integer> stream = new Generator<Integer>() {
 
 
-        int i = 0;
+            int i = 0;
 
 
-        @Override
-        public Integer next() {
-            return i++;
+            @Override
+            public Integer next() {
+                return i++;
+            }
+        };
+
+
+        for (int i = 0; i < 100; i++) {
+            stream.next();
         }
-    };
+        Assertions.assertTrue(stream.hasNext());
 
-
-    for (int i = 0; i < 100; i++) {
-        stream.next();
     }
-    Assertions.assertTrue(stream.hasNext());
-
-}
 
 }

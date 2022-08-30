@@ -11,35 +11,35 @@ import io.leaderli.litool.core.function.ThrowableSupplier;
  */
 public class RuntimeExceptionTransfer {
 
-public static void run(ThrowableRunner runnable) {
-    try {
-        runnable.run();
-    } catch (Throwable throwable) {
-        throw new RuntimeExceptionTransferException(throwable);
+    public static void run(ThrowableRunner runnable) {
+        try {
+            runnable.run();
+        } catch (Throwable throwable) {
+            throw new RuntimeExceptionTransferException(throwable);
+        }
     }
-}
 
-public static <T> void accept(ThrowableConsumer<T> consumer, T t) {
-    try {
-        consumer.accept(t);
-    } catch (Throwable throwable) {
-        throw new RuntimeExceptionTransferException(throwable);
+    public static <T> void accept(ThrowableConsumer<T> consumer, T t) {
+        try {
+            consumer.accept(t);
+        } catch (Throwable throwable) {
+            throw new RuntimeExceptionTransferException(throwable);
+        }
     }
-}
 
-public static <T, R> R apply(ThrowableFunction<T, R> function, T t) {
-    try {
-        return function.apply(t);
-    } catch (Throwable throwable) {
-        throw new RuntimeExceptionTransferException(throwable);
+    public static <T, R> R apply(ThrowableFunction<T, R> function, T t) {
+        try {
+            return function.apply(t);
+        } catch (Throwable throwable) {
+            throw new RuntimeExceptionTransferException(throwable);
+        }
     }
-}
 
-public static <T> T get(ThrowableSupplier<T> supplier) {
-    try {
-        return supplier.get();
-    } catch (Throwable throwable) {
-        throw new RuntimeExceptionTransferException(throwable);
+    public static <T> T get(ThrowableSupplier<T> supplier) {
+        try {
+            return supplier.get();
+        } catch (Throwable throwable) {
+            throw new RuntimeExceptionTransferException(throwable);
+        }
     }
-}
 }

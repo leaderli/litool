@@ -15,91 +15,91 @@ import java.util.Map;
  * @since 2022/8/8
  */
 public class Context {
-/**
- * 用于存储原始请求报文，待转换原始请求报文后，作为返回报文
- */
-public final Map<String, Object> origin_request_or_response = new HashMap<>();
-/**
- * 用于缓存无需重复计算的func的计算结果
- */
-public final Map<String, Object> func_result_cache = new HashMap<>();
-public final LiEventBus bus = new LiEventBus();
-public final BitPermission<Interrupt> interrupt = new BitPermission<>(Interrupt.class);
-/**
- * 存储临时变量使用，每个临时变量都有一个唯一的名称，其类型是固定的，临时变量在使用前必须先初始化，即临时变量一定有默认值。
- */
-private final TempContainer temp = new TempContainer();
-@SuppressWarnings("all")
-public Object interruptObj = new Object();
-/**
- * @see io.leaderli.litool.runner.executor.funcs.FuncsElementExecutor
- */
-private ImmutableMap<String, IFunc> funcFactory;
-private ImmutableMap<String, Object> readonly_request;
+    /**
+     * 用于存储原始请求报文，待转换原始请求报文后，作为返回报文
+     */
+    public final Map<String, Object> origin_request_or_response = new HashMap<>();
+    /**
+     * 用于缓存无需重复计算的func的计算结果
+     */
+    public final Map<String, Object> func_result_cache = new HashMap<>();
+    public final LiEventBus bus = new LiEventBus();
+    public final BitPermission<Interrupt> interrupt = new BitPermission<>(Interrupt.class);
+    /**
+     * 存储临时变量使用，每个临时变量都有一个唯一的名称，其类型是固定的，临时变量在使用前必须先初始化，即临时变量一定有默认值。
+     */
+    private final TempContainer temp = new TempContainer();
+    @SuppressWarnings("all")
+    public Object interruptObj = new Object();
+    /**
+     * @see io.leaderli.litool.runner.executor.funcs.FuncsElementExecutor
+     */
+    private ImmutableMap<String, IFunc> funcFactory;
+    private ImmutableMap<String, Object> readonly_request;
 
-public Context(Map<String, String> origin_request) {
-    this.origin_request_or_response.putAll(origin_request);
-}
-
-
-@SuppressWarnings("unchecked")
-public <T> T getRequest(String key) {
-    return (T) this.readonly_request.get(key);
-}
-
-public void setResponse(String key, Object value) {
-    this.origin_request_or_response.put(key, value);
-}
+    public Context(Map<String, String> origin_request) {
+        this.origin_request_or_response.putAll(origin_request);
+    }
 
 
-@SuppressWarnings("unchecked")
-public <T> T getResponse(String key) {
-    return (T) this.origin_request_or_response.get(key);
-}
+    @SuppressWarnings("unchecked")
+    public <T> T getRequest(String key) {
+        return (T) this.readonly_request.get(key);
+    }
 
-public void setReadonly_request(ImmutableMap<String, Object> readonly_request) {
-    this.readonly_request = readonly_request;
-}
+    public void setResponse(String key, Object value) {
+        this.origin_request_or_response.put(key, value);
+    }
 
-public ImmutableMap<String, IFunc> getFuncFactory() {
-    return funcFactory;
-}
 
-public void setFuncFactory(ImmutableMap<String, IFunc> funcFactory) {
-    this.funcFactory = funcFactory;
-}
+    @SuppressWarnings("unchecked")
+    public <T> T getResponse(String key) {
+        return (T) this.origin_request_or_response.get(key);
+    }
 
-@SuppressWarnings("unchecked")
-public <T> T getFuncResult(String key) {
-    return (T) funcFactory.get(key).apply(this);
-}
+    public void setReadonly_request(ImmutableMap<String, Object> readonly_request) {
+        this.readonly_request = readonly_request;
+    }
 
-public void setFuncResultCache(String key, Object value) {
-    this.func_result_cache.put(key, value);
-}
+    public ImmutableMap<String, IFunc> getFuncFactory() {
+        return funcFactory;
+    }
 
-@SuppressWarnings("unchecked")
-public <T> T getFuncResultCache(String key) {
-    return (T) func_result_cache.get(key);
-}
+    public void setFuncFactory(ImmutableMap<String, IFunc> funcFactory) {
+        this.funcFactory = funcFactory;
+    }
 
-public void setTemp(String key, Object value) {
-    this.temp.put(key, value);
-}
+    @SuppressWarnings("unchecked")
+    public <T> T getFuncResult(String key) {
+        return (T) funcFactory.get(key).apply(this);
+    }
 
-public <T> T getTemp(String key) {
-    return temp.get(key);
-}
+    public void setFuncResultCache(String key, Object value) {
+        this.func_result_cache.put(key, value);
+    }
 
-public Object getExpressionValue(Expression expression) {
-    return expression.apply(this);
-}
+    @SuppressWarnings("unchecked")
+    public <T> T getFuncResultCache(String key) {
+        return (T) func_result_cache.get(key);
+    }
 
-public <T> void registerListener(ILiEventListener<T> listener) {
-    this.bus.registerListener(listener);
-}
+    public void setTemp(String key, Object value) {
+        this.temp.put(key, value);
+    }
 
-public <T> void publishEvent(LiEventObject<T> event) {
-    this.bus.push(event);
-}
+    public <T> T getTemp(String key) {
+        return temp.get(key);
+    }
+
+    public Object getExpressionValue(Expression expression) {
+        return expression.apply(this);
+    }
+
+    public <T> void registerListener(ILiEventListener<T> listener) {
+        this.bus.registerListener(listener);
+    }
+
+    public <T> void publishEvent(LiEventObject<T> event) {
+        this.bus.push(event);
+    }
 }

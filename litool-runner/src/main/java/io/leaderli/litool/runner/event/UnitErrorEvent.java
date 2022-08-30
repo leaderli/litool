@@ -10,7 +10,7 @@ import io.leaderli.litool.core.meta.LiTuple2;
  */
 public final class UnitErrorEvent extends LiEventObject<LiTuple2<String, Throwable>> {
 
-public UnitErrorEvent(String id, Throwable source) {
-    super(LiTuple.of(id, source));
-}
+    public UnitErrorEvent(String id, Throwable source) {
+        super(LiTuple.of(id, source));
+    }
 }

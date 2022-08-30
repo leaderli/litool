@@ -14,14 +14,14 @@ import java.util.Map;
 class InstructContainerTest {
 
 
-@Test
-void scan() {
+    @Test
+    void scan() {
 
-    Map<String, Instruct> scanner = InstructContainer.scanner();
-    Assertions.assertTrue(scanner.size() > 0);
+        Map<String, Instruct> scanner = InstructContainer.scanner();
+        Assertions.assertTrue(scanner.size() > 0);
 
-    Assertions.assertThrows(AssertException.class, () -> InstructContainer.registerInstruct(new AddInstruct()));
+        Assertions.assertThrows(AssertException.class, () -> InstructContainer.registerInstruct(new AddInstruct()));
 
-}
+    }
 
 }

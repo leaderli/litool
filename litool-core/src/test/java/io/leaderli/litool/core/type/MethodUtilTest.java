@@ -12,61 +12,62 @@ import java.lang.reflect.Method;
  */
 class MethodUtilTest {
 
-@Test
-void getSameSignatureMethod() throws NoSuchMethodException {
-    Method method = Object.class.getMethod("toString");
-    Lino<Method> same = MethodUtil.getSameSignatureMethod(method, this);
-    Assertions.assertEquals("123", same.throwable_map(m -> m.invoke(this)).get());
+    @Test
+    void getSameSignatureMethod() throws NoSuchMethodException {
+        Method method = Object.class.getMethod("toString");
+        Lino<Method> same = MethodUtil.getSameSignatureMethod(method, this);
+        Assertions.assertEquals("123", same.throwable_map(m -> m.invoke(this)).get());
 
-    method = Runnable.class.getMethod("run");
-    same = MethodUtil.getSameSignatureMethod(method, this);
-    Assertions.assertSame(Lino.none(), same);
+        method = Runnable.class.getMethod("run");
+        same = MethodUtil.getSameSignatureMethod(method, this);
+        Assertions.assertSame(Lino.none(), same);
 
 
-    method = this.getClass().getDeclaredMethod("run");
-    same = MethodUtil.getSameSignatureMethod(method, Runnable.class);
-    Assertions.assertSame(Lino.none(), same);
-}
+        method = this.getClass().getDeclaredMethod("run");
+        same = MethodUtil.getSameSignatureMethod(method, Runnable.class);
+        Assertions.assertSame(Lino.none(), same);
+    }
 
-@Override
-public String toString() {
-    return "123";
-}
+    @Override
+    public String toString() {
+        return "123";
+    }
 
-protected void run() {
+    protected void run() {
 
-}
+    }
 
-public void run(String age) {
+    public void run(String age) {
 
-}
+    }
 
-@Test
-void findMethod() {
+    @Test
+    void findMethod() {
 
-    Assertions.assertTrue(MethodUtil.findMethod(MethodUtilBean.class, "test", void.class).present());
-    Assertions.assertTrue(MethodUtil.findMethod(MethodUtil.class, "findMethod", Lino.class, Class.class, String.class
-            , Class.class, Class[].class).present());
+        Assertions.assertTrue(MethodUtil.findMethod(MethodUtilBean.class, "test", void.class).present());
+        Assertions.assertTrue(MethodUtil.findMethod(MethodUtil.class, "findMethod", Lino.class, Class.class,
+                String.class
+                , Class.class, Class[].class).present());
 
-}
+    }
 
-@Test
-void notObjectMethod() throws NoSuchMethodException {
+    @Test
+    void notObjectMethod() throws NoSuchMethodException {
 
-    Assertions.assertTrue(MethodUtil.notObjectMethod(this.getClass().getDeclaredMethod("notObjectMethod")));
-    Assertions.assertFalse(MethodUtil.notObjectMethod(this.getClass().getMethod("notify")));
-}
+        Assertions.assertTrue(MethodUtil.notObjectMethod(this.getClass().getDeclaredMethod("notObjectMethod")));
+        Assertions.assertFalse(MethodUtil.notObjectMethod(this.getClass().getMethod("notify")));
+    }
 
-@Test
-void belongsTo() throws NoSuchMethodException {
-    Assertions.assertTrue(MethodUtil.belongsTo(this.getClass().getMethod("notify"), Object.class));
-    Assertions.assertFalse(MethodUtil.belongsTo(this.getClass().getDeclaredMethod("belongsTo"), Object.class));
-}
+    @Test
+    void belongsTo() throws NoSuchMethodException {
+        Assertions.assertTrue(MethodUtil.belongsTo(this.getClass().getMethod("notify"), Object.class));
+        Assertions.assertFalse(MethodUtil.belongsTo(this.getClass().getDeclaredMethod("belongsTo"), Object.class));
+    }
 
-@Test
-void methodOfRepeatableContainer() throws NoSuchMethodException {
+    @Test
+    void methodOfRepeatableContainer() throws NoSuchMethodException {
 
-    Assertions.assertTrue(MethodUtil.methodOfRepeatableContainer(NotNulls.class.getMethod("value")));
-    Assertions.assertFalse(MethodUtil.methodOfRepeatableContainer(NotNulls.class.getMethod("toString")));
-}
+        Assertions.assertTrue(MethodUtil.methodOfRepeatableContainer(NotNulls.class.getMethod("value")));
+        Assertions.assertFalse(MethodUtil.methodOfRepeatableContainer(NotNulls.class.getMethod("toString")));
+    }
 }

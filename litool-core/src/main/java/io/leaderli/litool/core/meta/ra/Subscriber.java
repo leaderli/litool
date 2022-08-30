@@ -17,47 +17,47 @@ package io.leaderli.litool.core.meta.ra;
  */
 public interface Subscriber<T> {
 
-/**
- * Invoked after calling {@link Publisher#subscribe(Subscriber)}
- * <p>
- * The {@link Publisher} will send notifications only to response {@link Subscription#request()}
- *
- * @param subscription {@link Subscription} that allows requesting data via {@link Subscription#request()}
- */
-void onSubscribe(Subscription subscription);
+    /**
+     * Invoked after calling {@link Publisher#subscribe(Subscriber)}
+     * <p>
+     * The {@link Publisher} will send notifications only to response {@link Subscription#request()}
+     *
+     * @param subscription {@link Subscription} that allows requesting data via {@link Subscription#request()}
+     */
+    void onSubscribe(Subscription subscription);
 
-/**
- * Data notification sent by the {@link Publisher} in response to request
- * to {@link Subscription#request()} when the element is not null
- *
- * @param t the element signaled
- */
-void next(T t);
+    /**
+     * Data notification sent by the {@link Publisher} in response to request
+     * to {@link Subscription#request()} when the element is not null
+     *
+     * @param t the element signaled
+     */
+    void next(T t);
 
-/**
- * Data notification sent by the {@link Publisher} in response to request
- * to {@link Subscription#request()} when the element is null
- */
-default void onNull() {
+    /**
+     * Data notification sent by the {@link Publisher} in response to request
+     * to {@link Subscription#request()} when the element is null
+     */
+    default void onNull() {
 
-}
+    }
 
 
-/**
- * all element have performed
- */
-default void onComplete() {
+    /**
+     * all element have performed
+     */
+    default void onComplete() {
 
-}
+    }
 
-/**
- * invoked when response to notification has throw error, can use {@link CancelSubscription#cancel()} to cancel the
- * demand
- *
- * @param t      the element signaled
- * @param cancel use to cancel demand
- */
-default void onError(Throwable t, CancelSubscription cancel) {
-}
+    /**
+     * invoked when response to notification has throw error, can use {@link CancelSubscription#cancel()} to cancel the
+     * demand
+     *
+     * @param t      the element signaled
+     * @param cancel use to cancel demand
+     */
+    default void onError(Throwable t, CancelSubscription cancel) {
+    }
 
 }

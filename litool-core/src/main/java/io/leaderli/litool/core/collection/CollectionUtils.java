@@ -13,219 +13,219 @@ import java.util.*;
  * @since 2022/7/20
  */
 public class CollectionUtils {
-/**
- * Return the element that appears multiple times
- *
- * @param iterable provide elements by {@link  Iterable#iterator()}
- * @param <T>      the type of elements returned by this iterable
- * @return a lira consists the element that appears multiple times
- */
-public static <T> Lira<T> getDuplicateElements(Iterable<? extends T> iterable) {
+    /**
+     * Return the element that appears multiple times
+     *
+     * @param iterable provide elements by {@link  Iterable#iterator()}
+     * @param <T>      the type of elements returned by this iterable
+     * @return a lira consists the element that appears multiple times
+     */
+    public static <T> Lira<T> getDuplicateElements(Iterable<? extends T> iterable) {
 
-    if (isEmpty(iterable)) {
-        return Lira.none();
-    }
-
-    Set<T> duplicate = new HashSet<>();
-
-    Set<T> unique = new HashSet<>();
-
-    for (T t : iterable) {
-        System.out.println(t);
-        if (!unique.add(t)) {
-            duplicate.add(t);
+        if (isEmpty(iterable)) {
+            return Lira.none();
         }
-    }
 
-    return Lira.of(duplicate);
-}
+        Set<T> duplicate = new HashSet<>();
 
-/**
- * Return an iterable has element
- *
- * @param iterable an iterable
- * @return an iterable has element
- */
-public static boolean isEmpty(Iterable<?> iterable) {
-    if (iterable == null) return true;
-    Iterator<?> iterator = iterable.iterator();
-    return !iterator.hasNext();
-}
+        Set<T> unique = new HashSet<>();
 
-/**
- * Return a new empty ArrayList
- *
- * @param <T> the type of elements in this list
- * @return a new empty ArrayList
- */
-public static <T> List<T> emptyList() {
-
-    return new ArrayList<>();
-}
-
-@SafeVarargs
-public static <T> List<T> of(T... elements) {
-
-    List<T> arrayList = new ArrayList<>();
-    if (elements != null) {
-        Collections.addAll(arrayList, elements);
-    }
-    return arrayList;
-}
-
-/**
- * Return Cartesian Product, return {new Object[0][]} if
- * any element is null or empty array
- *
- * @param elements the elements of cartesian
- * @return return cartesian of elements
- */
-@SuppressWarnings("ConstantConditions")
-public static Object[][] cartesian(Object[]... elements) {
-    if (elements == null || elements.length == 0) {
-        return new Object[0][0];
-    }
-
-    Object[] head = elements[0];
-    if (head == null) {
-        return new Object[0][];
-    }
-    head = Arrays.stream(head).distinct().toArray();
-
-
-    Object[][] result = new Object[head.length][];
-
-    for (int i = 0; i < result.length; i++) {
-        result[i] = new Object[]{head[i]};
-    }
-
-
-    while ((elements = ArrayUtils.subArray(elements, 1, 0)).length > 0) {
-        if (result.length == 0) {
-            return new Object[0][];
-        }
-        Object[] right = Lira.of(elements[0]).distinct().toArray();
-        Object[][] temps = new Object[result.length * right.length][];
-
-        int i = 0;
-        for (Object[] left : result) {
-
-            for (Object r : right) {
-                temps[i++] = ArrayUtils.add(left, r);
+        for (T t : iterable) {
+            System.out.println(t);
+            if (!unique.add(t)) {
+                duplicate.add(t);
             }
         }
-        result = temps;
 
-    }
-    return result;
-}
-
-/**
- * Return the wrapper array when it is a primitive array
- * <p>
- * Return null if  obj is null or is not arr. if arr
- *
- * @param obj an obj
- * @return an array
- */
-public static Object[] toWrapperArray(Object obj) {
-
-    if (obj == null || !obj.getClass().isArray()) {
-        return null;
-    }
-    Class<?> componentType = obj.getClass().getComponentType();
-    int length = Array.getLength(obj);
-    Object[] array = ClassUtil.newWrapperArray(componentType, length);
-
-    for (int i = 0; i < length; i++) {
-        array[i] = Array.get(obj, i);
+        return Lira.of(duplicate);
     }
 
-    return array;
-}
-
-/**
- * Return the xor of two lira
- *
- * @param a   a lira
- * @param b   another lira
- * @param <T> the  type of lira element
- * @return xor of two lira
- */
-public static <T> Lira<T> xor(Iterable<T> a, Iterable<T> b) {
-
-    Lira<T> union = union(a, b);
-    List<T> intersection = intersection(a, b).get();
-    return union.filter(e -> !intersection.contains(e));
-}
-
-/**
- * Return the union of two array
- *
- * @param a   a array
- * @param b   another array
- * @param <T> the type of array
- * @return the union of two array
- * @see #union(Iterable, Iterable)
- */
-public static <T> Lira<T> union(Iterable<T> a, Iterable<T> b) {
-
-
-    Lira<T> left = Lira.of(a).distinct();
-    if (b == null) {
-        return left;
+    /**
+     * Return an iterable has element
+     *
+     * @param iterable an iterable
+     * @return an iterable has element
+     */
+    public static boolean isEmpty(Iterable<?> iterable) {
+        if (iterable == null) return true;
+        Iterator<?> iterator = iterable.iterator();
+        return !iterator.hasNext();
     }
-    List<T> raw = left.get();
 
-    b.forEach(raw::add);
+    /**
+     * Return a new empty ArrayList
+     *
+     * @param <T> the type of elements in this list
+     * @return a new empty ArrayList
+     */
+    public static <T> List<T> emptyList() {
 
-    return Lira.of(raw).distinct();
-
-}
-
-/**
- * Return intersection of two lira
- *
- * @param a   a lira
- * @param b   another lira
- * @param <T> the type of lira
- * @return intersection of two lira
- */
-public static <T> Lira<T> intersection(Iterable<T> a, Iterable<T> b) {
-
-
-    List<T> result = new ArrayList<>();
-
-
-    List<T> raw = Lira.of(b).get();
-
-
-    if (a == null) {
-        return Lira.none();
+        return new ArrayList<>();
     }
-    a.forEach(t -> {
 
-        if (raw.contains(t)) {
-            result.add(t);
+    @SafeVarargs
+    public static <T> List<T> of(T... elements) {
+
+        List<T> arrayList = new ArrayList<>();
+        if (elements != null) {
+            Collections.addAll(arrayList, elements);
         }
-    });
+        return arrayList;
+    }
 
-    return Lira.of(result).distinct();
+    /**
+     * Return Cartesian Product, return {new Object[0][]} if
+     * any element is null or empty array
+     *
+     * @param elements the elements of cartesian
+     * @return return cartesian of elements
+     */
+    @SuppressWarnings("ConstantConditions")
+    public static Object[][] cartesian(Object[]... elements) {
+        if (elements == null || elements.length == 0) {
+            return new Object[0][0];
+        }
+
+        Object[] head = elements[0];
+        if (head == null) {
+            return new Object[0][];
+        }
+        head = Arrays.stream(head).distinct().toArray();
 
 
-}
+        Object[][] result = new Object[head.length][];
 
-/**
- * Return the union of two array
- *
- * @param a   a array
- * @param b   another array
- * @param <T> the type of array
- * @return the union of two array
- * @see #union(Iterable, Iterable)
- */
-public static <T> Lira<T> union(T[] a, T[] b) {
+        for (int i = 0; i < result.length; i++) {
+            result[i] = new Object[]{head[i]};
+        }
 
-    return union(Lira.of(a), Lira.of(b));
-}
+
+        while ((elements = ArrayUtils.subArray(elements, 1, 0)).length > 0) {
+            if (result.length == 0) {
+                return new Object[0][];
+            }
+            Object[] right = Lira.of(elements[0]).distinct().toArray();
+            Object[][] temps = new Object[result.length * right.length][];
+
+            int i = 0;
+            for (Object[] left : result) {
+
+                for (Object r : right) {
+                    temps[i++] = ArrayUtils.add(left, r);
+                }
+            }
+            result = temps;
+
+        }
+        return result;
+    }
+
+    /**
+     * Return the wrapper array when it is a primitive array
+     * <p>
+     * Return null if  obj is null or is not arr. if arr
+     *
+     * @param obj an obj
+     * @return an array
+     */
+    public static Object[] toWrapperArray(Object obj) {
+
+        if (obj == null || !obj.getClass().isArray()) {
+            return null;
+        }
+        Class<?> componentType = obj.getClass().getComponentType();
+        int length = Array.getLength(obj);
+        Object[] array = ClassUtil.newWrapperArray(componentType, length);
+
+        for (int i = 0; i < length; i++) {
+            array[i] = Array.get(obj, i);
+        }
+
+        return array;
+    }
+
+    /**
+     * Return the xor of two lira
+     *
+     * @param a   a lira
+     * @param b   another lira
+     * @param <T> the  type of lira element
+     * @return xor of two lira
+     */
+    public static <T> Lira<T> xor(Iterable<T> a, Iterable<T> b) {
+
+        Lira<T> union = union(a, b);
+        List<T> intersection = intersection(a, b).get();
+        return union.filter(e -> !intersection.contains(e));
+    }
+
+    /**
+     * Return the union of two array
+     *
+     * @param a   a array
+     * @param b   another array
+     * @param <T> the type of array
+     * @return the union of two array
+     * @see #union(Iterable, Iterable)
+     */
+    public static <T> Lira<T> union(Iterable<T> a, Iterable<T> b) {
+
+
+        Lira<T> left = Lira.of(a).distinct();
+        if (b == null) {
+            return left;
+        }
+        List<T> raw = left.get();
+
+        b.forEach(raw::add);
+
+        return Lira.of(raw).distinct();
+
+    }
+
+    /**
+     * Return intersection of two lira
+     *
+     * @param a   a lira
+     * @param b   another lira
+     * @param <T> the type of lira
+     * @return intersection of two lira
+     */
+    public static <T> Lira<T> intersection(Iterable<T> a, Iterable<T> b) {
+
+
+        List<T> result = new ArrayList<>();
+
+
+        List<T> raw = Lira.of(b).get();
+
+
+        if (a == null) {
+            return Lira.none();
+        }
+        a.forEach(t -> {
+
+            if (raw.contains(t)) {
+                result.add(t);
+            }
+        });
+
+        return Lira.of(result).distinct();
+
+
+    }
+
+    /**
+     * Return the union of two array
+     *
+     * @param a   a array
+     * @param b   another array
+     * @param <T> the type of array
+     * @return the union of two array
+     * @see #union(Iterable, Iterable)
+     */
+    public static <T> Lira<T> union(T[] a, T[] b) {
+
+        return union(Lira.of(a), Lira.of(b));
+    }
 }

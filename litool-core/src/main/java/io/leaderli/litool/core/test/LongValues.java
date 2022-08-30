@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
 @Valuable(LongCartesian.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface LongValues {
-long[] value();
+    long[] value();
 }
 

@@ -13,51 +13,51 @@ import java.util.List;
  * @since 2022/8/9 5:02 PM
  */
 public abstract class BaseElementExecutor<S extends SaxBean> extends ContextVisitor {
-public final S element;
+    public final S element;
 
-protected BaseElementExecutor(S element) {
-    this.element = element;
-}
+    protected BaseElementExecutor(S element) {
+        this.element = element;
+    }
 
-@Override
-protected void execute(Context context) {
-
-}
-
-@Override
-public void visit(Context context) {
-    List<ContextVisitor> contextVisitors = visit();
-
-    context.publishEvent(new VisitorEvent(element));
-    this.execute(context);
-
-    for (ContextVisitor contextVisitor : contextVisitors) {
-
-        if (context.interrupt.any()) {
-
-            if (!notify(context)) {
-                return;
-            }
-        }
-
-        if (context.interrupt.none()) {
-            contextVisitor.visit(context);
-        }
+    @Override
+    protected void execute(Context context) {
 
     }
 
-    // 一些 executor 没有子 executor，或者是子 executor 最后一个抛出事件
-    notify(context);
-}
+    @Override
+    public void visit(Context context) {
+        List<ContextVisitor> contextVisitors = visit();
 
-public boolean notify(Context context) {
+        context.publishEvent(new VisitorEvent(element));
+        this.execute(context);
 
-    return false;
-}
+        for (ContextVisitor contextVisitor : contextVisitors) {
 
-public List<ContextVisitor> visit() {
-    return CollectionUtils.emptyList();
-}
+            if (context.interrupt.any()) {
+
+                if (!notify(context)) {
+                    return;
+                }
+            }
+
+            if (context.interrupt.none()) {
+                contextVisitor.visit(context);
+            }
+
+        }
+
+        // 一些 executor 没有子 executor，或者是子 executor 最后一个抛出事件
+        notify(context);
+    }
+
+    public boolean notify(Context context) {
+
+        return false;
+    }
+
+    public List<ContextVisitor> visit() {
+        return CollectionUtils.emptyList();
+    }
 
 
 }

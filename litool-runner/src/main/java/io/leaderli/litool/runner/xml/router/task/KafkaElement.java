@@ -5,20 +5,20 @@ import io.leaderli.litool.runner.executor.router.task.KafkaElementExecutor;
 
 public class KafkaElement extends BaseEventElement<KafkaElement, KafkaElementExecutor, KafkaEvent> {
 
-private String topic = "";
+    private String topic = "";
 
-public KafkaElement() {
-    super("kafka");
-}
+    public KafkaElement() {
+        super("kafka");
+    }
 
 
-public String getTopic() {
-    return topic;
-}
+    public String getTopic() {
+        return topic;
+    }
 
-public void setTopic(String topic) {
-    this.topic = topic;
-}
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
 
 
 }

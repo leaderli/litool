@@ -8,17 +8,17 @@ import org.xml.sax.Locator;
  */
 public class StartEvent extends SaxEvent {
 
-private SaxBeanAdapter newSaxBean;
+    private SaxBeanAdapter newSaxBean;
 
-public StartEvent(Locator locator, String name) {
-    super(locator, name);
-}
+    public StartEvent(Locator locator, String name) {
+        super(locator, name);
+    }
 
-public SaxBeanAdapter getNewSaxBean() {
-    return newSaxBean;
-}
+    public SaxBeanAdapter getNewSaxBean() {
+        return newSaxBean;
+    }
 
-public void setNewSaxBean(SaxBeanAdapter newSaxBean) {
-    this.newSaxBean = newSaxBean;
-}
+    public void setNewSaxBean(SaxBeanAdapter newSaxBean) {
+        this.newSaxBean = newSaxBean;
+    }
 }

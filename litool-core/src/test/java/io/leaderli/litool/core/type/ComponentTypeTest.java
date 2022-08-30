@@ -10,15 +10,15 @@ import org.junit.jupiter.api.Test;
 class ComponentTypeTest {
 
 
-@Test
-void componentType() {
-    ComponentType<String> instance = new ComponentType<String>() {
-    };
+    @Test
+    void componentType() {
+        ComponentType<String> instance = new ComponentType<String>() {
+        };
 
-    Assertions.assertSame(String.class, instance.componentType());
-    ComponentType<Integer> instance2 = new ComponentType<Integer>() {
-    };
-    Assertions.assertSame(Integer.class, instance2.componentType());
+        Assertions.assertSame(String.class, instance.componentType());
+        ComponentType<Integer> instance2 = new ComponentType<Integer>() {
+        };
+        Assertions.assertSame(Integer.class, instance2.componentType());
 
-}
+    }
 }

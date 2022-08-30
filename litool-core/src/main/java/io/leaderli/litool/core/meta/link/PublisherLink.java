@@ -7,5 +7,5 @@ package io.leaderli.litool.core.meta.link;
 public interface PublisherLink<T> {
 
 
-void subscribe(SubscriberLink<T> subscriber);
+    void subscribe(SubscriberLink<T> subscriber);
 }

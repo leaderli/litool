@@ -14,11 +14,11 @@ import java.lang.reflect.Field;
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface Valuable {
 
-/**
- * @return 一个提供转换函数的元注解，被该注解的注解，仅第一个会生效
- * @see CartesianUtil#cartesian(Field, CartesianContext)
- */
-Class<? extends CartesianFunction<?, ?>> value();
+    /**
+     * @return 一个提供转换函数的元注解，被该注解的注解，仅第一个会生效
+     * @see CartesianUtil#cartesian(Field, CartesianContext)
+     */
+    Class<? extends CartesianFunction<?, ?>> value();
 
 
 }

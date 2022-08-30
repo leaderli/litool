@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 class RandomUtilTest {
 
 
-@Test
-void nextInt() {
+    @Test
+    void nextInt() {
 
-    Assertions.assertSame(0, RandomUtil.nextInt(1));
-    Assertions.assertTrue(RandomUtil.nextInt() >= 0);
-    Assertions.assertSame(1, RandomUtil.nextInt(1, 1));
-    Assertions.assertSame(1, RandomUtil.nextInt(1, 2));
-}
+        Assertions.assertSame(0, RandomUtil.nextInt(1));
+        Assertions.assertTrue(RandomUtil.nextInt() >= 0);
+        Assertions.assertSame(1, RandomUtil.nextInt(1, 1));
+        Assertions.assertSame(1, RandomUtil.nextInt(1, 2));
+    }
 }

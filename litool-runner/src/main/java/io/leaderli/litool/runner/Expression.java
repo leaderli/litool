@@ -5,53 +5,53 @@ import io.leaderli.litool.runner.util.ExpressionUtil;
 
 public class Expression {
 
-private Object name;
-private VariablesModel model;
+    private Object name;
+    private VariablesModel model;
 
-public Expression() {
-}
+    public Expression() {
+    }
 
-public Expression(String expr) {
-    Expression expression = ExpressionUtil.getExpression(expr);
-    this.name = expression.getName();
-    this.model = expression.getModel();
-}
+    public Expression(String expr) {
+        Expression expression = ExpressionUtil.getExpression(expr);
+        this.name = expression.getName();
+        this.model = expression.getModel();
+    }
 
-public String getName() {
-    return name + "";
-}
+    public String getName() {
+        return name + "";
+    }
 
-public void setName(String name) {
-    this.name = name;
-}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-public VariablesModel getModel() {
-    return model;
-}
+    public VariablesModel getModel() {
+        return model;
+    }
 
-public void setModel(VariablesModel model) {
-    this.model = model;
-}
+    public void setModel(VariablesModel model) {
+        this.model = model;
+    }
 
-public Expression(Object name, VariablesModel model) {
-    this.name = name;
-    this.model = model;
-}
+    public Expression(Object name, VariablesModel model) {
+        this.name = name;
+        this.model = model;
+    }
 
-public Object getObject() {
-    return name;
-}
+    public Object getObject() {
+        return name;
+    }
 
-public void setObject(Object obj) {
-    this.name = obj;
-}
+    public void setObject(Object obj) {
+        this.name = obj;
+    }
 
-public Object apply(Context context) {
-    return model.apply(context, name);
-}
+    public Object apply(Context context) {
+        return model.apply(context, name);
+    }
 
-@Override
-public String toString() {
-    return this.model + ":" + this.name;
-}
+    @Override
+    public String toString() {
+        return this.model + ":" + this.name;
+    }
 }

@@ -8,23 +8,23 @@ import io.leaderli.litool.core.meta.Lino;
  */
 public interface SubscriberLink<T> {
 
-void onSubscribe(SubscriptionLink<T> subscription);
+    void onSubscribe(SubscriptionLink<T> subscription);
 
-/**
- * 发布者推送了一个消息
- *
- * @param lino 消息
- */
-void next(T lino);
+    /**
+     * 发布者推送了一个消息
+     *
+     * @param lino 消息
+     */
+    void next(T lino);
 
 
-/**
- * 执行链条中断时调用
- *
- * @param lino 实际值
- */
-default void onCancel(Lino<T> lino) {
+    /**
+     * 执行链条中断时调用
+     *
+     * @param lino 实际值
+     */
+    default void onCancel(Lino<T> lino) {
 
-}
+    }
 
 }

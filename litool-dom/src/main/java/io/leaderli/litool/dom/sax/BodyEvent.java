@@ -8,18 +8,18 @@ import org.xml.sax.Locator;
  */
 public class BodyEvent extends SaxEvent {
 
-private String text = "";
+    private String text = "";
 
-public BodyEvent(Locator locator) {
-    super(locator, "body");
-}
+    public BodyEvent(Locator locator) {
+        super(locator, "body");
+    }
 
-public void append(String str) {
-    this.text += str.trim();
-}
+    public void append(String str) {
+        this.text += str.trim();
+    }
 
-@Override
-public String description() {
-    return text;
-}
+    @Override
+    public String description() {
+        return text;
+    }
 }

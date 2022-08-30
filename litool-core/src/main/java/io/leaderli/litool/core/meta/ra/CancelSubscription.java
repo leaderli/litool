@@ -6,8 +6,8 @@ package io.leaderli.litool.core.meta.ra;
  * It is used to cancel demand
  */
 public interface CancelSubscription {
-/**
- * Request the {@link Publisher} to stop sending data
- */
-void cancel();
+    /**
+     * Request the {@link Publisher} to stop sending data
+     */
+    void cancel();
 }

@@ -8,19 +8,19 @@ import org.xml.sax.Locator;
  */
 public class EndEvent extends SaxEvent {
 
-private SaxBeanAdapter saxBeanAdapter;
+    private SaxBeanAdapter saxBeanAdapter;
 
-public EndEvent(Locator locator, String name) {
-    super(locator, name);
-}
+    public EndEvent(Locator locator, String name) {
+        super(locator, name);
+    }
 
-public SaxBeanAdapter getSaxBeanWrapper() {
-    return saxBeanAdapter;
-}
+    public SaxBeanAdapter getSaxBeanWrapper() {
+        return saxBeanAdapter;
+    }
 
-public void setSaxBeanWrapper(SaxBeanAdapter saxBeanAdapter) {
-    this.saxBeanAdapter = saxBeanAdapter;
-}
+    public void setSaxBeanWrapper(SaxBeanAdapter saxBeanAdapter) {
+        this.saxBeanAdapter = saxBeanAdapter;
+    }
 
 
 }

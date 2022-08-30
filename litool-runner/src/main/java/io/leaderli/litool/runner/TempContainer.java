@@ -10,22 +10,22 @@ import java.util.Map;
 public class TempContainer {
 
 
-private final Map<TempNameEnum, Object> tempMap = new EnumMap<>(TempNameEnum.class);
+    private final Map<TempNameEnum, Object> tempMap = new EnumMap<>(TempNameEnum.class);
 
-public TempContainer() {
+    public TempContainer() {
 
-    for (TempNameEnum temp : TempNameEnum.values()) {
-        tempMap.put(temp, temp.def);
+        for (TempNameEnum temp : TempNameEnum.values()) {
+            tempMap.put(temp, temp.def);
+        }
     }
-}
 
-public void put(String key, Object value) {
-    tempMap.put(TempNameEnum.valueOf(key), value);
-}
+    public void put(String key, Object value) {
+        tempMap.put(TempNameEnum.valueOf(key), value);
+    }
 
-@SuppressWarnings("unchecked")
-public <T> T get(String key) {
-    return (T) tempMap.get(TempNameEnum.valueOf(key));
-}
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key) {
+        return (T) tempMap.get(TempNameEnum.valueOf(key));
+    }
 
 }

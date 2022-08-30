@@ -16,33 +16,33 @@ import java.util.HashMap;
 class EchoElementTest {
 
 
-@Test
-void success() {
-    SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
+    @Test
+    void success() {
+        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
 
-    MainElement mainElement = dfs.parse("router/task/echo.xml");
+        MainElement mainElement = dfs.parse("router/task/echo.xml");
 
-    Context context = new Context(new HashMap<>());
-    context.setResponse("Code", "114514");
-    context.setTemp("coordinate", "你好");
-    LiBox<LiTuple2<Integer, String>> echos = LiBox.none();
-    context.registerListener(new ILiEventListener<EchoEvent>() {
-        @Override
-        public void listen(EchoEvent event) {
-            echos.value(event.getSource().get());
-        }
+        Context context = new Context(new HashMap<>());
+        context.setResponse("Code", "114514");
+        context.setTemp("coordinate", "你好");
+        LiBox<LiTuple2<Integer, String>> echos = LiBox.none();
+        context.registerListener(new ILiEventListener<EchoEvent>() {
+            @Override
+            public void listen(EchoEvent event) {
+                echos.value(event.getSource().get());
+            }
 
-        @Override
-        public Class<EchoEvent> componentType() {
-            return EchoEvent.class;
-        }
-    });
-    mainElement.executor().visit(context);
-    Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "response variable [Code] not " +
-            "exists"));
+            @Override
+            public Class<EchoEvent> componentType() {
+                return EchoEvent.class;
+            }
+        });
+        mainElement.executor().visit(context);
+        Assertions.assertTrue(StringUtils.startsWith(dfs.getParseErrorMsgs().get(0), "response variable [Code] not " +
+                "exists"));
 
-    Assertions.assertEquals("(1, hello 123 world 你好)", echos.value().toString());
+        Assertions.assertEquals("(1, hello 123 world 你好)", echos.value().toString());
 
 
-}
+    }
 }

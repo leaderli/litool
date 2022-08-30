@@ -7,49 +7,49 @@ package io.leaderli.litool.core.meta.ra;
  * @since 2022/6/27
  */
 public class LimitSome<T> extends PublisherSome<T> {
-private final int limit;
+    private final int limit;
 
-public LimitSome(Publisher<T> prevPublisher, int limit) {
-    super(prevPublisher);
-    this.limit = limit;
-}
-
-@Override
-public void subscribe(Subscriber<? super T> actualSubscriber) {
-    prevPublisher.subscribe(new LimitSubscriber<>(actualSubscriber, limit));
-
-}
-
-private static final class LimitSubscriber<T> extends IntermediateSubscriber<T, T> {
-
-    private int limit;
-
-    private LimitSubscriber(Subscriber<? super T> actualSubscriber, int limit) {
-        super(actualSubscriber);
+    public LimitSome(Publisher<T> prevPublisher, int limit) {
+        super(prevPublisher);
         this.limit = limit;
     }
 
-
     @Override
-    public void next(T t) {
-        if (limit < 1) {
-            this.cancel();
+    public void subscribe(Subscriber<? super T> actualSubscriber) {
+        prevPublisher.subscribe(new LimitSubscriber<>(actualSubscriber, limit));
 
-        } else {
-            this.actualSubscriber.next(t);
-            limit--;
-        }
     }
 
-    @Override
-    public void onNull() {
-        if (limit < 1) {
-            this.cancel();
+    private static final class LimitSubscriber<T> extends IntermediateSubscriber<T, T> {
 
-        } else {
-            this.actualSubscriber.onNull();
-            limit--;
+        private int limit;
+
+        private LimitSubscriber(Subscriber<? super T> actualSubscriber, int limit) {
+            super(actualSubscriber);
+            this.limit = limit;
+        }
+
+
+        @Override
+        public void next(T t) {
+            if (limit < 1) {
+                this.cancel();
+
+            } else {
+                this.actualSubscriber.next(t);
+                limit--;
+            }
+        }
+
+        @Override
+        public void onNull() {
+            if (limit < 1) {
+                this.cancel();
+
+            } else {
+                this.actualSubscriber.onNull();
+                limit--;
+            }
         }
     }
-}
 }

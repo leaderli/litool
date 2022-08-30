@@ -9,16 +9,16 @@ import org.junit.jupiter.api.Test;
  */
 class ILiEventListenerTest {
 
-@Test
-void componentType() {
-    ILiEventListener<String> listener = new StringILiEventListener();
-    Assertions.assertSame(String.class, listener.componentType());
-}
-
-private static class StringILiEventListener implements ILiEventListener<String> {
-    @Override
-    public void listen(String event) {
-
+    @Test
+    void componentType() {
+        ILiEventListener<String> listener = new StringILiEventListener();
+        Assertions.assertSame(String.class, listener.componentType());
     }
-}
+
+    private static class StringILiEventListener implements ILiEventListener<String> {
+        @Override
+        public void listen(String event) {
+
+        }
+    }
 }

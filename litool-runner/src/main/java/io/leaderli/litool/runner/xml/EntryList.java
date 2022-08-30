@@ -7,8 +7,8 @@ import io.leaderli.litool.dom.sax.SaxList;
  * @since 2022/7/24
  */
 public class EntryList extends SaxList<EntryElement> {
-@Override
-public Class<EntryElement> componentType() {
-    return EntryElement.class;
-}
+    @Override
+    public Class<EntryElement> componentType() {
+        return EntryElement.class;
+    }
 }

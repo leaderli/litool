@@ -16,34 +16,34 @@ import java.util.function.Function;
 public class FilterSome<T> extends PublisherSome<T> {
 
 
-private final Function<? super T, ?> filter;
+    private final Function<? super T, ?> filter;
 
-public FilterSome(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
-    super(prevPublisher);
-    this.filter = filter;
-}
-
-@Override
-public void subscribe(Subscriber<? super T> actualSubscriber) {
-    prevPublisher.subscribe(new FilterSubscriber(actualSubscriber));
-
-}
-
-
-private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
-
-    public FilterSubscriber(Subscriber<? super T> actualSubscriber) {
-        super(actualSubscriber);
+    public FilterSome(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
+        super(prevPublisher);
+        this.filter = filter;
     }
 
     @Override
-    public void next(T t) {
-        Lino.of(t).filter(filter).ifPresent(this.actualSubscriber::next);
+    public void subscribe(Subscriber<? super T> actualSubscriber) {
+        prevPublisher.subscribe(new FilterSubscriber(actualSubscriber));
+
     }
 
-    @Override
-    public void onNull() {
-        //  filter will avoid null element
+
+    private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
+
+        public FilterSubscriber(Subscriber<? super T> actualSubscriber) {
+            super(actualSubscriber);
+        }
+
+        @Override
+        public void next(T t) {
+            Lino.of(t).filter(filter).ifPresent(this.actualSubscriber::next);
+        }
+
+        @Override
+        public void onNull() {
+            //  filter will avoid null element
+        }
     }
-}
 }

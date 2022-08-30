@@ -9,17 +9,17 @@ import org.junit.jupiter.api.Test;
  */
 class LiTupleTest {
 
-@Test
-void haveNull() {
-    LiTuple1<String> tu = LiTuple.of(null);
-    Assertions.assertFalse(tu.notIncludeNull());
-    tu = tu.update1("1");
-    Assertions.assertTrue(tu.notIncludeNull());
+    @Test
+    void haveNull() {
+        LiTuple1<String> tu = LiTuple.of(null);
+        Assertions.assertFalse(tu.notIncludeNull());
+        tu = tu.update1("1");
+        Assertions.assertTrue(tu.notIncludeNull());
 
-    LiTuple2<String, Object> append = tu.append(null);
-    Assertions.assertFalse(append.notIncludeNull());
-    append = append.update2("2");
-    Assertions.assertTrue(append.notIncludeNull());
+        LiTuple2<String, Object> append = tu.append(null);
+        Assertions.assertFalse(append.notIncludeNull());
+        append = append.update2("2");
+        Assertions.assertTrue(append.notIncludeNull());
 
-}
+    }
 }

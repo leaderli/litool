@@ -58,35 +58,35 @@ public enum BitStatusEnum {
     B32;
 
 
-/**
- * When using binary representation value , binary only have single '1'
- */
-final int value;
+    /**
+     * When using binary representation value , binary only have single '1'
+     */
+    final int value;
 
-BitStatusEnum() {
-    int index = Integer.parseInt(this.name().replace("B", "")) - 1;
-    this.value = 1 << index;
-}
+    BitStatusEnum() {
+        int index = Integer.parseInt(this.name().replace("B", "")) - 1;
+        this.value = 1 << index;
+    }
 
-public static Map<Integer, BitStatusEnum> getBitStatusMap() {
-    return Arrays.stream(values()).collect(Collectors.toMap(bit -> bit.value, bit -> bit));
-}
+    public static Map<Integer, BitStatusEnum> getBitStatusMap() {
+        return Arrays.stream(values()).collect(Collectors.toMap(bit -> bit.value, bit -> bit));
+    }
 
-/**
- * Return the {@link  BitStatusEnum} that exists on the status binary
- *
- * @param status a int value represent status
- * @return a lira of exist BX
- */
-public static Lira<BitStatusEnum> of(int status) {
+    /**
+     * Return the {@link  BitStatusEnum} that exists on the status binary
+     *
+     * @param status a int value represent status
+     * @return a lira of exist BX
+     */
+    public static Lira<BitStatusEnum> of(int status) {
 
-    BitStatusEnum[] values = values();
-    ArrayUtils.reverse(values);
-    return Lira.of(values).filter(b -> (b.value & status) == b.value);
-}
+        BitStatusEnum[] values = values();
+        ArrayUtils.reverse(values);
+        return Lira.of(values).filter(b -> (b.value & status) == b.value);
+    }
 
-@Override
-public String toString() {
-    return StringUtils.split(StringUtils.ljust(Integer.toBinaryString(value), 32, "0"), 4);
-}
+    @Override
+    public String toString() {
+        return StringUtils.split(StringUtils.ljust(Integer.toBinaryString(value), 32, "0"), 4);
+    }
 }

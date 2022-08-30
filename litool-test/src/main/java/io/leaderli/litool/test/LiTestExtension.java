@@ -21,80 +21,80 @@ import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
 public class LiTestExtension implements TestTemplateInvocationContextProvider {
 
 
-/**
- * @param context junit 插件上下文
- * @return 是否支持运行 junit
- */
-@Override
-public boolean supportsTestTemplate(ExtensionContext context) {
-    if (!context.getTestMethod().isPresent()) {
-        return false;
+    /**
+     * @param context junit 插件上下文
+     * @return 是否支持运行 junit
+     */
+    @Override
+    public boolean supportsTestTemplate(ExtensionContext context) {
+        if (!context.getTestMethod().isPresent()) {
+            return false;
+        }
+
+        return context.getTestMethod()
+                .map(testMethod -> isAnnotated(testMethod, LiTest.class))
+                .isPresent();
     }
 
-    return context.getTestMethod()
-            .map(testMethod -> isAnnotated(testMethod, LiTest.class))
-            .isPresent();
-}
-
-@Override
-public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext extensionContext) {
+    @Override
+    public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext extensionContext) {
 
 
-    Method templateMethod = extensionContext.getRequiredTestMethod();
+        Method templateMethod = extensionContext.getRequiredTestMethod();
 
-    List<TestTemplateInvocationContext> list = new ArrayList<>();
+        List<TestTemplateInvocationContext> list = new ArrayList<>();
 
-    Lira<Object[]> cartesian = new CartesianMethod(templateMethod, new CartesianContext()).cartesian();
-    // 返回多个 junit 执行案例
-    for (Object[] parameters : cartesian) {
-        list.add(new MyTestTemplateInvocationContext(parameters));
+        Lira<Object[]> cartesian = new CartesianMethod(templateMethod, new CartesianContext()).cartesian();
+        // 返回多个 junit 执行案例
+        for (Object[] parameters : cartesian) {
+            list.add(new MyTestTemplateInvocationContext(parameters));
+        }
+
+        return list.stream();
     }
-
-    return list.stream();
-}
 
 }
 
 class MyTestTemplateInvocationContext implements TestTemplateInvocationContext {
-private final Object[] parameters;
+    private final Object[] parameters;
 
-MyTestTemplateInvocationContext(Object... parameters) {
-    this.parameters = parameters;
-}
+    MyTestTemplateInvocationContext(Object... parameters) {
+        this.parameters = parameters;
+    }
 
-/**
- * @param invocationIndex 执行案例编号
- * @return 执行案例展示名
- */
-@Override
-public String getDisplayName(int invocationIndex) {
-    return "li:" + Arrays.toString(parameters);
-}
+    /**
+     * @param invocationIndex 执行案例编号
+     * @return 执行案例展示名
+     */
+    @Override
+    public String getDisplayName(int invocationIndex) {
+        return "li:" + Arrays.toString(parameters);
+    }
 
-/**
- * @return 执行案例的插件，可用于执行 {@link org.junit.jupiter.api.BeforeAll} ，填充参数等行为
- */
-@Override
-public List<Extension> getAdditionalExtensions() {
-    return Collections.singletonList(new MyCartesianProductResolver(parameters));
-}
+    /**
+     * @return 执行案例的插件，可用于执行 {@link org.junit.jupiter.api.BeforeAll} ，填充参数等行为
+     */
+    @Override
+    public List<Extension> getAdditionalExtensions() {
+        return Collections.singletonList(new MyCartesianProductResolver(parameters));
+    }
 }
 
 class MyCartesianProductResolver implements ParameterResolver {
 
-private final Object[] parameters;
+    private final Object[] parameters;
 
-MyCartesianProductResolver(Object[] parameters) {
-    this.parameters = parameters;
-}
+    MyCartesianProductResolver(Object[] parameters) {
+        this.parameters = parameters;
+    }
 
-@Override
-public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
-    return true;
-}
+    @Override
+    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+        return true;
+    }
 
-@Override
-public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
-    return parameters[parameterContext.getIndex()];
-}
+    @Override
+    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+        return parameters[parameterContext.getIndex()];
+    }
 }

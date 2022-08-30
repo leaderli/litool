@@ -11,9 +11,9 @@ import java.util.List;
 public class MainCheckVisitor extends ElementCheckVisitor<MainElement> {
 
 
-public MainCheckVisitor(MainElement mainElement, List<String> parseErrorMsgs) {
-    super(mainElement);
-    this.mainElement = mainElement;
-    this.parseErrorMsgs = parseErrorMsgs;
-}
+    public MainCheckVisitor(MainElement mainElement, List<String> parseErrorMsgs) {
+        super(mainElement);
+        this.mainElement = mainElement;
+        this.parseErrorMsgs = parseErrorMsgs;
+    }
 }

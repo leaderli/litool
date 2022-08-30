@@ -8,14 +8,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AndInstructTest {
 
-@Test
-void and() {
-    Instruct instruct = InstructContainer.getInnerMethodByAlias("and");
-    Object apply = instruct.apply(Boolean.class, new Object[]{true, false});
-    assertFalse((Boolean) apply);
+    @Test
+    void and() {
+        Instruct instruct = InstructContainer.getInnerMethodByAlias("and");
+        Object apply = instruct.apply(Boolean.class, new Object[]{true, false});
+        assertFalse((Boolean) apply);
 
-    apply = instruct.apply(Boolean.class, new Object[]{true, true});
-    assertTrue((Boolean) apply);
-}
+        apply = instruct.apply(Boolean.class, new Object[]{true, true});
+        assertTrue((Boolean) apply);
+    }
 
 }

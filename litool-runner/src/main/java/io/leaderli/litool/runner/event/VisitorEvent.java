@@ -8,7 +8,7 @@ import io.leaderli.litool.dom.sax.SaxBean;
  * @since 2022/8/22 4:42 PM
  */
 public class VisitorEvent extends LiEventObject<SaxBean> {
-public VisitorEvent(SaxBean source) {
-    super(source);
-}
+    public VisitorEvent(SaxBean source) {
+        super(source);
+    }
 }

@@ -12,16 +12,16 @@ import java.net.InetAddress;
  */
 public class NetUtil {
 
-/**
- * @param address the ip address
- * @return Check if the IP address is accessible
- */
-public static boolean pingable(String address) {
+    /**
+     * @param address the ip address
+     * @return Check if the IP address is accessible
+     */
+    public static boolean pingable(String address) {
 
-    return Lino.of(address)
-            .throwable_map(InetAddress::getByName)
-            .throwable_map(net -> net.isReachable(10000))
-            .get(false);
+        return Lino.of(address)
+                .throwable_map(InetAddress::getByName)
+                .throwable_map(net -> net.isReachable(10000))
+                .get(false);
 
-}
+    }
 }

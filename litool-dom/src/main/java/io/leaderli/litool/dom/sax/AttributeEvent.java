@@ -9,16 +9,16 @@ import org.xml.sax.Locator;
  */
 public class AttributeEvent extends SaxEvent {
 
-public final String value;
+    public final String value;
 
-public AttributeEvent(Locator locator, String name, String value) {
-    super(locator, name);
-    this.value = value;
-}
+    public AttributeEvent(Locator locator, String name, String value) {
+        super(locator, name);
+        this.value = value;
+    }
 
-@Override
+    @Override
 
-public String description() {
-    return name + ":" + value;
-}
+    public String description() {
+        return name + ":" + value;
+    }
 }

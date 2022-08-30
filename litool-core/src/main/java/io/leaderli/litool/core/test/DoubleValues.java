@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
 @Valuable(DoubleCartesian.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface DoubleValues {
-double[] value();
+    double[] value();
 }
 

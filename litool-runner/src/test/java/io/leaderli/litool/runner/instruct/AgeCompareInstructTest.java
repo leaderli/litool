@@ -9,14 +9,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AgeCompareInstructTest {
 
-@Test
-void age_compare() {
-    Instruct age_compare = InstructContainer.getInnerMethodByAlias("age_compare");
-    Object apply = age_compare.apply(Boolean.class, new Object[]{OperatorEnum.GREATER_THAN, "19900101", "20"});
-    assertTrue((Boolean) apply);
+    @Test
+    void age_compare() {
+        Instruct age_compare = InstructContainer.getInnerMethodByAlias("age_compare");
+        Object apply = age_compare.apply(Boolean.class, new Object[]{OperatorEnum.GREATER_THAN, "19900101", "20"});
+        assertTrue((Boolean) apply);
 
-    apply = age_compare.apply(Boolean.class, new Object[]{OperatorEnum.GREATER_THAN, "19900101", "40"});
-    assertFalse((Boolean) apply);
-}
+        apply = age_compare.apply(Boolean.class, new Object[]{OperatorEnum.GREATER_THAN, "19900101", "40"});
+        assertFalse((Boolean) apply);
+    }
 
 }

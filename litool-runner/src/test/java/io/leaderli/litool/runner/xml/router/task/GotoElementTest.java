@@ -13,17 +13,17 @@ import java.util.Map;
  * @since 2022/8/15 12:49 PM
  */
 class GotoElementTest {
-@Test
-void test() {
-    SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
-    MainElement element = dfs.parse("router/task/goto_error.xml");
+    @Test
+    void test() {
+        SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
+        MainElement element = dfs.parse("router/task/goto_error.xml");
 
-    Map<String, String> request = new HashMap<>();
+        Map<String, String> request = new HashMap<>();
 
 //        Context context = new Context(request);
 //        element.executor().visit(context);
 
-    Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).contains("next has no init"));
-    Assertions.assertTrue(dfs.getParseErrorMsgs().get(1).startsWith("goto next [001] is not exist"));
-}
+        Assertions.assertTrue(dfs.getParseErrorMsgs().get(0).contains("next has no init"));
+        Assertions.assertTrue(dfs.getParseErrorMsgs().get(1).startsWith("goto next [001] is not exist"));
+    }
 }

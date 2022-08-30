@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
 @Valuable(ByteCartesian.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface ByteValues {
-byte[] value();
+    byte[] value();
 }
 

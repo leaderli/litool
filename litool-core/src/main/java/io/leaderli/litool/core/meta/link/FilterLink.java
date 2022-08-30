@@ -12,41 +12,41 @@ import java.util.function.Function;
 public class FilterLink<T> extends SomeLink<T, T> {
 
 
-private final Function<? super T, ?> filter;
+    private final Function<? super T, ?> filter;
 
-public FilterLink(PublisherLink<T> prevPublisher, Function<? super T, ?> filter) {
-    super(prevPublisher);
-    this.filter = filter;
-}
-
-
-@Override
-public void subscribe(SubscriberLink<T> actualSubscriber) {
-    prevPublisher.subscribe(new FilterSubscriberLink(actualSubscriber));
-
-}
-
-/**
- * @author leaderli
- * @since 2022/7/16
- */
-private class FilterSubscriberLink extends SameTypeIntermediateSubscriberLink<T> {
-
-    public FilterSubscriberLink(SubscriberLink<T> actualSubscriber) {
-        super(actualSubscriber);
+    public FilterLink(PublisherLink<T> prevPublisher, Function<? super T, ?> filter) {
+        super(prevPublisher);
+        this.filter = filter;
     }
+
 
     @Override
-    public void next(T value) {
+    public void subscribe(SubscriberLink<T> actualSubscriber) {
+        prevPublisher.subscribe(new FilterSubscriberLink(actualSubscriber));
 
-        boolean next = BooleanUtil.parse(filter.apply(value));
+    }
+
+    /**
+     * @author leaderli
+     * @since 2022/7/16
+     */
+    private class FilterSubscriberLink extends SameTypeIntermediateSubscriberLink<T> {
+
+        public FilterSubscriberLink(SubscriberLink<T> actualSubscriber) {
+            super(actualSubscriber);
+        }
+
+        @Override
+        public void next(T value) {
+
+            boolean next = BooleanUtil.parse(filter.apply(value));
 
 
-        if (next) {
-            this.actualSubscriber.next(value);
-        } else {
-            this.actualSubscriber.onCancel(Lino.of(value));
+            if (next) {
+                this.actualSubscriber.next(value);
+            } else {
+                this.actualSubscriber.onCancel(Lino.of(value));
+            }
         }
     }
-}
 }

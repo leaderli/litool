@@ -11,10 +11,10 @@ import org.junit.jupiter.api.Test;
  */
 class ElementExecutorTest {
 
-@Test
-void executor() {
+    @Test
+    void executor() {
 
-    Assertions.assertNotNull(new AssignElement().executor());
-    Assertions.assertNotNull(new RequestElement().executor());
-}
+        Assertions.assertNotNull(new AssignElement().executor());
+        Assertions.assertNotNull(new RequestElement().executor());
+    }
 }

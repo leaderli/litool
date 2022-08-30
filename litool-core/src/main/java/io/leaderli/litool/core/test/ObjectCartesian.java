@@ -5,8 +5,8 @@ package io.leaderli.litool.core.test;
  * @since 2022/8/21
  */
 public class ObjectCartesian implements CartesianFunction<ObjectValues, Object> {
-@Override
-public Object[] apply(ObjectValues objectValues, CartesianContext context) {
-    throw new UnsupportedOperationException();
-}
+    @Override
+    public Object[] apply(ObjectValues objectValues, CartesianContext context) {
+        throw new UnsupportedOperationException();
+    }
 }

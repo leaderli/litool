@@ -10,11 +10,11 @@ package io.leaderli.litool.core.function;
 @FunctionalInterface
 public interface OnError {
 
-/**
- * Perform this operation on the given throwable
- *
- * @param throwable the input throwable
- */
-void onError(Throwable throwable);
+    /**
+     * Perform this operation on the given throwable
+     *
+     * @param throwable the input throwable
+     */
+    void onError(Throwable throwable);
 
 }

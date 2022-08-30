@@ -8,12 +8,12 @@ import io.leaderli.litool.core.type.PrimitiveEnum;
  */
 public class ByteCartesian implements CartesianFunction<ByteValues, Byte> {
 
-@Override
-public Byte[] apply(ByteValues byteValues, CartesianContext context) {
-    byte[] value = byteValues.value();
-    if (value.length > 0) {
-        return (Byte[]) PrimitiveEnum.toWrapperArray(value);
+    @Override
+    public Byte[] apply(ByteValues byteValues, CartesianContext context) {
+        byte[] value = byteValues.value();
+        if (value.length > 0) {
+            return (Byte[]) PrimitiveEnum.toWrapperArray(value);
+        }
+        return CartesianUtil.cartesian(Byte.class);
     }
-    return CartesianUtil.cartesian(Byte.class);
-}
 }

@@ -7,31 +7,31 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class SinkTest {
 
-@Test
-void test() {
+    @Test
+    void test() {
 
-    Sink<String, Boolean> prev = null;
-    for (int i = 0; i < 1000; i++) {
+        Sink<String, Boolean> prev = null;
+        for (int i = 0; i < 1000; i++) {
 
-        prev = new Sink<String, Boolean>(prev) {
-            @Override
-            public Boolean apply(String request, Boolean last) {
+            prev = new Sink<String, Boolean>(prev) {
+                @Override
+                public Boolean apply(String request, Boolean last) {
 
 
-                if (this.nextSink.present()) {
+                    if (this.nextSink.present()) {
 
-                    return this.nextSink.get().apply(request, last);
+                        return this.nextSink.get().apply(request, last);
+                    }
+                    return false;
                 }
-                return false;
-            }
-        };
+            };
+        }
+
+
+        assertFalse(prev.request("hello"));
+
+
     }
-
-
-    assertFalse(prev.request("hello"));
-
-
-}
 
 
 }

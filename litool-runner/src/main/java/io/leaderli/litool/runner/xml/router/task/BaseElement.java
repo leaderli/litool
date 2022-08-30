@@ -7,7 +7,7 @@ import io.leaderli.litool.runner.executor.ElementExecutor;
 public abstract class BaseElement<S extends SaxBean & ElementExecutor<S, E>, E extends BaseElementExecutor<S>> extends SaxBean implements ElementExecutor<S, E> {
 
 
-protected BaseElement(String tag) {
-    super(tag);
-}
+    protected BaseElement(String tag) {
+        super(tag);
+    }
 }

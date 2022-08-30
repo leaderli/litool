@@ -7,45 +7,45 @@ package io.leaderli.litool.core.meta.ra;
  * @since 2022/6/22
  */
 public abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Subscription {
-protected final Subscriber<? super R> actualSubscriber;
-private Subscription prevSubscription;
+    protected final Subscriber<? super R> actualSubscriber;
+    private Subscription prevSubscription;
 
-protected IntermediateSubscriber(Subscriber<? super R> actualSubscriber) {
-    this.actualSubscriber = actualSubscriber;
-}
+    protected IntermediateSubscriber(Subscriber<? super R> actualSubscriber) {
+        this.actualSubscriber = actualSubscriber;
+    }
 
-@Override
-public final void request() {
-    this.prevSubscription.request();
+    @Override
+    public final void request() {
+        this.prevSubscription.request();
 
-}
+    }
 
-@Override
-public final void cancel() {
-    this.prevSubscription.cancel();
+    @Override
+    public final void cancel() {
+        this.prevSubscription.cancel();
 
-}
+    }
 
-@Override
-public void onSubscribe(Subscription prevSubscription) {
-    this.prevSubscription = prevSubscription;
-    actualSubscriber.onSubscribe(this);
+    @Override
+    public void onSubscribe(Subscription prevSubscription) {
+        this.prevSubscription = prevSubscription;
+        actualSubscriber.onSubscribe(this);
 
-}
+    }
 
 
-@Override
-public void onNull() {
-    this.actualSubscriber.onNull();
-}
+    @Override
+    public void onNull() {
+        this.actualSubscriber.onNull();
+    }
 
-@Override
-public void onComplete() {
-    this.actualSubscriber.onComplete();
-}
+    @Override
+    public void onComplete() {
+        this.actualSubscriber.onComplete();
+    }
 
-@Override
-public void onError(Throwable t, CancelSubscription cancel) {
-    this.actualSubscriber.onError(t, cancel);
-}
+    @Override
+    public void onError(Throwable t, CancelSubscription cancel) {
+        this.actualSubscriber.onError(t, cancel);
+    }
 }

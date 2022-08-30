@@ -7,26 +7,27 @@ import java.time.format.DateTimeFormatter;
 
 public class DateCompareInstruct implements Instruct {
 
-@Override
-public Object apply(Class<?> type, Object[] objects) {
-    return invoke((OperatorEnum) objects[0], (String) objects[1], (String) objects[2]);
-}
-
-public Boolean invoke(OperatorEnum op, String left, String right) {
-    if (left.trim().length() != 8 || right.trim().length() != 8) {
-        throw new IllegalArgumentException(String.format("argument left:[%s] right:[%s] is illegal of Instruct [%s]",
-                left, right, name()));
+    @Override
+    public Object apply(Class<?> type, Object[] objects) {
+        return invoke((OperatorEnum) objects[0], (String) objects[1], (String) objects[2]);
     }
-    DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
-    LocalDate leftDate = LocalDate.parse(left, yyyyMMdd);
-    LocalDate rightDate = LocalDate.parse(right, yyyyMMdd);
 
-    return op.apply(leftDate, rightDate);
-}
+    public Boolean invoke(OperatorEnum op, String left, String right) {
+        if (left.trim().length() != 8 || right.trim().length() != 8) {
+            throw new IllegalArgumentException(String.format("argument left:[%s] right:[%s] is illegal of Instruct " +
+                            "[%s]",
+                    left, right, name()));
+        }
+        DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate leftDate = LocalDate.parse(left, yyyyMMdd);
+        LocalDate rightDate = LocalDate.parse(right, yyyyMMdd);
 
-@Override
-public String name() {
-    return "date_compare";
-}
+        return op.apply(leftDate, rightDate);
+    }
+
+    @Override
+    public String name() {
+        return "date_compare";
+    }
 
 }

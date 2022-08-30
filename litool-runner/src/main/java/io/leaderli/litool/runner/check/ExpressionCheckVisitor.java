@@ -18,67 +18,67 @@ import io.leaderli.litool.runner.xml.router.task.IfElement;
 public class ExpressionCheckVisitor extends CheckVisitor {
 
 
-private final ModelCheckVisitor modelCheckVisitor;
+    private final ModelCheckVisitor modelCheckVisitor;
 
-public ExpressionCheckVisitor(ModelCheckVisitor modelCheckVisitor) {
-    this.modelCheckVisitor = modelCheckVisitor;
-}
-
-
-@Override
-public void init() {
-    modelCheckVisitor.setMainElement(this.mainElement);
-    modelCheckVisitor.setParseErrorMsgs(this.parseErrorMsgs);
-}
-
-public void check(IfElement ifElement, SaxBean saxBean) {
-    IfElementExpressionCheckVisitor visitor = new IfElementExpressionCheckVisitor(ifElement);
-    visitor.setMainElement(mainElement);
-    visitor.setParseErrorMsgs(parseErrorMsgs);
-    visitor.visit();
-}
-
-public void check(LongExpression longExpression, SaxBean saxBean) {
-
-    // 依次对占位符进行校验
-    StrSubstitution.replace(longExpression.getExpr(), expr -> {
-        check(ExpressionUtil.getExpression(expr), saxBean);
-        return null;
-    });
-}
-
-public void check(Expression expression, SaxBean saxBean) {
-
-
-    VariablesModel model = expression.getModel();
-    String name = expression.getName();
-    String id = saxBean.getId();
-    id = Lino.of(id).filter(StringUtils::isNotBlank).map(i -> " id:" + i).get("");
-    switch (model) {
-        case FUNC:
-            modelCheckVisitor.func(name, id);
-            break;
-        case REQUEST:
-            modelCheckVisitor.request(name, id);
-            break;
-        case RESPONSE:
-            modelCheckVisitor.response(name, id);
-            break;
-        case TEMP:
-            modelCheckVisitor.temp(name, id);
-            break;
-        case ERROR:
-            modelCheckVisitor.error(name, id);
-            break;
-        default:
-            break;
+    public ExpressionCheckVisitor(ModelCheckVisitor modelCheckVisitor) {
+        this.modelCheckVisitor = modelCheckVisitor;
     }
-}
 
-public void check(CoordinateElement coordinate, SaxBean saxBean) {
-    CoordinateExpressionElementCheckVisitor visitor = new CoordinateExpressionElementCheckVisitor(coordinate);
-    visitor.setMainElement(mainElement);
-    visitor.setParseErrorMsgs(parseErrorMsgs);
-    visitor.visit();
-}
+
+    @Override
+    public void init() {
+        modelCheckVisitor.setMainElement(this.mainElement);
+        modelCheckVisitor.setParseErrorMsgs(this.parseErrorMsgs);
+    }
+
+    public void check(IfElement ifElement, SaxBean saxBean) {
+        IfElementExpressionCheckVisitor visitor = new IfElementExpressionCheckVisitor(ifElement);
+        visitor.setMainElement(mainElement);
+        visitor.setParseErrorMsgs(parseErrorMsgs);
+        visitor.visit();
+    }
+
+    public void check(LongExpression longExpression, SaxBean saxBean) {
+
+        // 依次对占位符进行校验
+        StrSubstitution.replace(longExpression.getExpr(), expr -> {
+            check(ExpressionUtil.getExpression(expr), saxBean);
+            return null;
+        });
+    }
+
+    public void check(Expression expression, SaxBean saxBean) {
+
+
+        VariablesModel model = expression.getModel();
+        String name = expression.getName();
+        String id = saxBean.getId();
+        id = Lino.of(id).filter(StringUtils::isNotBlank).map(i -> " id:" + i).get("");
+        switch (model) {
+            case FUNC:
+                modelCheckVisitor.func(name, id);
+                break;
+            case REQUEST:
+                modelCheckVisitor.request(name, id);
+                break;
+            case RESPONSE:
+                modelCheckVisitor.response(name, id);
+                break;
+            case TEMP:
+                modelCheckVisitor.temp(name, id);
+                break;
+            case ERROR:
+                modelCheckVisitor.error(name, id);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void check(CoordinateElement coordinate, SaxBean saxBean) {
+        CoordinateExpressionElementCheckVisitor visitor = new CoordinateExpressionElementCheckVisitor(coordinate);
+        visitor.setMainElement(mainElement);
+        visitor.setParseErrorMsgs(parseErrorMsgs);
+        visitor.visit();
+    }
 }

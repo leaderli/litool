@@ -9,12 +9,12 @@ package io.leaderli.litool.core.lang;
  */
 @FunctionalInterface
 public interface EqualComparator<T> {
-/**
- * two parameter are equivalent in some way
- *
- * @param left  the left to compare
- * @param right the  right to compare
- * @return left and right are equivalent in some way
- */
-boolean apply(T left, T right);
+    /**
+     * two parameter are equivalent in some way
+     *
+     * @param left  the left to compare
+     * @param right the  right to compare
+     * @return left and right are equivalent in some way
+     */
+    boolean apply(T left, T right);
 }

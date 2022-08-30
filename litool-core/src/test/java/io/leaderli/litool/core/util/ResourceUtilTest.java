@@ -16,23 +16,23 @@ import java.net.URL;
 class ResourceUtilTest {
 
 
-@Test
-void getResource() {
+    @Test
+    void getResource() {
 
 
-    Assertions.assertEquals(ResourceUtil.getResource("/"), ResourceUtil.getResource(""));
-    Assertions.assertEquals(ResourceUtil.getResource("/"), ResourceUtil.getResource(null));
-    Assertions.assertEquals(ResourceUtil.getResource("/", ResourceUtil.class), ResourceUtil.getResource(""));
-    Assertions.assertNotEquals(ResourceUtil.getResource("", ResourceUtil.class), ResourceUtil.getResource(""));
-}
+        Assertions.assertEquals(ResourceUtil.getResource("/"), ResourceUtil.getResource(""));
+        Assertions.assertEquals(ResourceUtil.getResource("/"), ResourceUtil.getResource(null));
+        Assertions.assertEquals(ResourceUtil.getResource("/", ResourceUtil.class), ResourceUtil.getResource(""));
+        Assertions.assertNotEquals(ResourceUtil.getResource("", ResourceUtil.class), ResourceUtil.getResource(""));
+    }
 
-@Test
-void getResourceIter() {
+    @Test
+    void getResourceItr() {
 
 
-    Lira<URL> resourcesLira = ResourceUtil.getResourcesLira("io/leaderli");
+        Lira<URL> resourcesLira = ResourceUtil.getResourcesLira("io/leaderli");
 
-    Assertions.assertEquals(2, resourcesLira.size());
+        Assertions.assertEquals(2, resourcesLira.size());
 //        LiPrintUtil.println(LiResourceUtil.getResourceIter("").get());
 //
 //        EnumerationIter.of(LiClassLoaderUtil.getClassLoader().getResources("")).forEachRemaining(
@@ -48,30 +48,30 @@ void getResourceIter() {
 //        Assertions.assertEquals(1, LiResourceUtil.getResourceFile(null).size());
 
 
-}
+    }
 
-@SuppressWarnings("resource")
-@Test
-void createContentStream() throws IOException {
+    @SuppressWarnings("resource")
+    @Test
+    void createContentStream() throws IOException {
 
-    InputStream contentStream = ResourceUtil.createContentStream(null);
-    Assertions.assertEquals(0, contentStream.available());
-    contentStream = ResourceUtil.createContentStream("hello");
-    Assertions.assertEquals(5, contentStream.available());
-}
+        InputStream contentStream = ResourceUtil.createContentStream(null);
+        Assertions.assertEquals(0, contentStream.available());
+        contentStream = ResourceUtil.createContentStream("hello");
+        Assertions.assertEquals(5, contentStream.available());
+    }
 
-@Test
-void getResourceFile() {
+    @Test
+    void getResourceFile() {
 //    Assertions.assertTrue(ResourceUtil.getResourceFile(null).absent());
-    Assertions.assertEquals(2, ResourceUtil.getResourcesLira("").size());
-}
+        Assertions.assertEquals(2, ResourceUtil.getResourcesLira("").size());
+    }
 
-@Test
-void getResourcesLira() {
+    @Test
+    void getResourcesLira() {
 
 
-    Assertions.assertTrue(ResourceUtil.getResourcesLira(null).absent());
-    Assertions.assertEquals(2, ResourceUtil.getResourcesLira("").size());
-}
+        Assertions.assertTrue(ResourceUtil.getResourcesLira(null).absent());
+        Assertions.assertEquals(2, ResourceUtil.getResourcesLira("").size());
+    }
 
 }

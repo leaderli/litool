@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DateGetInstructTest {
 
-@Test
-void date_get() {
-    Instruct date_get = InstructContainer.getInnerMethodByAlias("date_get");
-    assertEquals(2022, date_get.apply(Integer.class, new Object[]{"20220101", DateUnitEnum.YEAR}));
-}
+    @Test
+    void date_get() {
+        Instruct date_get = InstructContainer.getInnerMethodByAlias("date_get");
+        assertEquals(2022, date_get.apply(Integer.class, new Object[]{"20220101", DateUnitEnum.YEAR}));
+    }
 
 }

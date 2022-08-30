@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test;
 class LiEventObjectTest {
 
 
-@Test
-void getSource() {
+    @Test
+    void getSource() {
 
-    Assertions.assertTrue(new LiEventObject<>(null).getSource().absent());
+        Assertions.assertTrue(new LiEventObject<>(null).getSource().absent());
 
-}
+    }
 
 
 }

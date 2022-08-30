@@ -16,31 +16,31 @@ import java.util.function.Function;
 public class UntilNullSome<T> extends PublisherSome<T> {
 
 
-public UntilNullSome(Publisher<T> prevPublisher) {
-    super(prevPublisher);
-}
-
-@Override
-public void subscribe(Subscriber<? super T> actualSubscriber) {
-    prevPublisher.subscribe(new FilterSubscriber(actualSubscriber));
-
-}
-
-
-private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
-
-    public FilterSubscriber(Subscriber<? super T> actualSubscriber) {
-        super(actualSubscriber);
+    public UntilNullSome(Publisher<T> prevPublisher) {
+        super(prevPublisher);
     }
 
     @Override
-    public void next(T t) {
-        actualSubscriber.next(t);
+    public void subscribe(Subscriber<? super T> actualSubscriber) {
+        prevPublisher.subscribe(new FilterSubscriber(actualSubscriber));
+
     }
 
-    @Override
-    public void onNull() {
-        cancel();
+
+    private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
+
+        public FilterSubscriber(Subscriber<? super T> actualSubscriber) {
+            super(actualSubscriber);
+        }
+
+        @Override
+        public void next(T t) {
+            actualSubscriber.next(t);
+        }
+
+        @Override
+        public void onNull() {
+            cancel();
+        }
     }
-}
 }
