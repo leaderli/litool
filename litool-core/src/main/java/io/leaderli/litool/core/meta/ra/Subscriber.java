@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.meta.ra;
 
+import java.util.Iterator;
+
 /**
  * Will receive call to {@link #onSubscribe(Subscription)} once after passing an instance of {@link Subscriber} to
  * {@link Publisher#subscribe(Subscriber)}
@@ -46,7 +48,7 @@ public interface Subscriber<T> {
     /**
      * all element have performed
      */
-    default void onComplete() {
+    default void onComplete(Iterator<?> iterator) {
 
     }
 

@@ -121,8 +121,24 @@ public abstract class Some<T> implements Lira<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return get().iterator();
+        this.subscribe(new Subscriber<T>() {
+            @Override
+            public void onSubscribe(Subscription subscription) {
+                subscription.request();
+            }
 
+            @Override
+            public void next(T t) {
+                System.out.println(t);
+            }
+
+        });
+        return get().iterator();
+    }
+
+    @Override
+    public Lira<T> sleep(int countdown, long milliseconds) {
+        return new SleepSome<>(this, countdown, milliseconds);
     }
 
     @Override
@@ -297,6 +313,25 @@ public abstract class Some<T> implements Lira<T> {
         List<T> raw = get();
         raw.sort(comparator);
         return Lira.of(raw);
+    }
+
+    private class NewItr implements Iterator {
+        final Lira<T> lira;
+        boolean hasNext = true;
+
+        private NewItr(Lira<T> lira) {
+            this.lira = lira;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return hasNext;
+        }
+
+        @Override
+        public Object next() {
+            return lira.get();
+        }
     }
 
     @Override

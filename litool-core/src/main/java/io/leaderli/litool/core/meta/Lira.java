@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.collection.Generators;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
@@ -75,6 +76,10 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
         return none();
     }
 
+    static Lira<Integer> range() {
+        return Lira.of(Generators.range());
+    }
+
     /**
      * Returns the uniq none lira that not consisting any element
      *
@@ -87,6 +92,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
         return (Lira<T>) NONE_INSTANCE;
 
     }
+
 
     /**
      * Returns an lira that consisting elements provided by given stream
@@ -374,6 +380,12 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      * @return this
      */
     Lira<T> distinct();
+
+    default Lira<T> sleep(long milliseconds) {
+        return sleep(1, milliseconds);
+    }
+
+    Lira<T> sleep(int countdown, long milliseconds);
 
     /**
      * Return this that consisting of the distinct elements according to {@code EqualComparator}

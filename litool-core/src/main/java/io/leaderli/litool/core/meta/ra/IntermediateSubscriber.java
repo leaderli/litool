@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.meta.ra;
 
+import java.util.Iterator;
+
 /**
  * 一个用于连接前后节点的中间 消费者，消费操作的抽象类
  *
@@ -40,8 +42,8 @@ public abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Sub
     }
 
     @Override
-    public void onComplete() {
-        this.actualSubscriber.onComplete();
+    public void onComplete(Iterator<?> iterator) {
+        this.actualSubscriber.onComplete(iterator);
     }
 
     @Override

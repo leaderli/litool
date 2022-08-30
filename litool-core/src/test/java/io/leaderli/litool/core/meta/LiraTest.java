@@ -1,8 +1,11 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.Generator;
+import io.leaderli.litool.core.collection.Generators;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.ra.Subscriber;
+import io.leaderli.litool.core.meta.ra.Subscription;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +17,36 @@ import java.util.*;
  */
 class LiraTest {
 
+
+    @Test
+    void range() {
+
+        LiBox<Generator> box = LiBox.of(Generators.range());
+        new IntegerSubscriber(box).forEachRemaining(System.out::println);
+
+//        Lira.of(box.value()).subscribe(new IntegerSubscriber(box));
+//        Lira.of(box.value()).subscribe(new IntegerSubscriber(box));
+//        Lira.of(box.value()).subscribe(new IntegerSubscriber(box));
+//        Lira.of(box.value()).subscribe(new IntegerSubscriber(box));
+
+    }
+
+    @Test
+    void sleep() {
+
+//        Generator<Long> currentTimeMillis = System::currentTimeMillis;
+//        for (Long currentTimeMilli : currentTimeMillis) {
+//            System.out.println(currentTimeMilli);
+//        }
+//        Lira.of(currentTimeMillis).sleep(1000).forEach(System.out::println);
+
+        Lira<Integer> limit = Lira.of(Generators.range());
+        for (Integer integer : limit) {
+            System.out.println("li->" + integer);
+        }
+        System.out.println(limit);
+
+    }
 
     @Test
     void until() {
@@ -282,4 +315,44 @@ class LiraTest {
     }
 
 
+    private static class IntegerSubscriber<T> implements Subscriber<T>, Iterator<T> {
+        private final LiBox<Generator<T>> box;
+        private Subscription subscription;
+        private T next;
+
+        public IntegerSubscriber(LiBox<Generator<T>> box) {
+            this.box = box;
+        }
+
+        @Override
+        public void onSubscribe(Subscription subscription) {
+
+            this.subscription = subscription;
+            subscription.request();
+        }
+
+        @Override
+        public void next(T t) {
+            this.next = t;
+            subscription.cancel();
+        }
+
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void onComplete(Iterator<?> iterator) {
+            box.value((Generator<T>) iterator);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return box.value().hasNext();
+        }
+
+        @Override
+        public T next() {
+            Lira.of(box.value()).sleep(1000).subscribe(this);
+            return next;
+        }
+    }
 }
