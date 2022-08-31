@@ -14,7 +14,7 @@ public interface Subscription extends CancelSubscription {
     /**
      * No events will be send by a {@link Publisher} until is signaled via this method
      */
-    void request(long num);
+    void request();
 
 
     Subscription prevSubscription();

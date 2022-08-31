@@ -83,7 +83,7 @@ class IterableSubscriber<T> implements Subscriber<T>, Iterable<T>, Iterator<T> {
 //                return false;
 //            }
 //            iteratorState.enable(REQUEST);
-        this.prevSubscription.request(256);
+        this.prevSubscription.request();
         return true;
 //        }
     }

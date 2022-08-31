@@ -26,7 +26,7 @@ class LiraTest {
             @Override
             public void onSubscribe(Subscription subscription) {
 
-                subscription.request(-1);
+                subscription.request();
             }
 
             @Override
@@ -44,7 +44,7 @@ class LiraTest {
             @Override
             public void onSubscribe(Subscription subscription) {
 
-                subscription.request(100);
+                subscription.request();
             }
 
             @Override

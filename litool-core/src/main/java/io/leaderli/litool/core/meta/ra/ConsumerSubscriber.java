@@ -22,7 +22,7 @@ public class ConsumerSubscriber<T> implements Subscriber<T> {
 
     @Override
     public void onSubscribe(Subscription prevSubscription) {
-        prevSubscription.request(-1);
+        prevSubscription.request();
 
     }
 

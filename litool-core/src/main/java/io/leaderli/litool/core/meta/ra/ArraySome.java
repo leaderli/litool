@@ -35,22 +35,19 @@ public final class ArraySome<T> extends Some<T> {
         }
 
         @Override
-        public void request(long num) {
+        public void request() {
 
             if (canceled) {
                 return;
             }
 
-            while (num != 0 && iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 actualSubscriber.onRequested();
                 if (canceled) {
                     return;
                 }
                 T t = iterator.next();
 
-                if (num > 0) {
-                    num--;
-                }
 
                 try {
                     SubscriberUtil.next(actualSubscriber, t);
@@ -64,14 +61,9 @@ public final class ArraySome<T> extends Some<T> {
                 }
 
             }
-            if (num == 0) {
-                actualSubscriber.onRequested();
-            }
 
-            if (!iterator.hasNext()) {
 
-                actualSubscriber.onComplete();
-            }
+            actualSubscriber.onComplete();
         }
 
 

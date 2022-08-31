@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 public class BiConsumerSubscriber<T> implements Subscriber<T> {
     /**
      * 该消费者仅保留 {@link CancelSubscription#cancel()} 操作，不允许使用
-     * {@link Subscription#request(long)}
+     * {@link Subscription#request()}
      */
     private final BiConsumer<? super T, CancelSubscription> consumer;
     private Subscription prevSubscription;
@@ -29,7 +29,7 @@ public class BiConsumerSubscriber<T> implements Subscriber<T> {
     @Override
     public void onSubscribe(Subscription prevSubscription) {
         this.prevSubscription = prevSubscription;
-        this.prevSubscription.request(-1);
+        this.prevSubscription.request();
 
     }
 

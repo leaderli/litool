@@ -100,7 +100,7 @@ public abstract class Some<T> implements Lira<T> {
             @Override
             public void onSubscribe(Subscription prevSubscription) {
                 this.prevSubscription = prevSubscription;
-                prevSubscription.request(-1);
+                prevSubscription.request();
             }
 
             @Override
@@ -332,7 +332,7 @@ public abstract class Some<T> implements Lira<T> {
 
             @Override
             public void onSubscribe(Subscription prevSubscription) {
-                prevSubscription.request(-1);
+                prevSubscription.request();
 
             }
 
