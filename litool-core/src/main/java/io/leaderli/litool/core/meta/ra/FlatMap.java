@@ -29,6 +29,11 @@ public class FlatMap<T, R> extends Some<R> {
     private class FlatMapSubscriber extends IntermediateSubscriber<T, R> {
 
 
+        @Override
+        public void request() {
+            super.request();
+        }
+
         private FlatMapSubscriber(Subscriber<? super R> actualSubscriber) {
             super(actualSubscriber);
         }
@@ -39,6 +44,15 @@ public class FlatMap<T, R> extends Some<R> {
 
             // 展开迭代器，依次对非空元素执行下一步操作
             Lino.of(t).map(mapper).ifPresent(it -> it.forEachRemaining(this.actualSubscriber::next));
+//            Iterator<? extends R> apply = mapper.apply(t);
+//
+//            if (apply != null) {
+//                FlatArraySome<R> ts = new FlatArraySome<>(apply);
+//
+//                ts.subscribe(actualSubscriber);
+//            }
+
+
         }
 
         @Override

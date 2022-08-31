@@ -15,6 +15,7 @@ class LiYamlConfigTest {
     @Test
     void checkYamlFormat() {
 
+
         Assertions.assertThrows(RuntimeException.class, LiYamlConfig::checkYamlFormat);
     }
 

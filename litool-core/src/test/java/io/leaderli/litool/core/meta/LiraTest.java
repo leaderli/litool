@@ -4,6 +4,7 @@ import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.ra.*;
+import io.leaderli.litool.core.text.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,15 @@ import java.util.*;
  * @since 2022/6/19
  */
 class LiraTest {
+
+    @Test
+    void test1() {
+
+        Assertions.assertEquals("1,2,10,20", StringUtils.join(",",
+                Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator()));
+
+
+    }
 
     @Test
     void onComplete() {
@@ -375,6 +385,10 @@ class LiraTest {
 
     @Test
     void iterator() {
+        Assertions.assertEquals(1, Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator().next());
+
+        Assertions.assertEquals("1,2,10,20", StringUtils.join(",",
+                Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator()));
 
         Assertions.assertThrows(NoSuchElementException.class, () -> Lira.of().iterator().next());
         Iterator<Integer> iterator = Lira.of(1, 2).iterator();
