@@ -42,6 +42,10 @@ public final class ArraySome<T> extends Some<T> {
             }
 
             while (num != 0 && iterator.hasNext()) {
+                actualSubscriber.onRequested();
+                if (canceled) {
+                    return;
+                }
                 T t = iterator.next();
 
                 if (num > 0) {
