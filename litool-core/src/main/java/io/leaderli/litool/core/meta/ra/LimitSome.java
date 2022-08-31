@@ -42,25 +42,16 @@ public class LimitSome<T> extends PublisherSome<T> {
 
         @Override
         public void next(T t) {
-            System.out.println("next:" + t);
-            if (limit < 1) {
-                this.cancel();
 
-            } else {
-                this.actualSubscriber.next(t);
-                limit--;
-            }
+            this.actualSubscriber.next(t);
+            limit--;
         }
 
         @Override
         public void onNull() {
-            if (limit < 1) {
-                this.cancel();
 
-            } else {
-                this.actualSubscriber.onNull();
-                limit--;
-            }
+            this.actualSubscriber.onNull();
+            limit--;
         }
     }
 }

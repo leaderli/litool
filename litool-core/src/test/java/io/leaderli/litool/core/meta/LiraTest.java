@@ -339,10 +339,14 @@ class LiraTest {
     @Test
     void test() {
 
-        Lira<Integer> range = Lira.range();
-        System.out.println(range.limit(2));
-        System.out.println(range.limit(2));
-        System.out.println(range.limit(2));
+//        Lira<Integer> range = Lira.range().sleep(1);
+//        for (Integer integer : range) {
+//            System.out.println(integer);
+//        }
+//        System.out.println(range.limit(2));
+//        System.out.println(range.limit(2));
+//        System.out.println(range.limit(2));
+
 
     }
 
