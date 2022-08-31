@@ -48,8 +48,8 @@ public abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Sub
     }
 
     @Override
-    public void requested() {
-        this.actualSubscriber.requested();
+    public void onRequested() {
+        this.actualSubscriber.onRequested();
     }
 
     @Override
