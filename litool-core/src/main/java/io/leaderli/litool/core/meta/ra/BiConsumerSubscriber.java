@@ -29,7 +29,6 @@ public class BiConsumerSubscriber<T> implements Subscriber<T> {
     @Override
     public void onSubscribe(Subscription prevSubscription) {
         this.prevSubscription = prevSubscription;
-        this.prevSubscription.request();
 
     }
 

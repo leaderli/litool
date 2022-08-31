@@ -44,7 +44,7 @@ public abstract class Some<T> implements Lira<T> {
     public boolean contains(T t) {
 
         LiBox<Integer> exits = LiBox.none();
-        this.subscribe(new BiConsumerSubscriber<>((lino, s) ->
+        this.subscribe(new TerminalSubscriber<>(new BiConsumerSubscriber<>((lino, s) ->
 
                 Lino.of(lino)
                         .contain(t)
@@ -52,7 +52,7 @@ public abstract class Some<T> implements Lira<T> {
                             exits.value(1);
                             s.cancel();
                         }))
-        );
+        ));
         return exits.present();
     }
 
@@ -77,7 +77,7 @@ public abstract class Some<T> implements Lira<T> {
 
         LiBox<T> value = LiBox.none();
 
-        this.subscribe(new ConsumerSubscriber<>(value::value));
+        this.subscribe(new TerminalSubscriber<>(new ConsumerSubscriber<>(value::value)));
         return value.lino();
     }
 
@@ -89,18 +89,18 @@ public abstract class Some<T> implements Lira<T> {
     @Override
     public Lino<T> get(int index) {
 
+
         if (index < 0) {
             return Lino.none();
         }
         LiBox<T> result = LiBox.none();
-        this.subscribe(new Subscriber<T>() {
+        Subscriber<T> delegate = new Subscriber<T>() {
             int count = 0;
             private Subscription prevSubscription;
 
             @Override
             public void onSubscribe(Subscription prevSubscription) {
                 this.prevSubscription = prevSubscription;
-                prevSubscription.request();
             }
 
             @Override
@@ -114,17 +114,16 @@ public abstract class Some<T> implements Lira<T> {
 
             }
 
-        });
-
+        };
+        this.subscribe(new TerminalSubscriber<>(delegate));
         return result.lino();
     }
 
     @Override
     public Iterator<T> iterator() {
-//        IterableSubscriber<T> iterator = new IterableSubscriber<>();
-//        this.subscribe(iterator);
-//        return iterator;
-        return get().iterator();
+        IterableSubscriber<T> iterator = new IterableSubscriber<>();
+        this.subscribe(iterator);
+        return iterator;
     }
 
 
@@ -135,7 +134,7 @@ public abstract class Some<T> implements Lira<T> {
 
     @Override
     public void forEach(Consumer<? super T> consumer) {
-        this.subscribe(new ConsumerSubscriber<>(consumer));
+        this.subscribe(new TerminalSubscriber<>(new ConsumerSubscriber<>(consumer)));
     }
 
     @Override
@@ -239,7 +238,7 @@ public abstract class Some<T> implements Lira<T> {
             return Lino.none();
         }
         LiBox<T> box = LiBox.none();
-        this.subscribe(new BiConsumerSubscriber<>((t, sub) -> {
+        this.subscribe(new TerminalSubscriber<>(new BiConsumerSubscriber<>((t, sub) -> {
             if (box.absent()) {
                 box.value(t);
             } else {
@@ -248,7 +247,7 @@ public abstract class Some<T> implements Lira<T> {
                     sub.cancel();
                 }
             }
-        }));
+        })));
         return box.lino();
     }
 
@@ -260,13 +259,13 @@ public abstract class Some<T> implements Lira<T> {
             return Lino.none();
         }
         LiBox<T> box = LiBox.of(identity);
-        this.subscribe(new ConsumerSubscriber<>(t -> {
+        this.subscribe(new TerminalSubscriber<>(new ConsumerSubscriber<>(t -> {
             if (box.absent()) {
                 box.value(t);
             } else {
                 box.apply(accumulator, t);
             }
-        }));
+        })));
         return box.lino();
     }
 
@@ -328,7 +327,7 @@ public abstract class Some<T> implements Lira<T> {
 
         ThrowableConsumer<? super T> finalConsumer = action == null ? t -> {
         } : action;
-        this.subscribe(new Subscriber<T>() {
+        this.subscribe(new TerminalSubscriber<>(new Subscriber<T>() {
 
             @Override
             public void onSubscribe(Subscription prevSubscription) {
@@ -347,14 +346,15 @@ public abstract class Some<T> implements Lira<T> {
             }
 
 
-        });
+        }));
     }
 
     @Override
     public final List<T> get() {
 
         List<T> result = new ArrayList<>();
-        this.subscribe(new ConsumerSubscriber<>(result::add));
+        ConsumerSubscriber<T> delegate = new ConsumerSubscriber<>(result::add);
+        this.subscribe(new TerminalSubscriber<>(delegate));
         return result;
     }
 
@@ -370,7 +370,7 @@ public abstract class Some<T> implements Lira<T> {
 
         Map<K, V> result = new HashMap<>();
 
-        this.subscribe(new ConsumerSubscriber<>(e ->
+        this.subscribe(new TerminalSubscriber<>(new ConsumerSubscriber<>(e ->
                 Lino.of(e)
                         .map(keyMapper)
                         .ifPresent(key ->
@@ -379,7 +379,7 @@ public abstract class Some<T> implements Lira<T> {
                                     result.put(key, value);
                                 }
                         ))
-        );
+        ));
 
         return result;
     }
@@ -387,13 +387,13 @@ public abstract class Some<T> implements Lira<T> {
     @Override
     public <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> mapper) {
         Map<K, V> result = new HashMap<>();
-        this.subscribe(new ConsumerSubscriber<>(e ->
-                        Lino.of(e)
-                                .map(mapper)
-                                .filter(tuple2 -> tuple2._1 != null)
-                                .ifPresent(tuple2 -> result.put(tuple2._1, tuple2._2))
-                )
-        );
+        this.subscribe(new TerminalSubscriber<>(new ConsumerSubscriber<>(e ->
+                Lino.of(e)
+                        .map(mapper)
+                        .filter(tuple2 -> tuple2._1 != null)
+                        .ifPresent(tuple2 -> result.put(tuple2._1, tuple2._2))
+        )
+        ));
         return result;
     }
 

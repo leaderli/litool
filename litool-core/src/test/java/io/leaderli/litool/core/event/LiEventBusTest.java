@@ -197,7 +197,6 @@ class LiEventBusTest {
         @Override
         public void listen(String event) {
             box.value(1);
-            System.out.println(box);
 
         }
 

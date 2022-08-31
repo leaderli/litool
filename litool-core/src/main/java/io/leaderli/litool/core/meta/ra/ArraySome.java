@@ -1,6 +1,8 @@
 package io.leaderli.litool.core.meta.ra;
 
 
+import io.leaderli.litool.core.collection.IterableItr;
+
 import java.util.Iterator;
 
 /**
@@ -25,7 +27,7 @@ public final class ArraySome<T> extends Some<T> {
 
         private final Subscriber<? super T> actualSubscriber;
 
-        Iterator<? extends T> iterator = arr.iterator();
+        Iterator<? extends T> iterator = IterableItr.of(arr);
 
         private boolean canceled;
 
@@ -34,6 +36,7 @@ public final class ArraySome<T> extends Some<T> {
             this.actualSubscriber = actualSubscriber;
         }
 
+        @SuppressWarnings("java:S2583")
         @Override
         public void request() {
 
@@ -41,7 +44,7 @@ public final class ArraySome<T> extends Some<T> {
                 return;
             }
 
-            while (iterator.hasNext()) {
+            if (iterator.hasNext()) {
                 actualSubscriber.beforeRequest();
                 if (canceled) {
                     return;
@@ -56,14 +59,14 @@ public final class ArraySome<T> extends Some<T> {
                     actualSubscriber.onNull();
                 }
                 // 通过 onSubscribe 将 Subscription 传递给订阅者，由订阅者来调用 cancel方法从而实现提前结束循环
-                if (canceled) {
-                    return;
-                }
 
+                actualSubscriber.onRequested();
+
+            } else {
+                actualSubscriber.onComplete();
             }
 
 
-            actualSubscriber.onComplete();
         }
 
 
@@ -76,7 +79,6 @@ public final class ArraySome<T> extends Some<T> {
         public void cancel() {
             canceled = true;
             actualSubscriber.onCancel();
-            actualSubscriber.onComplete();
         }
     }
 

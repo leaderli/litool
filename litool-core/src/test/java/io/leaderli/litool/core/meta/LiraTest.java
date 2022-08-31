@@ -3,10 +3,7 @@ package io.leaderli.litool.core.meta;
 import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.meta.ra.CancelSubscription;
-import io.leaderli.litool.core.meta.ra.CancelableError;
-import io.leaderli.litool.core.meta.ra.Subscriber;
-import io.leaderli.litool.core.meta.ra.Subscription;
+import io.leaderli.litool.core.meta.ra.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -22,11 +19,11 @@ class LiraTest {
     void onComplete() {
 
         LiBox<Object> box = LiBox.none();
-        Lira.of(1, 2).subscribe(new Subscriber<Integer>() {
+        Lira.of(1, 2).subscribe(new TerminalSubscriber<>(new Subscriber<Integer>() {
             @Override
             public void onSubscribe(Subscription subscription) {
 
-                subscription.request();
+//                subscription.request();
             }
 
             @Override
@@ -38,13 +35,13 @@ class LiraTest {
             public void onComplete() {
                 box.value(1);
             }
-        });
+        }));
         box.reset();
-        Lira.of(1, 2).subscribe(new Subscriber<Integer>() {
+        Lira.of(1, 2).subscribe(new TerminalSubscriber<>(new Subscriber<Integer>() {
             @Override
             public void onSubscribe(Subscription subscription) {
 
-                subscription.request();
+//                subscription.request();
             }
 
             @Override
@@ -56,7 +53,7 @@ class LiraTest {
             public void onComplete() {
                 box.value(1);
             }
-        });
+        }));
         Assertions.assertEquals(1, box.value());
     }
 
@@ -73,7 +70,8 @@ class LiraTest {
 
         Assertions.assertEquals(2, Lira.of(1, 2, 3).dropWhile(i -> i > 1).first().get());
         Assertions.assertEquals(3, Lira.of(1, null, 2, 3).dropWhile(i -> i > 2).first().get());
-        Assertions.assertEquals("[3, 4]", Lira.of(1, null, 2, 3, null, 4, 5, 6).dropWhile(i -> i > 2).takeWhile(i -> i > 4).toString());
+        Assertions.assertEquals("[3, 4]",
+                Lira.of(1, null, 2, 3, null, 4, 5, 6).dropWhile(i -> i > 2).takeWhile(i -> i > 4).toString());
 
     }
 
@@ -165,19 +163,26 @@ class LiraTest {
         Assertions.assertEquals("[1, 2]", Lira.of("1", null, "2").get().toString());
 
 
-        Lira<Integer> loop = Lira.of(() -> new Generator<Integer>() {
+        Iterable<Integer> integers = () -> new Generator<Integer>() {
             int i = 0;
 
             @Override
             public Integer next() {
                 return i++;
             }
-        });
+        };
+        Lira<Integer> loop = Lira.of(integers);
 
         Assertions.assertEquals(4, loop.limit(5).last().get());
         Assertions.assertEquals(4, loop.limit(5).last().get());
 
 
+    }
+
+    @Test
+    void last() {
+
+        Assertions.assertEquals(0, Lira.range().limit(1).last().get());
     }
 
     @Test
@@ -257,12 +262,12 @@ class LiraTest {
         Assertions.assertSame(1, Lira.of(2, 1, 3).sorted((o1, o2) -> o2 - o1).last().get());
     }
 
-    @Test
-    void testlimit() {
-
-        System.out.println(Lira.of(1, 2, 3, 4).filter(i -> i > 1).limit(2).get());
-
-    }
+//    @Test
+//    void testlimit() {
+//
+//        System.out.println(Lira.range().limit(1).get());
+//
+//    }
 
     @Test
     void limit() {
@@ -270,6 +275,7 @@ class LiraTest {
         Assertions.assertEquals("[1]", Lira.of(1).limit(1).toString());
         Assertions.assertEquals(0, Lira.of().limit(1).size());
         Assertions.assertEquals("[1]", Lira.of(1, 2).limit(1).toString());
+        Assertions.assertEquals("[1, 2]", Lira.of(1, 2).toString());
         Assertions.assertEquals("[1, 2]", Lira.of(1, 2).limit(-1).toString());
         Assertions.assertEquals(0, Lira.of(1, 2).limit(0).size());
 
@@ -338,71 +344,89 @@ class LiraTest {
 
     @Test
     void test() {
-
-//        Lira<Integer> range = Lira.range().sleep(1);
+//        for (Integer integer : Lira.of(1, 2, 3, 4, 5, 6).filter(i -> i % 2 == 0).limit(2)) {
+        Iterator<Integer> iterator = Lira.of(null, 2).iterator();
+        Assertions.assertNull(iterator.next());
+//        Assertions.assertNull(iterator.next());
+//        for (Integer integer : Lira.range().filter(i -> i % 2 == 0).limit(2)) {
+//            System.out.println(integer);
+//        }
+//        Lira<Integer> range = Lira.range();
 //        for (Integer integer : range) {
 //            System.out.println(integer);
 //        }
 //        System.out.println(range.limit(2));
 //        System.out.println(range.limit(2));
 //        System.out.println(range.limit(2));
+        List<Integer> remove = new ArrayList<>();
+        remove.add(1);
+        remove.add(2);
+        remove.add(3);
+        remove.add(4);
 
+        for (Integer integer : Lira.of(remove)) {
+            System.out.println(integer);
+            if (integer % 2 == 0) {
+                remove.remove(integer);
+            }
+        }
 
     }
 
     @Test
     void iterator() {
-//        Assertions.assertThrows(NoSuchElementException.class, () -> Lira.of().iterator().next());
-//        Iterator<Integer> iterator = Lira.of(1, 2).iterator();
-//        Assertions.assertEquals(1, iterator.next());
-//        Assertions.assertEquals(2, iterator.next());
-//        Assertions.assertThrows(NoSuchElementException.class, iterator::next);
-//
-//        iterator = Lira.of(null, 2).iterator();
-////        Assertions.assertNull(iterator.next());
-//        Assertions.assertEquals(2, iterator.next());
-//        Assertions.assertThrows(NoSuchElementException.class, iterator::next);
-//
-//        iterator = Lira.of(1, 2, 3).filter(i -> i > 1).iterator();
-//
-//        Assertions.assertNotNull(iterator.next());
-//
-//        int count = 0;
-//        Lira<Integer> range = Lira.range();
-//        for (Integer integer : range.limit(2)) {
-//            Assertions.assertTrue(integer <= 1);
-//            count++;
-//        }
-//        Assertions.assertEquals(2, count);
-//
-//        count = 0;
-//        for (Integer integer : range.limit(2)) {
-//            Assertions.assertTrue(integer <= 3 && integer > 1);
-//            count++;
-//        }
-//        Assertions.assertEquals(2, count);
-//
-//        iterator = range.limit(2).iterator();
-//        Assertions.assertEquals(4, iterator.next());
-//        Assertions.assertEquals(5, iterator.next());
-//        iterator = range.limit(2).iterator();
-//        Assertions.assertEquals(6, iterator.next());
-//        Assertions.assertEquals(7, iterator.next());
-//
-//        count = 0;
-//        for (Integer integer : range.limit(2)) {
-//            count++;
-//        }
-//        Assertions.assertEquals(2, count);
-//
-//        count = 0;
-//        Lira<Integer> of = Lira.of(1, 2, 3);
-//        for (Integer integer : of) {
-//            System.out.println(integer);
-//
-//            count++;
-//        }
-//        Assertions.assertEquals(3, count);
+
+        Assertions.assertThrows(NoSuchElementException.class, () -> Lira.of().iterator().next());
+        Iterator<Integer> iterator = Lira.of(1, 2).iterator();
+        Assertions.assertEquals(1, iterator.next());
+        Assertions.assertEquals(2, iterator.next());
+        Assertions.assertThrows(NoSuchElementException.class, iterator::next);
+
+        iterator = Lira.of(null, 2).iterator();
+        Assertions.assertNull(iterator.next());
+        Assertions.assertEquals(2, iterator.next());
+        Assertions.assertThrows(NoSuchElementException.class, iterator::next);
+
+        iterator = Lira.of(1, 2, 3).filter(i -> i > 1).iterator();
+
+        Assertions.assertNotNull(iterator.next());
+
+        int count = 0;
+        Lira<Integer> range = Lira.range();
+        for (Integer integer : range.limit(2)) {
+            Assertions.assertTrue(integer <= 1);
+            count++;
+        }
+        Assertions.assertEquals(2, count);
+
+        count = 0;
+        for (Integer integer : range.limit(2)) {
+            Assertions.assertTrue(integer <= 3 && integer > 1);
+            count++;
+        }
+        Assertions.assertEquals(2, count);
+
+        iterator = range.limit(2).iterator();
+        Assertions.assertEquals(4, iterator.next());
+        Assertions.assertEquals(5, iterator.next());
+        iterator = range.limit(2).iterator();
+        Assertions.assertEquals(6, iterator.next());
+        Assertions.assertEquals(7, iterator.next());
+
+        count = 0;
+        for (Integer integer : range.limit(2)) {
+            count++;
+        }
+        Assertions.assertEquals(2, count);
+
+        count = 0;
+        Lira<Integer> of = Lira.of(1, 2, 3);
+        for (Integer integer : of) {
+            System.out.println(integer);
+
+            count++;
+        }
+        Assertions.assertEquals(3, count);
     }
 
     @Test

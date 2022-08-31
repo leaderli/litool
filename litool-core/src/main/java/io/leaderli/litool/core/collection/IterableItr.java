@@ -36,6 +36,9 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
             return NoneItr.of();
         }
         T[] arr = null;
+        if (obj instanceof Generator) {
+            return (IterableItr<T>) obj;
+        }
         if (obj instanceof IterableItr) {
             arr = ArrayUtils.toArray(((IterableItr<T>) obj).iterator());
         }
@@ -43,7 +46,11 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
             arr = ArrayUtils.toArray((Iterator<T>) obj);
         }
         if (obj instanceof Iterable) {
-            arr = ArrayUtils.toArray((Iterable<T>) obj);
+            Iterator<?> iterator = ((Iterable<?>) obj).iterator();
+            if (iterator instanceof Generator) {
+                return (Generator<T>) iterator;
+            }
+            arr = ArrayUtils.toArray((Iterator<T>) iterator);
         }
         if (obj instanceof Enumeration) {
             arr = ArrayUtils.toArray((Enumeration<T>) obj);

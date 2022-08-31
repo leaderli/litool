@@ -12,6 +12,7 @@ import java.util.stream.Stream;
  */
 class IterableItrTest {
 
+
     @SuppressWarnings("unchecked")
     @Test
     void of() {
@@ -47,6 +48,12 @@ class IterableItrTest {
         ((HashMap<String, String>) obj).put("1", "1");
         Assertions.assertSame(IterableItr.ArrayItr.class, IterableItr.of(obj).getClass());
 
+        // generator
+        obj = Generators.range();
+        Assertions.assertSame(IntGenerator.class, IterableItr.of(obj).getClass());
+
+        obj = (Iterable<Integer>) () -> (Generator<Integer>) () -> 0;
+        Assertions.assertInstanceOf(Generator.class, IterableItr.of(obj));
 
         Object temp = obj;
         Assertions.assertThrows(ClassCastException.class, () -> {
