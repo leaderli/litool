@@ -33,6 +33,7 @@ public class LiYamlConfig {
         Lira<File> resourceFile = ResourceUtil.getResourceFile(LiYamlConfig::isYamlFile);
 
         for (File file : resourceFile) {
+            System.out.println(file);
             RuntimeExceptionTransfer.run(() -> yaml.load(Files.newInputStream(file.toPath())));
         }
 
