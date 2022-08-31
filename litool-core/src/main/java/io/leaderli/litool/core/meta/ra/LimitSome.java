@@ -31,10 +31,10 @@ public class LimitSome<T> extends PublisherSome<T> {
 
 
         @Override
-        public void onRequested() {
+        public void beforeRequest() {
 
             System.out.println("onRequested:" + limit);
-            actualSubscriber.onRequested();
+            actualSubscriber.beforeRequest();
             if (limit < 1) {
                 this.cancel();
             }

@@ -42,7 +42,11 @@ public interface Subscriber<T> extends CancelableError {
 
     }
 
-    default void onRequested() {
+    default void beforeRequest() {
+
+    }
+
+    default void requested() {
 
     }
 

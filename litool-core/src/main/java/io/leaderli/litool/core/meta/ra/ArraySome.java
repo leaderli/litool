@@ -42,7 +42,7 @@ public final class ArraySome<T> extends Some<T> {
             }
 
             while (iterator.hasNext()) {
-                actualSubscriber.onRequested();
+                actualSubscriber.beforeRequest();
                 if (canceled) {
                     return;
                 }
