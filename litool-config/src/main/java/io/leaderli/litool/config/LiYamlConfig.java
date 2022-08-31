@@ -4,6 +4,7 @@ import io.leaderli.litool.core.collection.LiMapUtil;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.meta.LiBox;
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.resource.ResourceUtil;
 import io.leaderli.litool.core.text.StringUtils;
 import org.yaml.snakeyaml.Yaml;
@@ -28,7 +29,10 @@ public class LiYamlConfig {
 
 
         Yaml yaml = new Yaml();
-        for (File file : ResourceUtil.getResourceFile(LiYamlConfig::isYamlFile)) {
+
+        Lira<File> resourceFile = ResourceUtil.getResourceFile(LiYamlConfig::isYamlFile);
+
+        for (File file : resourceFile) {
             RuntimeExceptionTransfer.run(() -> yaml.load(Files.newInputStream(file.toPath())));
         }
 

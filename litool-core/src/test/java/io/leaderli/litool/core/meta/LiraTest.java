@@ -3,6 +3,8 @@ package io.leaderli.litool.core.meta;
 import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.ra.CancelSubscription;
+import io.leaderli.litool.core.meta.ra.CancelableError;
 import io.leaderli.litool.core.meta.ra.Subscriber;
 import io.leaderli.litool.core.meta.ra.Subscription;
 import org.junit.jupiter.api.Assertions;
@@ -16,19 +18,69 @@ import java.util.*;
  */
 class LiraTest {
 
+    @Test
+    void onComplete() {
+
+        LiBox<Object> box = LiBox.none();
+        Lira.of(1, 2).subscribe(new Subscriber<Integer>() {
+            @Override
+            public void onSubscribe(Subscription subscription) {
+
+                subscription.request(-1);
+            }
+
+            @Override
+            public void next(Integer integer) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                box.value(1);
+            }
+        });
+        box.reset();
+        Lira.of(1, 2).subscribe(new Subscriber<Integer>() {
+            @Override
+            public void onSubscribe(Subscription subscription) {
+
+                subscription.request(100);
+            }
+
+            @Override
+            public void next(Integer integer) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                box.value(1);
+            }
+        });
+        Assertions.assertEquals(1, box.value());
+    }
 
     @Test
-    void until() {
+    void takeWhile() {
 
-        Assertions.assertEquals(2, Lira.of(1, 2, 3).until(i -> i > 1).last().get());
-        Assertions.assertEquals(2, Lira.of(1, null, 2, 3).until(i -> i > 1).last().get());
+        Assertions.assertEquals(1, Lira.of(1, 2, 3).takeWhile(i -> i > 1).last().get());
+        Assertions.assertEquals(2, Lira.of(1, null, 2, 3).takeWhile(i -> i > 2).last().get());
 
     }
 
     @Test
-    void untilNull() {
-        Assertions.assertEquals(3, Lira.of(1, 2, 3).untilNull(i -> i > 1).last().get());
-        Assertions.assertEquals(1, Lira.of(1, null, 2, 3).untilNull(i -> i > 1).last().get());
+    void dropWhile() {
+
+        Assertions.assertEquals(2, Lira.of(1, 2, 3).dropWhile(i -> i > 1).first().get());
+        Assertions.assertEquals(3, Lira.of(1, null, 2, 3).dropWhile(i -> i > 2).first().get());
+        Assertions.assertEquals("[3, 4]", Lira.of(1, null, 2, 3, null, 4, 5, 6).dropWhile(i -> i > 2).takeWhile(i -> i > 4).toString());
+
+    }
+
+    @Test
+    void takeWhileNull() {
+        Assertions.assertEquals(3, Lira.of(1, 2, 3).takeWhileNull(i -> i > 1).last().get());
+        Assertions.assertEquals(1, Lira.of(1, null, 2, 3).takeWhileNull(i -> i > 1).last().get());
 
 
     }
@@ -68,8 +120,7 @@ class LiraTest {
         map.put("1", "1");
         map.put("2", 2);
 
-        @SuppressWarnings("UnnecessaryLocalVariable")
-        Object obj = map;
+        @SuppressWarnings("UnnecessaryLocalVariable") Object obj = map;
 
 
         Assertions.assertEquals(1, Lira.of(map).cast(Map.class).size());
@@ -207,13 +258,24 @@ class LiraTest {
     }
 
     @Test
+    void testlimit() {
+
+        System.out.println(Lira.of(1, 2, 3, 4).filter(i -> i > 1).limit(2).get());
+
+    }
+
+    @Test
     void limit() {
 
-        Assertions.assertSame(1, Lira.of(1).limit(1).size());
-        Assertions.assertSame(0, Lira.of().limit(1).size());
-        Assertions.assertSame(1, Lira.of(1, 2).limit(1).size());
-        Assertions.assertSame(2, Lira.of(1, 2).limit(-1).size());
-        Assertions.assertSame(0, Lira.of(1, 2).limit(0).size());
+        Assertions.assertEquals("[1]", Lira.of(1).limit(1).toString());
+        Assertions.assertEquals(0, Lira.of().limit(1).size());
+        Assertions.assertEquals("[1]", Lira.of(1, 2).limit(1).toString());
+        Assertions.assertEquals("[1, 2]", Lira.of(1, 2).limit(-1).toString());
+        Assertions.assertEquals(0, Lira.of(1, 2).limit(0).size());
+
+        Assertions.assertEquals("[2, 3]", Lira.of(1, 2, 3, 4).filter(i -> i > 1).limit(2).toString());
+        Assertions.assertEquals("[2]", Lira.of(1, 2).filter(i -> i > 1).limit(2).toString());
+
     }
 
     @Test
@@ -239,13 +301,11 @@ class LiraTest {
     @Test
     void toArray() {
 
-        Assertions.assertDoesNotThrow(
-                () -> {
+        Assertions.assertDoesNotThrow(() -> {
 
-                    Number[] nums = Lira.of(1, 2, 3, 4.0).toArray(Integer.class);
-                    Number[] nums2 = Lira.of(1, 2, 3).toArray(int.class);
-                }
-        );
+            Number[] nums = Lira.of(1, 2, 3, 4.0).toArray(Integer.class);
+            Number[] nums2 = Lira.of(1, 2, 3).toArray(int.class);
+        });
     }
 
     @Test
@@ -267,62 +327,81 @@ class LiraTest {
     @Test
     void flatMap() {
 
-        List<String> linos = Lira.of("1 2 3")
-                .map(s -> s.split(" "))
-                .flatMap(IterableItr::ofs)
-                .get();
+        List<String> linos = Lira.of("1 2 3").map(s -> s.split(" ")).flatMap(IterableItr::ofs).get();
 
 
         Assertions.assertEquals(3, linos.size());
-        linos = Lira.of("1 2 3")
-                .map(s -> s.split(" "))
-                .<String>flatMap()
-                .filter(f -> !f.equals("2"))
-                .get();
+        linos = Lira.of("1 2 3").map(s -> s.split(" ")).<String>flatMap().filter(f -> !f.equals("2")).get();
         Assertions.assertEquals(2, linos.size());
 
     }
 
 
-    private static class IntegerSubscriber<T> implements Subscriber<T>, Iterator<T> {
-        private final LiBox<Generator<T>> box;
-        private Subscription subscription;
-        private T next;
-
-        public IntegerSubscriber(LiBox<Generator<T>> box) {
-            this.box = box;
-        }
-
-        @Override
-        public void onSubscribe(Subscription subscription) {
-
-            this.subscription = subscription;
-            subscription.request();
-        }
-
-        @Override
-        public void next(T t) {
-            this.next = t;
-            subscription.cancel();
-        }
-
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void onComplete(Iterator<?> iterator) {
-            box.value((Generator<T>) iterator);
-        }
-
-
-        @Override
-        public boolean hasNext() {
-            return box.value().hasNext();
-        }
-
-        @Override
-        public T next() {
-            Lira.of(box.value()).sleep(1000).subscribe(this);
-            return next;
-        }
+    @Test
+    void iterator() {
+//        Assertions.assertThrows(NoSuchElementException.class, () -> Lira.of().iterator().next());
+//        Iterator<Integer> iterator = Lira.of(1, 2).iterator();
+//        Assertions.assertEquals(1, iterator.next());
+//        Assertions.assertEquals(2, iterator.next());
+//        Assertions.assertThrows(NoSuchElementException.class, iterator::next);
+//
+//        iterator = Lira.of(null, 2).iterator();
+////        Assertions.assertNull(iterator.next());
+//        Assertions.assertEquals(2, iterator.next());
+//        Assertions.assertThrows(NoSuchElementException.class, iterator::next);
+//
+//        iterator = Lira.of(1, 2, 3).filter(i -> i > 1).iterator();
+//
+//        Assertions.assertNotNull(iterator.next());
+//
+//        int count = 0;
+//        Lira<Integer> range = Lira.range();
+//        for (Integer integer : range.limit(2)) {
+//            Assertions.assertTrue(integer <= 1);
+//            count++;
+//        }
+//        Assertions.assertEquals(2, count);
+//
+//        count = 0;
+//        for (Integer integer : range.limit(2)) {
+//            Assertions.assertTrue(integer <= 3 && integer > 1);
+//            count++;
+//        }
+//        Assertions.assertEquals(2, count);
+//
+//        iterator = range.limit(2).iterator();
+//        Assertions.assertEquals(4, iterator.next());
+//        Assertions.assertEquals(5, iterator.next());
+//        iterator = range.limit(2).iterator();
+//        Assertions.assertEquals(6, iterator.next());
+//        Assertions.assertEquals(7, iterator.next());
+//
+//        count = 0;
+//        for (Integer integer : range.limit(2)) {
+//            count++;
+//        }
+//        Assertions.assertEquals(2, count);
+//
+//        count = 0;
+//        Lira<Integer> of = Lira.of(1, 2, 3);
+//        for (Integer integer : of) {
+//            System.out.println(integer);
+//
+//            count++;
+//        }
+//        Assertions.assertEquals(3, count);
     }
+
+    @Test
+    void onError() {
+        Assertions.assertEquals(2, Lira.of(1, 2, 3).map(i -> i / (i % 2)).size());
+        Lira<Integer> nullable = Lira.of(1, 2, 3).onError(new CancelableError() {
+            @Override
+            public void onError(Throwable t, CancelSubscription cancel) {
+                cancel.cancel();
+            }
+        }).map(i -> i / (i % 2)).nullable(() -> 10);
+        Assertions.assertEquals("[1, 10]", nullable.toString());
+    }
+
 }

@@ -13,36 +13,38 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-public class UntilSome<T> extends PublisherSome<T> {
+public class TakeWhileSome<T> extends PublisherSome<T> {
 
 
     private final Function<? super T, ?> filter;
 
-    public UntilSome(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
+    public TakeWhileSome(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
         super(prevPublisher);
         this.filter = filter;
     }
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new FilterSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new TakeWhileSubscriber(actualSubscriber));
 
     }
 
 
-    private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
+    private final class TakeWhileSubscriber extends IntermediateSubscriber<T, T> {
 
-        public FilterSubscriber(Subscriber<? super T> actualSubscriber) {
+        public TakeWhileSubscriber(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 
+
         @Override
         public void next(T t) {
-            actualSubscriber.next(t);
             boolean present = BooleanUtil.parse(filter.apply(t));
             if (present) {
                 cancel();
+                return;
             }
+            actualSubscriber.next(t);
 
         }
 

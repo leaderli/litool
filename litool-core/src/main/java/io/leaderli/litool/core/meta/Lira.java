@@ -6,10 +6,7 @@ import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
-import io.leaderli.litool.core.meta.ra.ArraySome;
-import io.leaderli.litool.core.meta.ra.DebugConsumer;
-import io.leaderli.litool.core.meta.ra.Publisher;
-import io.leaderli.litool.core.meta.ra.Subscriber;
+import io.leaderli.litool.core.meta.ra.*;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.util.BooleanUtil;
 
@@ -242,9 +239,11 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      * @param filter cancel signal push
      * @return this
      */
-    Lira<T> until(Function<? super T, ?> filter);
+    Lira<T> takeWhile(Function<? super T, ?> filter);
 
-    Lira<T> untilNull(Function<? super T, ?> filter);
+    Lira<T> dropWhile(Function<? super T, ?> filter);
+
+    Lira<T> takeWhileNull(Function<? super T, ?> filter);
 
     /**
      * @param supplier get a result
@@ -285,6 +284,8 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      * @return 转换后的 Lira
      */
     <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
+
+    Lira<T> onError(CancelableError onError);
 
     /**
      * @param others 数组

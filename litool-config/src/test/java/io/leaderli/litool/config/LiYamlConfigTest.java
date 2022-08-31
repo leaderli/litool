@@ -1,6 +1,5 @@
 package io.leaderli.litool.config;
 
-import io.leaderli.litool.core.resource.ResourceUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -15,10 +14,6 @@ class LiYamlConfigTest {
 
     @Test
     void checkYamlFormat() {
-        System.out.println(ResourceUtil.getResourceFile(null));
-
-        System.out.println(ResourceUtil.getResourcesLira(""));
-        System.out.println(ResourceUtil.getResourceFile(f -> true));
 
         Assertions.assertThrows(RuntimeException.class, LiYamlConfig::checkYamlFormat);
     }

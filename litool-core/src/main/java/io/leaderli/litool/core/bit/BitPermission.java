@@ -27,6 +27,9 @@ public class BitPermission<T> {
      */
     private int permissions;
 
+    public BitPermission() {
+        this.permission_constant_class = null;
+    }
 
     public BitPermission(Class<T> permission_constant_class) {
         this.permission_constant_class = permission_constant_class;
@@ -121,6 +124,9 @@ public class BitPermission<T> {
 
     @Override
     public String toString() {
+        if (permission_constant_class == null) {
+            return Integer.toBinaryString(permissions);
+        }
         return permission_constant_class.getSimpleName() + ":" + BitStatus.of(permission_constant_class).beauty(permissions);
     }
 }

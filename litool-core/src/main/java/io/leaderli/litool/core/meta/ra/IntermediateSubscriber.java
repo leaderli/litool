@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.ra;
 
-import java.util.Iterator;
-
 /**
  * 一个用于连接前后节点的中间 消费者，消费操作的抽象类
  *
@@ -10,15 +8,15 @@ import java.util.Iterator;
  */
 public abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Subscription {
     protected final Subscriber<? super R> actualSubscriber;
-    private Subscription prevSubscription;
+    Subscription prevSubscription;
 
     protected IntermediateSubscriber(Subscriber<? super R> actualSubscriber) {
         this.actualSubscriber = actualSubscriber;
     }
 
     @Override
-    public final void request() {
-        this.prevSubscription.request();
+    public void request(long num) {
+        this.prevSubscription.request(num);
 
     }
 
@@ -29,12 +27,15 @@ public abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Sub
     }
 
     @Override
-    public void onSubscribe(Subscription prevSubscription) {
-        this.prevSubscription = prevSubscription;
-        actualSubscriber.onSubscribe(this);
-
+    public Subscription prevSubscription() {
+        return this.prevSubscription;
     }
 
+    @Override
+    public void onSubscribe(Subscription prevSubscription) {
+        this.prevSubscription = prevSubscription.prevSubscription();
+        actualSubscriber.onSubscribe(this);
+    }
 
     @Override
     public void onNull() {
@@ -42,12 +43,24 @@ public abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Sub
     }
 
     @Override
-    public void onComplete(Iterator<?> iterator) {
-        this.actualSubscriber.onComplete(iterator);
+    public void onRequested() {
+        this.actualSubscriber.onRequested();
+    }
+
+    @Override
+    public void onComplete() {
+        this.actualSubscriber.onComplete();
+    }
+
+    @Override
+    public void onCancel() {
+        this.actualSubscriber.onCancel();
     }
 
     @Override
     public void onError(Throwable t, CancelSubscription cancel) {
         this.actualSubscriber.onError(t, cancel);
     }
+
+
 }

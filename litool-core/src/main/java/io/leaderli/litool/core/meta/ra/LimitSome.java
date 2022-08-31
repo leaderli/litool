@@ -31,6 +31,16 @@ public class LimitSome<T> extends PublisherSome<T> {
 
 
         @Override
+        public void onRequested() {
+            System.out.println("--------------> limit onRequested " + limit);
+
+            actualSubscriber.onRequested();
+            if (limit < 1) {
+                this.cancel();
+            }
+        }
+
+        @Override
         public void next(T t) {
             if (limit < 1) {
                 this.cancel();

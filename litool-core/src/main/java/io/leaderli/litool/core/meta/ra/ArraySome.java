@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
+
 import java.util.Iterator;
 
 /**
@@ -24,46 +25,62 @@ public final class ArraySome<T> extends Some<T> {
 
         private final Subscriber<? super T> actualSubscriber;
 
+        Iterator<? extends T> iterator = arr.iterator();
 
         private boolean canceled;
+
 
         public ArraySubscription(Subscriber<? super T> actualSubscriber) {
             this.actualSubscriber = actualSubscriber;
         }
 
         @Override
-        public void request() {
-            Iterator<? extends T> iterator = arr.iterator();
+        public void request(long num) {
+
             if (canceled) {
-                actualSubscriber.onComplete(iterator);
                 return;
             }
-//            System.out.println(arr instanceof Generator);
 
-            while (iterator.hasNext()) {
+            while (num != 0 && iterator.hasNext()) {
                 T t = iterator.next();
 
+                if (num > 0) {
+                    num--;
+                }
 
                 try {
                     SubscriberUtil.next(actualSubscriber, t);
                 } catch (Throwable throwable) {
                     actualSubscriber.onError(throwable, this);
+                    actualSubscriber.onNull();
                 }
                 // 通过 onSubscribe 将 Subscription 传递给订阅者，由订阅者来调用 cancel方法从而实现提前结束循环
                 if (canceled) {
-                    actualSubscriber.onComplete(iterator);
-
                     return;
                 }
 
             }
+            if (num == 0) {
+                actualSubscriber.onRequested();
+            }
 
-            actualSubscriber.onComplete(iterator);
+            if (!iterator.hasNext()) {
+
+                actualSubscriber.onComplete();
+            }
+        }
+
+
+        @Override
+        public Subscription prevSubscription() {
+            return this;
         }
 
         @Override
         public void cancel() {
             canceled = true;
+            actualSubscriber.onCancel();
+            actualSubscriber.onComplete();
         }
     }
 

@@ -8,5 +8,6 @@ public class MethodUtilBean {
 
     public void test() {
 
+        int a = 1;
     }
 }

@@ -12,22 +12,22 @@ public class ThreadUtil {
     /**
      * sleep some second
      *
-     * @param duration duration of {@link  TimeUnit#SECONDS}
+     * @param second second of {@link  TimeUnit#SECONDS}
      */
-    public static void sleep(long duration) {
-        sleep(TimeUnit.SECONDS, duration);
+    public static void sleep(long second) {
+        sleep(TimeUnit.SECONDS, second);
     }
 
     /**
      * sleep a while
      *
      * @param timeUnit a timeUnit
-     * @param duration time duration
+     * @param timeout  time timeout
      */
     @SuppressWarnings("java:S2142")
-    public static void sleep(TimeUnit timeUnit, long duration) {
+    public static void sleep(TimeUnit timeUnit, long timeout) {
         try {
-            timeUnit.sleep(duration);
+            timeUnit.sleep(timeout);
         } catch (InterruptedException ignore) {
             // ignore
         }

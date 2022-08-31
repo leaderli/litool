@@ -345,7 +345,7 @@ public class ArrayUtils {
      * @param array the array to test
      * @return {@code true} if the array is empty or {@code null}
      * @since 2.1
-     */
+ */
     public static boolean isEmpty(final boolean[] array) {
         return getLength(array) == 0;
     }
@@ -971,6 +971,7 @@ public class ArrayUtils {
      * Returns a array that append a array after origin array.
      *
      * @param origin an array
+     * @param add    the added arr
      * @param <T>    the type of elements
      * @return new appended array
      */
@@ -986,31 +987,32 @@ public class ArrayUtils {
      * @param origin     an array
      * @param beginIndex the beginning index, Negative numbers are supported, indicating
      *                   the position calculated from the back
+     * @param insert     the insert array
      * @param <T>        the type of elements
-     * @return new inserted array
+     * @return new insert array
      */
 
     @SafeVarargs
-    public static <T> T[] insert(T[] origin, int beginIndex, T... add) {
+    public static <T> T[] insert(T[] origin, int beginIndex, T... insert) {
 
         Class<T> componentType = ClassUtil.getComponentType(origin);
         if (componentType == null) {
-            return arraycopy(add);
+            return arraycopy(insert);
         }
-        if (add == null || add.length == 0) {
+        if (insert == null || insert.length == 0) {
             return arraycopy(origin);
         }
         int length = origin.length;
-        T[] arr = ClassUtil.newWrapperArray(componentType, length + add.length);
+        T[] arr = ClassUtil.newWrapperArray(componentType, length + insert.length);
 
         beginIndex = correctBeginIndex(beginIndex, length);
         if (beginIndex >= length) {
             System.arraycopy(origin, 0, arr, 0, length);
-            System.arraycopy(add, 0, arr, length, add.length);
+            System.arraycopy(insert, 0, arr, length, insert.length);
         } else {
             System.arraycopy(origin, 0, arr, 0, beginIndex);
-            System.arraycopy(add, 0, arr, beginIndex, add.length);
-            System.arraycopy(origin, beginIndex, arr, beginIndex + add.length, length - beginIndex);
+            System.arraycopy(insert, 0, arr, beginIndex, insert.length);
+            System.arraycopy(origin, beginIndex, arr, beginIndex + insert.length, length - beginIndex);
         }
 
 

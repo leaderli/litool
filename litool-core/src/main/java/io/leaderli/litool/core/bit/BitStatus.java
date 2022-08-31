@@ -69,8 +69,8 @@ public class BitStatus {
      */
     public String beauty(int bit_status) {
 
-        Lira<String> map = BitStatusEnum.of(bit_status).map(this.bit_name::get);
-        return StringUtils.join("|", map);
+        Lira<String> name_status = BitStatusEnum.of(bit_status).map(this.bit_name::get);
+        return StringUtils.join("|", name_status);
 
 
     }

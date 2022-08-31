@@ -100,7 +100,7 @@ public abstract class Some<T> implements Lira<T> {
             @Override
             public void onSubscribe(Subscription prevSubscription) {
                 this.prevSubscription = prevSubscription;
-                prevSubscription.request();
+                prevSubscription.request(-1);
             }
 
             @Override
@@ -121,20 +121,12 @@ public abstract class Some<T> implements Lira<T> {
 
     @Override
     public Iterator<T> iterator() {
-        this.subscribe(new Subscriber<T>() {
-            @Override
-            public void onSubscribe(Subscription subscription) {
-                subscription.request();
-            }
-
-            @Override
-            public void next(T t) {
-                System.out.println(t);
-            }
-
-        });
+//        IterableSubscriber<T> iterator = new IterableSubscriber<>();
+//        this.subscribe(iterator);
+//        return iterator;
         return get().iterator();
     }
+
 
     @Override
     public Lira<T> sleep(int countdown, long milliseconds) {
@@ -172,13 +164,18 @@ public abstract class Some<T> implements Lira<T> {
     }
 
     @Override
-    public Lira<T> until(Function<? super T, ?> filter) {
-        return new UntilSome<>(this, filter);
+    public Lira<T> takeWhile(Function<? super T, ?> filter) {
+        return new TakeWhileSome<>(this, filter);
     }
 
     @Override
-    public Lira<T> untilNull(Function<? super T, ?> filter) {
-        return new UntilNullSome<>(this);
+    public Lira<T> dropWhile(Function<? super T, ?> filter) {
+        return new DropWhileSome<>(this, filter);
+    }
+
+    @Override
+    public Lira<T> takeWhileNull(Function<? super T, ?> filter) {
+        return new TakeWhileNullSome<>(this);
     }
 
     @Override
@@ -207,6 +204,11 @@ public abstract class Some<T> implements Lira<T> {
     public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
         return new ThrowableMap<>(this, mapper);
 
+    }
+
+    @Override
+    public Lira<T> onError(CancelableError onError) {
+        return new OnErrorSome<>(this, onError);
     }
 
     @SafeVarargs
@@ -315,24 +317,6 @@ public abstract class Some<T> implements Lira<T> {
         return Lira.of(raw);
     }
 
-    private class NewItr implements Iterator {
-        final Lira<T> lira;
-        boolean hasNext = true;
-
-        private NewItr(Lira<T> lira) {
-            this.lira = lira;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return hasNext;
-        }
-
-        @Override
-        public Object next() {
-            return lira.get();
-        }
-    }
 
     @Override
     public void forThrowableEach(ThrowableConsumer<? super T> action) {
@@ -348,7 +332,7 @@ public abstract class Some<T> implements Lira<T> {
 
             @Override
             public void onSubscribe(Subscription prevSubscription) {
-                prevSubscription.request();
+                prevSubscription.request(-1);
 
             }
 

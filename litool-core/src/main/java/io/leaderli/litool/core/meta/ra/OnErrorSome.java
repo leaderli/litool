@@ -13,23 +13,28 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-public class UntilNullSome<T> extends PublisherSome<T> {
+public class OnErrorSome<T> extends PublisherSome<T> {
 
 
-    public UntilNullSome(Publisher<T> prevPublisher) {
+    private final CancelableError onError;
+
+    public OnErrorSome(Publisher<T> prevPublisher, CancelableError onError) {
         super(prevPublisher);
+        this.onError = onError;
     }
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new FilterSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new TakeWhileSubscriber(actualSubscriber));
 
     }
 
 
-    private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
+    private final class TakeWhileSubscriber extends IntermediateSubscriber<T, T> {
 
-        public FilterSubscriber(Subscriber<? super T> actualSubscriber) {
+        private boolean drop;
+
+        public TakeWhileSubscriber(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 
@@ -39,8 +44,8 @@ public class UntilNullSome<T> extends PublisherSome<T> {
         }
 
         @Override
-        public void onNull() {
-            cancel();
+        public void onError(Throwable t, CancelSubscription cancel) {
+            onError.onError(t, cancel);
         }
     }
 }

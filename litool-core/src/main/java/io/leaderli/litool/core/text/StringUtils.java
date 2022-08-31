@@ -1240,8 +1240,7 @@ public class StringUtils implements StrPool {
      * @param cs2 the second CharSequence, may be {@code null}
      * @return {@code true} if the CharSequences are equal (case-insensitive), or both {@code null}
      * @see #equals(CharSequence, CharSequence)
-     * @since 3.0 Changed signature from equalsIgnoreCase(String, String) to equalsIgnoreCase(CharSequence,
-     * CharSequence)
+     * @since 3.0 Changed signature from equalsIgnoreCase(String, String) to equalsIgnoreCase(CharSequence, CharSequence)
      */
     public static boolean equalsIgnoreCase(final CharSequence cs1, final CharSequence cs2) {
         if (cs1 == cs2) {
@@ -1552,8 +1551,7 @@ public class StringUtils implements StrPool {
      * @return the first index of the search CharSequence,
      * -1 if no match or {@code null} string input
      * @since 2.5
-     * @since 3.0 Changed signature from indexOfIgnoreCase(String, String) to indexOfIgnoreCase(CharSequence,
-     * CharSequence)
+     * @since 3.0 Changed signature from indexOfIgnoreCase(String, String) to indexOfIgnoreCase(CharSequence, CharSequence)
      */
     public static int indexOfIgnoreCase(final CharSequence str, final CharSequence searchStr) {
         return indexOfIgnoreCase(str, searchStr, 0);
@@ -1811,8 +1809,7 @@ public class StringUtils implements StrPool {
      * @return the last index of the search CharSequence (always &le; startPos),
      * -1 if no match or {@code null} string input
      * @since 2.0
-     * @since 3.0 Changed signature from lastIndexOf(String, String, int) to lastIndexOf(CharSequence, CharSequence,
-     * int)
+     * @since 3.0 Changed signature from lastIndexOf(String, String, int) to lastIndexOf(CharSequence, CharSequence, int)
      */
     public static int lastIndexOf(final CharSequence seq, final CharSequence searchSeq, final int startPos) {
         if (seq == null || searchSeq == null) {
@@ -3359,8 +3356,7 @@ public class StringUtils implements StrPool {
      * @return an array of parsed Strings, {@code null} if null String was input
      * @since 2.4
      */
-    public static String[] splitByWholeSeparatorPreserveAllTokens(final String str, final String separator,
-                                                                  final int max) {
+    public static String[] splitByWholeSeparatorPreserveAllTokens(final String str, final String separator, final int max) {
         return splitByWholeSeparatorWorker(str, separator, max, true);
     }
 
@@ -3989,8 +3985,7 @@ public class StringUtils implements StrPool {
      * @return the text with any replacements processed,
      * {@code null} if null String input
      */
-    public static String replace(final String text, final String searchString, final String replacement,
-                                 final int max) {
+    public static String replace(final String text, final String searchString, final String replacement, final int max) {
         return replace(text, searchString, replacement, max, false);
     }
 
@@ -6726,18 +6721,18 @@ public class StringUtils implements StrPool {
 
     public static String join(String delimiter, Iterable<?> elements) {
 
+        return join(delimiter, IterableItr.of(elements).iterator());
 
-        StringJoiner joiner = new StringJoiner(Lino.of(delimiter).get(" "));
-        Lira.of(elements).map(String::valueOf).nullable(() -> "").forEach(joiner::add);
-        return joiner.toString();
     }
 
     public static String join(String delimiter, Iterator<?> elements) {
 
 
-        IterableItr.of(elements);
-        StringJoiner joiner = new StringJoiner(Lino.of(delimiter).get(" "));
-        Lira.of(elements).get().stream().map(String::valueOf).forEach(joiner::add);
+        if (delimiter == null) {
+            delimiter = " ";
+        }
+        StringJoiner joiner = new StringJoiner(delimiter);
+        Lira.of(elements).map(String::valueOf).nullable(() -> "").forEach(joiner::add);
         return joiner.toString();
     }
 
@@ -7502,8 +7497,7 @@ public class StringUtils implements StrPool {
     /**
      * <p>Find the Jaro Winkler Distance which indicates the similarity score between two Strings.</p>
      *
-     * <p>The Jaro measure is the weighted sum of percentage of matched characters from each file and transposed
-     * characters.
+     * <p>The Jaro measure is the weighted sum of percentage of matched characters from each file and transposed characters.
      * Winkler increased this measure for matching initial characters.</p>
      *
      * <p>This implementation is based on the Jaro Winkler similarity algorithm
@@ -7793,8 +7787,7 @@ public class StringUtils implements StrPool {
      * @see Pattern
      * @see #trim(String)
      * @see <a
-     * href="http://www.w3.org/TR/xpath/#function-normalize-space">http://www.w3
-     * .org/TR/xpath/#function-normalize-space</a>
+     * href="http://www.w3.org/TR/xpath/#function-normalize-space">http://www.w3.org/TR/xpath/#function-normalize-space</a>
      * @since 3.0
      */
     public static String normalizeSpace(final String str) {
