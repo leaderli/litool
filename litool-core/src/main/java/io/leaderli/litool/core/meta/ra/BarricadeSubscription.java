@@ -7,7 +7,7 @@ import java.util.Iterator;
  * @author leaderli
  * @since 2022/7/16
  */
-public final class MediateSubscription<R> implements Subscription {
+public final class BarricadeSubscription<R> implements Subscription {
 
     private final Completable mediate;
     private final Subscriber<? super R> actualSubscriber;
@@ -17,7 +17,7 @@ public final class MediateSubscription<R> implements Subscription {
     private boolean canceled;
 
 
-    public MediateSubscription(Completable mediate, Subscriber<? super R> actualSubscriber, Iterator<? extends R> iterator) {
+    public BarricadeSubscription(Completable mediate, Subscriber<? super R> actualSubscriber, Iterator<? extends R> iterator) {
         this.mediate = mediate;
         this.actualSubscriber = actualSubscriber;
         this.iterator = iterator;

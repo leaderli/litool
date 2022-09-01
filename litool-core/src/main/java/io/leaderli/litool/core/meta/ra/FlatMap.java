@@ -25,36 +25,13 @@ public class FlatMap<T, R> extends Some<R> {
     }
 
 
-    class FlatMapSubscriber extends IntermediateSubscriber<T, R> {
+    class FlatMapSubscriber extends BarricadeIntermediateSubscription<T, R> {
 
-        private MediateSubscription<R> mediateSubscription;
-
-        @Override
-        public void request() {
-            if (mediateSubscription == null) {
-                super.request();
-            } else {
-                mediateSubscription.request();
-            }
-        }
-
-        @Override
-        public Subscription prevSubscription() {
-            return this;
-        }
 
         private FlatMapSubscriber(Subscriber<? super R> actualSubscriber) {
             super(actualSubscriber);
         }
 
-        @Override
-        public void onComplete() {
-            if (this.mediateSubscription == null) {
-                this.actualSubscriber.onComplete();
-            } else {
-                this.mediateSubscription = null;
-            }
-        }
 
         @Override
         public void next(T t) {
@@ -62,19 +39,12 @@ public class FlatMap<T, R> extends Some<R> {
             Iterator<? extends R> iterator = mapper.apply(t);
 
             if (iterator != null) {
-
-                mediateSubscription = new MediateSubscription<>(this, actualSubscriber, iterator);
-                mediateSubscription.request();
+                barricadeSubscription = new BarricadeSubscription<>(this, actualSubscriber, iterator);
+                barricadeSubscription.request();
             }
-
-
         }
 
-        @Override
-        public void onNull() {
 
-            // flat null  will return empty
-        }
 
     }
 }
