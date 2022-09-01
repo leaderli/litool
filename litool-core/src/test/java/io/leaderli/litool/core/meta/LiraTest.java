@@ -18,23 +18,14 @@ import java.util.*;
  * @since 2022/6/19
  */
 class LiraTest {
-//
-//    @Test
-//    void test1() {
-//
-//        Lira<Integer> terminate =
-//                Lira.of(1, 2, 3);
-//
-//        System.out.println(terminate.get());
-//        System.out.println(terminate);
-//        for (Integer integer : terminate) {
-//
-//            System.out.println(integer);
-//        }
-//        System.out.println(terminate);
-//
-//
-//    }
+
+    @Test
+    void test1() {
+
+        System.out.println(Lira.range().debug().sleep(1000).terminate());
+
+
+    }
 
 
     @Test

@@ -5,32 +5,11 @@ import io.leaderli.litool.core.bit.BitPermission;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import static io.leaderli.litool.core.meta.ra.IteratorStatus.ARRIVED;
-import static io.leaderli.litool.core.meta.ra.IteratorStatus.COMPLETE;
-
-/**
- * @author leaderli
- * @since 2022/8/31 11:05 AM
- */
-class IteratorStatus {
-
-    /**
-     * request a element from {@link  ArraySome}
-     */
-    public static final int REQUEST = 0b1;
-    /**
-     * a signal have reached the  {@link  Subscriber}
-     */
-    public static final int ARRIVED = 0b10;
-
-    /**
-     * lira has execute to the end
-     */
-    public static final int COMPLETE = 0b1000;
-}
+import static io.leaderli.litool.core.meta.ra.LiraStatus.ARRIVED;
+import static io.leaderli.litool.core.meta.ra.LiraStatus.COMPLETE;
 
 class IterableSubscriber<T> implements Subscriber<T>, Iterator<T> {
-    private final BitPermission<IteratorStatus> iteratorState = new BitPermission<>();
+    private final BitPermission iteratorState = new BitPermission();
     boolean request = true;
     private Subscription prevSubscription;
     private T next;
@@ -44,13 +23,13 @@ class IterableSubscriber<T> implements Subscriber<T>, Iterator<T> {
     public void next(T t) {
 
         next = t;
-        iteratorState.enable(IteratorStatus.ARRIVED);
+        iteratorState.enable(LiraStatus.ARRIVED);
     }
 
     @Override
     public void onNull() {
         next = null;
-        iteratorState.enable(IteratorStatus.ARRIVED);
+        iteratorState.enable(LiraStatus.ARRIVED);
     }
 
     @Override

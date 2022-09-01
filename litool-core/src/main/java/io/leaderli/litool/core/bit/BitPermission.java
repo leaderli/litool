@@ -8,7 +8,7 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
  * @author leaderli
  * @since 2022/8/16
  */
-public class BitPermission<T> {
+public class BitPermission {
 
     /**
      * Constant class used to represent permission state
@@ -18,7 +18,7 @@ public class BitPermission<T> {
      *    Modifier.FINAL
      * </pre>
      */
-    private final Class<T> permission_constant_class;
+    private final Class<?> permission_constant_class;
 
     /**
      * A non-negative int to hold the permission token, save permission with binary position. 1 means permission, 0
@@ -28,10 +28,10 @@ public class BitPermission<T> {
     private int permissions;
 
     public BitPermission() {
-        this.permission_constant_class = null;
+        this.permission_constant_class = this.getClass();
     }
 
-    public BitPermission(Class<T> permission_constant_class) {
+    public BitPermission(Class<?> permission_constant_class) {
         this.permission_constant_class = permission_constant_class;
     }
 
