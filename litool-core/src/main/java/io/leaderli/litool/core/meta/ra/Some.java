@@ -116,6 +116,7 @@ public abstract class Some<T> implements Lira<T> {
 
     @Override
     public Iterator<T> iterator() {
+        //TODO  使用supplier去实现
         return get().iterator();
 
     }

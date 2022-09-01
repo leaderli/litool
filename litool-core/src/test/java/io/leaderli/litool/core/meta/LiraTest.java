@@ -21,6 +21,24 @@ class LiraTest {
 
 
     @Test
+    void test() {
+
+
+        Lira<Integer> terminate = (Lira<Integer>) Lira.of(1, 2, 3).terminate();
+
+        for (Integer integer : terminate) {
+            System.out.println(integer);
+        }
+        Lira<Integer> map = terminate.map(i -> i * 10);
+        System.out.println(map.get());
+
+        for (Integer integer : map) {
+            System.out.println(integer);
+        }
+
+    }
+
+    @Test
     void onComplete() {
 
         LiBox<Object> box = LiBox.none();
