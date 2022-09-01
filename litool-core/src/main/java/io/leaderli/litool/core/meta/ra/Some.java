@@ -206,7 +206,7 @@ public abstract class Some<T> implements Lira<T> {
     }
 
     @Override
-    public Lira<T> onError(CancelableError onError) {
+    public Lira<T> onError(Exceptionable onError) {
         return new OnErrorSome<>(this, onError);
     }
 

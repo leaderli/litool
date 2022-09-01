@@ -83,7 +83,6 @@ class IterableSubscriber<T> implements Subscriber<T>, Iterator<T> {
 
 
         while (iteratorState.miss(ARRIVED | COMPLETE)) {
-
             this.prevSubscription.request();
         }
 

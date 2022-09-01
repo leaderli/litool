@@ -285,7 +285,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      */
     <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
 
-    Lira<T> onError(CancelableError onError);
+    Lira<T> onError(Exceptionable onError);
 
     /**
      * @param others 数组

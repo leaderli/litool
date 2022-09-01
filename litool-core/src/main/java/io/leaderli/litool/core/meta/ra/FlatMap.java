@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.meta.Lino;
-
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -26,31 +24,48 @@ public class FlatMap<T, R> extends Some<R> {
 
     }
 
-    private class FlatMapSubscriber extends IntermediateSubscriber<T, R> {
 
+    class FlatMapSubscriber extends IntermediateSubscriber<T, R> {
+
+        private FlatArraySome<R> flatArraySome;
 
         @Override
         public void request() {
-            super.request();
+            if (flatArraySome == null) {
+                super.request();
+            } else {
+                flatArraySome.request();
+            }
+        }
+
+        @Override
+        public Subscription prevSubscription() {
+            return this;
         }
 
         private FlatMapSubscriber(Subscriber<? super R> actualSubscriber) {
             super(actualSubscriber);
         }
 
+        @Override
+        public void onComplete() {
+            if (this.flatArraySome == null) {
+                this.actualSubscriber.onComplete();
+            } else {
+                this.flatArraySome = null;
+            }
+        }
 
         @Override
         public void next(T t) {
 
-            // 展开迭代器，依次对非空元素执行下一步操作
-            Lino.of(t).map(mapper).ifPresent(it -> it.forEachRemaining(this.actualSubscriber::next));
-//            Iterator<? extends R> apply = mapper.apply(t);
-//
-//            if (apply != null) {
-//                FlatArraySome<R> ts = new FlatArraySome<>(apply);
-//
-//                ts.subscribe(actualSubscriber);
-//            }
+            Iterator<? extends R> iterator = mapper.apply(t);
+
+            if (iterator != null) {
+
+                flatArraySome = new FlatArraySome<>(this, actualSubscriber, iterator);
+                flatArraySome.request();
+            }
 
 
         }

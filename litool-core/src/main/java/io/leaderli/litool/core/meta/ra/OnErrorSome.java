@@ -16,9 +16,9 @@ import java.util.function.Function;
 public class OnErrorSome<T> extends PublisherSome<T> {
 
 
-    private final CancelableError onError;
+    private final Exceptionable onError;
 
-    public OnErrorSome(Publisher<T> prevPublisher, CancelableError onError) {
+    public OnErrorSome(Publisher<T> prevPublisher, Exceptionable onError) {
         super(prevPublisher);
         this.onError = onError;
     }

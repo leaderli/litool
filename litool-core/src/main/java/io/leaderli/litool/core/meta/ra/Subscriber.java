@@ -15,7 +15,7 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/6/27
  */
-public interface Subscriber<T> extends CancelableError {
+public interface Subscriber<T> extends Exceptionable, Completable, Cancelable {
 
     /**
      * Invoked after calling {@link Publisher#subscribe(Subscriber)}
@@ -50,15 +50,7 @@ public interface Subscriber<T> extends CancelableError {
 
     }
 
-    /**
-     *
-     */
-    default void onComplete() {
 
-    }
 
-    default void onCancel() {
-
-    }
 
 }

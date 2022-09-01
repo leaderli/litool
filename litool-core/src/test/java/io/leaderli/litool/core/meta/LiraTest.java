@@ -341,7 +341,28 @@ class LiraTest {
     }
 
     @Test
+    void test() {
+//        Lira<Integer> ints = Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap();
+//        for (Integer anInt : ints) {
+//            System.out.println(anInt);
+//        }
+//        System.out.println(ints.get(0));
+
+//        for (Integer integer : Lira.of(1, 3, 4, 5, 0).sorted()) {
+//            System.out.println(integer);
+//        }
+
+    }
+
+    @Test
     void flatMap() {
+        Assertions.assertEquals("[1, 2, 10, 20]", Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().toString());
+        Iterator<Object> iterator = Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator();
+        Assertions.assertEquals(1, iterator.next());
+        Assertions.assertEquals(2, iterator.next());
+        Assertions.assertEquals(10, iterator.next());
+        Assertions.assertEquals(20, iterator.next());
+        Assertions.assertThrows(NoSuchElementException.class, iterator::next);
 
         List<String> linos = Lira.of("1 2 3").map(s -> s.split(" ")).flatMap(IterableItr::ofs).get();
 
@@ -352,36 +373,6 @@ class LiraTest {
 
     }
 
-    @Test
-    void test() {
-//        for (Integer integer : Lira.of(1, 2, 3, 4, 5, 6).filter(i -> i % 2 == 0).limit(2)) {
-        Iterator<Integer> iterator = Lira.of(null, 2).iterator();
-        Assertions.assertNull(iterator.next());
-//        Assertions.assertNull(iterator.next());
-//        for (Integer integer : Lira.range().filter(i -> i % 2 == 0).limit(2)) {
-//            System.out.println(integer);
-//        }
-//        Lira<Integer> range = Lira.range();
-//        for (Integer integer : range) {
-//            System.out.println(integer);
-//        }
-//        System.out.println(range.limit(2));
-//        System.out.println(range.limit(2));
-//        System.out.println(range.limit(2));
-        List<Integer> remove = new ArrayList<>();
-        remove.add(1);
-        remove.add(2);
-        remove.add(3);
-        remove.add(4);
-
-        for (Integer integer : Lira.of(remove)) {
-            System.out.println(integer);
-            if (integer % 2 == 0) {
-                remove.remove(integer);
-            }
-        }
-
-    }
 
     @Test
     void iterator() {
@@ -446,7 +437,7 @@ class LiraTest {
     @Test
     void onError() {
         Assertions.assertEquals(2, Lira.of(1, 2, 3).map(i -> i / (i % 2)).size());
-        Lira<Integer> nullable = Lira.of(1, 2, 3).onError(new CancelableError() {
+        Lira<Integer> nullable = Lira.of(1, 2, 3).onError(new Exceptionable() {
             @Override
             public void onError(Throwable t, CancelSubscription cancel) {
                 cancel.cancel();
