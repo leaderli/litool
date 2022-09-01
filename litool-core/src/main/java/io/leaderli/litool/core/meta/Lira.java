@@ -10,10 +10,7 @@ import io.leaderli.litool.core.meta.ra.*;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.util.BooleanUtil;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -58,10 +55,10 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
     }
 
     /**
-     * Returns an lira that consisting elements provided by given iterableIter
+     * Returns an lira that consisting elements provided by given iterableItr
      *
      * @param iterableItr the iterableIter that provide  elements
-     * @param <T>         the type of elements returned by this iterableIter
+     * @param <T>         the type of elements returned by this iterableItr
      * @return the new lira
      */
     static <T> Lira<T> of(IterableItr<? extends T> iterableItr) {
@@ -78,10 +75,10 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
     }
 
     /**
-     * Returns the uniq none lira that not consisting any element
+     * Returns the unique none lira that not consisting any element
      *
      * @param <T> the type of lira
-     * @return the uniq  none lira
+     * @return the unique  none lira
      * @see #NONE_INSTANCE
      */
     @SuppressWarnings("unchecked")
@@ -246,7 +243,11 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
 
     Lira<T> takeWhileNull(Function<? super T, ?> filter);
 
-    Publisher<T> terminate();
+    default Publisher<T> terminate() {
+        return terminate(null);
+    }
+
+    Publisher<T> terminate(Function<List<T>, Iterable<T>> terminalAction);
 
     /**
      * @param supplier get a result
@@ -383,7 +384,6 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      *
      * @return this
      */
-    Lira<T> distinct();
 
     default Lira<T> sleep(long milliseconds) {
         return sleep(1, milliseconds);
@@ -396,16 +396,17 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      *
      * @param comparator a {@code EqualComparator}  to be used to compare lira elements is equals
      * @return this
-     * TODO 通过 onComplete 实现中间状态
      */
     Lira<T> distinct(EqualComparator<T> comparator);
+
+    default Lira<T> distinct() {
+        return distinct(Objects::equals);
+    }
 
     /**
      * Returns a lira consisting of the elements of this lira ,sorted  according to natural order
      *
      * @return the new lira
-     * <p>
-     * TODO 通过 onComplete 实现中间状态
      */
     Lira<T> sorted();
 

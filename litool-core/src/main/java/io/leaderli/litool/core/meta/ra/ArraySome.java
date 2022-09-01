@@ -55,11 +55,14 @@ public final class ArraySome<T> extends Some<T> {
                 try {
                     SubscriberUtil.next(actualSubscriber, t);
                 } catch (Throwable throwable) {
-                    actualSubscriber.onError(throwable, this);
                     actualSubscriber.onNull();
+                    actualSubscriber.onError(throwable, this);
                 }
                 // 通过 onSubscribe 将 Subscription 传递给订阅者，由订阅者来调用 cancel方法从而实现提前结束循环
 
+                if (canceled) {
+                    return;
+                }
                 actualSubscriber.onRequested();
 
             } else {

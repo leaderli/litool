@@ -243,6 +243,11 @@ class LiraTest {
     @Test
     void sort() {
 
+
+        LiBox<Integer> box = LiBox.none();
+        Lira.of(1).debug(box::value).sorted();
+        Assertions.assertTrue(box.absent());
+
         Assertions.assertSame(1, Lira.of(2, 1).sorted().first().get());
         Assertions.assertSame(3, Lira.of(2, 1, 3).sorted((o1, o2) -> o2 - o1).first().get());
 
@@ -303,7 +308,11 @@ class LiraTest {
     }
 
     @Test
-    void set() {
+    void distinct() {
+        LiBox<Integer> box = LiBox.none();
+        Lira.of(1).debug(box::value).distinct();
+        Assertions.assertTrue(box.absent());
+
 
         Lira<Integer> set = Lira.of(1, 2, 1, 2).filter(i -> {
             LiAssertUtil.assertNotRun();
@@ -341,13 +350,26 @@ class LiraTest {
 
     @Test
     void iterator() {
+
+
+        Lira<Integer> terminate = (Lira<Integer>) Lira.of(1, 2, 3).terminate();
+
+
+        Iterator<Integer> iterator = terminate.map(i -> i * 10).iterator();
+
+        Assertions.assertEquals(10, iterator.next());
+        Assertions.assertEquals(20, iterator.next());
+        Assertions.assertEquals(30, iterator.next());
+        Assertions.assertThrows(NoSuchElementException.class, iterator::next);
+
+        Assertions.assertArrayEquals(new Object[]{10, 20, 30}, terminate.map(i -> i * 10).get().toArray());
         Assertions.assertEquals(1, Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator().next());
 
         Assertions.assertEquals("1,2,10,20", StringUtils.join(",",
                 Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator()));
 
         Assertions.assertThrows(NoSuchElementException.class, () -> Lira.of().iterator().next());
-        Iterator<Integer> iterator = Lira.of(1, 2).iterator();
+        iterator = Lira.of(1, 2).iterator();
         Assertions.assertEquals(1, iterator.next());
         Assertions.assertEquals(2, iterator.next());
         Assertions.assertThrows(NoSuchElementException.class, iterator::next);

@@ -20,12 +20,12 @@ public abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Sub
 
     }
 
+
     @Override
-    public final void cancel() {
+    public void cancel() {
         this.prevSubscription.cancel();
 
     }
-
 
     @Override
     public final void onSubscribe(Subscription prevSubscription) {

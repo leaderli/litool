@@ -3,6 +3,7 @@ package io.leaderli.litool.core.meta.ra;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.lang.CompareBean;
 import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiTuple2;
@@ -115,9 +116,8 @@ public abstract class Some<T> implements Lira<T> {
 
     @Override
     public Iterator<T> iterator() {
-        IterableSubscriber<T> iterator = new IterableSubscriber<>();
-        this.subscribe(iterator);
-        return iterator;
+        return get().iterator();
+
     }
 
 
@@ -172,9 +172,10 @@ public abstract class Some<T> implements Lira<T> {
     }
 
     @Override
-    public Publisher<T> terminate() {
-        return new TerminalSome<>(this);
+    public Publisher<T> terminate(Function<List<T>, Iterable<T>> terminalAction) {
+        return new TerminalSome<>(this, terminalAction);
     }
+
 
     @Override
     public Lira<T> nullable(Supplier<? extends T> supplier) {
@@ -286,19 +287,14 @@ public abstract class Some<T> implements Lira<T> {
         return new DebugSome<>(this, action);
     }
 
-    @Override
-    public Lira<T> distinct() {
-
-
-        return distinct(Object::equals);
-
-    }
 
     @Override
     public Lira<T> distinct(EqualComparator<T> comparator) {
 
+        Lira<CompareBean<T>> compareBeans =
+                (Lira<CompareBean<T>>) map(e -> new CompareBean<>(e, comparator)).terminate(HashSet::new);
+        return compareBeans.map(w -> w.value);
 
-        return new Distinct<>(this, comparator);
 
     }
 
@@ -310,9 +306,11 @@ public abstract class Some<T> implements Lira<T> {
     @Override
     public Lira<T> sorted(Comparator<? super T> comparator) {
 
-        List<T> raw = get();
-        raw.sort(comparator);
-        return Lira.of(raw);
+        return (Lira<T>) terminate(list -> {
+                    list.sort(comparator);
+                    return list;
+                }
+        );
     }
 
 
