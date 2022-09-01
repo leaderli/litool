@@ -17,6 +17,4 @@ public interface Subscription extends CancelSubscription {
     void request();
 
 
-    Subscription prevSubscription();
-
 }

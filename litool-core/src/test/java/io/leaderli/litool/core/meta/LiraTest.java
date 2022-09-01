@@ -3,7 +3,10 @@ package io.leaderli.litool.core.meta;
 import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.meta.ra.*;
+import io.leaderli.litool.core.meta.ra.CancelSubscription;
+import io.leaderli.litool.core.meta.ra.Exceptionable;
+import io.leaderli.litool.core.meta.ra.Subscriber;
+import io.leaderli.litool.core.meta.ra.Subscription;
 import io.leaderli.litool.core.text.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,7 +32,7 @@ class LiraTest {
     void onComplete() {
 
         LiBox<Object> box = LiBox.none();
-        Lira.of(1, 2).subscribe(new TerminalSubscriber<>(new Subscriber<Integer>() {
+        Lira.of(1, 2).terminate((new Subscriber<Integer>() {
             @Override
             public void onSubscribe(Subscription subscription) {
 
@@ -47,7 +50,7 @@ class LiraTest {
             }
         }));
         box.reset();
-        Lira.of(1, 2).subscribe(new TerminalSubscriber<>(new Subscriber<Integer>() {
+        Lira.of(1, 2).terminate((new Subscriber<Integer>() {
             @Override
             public void onSubscribe(Subscription subscription) {
 
@@ -340,19 +343,6 @@ class LiraTest {
         Assertions.assertEquals(1, Lira.of(1, 2, 3, 4, 1).distinct((left, right) -> left - right < 2).first().get());
     }
 
-    @Test
-    void test() {
-//        Lira<Integer> ints = Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap();
-//        for (Integer anInt : ints) {
-//            System.out.println(anInt);
-//        }
-//        System.out.println(ints.get(0));
-
-//        for (Integer integer : Lira.of(1, 3, 4, 5, 0).sorted()) {
-//            System.out.println(integer);
-//        }
-
-    }
 
     @Test
     void flatMap() {

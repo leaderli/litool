@@ -71,11 +71,6 @@ public final class ArraySome<T> extends Some<T> {
 
 
         @Override
-        public Subscription prevSubscription() {
-            return this;
-        }
-
-        @Override
         public void cancel() {
             canceled = true;
             actualSubscriber.onCancel();

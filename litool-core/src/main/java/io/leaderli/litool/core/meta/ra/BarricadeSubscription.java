@@ -17,7 +17,8 @@ public final class BarricadeSubscription<R> implements Subscription {
     private boolean canceled;
 
 
-    public BarricadeSubscription(Completable mediate, Subscriber<? super R> actualSubscriber, Iterator<? extends R> iterator) {
+    public BarricadeSubscription(Completable mediate, Subscriber<? super R> actualSubscriber,
+                                 Iterator<? extends R> iterator) {
         this.mediate = mediate;
         this.actualSubscriber = actualSubscriber;
         this.iterator = iterator;
@@ -54,11 +55,6 @@ public final class BarricadeSubscription<R> implements Subscription {
 
     }
 
-
-    @Override
-    public Subscription prevSubscription() {
-        return this;
-    }
 
     @Override
     public void cancel() {

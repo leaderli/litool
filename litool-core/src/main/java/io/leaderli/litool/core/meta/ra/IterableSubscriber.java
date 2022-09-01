@@ -37,7 +37,7 @@ class IterableSubscriber<T> implements Subscriber<T>, Iterator<T> {
 
     @Override
     public void onSubscribe(Subscription prevSubscription) {
-        this.prevSubscription = prevSubscription.prevSubscription();
+        this.prevSubscription = prevSubscription;
     }
 
     @Override
@@ -64,11 +64,6 @@ class IterableSubscriber<T> implements Subscriber<T>, Iterator<T> {
         iteratorState.enable(COMPLETE);
     }
 
-//    @SuppressWarnings("java:S4348")
-//    @Override
-//    public Iterator<T> iterator() {
-//        return this;
-//    }
 
     @Override
     public boolean hasNext() {

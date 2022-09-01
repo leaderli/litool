@@ -26,14 +26,10 @@ public abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Sub
 
     }
 
-    @Override
-    public Subscription prevSubscription() {
-        return this.prevSubscription;
-    }
 
     @Override
     public void onSubscribe(Subscription prevSubscription) {
-        this.prevSubscription = prevSubscription.prevSubscription();
+        this.prevSubscription = prevSubscription;
         actualSubscriber.onSubscribe(this);
     }
 

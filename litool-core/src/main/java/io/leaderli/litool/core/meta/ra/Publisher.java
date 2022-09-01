@@ -25,4 +25,9 @@ public interface Publisher<T> {
      * @param subscriber the  {@link Subscriber} will consume signal from this {@link Publisher}
      */
     void subscribe(Subscriber<? super T> subscriber);
+
+
+    default void terminate(Subscriber<? super T> subscriber) {
+        this.subscribe(new TerminalSubscriber<>(subscriber));
+    }
 }

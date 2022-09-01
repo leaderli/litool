@@ -21,14 +21,12 @@ public class TerminalSubscriber<T> implements Subscriber<T> {
 
     @Override
     public void onSubscribe(Subscription prevSubscription) {
-        Subscription prevSubscription1 = prevSubscription.prevSubscription();
-        this.delegate.onSubscribe(prevSubscription1);
+        this.delegate.onSubscribe(prevSubscription);
 
         while (iteratorState.miss(COMPLETE)) {
 
-            prevSubscription1.request();
+            prevSubscription.request();
         }
-
     }
 
 
