@@ -44,7 +44,11 @@ public class FlatMap<T, R> extends Some<R> {
             }
         }
 
+        @Override
+        public void onNull() {
 
+            // not provide an iterator to init a new  barricadeSubscription
+        }
 
     }
 }

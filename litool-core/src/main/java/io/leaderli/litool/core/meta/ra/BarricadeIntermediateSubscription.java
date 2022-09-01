@@ -20,15 +20,6 @@ public abstract class BarricadeIntermediateSubscription<T, R> extends Intermedia
         }
     }
 
-    public Subscription prevSubscription() {
-        return this;
-    }
-
-    @Override
-    public void onNull() {
-
-        // not provide an iterator to init a new  barricadeSubscription
-    }
 
     @Override
     public void onComplete() {

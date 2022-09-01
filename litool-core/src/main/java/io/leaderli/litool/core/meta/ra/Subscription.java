@@ -16,5 +16,9 @@ public interface Subscription extends CancelSubscription {
      */
     void request();
 
+    default void check() {
+
+    }
+
 
 }
