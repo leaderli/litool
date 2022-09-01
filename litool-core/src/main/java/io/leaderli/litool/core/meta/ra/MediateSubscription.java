@@ -7,9 +7,9 @@ import java.util.Iterator;
  * @author leaderli
  * @since 2022/7/16
  */
-public final class FlatArraySome<R> implements Subscription {
+public final class MediateSubscription<R> implements Subscription {
 
-    private final Completable completable;
+    private final Completable mediate;
     private final Subscriber<? super R> actualSubscriber;
 
     private final Iterator<? extends R> iterator;
@@ -17,8 +17,8 @@ public final class FlatArraySome<R> implements Subscription {
     private boolean canceled;
 
 
-    public FlatArraySome(Completable completable, Subscriber<? super R> actualSubscriber, Iterator<? extends R> iterator) {
-        this.completable = completable;
+    public MediateSubscription(Completable mediate, Subscriber<? super R> actualSubscriber, Iterator<? extends R> iterator) {
+        this.mediate = mediate;
         this.actualSubscriber = actualSubscriber;
         this.iterator = iterator;
     }
@@ -37,12 +37,10 @@ public final class FlatArraySome<R> implements Subscription {
             if (canceled) {
                 return;
             }
-            R t = iterator.next();
-
 
             try {
 
-                SubscriberUtil.next(actualSubscriber, t);
+                SubscriberUtil.next(actualSubscriber, iterator.next());
             } catch (Throwable throwable) {
                 actualSubscriber.onError(throwable, this);
                 actualSubscriber.onNull();
@@ -50,7 +48,7 @@ public final class FlatArraySome<R> implements Subscription {
             actualSubscriber.onRequested();
 
         } else {
-            completable.onComplete();
+            mediate.onComplete();
         }
 
 

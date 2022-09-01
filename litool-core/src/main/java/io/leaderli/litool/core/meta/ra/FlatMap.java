@@ -27,14 +27,14 @@ public class FlatMap<T, R> extends Some<R> {
 
     class FlatMapSubscriber extends IntermediateSubscriber<T, R> {
 
-        private FlatArraySome<R> flatArraySome;
+        private MediateSubscription<R> mediateSubscription;
 
         @Override
         public void request() {
-            if (flatArraySome == null) {
+            if (mediateSubscription == null) {
                 super.request();
             } else {
-                flatArraySome.request();
+                mediateSubscription.request();
             }
         }
 
@@ -49,10 +49,10 @@ public class FlatMap<T, R> extends Some<R> {
 
         @Override
         public void onComplete() {
-            if (this.flatArraySome == null) {
+            if (this.mediateSubscription == null) {
                 this.actualSubscriber.onComplete();
             } else {
-                this.flatArraySome = null;
+                this.mediateSubscription = null;
             }
         }
 
@@ -63,8 +63,8 @@ public class FlatMap<T, R> extends Some<R> {
 
             if (iterator != null) {
 
-                flatArraySome = new FlatArraySome<>(this, actualSubscriber, iterator);
-                flatArraySome.request();
+                mediateSubscription = new MediateSubscription<>(this, actualSubscriber, iterator);
+                mediateSubscription.request();
             }
 
 
