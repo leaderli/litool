@@ -10,27 +10,27 @@ import java.lang.reflect.Modifier;
  * @author leaderli
  * @since 2022/6/16 8:45 AM
  */
-class BitStatusTest {
+class BitStrTest {
 
 
     @Test
     void beauty() {
 
 
-        BitStatus bitStatus = BitStatus.of(TestMask.class);
-        Assertions.assertEquals("C", bitStatus.beauty(8));
+        BitStr bit = BitStr.of(TestMask.class);
+        Assertions.assertEquals("C", bit.beauty(8));
 
-        Assertions.assertEquals("", bitStatus.beauty(16));
-        Assertions.assertEquals("", bitStatus.beauty(4));
-        Assertions.assertEquals("C|B|A", bitStatus.beauty(123));
-        Assertions.assertEquals("A", bitStatus.beauty(1));
-        Assertions.assertEquals("", bitStatus.beauty(0));
+        Assertions.assertEquals("", bit.beauty(16));
+        Assertions.assertEquals("", bit.beauty(4));
+        Assertions.assertEquals("C|B|A", bit.beauty(123));
+        Assertions.assertEquals("A", bit.beauty(1));
+        Assertions.assertEquals("", bit.beauty(0));
 
-        Assertions.assertEquals("A", bitStatus.beauty(0b001 | 0b100));
-        Assertions.assertTrue(bitStatus.toString().contains("0001"));
+        Assertions.assertEquals("A", bit.beauty(0b001 | 0b100));
+        Assertions.assertTrue(bit.toString().contains("0001"));
 
 
-        Assertions.assertEquals("FINAL", BitStatus.of(Modifier.class).beauty(Modifier.FINAL));
+        Assertions.assertEquals("FINAL", BitStr.of(Modifier.class).beauty(Modifier.FINAL));
 
     }
 
@@ -49,7 +49,7 @@ class BitStatusTest {
                         "INTERFACE0000 0000 0000 0000 0000 0100 0000 0000 ABSTRACT0000 0000 0000 0000 0000 1000 0000 " +
                         "0000" +
                         " STRICT"
-                , BitStatus.of(Modifier.class).toString().replace(System.lineSeparator(), ""));
+                , BitStr.of(Modifier.class).toString().replace(System.lineSeparator(), ""));
     }
 
     @SuppressWarnings("unused")

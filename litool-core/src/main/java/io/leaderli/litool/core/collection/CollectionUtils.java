@@ -31,7 +31,6 @@ public class CollectionUtils {
         Set<T> unique = new HashSet<>();
 
         for (T t : iterable) {
-            System.out.println(t);
             if (!unique.add(t)) {
                 duplicate.add(t);
             }

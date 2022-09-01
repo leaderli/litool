@@ -41,7 +41,6 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
 
 
         Method templateMethod = extensionContext.getRequiredTestMethod();
-        System.out.println(templateMethod);
 
         List<TestTemplateInvocationContext> list = new ArrayList<>();
 
@@ -92,8 +91,6 @@ class MyCartesianProductResolver implements ParameterResolver {
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
 
-        System.out.println(extensionContext.getRequiredTestInstances());
-        System.out.println(extensionContext.getRequiredTestInstance());
         return true;
     }
 

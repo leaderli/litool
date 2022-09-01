@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * @since 2022/6/14
  */
 
-public enum BitStatusEnum {
+public enum BitPositionEnum {
 
     B1,
     B2,
@@ -63,24 +63,24 @@ public enum BitStatusEnum {
      */
     final int value;
 
-    BitStatusEnum() {
+    BitPositionEnum() {
         int index = Integer.parseInt(this.name().replace("B", "")) - 1;
         this.value = 1 << index;
     }
 
-    public static Map<Integer, BitStatusEnum> getBitStatusMap() {
+    public static Map<Integer, BitPositionEnum> getBitStatusMap() {
         return Arrays.stream(values()).collect(Collectors.toMap(bit -> bit.value, bit -> bit));
     }
 
     /**
-     * Return the {@link  BitStatusEnum} that exists on the status binary
+     * Return the {@link  BitPositionEnum} that exists on the status binary
      *
      * @param status a int value represent status
      * @return a lira of exist BX
      */
-    public static Lira<BitStatusEnum> of(int status) {
+    public static Lira<BitPositionEnum> of(int status) {
 
-        BitStatusEnum[] values = values();
+        BitPositionEnum[] values = values();
         ArrayUtils.reverse(values);
         return Lira.of(values).filter(b -> (b.value & status) == b.value);
     }

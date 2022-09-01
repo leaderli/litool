@@ -6,11 +6,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class BetweenTimeInstruct implements Instruct {
-    public static void main(String[] args) {
-        BetweenTimeInstruct betweenTimeInstruct = new BetweenTimeInstruct();
-        Boolean invoke = betweenTimeInstruct.invoke("0700", "1900", "1200");
-        System.out.println(invoke);
-    }
+
 
     public Boolean invoke(String left, String right, String now) {
         DateTimeFormatter HHmm = DateTimeFormatter.ofPattern("HHmm");

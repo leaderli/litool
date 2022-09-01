@@ -19,37 +19,12 @@ import java.util.*;
  */
 class LiraTest {
 
-    @Test
-    void test1() {
-
-        System.out.println(Lira.range().debug().sleep(1000).terminate());
-
-
-    }
-
 
     @Test
     void onComplete() {
 
         LiBox<Object> box = LiBox.none();
-        Lira.of(1, 2).terminate().subscribe(new Subscriber<Integer>() {
-            @Override
-            public void onSubscribe(Subscription subscription) {
 
-//                subscription.request();
-            }
-
-            @Override
-            public void next(Integer integer) {
-
-            }
-
-            @Override
-            public void onComplete() {
-                box.value(1);
-            }
-        });
-        box.reset();
         Lira.of(1, 2).terminate().subscribe((new Subscriber<Integer>() {
             @Override
             public void onSubscribe(Subscription subscription) {

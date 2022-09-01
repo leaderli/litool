@@ -17,20 +17,20 @@ import java.util.stream.Collectors;
  * <p>
  * Use constant names to represent binary
  */
-public class BitStatus {
+public class BitStr {
 
-    private final Map<BitStatusEnum, String> bit_name = new EnumMap<>(BitStatusEnum.class);
+    private final Map<BitPositionEnum, String> bit_name = new EnumMap<>(BitPositionEnum.class);
 
-    private BitStatus() {
+    private BitStr() {
     }
 
     /**
      * @param statusConstant the class  who contain constants with represent status
      * @return a new BitStatus
      */
-    public static BitStatus of(Class<?> statusConstant) {
-        Map<Integer, BitStatusEnum> bitStatusMap = BitStatusEnum.getBitStatusMap();
-        BitStatus bitStatus = new BitStatus();
+    public static BitStr of(Class<?> statusConstant) {
+        Map<Integer, BitPositionEnum> bitStatusMap = BitPositionEnum.getBitStatusMap();
+        BitStr bit = new BitStr();
 
         Lira<Field> sorted = ReflectUtil.getFields(statusConstant)
                 .filter(field -> ObjectsUtil.sameAny(field.getType(), int.class, Integer.class)
@@ -45,11 +45,11 @@ public class BitStatus {
                     .cast(Integer.class)
                     .map(bitStatusMap::get)
                     .ifPresent(statusEnum ->
-                            bitStatus.bit_name.putIfAbsent(statusEnum, field.getName())
+                            bit.bit_name.putIfAbsent(statusEnum, field.getName())
                     );
         }
 
-        return bitStatus;
+        return bit;
 
 
     }
@@ -69,7 +69,7 @@ public class BitStatus {
      */
     public String beauty(int bit_status) {
 
-        Lira<String> name_status = BitStatusEnum.of(bit_status).map(this.bit_name::get);
+        Lira<String> name_status = BitPositionEnum.of(bit_status).map(this.bit_name::get);
         return StringUtils.join("|", name_status);
 
 

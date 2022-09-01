@@ -1,15 +1,13 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.bit.BitPermission;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import static io.leaderli.litool.core.meta.ra.LiraStatus.ARRIVED;
-import static io.leaderli.litool.core.meta.ra.LiraStatus.COMPLETE;
+import static io.leaderli.litool.core.meta.ra.LiraBit.ARRIVED;
+import static io.leaderli.litool.core.meta.ra.LiraBit.COMPLETE;
 
 class IterableSubscriber<T> implements Subscriber<T>, Iterator<T> {
-    private final BitPermission iteratorState = new BitPermission();
+    private final LiraBit liraState = new LiraBit();
     boolean request = true;
     private Subscription prevSubscription;
     private T next;
@@ -23,51 +21,51 @@ class IterableSubscriber<T> implements Subscriber<T>, Iterator<T> {
     public void next(T t) {
 
         next = t;
-        iteratorState.enable(LiraStatus.ARRIVED);
+        liraState.enable(ARRIVED);
     }
 
     @Override
     public void onNull() {
         next = null;
-        iteratorState.enable(LiraStatus.ARRIVED);
+        liraState.enable(ARRIVED);
     }
 
     @Override
     public void onComplete() {
         request = false;
-        iteratorState.enable(COMPLETE);
+        liraState.enable(COMPLETE);
     }
 
     @Override
     public void onCancel() {
-        iteratorState.enable(COMPLETE);
+        liraState.enable(COMPLETE);
     }
 
 
     @Override
     public boolean hasNext() {
 
-        if (iteratorState.have(ARRIVED)) {
+        if (liraState.have(ARRIVED)) {
             return true;
         }
-        if (iteratorState.have(COMPLETE)) {
+        if (liraState.have(COMPLETE)) {
             return false;
         }
         // trigger
 
 
-        while (iteratorState.miss(ARRIVED | COMPLETE)) {
+        while (liraState.miss(ARRIVED | COMPLETE)) {
             this.prevSubscription.request();
         }
 
-        return iteratorState.have(ARRIVED);
+        return liraState.have(ARRIVED);
     }
 
     @Override
     public T next() {
 
         if (hasNext()) {
-            iteratorState.disable(ARRIVED);
+            liraState.disable(ARRIVED);
             return next;
         }
         throw new NoSuchElementException();

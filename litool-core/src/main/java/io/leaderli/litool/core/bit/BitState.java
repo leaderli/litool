@@ -8,41 +8,25 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
  * @author leaderli
  * @since 2022/8/16
  */
-public class BitPermission {
+public abstract class BitState {
 
-    /**
-     * Constant class used to represent permission state
-     * <p>
-     * eg:
-     * <pre>
-     *    Modifier.FINAL
-     * </pre>
-     */
-    private final Class<?> permission_constant_class;
 
     /**
      * A non-negative int to hold the permission token, save permission with binary position. 1 means permission, 0
      * means
      * no permission
      */
-    private int permissions;
+    private int states;
 
-    public BitPermission() {
-        this.permission_constant_class = this.getClass();
-    }
-
-    public BitPermission(Class<?> permission_constant_class) {
-        this.permission_constant_class = permission_constant_class;
-    }
 
     /**
      * Set the permissions
      *
-     * @param permissions {@link #permissions}
+     * @param permissions {@link #states}
      */
     public void set(int permissions) {
         non_negative(permissions);
-        this.permissions = permissions;
+        this.states = permissions;
     }
 
     private void non_negative(int permissions) {
@@ -52,57 +36,57 @@ public class BitPermission {
     /**
      * Add one or more permission
      *
-     * @param permissions {@link #permissions}
+     * @param permissions {@link #states}
      */
     public void enable(int permissions) {
         non_negative(permissions);
-        this.permissions |= permissions;
+        this.states |= permissions;
     }
 
     /**
      * Remove one or more permission
      *
-     * @param permissions {@link #permissions}
+     * @param permissions {@link #states}
      */
     public void disable(int permissions) {
         non_negative(permissions);
-        this.permissions &= ~permissions;
+        this.states &= ~permissions;
     }
 
     /**
      * Have the permissions
      *
-     * @param permissions {@link #permissions}
+     * @param permissions {@link #states}
      * @return have the permissions
      */
     public boolean have(int permissions) {
         if (permissions < 0) {
             return false;
         }
-        return (this.permissions & permissions) == permissions;
+        return (this.states & permissions) == permissions;
     }
 
     /**
      * Don't have the permissions
      *
-     * @param permissions {@link #permissions}
+     * @param permissions {@link #states}
      * @return don't have the permissions
      */
     public boolean miss(int permissions) {
         if (permissions < 0) {
             return true;
         }
-        return (this.permissions & permissions) == 0;
+        return (this.states & permissions) == 0;
     }
 
     /**
      * only have the permissions
      *
-     * @param permissions {@link #permissions}
+     * @param permissions {@link #states}
      * @return {@code this.permissions == permissions}
      */
     public boolean only(int permissions) {
-        return this.permissions == permissions;
+        return this.states == permissions;
     }
 
 
@@ -112,22 +96,23 @@ public class BitPermission {
      * @return {@code permissions == 0 }
      */
     public boolean none() {
-        return permissions == 0;
+        return states == 0;
     }
 
     /**
      * @return {@code permissions > 0 }
      */
     public boolean any() {
-        return permissions > 0;
+        return states > 0;
     }
 
     @Override
     public String toString() {
-        if (permission_constant_class == null) {
-            return Integer.toBinaryString(permissions);
-        }
-        return permission_constant_class.getSimpleName() + ":" + BitStatus.of(permission_constant_class).beauty(permissions);
+        return BitStr.of(this.getClass()).beauty(states);
+    }
+
+    public int get() {
+        return states;
     }
 }
 
