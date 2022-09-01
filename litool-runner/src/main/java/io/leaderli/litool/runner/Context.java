@@ -24,7 +24,7 @@ public class Context {
      */
     public final Map<String, Object> func_result_cache = new HashMap<>();
     public final LiEventBus bus = new LiEventBus();
-    public final BitPermission<Interrupt> interrupt = new BitPermission<>(Interrupt.class);
+    public final BitPermission interrupt = new BitPermission(Interrupt.class);
     /**
      * 存储临时变量使用，每个临时变量都有一个唯一的名称，其类型是固定的，临时变量在使用前必须先初始化，即临时变量一定有默认值。
      */

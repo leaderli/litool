@@ -12,7 +12,7 @@ import java.lang.reflect.Modifier;
  * @since 2022/8/16
  */
 class BitPermissionTest {
-    BitPermission<Modifier> bit = new BitPermission<>(Modifier.class);
+    BitPermission bit = new BitPermission(Modifier.class);
 
     @BeforeEach
 
