@@ -32,7 +32,6 @@ public class OnErrorSome<T> extends PublisherSome<T> {
 
     private final class TakeWhileSubscriber extends IntermediateSubscriber<T, T> {
 
-        private boolean drop;
 
         public TakeWhileSubscriber(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
