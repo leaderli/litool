@@ -243,7 +243,10 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
 
     Lira<T> dropWhile(Function<? super T, ?> filter);
 
+
     Lira<T> takeWhileNull(Function<? super T, ?> filter);
+
+    Publisher<T> terminate();
 
     /**
      * @param supplier get a result

@@ -27,7 +27,4 @@ public interface Publisher<T> {
     void subscribe(Subscriber<? super T> subscriber);
 
 
-    default void terminate(Subscriber<? super T> subscriber) {
-        this.subscribe(new TerminalSubscriber<>(subscriber));
-    }
 }

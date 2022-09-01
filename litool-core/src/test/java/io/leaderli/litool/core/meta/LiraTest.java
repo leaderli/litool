@@ -18,21 +18,30 @@ import java.util.*;
  * @since 2022/6/19
  */
 class LiraTest {
+//
+//    @Test
+//    void test1() {
+//
+//        Lira<Integer> terminate =
+//                Lira.of(1, 2, 3);
+//
+//        System.out.println(terminate.get());
+//        System.out.println(terminate);
+//        for (Integer integer : terminate) {
+//
+//            System.out.println(integer);
+//        }
+//        System.out.println(terminate);
+//
+//
+//    }
 
-    @Test
-    void test1() {
-
-        Assertions.assertEquals("1,2,10,20", StringUtils.join(",",
-                Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator()));
-
-
-    }
 
     @Test
     void onComplete() {
 
         LiBox<Object> box = LiBox.none();
-        Lira.of(1, 2).terminate((new Subscriber<Integer>() {
+        Lira.of(1, 2).terminate().subscribe(new Subscriber<Integer>() {
             @Override
             public void onSubscribe(Subscription subscription) {
 
@@ -48,13 +57,13 @@ class LiraTest {
             public void onComplete() {
                 box.value(1);
             }
-        }));
+        });
         box.reset();
-        Lira.of(1, 2).terminate((new Subscriber<Integer>() {
+        Lira.of(1, 2).terminate().subscribe((new Subscriber<Integer>() {
             @Override
             public void onSubscribe(Subscription subscription) {
 
-//                subscription.request();
+                subscription.request();
             }
 
             @Override
