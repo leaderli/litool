@@ -31,6 +31,12 @@ public class LimitSome<T> extends PublisherSome<T> {
 
 
         @Override
+        public void request(LiraBit bit) {
+            bit.enable(LiraBit.T_LIMIT_CONTAIN);
+            super.request(bit);
+        }
+
+        @Override
         public void beforeRequest() {
 
             actualSubscriber.beforeRequest();

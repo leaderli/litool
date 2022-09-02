@@ -10,6 +10,13 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
  */
 public abstract class BitState {
 
+    protected BitState() {
+
+    }
+
+    protected BitState(int states) {
+        this.states = states;
+    }
 
     /**
      * A non-negative int to hold the permission token, save permission with binary position. 1 means permission, 0

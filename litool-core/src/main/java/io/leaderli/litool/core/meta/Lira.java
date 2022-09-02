@@ -241,13 +241,13 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
     Lira<T> dropWhile(Function<? super T, ?> filter);
 
 
-    Lira<T> takeWhileNull(Function<? super T, ?> filter);
+    Lira<T> takeWhileNull();
 
-    default Publisher<T> terminate() {
+    default Lira<T> terminate() {
         return terminate(null);
     }
 
-    Publisher<T> terminate(Function<List<T>, Iterable<T>> terminalAction);
+    Lira<T> terminate(Function<List<T>, Iterable<T>> terminalAction);
 
     /**
      * @param supplier get a result

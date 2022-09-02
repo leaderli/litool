@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.meta.ra;
 
+import io.leaderli.litool.core.lang.LazyFunction;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,16 +37,37 @@ final class TerminalSome<T> extends PublisherSome<T> {
         private final List<T> cache = new ArrayList<>();
         private boolean terminalComplete = false;
         private boolean canceled;
+        private final LazyFunction<LiraBit, TerminalSubscriber> lazySupplier = new LazyFunction<LiraBit, TerminalSubscriber>() {
+
+            @Override
+            protected TerminalSubscriber init(LiraBit bit) {
+                while (!terminalComplete) {
+                    prevSubscription.request(bit);
+                }
+                return TerminalSubscriber.this;
+            }
+        };
 
         private TerminalSubscriber(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 
+        Iterator<T> iterator;
 
         @Override
-        public void request() {
-            while (!terminalComplete) {
-                prevSubscription.request();
+        public void request(LiraBit bit) {
+
+            TerminalSubscriber apply = lazySupplier.apply(bit);
+            if (bit.have(LiraBit.T_TERMINAL)) {
+
+                System.out.println("1 " + canceled);
+                while (!canceled) {
+                    apply.deliverToNextSubscriber();
+                }
+            } else {
+                System.out.println("2");
+
+                apply.deliverToNextSubscriber();
             }
         }
 
@@ -70,22 +93,10 @@ final class TerminalSome<T> extends PublisherSome<T> {
             completeTerminal();
         }
 
-        void completeTerminal() {
-
-            this.terminalComplete = true;
-
-            deliverToNextSubscriber();
-        }
-
         private void deliverToNextSubscriber() {
 
-            Iterable<T> iterable = cache;
 
-            if (deliverAction != null) {
-                iterable = deliverAction.apply(cache);
-            }
-
-            for (T t : iterable) {
+            if (iterator.hasNext()) {
 
                 actualSubscriber.beforeRequest();
                 if (canceled) {
@@ -94,19 +105,37 @@ final class TerminalSome<T> extends PublisherSome<T> {
 
 
                 try {
-                    SubscriberUtil.next(actualSubscriber, t);
+                    T next = iterator.next();
+                    System.out.println("next: " + next);
+                    SubscriberUtil.next(actualSubscriber, next);
+
                 } catch (Throwable throwable) {
                     actualSubscriber.onError(throwable, this);
                     actualSubscriber.onNull();
                 }
 
+                System.out.println("cancel ----" + canceled);
                 if (canceled) {
                     return;
                 }
                 actualSubscriber.onRequested();
 
+            } else {
+
+                actualSubscriber.onComplete();
+                canceled = true;
             }
-            actualSubscriber.onComplete();
+        }
+
+        void completeTerminal() {
+
+            this.terminalComplete = true;
+            iterator = cache.iterator();
+
+            if (deliverAction != null) {
+                iterator = deliverAction.apply(cache).iterator();
+            }
+//            deliverToNextSubscriber();
         }
 
         @Override

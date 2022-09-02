@@ -27,7 +27,7 @@ public final class BarricadeSubscription<R> implements Subscription {
 
     @SuppressWarnings("java:S2583")
     @Override
-    public void request() {
+    public void request(LiraBit bit) {
 
         if (canceled) {
             return;

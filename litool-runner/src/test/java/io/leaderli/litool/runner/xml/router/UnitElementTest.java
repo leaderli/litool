@@ -88,8 +88,6 @@ class UnitElementTest {
         public void listen(UnitErrorEvent event) {
 
             LiTuple2<String, Throwable> tuple = event.getSource().get();
-//                tuple._2.printStackTrace();
-//                System.out.println(tuple);
         }
     }
 

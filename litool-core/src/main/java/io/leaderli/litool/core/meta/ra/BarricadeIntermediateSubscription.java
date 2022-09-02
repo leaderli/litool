@@ -12,11 +12,11 @@ public abstract class BarricadeIntermediateSubscription<T, R> extends Intermedia
     }
 
     @Override
-    public void request() {
+    public void request(LiraBit bit) {
         if (barricadeSubscription == null) {
-            super.request();
+            super.request(bit);
         } else {
-            barricadeSubscription.request();
+            barricadeSubscription.request(LiraBit.itr());
         }
     }
 

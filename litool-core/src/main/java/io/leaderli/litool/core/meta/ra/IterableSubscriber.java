@@ -7,7 +7,7 @@ import static io.leaderli.litool.core.meta.ra.LiraBit.ARRIVED;
 import static io.leaderli.litool.core.meta.ra.LiraBit.COMPLETE;
 
 class IterableSubscriber<T> implements Subscriber<T>, Iterator<T> {
-    private final LiraBit liraState = new LiraBit();
+    private final LiraBit liraState = LiraBit.itr();
     boolean request = true;
     private Subscription prevSubscription;
     private T next;
@@ -55,7 +55,7 @@ class IterableSubscriber<T> implements Subscriber<T>, Iterator<T> {
 
 
         while (liraState.miss(ARRIVED | COMPLETE)) {
-            this.prevSubscription.request();
+            this.prevSubscription.request(liraState);
         }
 
         return liraState.have(ARRIVED);

@@ -23,7 +23,7 @@ public class ConsumerSubscriber<T> implements Subscriber<T> {
     @Override
     public void onSubscribe(Subscription prevSubscription) {
         //  terminal
-        prevSubscription.request();
+        prevSubscription.request(LiraBit.terminal());
     }
 
     @Override

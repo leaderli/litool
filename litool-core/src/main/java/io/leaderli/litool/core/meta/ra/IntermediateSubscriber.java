@@ -15,8 +15,8 @@ public abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Sub
     }
 
     @Override
-    public void request() {
-        this.prevSubscription.request();
+    public void request(LiraBit bit) {
+        this.prevSubscription.request(bit);
 
     }
 

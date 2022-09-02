@@ -91,33 +91,24 @@ public abstract class Some<T> implements Lira<T> {
     public Lino<T> get(int index) {
 
 
-        if (index < 0) {
-            return Lino.none();
-        }
-        LiBox<T> result = LiBox.none();
-        Subscriber<T> delegate = new CancelConsumerSubscriber<>(new CancelConsumer<T>() {
-            int count = 0;
-
-            @Override
-            public void accept(T t, CancelSubscription cancelSubscription) {
-                if (count == index) {
-                    result.value(t);
-                    cancelSubscription.cancel();
-                }
-                count++;
-            }
-        });
+//        LiBox<T> result = LiBox.none();
 
 
-        terminate().subscribe(delegate);
-
-        return result.lino();
+        return BoxSubscriber.subscribe(limit(index + 1).skip(index).terminate());
+        // limit n element and skip n-1 element
+//        limit(index + 1).skip(index).terminate().subscribe(new ConsumerSubscriber<>(result::value));
+//        return result.lino();
     }
+
 
     @Override
     public Iterator<T> iterator() {
         //TODO  使用supplier去实现
-        return get().iterator();
+        IterableSubscriber<T> iterator = new IterableSubscriber<>();
+
+        subscribe(iterator);
+        return iterator;
+//        return get().iterator();
 
     }
 
@@ -134,10 +125,11 @@ public abstract class Some<T> implements Lira<T> {
 
     @Override
     public Lira<T> limit(int n) {
-        if (n >= 0) {
+        if (n > 0) {
             return new LimitSome<>(this, n);
         }
-        return this;
+        return new NoneSome<>(this);
+
     }
 
     @Override
@@ -164,16 +156,24 @@ public abstract class Some<T> implements Lira<T> {
 
     @Override
     public Lira<T> dropWhile(Function<? super T, ?> filter) {
-        return new DropWhileSome<>(this, filter);
+        DropWhileSome<T> drop = new DropWhileSome<>(this, filter);
+        return drop.onError(new Exceptionable() {
+
+            @Override
+            public void onError(Throwable t, CancelSubscription cancel) {
+                throw new RuntimeException(t);
+            }
+        });
+
     }
 
     @Override
-    public Lira<T> takeWhileNull(Function<? super T, ?> filter) {
+    public Lira<T> takeWhileNull() {
         return new TakeWhileNullSome<>(this);
     }
 
     @Override
-    public Publisher<T> terminate(Function<List<T>, Iterable<T>> terminalAction) {
+    public Lira<T> terminate(Function<List<T>, Iterable<T>> terminalAction) {
         return new TerminalSome<>(this, terminalAction);
     }
 
@@ -293,7 +293,7 @@ public abstract class Some<T> implements Lira<T> {
     public Lira<T> distinct(EqualComparator<T> comparator) {
 
         Lira<CompareBean<T>> compareBeans =
-                (Lira<CompareBean<T>>) map(e -> new CompareBean<>(e, comparator)).terminate(HashSet::new);
+                map(e -> new CompareBean<>(e, comparator)).terminate(HashSet::new);
         return compareBeans.map(w -> w.value);
 
 
@@ -307,7 +307,7 @@ public abstract class Some<T> implements Lira<T> {
     @Override
     public Lira<T> sorted(Comparator<? super T> comparator) {
 
-        return (Lira<T>) terminate(list -> {
+        return terminate(list -> {
                     list.sort(comparator);
                     return list;
                 }
@@ -329,7 +329,7 @@ public abstract class Some<T> implements Lira<T> {
 
             @Override
             public void onSubscribe(Subscription prevSubscription) {
-                prevSubscription.request();
+                prevSubscription.request(LiraBit.terminal());
 
             }
 

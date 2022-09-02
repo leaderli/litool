@@ -1,7 +1,9 @@
 package io.leaderli.litool.core.meta.ra;
 
 
+import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
+import io.leaderli.litool.core.exception.InfinityException;
 
 import java.util.Iterator;
 
@@ -38,7 +40,24 @@ public final class ArraySome<T> extends Some<T> {
 
         @SuppressWarnings("java:S2583")
         @Override
-        public void request() {
+        public void request(LiraBit bit) {
+
+            if (arr instanceof Generator) {
+                bit.enable(LiraBit.T_GENERATOR);
+                if (bit.have(LiraBit.T_TERMINAL)) {
+                    if (bit.miss(LiraBit.T_LIMIT_CONTAIN)) {
+                        throw new InfinityException("infinity loop \r\n\tat " + arr);
+                    }
+                }
+//                if (bit.have(LiraBit.T_ITERATOR)) {
+//
+//                    if (bit.have(LiraBit.T_DROP)) {
+//                        throw new InfinityException(arr);
+//                    }
+//                }
+
+            }
+
 
             if (canceled) {
                 return;

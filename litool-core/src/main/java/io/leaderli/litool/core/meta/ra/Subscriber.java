@@ -4,11 +4,11 @@ package io.leaderli.litool.core.meta.ra;
  * Will receive call to {@link #onSubscribe(Subscription)} once after passing an instance of {@link Subscriber} to
  * {@link Publisher#subscribe(Subscriber)}
  * <p>
- * No further notifications will be received until {@link Subscription#request()} is called.
+ * No further notifications will be received until {@link Subscription#request(LiraBit)} is called.
  * <p>
  * After signaling demand:
  * <p>
- * Demand can be signaled via {@link Subscription#request()} whenever the {@link Subscriber} instance is capable of
+ * Demand can be signaled via {@link Subscription#request(LiraBit)} whenever the {@link Subscriber} instance is capable of
  * handling more.
  *
  * @param <T> the type of element signaled.
@@ -20,15 +20,15 @@ public interface Subscriber<T> extends Exceptionable, Completable, Cancelable {
     /**
      * Invoked after calling {@link Publisher#subscribe(Subscriber)}
      * <p>
-     * The {@link Publisher} will send notifications only to response {@link Subscription#request()}
+     * The {@link Publisher} will send notifications only to response {@link Subscription#request(LiraBit)}
      *
-     * @param subscription {@link Subscription} that allows requesting data via {@link Subscription#request()}
+     * @param subscription {@link Subscription} that allows requesting data via {@link Subscription#request(LiraBit)}
      */
     void onSubscribe(Subscription subscription);
 
     /**
      * Data notification sent by the {@link Publisher} in response to request
-     * to {@link Subscription#request()} when the element is not null
+     * to {@link Subscription#request(LiraBit)} when the element is not null
      *
      * @param t the element signaled
      */
@@ -36,7 +36,7 @@ public interface Subscriber<T> extends Exceptionable, Completable, Cancelable {
 
     /**
      * Data notification sent by the {@link Publisher} in response to request
-     * to {@link Subscription#request()} when the element is null
+     * to {@link Subscription#request(LiraBit)} when the element is null
      */
     default void onNull() {
 

@@ -11,7 +11,7 @@ import java.util.Objects;
 public class CancelConsumerSubscriber<T> implements Subscriber<T> {
     /**
      * 该消费者仅保留 {@link CancelSubscription#cancel()} 操作，不允许使用
-     * {@link Subscription#request()}
+     * {@link Subscription#request(LiraBit)}
      */
     private final CancelConsumer<? super T> consumer;
     private Subscription prevSubscription;
@@ -24,7 +24,7 @@ public class CancelConsumerSubscriber<T> implements Subscriber<T> {
     @Override
     public void onSubscribe(Subscription prevSubscription) {
         this.prevSubscription = prevSubscription;
-        prevSubscription.request();
+        prevSubscription.request(LiraBit.terminal());
 
 
     }

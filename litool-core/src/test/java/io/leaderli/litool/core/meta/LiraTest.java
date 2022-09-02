@@ -2,11 +2,9 @@ package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
+import io.leaderli.litool.core.exception.InfinityException;
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.meta.ra.CancelSubscription;
-import io.leaderli.litool.core.meta.ra.Exceptionable;
-import io.leaderli.litool.core.meta.ra.Subscriber;
-import io.leaderli.litool.core.meta.ra.Subscription;
+import io.leaderli.litool.core.meta.ra.*;
 import io.leaderli.litool.core.text.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,18 +22,19 @@ class LiraTest {
     void test() {
 
 
-        Lira<Integer> terminate = (Lira<Integer>) Lira.of(1, 2, 3).terminate();
+    }
 
-        for (Integer integer : terminate) {
-            System.out.println(integer);
-        }
-        Lira<Integer> map = terminate.map(i -> i * 10);
-        System.out.println(map.get());
+    @Test
+    void infinity_loop() {
+        Iterator<Integer> iterator = Lira.range().filter(i -> i % 2 == 0).iterator();
 
-        for (Integer integer : map) {
-            System.out.println(integer);
-        }
+        Assertions.assertEquals(0, iterator.next());
+        Assertions.assertEquals(2, iterator.next());
+        Assertions.assertEquals(4, iterator.next());
+//        Assertions.assertEquals();iterator.next()
 
+        Assertions.assertThrows(InfinityException.class, () -> Lira.range().get());
+        Assertions.assertEquals(9, Lira.range().get(10).get());
     }
 
     @Test
@@ -47,7 +46,7 @@ class LiraTest {
             @Override
             public void onSubscribe(Subscription subscription) {
 
-                subscription.request();
+                subscription.request(LiraBit.terminal());
             }
 
             @Override
@@ -73,6 +72,7 @@ class LiraTest {
 
     @Test
     void dropWhile() {
+        Assertions.assertThrows(RuntimeException.class, () -> Lira.range().dropWhile(i -> i < 0).iterator().next());
 
         Assertions.assertEquals(2, Lira.of(1, 2, 3).dropWhile(i -> i > 1).first().get());
         Assertions.assertEquals(3, Lira.of(1, null, 2, 3).dropWhile(i -> i > 2).first().get());
@@ -83,8 +83,8 @@ class LiraTest {
 
     @Test
     void takeWhileNull() {
-        Assertions.assertEquals(3, Lira.of(1, 2, 3).takeWhileNull(i -> i > 1).last().get());
-        Assertions.assertEquals(1, Lira.of(1, null, 2, 3).takeWhileNull(i -> i > 1).last().get());
+        Assertions.assertEquals(3, Lira.of(1, 2, 3).takeWhileNull().last().get());
+        Assertions.assertEquals(1, Lira.of(1, null, 2, 3).takeWhileNull().last().get());
 
 
     }
@@ -97,6 +97,7 @@ class LiraTest {
         Assertions.assertEquals(1, Lira.of(1, null).size());
 
     }
+
 
     @Test
     void getIndex() {
@@ -287,7 +288,7 @@ class LiraTest {
         Assertions.assertEquals(0, Lira.of().limit(1).size());
         Assertions.assertEquals("[1]", Lira.of(1, 2).limit(1).toString());
         Assertions.assertEquals("[1, 2]", Lira.of(1, 2).toString());
-        Assertions.assertEquals("[1, 2]", Lira.of(1, 2).limit(-1).toString());
+        Assertions.assertEquals("[]", Lira.of(1, 2).limit(-1).toString());
         Assertions.assertEquals(0, Lira.of(1, 2).limit(0).size());
 
         Assertions.assertEquals("[2, 3]", Lira.of(1, 2, 3, 4).filter(i -> i > 1).limit(2).toString());
@@ -370,7 +371,7 @@ class LiraTest {
     void iterator() {
 
 
-        Lira<Integer> terminate = (Lira<Integer>) Lira.of(1, 2, 3).terminate();
+        Lira<Integer> terminate = Lira.of(1, 2, 3).terminate();
 
 
         Iterator<Integer> iterator = terminate.map(i -> i * 10).iterator();

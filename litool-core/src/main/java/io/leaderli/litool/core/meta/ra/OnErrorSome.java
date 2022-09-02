@@ -25,15 +25,15 @@ public class OnErrorSome<T> extends PublisherSome<T> {
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new TakeWhileSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new OnErrorSubscriber(actualSubscriber));
 
     }
 
 
-    private final class TakeWhileSubscriber extends IntermediateSubscriber<T, T> {
+    private final class OnErrorSubscriber extends IntermediateSubscriber<T, T> {
 
 
-        public TakeWhileSubscriber(Subscriber<? super T> actualSubscriber) {
+        public OnErrorSubscriber(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 

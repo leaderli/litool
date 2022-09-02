@@ -33,6 +33,14 @@ public class FlatMap<T, R> extends Some<R> {
         }
 
 
+        private LiraBit clone;
+
+        @Override
+        public void request(LiraBit bit) {
+            clone = new LiraBit(bit.get());
+            super.request(bit);
+        }
+
         @Override
         public void next(T t) {
 
@@ -40,7 +48,7 @@ public class FlatMap<T, R> extends Some<R> {
 
             if (iterator != null) {
                 barricadeSubscription = new BarricadeSubscription<>(this, actualSubscriber, iterator);
-                barricadeSubscription.request();
+                barricadeSubscription.request(new LiraBit(clone.get()));
             }
         }
 
