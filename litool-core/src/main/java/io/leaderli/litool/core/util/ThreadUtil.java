@@ -32,4 +32,14 @@ public class ThreadUtil {
             // ignore
         }
     }
+
+    public static void printStack(int length) {
+
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (int i = 2; i < length + 2; i++) {
+
+
+            System.out.println(stackTrace[i]);
+        }
+    }
 }

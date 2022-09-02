@@ -57,15 +57,14 @@ final class TerminalSome<T> extends PublisherSome<T> {
         @Override
         public void request(LiraBit bit) {
 
+            bit.disable(LiraBit.T_LIMIT_CONTAIN);
             TerminalSubscriber apply = lazySupplier.apply(bit);
             if (bit.have(LiraBit.T_TERMINAL)) {
 
-                System.out.println("1 " + canceled);
                 while (!canceled) {
                     apply.deliverToNextSubscriber();
                 }
             } else {
-                System.out.println("2");
 
                 apply.deliverToNextSubscriber();
             }
@@ -76,6 +75,7 @@ final class TerminalSome<T> extends PublisherSome<T> {
 
             // cancel  deliver
             this.canceled = true;
+            this.actualSubscriber.onCancel();
         }
 
         @Override
@@ -93,6 +93,11 @@ final class TerminalSome<T> extends PublisherSome<T> {
             completeTerminal();
         }
 
+        @Override
+        public void next(T t) {
+            this.cache.add(t);
+        }
+
         private void deliverToNextSubscriber() {
 
 
@@ -106,7 +111,6 @@ final class TerminalSome<T> extends PublisherSome<T> {
 
                 try {
                     T next = iterator.next();
-                    System.out.println("next: " + next);
                     SubscriberUtil.next(actualSubscriber, next);
 
                 } catch (Throwable throwable) {
@@ -114,7 +118,6 @@ final class TerminalSome<T> extends PublisherSome<T> {
                     actualSubscriber.onNull();
                 }
 
-                System.out.println("cancel ----" + canceled);
                 if (canceled) {
                     return;
                 }
@@ -135,12 +138,6 @@ final class TerminalSome<T> extends PublisherSome<T> {
             if (deliverAction != null) {
                 iterator = deliverAction.apply(cache).iterator();
             }
-//            deliverToNextSubscriber();
-        }
-
-        @Override
-        public void next(T t) {
-            this.cache.add(t);
         }
 
 

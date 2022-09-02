@@ -219,6 +219,15 @@ class ReflectUtilTest {
     }
 
     @Test
+    void test() {
+
+        Lira<Type> superInterface = ReflectUtil.getInterfacesType(ArrayList.class);
+
+        superInterface.size();
+
+    }
+
+    @Test
     void getGenericInterfacesType() {
 
         Consumer<?> consumer = new StringConsumer();

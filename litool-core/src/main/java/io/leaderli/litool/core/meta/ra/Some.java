@@ -94,10 +94,8 @@ public abstract class Some<T> implements Lira<T> {
 //        LiBox<T> result = LiBox.none();
 
 
-        return BoxSubscriber.subscribe(limit(index + 1).skip(index).terminate());
         // limit n element and skip n-1 element
-//        limit(index + 1).skip(index).terminate().subscribe(new ConsumerSubscriber<>(result::value));
-//        return result.lino();
+        return BoxSubscriber.subscribe(limit(index + 1).skip(index).terminate());
     }
 
 
@@ -293,7 +291,7 @@ public abstract class Some<T> implements Lira<T> {
     public Lira<T> distinct(EqualComparator<T> comparator) {
 
         Lira<CompareBean<T>> compareBeans =
-                map(e -> new CompareBean<>(e, comparator)).terminate(HashSet::new);
+                map(e -> new CompareBean<>(e, comparator)).terminate(LinkedHashSet::new);
         return compareBeans.map(w -> w.value);
 
 

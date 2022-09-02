@@ -21,7 +21,8 @@ public class CompareBean<T> implements Comparator<T> {
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        // only compare with equals
+        return 0;
     }
 
     @SuppressWarnings("unchecked")

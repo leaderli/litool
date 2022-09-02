@@ -19,7 +19,17 @@ class LiraTest {
 
 
     @Test
+    void subscribe() {
+
+
+        System.out.println(Lira.of(2, 1, 3).sorted().first());
+
+
+    }
+
+    @Test
     void test() {
+        System.out.println(Lira.of(1, 2, 3).terminate().terminate().first());
 
 
     }
@@ -31,10 +41,10 @@ class LiraTest {
         Assertions.assertEquals(0, iterator.next());
         Assertions.assertEquals(2, iterator.next());
         Assertions.assertEquals(4, iterator.next());
-//        Assertions.assertEquals();iterator.next()
+        Assertions.assertEquals(10, Lira.range().get(10).get());
 
         Assertions.assertThrows(InfinityException.class, () -> Lira.range().get());
-        Assertions.assertEquals(9, Lira.range().get(10).get());
+        Assertions.assertThrows(InfinityException.class, () -> Lira.range().sorted().limit(4).get());
     }
 
     @Test
@@ -106,6 +116,12 @@ class LiraTest {
         Assertions.assertEquals(2, Lira.of(1, 2, 3).get(1).get());
         Assertions.assertEquals(3, Lira.of(1, 2, 3).get(2).get());
         Assertions.assertEquals(Lino.none(), Lira.of(1, 2, 3).get(4));
+
+        Assertions.assertEquals(0, Lira.range().get(0).get());
+        Assertions.assertEquals(1, Lira.range().get(1).get());
+        Assertions.assertEquals(2, Lira.range().get(2).get());
+        Assertions.assertEquals(Lino.none(), Lira.range().get(-1));
+
     }
 
     @Test
@@ -267,11 +283,11 @@ class LiraTest {
         Lira.of(1).debug(box::value).sorted();
         Assertions.assertTrue(box.absent());
 
-        Assertions.assertSame(1, Lira.of(2, 1).sorted().first().get());
-        Assertions.assertSame(3, Lira.of(2, 1, 3).sorted((o1, o2) -> o2 - o1).first().get());
+        Assertions.assertEquals("[1, 2]", Lira.of(2, 1).sorted().toString());
+        Assertions.assertEquals("[3, 2, 1]", Lira.of(2, 1, 3).sorted((o1, o2) -> o2 - o1).toString());
 
-        Assertions.assertSame(2, Lira.of(2, 1).sorted().last().get());
-        Assertions.assertSame(1, Lira.of(2, 1, 3).sorted((o1, o2) -> o2 - o1).last().get());
+        Assertions.assertEquals("[1, 2]", Lira.of(2, 1).sorted().toString());
+        Assertions.assertEquals("[1, 2, 3]", Lira.of(2, 1, 3).sorted(Comparator.comparingInt(o -> o)).toString());
     }
 
 //    @Test
