@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.exception.InfinityException;
-
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -101,12 +99,6 @@ public class FlatMap<T, R> extends Some<R> {
             @SuppressWarnings("java:S2583")
             @Override
             public void request(int state) {
-                LiraBit bit = LiraBit.of(state);
-                if (bit.have(LiraBit.DROP)) {
-                    if (drop_count-- == 0) {
-                        throw new InfinityException("generator arrived max drop \r\n\tat " + iterator);
-                    }
-                }
                 if (LiraBit.isTerminal(state)) {
                     throw new IllegalStateException("barricade in flat map not support terminal request");
                 }

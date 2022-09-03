@@ -48,11 +48,7 @@ public final class IterableSome<T> extends Some<T> {
                     throw new InfinityException("generator loop \r\n\tat " + iterator);
                 }
             }
-            if (bit.have(LiraBit.DROP)) {
-                if (drop_count-- == 0) {
-                    throw new InfinityException("generator arrived max drop \r\n\tat " + iterator);
-                }
-            }
+   
 
             if (LiraBit.isTerminal(state)) {
                 while (true) {

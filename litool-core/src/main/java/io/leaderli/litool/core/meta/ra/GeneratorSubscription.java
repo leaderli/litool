@@ -12,7 +12,6 @@ public abstract class GeneratorSubscription<T> implements Subscription {
     protected final Iterator<? extends T> iterator;
 
     protected boolean completed;
-    int drop_count = DropWhileSome.DROP_COUNT;
 
     protected GeneratorSubscription(Subscriber<? super T> actualSubscriber,
                                     Iterator<? extends T> iterator) {

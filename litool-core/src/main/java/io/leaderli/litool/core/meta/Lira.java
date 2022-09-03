@@ -57,7 +57,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
     /**
      * Returns an lira that consisting elements provided by given iterableItr
      *
-     * @param iterableItr the iterableIter that provide  elements
+     * @param iterableItr the iterableItr that provide  elements
      * @param <T>         the type of elements returned by this iterableItr
      * @return the new lira
      */

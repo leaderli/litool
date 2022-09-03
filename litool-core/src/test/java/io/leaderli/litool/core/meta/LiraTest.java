@@ -89,7 +89,6 @@ class LiraTest {
 
     @Test
     void dropWhile() {
-        Assertions.assertThrows(RuntimeException.class, () -> Lira.range().dropWhile(i -> i < 0).iterator().next());
 
         Assertions.assertEquals(2, Lira.of(1, 2, 3).dropWhile(i -> i > 1).first().get());
         Assertions.assertEquals(3, Lira.of(1, null, 2, 3).dropWhile(i -> i > 2).first().get());
@@ -328,7 +327,7 @@ class LiraTest {
     @Test
     void map() {
 
-        System.out.println(Lira.of(1, 2, 0).throwable_map(i -> 4 / i));
+        Assertions.assertEquals("[4, 2]", Lira.of(1, 2, 0).throwable_map(i -> 4 / i).toString());
         Assertions.assertTrue(Lira.of(1).map(i -> null).absent());
     }
 

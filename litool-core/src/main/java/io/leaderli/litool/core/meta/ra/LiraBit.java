@@ -14,7 +14,6 @@ public class LiraBit extends BitState {
      */
     public static final int ITR = 1;
     public static final int LIMIT = 1 << 1;
-    public static final int DROP = 1 << 2;
 
     public LiraBit(int states) {
         super(states);

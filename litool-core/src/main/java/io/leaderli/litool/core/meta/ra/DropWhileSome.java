@@ -16,8 +16,6 @@ import java.util.function.Function;
 public class DropWhileSome<T> extends PublisherSome<T> {
 
 
-    public static final int DROP_COUNT = 256;
-
     private final Function<? super T, ?> drop_condition;
 
     public DropWhileSome(Publisher<T> prevPublisher, Function<? super T, ?> drop_condition) {
@@ -41,10 +39,6 @@ public class DropWhileSome<T> extends PublisherSome<T> {
             super(actualSubscriber);
         }
 
-        @Override
-        public void request(int states) {
-            super.request(states | LiraBit.DROP);
-        }
 
         @Override
         public void next_null() {
