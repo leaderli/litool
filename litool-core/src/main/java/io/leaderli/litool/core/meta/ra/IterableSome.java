@@ -24,8 +24,13 @@ public final class IterableSome<T> extends Some<T> {
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        actualSubscriber.onSubscribe(new ItrGenerator(actualSubscriber, iterable.iterator()));
+        actualSubscriber.onSubscribe(newGenerator(actualSubscriber));
     }
+
+    public ItrGenerator newGenerator(Subscriber<? super T> actualSubscriber) {
+        return new ItrGenerator(actualSubscriber, iterable.iterator());
+    }
+
 
     public class ItrGenerator extends GeneratorSubscription<T> {
 

@@ -149,6 +149,11 @@ public abstract class Some<T> implements Lira<T> {
     }
 
     @Override
+    public Lira<T> terminal(Function<List<T>, Iterable<T>> deliverAction) {
+        return new TerminalSome<>(this, deliverAction);
+    }
+
+    @Override
     public Lira<T> takeWhile(Function<? super T, ?> filter) {
         return new TakeWhileSome<>(this, filter);
     }
@@ -273,11 +278,9 @@ public abstract class Some<T> implements Lira<T> {
     @Override
     public Lira<T> distinct(EqualComparator<T> comparator) {
 
-
-        List<CompareBean<T>> compareBeans = map(e -> new CompareBean<>(e, comparator)).get();
-        return Lira.of(new LinkedHashSet<>(compareBeans)).map(w -> w.value);
-
-
+        return map(e -> new CompareBean<>(e, comparator))
+                .terminal(LinkedHashSet::new)
+                .map(w -> w.value);
     }
 
     @Override
@@ -287,9 +290,11 @@ public abstract class Some<T> implements Lira<T> {
 
     @Override
     public Lira<T> sorted(Comparator<? super T> comparator) {
-        List<T> sorted = get();
-        sorted.sort(comparator);
-        return Lira.of(sorted);
+        return terminal(l -> {
+
+            l.sort(comparator);
+            return l;
+        });
     }
 
 

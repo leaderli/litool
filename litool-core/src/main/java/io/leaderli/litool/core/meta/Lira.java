@@ -234,10 +234,13 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
      */
     <R> Lira<R> map(Function<? super T, ? extends R> mapper);
 
+    Lira<T> terminal(Function<List<T>, Iterable<T>> deliverAction);
+
     /**
      * @param filter cancel signal push
      * @return this
      */
+
     Lira<T> takeWhile(Function<? super T, ?> filter);
 
     Lira<T> dropWhile(Function<? super T, ?> filter);

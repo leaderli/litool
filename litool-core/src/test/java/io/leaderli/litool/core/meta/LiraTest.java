@@ -22,6 +22,21 @@ class LiraTest {
 
 
     @Test
+    void terminal() {
+
+        Lira<Integer> lira = Lira.of(1, 2, 3).terminal(null);
+        Assertions.assertEquals(3, lira.size());
+
+        Iterator<Integer> iterator = lira.iterator();
+        Assertions.assertEquals(1, iterator.next());
+        Assertions.assertEquals(2, iterator.next());
+        Assertions.assertEquals(3, iterator.next());
+        Assertions.assertThrows(NoSuchElementException.class, iterator::next);
+
+    }
+
+
+    @Test
     void infinity_loop() {
         Iterator<Integer> iterator = Lira.range().filter(i -> i % 2 == 0).iterator();
 
@@ -261,12 +276,12 @@ class LiraTest {
 
 
     @Test
-    void sort() {
-//
-//
-//        LiBox<Integer> box = LiBox.none();
-//        Lira.of(1).debug(box::value).sorted();
-//        Assertions.assertTrue(box.absent());
+    void sorted() {
+
+
+        LiBox<Integer> box = LiBox.none();
+        Lira.of(1).debug(box::value).sorted();
+        Assertions.assertTrue(box.absent());
 
         Assertions.assertEquals("[1, 2]", Lira.of(2, 1).sorted().toString());
         Assertions.assertEquals("[3, 2, 1]", Lira.of(2, 1, 3).sorted((o1, o2) -> o2 - o1).toString());
@@ -329,9 +344,9 @@ class LiraTest {
 
     @Test
     void distinct() {
-//        LiBox<Integer> box = LiBox.none();
-//        Lira.of(1).debug(box::value).distinct();
-//        Assertions.assertTrue(box.absent());
+        LiBox<Integer> box = LiBox.none();
+        Lira.of(1).debug(box::value).distinct();
+        Assertions.assertTrue(box.absent());
 
 
         Lira<Integer> set = Lira.of(1, 2, 1, 2).filter(i -> {

@@ -62,6 +62,7 @@ class LiEventBusTest {
         Assertions.assertEquals(2, listener.count);
     }
 
+
     @SuppressWarnings("unchecked")
     @Test
     void unRegisterListener() {
@@ -70,6 +71,14 @@ class LiEventBusTest {
         ILiEventListener<String> listener = new StringEventObject();
 
         eventBus.registerListener(listener);
+        ILiEventListener<String> listener1 = new StringEventObject();
+        ILiEventListener<String> listener2 = new StringEventObject();
+        ILiEventListener<String> listener3 = new StringEventObject();
+
+        eventBus.registerListener(listener1);
+        eventBus.registerListener(listener2);
+        eventBus.registerListener(listener3);
+
         eventBus.push("123");
         Assertions.assertEquals(1, box.value());
 
