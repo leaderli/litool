@@ -89,10 +89,10 @@ public abstract class Some<T> implements Lira<T> {
 
     @Override
     public Lino<T> get(int index) {
-
-
+        LiBox<T> box = LiBox.none();
         // limit n element and skip n-1 element
-        return BoxSubscriber.subscribe(limit(index + 1).skip(index));
+        limit(index + 1).skip(index).subscribe(new ConsumerSubscriber<>(box::value));
+        return box.lino();
     }
 
 

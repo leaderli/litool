@@ -218,14 +218,6 @@ class ReflectUtilTest {
         Assertions.assertSame(6, superInterface.size());
     }
 
-    @Test
-    void test() {
-
-        Lira<Type> superInterface = ReflectUtil.getInterfacesType(ArrayList.class);
-
-        superInterface.size();
-
-    }
 
     @Test
     void getGenericInterfacesType() {
