@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
 
 
-    Lira<?> NONE_INSTANCE = new ArraySome<>(NoneItr.of());
+    Lira<?> NONE_INSTANCE = new IterableSome<>(NoneItr.of());
 
     /**
      * Returns the narrow type lira, convert {@code <? extends T>} to {@code  <T>}
@@ -65,7 +65,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
 
         if (iterableItr != null && iterableItr.hasNext()) {
 
-            return new ArraySome<>(iterableItr);
+            return new IterableSome<>(iterableItr);
         }
         return none();
     }
@@ -126,7 +126,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
         if (iterable == null || !iterable.iterator().hasNext()) {
             return none();
         }
-        return new ArraySome<>(iterable);
+        return new IterableSome<>(iterable);
     }
 
     /**
@@ -191,6 +191,8 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
     @Override
     Iterator<T> iterator();
 
+    Iterator<T> nullableIterator();
+
     @Override
     void forEach(Consumer<? super T> consumer);
 
@@ -241,17 +243,9 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
     Lira<T> dropWhile(Function<? super T, ?> filter);
 
 
-    Lira<T> takeWhileNull();
-
-    default Lira<T> terminate() {
-        return terminate(null);
-    }
-
-    Lira<T> terminate(Function<List<T>, Iterable<T>> terminalAction);
-
     /**
      * @param supplier get a result
-     * @return a result if call {@link  Subscriber#onNull()}
+     * @return a result if call {@link  Subscriber#next_null()}
      */
     Lira<T> nullable(Supplier<? extends T> supplier);
 

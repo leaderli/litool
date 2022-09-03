@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.exception.InfinityException;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.util.BooleanUtil;
 
@@ -16,60 +15,61 @@ import java.util.function.Function;
  */
 public class DropWhileSome<T> extends PublisherSome<T> {
 
-    private static final int MAX_GENERATOR_TRY_COUNT = 256;
 
-    private final Function<? super T, ?> filter;
+    public static final int DROP_COUNT = 256;
 
-    public DropWhileSome(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
+    private final Function<? super T, ?> drop_condition;
+
+    public DropWhileSome(Publisher<T> prevPublisher, Function<? super T, ?> drop_condition) {
         super(prevPublisher);
-        this.filter = filter;
+        this.drop_condition = drop_condition;
     }
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new DropWhileSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new DropWhileSubscriberSubscription(actualSubscriber));
 
     }
 
 
-    private final class DropWhileSubscriber extends IntermediateSubscriber<T, T> {
+    private final class DropWhileSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
 
-        private boolean drop;
+        private boolean dropped;
 
-        private int count;
 
-        public DropWhileSubscriber(Subscriber<? super T> actualSubscriber) {
+        public DropWhileSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 
         @Override
-        public void request(LiraBit bit) {
-            bit.enable(LiraBit.T_DROP);
-            super.request(bit);
+        public void request(int states) {
+            super.request(states | LiraBit.DROP);
+        }
+
+        @Override
+        public void next_null() {
+            //  filter will avoid null element
+            dropped = drop_condition == null;
+        }
+
+        @Override
+        public void onComplete() {
+            dropped = true;
+            actualSubscriber.onComplete();
         }
 
         @Override
         public void next(T t) {
 
-            count++;
-            if (count > MAX_GENERATOR_TRY_COUNT) {
-                cancel();
-                throw new InfinityException("max generator try count\r\n\tat " + this);
-            }
-            if (drop) {
+            if (dropped) {
                 actualSubscriber.next(t);
                 return;
             }
-            drop = BooleanUtil.parse(filter.apply(t));
-            if (drop) {
+            dropped = BooleanUtil.parse(drop_condition.apply(t));
+            if (dropped) {
                 actualSubscriber.next(t);
             }
 
-        }
-
-        @Override
-        public void onNull() {
-            //  filter will avoid null element
         }
     }
 }

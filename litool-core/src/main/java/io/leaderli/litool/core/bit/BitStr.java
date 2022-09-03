@@ -1,15 +1,14 @@
 package io.leaderli.litool.core.bit;
 
-import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.lang.reflect.Field;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author leaderli
@@ -32,22 +31,20 @@ public class BitStr {
         Map<Integer, BitPositionEnum> bitStatusMap = BitPositionEnum.getBitStatusMap();
         BitStr bit = new BitStr();
 
-        Lira<Field> sorted = ReflectUtil.getFields(statusConstant)
+        Stream<Field> fieldStream = Arrays.stream(statusConstant.getFields())
                 .filter(field -> ObjectsUtil.sameAny(field.getType(), int.class, Integer.class)
                         && ModifierUtil.isPublic(field)
                         && ModifierUtil.isFinal(field)
                         && ModifierUtil.isStatic(field)
                 );
+        fieldStream.forEach(
 
-        for (Field field : sorted) {
-
-            ReflectUtil.getFieldValue(null, field)
-                    .cast(Integer.class)
-                    .map(bitStatusMap::get)
-                    .ifPresent(statusEnum ->
-                            bit.bit_name.putIfAbsent(statusEnum, field.getName())
-                    );
-        }
+                field -> ReflectUtil.getFieldValue(null, field)
+                        .cast(Integer.class)
+                        .map(bitStatusMap::get)
+                        .ifPresent(statusEnum ->
+                                bit.bit_name.putIfAbsent(statusEnum, field.getName())
+                        ));
 
         return bit;
 
@@ -69,8 +66,11 @@ public class BitStr {
      */
     public String beauty(int bit_status) {
 
-        Lira<String> name_status = BitPositionEnum.of(bit_status).map(this.bit_name::get);
-        return StringUtils.join("|", name_status);
+
+        List<BitPositionEnum> bits = new ArrayList<>();
+        BitPositionEnum.of(bit_status).forEachRemaining(bits::add);
+        Iterator<String> names = bits.stream().map(this.bit_name::get).filter(Objects::nonNull).iterator();
+        return StringUtils.join("|", names);
 
 
     }

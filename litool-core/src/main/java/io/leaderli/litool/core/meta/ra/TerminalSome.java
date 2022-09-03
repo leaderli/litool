@@ -23,7 +23,7 @@ final class TerminalSome<T> extends PublisherSome<T> {
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new TerminalSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new TerminalSubscriberSubscription(actualSubscriber));
     }
 
     @Override
@@ -32,35 +32,36 @@ final class TerminalSome<T> extends PublisherSome<T> {
     }
 
 
-    private final class TerminalSubscriber extends IntermediateSubscriber<T, T> {
+    private final class TerminalSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
 
         private final List<T> cache = new ArrayList<>();
         private boolean terminalComplete = false;
         private boolean canceled;
-        private final LazyFunction<LiraBit, TerminalSubscriber> lazySupplier = new LazyFunction<LiraBit, TerminalSubscriber>() {
+        private final LazyFunction<Integer, TerminalSubscriberSubscription> lazySupplier = new LazyFunction<Integer,
+                TerminalSubscriberSubscription>() {
 
             @Override
-            protected TerminalSubscriber init(LiraBit bit) {
+            protected TerminalSubscriberSubscription init(Integer bit) {
                 while (!terminalComplete) {
                     prevSubscription.request(bit);
                 }
-                return TerminalSubscriber.this;
+                return TerminalSubscriberSubscription.this;
             }
         };
 
-        private TerminalSubscriber(Subscriber<? super T> actualSubscriber) {
+        private TerminalSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 
         Iterator<T> iterator;
 
         @Override
-        public void request(LiraBit bit) {
+        public void request(int state) {
 
-            bit.disable(LiraBit.T_LIMIT_CONTAIN);
-            TerminalSubscriber apply = lazySupplier.apply(bit);
-            if (bit.have(LiraBit.T_TERMINAL)) {
-
+            LiraBit bit = LiraBit.of(state);
+            bit.disable(LiraBit.LIMIT);
+            TerminalSubscriberSubscription apply = lazySupplier.apply(bit.get());
+            if (LiraBit.isTerminal(state)) {
                 while (!canceled) {
                     apply.deliverToNextSubscriber();
                 }
@@ -79,7 +80,7 @@ final class TerminalSome<T> extends PublisherSome<T> {
         }
 
         @Override
-        public void onNull() {
+        public void next_null() {
             this.cache.add(null);
         }
 
@@ -103,11 +104,6 @@ final class TerminalSome<T> extends PublisherSome<T> {
 
             if (iterator.hasNext()) {
 
-                actualSubscriber.beforeRequest();
-                if (canceled) {
-                    return;
-                }
-
 
                 try {
                     T next = iterator.next();
@@ -115,13 +111,9 @@ final class TerminalSome<T> extends PublisherSome<T> {
 
                 } catch (Throwable throwable) {
                     actualSubscriber.onError(throwable, this);
-                    actualSubscriber.onNull();
+                    actualSubscriber.next_null();
                 }
 
-                if (canceled) {
-                    return;
-                }
-                actualSubscriber.onRequested();
 
             } else {
 

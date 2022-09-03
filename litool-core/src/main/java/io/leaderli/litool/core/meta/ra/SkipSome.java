@@ -16,15 +16,15 @@ public class SkipSome<T> extends PublisherSome<T> {
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new SkipSubscriber<>(actualSubscriber, skip));
+        prevPublisher.subscribe(new SkipSubscriberSubscription<>(actualSubscriber, skip));
 
     }
 
-    private static class SkipSubscriber<T> extends IntermediateSubscriber<T, T> {
+    private static class SkipSubscriberSubscription<T> extends IntermediateSubscriberSubscription<T, T> {
 
         private int skip;
 
-        private SkipSubscriber(Subscriber<? super T> actualSubscriber, int skip) {
+        private SkipSubscriberSubscription(Subscriber<? super T> actualSubscriber, int skip) {
             super(actualSubscriber);
             this.skip = skip;
         }
@@ -33,7 +33,6 @@ public class SkipSome<T> extends PublisherSome<T> {
         @Override
         public void next(T t) {
             if (skip < 1) {
-
                 this.actualSubscriber.next(t);
             } else {
                 skip--;
@@ -41,10 +40,9 @@ public class SkipSome<T> extends PublisherSome<T> {
         }
 
         @Override
-        public void onNull() {
+        public void next_null() {
             if (skip < 1) {
-
-                this.actualSubscriber.onNull();
+                this.actualSubscriber.next_null();
             } else {
                 skip--;
             }

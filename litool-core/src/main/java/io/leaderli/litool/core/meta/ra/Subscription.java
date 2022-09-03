@@ -11,10 +11,14 @@ package io.leaderli.litool.core.meta.ra;
  */
 public interface Subscription extends CancelSubscription {
 
+    default void request() {
+        request(0);
+    }
+
     /**
      * No events will be send by a {@link Publisher} until is signaled via this method
      */
-    void request(LiraBit bit);
+    void request(int bit);
 
 
 }

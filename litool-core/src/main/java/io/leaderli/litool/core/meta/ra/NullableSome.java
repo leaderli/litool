@@ -16,12 +16,12 @@ public class NullableSome<T> extends PublisherSome<T> {
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new NullableSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new NullableSubscriberSubscription(actualSubscriber));
 
     }
 
-    private class NullableSubscriber extends IntermediateSubscriber<T, T> {
-        public NullableSubscriber(Subscriber<? super T> actualSubscriber) {
+    private class NullableSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
+        public NullableSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 
@@ -31,7 +31,7 @@ public class NullableSome<T> extends PublisherSome<T> {
         }
 
         @Override
-        public void onNull() {
+        public void next_null() {
             SubscriberUtil.next(actualSubscriber, supplier.get());
         }
     }

@@ -16,46 +16,46 @@ public class LimitSome<T> extends PublisherSome<T> {
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new LimitSubscriber<>(actualSubscriber, limit));
+        prevPublisher.subscribe(new LimitSubscriberSubscription<>(actualSubscriber, limit));
 
     }
 
-    private static final class LimitSubscriber<T> extends IntermediateSubscriber<T, T> {
+    private static final class LimitSubscriberSubscription<T> extends IntermediateSubscriberSubscription<T, T> {
 
         private int limit;
 
-        private LimitSubscriber(Subscriber<? super T> actualSubscriber, int limit) {
+        private LimitSubscriberSubscription(Subscriber<? super T> actualSubscriber, int limit) {
             super(actualSubscriber);
             this.limit = limit;
         }
 
 
         @Override
-        public void request(LiraBit bit) {
-            bit.enable(LiraBit.T_LIMIT_CONTAIN);
-            super.request(bit);
-        }
-
-        @Override
-        public void beforeRequest() {
-
-            actualSubscriber.beforeRequest();
+        public void request(int states) {
             if (limit < 1) {
                 this.cancel();
+                return;
             }
+            super.request(states | LiraBit.LIMIT);
         }
 
         @Override
-        public void next(T t) {
-
-            this.actualSubscriber.next(t);
+        public void next_null() {
+            if (limit < 1) {
+                this.cancel();
+                return;
+            }
+            this.actualSubscriber.next_null();
             limit--;
         }
 
         @Override
-        public void onNull() {
-
-            this.actualSubscriber.onNull();
+        public void next(T t) {
+            if (limit < 1) {
+                this.cancel();
+                return;
+            }
+            this.actualSubscriber.next(t);
             limit--;
         }
     }

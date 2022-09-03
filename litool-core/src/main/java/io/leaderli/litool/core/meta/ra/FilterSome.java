@@ -25,25 +25,34 @@ public class FilterSome<T> extends PublisherSome<T> {
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new FilterSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new FilterSubscriberSubscription(actualSubscriber));
 
     }
 
 
-    private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
+    private final class FilterSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
 
-        public FilterSubscriber(Subscriber<? super T> actualSubscriber) {
+        public FilterSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 
         @Override
         public void next(T t) {
-            Lino.of(t).filter(filter).ifPresent(this.actualSubscriber::next);
+            if (filter != null) {
+                if (BooleanUtil.parse(filter.apply(t))) {
+                    this.actualSubscriber.next(t);
+                }
+            } else {
+                this.actualSubscriber.next(t);
+            }
         }
 
         @Override
-        public void onNull() {
+        public void next_null() {
             //  filter will avoid null element
+            if (filter == null) {
+                this.actualSubscriber.next_null();
+            }
         }
     }
 }

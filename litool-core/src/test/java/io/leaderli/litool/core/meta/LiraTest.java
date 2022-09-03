@@ -4,7 +4,10 @@ import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.InfinityException;
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.meta.ra.*;
+import io.leaderli.litool.core.meta.ra.CancelSubscription;
+import io.leaderli.litool.core.meta.ra.Exceptionable;
+import io.leaderli.litool.core.meta.ra.Subscriber;
+import io.leaderli.litool.core.meta.ra.Subscription;
 import io.leaderli.litool.core.text.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,22 +22,6 @@ class LiraTest {
 
 
     @Test
-    void subscribe() {
-
-
-        System.out.println(Lira.of(2, 1, 3).sorted().first());
-
-
-    }
-
-    @Test
-    void test() {
-        System.out.println(Lira.of(1, 2, 3).terminate().terminate().first());
-
-
-    }
-
-    @Test
     void infinity_loop() {
         Iterator<Integer> iterator = Lira.range().filter(i -> i % 2 == 0).iterator();
 
@@ -45,6 +32,9 @@ class LiraTest {
 
         Assertions.assertThrows(InfinityException.class, () -> Lira.range().get());
         Assertions.assertThrows(InfinityException.class, () -> Lira.range().sorted().limit(4).get());
+        Assertions.assertThrows(InfinityException.class, () -> Lira.range().dropWhile(i -> i > 500).get());
+        Assertions.assertDoesNotThrow(() -> Lira.range().dropWhile(i -> i > 200).first());
+
     }
 
     @Test
@@ -52,11 +42,11 @@ class LiraTest {
 
         LiBox<Object> box = LiBox.none();
 
-        Lira.of(1, 2).terminate().subscribe((new Subscriber<Integer>() {
+        Lira.of(1, 2).subscribe((new Subscriber<Integer>() {
             @Override
             public void onSubscribe(Subscription subscription) {
 
-                subscription.request(LiraBit.terminal());
+                subscription.request();
             }
 
             @Override
@@ -78,6 +68,8 @@ class LiraTest {
         Assertions.assertEquals(1, Lira.of(1, 2, 3).takeWhile(i -> i > 1).last().get());
         Assertions.assertEquals(2, Lira.of(1, null, 2, 3).takeWhile(i -> i > 2).last().get());
 
+        Assertions.assertEquals(3, Lira.of(1, 2, 3).takeWhile(null).last().get());
+        Assertions.assertEquals(1, Lira.of(1, null, 2, 3).takeWhile(null).last().get());
     }
 
     @Test
@@ -91,19 +83,11 @@ class LiraTest {
 
     }
 
-    @Test
-    void takeWhileNull() {
-        Assertions.assertEquals(3, Lira.of(1, 2, 3).takeWhileNull().last().get());
-        Assertions.assertEquals(1, Lira.of(1, null, 2, 3).takeWhileNull().last().get());
-
-
-    }
 
     @Test
     void nullable() {
 
         Assertions.assertArrayEquals(new Integer[]{100, 1}, Lira.of(null, 1).nullable(() -> 100).toArray());
-        Assertions.assertArrayEquals(new Integer[]{1}, Lira.of(null, 1).filter().nullable(() -> 100).toArray());
         Assertions.assertEquals(1, Lira.of(1, null).size());
 
     }
@@ -210,6 +194,7 @@ class LiraTest {
 
     @Test
     void filter() {
+        Assertions.assertArrayEquals(new Integer[]{100, 1}, Lira.of(null, 1).filter().nullable(() -> 100).toArray());
 
         Assertions.assertTrue(Lira.of(1, 2, 3).filter(i -> i > 4).absent());
         Assertions.assertSame(2, Lira.of(1, 2, 3).filter(i -> i > 1).size());
@@ -277,11 +262,11 @@ class LiraTest {
 
     @Test
     void sort() {
-
-
-        LiBox<Integer> box = LiBox.none();
-        Lira.of(1).debug(box::value).sorted();
-        Assertions.assertTrue(box.absent());
+//
+//
+//        LiBox<Integer> box = LiBox.none();
+//        Lira.of(1).debug(box::value).sorted();
+//        Assertions.assertTrue(box.absent());
 
         Assertions.assertEquals("[1, 2]", Lira.of(2, 1).sorted().toString());
         Assertions.assertEquals("[3, 2, 1]", Lira.of(2, 1, 3).sorted((o1, o2) -> o2 - o1).toString());
@@ -344,9 +329,9 @@ class LiraTest {
 
     @Test
     void distinct() {
-        LiBox<Integer> box = LiBox.none();
-        Lira.of(1).debug(box::value).distinct();
-        Assertions.assertTrue(box.absent());
+//        LiBox<Integer> box = LiBox.none();
+//        Lira.of(1).debug(box::value).distinct();
+//        Assertions.assertTrue(box.absent());
 
 
         Lira<Integer> set = Lira.of(1, 2, 1, 2).filter(i -> {
@@ -386,8 +371,25 @@ class LiraTest {
     @Test
     void iterator() {
 
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
 
-        Lira<Integer> terminate = Lira.of(1, 2, 3).terminate();
+        Assertions.assertThrows(ConcurrentModificationException.class, () -> {
+
+            for (Integer integer : Lira.of(list)) {
+                list.removeIf(i -> true);
+            }
+        });
+
+
+        Assertions.assertNotNull(Lira.of(null, 1).iterator().next());
+        Assertions.assertNull(Lira.of(null, 1).nullableIterator().next());
+
+        Lira<Integer> terminate = Lira.of(1, 2, 3);
 
 
         Iterator<Integer> iterator = terminate.map(i -> i * 10).iterator();
@@ -410,13 +412,13 @@ class LiraTest {
         Assertions.assertThrows(NoSuchElementException.class, iterator::next);
 
         iterator = Lira.of(null, 2).iterator();
-        Assertions.assertNull(iterator.next());
         Assertions.assertEquals(2, iterator.next());
         Assertions.assertThrows(NoSuchElementException.class, iterator::next);
 
         iterator = Lira.of(1, 2, 3).filter(i -> i > 1).iterator();
 
         Assertions.assertNotNull(iterator.next());
+
 
         int count = 0;
         Lira<Integer> range = Lira.range();
@@ -449,8 +451,6 @@ class LiraTest {
         count = 0;
         Lira<Integer> of = Lira.of(1, 2, 3);
         for (Integer integer : of) {
-            System.out.println(integer);
-
             count++;
         }
         Assertions.assertEquals(3, count);

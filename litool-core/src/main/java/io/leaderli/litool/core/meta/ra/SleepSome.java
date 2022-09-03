@@ -18,6 +18,9 @@ import java.util.function.Function;
 public class SleepSome<T> extends PublisherSome<T> {
 
 
+    /**
+     * take a sleep at every countdown  element
+     */
     private final int final_countdown;
     private final long milliseconds;
 
@@ -29,15 +32,15 @@ public class SleepSome<T> extends PublisherSome<T> {
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new FilterSubscriber(actualSubscriber, final_countdown));
+        prevPublisher.subscribe(new FilterSubscriberSubscription(actualSubscriber, final_countdown));
 
     }
 
 
-    private final class FilterSubscriber extends IntermediateSubscriber<T, T> {
+    private final class FilterSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
         private int countdown;
 
-        public FilterSubscriber(Subscriber<? super T> actualSubscriber, int countdown) {
+        public FilterSubscriberSubscription(Subscriber<? super T> actualSubscriber, int countdown) {
             super(actualSubscriber);
             this.countdown = countdown;
         }
@@ -57,8 +60,8 @@ public class SleepSome<T> extends PublisherSome<T> {
         }
 
         @Override
-        public void onNull() {
-            actualSubscriber.onNull();
+        public void next_null() {
+            actualSubscriber.next_null();
             sleep();
         }
     }

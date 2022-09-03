@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.meta.ra;
 
 /**
- * Represents an operation that when call {@link  Subscriber#next(Object)} or {@link  Subscriber#onNull()}
+ * Represents an operation that when call {@link  Subscriber#next(Object)} or {@link  Subscriber#next_null()}
  *
  * @param <T> the type of the input to the operation
  */
@@ -16,7 +16,7 @@ public interface DebugConsumer<T> {
     void accept(T t);
 
     /**
-     * Perform this operation on {@link  Subscriber#onNull()}
+     * Perform this operation on {@link  Subscriber#next_null()}
      */
     default void onNull() {
 

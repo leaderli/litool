@@ -2,10 +2,10 @@ package io.leaderli.litool.core.bit;
 
 
 import io.leaderli.litool.core.collection.ArrayUtils;
-import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -78,11 +78,11 @@ public enum BitPositionEnum {
      * @param status a int value represent status
      * @return a lira of exist BX
      */
-    public static Lira<BitPositionEnum> of(int status) {
+    public static Iterator<BitPositionEnum> of(int status) {
 
         BitPositionEnum[] values = values();
         ArrayUtils.reverse(values);
-        return Lira.of(values).filter(b -> (b.value & status) == b.value);
+        return Arrays.stream(values).filter(b -> (b.value & status) == b.value).iterator();
     }
 
     @Override

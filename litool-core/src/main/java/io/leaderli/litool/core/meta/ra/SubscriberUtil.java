@@ -22,7 +22,7 @@ public class SubscriberUtil {
     public static <T> void next(Subscriber<T> subscriber, T t) {
 
         if (t == null) {
-            subscriber.onNull();
+            subscriber.next_null();
         } else {
             subscriber.next(t);
         }

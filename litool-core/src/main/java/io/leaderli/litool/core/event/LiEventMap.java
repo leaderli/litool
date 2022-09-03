@@ -51,8 +51,8 @@ class LiEventMap {
         }
 
         //  because listener may be remove themself in consumer, so it should not directly forEach List
-        Lira<ILiEventListener> lira = Lira.of(this.eventListenerMap.get(eventType))
-                .cast(ILiEventListener.class);
+        List<ILiEventListener> lira = Lira.of(this.eventListenerMap.get(eventType))
+                .cast(ILiEventListener.class).get();
 
         for (ILiEventListener<T> listener : lira) {
             consumer.accept(listener);

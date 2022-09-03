@@ -49,6 +49,6 @@ class BitPositionEnumTest {
     @Test
     void convertStatusToEnum() {
 
-        Assertions.assertSame(BitPositionEnum.B1, BitPositionEnum.of(1).get(0).get());
+        Assertions.assertSame(BitPositionEnum.B1, BitPositionEnum.of(1).next());
     }
 }

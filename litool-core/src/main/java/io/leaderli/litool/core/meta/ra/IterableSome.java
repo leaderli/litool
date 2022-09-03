@@ -1,0 +1,93 @@
+package io.leaderli.litool.core.meta.ra;
+
+
+import io.leaderli.litool.core.collection.Generator;
+import io.leaderli.litool.core.exception.InfinityException;
+
+import java.util.Iterator;
+
+/**
+ * @author leaderli
+ * @since 2022/7/16
+ */
+public final class IterableSome<T> extends Some<T> {
+
+    private final Iterable<? extends T> iterable;
+    private final boolean infinity;
+
+    public IterableSome(Iterable<? extends T> iterable) {
+        this.iterable = iterable;
+        this.infinity = iterable instanceof Generator;
+
+    }
+
+
+    @Override
+    public void subscribe(Subscriber<? super T> actualSubscriber) {
+        actualSubscriber.onSubscribe(new ItrGenerator(actualSubscriber, iterable.iterator()));
+    }
+
+    public class ItrGenerator extends GeneratorSubscription<T> {
+
+        protected ItrGenerator(Subscriber<? super T> actualSubscriber, Iterator<? extends T> iterator) {
+            super(actualSubscriber, iterator);
+        }
+
+        @Override
+        public final void request(int state) {
+            LiraBit bit = LiraBit.of(state);
+
+            // not active response onComplete signal, only response on when the next request
+            if (infinity) {
+                if (LiraBit.isTerminal(state) && bit.miss(LiraBit.LIMIT)) {
+                    throw new InfinityException("generator loop \r\n\tat " + iterator);
+                }
+            }
+            if (bit.have(LiraBit.DROP)) {
+                if (drop_count-- == 0) {
+                    throw new InfinityException("generator arrived max drop \r\n\tat " + iterator);
+                }
+            }
+
+            if (LiraBit.isTerminal(state)) {
+                while (true) {
+                    performRequest();
+                    if (completed) {
+                        return;
+                    }
+                }
+
+            } else {
+                performRequest();
+            }
+
+        }
+
+        private void performRequest() {
+            if (completed) {
+                this.actualSubscriber.onComplete();
+                return;
+            }
+            if (iterator.hasNext()) {
+                // not catch iterator.next to avoid infinity loop
+                T next = iterator.next();
+
+                try {
+                    SubscriberUtil.next(actualSubscriber, next);
+                } catch (Throwable throwable) {
+                    actualSubscriber.next_null();
+                    actualSubscriber.onError(throwable, this);
+                }
+            } else {
+                completed = true;
+                this.actualSubscriber.onComplete();
+            }
+        }
+
+    }
+
+
+}
+
+
+

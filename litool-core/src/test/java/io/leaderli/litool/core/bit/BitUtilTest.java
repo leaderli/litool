@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
  */
 class BitUtilTest {
 
+
     @Test
     void isPositivePower2() {
 

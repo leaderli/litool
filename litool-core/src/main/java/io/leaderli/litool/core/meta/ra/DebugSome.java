@@ -14,14 +14,14 @@ public class DebugSome<T> extends PublisherSome<T> {
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new DebugSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new DebugSubscriberSubscription(actualSubscriber));
 
     }
 
-    private class DebugSubscriber extends IntermediateSubscriber<T, T> {
+    private class DebugSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
 
 
-        private DebugSubscriber(Subscriber<? super T> actualSubscriber) {
+        private DebugSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 
@@ -33,9 +33,9 @@ public class DebugSome<T> extends PublisherSome<T> {
         }
 
         @Override
-        public void onNull() {
+        public void next_null() {
             consumer.onNull();
-            actualSubscriber.onNull();
+            actualSubscriber.next_null();
         }
 
     }

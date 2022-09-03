@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.meta.Lino;
-
 import java.util.function.Function;
 
 /**
@@ -21,21 +19,25 @@ public class MapSome<T, R> extends Some<R> {
 
     @Override
     public void subscribe(Subscriber<? super R> actualSubscriber) {
-        prevPublisher.subscribe(new MapSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new MapSubscriberSubscription(actualSubscriber));
 
     }
 
-    private class MapSubscriber extends IntermediateSubscriber<T, R> {
+    private class MapSubscriberSubscription extends IntermediateSubscriberSubscription<T, R> {
 
 
-        private MapSubscriber(Subscriber<? super R> actualSubscriber) {
+        private MapSubscriberSubscription(Subscriber<? super R> actualSubscriber) {
             super(actualSubscriber);
         }
 
 
         @Override
         public void next(T t) {
-            Lino.of(t).map(mapper).ifPresent(this.actualSubscriber::next);
+            if (mapper == null) {
+                this.actualSubscriber.next_null();
+            } else {
+                SubscriberUtil.next(this.actualSubscriber, mapper.apply(t));
+            }
         }
 
     }

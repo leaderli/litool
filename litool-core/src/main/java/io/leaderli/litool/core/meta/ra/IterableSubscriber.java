@@ -3,14 +3,11 @@ package io.leaderli.litool.core.meta.ra;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import static io.leaderli.litool.core.meta.ra.LiraBit.ARRIVED;
-import static io.leaderli.litool.core.meta.ra.LiraBit.COMPLETE;
-
 class IterableSubscriber<T> implements Subscriber<T>, Iterator<T> {
-    private final LiraBit liraState = LiraBit.itr();
-    boolean request = true;
     private Subscription prevSubscription;
     private T next;
+    private boolean accepted;
+    private boolean completed;
 
     @Override
     public void onSubscribe(Subscription prevSubscription) {
@@ -19,53 +16,60 @@ class IterableSubscriber<T> implements Subscriber<T>, Iterator<T> {
 
     @Override
     public void next(T t) {
+        arrive(t);
+    }
 
+    private void arrive(T t) {
         next = t;
-        liraState.enable(ARRIVED);
+        accepted = true;
     }
 
     @Override
-    public void onNull() {
-        next = null;
-        liraState.enable(ARRIVED);
+    public void next_null() {
+        arrive(null);
     }
 
     @Override
     public void onComplete() {
-        request = false;
-        liraState.enable(COMPLETE);
+        completed = true;
     }
 
     @Override
     public void onCancel() {
-        liraState.enable(COMPLETE);
+        completed = true;
     }
 
 
+    @SuppressWarnings("java:S2583")
     @Override
     public boolean hasNext() {
 
-        if (liraState.have(ARRIVED)) {
-            return true;
-        }
-        if (liraState.have(COMPLETE)) {
+        if (completed) {
             return false;
         }
-        // trigger
-
-
-        while (liraState.miss(ARRIVED | COMPLETE)) {
-            this.prevSubscription.request(liraState);
+        if (accepted) {
+            return true;
         }
 
-        return liraState.have(ARRIVED);
+        // trigger
+        while (true) {
+            this.prevSubscription.request(LiraBit.ITR);
+            if (completed) {
+                return false;
+            }
+            if (accepted) {
+                return true;
+            }
+
+        }
+
     }
 
     @Override
     public T next() {
 
         if (hasNext()) {
-            liraState.disable(ARRIVED);
+            accepted = false;
             return next;
         }
         throw new NoSuchElementException();

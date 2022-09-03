@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.meta.ra;
 
+import io.leaderli.litool.core.exception.InfinityException;
+
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -20,43 +22,118 @@ public class FlatMap<T, R> extends Some<R> {
 
     @Override
     public void subscribe(Subscriber<? super R> actualSubscriber) {
-        prevPublisher.subscribe(new FlatMapSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new FlatMapSubscriberSubscription(actualSubscriber));
 
     }
 
 
-    class FlatMapSubscriber extends BarricadeIntermediateSubscription<T, R> {
+    class FlatMapSubscriberSubscription extends IntermediateSubscriberSubscription<T, R> {
 
 
-        private FlatMapSubscriber(Subscriber<? super R> actualSubscriber) {
+        protected Subscription barricadeSubscription;
+        private int actual_states;
+
+
+        private FlatMapSubscriberSubscription(Subscriber<? super R> actualSubscriber) {
             super(actualSubscriber);
         }
 
+        @Override
+        public void request(int state) {
+            actual_states = state;
+            if (LiraBit.isTerminal(state)) {
+                super.request(state);
+            } else {
 
-        private LiraBit clone;
+                if (barricadeSubscription == null) {
+                    super.request(state);
+                } else {
+                    barricadeSubscription.request(state);
+                }
+            }
+        }
 
         @Override
-        public void request(LiraBit bit) {
-            clone = new LiraBit(bit.get());
-            super.request(bit);
+        public void next_null() {
+
+            // not provide an iterator to init a new  barricadeSubscription
+        }
+
+        @Override
+        public void onComplete() {
+            if (this.barricadeSubscription == null) {
+                this.actualSubscriber.onComplete();
+            } else {
+                this.barricadeSubscription = null;
+            }
         }
 
         @Override
         public void next(T t) {
 
             Iterator<? extends R> iterator = mapper.apply(t);
-
-            if (iterator != null) {
-                barricadeSubscription = new BarricadeSubscription<>(this, actualSubscriber, iterator);
-                barricadeSubscription.request(new LiraBit(clone.get()));
+            if (iterator == null || !iterator.hasNext()) {
+                return;
             }
+            if (LiraBit.isTerminal(actual_states)) {
+                iterator.forEachRemaining(e -> SubscriberUtil.next(actualSubscriber, e));
+            } else {
+                barricadeSubscription = new BarricadeGenerator(this, actualSubscriber, iterator);
+                barricadeSubscription.request(actual_states);
+
+            }
+
         }
 
-        @Override
-        public void onNull() {
+        /**
+         * @author leaderli
+         * @since 2022/7/16
+         */
+        public final class BarricadeGenerator extends GeneratorSubscription<R> {
 
-            // not provide an iterator to init a new  barricadeSubscription
+
+            public BarricadeGenerator(Completable mediate, Subscriber<? super R> actualSubscriber,
+                                      Iterator<? extends R> iterator) {
+                super(actualSubscriber, iterator);
+            }
+
+
+            @SuppressWarnings("java:S2583")
+            @Override
+            public void request(int state) {
+                LiraBit bit = LiraBit.of(state);
+                if (bit.have(LiraBit.DROP)) {
+                    if (drop_count-- == 0) {
+                        throw new InfinityException("generator arrived max drop \r\n\tat " + iterator);
+                    }
+                }
+                if (LiraBit.isTerminal(state)) {
+                    throw new IllegalStateException("barricade in flat map not support terminal request");
+                }
+
+                performRequest();
+
+            }
+
+            private void performRequest() {
+                if (completed) {
+                    // just tell  barricade is completed, not tell actualSubscriber
+                    onComplete();
+                    return;
+                }
+                if (iterator.hasNext()) {
+                    try {
+                        SubscriberUtil.next(actualSubscriber, iterator.next());
+                    } catch (Throwable throwable) {
+                        actualSubscriber.next_null();
+                        actualSubscriber.onError(throwable, this);
+                    }
+                } else {
+                    completed = true;
+                    onComplete();
+                }
+            }
+
         }
-
     }
 }

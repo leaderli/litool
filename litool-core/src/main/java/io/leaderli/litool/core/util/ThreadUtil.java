@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.text.StringUtils;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -16,6 +18,20 @@ public class ThreadUtil {
      */
     public static void sleep(long second) {
         sleep(TimeUnit.SECONDS, second);
+    }
+
+    public static void sleep1s(Object... msgs) {
+        sleep(1, () -> System.out.println(StringUtils.join0(" ", msgs)));
+    }
+
+    /**
+     * sleep some second
+     *
+     * @param second second of {@link  TimeUnit#SECONDS}
+     */
+    public static void sleep(long second, Runnable runnable) {
+        sleep(TimeUnit.SECONDS, second);
+        runnable.run();
     }
 
     /**

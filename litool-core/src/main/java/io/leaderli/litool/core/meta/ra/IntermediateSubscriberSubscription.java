@@ -6,16 +6,16 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/6/22
  */
-public abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Subscription {
+public abstract class IntermediateSubscriberSubscription<T, R> implements Subscriber<T>, Subscription {
     protected final Subscriber<? super R> actualSubscriber;
     Subscription prevSubscription;
 
-    protected IntermediateSubscriber(Subscriber<? super R> actualSubscriber) {
+    protected IntermediateSubscriberSubscription(Subscriber<? super R> actualSubscriber) {
         this.actualSubscriber = actualSubscriber;
     }
 
     @Override
-    public void request(LiraBit bit) {
+    public void request(int bit) {
         this.prevSubscription.request(bit);
 
     }
@@ -34,19 +34,10 @@ public abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Sub
     }
 
     @Override
-    public void onNull() {
-        this.actualSubscriber.onNull();
+    public void next_null() {
+        this.actualSubscriber.next_null();
     }
 
-    @Override
-    public void beforeRequest() {
-        this.actualSubscriber.beforeRequest();
-    }
-
-    @Override
-    public void onRequested() {
-        this.actualSubscriber.onRequested();
-    }
 
     @Override
     public void onComplete() {

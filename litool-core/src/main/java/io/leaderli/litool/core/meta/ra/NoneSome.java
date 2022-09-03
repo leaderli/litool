@@ -12,25 +12,25 @@ public class NoneSome<T> extends PublisherSome<T> {
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new NoneSubscriber<>(actualSubscriber));
+        prevPublisher.subscribe(new NoneSubscriberSubscription<>(actualSubscriber));
 
     }
 
-    private static final class NoneSubscriber<T> extends IntermediateSubscriber<T, T> {
+    private static final class NoneSubscriberSubscription<T> extends IntermediateSubscriberSubscription<T, T> {
 
 
-        private NoneSubscriber(Subscriber<? super T> actualSubscriber) {
+        private NoneSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 
 
         @Override
-        public void request(LiraBit bit) {
+        public void request(int bit) {
             prevSubscription.cancel();
         }
 
         @Override
-        public void onNull() {
+        public void next_null() {
             throw new IllegalStateException("NoneSubscriber will never call onNull");
         }
 

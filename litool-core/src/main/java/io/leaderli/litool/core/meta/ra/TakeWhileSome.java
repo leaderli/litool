@@ -25,32 +25,40 @@ public class TakeWhileSome<T> extends PublisherSome<T> {
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new TakeWhileSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new TakeWhileSubscriberSubscription(actualSubscriber));
 
     }
 
 
-    private final class TakeWhileSubscriber extends IntermediateSubscriber<T, T> {
+    private final class TakeWhileSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
 
-        public TakeWhileSubscriber(Subscriber<? super T> actualSubscriber) {
+        public TakeWhileSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 
 
         @Override
         public void next(T t) {
-            boolean present = BooleanUtil.parse(filter.apply(t));
-            if (present) {
-                cancel();
-                return;
+
+            if (filter != null) {
+                boolean present = BooleanUtil.parse(filter.apply(t));
+                if (present) {
+                    cancel();
+                    return;
+                }
             }
             actualSubscriber.next(t);
 
         }
 
         @Override
-        public void onNull() {
+        public void next_null() {
             //  filter will avoid null element
+            if (filter == null) {
+                cancel();
+            } else {
+                super.next_null();
+            }
         }
     }
 }

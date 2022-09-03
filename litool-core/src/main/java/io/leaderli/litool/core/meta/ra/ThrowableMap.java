@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
+import io.leaderli.litool.core.exception.ThrowableInterfaceException;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.meta.Lino;
 
@@ -23,25 +23,29 @@ public class ThrowableMap<T, R> extends Some<R> {
 
     @Override
     public void subscribe(Subscriber<? super R> actualSubscriber) {
-        prevPublisher.subscribe(new ThrowableMapSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new ThrowableMapSubscriberSubscription(actualSubscriber));
 
     }
 
-    private class ThrowableMapSubscriber extends IntermediateSubscriber<T, R> {
+    private class ThrowableMapSubscriberSubscription extends IntermediateSubscriberSubscription<T, R> {
 
 
-        private ThrowableMapSubscriber(Subscriber<? super R> actualSubscriber) {
+        private ThrowableMapSubscriberSubscription(Subscriber<? super R> actualSubscriber) {
             super(actualSubscriber);
         }
 
 
         @Override
         public void next(T t) {
-            SubscriberUtil.next(actualSubscriber, RuntimeExceptionTransfer.get(() -> mapper.apply(t)));
-            try {
-                SubscriberUtil.next(actualSubscriber, mapper.apply(t));
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
+
+            if (mapper == null) {
+                this.actualSubscriber.next_null();
+            } else {
+                try {
+                    SubscriberUtil.next(actualSubscriber, mapper.apply(t));
+                } catch (Throwable e) {
+                    throw new ThrowableInterfaceException(e);
+                }
             }
         }
 
