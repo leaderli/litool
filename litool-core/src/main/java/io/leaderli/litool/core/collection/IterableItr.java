@@ -14,17 +14,22 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
 
 
     /**
-     * make obj behave like {@link  IterableItr}, support :
+     * make obj behave like {@link  IterableItr}, only support :
      * <ul>
      *     <li>{@link  IterableItr} </li>
      *     <li>{@link  Iterator}</li>
      *     <li>{@link  Iterable}</li>
      *     <li>{@link  Enumeration}</li>
      *     <li>{@link  Map}</li>
+     *     <li>{@link  Stream}</li>
+     *     <li>{@link  Generator}</li>
      *     <li>Array</li>
      * </ul>
      * <p>
      * otherwise will return {@link  NoneItr}
+     * <p>
+     * Most obj will convert to an new {@link  ArrayItr}, except {@link  Generator},
+     * because generator is infinite, it only return it self.
      *
      * @param obj a obj
      * @param <T> the type of elements {@link  IterableItr} provide
@@ -155,7 +160,6 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
             }
             throw new NoSuchElementException();
         }
-
 
     }
 }

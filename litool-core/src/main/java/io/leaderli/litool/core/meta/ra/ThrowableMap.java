@@ -11,7 +11,7 @@ import io.leaderli.litool.core.meta.Lino;
  * @see Lino#throwable_map(ThrowableFunction)
  * @since 2022/6/27
  */
-public class ThrowableMap<T, R> extends Some<R> {
+class ThrowableMap<T, R> extends Some<R> {
     private final ThrowableFunction<? super T, ? extends R> mapper;
     private final Publisher<T> prevPublisher;
 

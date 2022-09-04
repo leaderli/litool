@@ -18,6 +18,11 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
+ * a collection provide some convenient method
+ *
+ * <p>
+ * lira should not use  the tool class that contain lira, such as {@link  io.leaderli.litool.core.bit.BitStr}
+ *
  * @author leaderli
  * @since 2022/6/19
  */

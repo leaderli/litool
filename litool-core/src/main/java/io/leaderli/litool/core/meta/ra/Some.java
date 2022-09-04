@@ -3,7 +3,6 @@ package io.leaderli.litool.core.meta.ra;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
-import io.leaderli.litool.core.lang.CompareBean;
 import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiTuple2;
@@ -278,9 +277,32 @@ public abstract class Some<T> implements Lira<T> {
     @Override
     public Lira<T> distinct(EqualComparator<T> comparator) {
 
-        return map(e -> new CompareBean<>(e, comparator))
-                .terminal(LinkedHashSet::new)
-                .map(w -> w.value);
+        return terminal(list -> {
+
+            List<T> distinct = new ArrayList<>();
+            out:
+            for (T t : list) {
+
+                if (t == null) {
+                    if (!distinct.contains(null)) {
+                        distinct.add(null);
+                    }
+                } else {
+
+                    for (T di : distinct) {
+
+                        if (di != null) {
+                            if (comparator.apply(t, di)) {
+                                continue out;
+                            }
+
+                        }
+                    }
+                    distinct.add(t);
+                }
+            }
+            return distinct;
+        });
     }
 
     @Override

@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.function.ThrowableFunction;
-import io.leaderli.litool.core.meta.ra.ThrowableMap;
 
 import java.util.function.Consumer;
 
@@ -17,7 +16,6 @@ public class LiConstant {
      *
      * @see Lino#throwable_map(ThrowableFunction)
      * @see Lira#throwable_map(ThrowableFunction)
-     * @see ThrowableMap
      */
     @SuppressWarnings("all")
     public static Consumer<Throwable> WHEN_THROW = Throwable::printStackTrace;

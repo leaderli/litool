@@ -2,7 +2,7 @@ package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
-import io.leaderli.litool.core.exception.InfinityException;
+import io.leaderli.litool.core.exception.InfiniteException;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.ra.CancelSubscription;
 import io.leaderli.litool.core.meta.ra.Exceptionable;
@@ -37,7 +37,7 @@ class LiraTest {
 
 
     @Test
-    void infinity_loop() {
+    void infinite_loop() {
         Iterator<Integer> iterator = Lira.range().filter(i -> i % 2 == 0).iterator();
 
         Assertions.assertEquals(0, iterator.next());
@@ -45,9 +45,9 @@ class LiraTest {
         Assertions.assertEquals(4, iterator.next());
         Assertions.assertEquals(10, Lira.range().get(10).get());
 
-        Assertions.assertThrows(InfinityException.class, () -> Lira.range().get());
-        Assertions.assertThrows(InfinityException.class, () -> Lira.range().sorted().limit(4).get());
-        Assertions.assertThrows(InfinityException.class, () -> Lira.range().dropWhile(i -> i > 500).get());
+        Assertions.assertThrows(InfiniteException.class, () -> Lira.range().get());
+        Assertions.assertThrows(InfiniteException.class, () -> Lira.range().sorted().limit(4).get());
+        Assertions.assertThrows(InfiniteException.class, () -> Lira.range().dropWhile(i -> i > 500).get());
         Assertions.assertDoesNotThrow(() -> Lira.range().dropWhile(i -> i > 200).first());
 
     }
@@ -289,13 +289,6 @@ class LiraTest {
         Assertions.assertEquals("[1, 2, 3]", Lira.of(2, 1, 3).sorted(Comparator.comparingInt(o -> o)).toString());
     }
 
-//    @Test
-//    void testlimit() {
-//
-//        System.out.println(Lira.range().limit(1).get());
-//
-//    }
-
     @Test
     void limit() {
 
@@ -353,10 +346,14 @@ class LiraTest {
             return true;
         }).distinct();
 
-        Assertions.assertEquals(2, Lira.of(1, 2, 1, 2).distinct().size());
+        Assertions.assertNull(Lira.of(null, 2, 1, 2).distinct().nullableIterator().next());
+        Assertions.assertArrayEquals(new Integer[]{100, 1, 2},
+                Lira.of(null, null, 1, 2).distinct().nullable(() -> 100).toArray());
+        Assertions.assertArrayEquals(new Integer[]{1, 2}, Lira.of(1, 2, 1, 2).distinct().toArray());
 
 
-        Assertions.assertEquals(3, Lira.of(1, 2, 3, 4, 1).distinct().map(i -> i / 2).distinct().size());
+        Assertions.assertArrayEquals(new Integer[]{0, 1, 2},
+                Lira.of(1, 2, 3, 4, 1).distinct().map(i -> i / 2).distinct().toArray());
 
         Assertions.assertEquals(1, Lira.of(1, 2, 3, 4, 1).distinct((left, right) -> left - right < 2).first().get());
     }

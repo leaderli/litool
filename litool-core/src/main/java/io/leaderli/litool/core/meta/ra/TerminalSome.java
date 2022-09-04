@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.lang.LazyRunnable;
+import io.leaderli.litool.core.lang.DisposableRunnableProxy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,10 @@ class TerminalSome<T> extends PublisherSome<T> {
         private final Subscriber<? super T> actualSubscriber;
         Subscription prevSubscription;
         private final List<T> cache = new ArrayList<>();
-        private final LazyRunnable lazySupplier = LazyRunnable.of(() -> prevSubscription.request(0));
+        /**
+         * not use  method reference to avoid null pointer
+         */
+        private final Runnable disposable = DisposableRunnableProxy.of(() -> prevSubscription.request(0));
         private Subscription terminalSubscription;
 
         private TerminalSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
@@ -42,7 +45,7 @@ class TerminalSome<T> extends PublisherSome<T> {
 
         @Override
         public void request(int state) {
-            lazySupplier.run();
+            disposable.run();
             terminalSubscription.request(state);
         }
 

@@ -1,7 +1,10 @@
 package io.leaderli.litool.core.exception;
 
+import io.leaderli.litool.core.function.ThrowableFunction;
+
 /**
- * A RuntimeException use for {@link  RuntimeExceptionTransfer}
+ * A RuntimeException use for
+ * {@link  io.leaderli.litool.core.meta.Lira#throwable_map(ThrowableFunction)}
  *
  * @see RuntimeExceptionTransfer
  */

@@ -2,7 +2,7 @@ package io.leaderli.litool.core.meta.ra;
 
 
 import io.leaderli.litool.core.collection.Generator;
-import io.leaderli.litool.core.exception.InfinityException;
+import io.leaderli.litool.core.exception.InfiniteException;
 
 import java.util.Iterator;
 
@@ -13,11 +13,11 @@ import java.util.Iterator;
 public final class IterableSome<T> extends Some<T> {
 
     private final Iterable<? extends T> iterable;
-    private final boolean infinity;
+    private final boolean infinite;
 
     public IterableSome(Iterable<? extends T> iterable) {
         this.iterable = iterable;
-        this.infinity = iterable instanceof Generator;
+        this.infinite = iterable instanceof Generator;
 
     }
 
@@ -43,12 +43,12 @@ public final class IterableSome<T> extends Some<T> {
             LiraBit bit = LiraBit.of(state);
 
             // not active response onComplete signal, only response on when the next request
-            if (infinity) {
+            if (infinite) {
                 if (LiraBit.isTerminal(state) && bit.miss(LiraBit.LIMIT)) {
-                    throw new InfinityException("generator loop \r\n\tat " + iterator);
+                    throw new InfiniteException("generator loop \r\n\tat " + iterator);
                 }
             }
-   
+
 
             if (LiraBit.isTerminal(state)) {
                 while (true) {
@@ -70,7 +70,7 @@ public final class IterableSome<T> extends Some<T> {
                 return;
             }
             if (iterator.hasNext()) {
-                // not catch iterator.next to avoid infinity loop
+                // not catch iterator.next to avoid infinite loop
                 T next = iterator.next();
 
                 try {
