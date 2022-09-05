@@ -9,7 +9,11 @@ import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -37,54 +41,86 @@ public class ResourceUtil {
     }
 
     /**
-     * Return a lira of resource files , include subdirectories
+     * Return a lira of resource files under classpath, include subdirectories
      *
-     * @param fileFilter the filter of {@link  File}
+     * @param walkFileFilter the filter of {@link  File}
      * @return a lira of files
+     * @see #getResourceFiles(String, WalkFileFilter)
      */
-    public static Lira<File> getResourceFile(FileFilter fileFilter) {
+    public static Lira<File> getResourceFiles(WalkFileFilter walkFileFilter) {
 
-        return getResourcesLira("")
-                .map(URL::getFile)
-                .map(File::new)
-                .map(f -> f.listFiles(fileFilter))
-                .flatMap();
+        return getResourceFiles("", walkFileFilter);
+    }
 
+    /**
+     * Return a lira of resource files under classpath, include subdirectories
+     *
+     * @param resource_name the name of resource under classpath
+     * @param fileFilter    the filter of {@link  File}
+     * @return a lira of files
+     * @see #getResourcesLira(String)
+     */
+    public static Lira<File> getResourceFiles(String resource_name, WalkFileFilter fileFilter) {
+
+
+        List<File> result = new ArrayList<>();
+        getResourcesLira(resource_name).throwable_map(URL::toURI).map(Paths::get).forThrowableEach(path -> {
+
+            SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    if (fileFilter == null || fileFilter.dir(dir.toFile())) {
+                        return FileVisitResult.CONTINUE;
+                    }
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path filePath, BasicFileAttributes attrs) {
+
+                    File file = filePath.toFile();
+                    if (fileFilter == null || fileFilter.file(file)) {
+                        result.add(file);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+            };
+            Files.walkFileTree(path, visitor);
+        });
+
+        return Lira.of(result);
     }
 
     /**
      * Return a lira consist of {@link  URL} according to  {@link  ClassLoader#getResources(String)}
      *
-     * @param resource the name of resource
+     * @param resource_name the name of resource_name
      * @return a lira consist of {@link  URL}
      */
-    public static Lira<URL> getResourcesLira(String resource) {
+    public static Lira<URL> getResourcesLira(String resource_name) {
 
-        return Lino.of(resource).throwable_map(ClassLoaderUtil.getClassLoader()::getResources).toLira(URL.class);
+        return Lino.of(resource_name).throwable_map(ClassLoaderUtil.getClassLoader()::getResources).toLira(URL.class);
 
     }
 
     /**
-     * @param path 路径
-     * @return 返回每一行字符串的 map
+     * Return  the map of line of content
+     *
+     * @param path file path under classpath
+     * @return a map of line of content
      */
     public static Map<Integer, String> lineStrOfResourcesFile(String path) {
 
-        return Lino.of(path)
-                .map(ResourceUtil::getResource)
-                .throwable_map(URL::openStream)
-                .map(InputStreamReader::new)
-                .map(BufferedReader::new)
-                .throwable_map(reader -> {
-                    Map<Integer, String> lines = new HashMap<>();
-                    int i = 0;
-                    while (reader.ready()) {
-                        lines.put(++i, reader.readLine());
-                    }
+        return Lino.of(path).map(ResourceUtil::getResource).throwable_map(URL::openStream).map(InputStreamReader::new).map(BufferedReader::new).throwable_map(reader -> {
+            Map<Integer, String> lines = new HashMap<>();
+            int i = 0;
+            while (reader.ready()) {
+                lines.put(++i, reader.readLine());
+            }
 
-                    return lines;
-                }).or(HashMap::new)
-                .get();
+            return lines;
+        }).or(HashMap::new).get();
     }
 
     /**
@@ -96,12 +132,12 @@ public class ResourceUtil {
      * spring/xml/test.xml
      * </pre>
      *
-     * @param resource 资源（相对Classpath的路径）
+     * @param path file path under classpath
      * @return 资源URL
      */
-    public static URL getResource(String resource) {
+    public static URL getResource(String path) {
 
-        return getResource(resource, null);
+        return getResource(path, null);
     }
 
     /**
