@@ -23,13 +23,18 @@ import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ReflectUtil;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * <p>Operations on {@link String} that are
@@ -8611,6 +8616,15 @@ public class StringUtils implements StrPool {
      */
     public static String str(CharSequence cs) {
         return null == cs ? null : cs.toString();
+    }
+
+    public static String read(InputStream inputStream) {
+        return read(inputStream, StandardCharsets.UTF_8);
+    }
+
+    public static String read(InputStream inputStream, Charset charset) {
+        return new BufferedReader(new InputStreamReader(inputStream, charset)).lines().collect(Collectors.joining("\n"
+        ));
     }
 
     public static String getFieldsToString(Object o) {

@@ -358,6 +358,16 @@ class LiraTest {
         Assertions.assertEquals(1, Lira.of(1, 2, 3, 4, 1).distinct((left, right) -> left - right < 2).first().get());
     }
 
+    @Test
+    void equals() {
+
+        Assertions.assertEquals(Lira.none(), Lira.of(1).filter(i -> i > 10));
+        Assertions.assertEquals(Lira.of(1), Lira.of(1).filter(i -> i < 10));
+        Assertions.assertThrows(InfiniteException.class,
+                () -> {
+                    boolean equals = Lira.range().equals(Lira.of(1).filter(i -> i < 10));
+                });
+    }
 
     @Test
     void flatMap() {

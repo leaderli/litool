@@ -9,7 +9,11 @@ import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -37,111 +41,146 @@ public class ResourceUtil {
     }
 
     /**
-     * Return a lira of resource files , include subdirectories
-     *
-     * @param fileFilter the filter of {@link  File}
-     * @return a lira of files
-     */
-    public static Lira<File> getResourceFile(FileFilter fileFilter) {
-
-        return getResourcesLira("")
-                .map(URL::getFile)
-                .map(File::new)
-                .map(f -> f.listFiles(fileFilter))
-                .flatMap();
-
-    }
-
-    /**
-     * Return a lira consist of {@link  URL} according to  {@link  ClassLoader#getResources(String)}
-     *
-     * @param resource the name of resource
-     * @return a lira consist of {@link  URL}
-     */
-    public static Lira<URL> getResourcesLira(String resource) {
-
-        return Lino.of(resource).throwable_map(ClassLoaderUtil.getClassLoader()::getResources).toLira(URL.class);
-
-    }
-
-    /**
-     * @param path 路径
-     * @return 返回每一行字符串的 map
-     */
-    public static Map<Integer, String> lineStrOfResourcesFile(String path) {
-
-        return Lino.of(path)
-                .map(ResourceUtil::getResource)
-                .throwable_map(URL::openStream)
-                .map(InputStreamReader::new)
-                .map(BufferedReader::new)
-                .throwable_map(reader -> {
-                    Map<Integer, String> lines = new HashMap<>();
-                    int i = 0;
-                    while (reader.ready()) {
-                        lines.put(++i, reader.readLine());
-                    }
-
-                    return lines;
-                }).or(HashMap::new)
-                .get();
-    }
-
-    /**
-     * 获得资源的URL<br>
-     * 路径用/分隔，例如:
+     * get file URL
      *
      * <pre>
      * config/a/db.config
      * spring/xml/test.xml
      * </pre>
      *
-     * @param resource 资源（相对Classpath的路径）
-     * @return 资源URL
+     * @param path file path under classpath
+     * @return file url
      */
-    public static URL getResource(String resource) {
+    public static URL getResource(String path) {
 
-        return getResource(resource, null);
+        return getResource(path, null);
     }
 
     /**
-     * 获得资源相对路径对应的URL
+     * Return a lira of resource files under classpath, include subdirectories
      *
-     * @param resource  资源相对路径，{@code null}和""都表示classpath根路径
-     * @param baseClass 基准Class，获得的相对路径相对于此Class所在路径，如果为{@code null}则相对ClassPath
+     * @param walkFileFilter the filter of {@link  File}
+     * @return a lira of files
+     * @see #getResourceFiles(String, WalkFileFilter)
+     */
+    public static Lira<File> getResourceFiles(WalkFileFilter walkFileFilter) {
+
+        return getResourceFiles("", walkFileFilter);
+    }
+
+    /**
+     * Return the relative URL under benchmark class
+     *
+     * @param resource_name the relative path of resource, {@code null} and "" both represent classpath path
+     * @param baseClass     the benchmark Class，
      * @return {@link URL}
      */
-    public static URL getResource(String resource, Class<?> baseClass) {
-        resource = StringUtils.stripToEmpty(resource);
+    public static URL getResource(String resource_name, Class<?> baseClass) {
+        resource_name = StringUtils.stripToEmpty(resource_name);
         if (baseClass == null) {
-            resource = StringUtils.removeStart(resource, "/");
-            return ClassLoaderUtil.getClassLoader().getResource(resource);
+            resource_name = StringUtils.removeStart(resource_name, "/");
+            return ClassLoaderUtil.getClassLoader().getResource(resource_name);
         }
-        return baseClass.getResource(resource);
+        return baseClass.getResource(resource_name);
     }
 
     /**
-     * @param resource 资源路径
-     * @return 流
+     * Return a lira of resource files under classpath, include subdirectories
+     *
+     * @param resource_name the name of resource under classpath
+     * @param fileFilter    the filter of {@link  File}
+     * @return a lira of files
+     * @see #getResourceURLs(String)
+     */
+    public static Lira<File> getResourceFiles(String resource_name, WalkFileFilter fileFilter) {
+
+
+        List<File> result = new ArrayList<>();
+        getResourceURLs(resource_name).throwable_map(URL::toURI).map(Paths::get).forThrowableEach(path -> {
+
+            SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    if (fileFilter == null || fileFilter.dir(dir.toFile())) {
+                        return FileVisitResult.CONTINUE;
+                    }
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path filePath, BasicFileAttributes attrs) {
+
+                    File file = filePath.toFile();
+                    if (fileFilter == null || fileFilter.file(file)) {
+                        result.add(file);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+            };
+            Files.walkFileTree(path, visitor);
+        });
+
+        return Lira.of(result);
+    }
+
+    /**
+     * Return  the map of line of content
+     *
+     * @param path file path under classpath
+     * @return a map of line of content
+     */
+    public static Map<Integer, String> lineStrOfResourcesFile(String path) {
+
+        return Lino.of(path).map(ResourceUtil::getResource).throwable_map(URL::openStream).map(InputStreamReader::new).map(BufferedReader::new).throwable_map(reader -> {
+            Map<Integer, String> lines = new HashMap<>();
+            int i = 0;
+            while (reader.ready()) {
+                lines.put(++i, reader.readLine());
+            }
+
+            return lines;
+        }).or(HashMap::new).get();
+    }
+
+    /**
+     * Return a lira consist of {@link  URL} according to  {@link  ClassLoader#getResources(String)}
+     *
+     * @param resource_name the name of resource_name
+     * @return a lira consist of {@link  URL}
+     */
+    public static Lira<URL> getResourceURLs(String resource_name) {
+
+        return Lino.of(resource_name).throwable_map(ClassLoaderUtil.getClassLoader()::getResources).toLira(URL.class);
+
+    }
+
+    /**
+     * An inputStream of resource under classpath
+     *
+     * @param resource_path the relative path under classpath
+     * @return an  inputStream
      * @see #getResourceAsStream(String, Class)
      */
-    public static InputStream getResourceAsStream(String resource) {
+    public static InputStream getResourceAsStream(String resource_path) {
 
-        return getResourceAsStream(resource, null);
+        return getResourceAsStream(resource_path, null);
 
     }
 
     /**
-     * @param resource  资源路径
-     * @param baseClass 类路径下找
-     * @return 流
+     * An inputStream of resource under benchmark class
+     *
+     * @param resource_relative_path the relative path under benchmark class
+     * @param baseClass              benchmark class
+     * @return an inputStream
      * @see #getResource(String, Class)
      * @see URL#openStream()
      */
-    public static InputStream getResourceAsStream(String resource, Class<?> baseClass) {
+    public static InputStream getResourceAsStream(String resource_relative_path, Class<?> baseClass) {
 
         try {
-            return getResource(resource, baseClass).openStream();
+            return getResource(resource_relative_path, baseClass).openStream();
         } catch (IOException e) {
             return null;
         }

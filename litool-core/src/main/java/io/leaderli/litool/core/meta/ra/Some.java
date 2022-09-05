@@ -275,6 +275,24 @@ public abstract class Some<T> implements Lira<T> {
 
 
     @Override
+    public int hashCode() {
+        return get().hashCode();
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Some) {
+
+            return get().equals(((Some<?>) obj).get());
+        }
+        return false;
+    }
+
+    @Override
     public Lira<T> distinct(EqualComparator<T> comparator) {
 
         return terminal(list -> {

@@ -30,7 +30,7 @@ public class LiYamlConfig {
 
         Yaml yaml = new Yaml();
 
-        Lira<File> resourceFile = ResourceUtil.getResourceFile(LiYamlConfig::isYamlFile);
+        Lira<File> resourceFile = ResourceUtil.getResourceFiles(LiYamlConfig::isYamlFile);
 
         for (File file : resourceFile) {
             RuntimeExceptionTransfer.run(() -> yaml.load(Files.newInputStream(file.toPath())));
@@ -62,7 +62,7 @@ public class LiYamlConfig {
         List<String> nameList = Arrays.asList(names);
 
         LiBox<Map<String, Object>> box = LiBox.of(new HashMap<>());
-        ResourceUtil.getResourceFile(f -> nameList.contains(f.getName()))
+        ResourceUtil.getResourceFiles(f -> nameList.contains(f.getName()))
                 .sorted(Comparator.comparingInt(f -> nameList.indexOf(f.getName())))
                 .throwable_map(f -> (Map<?, ?>) new Yaml().load(Files.newInputStream(f.toPath())))
                 .forThrowableEach(f -> box.value(LiMapUtil.merge(box.value(), f)));

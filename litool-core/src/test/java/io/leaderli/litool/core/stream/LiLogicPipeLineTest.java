@@ -75,6 +75,7 @@ class LiLogicPipeLineTest {
         MyInterPredicateSink test(Predicate<String> predicate);
     }
 
+    @FunctionalInterface
     private interface MyInterNotOperationSink extends InterNotOperationSink<String> {
         @Override
         MyInterOperationSink not();

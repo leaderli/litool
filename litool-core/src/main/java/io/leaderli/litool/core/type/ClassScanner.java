@@ -165,7 +165,7 @@ public class ClassScanner {
      * @since 5.7.5
      */
     public Set<Class<?>> scan(boolean forceScanJavaClassPaths) {
-        for (URL url : ResourceUtil.getResourcesLira(this.packagePath).get()) {
+        for (URL url : ResourceUtil.getResourceURLs(this.packagePath).get()) {
             if ("file".equals(url.getProtocol())) {
                 scanFile(new File(URLUtil.decode(url.getFile(), this.charset.name())), null);
             } else if ("jar".equals(url.getProtocol())) {
