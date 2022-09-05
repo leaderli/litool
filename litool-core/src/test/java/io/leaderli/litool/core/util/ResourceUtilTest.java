@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.util;
 
-import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.resource.ResourceUtil;
 import io.leaderli.litool.core.resource.WalkFileFilter;
@@ -11,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.function.Supplier;
 
 /**
  * @author leaderli
@@ -19,28 +17,6 @@ import java.util.function.Supplier;
  */
 class ResourceUtilTest {
 
-
-    @Test
-    void test() throws Exception {
-        Supplier<AutoCloseable> supplier = () -> (AutoCloseable) () -> {
-            System.out.println("fuck");
-
-        };
-
-        closeable(supplier, z -> {
-            System.out.println(z.getClass());
-        });
-
-    }
-
-    <T extends AutoCloseable> void closeable(Supplier<T> supplier, ThrowableConsumer<T> consumer) {
-
-        try (T closeable = supplier.get()) {
-            consumer.accept(closeable);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Test
     void getResource() {
@@ -120,7 +96,8 @@ class ResourceUtilTest {
     @Test
     void getResourceAsStream() {
 
-        closeable(() -> ResourceUtil.getResourceAsStream("io/leaderli/litool/core/bit/BitStr" +
+        AutoCloseableUtil.closeableConsumer(() -> ResourceUtil.getResourceAsStream("io/leaderli/litool/core/bit" +
+                "/BitStr" +
                 ".class"), ins -> {
 
 
