@@ -7,7 +7,7 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/7/18
  */
-public class FlatMap<T, R> extends Some<R> {
+class FlatMap<T, R> extends Ra<R> {
 
 
     private final Function<? super T, Iterator<? extends R>> mapper;

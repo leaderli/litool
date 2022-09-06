@@ -6,10 +6,10 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/8/30 7:25 PM
  */
-public class NullableSome<T> extends PublisherSome<T> {
+class NullableRa<T> extends PublisherRa<T> {
     private final Supplier<? extends T> supplier;
 
-    public NullableSome(Publisher<T> prevPublisher, Supplier<? extends T> supplier) {
+    public NullableRa(Publisher<T> prevPublisher, Supplier<? extends T> supplier) {
         super(prevPublisher);
         this.supplier = supplier;
     }

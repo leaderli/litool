@@ -4,9 +4,9 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/6/27
  */
-public class NoneSome<T> extends PublisherSome<T> {
+class NoneRa<T> extends PublisherRa<T> {
 
-    public NoneSome(Publisher<T> prevPublisher) {
+    public NoneRa(Publisher<T> prevPublisher) {
         super(prevPublisher);
     }
 

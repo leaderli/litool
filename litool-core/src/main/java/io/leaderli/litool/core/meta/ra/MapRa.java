@@ -8,11 +8,11 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/6/27
  */
-public class MapSome<T, R> extends Some<R> {
+public class MapRa<T, R> extends Ra<R> {
     private final Function<? super T, ? extends R> mapper;
     private final Publisher<T> prevPublisher;
 
-    public MapSome(Publisher<T> prevPublisher, Function<? super T, ? extends R> mapper) {
+    public MapRa(Publisher<T> prevPublisher, Function<? super T, ? extends R> mapper) {
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }

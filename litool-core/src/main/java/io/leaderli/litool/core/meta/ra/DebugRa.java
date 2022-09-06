@@ -4,10 +4,10 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/8/30
  */
-public class DebugSome<T> extends PublisherSome<T> {
+class DebugRa<T> extends PublisherRa<T> {
     private final DebugConsumer<T> consumer;
 
-    public DebugSome(Publisher<T> prevPublisher, DebugConsumer<T> consumer) {
+    public DebugRa(Publisher<T> prevPublisher, DebugConsumer<T> consumer) {
         super(prevPublisher);
         this.consumer = consumer;
     }

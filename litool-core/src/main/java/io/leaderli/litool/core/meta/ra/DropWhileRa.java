@@ -13,12 +13,12 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-public class DropWhileSome<T> extends PublisherSome<T> {
+class DropWhileRa<T> extends PublisherRa<T> {
 
 
     private final Function<? super T, ?> drop_condition;
 
-    public DropWhileSome(Publisher<T> prevPublisher, Function<? super T, ?> drop_condition) {
+    public DropWhileRa(Publisher<T> prevPublisher, Function<? super T, ?> drop_condition) {
         super(prevPublisher);
         this.drop_condition = drop_condition;
     }

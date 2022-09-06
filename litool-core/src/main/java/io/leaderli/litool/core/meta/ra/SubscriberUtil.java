@@ -4,7 +4,7 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/8/30
  */
-public class SubscriberUtil {
+class SubscriberUtil {
 
     /**
      * <pre>

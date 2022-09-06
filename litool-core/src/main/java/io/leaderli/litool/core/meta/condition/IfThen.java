@@ -8,24 +8,24 @@ import java.util.function.Function;
  * <p>
  * 后接 then 系列操作
  */
-public class IfThen<T, R> implements LiThen<T, R> {
-    private final PublisherIf<T, R> prevPublisher;
+class IfThen<T, R> implements LiThen<T, R> {
+    private final Publisher<T, R> prevPublisher;
     private final Function<? super T, ?> filter;
 
-    public IfThen(PublisherIf<T, R> prevPublisher, Function<? super T, ?> filter) {
+    public IfThen(Publisher<T, R> prevPublisher, Function<? super T, ?> filter) {
         this.prevPublisher = prevPublisher;
         this.filter = filter;
     }
 
     @Override
-    public void subscribe(SubscriberIf<T, R> actualSubscriber) {
-        prevPublisher.subscribe(new SubscriberIfThen(actualSubscriber));
+    public void subscribe(Subscriber<T, R> actualSubscriber) {
+        prevPublisher.subscribe(new SubscriberThen(actualSubscriber));
 
     }
 
-    private class SubscriberIfThen extends IntermediateSubscriberIf<T, R> {
+    private class SubscriberThen extends IntermediateSubscriber<T, R> {
 
-        public SubscriberIfThen(SubscriberIf<T, R> actualSubscriber) {
+        public SubscriberThen(Subscriber<T, R> actualSubscriber) {
             super(actualSubscriber);
 
         }

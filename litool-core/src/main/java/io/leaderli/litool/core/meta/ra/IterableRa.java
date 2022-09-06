@@ -10,12 +10,12 @@ import java.util.Iterator;
  * @author leaderli
  * @since 2022/7/16
  */
-public final class IterableSome<T> extends Some<T> {
+public class IterableRa<T> extends Ra<T> {
 
     private final Iterable<? extends T> iterable;
     private final boolean infinite;
 
-    public IterableSome(Iterable<? extends T> iterable) {
+    public IterableRa(Iterable<? extends T> iterable) {
         this.iterable = iterable;
         this.infinite = iterable instanceof Generator;
 

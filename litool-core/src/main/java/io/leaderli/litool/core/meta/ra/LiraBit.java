@@ -6,7 +6,7 @@ import io.leaderli.litool.core.bit.BitState;
  * @author leaderli
  * @since 2022/8/31 11:05 AM
  */
-public class LiraBit extends BitState {
+class LiraBit extends BitState {
 
 
     /**

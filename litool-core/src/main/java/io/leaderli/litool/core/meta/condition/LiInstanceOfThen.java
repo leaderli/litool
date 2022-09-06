@@ -9,7 +9,8 @@ import java.util.function.Supplier;
  *
  * @see LiIf
  */
-public interface LiInstanceOfThen<T, M, R> extends PublisherIf<T, R> {
+@FunctionalInterface
+public interface LiInstanceOfThen<T, M, R> extends Publisher<T, R> {
 
 
     /**
@@ -18,7 +19,7 @@ public interface LiInstanceOfThen<T, M, R> extends PublisherIf<T, R> {
      */
     default LiIf<T, R> then(Function<? super M, ? extends R> mapping) {
 
-        return new CaseIf<>(this, mapping);
+        return new Case<>(this, mapping);
     }
 
     /**
@@ -27,7 +28,7 @@ public interface LiInstanceOfThen<T, M, R> extends PublisherIf<T, R> {
      */
     default LiIf<T, R> then(Supplier<R> supplier) {
 
-        return new CaseIf<>(this, v -> supplier.get());
+        return new Case<>(this, v -> supplier.get());
     }
 
     /**
@@ -36,7 +37,7 @@ public interface LiInstanceOfThen<T, M, R> extends PublisherIf<T, R> {
      */
     default LiIf<T, R> then(R value) {
 
-        return new CaseIf<>(this, v -> value);
+        return new Case<>(this, v -> value);
     }
 
     /**
@@ -46,7 +47,7 @@ public interface LiInstanceOfThen<T, M, R> extends PublisherIf<T, R> {
     @SuppressWarnings("unchecked")
     default LiIf<T, R> then(Consumer<? super M> consumer) {
 
-        return new CaseIf<>(this, v -> {
+        return new Case<>(this, v -> {
             consumer.accept((M) v);
             return null;
         });

@@ -10,12 +10,12 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/9/1
  */
-class TerminalSome<T> extends PublisherSome<T> {
+class TerminalRa<T> extends PublisherRa<T> {
 
     private final Function<List<T>, Iterable<T>> deliverAction;
 
 
-    public TerminalSome(Publisher<T> prevPublisher, Function<List<T>, Iterable<T>> deliverAction) {
+    public TerminalRa(Publisher<T> prevPublisher, Function<List<T>, Iterable<T>> deliverAction) {
         super(prevPublisher);
         this.deliverAction = deliverAction;
     }
@@ -83,9 +83,9 @@ class TerminalSome<T> extends PublisherSome<T> {
         void completeTerminal() {
 
             if (deliverAction != null) {
-                terminalSubscription = new IterableSome<>(deliverAction.apply(cache)).newGenerator(actualSubscriber);
+                terminalSubscription = new IterableRa<>(deliverAction.apply(cache)).newGenerator(actualSubscriber);
             } else {
-                terminalSubscription = new IterableSome<>(cache).newGenerator(actualSubscriber);
+                terminalSubscription = new IterableRa<>(cache).newGenerator(actualSubscriber);
             }
         }
 

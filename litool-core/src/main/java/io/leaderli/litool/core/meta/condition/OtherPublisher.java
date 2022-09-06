@@ -7,25 +7,25 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/7/17
  */
-public class OtherThen<T, R> implements PublisherIf<T, R> {
-    private final PublisherIf<T, R> prevPublisher;
+class OtherPublisher<T, R> implements Publisher<T, R> {
+    private final Publisher<T, R> prevPublisher;
     private final Supplier<? extends R> supplier;
 
-    public OtherThen(PublisherIf<T, R> prevPublisher, Supplier<? extends R> supplier) {
+    public OtherPublisher(Publisher<T, R> prevPublisher, Supplier<? extends R> supplier) {
         this.prevPublisher = prevPublisher;
         this.supplier = supplier;
     }
 
     @Override
-    public void subscribe(SubscriberIf<T, R> actualSubscriber) {
+    public void subscribe(Subscriber<T, R> actualSubscriber) {
         prevPublisher.subscribe(new SubscriberOtherThen<>(supplier, actualSubscriber));
 
     }
 
-    private static class SubscriberOtherThen<T, R> extends IntermediateSubscriberIf<T, R> {
+    private static class SubscriberOtherThen<T, R> extends IntermediateSubscriber<T, R> {
         private final Supplier<? extends R> supplier;
 
-        public SubscriberOtherThen(Supplier<? extends R> supplier, SubscriberIf<T, R> actualSubscriber) {
+        public SubscriberOtherThen(Supplier<? extends R> supplier, Subscriber<T, R> actualSubscriber) {
             super(actualSubscriber);
             this.supplier = supplier;
 

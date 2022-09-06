@@ -6,7 +6,7 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/6/22
  */
-public abstract class IntermediateSubscriberSubscription<T, R> implements Subscriber<T>, Subscription {
+abstract class IntermediateSubscriberSubscription<T, R> implements Subscriber<T>, Subscription {
     protected final Subscriber<? super R> actualSubscriber;
     Subscription prevSubscription;
 

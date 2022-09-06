@@ -6,7 +6,7 @@ import java.util.Iterator;
  * @author leaderli
  * @since 2022/9/3
  */
-public abstract class GeneratorSubscription<T> implements Subscription {
+abstract class GeneratorSubscription<T> implements Subscription {
 
     protected final Subscriber<? super T> actualSubscriber;
     protected final Iterator<? extends T> iterator;

@@ -6,16 +6,16 @@ import java.util.function.Consumer;
  * @author leaderli
  * @since 2022/6/22
  */
-public abstract class IntermediateSubscriberIf<T, R> implements SubscriberIf<T, R>, SubscriptionIf<R> {
-    protected final SubscriberIf<T, R> actualSubscriber;
-    private SubscriptionIf<R> prevSubscription;
+abstract class IntermediateSubscriber<T, R> implements Subscriber<T, R>, Subscription<R> {
+    protected final Subscriber<T, R> actualSubscriber;
+    private Subscription<R> prevSubscription;
 
-    protected IntermediateSubscriberIf(SubscriberIf<T, R> actualSubscriber) {
+    protected IntermediateSubscriber(Subscriber<T, R> actualSubscriber) {
         this.actualSubscriber = actualSubscriber;
     }
 
     @Override
-    public void onSubscribe(SubscriptionIf<R> prevSubscription) {
+    public void onSubscribe(Subscription<R> prevSubscription) {
         this.prevSubscription = prevSubscription;
         actualSubscriber.onSubscribe(this);
     }

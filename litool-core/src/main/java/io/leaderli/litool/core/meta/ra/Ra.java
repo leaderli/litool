@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/6/28
  */
-public abstract class Some<T> implements Lira<T> {
+public abstract class Ra<T> implements Lira<T> {
 
 
     @Override
@@ -58,7 +58,7 @@ public abstract class Some<T> implements Lira<T> {
 
     @Override
     public Lira<T> filter(Function<? super T, ?> filter) {
-        return new FilterSome<>(this, filter);
+        return new FilterRa<>(this, filter);
 
     }
 
@@ -112,8 +112,12 @@ public abstract class Some<T> implements Lira<T> {
     }
 
     @Override
-    public Lira<T> sleep(int countdown, long milliseconds) {
-        return new SleepSome<>(this, countdown, milliseconds);
+    public Lira<T> limit(int n) {
+        if (n > 0) {
+            return new LimitRa<>(this, n);
+        }
+        return new NoneRa<>(this);
+
     }
 
     @Override
@@ -122,11 +126,8 @@ public abstract class Some<T> implements Lira<T> {
     }
 
     @Override
-    public Lira<T> limit(int n) {
-        if (n > 0) {
-            return new LimitSome<>(this, n);
-        }
-        return new NoneSome<>(this);
+    public <R> Lira<R> map(Function<? super T, ? extends R> mapper) {
+        return new MapRa<>(this, mapper);
 
     }
 
@@ -142,37 +143,30 @@ public abstract class Some<T> implements Lira<T> {
     }
 
     @Override
-    public <R> Lira<R> map(Function<? super T, ? extends R> mapper) {
-        return new MapSome<>(this, mapper);
-
-    }
-
-    @Override
     public Lira<T> terminal(Function<List<T>, Iterable<T>> deliverAction) {
-        return new TerminalSome<>(this, deliverAction);
+        return new TerminalRa<>(this, deliverAction);
     }
 
     @Override
     public Lira<T> takeWhile(Function<? super T, ?> filter) {
-        return new TakeWhileSome<>(this, filter);
+        return new TakeWhileRa<>(this, filter);
     }
 
     @Override
     public Lira<T> dropWhile(Function<? super T, ?> filter) {
-        return new DropWhileSome<>(this, filter);
+        return new DropWhileRa<>(this, filter);
     }
-
 
     @Override
     public Lira<T> nullable(Supplier<? extends T> supplier) {
-        return new NullableSome<>(this, supplier);
+        return new NullableRa<>(this, supplier);
 
     }
 
     @Override
     public Lira<T> skip(int n) {
         if (n > 0) {
-            return new SkipSome<>(this, n);
+            return new SkipRa<>(this, n);
         }
 
         return this;
@@ -180,20 +174,27 @@ public abstract class Some<T> implements Lira<T> {
 
     @Override
     public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
-        return new ThrowableMap<>(this, mapper);
+        return new ThrowableMapRa<>(this, mapper);
 
 
     }
 
     @Override
     public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
-        return new ThrowableMap<>(this, mapper);
+        return new ThrowableMapRa<>(this, mapper);
 
     }
 
     @Override
     public Lira<T> onError(Exceptionable onError) {
-        return new OnErrorSome<>(this, onError);
+        return new OnErrorRa<>(this, onError);
+    }
+
+    @Override
+    public Lira<T> debug(DebugConsumer<T> action) {
+
+
+        return new DebugRa<>(this, action);
     }
 
     @SafeVarargs
@@ -267,10 +268,8 @@ public abstract class Some<T> implements Lira<T> {
     }
 
     @Override
-    public Lira<T> debug(DebugConsumer<T> action) {
-
-
-        return new DebugSome<>(this, action);
+    public Lira<T> sleep(int countdown, long milliseconds) {
+        return new SleepRa<>(this, countdown, milliseconds);
     }
 
 
@@ -285,9 +284,9 @@ public abstract class Some<T> implements Lira<T> {
         if (obj == null) {
             return false;
         }
-        if (obj instanceof Some) {
+        if (obj instanceof Ra) {
 
-            return get().equals(((Some<?>) obj).get());
+            return get().equals(((Ra<?>) obj).get());
         }
         return false;
     }

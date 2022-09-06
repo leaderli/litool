@@ -10,26 +10,27 @@ import java.util.function.Function;
  * <p>
  * 当条件满足时执行转换函数，后接 if 系列
  */
-public class ThenIf<T, R> implements LiIf<T, R> {
+class Then<T, R> extends If<T, R> {
 
-    private final PublisherIf<T, R> prevPublisher;
+    private final Publisher<T, R> prevPublisher;
     private final Function<? super T, ? extends R> mapper;
 
 
-    public ThenIf(PublisherIf<T, R> prevPublisher, Function<? super T, ? extends R> mapper) {
+    public Then(Publisher<T, R> prevPublisher, Function<? super T, ? extends R> mapper) {
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }
 
 
-    public void subscribe(SubscriberIf<T, R> actualSubscriber) {
-        prevPublisher.subscribe(new SubscriberThenIf(actualSubscriber));
+    @Override
+    public void subscribe(Subscriber<T, R> actualSubscriber) {
+        prevPublisher.subscribe(new SubscriberThen(actualSubscriber));
 
     }
 
-    private class SubscriberThenIf extends IntermediateSubscriberIf<T, R> {
+    private class SubscriberThen extends IntermediateSubscriber<T, R> {
 
-        public SubscriberThenIf(SubscriberIf<T, R> actualSubscriber) {
+        public SubscriberThen(Subscriber<T, R> actualSubscriber) {
             super(actualSubscriber);
         }
 

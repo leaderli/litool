@@ -11,12 +11,12 @@ import io.leaderli.litool.core.meta.Lino;
  * @see Lino#throwable_map(ThrowableFunction)
  * @since 2022/6/27
  */
-class ThrowableMap<T, R> extends Some<R> {
+class ThrowableMapRa<T, R> extends Ra<R> {
     private final ThrowableFunction<? super T, ? extends R> mapper;
     private final Publisher<T> prevPublisher;
 
 
-    public ThrowableMap(Publisher<T> prevPublisher, ThrowableFunction<? super T, ? extends R> mapper) {
+    public ThrowableMapRa(Publisher<T> prevPublisher, ThrowableFunction<? super T, ? extends R> mapper) {
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }

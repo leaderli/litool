@@ -9,7 +9,8 @@ import java.util.function.Supplier;
  *
  * @see LiIf
  */
-public interface LiThen<T, R> extends PublisherIf<T, R> {
+@FunctionalInterface
+public interface LiThen<T, R> extends Publisher<T, R> {
 
 
     /**
@@ -18,7 +19,7 @@ public interface LiThen<T, R> extends PublisherIf<T, R> {
      */
     default LiIf<T, R> then(Function<? super T, ? extends R> mapping) {
 
-        return new ThenIf<>(this, mapping);
+        return new Then<>(this, mapping);
     }
 
     /**
@@ -27,7 +28,7 @@ public interface LiThen<T, R> extends PublisherIf<T, R> {
      */
     default LiIf<T, R> then(Supplier<? extends R> supplier) {
 
-        return new ThenIf<>(this, v -> supplier.get());
+        return new Then<>(this, v -> supplier.get());
     }
 
     /**
@@ -36,7 +37,7 @@ public interface LiThen<T, R> extends PublisherIf<T, R> {
      */
     default LiIf<T, R> then(R value) {
 
-        return new ThenIf<>(this, v -> value);
+        return new Then<>(this, v -> value);
     }
 
     /**
@@ -45,7 +46,7 @@ public interface LiThen<T, R> extends PublisherIf<T, R> {
      */
     default LiIf<T, R> then(Consumer<? super T> consumer) {
 
-        return new ThenIf<>(this, v -> {
+        return new Then<>(this, v -> {
             consumer.accept(v);
             return null;
         });

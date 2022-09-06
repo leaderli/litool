@@ -13,51 +13,45 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-public class TakeWhileSome<T> extends PublisherSome<T> {
+class FilterRa<T> extends PublisherRa<T> {
 
 
     private final Function<? super T, ?> filter;
 
-    public TakeWhileSome(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
+    public FilterRa(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
         super(prevPublisher);
         this.filter = filter;
     }
 
     @Override
     public void subscribe(Subscriber<? super T> actualSubscriber) {
-        prevPublisher.subscribe(new TakeWhileSubscriberSubscription(actualSubscriber));
+        prevPublisher.subscribe(new FilterSubscriberSubscription(actualSubscriber));
 
     }
 
 
-    private final class TakeWhileSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
+    private final class FilterSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
 
-        public TakeWhileSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
+        public FilterSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 
-
         @Override
         public void next(T t) {
-
             if (filter != null) {
-                boolean present = BooleanUtil.parse(filter.apply(t));
-                if (present) {
-                    cancel();
-                    return;
+                if (BooleanUtil.parse(filter.apply(t))) {
+                    this.actualSubscriber.next(t);
                 }
+            } else {
+                this.actualSubscriber.next(t);
             }
-            actualSubscriber.next(t);
-
         }
 
         @Override
         public void next_null() {
             //  filter will avoid null element
             if (filter == null) {
-                cancel();
-            } else {
-                super.next_null();
+                this.actualSubscriber.next_null();
             }
         }
     }

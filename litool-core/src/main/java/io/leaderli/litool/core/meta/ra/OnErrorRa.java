@@ -13,12 +13,12 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-public class OnErrorSome<T> extends PublisherSome<T> {
+class OnErrorRa<T> extends PublisherRa<T> {
 
 
     private final Exceptionable onError;
 
-    public OnErrorSome(Publisher<T> prevPublisher, Exceptionable onError) {
+    public OnErrorRa(Publisher<T> prevPublisher, Exceptionable onError) {
         super(prevPublisher);
         this.onError = onError;
     }

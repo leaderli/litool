@@ -8,7 +8,7 @@ import java.util.Objects;
  * @author leaderli
  * @since 2022/6/27
  */
-public class CancelConsumerSubscriber<T> implements Subscriber<T> {
+class CancelConsumerSubscriber<T> implements Subscriber<T> {
     /**
      * 该消费者仅保留 {@link CancelSubscription#cancel()} 操作，不允许使用
      * {@link Subscription#request(int)}

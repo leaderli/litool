@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
  * @author leaderli
  * @since 2022/6/24
  */
-class LiIfTest {
+class LiTest {
 
     @Test
     void test_if() {
@@ -97,11 +97,6 @@ class LiIfTest {
         );
     }
 
-    @Test
-    void _else() {
-
-        Assertions.assertSame(Lino.none(), LiIf.of()._else());
-    }
 
     @Test
     void then() {

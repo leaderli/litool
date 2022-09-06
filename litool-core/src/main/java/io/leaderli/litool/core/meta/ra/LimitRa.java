@@ -6,10 +6,10 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/6/27
  */
-public class LimitSome<T> extends PublisherSome<T> {
+class LimitRa<T> extends PublisherRa<T> {
     private final int limit;
 
-    public LimitSome(Publisher<T> prevPublisher, int limit) {
+    public LimitRa(Publisher<T> prevPublisher, int limit) {
         super(prevPublisher);
         this.limit = limit;
     }

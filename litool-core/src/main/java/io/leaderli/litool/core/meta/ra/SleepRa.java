@@ -15,7 +15,7 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-public class SleepSome<T> extends PublisherSome<T> {
+class SleepRa<T> extends PublisherRa<T> {
 
 
     /**
@@ -24,7 +24,7 @@ public class SleepSome<T> extends PublisherSome<T> {
     private final int final_countdown;
     private final long milliseconds;
 
-    public SleepSome(Publisher<T> prevPublisher, int countdown, long milliseconds) {
+    public SleepRa(Publisher<T> prevPublisher, int countdown, long milliseconds) {
         super(prevPublisher);
         this.final_countdown = countdown;
         this.milliseconds = milliseconds;

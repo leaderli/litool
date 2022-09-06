@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
 
 
-    Lira<?> NONE_INSTANCE = new IterableSome<>(NoneItr.of());
+    Lira<?> NONE_INSTANCE = new IterableRa<>(NoneItr.of());
 
     /**
      * Returns the narrow type lira, convert {@code <? extends T>} to {@code  <T>}
@@ -70,7 +70,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
 
         if (iterableItr != null && iterableItr.hasNext()) {
 
-            return new IterableSome<>(iterableItr);
+            return new IterableRa<>(iterableItr);
         }
         return none();
     }
@@ -131,7 +131,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
         if (iterable == null || !iterable.iterator().hasNext()) {
             return none();
         }
-        return new IterableSome<>(iterable);
+        return new IterableRa<>(iterable);
     }
 
     /**

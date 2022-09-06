@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * @author leaderli
  * @since 2022/6/27
  */
-public class ConsumerSubscriber<T> implements Subscriber<T> {
+class ConsumerSubscriber<T> implements Subscriber<T> {
     private final Consumer<? super T> consumer;
 
 

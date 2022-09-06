@@ -2,7 +2,7 @@ package io.leaderli.litool.core.meta.condition;
 
 import java.util.function.Consumer;
 
-public interface SubscriptionIf<T> {
+interface Subscription<T> {
 
     /**
      * 请求数据

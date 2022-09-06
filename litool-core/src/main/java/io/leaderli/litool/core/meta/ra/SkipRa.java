@@ -6,10 +6,10 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/6/27
  */
-public class SkipSome<T> extends PublisherSome<T> {
+class SkipRa<T> extends PublisherRa<T> {
     private final int skip;
 
-    public SkipSome(Publisher<T> prevPublisher, int skip) {
+    public SkipRa(Publisher<T> prevPublisher, int skip) {
         super(prevPublisher);
         this.skip = skip;
     }
