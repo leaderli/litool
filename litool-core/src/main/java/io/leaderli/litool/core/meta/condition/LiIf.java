@@ -14,14 +14,12 @@ public interface LiIf<T, R> extends Publisher<T, R> {
 
 
     static <T, R> LiIf<T, R> of(Lino<T> lino) {
-        if (lino == null) {
-            lino = Lino.none();
-        }
-        return new Begin<>(lino);
+        T v = lino == null ? null : lino.get();
+        return new BeginNode<>(v);
     }
 
     static <T, R> LiIf<T, R> of(T value) {
-        return of(Lino.of(value));
+        return new BeginNode<>(value);
     }
 
     /**
@@ -83,14 +81,6 @@ public interface LiIf<T, R> extends Publisher<T, R> {
      */
     LiThen<T, R> _if(Function<? super T, ?> predicate);
 
-
-    /**
-     * 当原数据为 null 时，则所有前置条件都不执行断言，直接执行 runnable
-     *
-     * @param runnable 当所有前置断言全部失败时的时执行，该出恒返回 {@link Lino#none()}
-     * @return 触发实际链条执行的函数
-     */
-    Lino<R> _else(Runnable runnable);
 
     /**
      * @param value 当所有前置断言全部失败时的默认值

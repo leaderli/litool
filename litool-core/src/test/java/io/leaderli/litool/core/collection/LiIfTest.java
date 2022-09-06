@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
  * @author leaderli
  * @since 2022/6/24
  */
-class LiTest {
+class LiIfTest {
 
     @Test
     void test_if() {

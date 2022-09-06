@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.meta.condition;
 
-import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.util.BooleanUtil;
 
@@ -11,7 +10,7 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/9/6
  */
-abstract class If<T, R> implements LiIf<T, R> {
+abstract class Node<T, R> implements LiIf<T, R> {
 
     /**
      * @param compares 当存在 equals 的值时执行
@@ -21,7 +20,7 @@ abstract class If<T, R> implements LiIf<T, R> {
     @SuppressWarnings("unchecked")
     public LiThen<T, R> _case(T... compares) {
 
-        return new IfThen<>(this, v -> {
+        return new IfNode<>(this, v -> {
 
             if (compares != null) {
                 for (T compare : compares) {
@@ -52,7 +51,7 @@ abstract class If<T, R> implements LiIf<T, R> {
      */
     @Override
     public LiThen<T, R> _case(T compare) {
-        return new IfThen<>(this, v -> v.equals(compare));
+        return new IfNode<>(this, v -> v.equals(compare));
     }
 
     /**
@@ -102,25 +101,7 @@ abstract class If<T, R> implements LiIf<T, R> {
     @Override
     public LiThen<T, R> _if(Function<? super T, ?> predicate) {
 
-        return new IfThen<>(this, predicate);
-    }
-
-    /**
-     * 当原数据为 null 时，则所有前置条件都不执行断言，直接执行 runnable
-     *
-     * @param runnable 当所有前置断言全部失败时的时执行，该出恒返回 {@link Lino#none()}
-     * @return 触发实际链条执行的函数
-     */
-    @Override
-    public Lino<R> _else(Runnable runnable) {
-        OtherPublisher<T, R> otherPublisher = new OtherPublisher<>(this, () -> {
-            runnable.run();
-            return null;
-        });
-        LiBox<R> result = LiBox.none();
-        End<T, R> endIf = new End<>(result::value);
-        endIf.request(otherPublisher);
-        return result.lino();
+        return new IfNode<>(this, predicate);
     }
 
     /**
@@ -140,11 +121,10 @@ abstract class If<T, R> implements LiIf<T, R> {
      */
     @Override
     public Lino<R> _else(Supplier<? extends R> supplier) {
-        OtherPublisher<T, R> otherPublisher = new OtherPublisher<>(this, supplier);
-        LiBox<R> result = LiBox.none();
-        End<T, R> endIf = new End<>(result::value);
-        endIf.request(otherPublisher);
-        return result.lino();
+        ElseNode<T, R> elseNode = new ElseNode<>(this, supplier);
+        elseNode.subscribe(Subscription::request);
+        return Lino.of(elseNode.getResult());
+
     }
 
     /**
@@ -154,6 +134,6 @@ abstract class If<T, R> implements LiIf<T, R> {
      */
     @Override
     public Lino<R> _else() {
-        return _else((Supplier<? extends R>) null);
+        return _else(() -> null);
     }
 }

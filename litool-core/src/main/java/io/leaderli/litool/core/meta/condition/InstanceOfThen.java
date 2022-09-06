@@ -2,8 +2,6 @@ package io.leaderli.litool.core.meta.condition;
 
 import io.leaderli.litool.core.type.ClassUtil;
 
-import java.util.function.Function;
-
 /**
  * @author leaderli
  * @since 2022/7/17
@@ -31,11 +29,15 @@ class InstanceOfThen<T, M, R> implements LiInstanceOfThen<T, M, R> {
 
 
         @Override
-        public void next(T t, Function<? super T, ?> predicate) {
+        public void next(T t) {
 
-            this.actualSubscriber.next(t, v -> ClassUtil.isAssignableFromOrIsWrapper(InstanceOfThen.this.middleType,
-                    v.getClass()));
+            if (ClassUtil.isAssignableFromOrIsWrapper(InstanceOfThen.this.middleType, t.getClass())) {
+                this.actualSubscriber.apply(t);
+            } else {
+                this.actualSubscriber.next(t);
+            }
         }
+
 
     }
 

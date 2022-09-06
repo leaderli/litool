@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.meta.condition;
 
+import io.leaderli.litool.core.util.BooleanUtil;
+
 import java.util.function.Function;
 
 /**
@@ -8,11 +10,11 @@ import java.util.function.Function;
  * <p>
  * 后接 then 系列操作
  */
-class IfThen<T, R> implements LiThen<T, R> {
+class IfNode<T, R> implements LiThen<T, R> {
     private final Publisher<T, R> prevPublisher;
     private final Function<? super T, ?> filter;
 
-    public IfThen(Publisher<T, R> prevPublisher, Function<? super T, ?> filter) {
+    public IfNode(Publisher<T, R> prevPublisher, Function<? super T, ?> filter) {
         this.prevPublisher = prevPublisher;
         this.filter = filter;
     }
@@ -30,12 +32,16 @@ class IfThen<T, R> implements LiThen<T, R> {
 
         }
 
-
         @Override
-        public void next(T t, Function<? super T, ?> predicate) {
+        public void next(T t) {
 
-            this.actualSubscriber.next(t, filter);
+            if (BooleanUtil.parse(filter.apply(t))) {
+                this.actualSubscriber.apply(t);
+            } else {
+                this.actualSubscriber.next(t);
+            }
         }
+
 
     }
 }

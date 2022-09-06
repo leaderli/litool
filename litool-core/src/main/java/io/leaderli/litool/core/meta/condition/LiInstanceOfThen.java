@@ -19,7 +19,7 @@ public interface LiInstanceOfThen<T, M, R> extends Publisher<T, R> {
      */
     default LiIf<T, R> then(Function<? super M, ? extends R> mapping) {
 
-        return new Case<>(this, mapping);
+        return new FulfillNode<>(this, mapping);
     }
 
     /**
@@ -28,7 +28,7 @@ public interface LiInstanceOfThen<T, M, R> extends Publisher<T, R> {
      */
     default LiIf<T, R> then(Supplier<R> supplier) {
 
-        return new Case<>(this, v -> supplier.get());
+        return new FulfillNode<>(this, v -> supplier.get());
     }
 
     /**
@@ -37,7 +37,7 @@ public interface LiInstanceOfThen<T, M, R> extends Publisher<T, R> {
      */
     default LiIf<T, R> then(R value) {
 
-        return new Case<>(this, v -> value);
+        return new FulfillNode<>(this, v -> value);
     }
 
     /**
@@ -47,7 +47,7 @@ public interface LiInstanceOfThen<T, M, R> extends Publisher<T, R> {
     @SuppressWarnings("unchecked")
     default LiIf<T, R> then(Consumer<? super M> consumer) {
 
-        return new Case<>(this, v -> {
+        return new FulfillNode<>(this, v -> {
             consumer.accept((M) v);
             return null;
         });

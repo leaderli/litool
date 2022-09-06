@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.meta.condition;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -19,7 +18,7 @@ public interface LiThen<T, R> extends Publisher<T, R> {
      */
     default LiIf<T, R> then(Function<? super T, ? extends R> mapping) {
 
-        return new Then<>(this, mapping);
+        return new FulfillNode<>(this, mapping);
     }
 
     /**
@@ -28,7 +27,7 @@ public interface LiThen<T, R> extends Publisher<T, R> {
      */
     default LiIf<T, R> then(Supplier<? extends R> supplier) {
 
-        return new Then<>(this, v -> supplier.get());
+        return new FulfillNode<>(this, v -> supplier.get());
     }
 
     /**
@@ -37,19 +36,7 @@ public interface LiThen<T, R> extends Publisher<T, R> {
      */
     default LiIf<T, R> then(R value) {
 
-        return new Then<>(this, v -> value);
-    }
-
-    /**
-     * @param consumer 消费者，当条件满足时执行，不需要保存结构，会存储为 null
-     * @return 返回一个新的 LiIf ,  以方便链式调用
-     */
-    default LiIf<T, R> then(Consumer<? super T> consumer) {
-
-        return new Then<>(this, v -> {
-            consumer.accept(v);
-            return null;
-        });
+        return new FulfillNode<>(this, v -> value);
     }
 
 
