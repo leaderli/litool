@@ -667,7 +667,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public <R> LiIf<T, R> toIf() {
-            return LiIf.of();
+            return LiIf.of(null);
         }
 
         @Override
