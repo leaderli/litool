@@ -6,12 +6,12 @@ import io.leaderli.litool.core.meta.Lino;
  * @author leaderli
  * @since 2022/7/16
  */
-class NewValue<T> extends Some<T, T> {
+class ValueLink<T> extends SomeLink<T, T> {
 
 
     private final T value;
 
-    public NewValue(T t) {
+    public ValueLink(T t) {
         super(null);
         this.value = t;
 

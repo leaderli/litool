@@ -28,7 +28,7 @@ public interface LiLink<T> extends LiValue, Publisher<T>, Runnable {
      */
     static LiLink<Integer> of() {
 
-        return new NewValue<>(1);
+        return new ValueLink<>(1);
     }
 
     /**
@@ -37,7 +37,7 @@ public interface LiLink<T> extends LiValue, Publisher<T>, Runnable {
      */
     static <T> LiLink<T> none() {
 
-        return new NewValue<>(null);
+        return new ValueLink<>(null);
     }
 
     /**
@@ -47,7 +47,7 @@ public interface LiLink<T> extends LiValue, Publisher<T>, Runnable {
      */
     static <T> LiLink<T> of(T value) {
 
-        return new NewValue<>(value);
+        return new ValueLink<>(value);
     }
 
     /**
@@ -165,7 +165,7 @@ public interface LiLink<T> extends LiValue, Publisher<T>, Runnable {
      * @param consumer 消费者
      * @return this
      */
-    OnErrorConsumer<T> error(Consumer<? super T> consumer);
+    OnErrorConsumerLink<T> error(Consumer<? super T> consumer);
 
     /**
      * 当链条失败时执行，无视异常
@@ -183,7 +183,7 @@ public interface LiLink<T> extends LiValue, Publisher<T>, Runnable {
      * @return this
      * @see LiConstant#WHEN_THROW
      */
-    OnErrorConsumer<T> throwable_error(ThrowableConsumer<? super T> consumer);
+    OnErrorConsumerLink<T> throwable_error(ThrowableConsumer<? super T> consumer);
 
     /**
      * @return 链条是否正确执行完成，没有任何 error 节点执行

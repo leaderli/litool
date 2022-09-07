@@ -8,13 +8,13 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/7/16
  */
-class Union<T, R> extends Some<T, R> {
+class UnionLink<T, R> extends SomeLink<T, R> {
 
 
     private final Supplier<? extends R> supplier;
 
 
-    public Union(Publisher<T> prevPublisher, Supplier<? extends R> supplier) {
+    public UnionLink(Publisher<T> prevPublisher, Supplier<? extends R> supplier) {
         super(prevPublisher);
         this.supplier = supplier;
     }

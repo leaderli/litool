@@ -21,11 +21,11 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/7/16
  */
-abstract class Some<P, T> implements LiLink<T> {
+abstract class SomeLink<P, T> implements LiLink<T> {
 
     protected final Publisher<P> prevPublisher;
 
-    protected Some(Publisher<P> prevPublisher) {
+    protected SomeLink(Publisher<P> prevPublisher) {
         this.prevPublisher = prevPublisher;
     }
 
@@ -34,7 +34,7 @@ abstract class Some<P, T> implements LiLink<T> {
      */
     static LiLink<Integer> of() {
 
-        return new NewValue<>(1);
+        return new ValueLink<>(1);
     }
 
     /**
@@ -44,23 +44,23 @@ abstract class Some<P, T> implements LiLink<T> {
      */
     static <T> LiLink<T> of(T value) {
 
-        return new NewValue<>(value);
+        return new ValueLink<>(value);
     }
 
 
     @Override
     public <R> LiLink<R> map(Function<? super T, ? extends R> mapper) {
-        return new Map<>(this, mapper);
+        return new MapLink<>(this, mapper);
     }
 
     @Override
     public <R> LiLink<R> union(R value) {
-        return new Union<>(this, () -> value);
+        return new UnionLink<>(this, () -> value);
     }
 
     @Override
     public <R> LiLink<R> union(Supplier<R> supplier) {
-        return new Union<>(this, supplier);
+        return new UnionLink<>(this, supplier);
     }
 
     /**
@@ -204,7 +204,7 @@ abstract class Some<P, T> implements LiLink<T> {
     @Override
     public LiLink<T> error(Runnable runnable) {
 
-        return new CancelRunnable<>(this, runnable);
+        return new OnErrorRunnableLink<>(this, runnable);
     }
 
     /**
@@ -214,8 +214,8 @@ abstract class Some<P, T> implements LiLink<T> {
      * @return this
      */
     @Override
-    public OnErrorConsumer<T> error(Consumer<? super T> consumer) {
-        return new OnErrorConsumer<>(this, consumer);
+    public OnErrorConsumerLink<T> error(Consumer<? super T> consumer) {
+        return new OnErrorConsumerLink<>(this, consumer);
     }
 
     /**
@@ -228,7 +228,7 @@ abstract class Some<P, T> implements LiLink<T> {
     @Override
     public LiLink<T> throwable_error(ThrowableRunner runnable) {
 
-        return new CancelRunnable<>(this, () -> {
+        return new OnErrorRunnableLink<>(this, () -> {
             try {
                 runnable.run();
             } catch (Throwable e) {
@@ -245,8 +245,8 @@ abstract class Some<P, T> implements LiLink<T> {
      * @see LiConstant#WHEN_THROW
      */
     @Override
-    public OnErrorConsumer<T> throwable_error(ThrowableConsumer<? super T> consumer) {
-        return new OnErrorConsumer<>(this, v -> {
+    public OnErrorConsumerLink<T> throwable_error(ThrowableConsumer<? super T> consumer) {
+        return new OnErrorConsumerLink<>(this, v -> {
             try {
                 consumer.accept(v);
             } catch (Throwable e) {
@@ -285,7 +285,7 @@ abstract class Some<P, T> implements LiLink<T> {
 
     @Override
     public void request(final T t) {
-        new NewRequest<>(this, t).run();
+        new NewRequestLink<>(this, t).run();
     }
 
     /**

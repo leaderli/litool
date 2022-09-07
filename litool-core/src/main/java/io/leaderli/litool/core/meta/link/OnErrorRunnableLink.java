@@ -2,33 +2,31 @@ package io.leaderli.litool.core.meta.link;
 
 import io.leaderli.litool.core.meta.Lino;
 
-import java.util.function.Consumer;
-
 /**
  * @author leaderli
  * @since 2022/7/16
  */
-public class OnErrorConsumer<T> extends Some<T, T> {
+public class OnErrorRunnableLink<T> extends SomeLink<T, T> {
 
-    private final Consumer<? super T> errorConsumer;
+    private final Runnable runnable;
 
 
-    public OnErrorConsumer(Publisher<T> prevPublisher, final Consumer<? super T> errorConsumer) {
+    public OnErrorRunnableLink(Publisher<T> prevPublisher, final Runnable runnable) {
         super(prevPublisher);
-        this.errorConsumer = errorConsumer;
+        this.runnable = runnable;
     }
 
 
     @Override
     public void subscribe(Subscriber<T> actualSubscriber) {
-        prevPublisher.subscribe(new CancelConsumerSubscriber(actualSubscriber));
+        prevPublisher.subscribe(new CancelRunnableSubscriber(actualSubscriber));
     }
 
 
-    private class CancelConsumerSubscriber extends SameTypeIntermediateSubscriber<T> implements OnErrorSubscriber {
+    private class CancelRunnableSubscriber extends SameTypeIntermediateSubscriber<T> implements OnErrorSubscriber {
 
 
-        protected CancelConsumerSubscriber(Subscriber<T> actualSubscriber) {
+        protected CancelRunnableSubscriber(Subscriber<T> actualSubscriber) {
             super(actualSubscriber);
         }
 
@@ -41,10 +39,11 @@ public class OnErrorConsumer<T> extends Some<T, T> {
 
         @Override
         public void onError(Lino<T> lino) {
-            lino.ifPresent(errorConsumer);
+            runnable.run();
 
             if (this.actualSubscriber instanceof OnErrorSubscriber) {
                 this.actualSubscriber.onError(lino);
+
             }
         }
     }

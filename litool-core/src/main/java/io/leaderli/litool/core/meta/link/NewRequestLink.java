@@ -4,12 +4,12 @@ package io.leaderli.litool.core.meta.link;
  * @author leaderli
  * @since 2022/7/16
  */
-class NewRequest<T> extends Some<T, T> {
+class NewRequestLink<T> extends SomeLink<T, T> {
 
 
     private final T newValue;
 
-    public NewRequest(Publisher<T> prevPublisher, T newValue) {
+    public NewRequestLink(Publisher<T> prevPublisher, T newValue) {
         super(prevPublisher);
         this.newValue = newValue;
     }

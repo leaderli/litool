@@ -9,7 +9,7 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/7/16
  */
-class FilterLink<T> extends Some<T, T> {
+class FilterLink<T> extends SomeLink<T, T> {
 
 
     private final Function<? super T, ?> filter;

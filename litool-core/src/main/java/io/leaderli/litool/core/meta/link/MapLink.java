@@ -8,13 +8,13 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/7/16
  */
-class Map<T, R> extends Some<T, R> {
+class MapLink<T, R> extends SomeLink<T, R> {
 
 
     private final Function<? super T, ? extends R> mapper;
 
 
-    public Map(Publisher<T> prevPublisher, Function<? super T, ? extends R> mapper) {
+    public MapLink(Publisher<T> prevPublisher, Function<? super T, ? extends R> mapper) {
         super(prevPublisher);
         this.mapper = mapper;
     }
