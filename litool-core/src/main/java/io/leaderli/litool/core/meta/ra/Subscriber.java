@@ -1,8 +1,8 @@
 package io.leaderli.litool.core.meta.ra;
 
 /**
- * Will receive call to {@link #onSubscribe(Subscription)} once after passing an instance of {@link Subscriber} to
- * {@link Publisher#subscribe(Subscriber)}
+ * Will receive call to {@link #onSubscribe(Subscription)} once after passing an instance of
+ * {@link Subscriber} to {@link Publisher#subscribe(Subscriber)}
  * <p>
  * No further notifications will be received until {@link Subscription#request(int)} is called.
  * <p>

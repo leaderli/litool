@@ -1,7 +1,8 @@
 package io.leaderli.litool.core.meta.ra;
 
 /**
- * 一个用于连接前后节点的中间 消费者，消费操作的抽象类
+ * a  middle node which link subscriber and subscription which send event
+ * to {@link  #prevSubscription}, notification data, event to {@link  #actualSubscriber}
  *
  * @author leaderli
  * @since 2022/6/22

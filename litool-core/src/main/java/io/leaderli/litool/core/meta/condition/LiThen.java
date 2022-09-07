@@ -4,7 +4,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * test next node is the result node
+ * the abstract class provide apply method which could chain with test interface,  when the prev test method is
+ * predicated , prev will use {@link  Subscriber#apply(Object)} ,and the mapper under {@link  FulfillNode} will be
+ * applied to target value and break chain.  otherwise will continue the next chain node by
+ * {@link  Subscriber#next(Object)}
  *
  * @param <T> the declare type of source value
  * @param <M> the  real type of source value  {@link  LiIf#_instanceof(Class)}

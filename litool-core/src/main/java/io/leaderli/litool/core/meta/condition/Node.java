@@ -44,12 +44,6 @@ abstract class Node<T, R> implements LiIf<T, R> {
 
 
     @Override
-    public Lino<R> _else(R value) {
-        return _else(() -> value);
-    }
-
-
-    @Override
     public Lino<R> _else(Supplier<? extends R> supplier) {
         ElseNode<T, R> elseNode = new ElseNode<>(this, supplier);
         elseNode.subscribe(Subscription::request);

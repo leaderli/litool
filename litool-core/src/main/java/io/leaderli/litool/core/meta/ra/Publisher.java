@@ -2,8 +2,7 @@ package io.leaderli.litool.core.meta.ra;
 
 /**
  * A {@link Publisher} is a provider of a potentially unbounded number of sequenced elements, publishing them
- * according to
- * the demand received from its {@link Subscriber}
+ * according to the demand received from its {@link Subscriber}
  * <p>
  * A {@link Publisher} can serve multiple {@link Subscriber} subscribed {@link #subscribe(Subscriber)} dynamically
  * at various points in time

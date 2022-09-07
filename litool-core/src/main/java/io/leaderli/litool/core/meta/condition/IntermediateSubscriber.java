@@ -1,6 +1,9 @@
 package io.leaderli.litool.core.meta.condition;
 
 /**
+ * a  middle node which link subscriber and subscription which send request
+ * to {@link  #prevSubscription}, notification data, event to {@link  #actualSubscriber}
+ *
  * @author leaderli
  * @since 2022/6/22
  */
