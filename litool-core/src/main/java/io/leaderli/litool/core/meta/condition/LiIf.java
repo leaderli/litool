@@ -27,59 +27,24 @@ public interface LiIf<T, R> extends Publisher<T, R> {
      * @return {@link #_if(Function)}
      */
     @SuppressWarnings("unchecked")
-    LiThen<T, R> _case(T... compares);
-
-
-    /**
-     * @param compare 当值 equals 时执行
-     * @param mapping 转换函数
-     * @return {@code _if(predicate).then(mapper)}
-     * @see #_case(Object)
-     * @see LiThen#then(Function)
-     */
-    LiIf<T, R> _case(T compare, Function<? super T, ? extends R> mapping);
-
-    /**
-     * @param compare 当值 equals 时执行
-     * @return {@link #_if(Function)}
-     */
-    LiThen<T, R> _case(T compare);
-
-    /**
-     * @param type    当  值 instanceof type 时执行
-     * @param <M>     type 的泛型
-     * @param mapping 转换函数
-     * @return {@code _if(predicate).then(mapper)}
-     * @see #_instanceof(Class)
-     * @see LiInstanceOfThen#then(Function)
-     */
-
-    <M> LiIf<T, R> _instanceof(Class<M> type, Function<? super M, ? extends R> mapping);
+    LiThen<T, T, R> _case(T... compares);
 
 
     /**
      * @param type 当  值 instanceof type 时执行
      * @param <M>  type 的泛型
      * @return {@code  LiCaseThen<T, M, R>}
-     * @see LiInstanceOfThen
+     * @see LiThen
      */
-    <M> LiInstanceOfThen<T, M, R> _instanceof(Class<? extends M> type);
+    <M extends T> LiThen<T, M, R> _instanceof(Class<? extends M> type);
 
-    /**
-     * @param predicate 断言函数
-     * @param mapping   转换函数
-     * @return {@code _if(predicate).then(mapper)}
-     * @see #_if(Function)
-     * @see LiThen#then(Function)
-     */
-    LiIf<T, R> _if(Function<? super T, Object> predicate, Function<? super T, ? extends R> mapping);
 
     /**
      * @param predicate 断言函数
      * @return 返回一个可以提供 {@link LiThen#then(Function)} 转换函数的接口类，以方便链式调用。只有当 断言函数返回为true时，才会实际调用 转换函数
      * @see BooleanUtil#parse(Object)
      */
-    LiThen<T, R> _if(Function<? super T, ?> predicate);
+    LiThen<T, T, R> _if(Function<? super T, ?> predicate);
 
 
     /**
@@ -101,7 +66,9 @@ public interface LiIf<T, R> extends Publisher<T, R> {
      *
      * @return {@link #_else(Supplier)} 传递参数为 null
      */
-    Lino<R> _else();
+    default Lino<R> _else() {
+        return _else((R) null);
+    }
 
 
 }

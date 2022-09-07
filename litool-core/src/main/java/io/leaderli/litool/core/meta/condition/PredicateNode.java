@@ -10,11 +10,11 @@ import java.util.function.Function;
  * <p>
  * 后接 then 系列操作
  */
-class IfNode<T, R> implements LiThen<T, R> {
+class PredicateNode<T, R> implements LiThen<T, T, R> {
     private final Publisher<T, R> prevPublisher;
     private final Function<? super T, ?> filter;
 
-    public IfNode(Publisher<T, R> prevPublisher, Function<? super T, ?> filter) {
+    public PredicateNode(Publisher<T, R> prevPublisher, Function<? super T, ?> filter) {
         this.prevPublisher = prevPublisher;
         this.filter = filter;
     }
@@ -24,6 +24,7 @@ class IfNode<T, R> implements LiThen<T, R> {
         prevPublisher.subscribe(new SubscriberThen(actualSubscriber));
 
     }
+
 
     private class SubscriberThen extends IntermediateSubscriber<T, R> {
 

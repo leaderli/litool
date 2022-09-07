@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
  */
 class LiIfTest {
 
+
     @Test
     void test_if() {
 
@@ -22,12 +23,6 @@ class LiIfTest {
         Assertions.assertEquals(Lino.of(789),
                 LiIf.<Integer, Integer>of(1)._if(i -> i == 123).then(i -> 456)._else(() -> 789));
 
-        Assertions.assertEquals(Lino.of(789),
-                LiIf.<Integer, Integer>of(null)._if(i -> i == 123, i -> 456)._else(() -> 789));
-        Assertions.assertEquals(Lino.of(456),
-                LiIf.<Integer, Integer>of(123)._if(i -> i == 123, i -> 456)._else(() -> 789));
-        Assertions.assertEquals(Lino.of(789),
-                LiIf.<Integer, Integer>of(1)._if(i -> i == 123, i -> 456)._else(() -> 789));
     }
 
     @Test
@@ -39,18 +34,11 @@ class LiIfTest {
         Assertions.assertEquals(Lino.of(456),
                 LiIf.<Integer, Integer>of(123)._instanceof(Integer.class).then(i -> 456)._else(() -> 789));
         Assertions.assertEquals(Lino.of(789),
-                LiIf.<Integer, Integer>of(1)._instanceof(String.class).then(i -> 456)._else(() -> 789));
-
-        Assertions.assertEquals(Lino.of(789),
-                LiIf.<Integer, Integer>of(null)._instanceof(Integer.class, i -> 456)._else(() -> 789));
-        Assertions.assertEquals(Lino.of(456),
-                LiIf.<Integer, Integer>of(123)._instanceof(Integer.class, i -> 456)._else(() -> 789));
-        Assertions.assertEquals(Lino.of(789),
-                LiIf.<Integer, Integer>of(1)._instanceof(String.class, i -> 456)._else(() -> 789));
+                LiIf.<Object, Integer>of(1)._instanceof(String.class).then(i -> 456)._else(() -> 789));
 
 
         Assertions.assertEquals(Lino.of(789),
-                LiIf.<Integer, Integer>of(1)._instanceof((Class<?>) null).then(i -> 456)._else(() -> 789));
+                LiIf.<Object, Integer>of(1)._instanceof((Class<?>) null).then(i -> 456)._else(() -> 789));
 
     }
 
@@ -63,9 +51,6 @@ class LiIfTest {
                 LiIf.<Integer, Integer>of(123)._case(123).then(i -> 456)._else(() -> 789));
         Assertions.assertEquals(Lino.of(789), LiIf.<Integer, Integer>of(1)._case(123).then(i -> 456)._else(() -> 789));
 
-        Assertions.assertEquals(Lino.of(789), LiIf.<Integer, Integer>of(null)._case(1, i -> 456)._else(() -> 789));
-        Assertions.assertEquals(Lino.of(456), LiIf.<Integer, Integer>of(123)._case(123, i -> 456)._else(() -> 789));
-        Assertions.assertEquals(Lino.of(789), LiIf.<Integer, Integer>of(1)._case(123, i -> 456)._else(() -> 789));
 
         Assertions.assertEquals(Lino.of(789),
                 LiIf.<Integer, Integer>of(null)._case(1, 2).then(i -> 456)._else(() -> 789));

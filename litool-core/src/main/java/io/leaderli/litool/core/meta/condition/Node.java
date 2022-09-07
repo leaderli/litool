@@ -18,9 +18,9 @@ abstract class Node<T, R> implements LiIf<T, R> {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public LiThen<T, R> _case(T... compares) {
+    public LiThen<T, T, R> _case(T... compares) {
 
-        return new IfNode<>(this, v -> {
+        return new PredicateNode<>(this, v -> {
 
             if (compares != null) {
                 for (T compare : compares) {
@@ -33,65 +33,18 @@ abstract class Node<T, R> implements LiIf<T, R> {
         });
     }
 
-    /**
-     * @param compare 当值 equals 时执行
-     * @param mapping 转换函数
-     * @return {@code _if(predicate).then(mapper)}
-     * @see #_case(Object)
-     * @see LiThen#then(Function)
-     */
-    @Override
-    public LiIf<T, R> _case(T compare, Function<? super T, ? extends R> mapping) {
-        return _case(compare).then(mapping);
-    }
-
-    /**
-     * @param compare 当值 equals 时执行
-     * @return {@link #_if(Function)}
-     */
-    @Override
-    public LiThen<T, R> _case(T compare) {
-        return new IfNode<>(this, v -> v.equals(compare));
-    }
-
-    /**
-     * @param type    当  值 instanceof type 时执行
-     * @param <M>     type 的泛型
-     * @param mapping 转换函数
-     * @return {@code _if(predicate).then(mapper)}
-     * @see #_instanceof(Class)
-     * @see LiInstanceOfThen#then(Function)
-     */
-
-    @Override
-    public <M> LiIf<T, R> _instanceof(Class<M> type, Function<? super M, ? extends R> mapping) {
-        return _instanceof(type).then(mapping);
-
-    }
 
     /**
      * @param type 当  值 instanceof type 时执行
      * @param <M>  type 的泛型
      * @return {@code  LiCaseThen<T, M, R>}
-     * @see LiInstanceOfThen
+     * @see LiThen
      */
     @Override
-    public <M> LiInstanceOfThen<T, M, R> _instanceof(Class<? extends M> type) {
-        return new InstanceOfThen<>(this, type);
+    public <M extends T> LiThen<T, M, R> _instanceof(Class<? extends M> type) {
+        return new InstanceOfNode<>(this, type);
     }
 
-    /**
-     * @param predicate 断言函数
-     * @param mapping   转换函数
-     * @return {@code _if(predicate).then(mapper)}
-     * @see #_if(Function)
-     * @see LiThen#then(Function)
-     */
-    @Override
-    public LiIf<T, R> _if(Function<? super T, Object> predicate, Function<? super T, ? extends R> mapping) {
-
-        return _if(predicate).then(mapping);
-    }
 
     /**
      * @param predicate 断言函数
@@ -99,9 +52,9 @@ abstract class Node<T, R> implements LiIf<T, R> {
      * @see BooleanUtil#parse(Object)
      */
     @Override
-    public LiThen<T, R> _if(Function<? super T, ?> predicate) {
+    public LiThen<T, T, R> _if(Function<? super T, ?> predicate) {
 
-        return new IfNode<>(this, predicate);
+        return new PredicateNode<>(this, predicate);
     }
 
     /**
@@ -124,16 +77,6 @@ abstract class Node<T, R> implements LiIf<T, R> {
         ElseNode<T, R> elseNode = new ElseNode<>(this, supplier);
         elseNode.subscribe(Subscription::request);
         return Lino.of(elseNode.getResult());
-
     }
 
-    /**
-     * else 不做任何动作，仅用于触发函数调用
-     *
-     * @return {@link #_else(Supplier)} 传递参数为 null
-     */
-    @Override
-    public Lino<R> _else() {
-        return _else(() -> null);
-    }
 }

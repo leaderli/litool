@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta.condition;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -9,14 +10,14 @@ import java.util.function.Supplier;
  * @see LiIf
  */
 @FunctionalInterface
-public interface LiThen<T, R> extends Publisher<T, R> {
+public interface LiThen<T, M extends T, R> extends Publisher<T, R> {
 
 
     /**
      * @param mapping 转换函数，当条件满足时执行
      * @return 返回一个新的 LiIf ,  以方便链式调用
      */
-    default LiIf<T, R> then(Function<? super T, ? extends R> mapping) {
+    default LiIf<T, R> then(Function<? super M, ? extends R> mapping) {
 
         return new FulfillNode<>(this, mapping);
     }
@@ -25,7 +26,7 @@ public interface LiThen<T, R> extends Publisher<T, R> {
      * @param supplier 当条件满足时提供值
      * @return 返回一个新的 LiIf ,  以方便链式调用
      */
-    default LiIf<T, R> then(Supplier<? extends R> supplier) {
+    default LiIf<T, R> then(Supplier<R> supplier) {
 
         return new FulfillNode<>(this, v -> supplier.get());
     }
@@ -37,6 +38,19 @@ public interface LiThen<T, R> extends Publisher<T, R> {
     default LiIf<T, R> then(R value) {
 
         return new FulfillNode<>(this, v -> value);
+    }
+
+    /**
+     * @param consumer 消费者，当条件满足时执行，不需要保存结构，会存储为 null
+     * @return 返回一个新的 LiIf ,  以方便链式调用
+     */
+    @SuppressWarnings("unchecked")
+    default LiIf<T, R> then(Consumer<? super M> consumer) {
+
+        return new FulfillNode<>(this, v -> {
+            consumer.accept((M) v);
+            return null;
+        });
     }
 
 
