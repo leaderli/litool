@@ -9,20 +9,20 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/7/16
  */
-public class FilterLink<T> extends SomeLink<T, T> {
+class FilterLink<T> extends Some<T, T> {
 
 
     private final Function<? super T, ?> filter;
 
-    public FilterLink(PublisherLink<T> prevPublisher, Function<? super T, ?> filter) {
+    public FilterLink(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
         super(prevPublisher);
         this.filter = filter;
     }
 
 
     @Override
-    public void subscribe(SubscriberLink<T> actualSubscriber) {
-        prevPublisher.subscribe(new FilterSubscriberLink(actualSubscriber));
+    public void subscribe(Subscriber<T> actualSubscriber) {
+        prevPublisher.subscribe(new FilterSubscriber(actualSubscriber));
 
     }
 
@@ -30,9 +30,9 @@ public class FilterLink<T> extends SomeLink<T, T> {
      * @author leaderli
      * @since 2022/7/16
      */
-    private class FilterSubscriberLink extends SameTypeIntermediateSubscriberLink<T> {
+    private class FilterSubscriber extends SameTypeIntermediateSubscriber<T> {
 
-        public FilterSubscriberLink(SubscriberLink<T> actualSubscriber) {
+        public FilterSubscriber(Subscriber<T> actualSubscriber) {
             super(actualSubscriber);
         }
 
@@ -45,7 +45,7 @@ public class FilterLink<T> extends SomeLink<T, T> {
             if (next) {
                 this.actualSubscriber.next(value);
             } else {
-                this.actualSubscriber.onCancel(Lino.of(value));
+                this.actualSubscriber.onError(Lino.of(value));
             }
         }
     }

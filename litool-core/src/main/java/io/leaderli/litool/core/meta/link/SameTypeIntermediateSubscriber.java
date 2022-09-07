@@ -8,15 +8,15 @@ import io.leaderli.litool.core.meta.Lino;
  * <p>
  * 前后类型相同
  */
-public abstract class SameTypeIntermediateSubscriberLink<T> extends IntermediateSubscriberLink<T, T> {
-    protected SameTypeIntermediateSubscriberLink(SubscriberLink<T> actualSubscriber) {
+abstract class SameTypeIntermediateSubscriber<T> extends IntermediateSubscriber<T, T> {
+    protected SameTypeIntermediateSubscriber(Subscriber<T> actualSubscriber) {
         super(actualSubscriber);
     }
 
 
     @Override
-    public void onCancel(Lino<T> lino) {
-        this.actualSubscriber.onCancel(lino);
+    public void onError(Lino<T> lino) {
+        this.actualSubscriber.onError(lino);
     }
 
 

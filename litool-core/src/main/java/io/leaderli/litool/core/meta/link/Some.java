@@ -6,7 +6,6 @@ import io.leaderli.litool.core.function.ThrowableRunner;
 import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiConstant;
-import io.leaderli.litool.core.meta.LiLink;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.function.Consumer;
@@ -22,11 +21,11 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/7/16
  */
-public abstract class SomeLink<P, T> implements LiLink<T> {
+abstract class Some<P, T> implements LiLink<T> {
 
-    protected final PublisherLink<P> prevPublisher;
+    protected final Publisher<P> prevPublisher;
 
-    protected SomeLink(PublisherLink<P> prevPublisher) {
+    protected Some(Publisher<P> prevPublisher) {
         this.prevPublisher = prevPublisher;
     }
 
@@ -35,7 +34,7 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
      */
     static LiLink<Integer> of() {
 
-        return new ValueLink<>(1);
+        return new NewValue<>(1);
     }
 
     /**
@@ -45,23 +44,23 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
      */
     static <T> LiLink<T> of(T value) {
 
-        return new ValueLink<>(value);
+        return new NewValue<>(value);
     }
 
 
     @Override
     public <R> LiLink<R> map(Function<? super T, ? extends R> mapper) {
-        return new MapLink<>(this, mapper);
+        return new Map<>(this, mapper);
     }
 
     @Override
     public <R> LiLink<R> union(R value) {
-        return new UnionLink<>(this, () -> value);
+        return new Union<>(this, () -> value);
     }
 
     @Override
     public <R> LiLink<R> union(Supplier<R> supplier) {
-        return new UnionLink<>(this, supplier);
+        return new Union<>(this, supplier);
     }
 
     /**
@@ -205,7 +204,7 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
     @Override
     public LiLink<T> error(Runnable runnable) {
 
-        return new CancelRunnableLink<>(this, runnable);
+        return new CancelRunnable<>(this, runnable);
     }
 
     /**
@@ -215,8 +214,8 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
      * @return this
      */
     @Override
-    public CancelConsumerLink<T> error(Consumer<? super T> consumer) {
-        return new CancelConsumerLink<>(this, consumer);
+    public OnErrorConsumer<T> error(Consumer<? super T> consumer) {
+        return new OnErrorConsumer<>(this, consumer);
     }
 
     /**
@@ -229,7 +228,7 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
     @Override
     public LiLink<T> throwable_error(ThrowableRunner runnable) {
 
-        return new CancelRunnableLink<>(this, () -> {
+        return new CancelRunnable<>(this, () -> {
             try {
                 runnable.run();
             } catch (Throwable e) {
@@ -246,8 +245,8 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
      * @see LiConstant#WHEN_THROW
      */
     @Override
-    public CancelConsumerLink<T> throwable_error(ThrowableConsumer<? super T> consumer) {
-        return new CancelConsumerLink<>(this, v -> {
+    public OnErrorConsumer<T> throwable_error(ThrowableConsumer<? super T> consumer) {
+        return new OnErrorConsumer<>(this, v -> {
             try {
                 consumer.accept(v);
             } catch (Throwable e) {
@@ -263,9 +262,9 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
     @Override
     public boolean present() {
         LiBox<Object> next = LiBox.none();
-        this.subscribe(new SubscriberLink<T>() {
+        this.subscribe(new Subscriber<T>() {
             @Override
-            public void onSubscribe(SubscriptionLink<T> prevSubscription) {
+            public void onSubscribe(Subscription<T> prevSubscription) {
                 prevSubscription.request();
             }
 
@@ -286,7 +285,7 @@ public abstract class SomeLink<P, T> implements LiLink<T> {
 
     @Override
     public void request(final T t) {
-        new NewRequestLink<>(this, t).run();
+        new NewRequest<>(this, t).run();
     }
 
     /**

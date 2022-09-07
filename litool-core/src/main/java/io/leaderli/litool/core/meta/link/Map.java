@@ -8,29 +8,29 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/7/16
  */
-public class MapLink<T, R> extends SomeLink<T, R> {
+class Map<T, R> extends Some<T, R> {
 
 
     private final Function<? super T, ? extends R> mapper;
 
 
-    public MapLink(PublisherLink<T> prevPublisher, Function<? super T, ? extends R> mapper) {
+    public Map(Publisher<T> prevPublisher, Function<? super T, ? extends R> mapper) {
         super(prevPublisher);
         this.mapper = mapper;
     }
 
     @Override
-    public void subscribe(SubscriberLink<R> actualSubscriber) {
-        prevPublisher.subscribe(new MapSubscriberLink(actualSubscriber));
+    public void subscribe(Subscriber<R> actualSubscriber) {
+        prevPublisher.subscribe(new MapSubscriber(actualSubscriber));
     }
 
 
-    private class MapSubscriberLink extends IntermediateSubscriberLink<T, R> {
+    private class MapSubscriber extends IntermediateSubscriber<T, R> {
 
 
         private R newValue;
 
-        protected MapSubscriberLink(SubscriberLink<R> actualSubscriber) {
+        protected MapSubscriber(Subscriber<R> actualSubscriber) {
             super(actualSubscriber);
         }
 
@@ -48,13 +48,13 @@ public class MapLink<T, R> extends SomeLink<T, R> {
             Lino.of(newValue)
                     .or(mapper.apply(value))
                     .ifPresent(actualSubscriber::next)
-                    .ifAbsent(() -> actualSubscriber.onCancel(Lino.none()));
+                    .ifAbsent(() -> actualSubscriber.onError(Lino.none()));
 
         }
 
         @Override
-        public void onCancel(Lino<T> value) {
-            this.actualSubscriber.onCancel(Lino.of(newValue).or(value.map(mapper)));
+        public void onError(Lino<T> value) {
+            this.actualSubscriber.onError(Lino.of(newValue).or(value.map(mapper)));
         }
 
         @Override

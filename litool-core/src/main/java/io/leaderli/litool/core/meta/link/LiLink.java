@@ -1,12 +1,11 @@
-package io.leaderli.litool.core.meta;
+package io.leaderli.litool.core.meta.link;
 
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableRunner;
 import io.leaderli.litool.core.function.ThrowableSupplier;
-import io.leaderli.litool.core.meta.link.CancelConsumerLink;
-import io.leaderli.litool.core.meta.link.PublisherLink;
-import io.leaderli.litool.core.meta.link.ValueLink;
+import io.leaderli.litool.core.meta.LiConstant;
+import io.leaderli.litool.core.meta.LiValue;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.function.Consumer;
@@ -22,14 +21,14 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/7/16
  */
-public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
+public interface LiLink<T> extends LiValue, Publisher<T>, Runnable {
 
     /**
      * @return 返回一个值为 1 的实例
      */
     static LiLink<Integer> of() {
 
-        return new ValueLink<>(1);
+        return new NewValue<>(1);
     }
 
     /**
@@ -38,7 +37,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      */
     static <T> LiLink<T> none() {
 
-        return new ValueLink<>(null);
+        return new NewValue<>(null);
     }
 
     /**
@@ -48,7 +47,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      */
     static <T> LiLink<T> of(T value) {
 
-        return new ValueLink<>(value);
+        return new NewValue<>(value);
     }
 
     /**
@@ -166,7 +165,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @param consumer 消费者
      * @return this
      */
-    CancelConsumerLink<T> error(Consumer<? super T> consumer);
+    OnErrorConsumer<T> error(Consumer<? super T> consumer);
 
     /**
      * 当链条失败时执行，无视异常
@@ -184,7 +183,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return this
      * @see LiConstant#WHEN_THROW
      */
-    CancelConsumerLink<T> throwable_error(ThrowableConsumer<? super T> consumer);
+    OnErrorConsumer<T> throwable_error(ThrowableConsumer<? super T> consumer);
 
     /**
      * @return 链条是否正确执行完成，没有任何 error 节点执行

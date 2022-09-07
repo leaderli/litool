@@ -8,29 +8,29 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/7/16
  */
-public class UnionLink<T, R> extends SomeLink<T, R> {
+class Union<T, R> extends Some<T, R> {
 
 
     private final Supplier<? extends R> supplier;
 
 
-    public UnionLink(PublisherLink<T> prevPublisher, Supplier<? extends R> supplier) {
+    public Union(Publisher<T> prevPublisher, Supplier<? extends R> supplier) {
         super(prevPublisher);
         this.supplier = supplier;
     }
 
     @Override
-    public void subscribe(SubscriberLink<R> actualSubscriber) {
-        prevPublisher.subscribe(new MapSubscriberLink(actualSubscriber));
+    public void subscribe(Subscriber<R> actualSubscriber) {
+        prevPublisher.subscribe(new MapSubscriber(actualSubscriber));
     }
 
 
-    private class MapSubscriberLink extends IntermediateSubscriberLink<T, R> {
+    private class MapSubscriber extends IntermediateSubscriber<T, R> {
 
 
         private R newValue;
 
-        protected MapSubscriberLink(SubscriberLink<R> actualSubscriber) {
+        protected MapSubscriber(Subscriber<R> actualSubscriber) {
             super(actualSubscriber);
         }
 
@@ -48,13 +48,13 @@ public class UnionLink<T, R> extends SomeLink<T, R> {
             Lino.of(newValue)
                     .or(supplier)
                     .ifPresent(actualSubscriber::next)
-                    .ifAbsent(() -> actualSubscriber.onCancel(Lino.none()));
+                    .ifAbsent(() -> actualSubscriber.onError(Lino.none()));
 
         }
 
         @Override
-        public void onCancel(Lino<T> value) {
-            this.actualSubscriber.onCancel(Lino.of(newValue).or(supplier));
+        public void onError(Lino<T> value) {
+            this.actualSubscriber.onError(Lino.of(newValue).or(supplier));
         }
 
         @Override

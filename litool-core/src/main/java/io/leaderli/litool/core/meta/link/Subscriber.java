@@ -6,9 +6,9 @@ import io.leaderli.litool.core.meta.Lino;
  * @author leaderli
  * @since 2022/6/27
  */
-public interface SubscriberLink<T> {
+public interface Subscriber<T> {
 
-    void onSubscribe(SubscriptionLink<T> subscription);
+    void onSubscribe(Subscription<T> subscription);
 
     /**
      * 发布者推送了一个消息
@@ -23,7 +23,7 @@ public interface SubscriberLink<T> {
      *
      * @param lino 实际值
      */
-    default void onCancel(Lino<T> lino) {
+    default void onError(Lino<T> lino) {
 
     }
 

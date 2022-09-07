@@ -6,5 +6,5 @@ package io.leaderli.litool.core.meta.link;
  * <p>
  * 用于标记用，紧挨着的 error 节点可以连续消费
  */
-public interface ErrorLink {
+public interface OnErrorSubscriber {
 }
