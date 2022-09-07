@@ -5,10 +5,10 @@ package io.leaderli.litool.core.meta.condition;
  * @since 2022/6/22
  */
 abstract class IntermediateSubscriber<T, R> implements Subscriber<T, R>, Subscription {
-    protected final Subscriber<T, R> actualSubscriber;
+    protected final Subscriber<? super T, R> actualSubscriber;
     private Subscription prevSubscription;
 
-    protected IntermediateSubscriber(Subscriber<T, R> actualSubscriber) {
+    protected IntermediateSubscriber(Subscriber<? super T, R> actualSubscriber) {
         this.actualSubscriber = actualSubscriber;
     }
 

@@ -24,9 +24,7 @@ class CancelConsumerSubscriber<T> implements Subscriber<T> {
     @Override
     public void onSubscribe(Subscription prevSubscription) {
         this.prevSubscription = prevSubscription;
-        prevSubscription.request();
-
-
+        this.prevSubscription.request();
     }
 
     @Override

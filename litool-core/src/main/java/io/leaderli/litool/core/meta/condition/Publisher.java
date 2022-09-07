@@ -12,5 +12,5 @@ interface Publisher<T, R> {
      * @param subscriber 订阅者
      * @see Subscriber#onSubscribe(Subscription)
      */
-    void subscribe(Subscriber<T, R> subscriber);
+    void subscribe(Subscriber<? super T, R> subscriber);
 }

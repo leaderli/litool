@@ -1,10 +1,14 @@
 package io.leaderli.litool.core.meta.condition;
 
+import io.leaderli.litool.core.meta.Lino;
+
 /**
- * 用于开始响应式调用，并保存最终结果
+ * the begin node of chain, it will hold the source value
  *
- * @param <T> 源数据泛型
- * @param <R> 结果数据泛型
+ * @param <T> the type of source value
+ * @param <R> the type pf target value
+ * @see LiIf#of(Lino)
+ * @see LiIf#of(Object)
  */
 class BeginNode<T, R> extends Node<T, R> {
     private final T value;
@@ -15,7 +19,7 @@ class BeginNode<T, R> extends Node<T, R> {
     }
 
     @Override
-    public void subscribe(Subscriber<T, R> actualSubscriber) {
+    public void subscribe(Subscriber<? super T, R> actualSubscriber) {
 
 
         actualSubscriber.onSubscribe(new IntermediateSubscriber<T, R>(actualSubscriber) {

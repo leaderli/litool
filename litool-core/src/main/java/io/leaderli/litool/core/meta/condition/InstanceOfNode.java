@@ -6,7 +6,7 @@ import io.leaderli.litool.core.type.ClassUtil;
  * @author leaderli
  * @since 2022/7/17
  */
-class InstanceOfNode<T, M extends T, R> implements LiThen<T, M, R> {
+class InstanceOfNode<T, M extends T, R> extends LiThen<T, M, R> {
     private final PredicateNode<T, R> predicateNode;
 
     public InstanceOfNode(Publisher<T, R> prevPublisher, Class<? extends M> middleType) {
@@ -15,9 +15,7 @@ class InstanceOfNode<T, M extends T, R> implements LiThen<T, M, R> {
     }
 
     @Override
-    public void subscribe(Subscriber<T, R> actualSubscriber) {
+    public void subscribe(Subscriber<? super T, R> actualSubscriber) {
         this.predicateNode.subscribe(actualSubscriber);
     }
-
-
 }
