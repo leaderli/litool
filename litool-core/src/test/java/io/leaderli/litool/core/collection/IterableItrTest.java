@@ -79,6 +79,38 @@ class IterableItrTest {
 
         Object[] elements = {};
         Assertions.assertSame(IterableItr.ofs(elements), NoneItr.of());
+
+        Assertions.assertTrue(IterableItr.of(new IteratorEnumeration(Arrays.asList(1, 2, 3).iterator())).hasNext());
+
+    }
+
+    private class IteratorEnumeration implements Iterator<Integer>, Enumeration<Integer> {
+
+        final Iterator<Integer> iterator;
+
+        private IteratorEnumeration(Iterator<Integer> iterator) {
+            this.iterator = iterator;
+        }
+
+        @Override
+        public boolean hasMoreElements() {
+            return hasNext();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public Integer next() {
+            return iterator.next();
+        }
+
+        @Override
+        public Integer nextElement() {
+            return next();
+        }
     }
 
     Enumeration<Integer> enumeration() {

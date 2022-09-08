@@ -40,41 +40,40 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
         if (obj == null) {
             return NoneItr.of();
         }
-        T[] arr = null;
         if (obj instanceof Generator) {
             return (IterableItr<T>) obj;
         }
         if (obj instanceof IterableItr) {
-            arr = ArrayUtils.toArray(((IterableItr<T>) obj).iterator());
+            return ofs(ArrayUtils.toArray(((IterableItr<T>) obj).iterator()));
         }
         if (obj instanceof Iterator) {
-            arr = ArrayUtils.toArray((Iterator<T>) obj);
+            return ofs(ArrayUtils.toArray((Iterator<T>) obj));
         }
         if (obj instanceof Iterable) {
             Iterator<?> iterator = ((Iterable<?>) obj).iterator();
             if (iterator instanceof Generator) {
                 return (Generator<T>) iterator;
             }
-            arr = ArrayUtils.toArray((Iterator<T>) iterator);
+            return ofs(ArrayUtils.toArray((Iterator<T>) iterator));
         }
         if (obj instanceof Enumeration) {
-            arr = ArrayUtils.toArray((Enumeration<T>) obj);
+            return ofs(ArrayUtils.toArray((Enumeration<T>) obj));
         }
         if (obj instanceof Stream) {
-            arr = ArrayUtils.toArray((Stream<T>) obj);
+            return ofs(ArrayUtils.toArray((Stream<T>) obj));
         }
 
         if (obj instanceof Map) {
 
-            arr = (T[]) ArrayUtils.toArray(((Map<?, ?>) obj).entrySet());
+            return ofs((T[]) ArrayUtils.toArray(((Map<?, ?>) obj).entrySet()));
         }
 
         if (obj.getClass().isArray()) {
 
-            arr = ClassUtil.toArray(obj);
+            return ofs(ClassUtil.toArray(obj));
         }
 
-        return ofs(arr);
+        return NoneItr.of();
 
     }
 

@@ -39,6 +39,8 @@ public class AutoCloseableUtil {
      * @param supplier a supplier provide  {@link  AutoCloseable} instance
      * @param function a function
      * @param <T>      the type that extends {@link  AutoCloseable}
+     * @param <R>      the type of  function provide
+     * @return the function  result
      */
     public static <T extends AutoCloseable, R> R closeableFunction(Supplier<T> supplier,
                                                                    ThrowableFunction<T, R> function) {

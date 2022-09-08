@@ -27,7 +27,8 @@ public class ThreadUtil {
     /**
      * sleep some second
      *
-     * @param second second of {@link  TimeUnit#SECONDS}
+     * @param second   second of {@link  TimeUnit#SECONDS}
+     * @param runnable execute after sleep
      */
     public static void sleep(long second, Runnable runnable) {
         sleep(TimeUnit.SECONDS, second);

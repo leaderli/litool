@@ -10,7 +10,7 @@ import java.util.function.Supplier;
  * <p>
  * this interface only provide instance, test method, the apply method only can chained after test method.
  * <pre>
- *  LiIf.of(obj)._if(i->i==0).then(100).else(0);
+ *  LiIf.of(obj)._if(i-&gt;i==0).then(100).else(0);
  *  LiIf.of(obj)._case(0).then(100).else(0);
  *  LiIf.of(obj)._instanceof(Integer.class).then(100).else(0);
  * </pre>

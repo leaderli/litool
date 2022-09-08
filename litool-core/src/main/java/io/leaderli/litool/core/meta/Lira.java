@@ -384,6 +384,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
     /**
      * return this lira that consisting of the distinct elements (according to {@link Object#equals(Object)})
      *
+     * @param milliseconds sleep duration
      * @return this
      */
 

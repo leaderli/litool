@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.type;
 
-import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.io.FileNameUtil;
@@ -174,7 +173,7 @@ public class ClassScanner {
         }
 
         // classpath下未找到，则扫描其他jar包下的类
-        if (forceScanJavaClassPaths || CollectionUtils.isEmpty(this.classes)) {
+        if (forceScanJavaClassPaths) {
             scanJavaClassPaths();
         }
 
@@ -213,6 +212,7 @@ public class ClassScanner {
                 addIfAccept(className);
             } else if (fileName.endsWith(FileNameUtil.EXT_JAR)) {
 
+                System.out.println(fileName);
                 RuntimeExceptionTransfer.run(() -> scanJar(new JarFile(file)));
             }
         } else if (file.isDirectory()) {

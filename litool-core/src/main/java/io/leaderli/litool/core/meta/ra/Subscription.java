@@ -19,6 +19,8 @@ public interface Subscription extends CancelSubscription {
 
     /**
      * No events will be send by a {@link Publisher} until  signaled via this method
+     *
+     * @param bit request status {@link LiraBit}
      */
     void request(int bit);
 
