@@ -14,14 +14,14 @@ class FilterLink<T> extends SomeLink<T, T> {
 
     private final Function<? super T, ?> filter;
 
-    public FilterLink(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
+    public FilterLink(PublisherLink<T> prevPublisher, Function<? super T, ?> filter) {
         super(prevPublisher);
         this.filter = filter;
     }
 
 
     @Override
-    public void subscribe(Subscriber<T> actualSubscriber) {
+    public void subscribe(SubscriberLink<T> actualSubscriber) {
         prevPublisher.subscribe(new FilterSubscriber(actualSubscriber));
 
     }
@@ -32,7 +32,7 @@ class FilterLink<T> extends SomeLink<T, T> {
      */
     private class FilterSubscriber extends SameTypeIntermediateSubscriber<T> {
 
-        public FilterSubscriber(Subscriber<T> actualSubscriber) {
+        public FilterSubscriber(SubscriberLink<T> actualSubscriber) {
             super(actualSubscriber);
         }
 

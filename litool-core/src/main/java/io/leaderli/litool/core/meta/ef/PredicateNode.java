@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.meta.condition;
+package io.leaderli.litool.core.meta.ef;
 
 import io.leaderli.litool.core.util.BooleanUtil;
 
@@ -7,24 +7,24 @@ import java.util.function.Function;
 
 
 class PredicateNode<T, R> extends LiThen<T, T, R> {
-    private final Publisher<T, R> prevPublisher;
+    private final PublisherIf<T, R> prevPublisher;
     private final Function<? super T, ?> filter;
 
-    public PredicateNode(Publisher<T, R> prevPublisher, Function<? super T, ?> filter) {
+    public PredicateNode(PublisherIf<T, R> prevPublisher, Function<? super T, ?> filter) {
         Objects.requireNonNull(filter);
         this.prevPublisher = prevPublisher;
         this.filter = filter;
     }
 
     @Override
-    public void subscribe(Subscriber<? super T, R> actualSubscriber) {
+    public void subscribe(SubscriberIf<? super T, R> actualSubscriber) {
         prevPublisher.subscribe(new SubscriberThen(actualSubscriber));
     }
 
 
     private class SubscriberThen extends IntermediateSubscriber<T, R> {
 
-        public SubscriberThen(Subscriber<? super T, R> actualSubscriber) {
+        public SubscriberThen(SubscriberIf<? super T, R> actualSubscriber) {
             super(actualSubscriber);
         }
 

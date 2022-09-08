@@ -14,13 +14,13 @@ class UnionLink<T, R> extends SomeLink<T, R> {
     private final Supplier<? extends R> supplier;
 
 
-    public UnionLink(Publisher<T> prevPublisher, Supplier<? extends R> supplier) {
+    public UnionLink(PublisherLink<T> prevPublisher, Supplier<? extends R> supplier) {
         super(prevPublisher);
         this.supplier = supplier;
     }
 
     @Override
-    public void subscribe(Subscriber<R> actualSubscriber) {
+    public void subscribe(SubscriberLink<R> actualSubscriber) {
         prevPublisher.subscribe(new MapSubscriber(actualSubscriber));
     }
 
@@ -30,7 +30,7 @@ class UnionLink<T, R> extends SomeLink<T, R> {
 
         private R newValue;
 
-        protected MapSubscriber(Subscriber<R> actualSubscriber) {
+        protected MapSubscriber(SubscriberLink<R> actualSubscriber) {
             super(actualSubscriber);
         }
 

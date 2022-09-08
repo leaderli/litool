@@ -8,7 +8,7 @@ package io.leaderli.litool.core.meta.ra;
 @FunctionalInterface
 public interface CancelSubscription {
     /**
-     * Request the {@link Publisher} to stop sending data
+     * Request the {@link PublisherRa} to stop sending data
      */
     void cancel();
 }

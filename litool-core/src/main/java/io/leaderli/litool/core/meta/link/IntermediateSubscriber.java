@@ -6,17 +6,17 @@ package io.leaderli.litool.core.meta.link;
  * @author leaderli
  * @since 2022/6/22
  */
-abstract class IntermediateSubscriber<T, R> implements Subscriber<T>, Subscription<R> {
-    protected final Subscriber<R> actualSubscriber;
-    protected Subscription<T> prevSubscription;
+abstract class IntermediateSubscriber<T, R> implements SubscriberLink<T>, SubscriptionLink<R> {
+    protected final SubscriberLink<R> actualSubscriber;
+    protected SubscriptionLink<T> prevSubscription;
 
-    protected IntermediateSubscriber(Subscriber<R> actualSubscriber) {
+    protected IntermediateSubscriber(SubscriberLink<R> actualSubscriber) {
         this.actualSubscriber = actualSubscriber;
     }
 
 
     @Override
-    public void onSubscribe(Subscription<T> prevSubscription) {
+    public void onSubscribe(SubscriptionLink<T> prevSubscription) {
         this.prevSubscription = prevSubscription;
         actualSubscriber.onSubscribe(this);
     }

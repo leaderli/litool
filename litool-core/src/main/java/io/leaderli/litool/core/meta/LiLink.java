@@ -1,11 +1,12 @@
-package io.leaderli.litool.core.meta.link;
+package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableRunner;
 import io.leaderli.litool.core.function.ThrowableSupplier;
-import io.leaderli.litool.core.meta.LiConstant;
-import io.leaderli.litool.core.meta.LiValue;
+import io.leaderli.litool.core.meta.link.OnErrorConsumerLink;
+import io.leaderli.litool.core.meta.link.PublisherLink;
+import io.leaderli.litool.core.meta.link.ValueLink;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.function.Consumer;
@@ -21,7 +22,7 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/7/16
  */
-public interface LiLink<T> extends LiValue, Publisher<T>, Runnable {
+public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
 
     /**
      * @return 返回一个值为 1 的实例

@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.meta.condition;
+package io.leaderli.litool.core.meta.ef;
 
 import io.leaderli.litool.core.type.ClassUtil;
 
@@ -9,13 +9,13 @@ import io.leaderli.litool.core.type.ClassUtil;
 class InstanceOfNode<T, M extends T, R> extends LiThen<T, M, R> {
     private final PredicateNode<T, R> predicateNode;
 
-    public InstanceOfNode(Publisher<T, R> prevPublisher, Class<? extends M> middleType) {
+    public InstanceOfNode(PublisherIf<T, R> prevPublisher, Class<? extends M> middleType) {
         this.predicateNode = new PredicateNode<>(prevPublisher, t ->
                 ClassUtil.isAssignableFromOrIsWrapper(middleType, t.getClass()));
     }
 
     @Override
-    public void subscribe(Subscriber<? super T, R> actualSubscriber) {
+    public void subscribe(SubscriberIf<? super T, R> actualSubscriber) {
         this.predicateNode.subscribe(actualSubscriber);
     }
 }

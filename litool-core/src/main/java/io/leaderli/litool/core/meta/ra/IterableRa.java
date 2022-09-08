@@ -23,18 +23,18 @@ public class IterableRa<T> extends Ra<T> {
 
 
     @Override
-    public void subscribe(Subscriber<? super T> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
         actualSubscriber.onSubscribe(newGenerator(actualSubscriber));
     }
 
-    public ItrGenerator newGenerator(Subscriber<? super T> actualSubscriber) {
+    public ItrGenerator newGenerator(SubscriberRa<? super T> actualSubscriber) {
         return new ItrGenerator(actualSubscriber, iterable.iterator());
     }
 
 
     public class ItrGenerator extends GeneratorSubscription<T> {
 
-        protected ItrGenerator(Subscriber<? super T> actualSubscriber, Iterator<? extends T> iterator) {
+        protected ItrGenerator(SubscriberRa<? super T> actualSubscriber, Iterator<? extends T> iterator) {
             super(actualSubscriber, iterator);
         }
 

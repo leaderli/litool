@@ -13,18 +13,18 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-class FilterRa<T> extends PublisherRa<T> {
+class FilterRa<T> extends RaWithPrevPublisher<T> {
 
 
     private final Function<? super T, ?> filter;
 
-    public FilterRa(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
+    public FilterRa(PublisherRa<T> prevPublisher, Function<? super T, ?> filter) {
         super(prevPublisher);
         this.filter = filter;
     }
 
     @Override
-    public void subscribe(Subscriber<? super T> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
         prevPublisher.subscribe(new FilterSubscriberSubscription(actualSubscriber));
 
     }
@@ -32,7 +32,7 @@ class FilterRa<T> extends PublisherRa<T> {
 
     private final class FilterSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
 
-        public FilterSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
+        public FilterSubscriberSubscription(SubscriberRa<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 

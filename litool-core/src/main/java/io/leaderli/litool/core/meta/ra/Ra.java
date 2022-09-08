@@ -347,10 +347,10 @@ public abstract class Ra<T> implements Lira<T> {
 
         ThrowableConsumer<? super T> finalConsumer = action == null ? t -> {
         } : action;
-        subscribe((new Subscriber<T>() {
+        subscribe((new SubscriberRa<T>() {
 
             @Override
-            public void onSubscribe(Subscription prevSubscription) {
+            public void onSubscribe(SubscriptionRa prevSubscription) {
                 prevSubscription.request();
 
             }

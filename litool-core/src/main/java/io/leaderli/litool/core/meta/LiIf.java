@@ -1,6 +1,9 @@
-package io.leaderli.litool.core.meta.condition;
+package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.ef.BeginNode;
+import io.leaderli.litool.core.meta.ef.FulfillNode;
+import io.leaderli.litool.core.meta.ef.LiThen;
+import io.leaderli.litool.core.meta.ef.PublisherIf;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -20,7 +23,7 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/6/23
  */
-public interface LiIf<T, R> extends Publisher<T, R> {
+public interface LiIf<T, R> extends PublisherIf<T, R> {
 
 
     /**

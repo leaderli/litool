@@ -6,7 +6,6 @@ import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableSupplier;
-import io.leaderli.litool.core.meta.condition.LiIf;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.util.BooleanUtil;

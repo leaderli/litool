@@ -4,14 +4,14 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/6/27
  */
-class NoneRa<T> extends PublisherRa<T> {
+class NoneRa<T> extends RaWithPrevPublisher<T> {
 
-    public NoneRa(Publisher<T> prevPublisher) {
+    public NoneRa(PublisherRa<T> prevPublisher) {
         super(prevPublisher);
     }
 
     @Override
-    public void subscribe(Subscriber<? super T> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
         prevPublisher.subscribe(new NoneSubscriberSubscription<>(actualSubscriber));
 
     }
@@ -19,7 +19,7 @@ class NoneRa<T> extends PublisherRa<T> {
     private static final class NoneSubscriberSubscription<T> extends IntermediateSubscriberSubscription<T, T> {
 
 
-        private NoneSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
+        private NoneSubscriberSubscription(SubscriberRa<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 

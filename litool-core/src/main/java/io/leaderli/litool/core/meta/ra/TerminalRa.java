@@ -10,35 +10,35 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/9/1
  */
-class TerminalRa<T> extends PublisherRa<T> {
+class TerminalRa<T> extends RaWithPrevPublisher<T> {
 
     private final Function<List<T>, Iterable<T>> deliverAction;
 
 
-    public TerminalRa(Publisher<T> prevPublisher, Function<List<T>, Iterable<T>> deliverAction) {
+    public TerminalRa(PublisherRa<T> prevPublisher, Function<List<T>, Iterable<T>> deliverAction) {
         super(prevPublisher);
         this.deliverAction = deliverAction;
     }
 
     @Override
-    public void subscribe(Subscriber<? super T> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
         prevPublisher.subscribe(new TerminalSubscriberSubscription(actualSubscriber));
     }
 
 
-    private final class TerminalSubscriberSubscription implements Subscriber<T>, Subscription {
+    private final class TerminalSubscriberSubscription implements SubscriberRa<T>, SubscriptionRa {
 
 
-        private final Subscriber<? super T> actualSubscriber;
-        Subscription prevSubscription;
+        private final SubscriberRa<? super T> actualSubscriber;
+        SubscriptionRa prevSubscription;
         private final List<T> cache = new ArrayList<>();
         /**
          * not use  method reference to avoid null pointer
          */
         private final Runnable disposable = DisposableRunnableProxy.of(() -> prevSubscription.request(0));
-        private Subscription terminalSubscription;
+        private SubscriptionRa terminalSubscription;
 
-        private TerminalSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
+        private TerminalSubscriberSubscription(SubscriberRa<? super T> actualSubscriber) {
             this.actualSubscriber = actualSubscriber;
         }
 
@@ -55,7 +55,7 @@ class TerminalRa<T> extends PublisherRa<T> {
         }
 
         @Override
-        public void onSubscribe(Subscription prevSubscription) {
+        public void onSubscribe(SubscriptionRa prevSubscription) {
             this.prevSubscription = prevSubscription;
             actualSubscriber.onSubscribe(this);
         }

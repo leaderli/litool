@@ -1,16 +1,18 @@
-package io.leaderli.litool.core.meta.condition;
+package io.leaderli.litool.core.meta.ef;
 
-import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.LiIf;
+
+import java.util.function.Supplier;
 
 /**
  * the begin node of chain, it will hold the source value
  *
  * @param <T> the type of source value
  * @param <R> the type pf target value
- * @see LiIf#of(Lino)
+ * @see LiIf#of(Supplier)
  * @see LiIf#of(Object)
  */
-class BeginNode<T, R> extends Node<T, R> {
+public class BeginNode<T, R> extends Node<T, R> {
     private final T value;
 
 
@@ -19,7 +21,7 @@ class BeginNode<T, R> extends Node<T, R> {
     }
 
     @Override
-    public void subscribe(Subscriber<? super T, R> actualSubscriber) {
+    public void subscribe(SubscriberIf<? super T, R> actualSubscriber) {
 
 
         actualSubscriber.onSubscribe(new IntermediateSubscriber<T, R>(actualSubscriber) {

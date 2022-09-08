@@ -8,13 +8,13 @@ import java.util.Objects;
  * @author leaderli
  * @since 2022/6/27
  */
-class CancelConsumerSubscriber<T> implements Subscriber<T> {
+class CancelConsumerSubscriber<T> implements SubscriberRa<T> {
     /**
      * 该消费者仅保留 {@link CancelSubscription#cancel()} 操作，不允许使用
-     * {@link Subscription#request(int)}
+     * {@link SubscriptionRa#request(int)}
      */
     private final CancelConsumer<? super T> consumer;
-    private Subscription prevSubscription;
+    private SubscriptionRa prevSubscription;
 
     public CancelConsumerSubscriber(CancelConsumer<? super T> consumer) {
         Objects.requireNonNull(consumer);
@@ -22,7 +22,7 @@ class CancelConsumerSubscriber<T> implements Subscriber<T> {
     }
 
     @Override
-    public void onSubscribe(Subscription prevSubscription) {
+    public void onSubscribe(SubscriptionRa prevSubscription) {
         this.prevSubscription = prevSubscription;
         this.prevSubscription.request();
     }

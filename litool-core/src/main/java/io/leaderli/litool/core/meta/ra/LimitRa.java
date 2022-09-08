@@ -6,16 +6,16 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/6/27
  */
-class LimitRa<T> extends PublisherRa<T> {
+class LimitRa<T> extends RaWithPrevPublisher<T> {
     private final int limit;
 
-    public LimitRa(Publisher<T> prevPublisher, int limit) {
+    public LimitRa(PublisherRa<T> prevPublisher, int limit) {
         super(prevPublisher);
         this.limit = limit;
     }
 
     @Override
-    public void subscribe(Subscriber<? super T> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
         prevPublisher.subscribe(new LimitSubscriberSubscription<>(actualSubscriber, limit));
 
     }
@@ -24,7 +24,7 @@ class LimitRa<T> extends PublisherRa<T> {
 
         private int limit;
 
-        private LimitSubscriberSubscription(Subscriber<? super T> actualSubscriber, int limit) {
+        private LimitSubscriberSubscription(SubscriberRa<? super T> actualSubscriber, int limit) {
             super(actualSubscriber);
             this.limit = limit;
         }

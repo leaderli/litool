@@ -13,18 +13,18 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-class TakeWhileRa<T> extends PublisherRa<T> {
+class TakeWhileRa<T> extends RaWithPrevPublisher<T> {
 
 
     private final Function<? super T, ?> filter;
 
-    public TakeWhileRa(Publisher<T> prevPublisher, Function<? super T, ?> filter) {
+    public TakeWhileRa(PublisherRa<T> prevPublisher, Function<? super T, ?> filter) {
         super(prevPublisher);
         this.filter = filter;
     }
 
     @Override
-    public void subscribe(Subscriber<? super T> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
         prevPublisher.subscribe(new TakeWhileSubscriberSubscription(actualSubscriber));
 
     }
@@ -32,7 +32,7 @@ class TakeWhileRa<T> extends PublisherRa<T> {
 
     private final class TakeWhileSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
 
-        public TakeWhileSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
+        public TakeWhileSubscriberSubscription(SubscriberRa<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 

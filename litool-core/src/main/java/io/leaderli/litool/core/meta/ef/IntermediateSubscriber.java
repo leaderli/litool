@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.meta.condition;
+package io.leaderli.litool.core.meta.ef;
 
 /**
  * a  middle node which link subscriber and subscription which send request
@@ -7,16 +7,16 @@ package io.leaderli.litool.core.meta.condition;
  * @author leaderli
  * @since 2022/6/22
  */
-abstract class IntermediateSubscriber<T, R> implements Subscriber<T, R>, Subscription {
-    protected final Subscriber<? super T, R> actualSubscriber;
-    private Subscription prevSubscription;
+abstract class IntermediateSubscriber<T, R> implements SubscriberIf<T, R>, SubscriptionIf {
+    protected final SubscriberIf<? super T, R> actualSubscriber;
+    private SubscriptionIf prevSubscription;
 
-    protected IntermediateSubscriber(Subscriber<? super T, R> actualSubscriber) {
+    protected IntermediateSubscriber(SubscriberIf<? super T, R> actualSubscriber) {
         this.actualSubscriber = actualSubscriber;
     }
 
     @Override
-    public void onSubscribe(Subscription prevSubscription) {
+    public void onSubscribe(SubscriptionIf prevSubscription) {
         this.prevSubscription = prevSubscription;
         actualSubscriber.onSubscribe(this);
     }

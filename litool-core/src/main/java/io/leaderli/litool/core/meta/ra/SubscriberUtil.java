@@ -15,11 +15,11 @@ class SubscriberUtil {
      *     }
      * </pre>
      *
-     * @param subscriber {@link  Subscriber}
+     * @param subscriber {@link  SubscriberRa}
      * @param t          the element signaled
      * @param <T>        the type of element signaled.
      */
-    public static <T> void next(Subscriber<T> subscriber, T t) {
+    public static <T> void next(SubscriberRa<T> subscriber, T t) {
 
         if (t == null) {
             subscriber.next_null();

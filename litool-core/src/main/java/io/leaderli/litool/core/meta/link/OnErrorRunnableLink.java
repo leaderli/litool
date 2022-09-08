@@ -11,14 +11,14 @@ public class OnErrorRunnableLink<T> extends SomeLink<T, T> {
     private final Runnable runnable;
 
 
-    public OnErrorRunnableLink(Publisher<T> prevPublisher, final Runnable runnable) {
+    public OnErrorRunnableLink(PublisherLink<T> prevPublisher, final Runnable runnable) {
         super(prevPublisher);
         this.runnable = runnable;
     }
 
 
     @Override
-    public void subscribe(Subscriber<T> actualSubscriber) {
+    public void subscribe(SubscriberLink<T> actualSubscriber) {
         prevPublisher.subscribe(new CancelRunnableSubscriber(actualSubscriber));
     }
 
@@ -26,7 +26,7 @@ public class OnErrorRunnableLink<T> extends SomeLink<T, T> {
     private class CancelRunnableSubscriber extends SameTypeIntermediateSubscriber<T> implements OnErrorSubscriber {
 
 
-        protected CancelRunnableSubscriber(Subscriber<T> actualSubscriber) {
+        protected CancelRunnableSubscriber(SubscriberLink<T> actualSubscriber) {
             super(actualSubscriber);
         }
 

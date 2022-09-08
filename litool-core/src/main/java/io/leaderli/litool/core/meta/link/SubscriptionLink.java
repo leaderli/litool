@@ -4,7 +4,7 @@ package io.leaderli.litool.core.meta.link;
  * @author leaderli
  * @since 2022/6/27
  */
-public interface Subscription<T> {
+public interface SubscriptionLink<T> {
 
     /**
      * 请求数据

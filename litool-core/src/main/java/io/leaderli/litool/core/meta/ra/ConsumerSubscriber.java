@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * @author leaderli
  * @since 2022/6/27
  */
-class ConsumerSubscriber<T> implements Subscriber<T> {
+class ConsumerSubscriber<T> implements SubscriberRa<T> {
     private final Consumer<? super T> consumer;
 
 
@@ -21,7 +21,7 @@ class ConsumerSubscriber<T> implements Subscriber<T> {
     }
 
     @Override
-    public void onSubscribe(Subscription prevSubscription) {
+    public void onSubscribe(SubscriptionRa prevSubscription) {
         //  terminal
         prevSubscription.request();
     }

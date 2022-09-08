@@ -1,4 +1,6 @@
-package io.leaderli.litool.core.meta.condition;
+package io.leaderli.litool.core.meta.ef;
+
+import io.leaderli.litool.core.meta.LiIf;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -16,27 +18,27 @@ import java.util.function.Supplier;
  * @see LiThen#then(Object)
  * @since 2022/7/17
  */
-class FulfillNode<T, M extends T, R> extends Node<T, R> {
+public class FulfillNode<T, M extends T, R> extends Node<T, R> {
 
-    private final Publisher<T, R> prevPublisher;
+    private final PublisherIf<T, R> prevPublisher;
     private final Function<? super M, ? extends R> mapper;
 
 
-    public FulfillNode(Publisher<T, R> prevPublisher, Function<? super M, ? extends R> mapper) {
+    public FulfillNode(PublisherIf<T, R> prevPublisher, Function<? super M, ? extends R> mapper) {
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }
 
 
     @Override
-    public void subscribe(Subscriber<? super T, R> actualSubscriber) {
+    public void subscribe(SubscriberIf<? super T, R> actualSubscriber) {
         prevPublisher.subscribe(new SubscriberCase(actualSubscriber));
 
     }
 
     private class SubscriberCase extends IntermediateSubscriber<T, R> {
 
-        public SubscriberCase(Subscriber<? super T, R> actualSubscriber) {
+        public SubscriberCase(SubscriberIf<? super T, R> actualSubscriber) {
             super(actualSubscriber);
 
         }

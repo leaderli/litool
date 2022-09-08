@@ -6,8 +6,8 @@ import io.leaderli.litool.core.exception.InfiniteException;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.ra.CancelSubscription;
 import io.leaderli.litool.core.meta.ra.Exceptionable;
-import io.leaderli.litool.core.meta.ra.Subscriber;
-import io.leaderli.litool.core.meta.ra.Subscription;
+import io.leaderli.litool.core.meta.ra.SubscriberRa;
+import io.leaderli.litool.core.meta.ra.SubscriptionRa;
 import io.leaderli.litool.core.text.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -57,9 +57,9 @@ class LiraTest {
 
         LiBox<Object> box = LiBox.none();
 
-        Lira.of(1, 2).subscribe((new Subscriber<Integer>() {
+        Lira.of(1, 2).subscribe((new SubscriberRa<Integer>() {
             @Override
-            public void onSubscribe(Subscription subscription) {
+            public void onSubscribe(SubscriptionRa subscription) {
 
                 subscription.request();
             }

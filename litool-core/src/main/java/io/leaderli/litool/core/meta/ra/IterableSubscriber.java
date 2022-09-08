@@ -3,14 +3,14 @@ package io.leaderli.litool.core.meta.ra;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-class IterableSubscriber<T> implements Subscriber<T>, Iterator<T> {
-    private Subscription prevSubscription;
+class IterableSubscriber<T> implements SubscriberRa<T>, Iterator<T> {
+    private SubscriptionRa prevSubscription;
     private T next;
     private boolean accepted;
     private boolean completed;
 
     @Override
-    public void onSubscribe(Subscription prevSubscription) {
+    public void onSubscribe(SubscriptionRa prevSubscription) {
         this.prevSubscription = prevSubscription;
     }
 

@@ -6,6 +6,7 @@ import io.leaderli.litool.core.function.ThrowableRunner;
 import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiConstant;
+import io.leaderli.litool.core.meta.LiLink;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.function.Consumer;
@@ -23,9 +24,9 @@ import java.util.function.Supplier;
  */
 abstract class SomeLink<P, T> implements LiLink<T> {
 
-    protected final Publisher<P> prevPublisher;
+    protected final PublisherLink<P> prevPublisher;
 
-    protected SomeLink(Publisher<P> prevPublisher) {
+    protected SomeLink(PublisherLink<P> prevPublisher) {
         this.prevPublisher = prevPublisher;
     }
 
@@ -262,9 +263,9 @@ abstract class SomeLink<P, T> implements LiLink<T> {
     @Override
     public boolean present() {
         LiBox<Object> next = LiBox.none();
-        this.subscribe(new Subscriber<T>() {
+        this.subscribe(new SubscriberLink<T>() {
             @Override
-            public void onSubscribe(Subscription<T> prevSubscription) {
+            public void onSubscribe(SubscriptionLink<T> prevSubscription) {
                 prevSubscription.request();
             }
 

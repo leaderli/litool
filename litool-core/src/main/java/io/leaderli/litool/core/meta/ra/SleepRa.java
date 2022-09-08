@@ -15,7 +15,7 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-class SleepRa<T> extends PublisherRa<T> {
+class SleepRa<T> extends RaWithPrevPublisher<T> {
 
 
     /**
@@ -24,14 +24,14 @@ class SleepRa<T> extends PublisherRa<T> {
     private final int final_countdown;
     private final long milliseconds;
 
-    public SleepRa(Publisher<T> prevPublisher, int countdown, long milliseconds) {
+    public SleepRa(PublisherRa<T> prevPublisher, int countdown, long milliseconds) {
         super(prevPublisher);
         this.final_countdown = countdown;
         this.milliseconds = milliseconds;
     }
 
     @Override
-    public void subscribe(Subscriber<? super T> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
         prevPublisher.subscribe(new FilterSubscriberSubscription(actualSubscriber, final_countdown));
 
     }
@@ -40,7 +40,7 @@ class SleepRa<T> extends PublisherRa<T> {
     private final class FilterSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
         private int countdown;
 
-        public FilterSubscriberSubscription(Subscriber<? super T> actualSubscriber, int countdown) {
+        public FilterSubscriberSubscription(SubscriberRa<? super T> actualSubscriber, int countdown) {
             super(actualSubscriber);
             this.countdown = countdown;
         }

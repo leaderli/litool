@@ -11,15 +11,15 @@ class FlatMap<T, R> extends Ra<R> {
 
 
     private final Function<? super T, Iterator<? extends R>> mapper;
-    private final Publisher<T> prevPublisher;
+    private final PublisherRa<T> prevPublisher;
 
-    public FlatMap(Publisher<T> prevPublisher, Function<? super T, Iterator<? extends R>> mapper) {
+    public FlatMap(PublisherRa<T> prevPublisher, Function<? super T, Iterator<? extends R>> mapper) {
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }
 
     @Override
-    public void subscribe(Subscriber<? super R> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super R> actualSubscriber) {
         prevPublisher.subscribe(new FlatMapSubscriberSubscription(actualSubscriber));
 
     }
@@ -28,11 +28,11 @@ class FlatMap<T, R> extends Ra<R> {
     class FlatMapSubscriberSubscription extends IntermediateSubscriberSubscription<T, R> {
 
 
-        protected Subscription barricadeSubscription;
+        protected SubscriptionRa barricadeSubscription;
         private int actual_states;
 
 
-        private FlatMapSubscriberSubscription(Subscriber<? super R> actualSubscriber) {
+        private FlatMapSubscriberSubscription(SubscriberRa<? super R> actualSubscriber) {
             super(actualSubscriber);
         }
 
@@ -90,7 +90,7 @@ class FlatMap<T, R> extends Ra<R> {
         public final class BarricadeGenerator extends GeneratorSubscription<R> {
 
 
-            public BarricadeGenerator(Completable mediate, Subscriber<? super R> actualSubscriber,
+            public BarricadeGenerator(Completable mediate, SubscriberRa<? super R> actualSubscriber,
                                       Iterator<? extends R> iterator) {
                 super(actualSubscriber, iterator);
             }

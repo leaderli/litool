@@ -1,5 +1,6 @@
-package io.leaderli.litool.core.meta.condition;
+package io.leaderli.litool.core.meta.ef;
 
+import io.leaderli.litool.core.meta.LiIf;
 import io.leaderli.litool.core.meta.Lino;
 
 import java.util.function.Function;
@@ -46,7 +47,7 @@ abstract class Node<T, R> implements LiIf<T, R> {
     @Override
     public Lino<R> _else(Supplier<? extends R> supplier) {
         ElseNode<T, R> elseNode = new ElseNode<>(this, supplier);
-        elseNode.subscribe(Subscription::request);
+        elseNode.subscribe(SubscriptionIf::request);
         return elseNode.getResult();
     }
 

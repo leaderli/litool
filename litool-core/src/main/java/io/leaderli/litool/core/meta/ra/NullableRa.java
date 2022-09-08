@@ -6,22 +6,22 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/8/30 7:25 PM
  */
-class NullableRa<T> extends PublisherRa<T> {
+class NullableRa<T> extends RaWithPrevPublisher<T> {
     private final Supplier<? extends T> supplier;
 
-    public NullableRa(Publisher<T> prevPublisher, Supplier<? extends T> supplier) {
+    public NullableRa(PublisherRa<T> prevPublisher, Supplier<? extends T> supplier) {
         super(prevPublisher);
         this.supplier = supplier;
     }
 
     @Override
-    public void subscribe(Subscriber<? super T> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
         prevPublisher.subscribe(new NullableSubscriberSubscription(actualSubscriber));
 
     }
 
     private class NullableSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
-        public NullableSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
+        public NullableSubscriberSubscription(SubscriberRa<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 

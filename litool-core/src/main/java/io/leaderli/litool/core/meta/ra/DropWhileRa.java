@@ -13,18 +13,18 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-class DropWhileRa<T> extends PublisherRa<T> {
+class DropWhileRa<T> extends RaWithPrevPublisher<T> {
 
 
     private final Function<? super T, ?> drop_condition;
 
-    public DropWhileRa(Publisher<T> prevPublisher, Function<? super T, ?> drop_condition) {
+    public DropWhileRa(PublisherRa<T> prevPublisher, Function<? super T, ?> drop_condition) {
         super(prevPublisher);
         this.drop_condition = drop_condition;
     }
 
     @Override
-    public void subscribe(Subscriber<? super T> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
         prevPublisher.subscribe(new DropWhileSubscriberSubscription(actualSubscriber));
 
     }
@@ -35,7 +35,7 @@ class DropWhileRa<T> extends PublisherRa<T> {
         private boolean dropped;
 
 
-        public DropWhileSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
+        public DropWhileSubscriberSubscription(SubscriberRa<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 

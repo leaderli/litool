@@ -1,5 +1,6 @@
-package io.leaderli.litool.core.meta.condition;
+package io.leaderli.litool.core.meta.ef;
 
+import io.leaderli.litool.core.meta.LiIf;
 import io.leaderli.litool.core.meta.Lino;
 
 import java.util.function.Supplier;
@@ -15,13 +16,13 @@ import java.util.function.Supplier;
  * @see LiIf#_else()
  * @since 2022/9/6
  */
-class ElseNode<T, R> implements Publisher<T, R> {
-    private final Publisher<T, R> prevPublisher;
+class ElseNode<T, R> implements PublisherIf<T, R> {
+    private final PublisherIf<T, R> prevPublisher;
     private final Supplier<? extends R> supplier;
     private R result;
 
 
-    ElseNode(Publisher<T, R> prevPublisher, Supplier<? extends R> supplier) {
+    ElseNode(PublisherIf<T, R> prevPublisher, Supplier<? extends R> supplier) {
         this.prevPublisher = prevPublisher;
         this.supplier = supplier;
     }
@@ -31,7 +32,7 @@ class ElseNode<T, R> implements Publisher<T, R> {
     }
 
     @Override
-    public void subscribe(Subscriber<? super T, R> actualSubscriber) {
+    public void subscribe(SubscriberIf<? super T, R> actualSubscriber) {
         prevPublisher.subscribe(new EndSubscriber(actualSubscriber));
     }
 
@@ -39,7 +40,7 @@ class ElseNode<T, R> implements Publisher<T, R> {
     private class EndSubscriber extends IntermediateSubscriber<T, R> {
 
 
-        protected EndSubscriber(Subscriber<? super T, R> actualSubscriber) {
+        protected EndSubscriber(SubscriberIf<? super T, R> actualSubscriber) {
             super(actualSubscriber);
         }
 

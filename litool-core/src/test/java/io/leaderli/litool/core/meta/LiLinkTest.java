@@ -1,8 +1,6 @@
-package io.leaderli.litool.core.meta.link;
+package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.meta.LiBox;
-import io.leaderli.litool.core.meta.LiConstant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

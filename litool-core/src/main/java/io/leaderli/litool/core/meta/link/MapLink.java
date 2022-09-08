@@ -14,13 +14,13 @@ class MapLink<T, R> extends SomeLink<T, R> {
     private final Function<? super T, ? extends R> mapper;
 
 
-    public MapLink(Publisher<T> prevPublisher, Function<? super T, ? extends R> mapper) {
+    public MapLink(PublisherLink<T> prevPublisher, Function<? super T, ? extends R> mapper) {
         super(prevPublisher);
         this.mapper = mapper;
     }
 
     @Override
-    public void subscribe(Subscriber<R> actualSubscriber) {
+    public void subscribe(SubscriberLink<R> actualSubscriber) {
         prevPublisher.subscribe(new MapSubscriber(actualSubscriber));
     }
 
@@ -30,7 +30,7 @@ class MapLink<T, R> extends SomeLink<T, R> {
 
         private R newValue;
 
-        protected MapSubscriber(Subscriber<R> actualSubscriber) {
+        protected MapSubscriber(SubscriberLink<R> actualSubscriber) {
             super(actualSubscriber);
         }
 

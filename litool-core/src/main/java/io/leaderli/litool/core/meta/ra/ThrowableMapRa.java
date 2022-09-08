@@ -13,16 +13,16 @@ import io.leaderli.litool.core.meta.Lino;
  */
 class ThrowableMapRa<T, R> extends Ra<R> {
     private final ThrowableFunction<? super T, ? extends R> mapper;
-    private final Publisher<T> prevPublisher;
+    private final PublisherRa<T> prevPublisher;
 
 
-    public ThrowableMapRa(Publisher<T> prevPublisher, ThrowableFunction<? super T, ? extends R> mapper) {
+    public ThrowableMapRa(PublisherRa<T> prevPublisher, ThrowableFunction<? super T, ? extends R> mapper) {
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }
 
     @Override
-    public void subscribe(Subscriber<? super R> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super R> actualSubscriber) {
         prevPublisher.subscribe(new ThrowableMapSubscriberSubscription(actualSubscriber));
 
     }
@@ -30,7 +30,7 @@ class ThrowableMapRa<T, R> extends Ra<R> {
     private class ThrowableMapSubscriberSubscription extends IntermediateSubscriberSubscription<T, R> {
 
 
-        private ThrowableMapSubscriberSubscription(Subscriber<? super R> actualSubscriber) {
+        private ThrowableMapSubscriberSubscription(SubscriberRa<? super R> actualSubscriber) {
             super(actualSubscriber);
         }
 

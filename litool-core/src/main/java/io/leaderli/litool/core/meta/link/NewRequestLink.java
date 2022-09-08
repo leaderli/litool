@@ -9,14 +9,14 @@ class NewRequestLink<T> extends SomeLink<T, T> {
 
     private final T newValue;
 
-    public NewRequestLink(Publisher<T> prevPublisher, T newValue) {
+    public NewRequestLink(PublisherLink<T> prevPublisher, T newValue) {
         super(prevPublisher);
         this.newValue = newValue;
     }
 
 
     @Override
-    public void subscribe(Subscriber<T> actualSubscriber) {
+    public void subscribe(SubscriberLink<T> actualSubscriber) {
         prevPublisher.subscribe(new NewRequestSubscriber(actualSubscriber));
 
     }
@@ -27,7 +27,7 @@ class NewRequestLink<T> extends SomeLink<T, T> {
      */
     private class NewRequestSubscriber extends SameTypeIntermediateSubscriber<T> {
 
-        public NewRequestSubscriber(Subscriber<T> actualSubscriber) {
+        public NewRequestSubscriber(SubscriberLink<T> actualSubscriber) {
             super(actualSubscriber);
         }
 

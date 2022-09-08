@@ -6,7 +6,10 @@ import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
-import io.leaderli.litool.core.meta.ra.*;
+import io.leaderli.litool.core.meta.ra.DebugConsumer;
+import io.leaderli.litool.core.meta.ra.Exceptionable;
+import io.leaderli.litool.core.meta.ra.IterableRa;
+import io.leaderli.litool.core.meta.ra.PublisherRa;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.util.BooleanUtil;
 
@@ -26,7 +29,7 @@ import java.util.stream.Stream;
  * @author leaderli
  * @since 2022/6/19
  */
-public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
+public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
 
     Lira<?> NONE_INSTANCE = new IterableRa<>(NoneItr.of());
@@ -253,7 +256,7 @@ public interface Lira<T> extends LiValue, Publisher<T>, Iterable<T> {
 
     /**
      * @param supplier get a result
-     * @return a result if call {@link  Subscriber#next_null()}
+     * @return a result if call {@link  io.leaderli.litool.core.meta.ra.SubscriberRa#next_null()}
      */
     Lira<T> nullable(Supplier<? extends T> supplier);
 

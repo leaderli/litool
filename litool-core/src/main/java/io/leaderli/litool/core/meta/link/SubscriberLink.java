@@ -6,9 +6,9 @@ import io.leaderli.litool.core.meta.Lino;
  * @author leaderli
  * @since 2022/6/27
  */
-public interface Subscriber<T> {
+public interface SubscriberLink<T> {
 
-    void onSubscribe(Subscription<T> subscription);
+    void onSubscribe(SubscriptionLink<T> subscription);
 
     /**
      * 发布者推送了一个消息

@@ -5,8 +5,8 @@ package io.leaderli.litool.core.meta.link;
  * @since 2022/6/27
  */
 @FunctionalInterface
-public interface Publisher<T> {
+public interface PublisherLink<T> {
 
 
-    void subscribe(Subscriber<T> subscriber);
+    void subscribe(SubscriberLink<T> subscriber);
 }

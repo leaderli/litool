@@ -9,7 +9,7 @@ import io.leaderli.litool.core.meta.Lino;
  * 前后类型相同
  */
 abstract class SameTypeIntermediateSubscriber<T> extends IntermediateSubscriber<T, T> {
-    protected SameTypeIntermediateSubscriber(Subscriber<T> actualSubscriber) {
+    protected SameTypeIntermediateSubscriber(SubscriberLink<T> actualSubscriber) {
         super(actualSubscriber);
     }
 

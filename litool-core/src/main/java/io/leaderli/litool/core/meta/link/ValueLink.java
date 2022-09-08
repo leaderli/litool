@@ -6,7 +6,7 @@ import io.leaderli.litool.core.meta.Lino;
  * @author leaderli
  * @since 2022/7/16
  */
-class ValueLink<T> extends SomeLink<T, T> {
+public class ValueLink<T> extends SomeLink<T, T> {
 
 
     private final T value;
@@ -18,8 +18,8 @@ class ValueLink<T> extends SomeLink<T, T> {
     }
 
     @Override
-    public void subscribe(Subscriber<T> actualSubscriber) {
-        Subscription<T> subscription = new ValueSubscription(actualSubscriber);
+    public void subscribe(SubscriberLink<T> actualSubscriber) {
+        SubscriptionLink<T> subscription = new ValueSubscription(actualSubscriber);
         actualSubscriber.onSubscribe(subscription);
     }
 
@@ -27,11 +27,11 @@ class ValueLink<T> extends SomeLink<T, T> {
      * @author leaderli
      * @since 2022/7/16
      */
-    private class ValueSubscription implements Subscription<T> {
+    private class ValueSubscription implements SubscriptionLink<T> {
 
-        private final Subscriber<? super T> actualSubscriber;
+        private final SubscriberLink<? super T> actualSubscriber;
 
-        public ValueSubscription(Subscriber<? super T> actualSubscriber) {
+        public ValueSubscription(SubscriberLink<? super T> actualSubscriber) {
             this.actualSubscriber = actualSubscriber;
         }
 

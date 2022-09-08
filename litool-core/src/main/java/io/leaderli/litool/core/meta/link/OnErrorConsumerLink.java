@@ -13,14 +13,14 @@ public class OnErrorConsumerLink<T> extends SomeLink<T, T> {
     private final Consumer<? super T> errorConsumer;
 
 
-    public OnErrorConsumerLink(Publisher<T> prevPublisher, final Consumer<? super T> errorConsumer) {
+    public OnErrorConsumerLink(PublisherLink<T> prevPublisher, final Consumer<? super T> errorConsumer) {
         super(prevPublisher);
         this.errorConsumer = errorConsumer;
     }
 
 
     @Override
-    public void subscribe(Subscriber<T> actualSubscriber) {
+    public void subscribe(SubscriberLink<T> actualSubscriber) {
         prevPublisher.subscribe(new CancelConsumerSubscriber(actualSubscriber));
     }
 
@@ -28,7 +28,7 @@ public class OnErrorConsumerLink<T> extends SomeLink<T, T> {
     private class CancelConsumerSubscriber extends SameTypeIntermediateSubscriber<T> implements OnErrorSubscriber {
 
 
-        protected CancelConsumerSubscriber(Subscriber<T> actualSubscriber) {
+        protected CancelConsumerSubscriber(SubscriberLink<T> actualSubscriber) {
             super(actualSubscriber);
         }
 

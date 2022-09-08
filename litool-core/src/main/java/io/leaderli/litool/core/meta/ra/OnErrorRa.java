@@ -13,18 +13,18 @@ import java.util.function.Function;
  * @see BooleanUtil#parse(Object)
  * @since 2022/6/27
  */
-class OnErrorRa<T> extends PublisherRa<T> {
+class OnErrorRa<T> extends RaWithPrevPublisher<T> {
 
 
     private final Exceptionable onError;
 
-    public OnErrorRa(Publisher<T> prevPublisher, Exceptionable onError) {
+    public OnErrorRa(PublisherRa<T> prevPublisher, Exceptionable onError) {
         super(prevPublisher);
         this.onError = onError;
     }
 
     @Override
-    public void subscribe(Subscriber<? super T> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super T> actualSubscriber) {
         prevPublisher.subscribe(new OnErrorSubscriberSubscription(actualSubscriber));
 
     }
@@ -33,7 +33,7 @@ class OnErrorRa<T> extends PublisherRa<T> {
     private final class OnErrorSubscriberSubscription extends IntermediateSubscriberSubscription<T, T> {
 
 
-        public OnErrorSubscriberSubscription(Subscriber<? super T> actualSubscriber) {
+        public OnErrorSubscriberSubscription(SubscriberRa<? super T> actualSubscriber) {
             super(actualSubscriber);
         }
 
