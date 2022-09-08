@@ -68,6 +68,8 @@ public class ClassScanner {
      */
     private boolean initialize;
 
+    private boolean forceScanJavaClassPaths;
+
 
     /**
      * 构造，默认UTF-8编码
@@ -146,24 +148,14 @@ public class ClassScanner {
 
     }
 
-    /**
-     * 扫描包路径下满足class过滤器条件的所有class文件<br>
-     * 此方法首先扫描指定包名下的资源目录，如果未扫描到，则扫描整个classpath中所有加载的类
-     *
-     * @return 类集合
-     */
-    public Set<Class<?>> scan() {
-        return scan(false);
-    }
 
     /**
      * 扫描包路径下满足class过滤器条件的所有class文件
      *
-     * @param forceScanJavaClassPaths 是否强制扫描其他位于classpath关联jar中的类
      * @return 类集合
      * @since 5.7.5
      */
-    public Set<Class<?>> scan(boolean forceScanJavaClassPaths) {
+    public Set<Class<?>> scan() {
         for (URL url : ResourceUtil.getResourceURLs(this.packagePath).get()) {
             if ("file".equals(url.getProtocol())) {
                 scanFile(new File(URLUtil.decode(url.getFile(), this.charset.name())), null);

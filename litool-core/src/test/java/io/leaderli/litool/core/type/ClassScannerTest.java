@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.*;
 import java.util.Set;
-import java.util.function.Predicate;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER, ElementType.TYPE})
@@ -55,21 +54,5 @@ class ClassScannerTest {
         Assertions.assertEquals(2, subTypesOf.size());
     }
 
-    @Test
-    void test() {
-
-        ClassScanner classScanner = new ClassScanner(null, new Predicate<Class<?>>() {
-            @Override
-            public boolean test(Class<?> aClass) {
-                return !aClass.getPackage().getName().startsWith("io.leaderli");
-            }
-        });
-
-
-        Set<Class<?>> scan = classScanner.scan(true);
-//        ConsoleUtil.println(scan);
-//        System.out.println(scan.size());
-
-    }
 
 }
