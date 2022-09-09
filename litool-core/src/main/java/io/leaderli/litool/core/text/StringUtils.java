@@ -17,8 +17,8 @@
 package io.leaderli.litool.core.text;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
-import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.lang.RegExUtils;
+import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ReflectUtil;
@@ -27,10 +27,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -8360,7 +8358,8 @@ public class StringUtils implements StrPool {
         return value == null ? null : String.valueOf(value);
     }
 
-    //------------------------------------------------------------------litool------------------------------------------------------------------
+    //------------------------------------------------------------------litool
+    // ------------------------------------------------------------------
 
     /**
      * Return the new string with fixed length, if the origin string length is
@@ -8513,9 +8512,27 @@ public class StringUtils implements StrPool {
 
 
     /**
+     * get the bottom cause stackTrack, and return the first error message that occurs at the class
+     * <pre>
+     *    java.lang.RuntimeException: java.lang.RuntimeException: java.lang.IllegalArgumentException: bound must be positive
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.outmock(StringUtilsTest.java:95)
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.line(StringUtilsTest.java:70)
+     * 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+     * 	...
+     * Caused by: java.lang.RuntimeException: java.lang.IllegalArgumentException: bound must be positive
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.mock(StringUtilsTest.java:105)
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.outmock(StringUtilsTest.java:93)
+     * 	... 68 more
+     * Caused by: java.lang.IllegalArgumentException: bound must be positive
+     * 	at java.util.Random.nextInt(Random.java:388)
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.lambda$mock$6(StringUtilsTest.java:103)
+     * 	at io.leaderli.litool.core.meta.Lino$Some.map(Lino.java:400)
+     * 	... 69 more
+     * </pre>
+     *
      * @param throwable  the error
      * @param threwClass the class that have error message
-     * @return the error message
+     * @return one line error message  of specific class
      */
     public static String localMessageAtLineOfClass(Throwable throwable, Class<?> threwClass) {
 
@@ -8523,6 +8540,29 @@ public class StringUtils implements StrPool {
 
     }
 
+    /**
+     * get the bottom cause stackTrack, and return the first error message  start with prefix
+     * <pre>
+     *    java.lang.RuntimeException: java.lang.RuntimeException: java.lang.IllegalArgumentException: bound must be positive
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.outmock(StringUtilsTest.java:95)
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.line(StringUtilsTest.java:70)
+     * 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+     * 	...
+     * Caused by: java.lang.RuntimeException: java.lang.IllegalArgumentException: bound must be positive
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.mock(StringUtilsTest.java:105)
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.outmock(StringUtilsTest.java:93)
+     * 	... 68 more
+     * Caused by: java.lang.IllegalArgumentException: bound must be positive
+     * 	at java.util.Random.nextInt(Random.java:388)
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.lambda$mock$6(StringUtilsTest.java:103)
+     * 	at io.leaderli.litool.core.meta.Lino$Some.map(Lino.java:400)
+     * 	... 69 more
+     * </pre>
+     *
+     * @param throwable the error
+     * @param prefix    the message start with
+     * @return one line error message  start with prefix
+     */
     public static String localMessageStartWith(Throwable throwable, String prefix) {
 
 
@@ -8548,16 +8588,39 @@ public class StringUtils implements StrPool {
         return "";
     }
 
+    /**
+     * get the bottom cause stackTrack, and return the first error message occurs at the package
+     * <pre>
+     *    java.lang.RuntimeException: java.lang.RuntimeException: java.lang.IllegalArgumentException: bound must be positive
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.outmock(StringUtilsTest.java:95)
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.line(StringUtilsTest.java:70)
+     * 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+     * 	...
+     * Caused by: java.lang.RuntimeException: java.lang.IllegalArgumentException: bound must be positive
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.mock(StringUtilsTest.java:105)
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.outmock(StringUtilsTest.java:93)
+     * 	... 68 more
+     * Caused by: java.lang.IllegalArgumentException: bound must be positive
+     * 	at java.util.Random.nextInt(Random.java:388)
+     * 	at io.leaderli.litool.core.lang.StringUtilsTest.lambda$mock$6(StringUtilsTest.java:103)
+     * 	at io.leaderli.litool.core.meta.Lino$Some.map(Lino.java:400)
+     * 	... 69 more
+     * </pre>
+     *
+     * @param throwable the error
+     * @param _package  the message occurs at the package
+     * @return one line error message  start with prefix
+     */
     public static String localMessageAtLineOfPackage(Throwable throwable, Package _package) {
         return localMessageStartWith(throwable, _package.getName());
     }
 
     /**
-     * 编码字符串
+     * encode string
      *
-     * @param str     字符串
-     * @param charset 字符集，如果此字段为空，则解码的结果取决于平台
-     * @return 编码后的字节码
+     * @param str     the  str
+     * @param charset if null ,the encode will depend on platform
+     * @return encode bytes of string
      */
     public static byte[] bytes(CharSequence str, Charset charset) {
         if (str == null) {
@@ -8571,11 +8634,11 @@ public class StringUtils implements StrPool {
     }
 
     /**
-     * 解码字节码
+     * decode bytes
      *
-     * @param data    字符串
-     * @param charset 字符集，如果此字段为空，则解码的结果取决于平台
-     * @return 解码后的字符串
+     * @param data    the bytes of string
+     * @param charset if {@code  null}, the decode result depend on the platform
+     * @return the decode value of bytes
      */
     public static String str(byte[] data, Charset charset) {
         if (data == null) {
@@ -8589,40 +8652,94 @@ public class StringUtils implements StrPool {
     }
 
     /**
-     * {@link CharSequence} 转为字符串，null安全
+     * convert {@link CharSequence} to String, null-safe
      *
      * @param cs {@link CharSequence}
-     * @return 字符串
+     * @return str
      */
     public static String str(CharSequence cs) {
         return null == cs ? null : cs.toString();
     }
 
+    /**
+     * Return read inputStream to string, use {@link  Charset#defaultCharset()}
+     *
+     * @param inputStream the input stream
+     * @return a string
+     */
     public static String read(InputStream inputStream) {
-        return read(inputStream, StandardCharsets.UTF_8);
+        return read(inputStream, Charset.defaultCharset());
     }
 
+    /**
+     * Return read inputStream to string
+     *
+     * @param inputStream the inputStream
+     * @param charset     the string charset
+     * @return a string
+     */
     public static String read(InputStream inputStream, Charset charset) {
-        return new BufferedReader(new InputStreamReader(inputStream, charset)).lines().collect(Collectors.joining("\n"
-        ));
+        return new BufferedReader(
+                new InputStreamReader(inputStream, charset)).lines().collect(Collectors.joining("\n")
+        );
     }
 
-    public static String getFieldsToString(Object o) {
+    /**
+     * Return the non-static field-value join with ','
+     *
+     * @param obj the non-null obj
+     * @return the non-static field-value join with ','
+     */
+    public static String obj2String(Object obj) {
 
-        return join(",", Lino.of(o).map(l -> l.getClass().getFields())
+        Lira<String> fields =
+                ReflectUtil.getFields(obj.getClass())
+                        .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                        .map(f -> f.getName() + "=" + ReflectUtil.getFieldValue(obj, f).get());
 
-                .toLira(Field.class)
-                .filter(field -> !Modifier.isStatic(field.getModifiers()))
-                .map(f -> f.getName() + " = " + ReflectUtil.getFieldValue(o, f).get())
-                .get());
-
+        return join(", ", fields);
 
     }
 
     /**
-     * @param delimiter 分割符
-     * @param elements  数组
-     * @return 将数组转换为字符串并通过 delimiter 连接起来
+     * join elements with delimiter, if element is null, it will be regard as ''
+     *
+     * @param delimiter delimiter str, if {@code  null} will use {@link  LiConstant#JOIN_DELIMITER}
+     * @param iterable  an iterable
+     * @return joined elements
+     */
+
+    public static String join(String delimiter, Iterable<?> iterable) {
+
+
+        if (iterable == null) {
+            return "";
+        }
+        if (delimiter == null) {
+            delimiter = LiConstant.JOIN_DELIMITER;
+        }
+        StringJoiner joiner = new StringJoiner(delimiter);
+        iterable.forEach(
+                element -> {
+                    String value;
+                    if (element == null) {
+                        value = "";
+                    } else {
+                        value = String.valueOf(element);
+                    }
+
+                    joiner.add(value);
+                }
+        );
+        return joiner.toString();
+    }
+
+    /**
+     * join elements with delimiter, if element is null, it will be regard as ''
+     *
+     * @param delimiter delimiter str, if {@code  null} will use {@link  LiConstant#JOIN_DELIMITER}
+     * @param elements  an array
+     * @return joined elements
      */
     public static String join(String delimiter, Object... elements) {
 
@@ -8630,17 +8747,19 @@ public class StringUtils implements StrPool {
     }
 
     /**
-     * @param delimiter 分割符
-     * @param elements  数组
-     * @return 将数组转换为字符串并通过 delimiter 连接起来
+     * join elements with delimiter, if element is null, it will be regard as ''
+     *
+     * @param delimiter delimiter str, if {@code  null} will use {@link  LiConstant#JOIN_DELIMITER}
+     * @param elements  an array
+     * @return joined elements
      */
-    public static String join0(String delimiter, Object[] elements) {
+    private static String join0(String delimiter, Object[] elements) {
 
         if (elements == null) {
             return "";
         }
         if (delimiter == null) {
-            delimiter = " ";
+            delimiter = LiConstant.JOIN_DELIMITER;
         }
 
         String[] arr = new String[elements.length];
@@ -8652,21 +8771,24 @@ public class StringUtils implements StrPool {
 
     }
 
+    /**
+     * join elements with delimiter, if element is null, it will be regard as ''
+     *
+     * @param delimiter delimiter str, if {@code  null} will use {@link  LiConstant#JOIN_DELIMITER}
+     * @param iterator  an iterator
+     * @return joined elements
+     */
+    public static String join(String delimiter, Iterator<?> iterator) {
 
-    public static String join(String delimiter, Iterable<?> elements) {
 
-        return join(delimiter, IterableItr.of(elements).iterator());
-
-    }
-
-    public static String join(String delimiter, Iterator<?> elements) {
-
-
+        if (iterator == null) {
+            return "";
+        }
         if (delimiter == null) {
-            delimiter = " ";
+            delimiter = LiConstant.JOIN_DELIMITER;
         }
         StringJoiner joiner = new StringJoiner(delimiter);
-        elements.forEachRemaining(
+        iterator.forEachRemaining(
                 element -> {
                     String value;
                     if (element == null) {

@@ -1,7 +1,9 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.text.StringUtils;
 
+import java.util.Iterator;
 import java.util.function.Consumer;
 
 /**
@@ -10,6 +12,14 @@ import java.util.function.Consumer;
  */
 public class LiConstant {
 
+
+    /**
+     * the default delimiter of
+     * {@link  StringUtils#join(String, Iterable)}
+     * {@link  StringUtils#join(String, Iterator)}
+     * {@link  StringUtils#join(String, Object...)}
+     */
+    public static final String JOIN_DELIMITER = ",";
     public static final String ATTRIBUTE_NAME_RULE = "[a-zA-Z0-9_]+";
     /**
      * 默认的异常消费者，适用于

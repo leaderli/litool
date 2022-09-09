@@ -21,7 +21,7 @@ public class ThreadUtil {
     }
 
     public static void sleep1s(Object... msgs) {
-        sleep(1, () -> System.out.println(StringUtils.join0(" ", msgs)));
+        sleep(1, () -> System.out.println(StringUtils.join(" ", msgs)));
     }
 
     /**

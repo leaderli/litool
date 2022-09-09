@@ -20,7 +20,7 @@ public abstract class BaseEventElementExecutor<B extends BaseEventElement<B, ?, 
     public final void execute(Context context) {
 
 
-        String message = StrSubstitution.replace(element.getLongExpression().getExpr()
+        String message = StrSubstitution.format(element.getLongExpression().getExpr()
                 , expr -> ExpressionUtil.getExpression(expr).apply(context) + "");
         LiEventObject<?> e = newEvent(message);
         context.publishEvent(e);

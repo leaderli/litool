@@ -56,10 +56,32 @@ class StringUtilsTest {
         Assertions.assertEquals("1 2 3", StringUtils.join(" ", 1, 2, 3));
         Assertions.assertEquals("", StringUtils.join(" ", (Object[]) null));
         Assertions.assertEquals("", StringUtils.join(" ", (Object) null));
-        Assertions.assertEquals("1 2", StringUtils.join(null, 1, 2));
-        Assertions.assertEquals(" 1", StringUtils.join(null, Arrays.asList(null, 1)));
+        Assertions.assertEquals("1,2", StringUtils.join(null, 1, 2));
+        Assertions.assertEquals(",1", StringUtils.join(null, Arrays.asList(null, 1)));
         Assertions.assertEquals(",1", StringUtils.join(",", Arrays.asList(null, 1)));
-        Assertions.assertEquals("1 2", StringUtils.join(null, Arrays.asList(1, 2)));
+        Assertions.assertEquals("1,2", StringUtils.join(null, Arrays.asList(1, 2)));
+    }
+
+    @Test
+    void obj2String() {
+
+        FieldsString obj = new FieldsString();
+        obj.name = "hello";
+
+
+        Assertions.assertEquals("name=hello, age=0", StringUtils.obj2String(obj));
+
+        Assertions.assertThrows(NullPointerException.class, () -> StringUtils.obj2String(null));
+
+
+    }
+
+    private static class FieldsString {
+
+        public static int size = 0;
+        private String name;
+        private int age;
+
     }
 
     @Test
