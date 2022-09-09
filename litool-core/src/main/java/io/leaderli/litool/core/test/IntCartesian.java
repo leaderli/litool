@@ -13,6 +13,6 @@ class IntCartesian implements CartesianFunction<IntValues, Integer> {
         if (value.length > 0) {
             return (Integer[]) PrimitiveEnum.toWrapperArray(value);
         }
-        return CartesianUtil.cartesian(Integer.class);
+        return CartesianUtil.cartesian_single_def(Integer.class);
     }
 }

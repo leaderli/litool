@@ -14,6 +14,6 @@ public class ByteCartesian implements CartesianFunction<ByteValues, Byte> {
         if (value.length > 0) {
             return (Byte[]) PrimitiveEnum.toWrapperArray(value);
         }
-        return CartesianUtil.cartesian(Byte.class);
+        return CartesianUtil.cartesian_single_def(Byte.class);
     }
 }

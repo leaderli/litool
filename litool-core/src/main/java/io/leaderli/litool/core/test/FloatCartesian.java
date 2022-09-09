@@ -14,6 +14,6 @@ public class FloatCartesian implements CartesianFunction<FloatValues, Float> {
         if (value.length > 0) {
             return (Float[]) PrimitiveEnum.toWrapperArray(value);
         }
-        return CartesianUtil.cartesian(Float.class);
+        return CartesianUtil.cartesian_single_def(Float.class);
     }
 }

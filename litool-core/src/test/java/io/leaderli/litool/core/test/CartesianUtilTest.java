@@ -35,10 +35,17 @@ class CartesianUtilTest {
     }
 
     @Test
-    void testField() {
+    void cartesian_single_def() {
 
-        Assertions.assertSame(Integer.class, CartesianUtil.cartesian(int.class)[0].getClass());
-        Assertions.assertNull(CartesianUtil.cartesian(String.class)[0]);
+        Assertions.assertSame(Integer.class, CartesianUtil.cartesian_single_def(int.class)[0].getClass());
+        Assertions.assertNull(CartesianUtil.cartesian_single_def(String.class)[0]);
+        Assertions.assertThrows(NullPointerException.class, () -> {
+            Object o = CartesianUtil.cartesian_single_def(null)[0];
+        });
+    }
+
+    @Test
+    void testField() {
 
 
         Field field = ReflectUtil.getField(TestA.class, "age").get();

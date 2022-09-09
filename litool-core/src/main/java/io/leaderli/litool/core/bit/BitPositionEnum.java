@@ -87,6 +87,6 @@ public enum BitPositionEnum {
 
     @Override
     public String toString() {
-        return StringUtils.split(StringUtils.ljust(Integer.toBinaryString(value), 32, "0"), 4);
+        return StringUtils.chunk(StringUtils.ljust(Integer.toBinaryString(value), 32, '0'), 4);
     }
 }

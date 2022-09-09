@@ -318,14 +318,14 @@ public class ReflectUtil {
     }
 
     /**
-     * @param cls  类
-     * @param mark 标记注解类
+     * @param annotatedElement 类
+     * @param mark             标记注解类
      * @return 查找类的所有注解中被 mark 注解的注解
      * @see #findAnnotations(AnnotatedElement, Function)
      */
-    public static Lira<Annotation> findAnnotationsWithMark(AnnotatedElement cls, Class<? extends Annotation> mark) {
+    public static Lira<Annotation> findAnnotationsWithMark(AnnotatedElement annotatedElement, Class<? extends Annotation> mark) {
 
-        return findAnnotations(cls, annotation -> annotation.annotationType().isAnnotationPresent(mark));
+        return findAnnotations(annotatedElement, annotation -> annotation.annotationType().isAnnotationPresent(mark));
     }
 
     /**

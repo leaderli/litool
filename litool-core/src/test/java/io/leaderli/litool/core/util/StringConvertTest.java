@@ -13,10 +13,20 @@ import org.junit.jupiter.api.Test;
 class StringConvertTest {
 
     @Test
+    void support() {
+
+        Assertions.assertFalse(StringConvert.support(null));
+        Assertions.assertTrue(StringConvert.support(String.class));
+        Assertions.assertTrue(StringConvert.support(int.class));
+        Assertions.assertTrue(StringConvert.support(Integer.class));
+    }
+
+    @Test
     void parserInt() {
 
         LiConstant.WHEN_THROW = null;
         Assertions.assertSame(0, StringConvert.parser(null, 0));
+        Assertions.assertSame(null, StringConvert.parser(null, (Object) null));
         Assertions.assertSame(1, StringConvert.parser("1", 0));
         Assertions.assertSame(true, StringConvert.parser("true", false));
         Assertions.assertSame((byte) 1, StringConvert.parser("1", (byte) 0));

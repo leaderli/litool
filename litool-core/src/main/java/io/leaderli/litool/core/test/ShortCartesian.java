@@ -14,6 +14,6 @@ public class ShortCartesian implements CartesianFunction<ShortValues, Short> {
         if (value.length > 0) {
             return (Short[]) PrimitiveEnum.toWrapperArray(value);
         }
-        return CartesianUtil.cartesian(Short.class);
+        return CartesianUtil.cartesian_single_def(Short.class);
     }
 }

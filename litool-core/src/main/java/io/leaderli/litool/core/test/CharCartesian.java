@@ -13,6 +13,6 @@ class CharCartesian implements CartesianFunction<CharValues, Character> {
         if (value.length > 0) {
             return (Character[]) PrimitiveEnum.toWrapperArray(value);
         }
-        return CartesianUtil.cartesian(Character.class);
+        return CartesianUtil.cartesian_single_def(Character.class);
     }
 }
