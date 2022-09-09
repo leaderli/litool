@@ -16,16 +16,16 @@ class StringUtilsTest {
 
     @Test
     void just() {
-        Assertions.assertEquals("**1**", StringUtils.just("1", 4, "*"));
-        Assertions.assertEquals("--1--", StringUtils.just("1", 4));
-        Assertions.assertEquals("----", StringUtils.just(null, 4));
+        Assertions.assertEquals("**1**", StringUtils.just("1", 4, '*'));
+        Assertions.assertEquals("  1  ", StringUtils.just("1", 4));
+        Assertions.assertEquals("    ", StringUtils.just(null, 4));
         Assertions.assertEquals("12345", StringUtils.just("12345", 4));
     }
 
     @Test
     void ljust() {
 
-        Assertions.assertEquals("***1", StringUtils.ljust("1", 4, "*"));
+        Assertions.assertEquals("***1", StringUtils.ljust("1", 4, '*'));
         Assertions.assertEquals("   1", StringUtils.ljust("1", 4));
         Assertions.assertEquals("    ", StringUtils.ljust(null, 4));
         Assertions.assertEquals("12345", StringUtils.ljust("12345", 4));
@@ -34,7 +34,7 @@ class StringUtilsTest {
     @Test
     void rjust() {
 
-        Assertions.assertEquals("1***", StringUtils.rjust("1", 4, "*"));
+        Assertions.assertEquals("1***", StringUtils.rjust("1", 4, '*'));
         Assertions.assertEquals("1   ", StringUtils.rjust("1", 4));
         Assertions.assertEquals("    ", StringUtils.rjust(null, 4));
         Assertions.assertEquals("12345", StringUtils.rjust("12345", 4));
@@ -43,11 +43,11 @@ class StringUtilsTest {
     @Test
     void split() {
 
-        Assertions.assertNull(StringUtils.split(null, 4));
-        Assertions.assertEquals("123", StringUtils.split("123", 4));
-        Assertions.assertEquals("12 3", StringUtils.split("123", 2));
-        Assertions.assertEquals("12 34", StringUtils.split("1234", 2));
-        Assertions.assertEquals("12 34 5", StringUtils.split("12345", 2));
+        Assertions.assertNull(StringUtils.chunk(null, 4));
+        Assertions.assertEquals("123", StringUtils.chunk("123", 4));
+        Assertions.assertEquals("12 3", StringUtils.chunk("123", 2));
+        Assertions.assertEquals("12 34", StringUtils.chunk("1234", 2));
+        Assertions.assertEquals("12 34 5", StringUtils.chunk("12345", 2));
     }
 
     @Test

@@ -36,10 +36,25 @@ public class StringConvert {
         CONVERTS.put(String.class, str -> str);
     }
 
-    public static boolean support(Class<?> key) {
-        return CONVERTS.containsKey(key);
+    /**
+     * Return class is support to converted
+     *
+     * @param cls the class
+     * @return class is support to converted
+     */
+    public static boolean support(Class<?> cls) {
+        return CONVERTS.containsKey(cls);
     }
 
+
+    /**
+     * Return the def  if parsed fail, or the parsed value
+     *
+     * @param value the string value
+     * @param def   the def value if parsed fail
+     * @param <T>   the type parameter of parsed type, it's same with def type
+     * @return the parsed value
+     */
     public static <T> T parser(String value, T def) {
 
         Class<T> cls = ClassUtil.getClass(def);
@@ -47,6 +62,15 @@ public class StringConvert {
         return parser(cls, value, def);
     }
 
+    /**
+     * Return the def  if parsed fail, or the parsed value
+     *
+     * @param cls   the type of parsed value
+     * @param value the string value
+     * @param def   the def value if parsed fail
+     * @param <T>   the type parameter of parsed type
+     * @return the parsed value
+     */
     public static <T> T parser(Class<T> cls, String value, T def) {
 
         return Lino.of(CONVERTS.get(cls))

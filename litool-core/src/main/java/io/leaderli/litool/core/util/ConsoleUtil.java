@@ -74,7 +74,7 @@ public class ConsoleUtil {
      */
     public static void line() {
 
-        CONSOLE.println(StringUtils.ljust("", 60, "-"));
+        CONSOLE.println(StringUtils.just("", 60, '-'));
 
     }
 

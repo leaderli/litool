@@ -42,6 +42,13 @@ public class CartesianUtil {
 
     }
 
+    /**
+     * Return the potential values of parameter
+     *
+     * @param parameter the parameter
+     * @param context   the context may be used for {@link  CartesianFunction#apply(Annotation, CartesianContext)}
+     * @return the potential values of parameter
+     */
     public static Object[] cartesian(Parameter parameter, CartesianContext context) {
         return cartesian(parameter.getType(), parameter, context);
     }

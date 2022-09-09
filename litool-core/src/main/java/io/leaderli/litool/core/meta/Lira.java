@@ -260,6 +260,10 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     Lira<T> nullable(Supplier<? extends T> supplier);
 
+    default Lira<T> nullable(T supplier) {
+        return nullable(() -> supplier);
+    }
+
     /**
      * @param n 跳过多少个元素
      * @return 截掉前 n 位元素

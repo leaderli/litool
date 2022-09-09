@@ -6719,43 +6719,6 @@ public class StringUtils implements StrPool {
         return splitWorker(str, separatorChars, -1, false);
     }
 
-    /**
-     * @param delimiter 分割符
-     * @param elements  数组
-     * @return 将数组转换为字符串并通过 delimiter 连接起来
-     */
-    public static String join0(String delimiter, Object[] elements) {
-
-        return join(delimiter, Lino.of(elements).map(Arrays::asList).get());
-    }
-
-    public static String join(String delimiter, Iterable<?> elements) {
-
-        return join(delimiter, IterableItr.of(elements).iterator());
-
-    }
-
-    public static String join(String delimiter, Iterator<?> elements) {
-
-
-        if (delimiter == null) {
-            delimiter = " ";
-        }
-        StringJoiner joiner = new StringJoiner(delimiter);
-        elements.forEachRemaining(
-                element -> {
-                    String value;
-                    if (element == null) {
-                        value = "";
-                    } else {
-                        value = String.valueOf(element);
-                    }
-
-                    joiner.add(value);
-                }
-        );
-        return joiner.toString();
-    }
 
 // Difference
 //-----------------------------------------------------------------------
@@ -8397,119 +8360,138 @@ public class StringUtils implements StrPool {
         return value == null ? null : String.valueOf(value);
     }
 
+    //------------------------------------------------------------------litool------------------------------------------------------------------
+
     /**
-     * @param origin     -
-     * @param min_length -
-     * @return -
-     * @see #just(String, int, String)
+     * Return the new string with fixed length, if the origin string length is
+     * less than min length, will padding ' ' at bound
+     *
+     * @param origin     a string
+     * @param min_length the min length of just string
+     * @return the new string with fixed length
+     * @see #just(String, int, char)
      */
     public static String just(String origin, int min_length) {
-        return just(origin, min_length, null);
+        return just(origin, min_length, ' ');
     }
 
     /**
-     * @param origin     原字符串
-     * @param min_length 最小长度
-     * @param padding    占位符
-     * @return 当位数达不到最小长度时，在左右两侧补充占位符，默认占位符 -
+     * Return the new string with fixed length, if the origin string length is
+     * less than min length, will padding at bound
+     *
+     * @param origin     a string
+     * @param min_length the min length of just string
+     * @param padding    the padding char
+     * @return the new string with fixed length
      */
-    public static String just(String origin, int min_length, String padding) {
+    public static String just(String origin, int min_length, char padding) {
 
         if (origin == null) {
             origin = "";
         }
-        if (padding == null) {
-            padding = "-";
-        }
+
 
         if (origin.length() >= min_length) {
             return origin;
         }
 
         int gap = min_length - origin.length();
-        if ((gap & 1) == 1) { // 奇数
+        if ((gap & 1) == 1) { // odd
             gap = gap / 2 + 1;
         } else {
             gap = gap / 2;
         }
-        String replace = new String(new char[gap]).replace("\0", padding);
+        String replace = new String(new char[gap]).replace('\0', padding);
         return replace + origin + replace;
 
     }
 
+
     /**
-     * @param origin     -
-     * @param min_length -
-     * @return -
-     * @see #ljust(String, int, String)
+     * Return the new string with fixed length, if the origin string length is
+     * less than min length, will padding ' ' at left
+     *
+     * @param origin     a string
+     * @param min_length the min length of ljust string
+     * @return the new string with fixed length
+     * @see #ljust(String, int, char)
      */
     public static String ljust(String origin, int min_length) {
-        return ljust(origin, min_length, null);
+        return ljust(origin, min_length, ' ');
     }
 
     /**
-     * @param origin     原字符串
-     * @param min_length 最小长度
-     * @param padding    占位符
-     * @return 当位数达不到最小长度时，在左侧补充占位符，默认占位符为空格
+     * Return the new string with fixed length, if the origin string length is
+     * less than min length, will padding ' ' at left
+     *
+     * @param origin     a string
+     * @param min_length the min length of ljust string
+     * @param padding    the padding char
+     * @return the new string with fixed length
+     * @see #ljust(String, int, char)
      */
-    public static String ljust(String origin, int min_length, String padding) {
+    public static String ljust(String origin, int min_length, char padding) {
 
         if (origin == null) {
             origin = "";
         }
-        if (padding == null) {
-            padding = " ";
-        }
+
 
         if (origin.length() >= min_length) {
             return origin;
         }
 
-        return new String(new char[min_length - origin.length()]).replace("\0", padding) + origin;
+        return new String(new char[min_length - origin.length()]).replace('\0', padding) + origin;
 
     }
 
+
     /**
-     * @param origin     -
-     * @param min_length -
-     * @return -
-     * @see #rjust(String, int, String)
+     * Return the new string with fixed length, if the origin string length is
+     * less than min length, will padding ' ' at  right
+     *
+     * @param origin     a string
+     * @param min_length the min length of rjust string
+     * @return the new string with fixed length
+     * @see #rjust(String, int, char)
      */
     public static String rjust(String origin, int min_length) {
-        return rjust(origin, min_length, null);
+        return rjust(origin, min_length, ' ');
     }
 
+
     /**
-     * @param origin     原字符串
-     * @param min_length 最小长度
-     * @param padding    占位符
-     * @return 当位数达不到最小长度时，在右侧补充占位符，默认占位符为空格
+     * Return the new string with fixed length, if the origin string length is
+     * less than min length, will padding ' ' at  right
+     *
+     * @param origin     a string
+     * @param min_length the min length of rjust string
+     * @param padding    the padding char
+     * @return the new string with fixed length
      */
-    public static String rjust(String origin, int min_length, String padding) {
+    public static String rjust(String origin, int min_length, char padding) {
 
         if (origin == null) {
             origin = "";
-        }
-        if (padding == null) {
-            padding = " ";
         }
 
         if (origin.length() >= min_length) {
             return origin;
         }
 
-        return origin + (new String(new char[min_length - origin.length()]).replace("\0", padding));
+        return origin + (new String(new char[min_length - origin.length()]).replace('\0', padding));
 
     }
 
     /**
-     * @param str       字符串
-     * @param chunkSize 切割子字符串的长度
-     * @return 将字符串每隔  chunkSize 位 插入一个空格
+     * Return a new string that  insert a ' ' at every chunk digits at the str
+     *
+     * @param str       the str
+     * @param chunkSize the size of chunk
+     * @return a new string that  insert a ' ' at every chunk digits at the str
      */
     @SuppressWarnings("java:S2259")
-    public static String split(String str, int chunkSize) {
+    public static String chunk(String str, int chunkSize) {
 
         if (length(str) < chunkSize) {
             return str;
@@ -8519,24 +8501,22 @@ public class StringUtils implements StrPool {
     }
 
     /**
-     * @param str 字符串
-     * @return 获取字符串的长度
+     * Return the length of str
+     *
+     * @param str the str
+     * @return the length of str
      */
     public static int length(String str) {
 
         return str == null ? 0 : str.length();
     }
 
+
     /**
-     * @param delimiter 分割符
-     * @param elements  数组
-     * @return 将数组转换为字符串并通过 delimiter 连接起来
+     * @param throwable  the error
+     * @param threwClass the class that have error message
+     * @return the error message
      */
-    public static String join(String delimiter, Object... elements) {
-
-        return join(delimiter, Lino.of(elements).map(Arrays::asList).get());
-    }
-
     public static String localMessageAtLineOfClass(Throwable throwable, Class<?> threwClass) {
 
         return localMessageStartWith(throwable, Lino.of(threwClass).map(Class::getName).get());
@@ -8638,4 +8618,67 @@ public class StringUtils implements StrPool {
 
 
     }
+
+    /**
+     * @param delimiter 分割符
+     * @param elements  数组
+     * @return 将数组转换为字符串并通过 delimiter 连接起来
+     */
+    public static String join(String delimiter, Object... elements) {
+
+        return join0(delimiter, elements);
+    }
+
+    /**
+     * @param delimiter 分割符
+     * @param elements  数组
+     * @return 将数组转换为字符串并通过 delimiter 连接起来
+     */
+    public static String join0(String delimiter, Object[] elements) {
+
+        if (elements == null) {
+            return "";
+        }
+        if (delimiter == null) {
+            delimiter = " ";
+        }
+
+        String[] arr = new String[elements.length];
+
+        for (int i = 0; i < elements.length; i++) {
+            arr[i] = elements[i] == null ? "" : String.valueOf(elements[i]);
+        }
+        return String.join(delimiter, arr);
+
+    }
+
+
+    public static String join(String delimiter, Iterable<?> elements) {
+
+        return join(delimiter, IterableItr.of(elements).iterator());
+
+    }
+
+    public static String join(String delimiter, Iterator<?> elements) {
+
+
+        if (delimiter == null) {
+            delimiter = " ";
+        }
+        StringJoiner joiner = new StringJoiner(delimiter);
+        elements.forEachRemaining(
+                element -> {
+                    String value;
+                    if (element == null) {
+                        value = "";
+                    } else {
+                        value = String.valueOf(element);
+                    }
+
+                    joiner.add(value);
+                }
+        );
+        return joiner.toString();
+    }
+
 }
