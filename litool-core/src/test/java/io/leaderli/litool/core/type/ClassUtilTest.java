@@ -21,6 +21,26 @@ import java.util.function.Function;
 @SuppressWarnings("ConstantConditions")
 class ClassUtilTest {
 
+    int test() {
+        return 1;
+    }
+
+    @Test
+    void castDouble() {
+
+        Assertions.assertEquals(Byte.class, ClassUtil.castDouble(1d, PrimitiveEnum.BYTE).getClass());
+        Assertions.assertEquals(Float.class, ClassUtil.castDouble(1d, PrimitiveEnum.FLOAT).getClass());
+        Assertions.assertEquals(Boolean.class, ClassUtil.castDouble(1d, PrimitiveEnum.BOOLEAN).getClass());
+        Assertions.assertEquals(true, ClassUtil.castDouble(1d, PrimitiveEnum.BOOLEAN));
+        Assertions.assertEquals(false, ClassUtil.castDouble(0d, PrimitiveEnum.BOOLEAN));
+        Assertions.assertEquals(Character.class, ClassUtil.castDouble(1d, PrimitiveEnum.CHAR).getClass());
+        Assertions.assertEquals(Double.class, ClassUtil.castDouble(1d, PrimitiveEnum.DOUBLE).getClass());
+        Assertions.assertEquals(Long.class, ClassUtil.castDouble(1d, PrimitiveEnum.LONG).getClass());
+        Assertions.assertEquals(Integer.class, ClassUtil.castDouble(1d, PrimitiveEnum.INT).getClass());
+        Assertions.assertEquals(Short.class, ClassUtil.castDouble(1d, PrimitiveEnum.SHORT).getClass());
+
+    }
+
     @Test
     void getComponentType() {
 

@@ -5,6 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.lang.reflect.Parameter;
 
 /**
  * @author leaderli
@@ -15,8 +16,9 @@ import java.lang.reflect.Field;
 public @interface Valuable {
 
     /**
-     * @return 一个提供转换函数的元注解，被该注解的注解，仅第一个会生效
+     * @return a meta annotation that provide a {@link  CartesianFunction}
      * @see CartesianUtil#cartesian(Field, CartesianContext)
+     * @see CartesianUtil#cartesian(Parameter, CartesianContext)
      */
     Class<? extends CartesianFunction<?, ?>> value();
 

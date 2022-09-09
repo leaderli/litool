@@ -13,6 +13,6 @@ public class LongCartesian implements CartesianFunction<LongValues, Long> {
         if (value.length > 0) {
             return (Long[]) PrimitiveEnum.toWrapperArray(value);
         }
-        return CartesianUtil.cartesian(Long.class);
+        return CartesianUtil.cartesian_single_def(Long.class);
     }
 }

@@ -13,7 +13,7 @@ public class BooleanCartesian implements CartesianFunction<BooleanValues, Boolea
         if (value.length > 0) {
             return (Boolean[]) PrimitiveEnum.toWrapperArray(value);
         }
-        return CartesianUtil.cartesian(Boolean.class);
+        return CartesianUtil.cartesian_single_def(Boolean.class);
 
     }
 }

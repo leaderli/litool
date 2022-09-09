@@ -13,6 +13,6 @@ class DoubleCartesian implements CartesianFunction<DoubleValues, Double> {
         if (value.length > 0) {
             return (Double[]) PrimitiveEnum.toWrapperArray(value);
         }
-        return CartesianUtil.cartesian(Double.class);
+        return CartesianUtil.cartesian_single_def(Double.class);
     }
 }

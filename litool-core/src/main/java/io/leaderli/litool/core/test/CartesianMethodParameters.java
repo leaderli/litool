@@ -9,20 +9,19 @@ import java.lang.reflect.Method;
  * @author leaderli
  * @since 2022/8/17 7:16 PM
  */
-public class CartesianMethod {
+public class CartesianMethodParameters {
 
     public final Method method;
     public final CartesianContext context;
 
-    public CartesianMethod(Method method, CartesianContext context) {
+    public CartesianMethodParameters(Method method, CartesianContext context) {
         this.method = method;
         this.context = context;
     }
 
     /**
-     * @return 所有成员变量有区分度的取值集合的笛卡尔集组成的所有实例
+     * @return the parameters cartesian lira
      */
-
     public Lira<Object[]> cartesian() {
 
         if (method == null) {

@@ -179,24 +179,17 @@ public class ClassUtil {
      * @param <V>       the type parameter of valueType
      * @return the map  cast key and value type and filter the element can not cast
      */
-    public static <K, V> Map<K, V> filterCanCast(Map<?, ?> map, Class<? extends K> keyType,
-                                                 Class<? extends V> valueType) {
+    public static <K, V> Map<K, V> filterCanCast(Map<?, ?> map, Class<? extends K> keyType, Class<? extends V> valueType) {
 
         if (map == null || keyType == null || valueType == null) {
             return new HashMap<>();
         }
-        return map.entrySet().stream()
-                .map(entry -> {
+        return map.entrySet().stream().map(entry -> {
 
-                    K k = cast(entry.getKey(), keyType);
-                    V v = cast(entry.getValue(), valueType);
-                    return LiTuple.of(k, v);
-                })
-                .filter(LiTuple2::notIncludeNull)
-                .collect(Collectors.toMap(
-                        tu -> tu._1,
-                        tu -> tu._2
-                ));
+            K k = cast(entry.getKey(), keyType);
+            V v = cast(entry.getValue(), valueType);
+            return LiTuple.of(k, v);
+        }).filter(LiTuple2::notIncludeNull).collect(Collectors.toMap(tu -> tu._1, tu -> tu._2));
     }
 
     /**
@@ -254,20 +247,34 @@ public class ClassUtil {
         return false;
     }
 
-    public static Object castNumber(Double num, PrimitiveEnum primitiveEnum) {
+    /**
+     * Return the primitive value converted  by double value
+     * <p>
+     * support byte,boolean,char,float,double,long,int,short
+     *
+     * @param d             a double value
+     * @param primitiveEnum a primitive enum
+     * @return convert double value to other primitive value
+     */
+    public static Object castDouble(Double d, PrimitiveEnum primitiveEnum) {
         switch (primitiveEnum) {
             case BYTE:
-                return num.byteValue();
+                return d.byteValue();
+            case BOOLEAN:
+                return d != 0;
+            case CHAR:
+                return (char) (double) d;
             case FLOAT:
-                return num.floatValue();
+                return d.floatValue();
             case DOUBLE:
-                return num;
+            case OBJECT:
+                return d;
             case LONG:
-                return num.longValue();
+                return d.longValue();
             case INT:
-                return num.intValue();
+                return d.intValue();
             case SHORT:
-                return num.shortValue();
+                return d.shortValue();
             default:
                 throw new IllegalStateException();
         }
@@ -296,18 +303,11 @@ public class ClassUtil {
 
 
         LiAssertUtil.assertTrue(_interface.isInterface(), "only support interface");
-        LiAssertUtil.assertTrue(_interface.getTypeParameters().length == 0,
-                "not support interface with generic of :  " + _interface.toGenericString());
-        LiAssertUtil.assertTrue(_interface.getInterfaces().length == 0, "not support interface extends other " +
-                "interface:  "
-                + StringUtils.join(",", (Object[]) _interface.getInterfaces()));
+        LiAssertUtil.assertTrue(_interface.getTypeParameters().length == 0, "not support interface with generic of :  " + _interface.toGenericString());
+        LiAssertUtil.assertTrue(_interface.getInterfaces().length == 0, "not support interface extends other " + "interface:  " + StringUtils.join(",", (Object[]) _interface.getInterfaces()));
 
-        InvocationHandler invocationHandler = (proxy, method, params) ->
-                MethodUtil.getSameSignatureMethod(method, aop)
-                        .throwable_map(m -> m.invoke(aop, params), Throwable::printStackTrace)
-                        .get();
-        return _interface.cast(Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{_interface},
-                invocationHandler));
+        InvocationHandler invocationHandler = (proxy, method, params) -> MethodUtil.getSameSignatureMethod(method, aop).throwable_map(m -> m.invoke(aop, params), Throwable::printStackTrace).get();
+        return _interface.cast(Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{_interface}, invocationHandler));
     }
 
     @SuppressWarnings("unchecked")

@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  * @author leaderli
  * @since 2022/8/21
  */
-class CartesianMethodTest {
+class CartesianMethodParametersTest {
 
 
     Method method = ReflectUtil.getMethod(getClass(), "have").get();
@@ -22,8 +22,8 @@ class CartesianMethodTest {
     void test() {
 
 
-        CartesianMethod cartesianMethod = new CartesianMethod(method, context);
-        Lira<Object[]> parametersLira = cartesianMethod.cartesian();
+        CartesianMethodParameters cartesianMethodParameters = new CartesianMethodParameters(method, context);
+        Lira<Object[]> parametersLira = cartesianMethodParameters.cartesian();
 
         for (Object[] parameters : parametersLira) {
             Assertions.assertDoesNotThrow(() -> ReflectUtil.getMethodValue(method, this, parameters));
