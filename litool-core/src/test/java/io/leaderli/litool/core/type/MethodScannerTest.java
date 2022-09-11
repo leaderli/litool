@@ -4,6 +4,7 @@ import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -12,14 +13,22 @@ import java.lang.reflect.Method;
  */
 class MethodScannerTest {
 
+    private final String name = Lira.of().filter(f -> f).get().toString();
+
+
     @Test
-    void test() {
+    void test() throws InvocationTargetException, IllegalAccessException {
+
 
         MethodScanner methodScanner = new MethodScanner(MethodScannerTest.class, true, null);
+
 
         Lira<Method> scan = methodScanner.scan();
         Assertions.assertEquals("test", scan.first().get().getName());
         Assertions.assertTrue(scan.first(f -> f.getName().equals("toString")).absent());
+
+        methodScanner.set_scan_lambda();
+        Assertions.assertTrue(methodScanner.scan().filter(f -> f.getName().contains("$")).present());
 
         methodScanner = new MethodScanner(MethodScannerTest.class, true, null);
         methodScanner.set_scan_object();
@@ -29,6 +38,7 @@ class MethodScannerTest {
         methodScanner = new MethodScanner(MethodScannerTest.class, true, Method::isDefault);
         scan = methodScanner.scan();
         Assertions.assertTrue(scan.absent());
+
 
     }
 

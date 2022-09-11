@@ -2,6 +2,7 @@ package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.meta.LiValue;
 
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -12,17 +13,18 @@ import java.util.Map;
 public class BooleanUtil {
 
     /**
-     * @param obj 实例
-     * @return 根据 obj 的 类型来转换 obj 的 布尔类型
-     *     <ul>
+     * <ul>
+     *  <li> if obj is collection, return is not empty, support {@link  Iterator}, {@link Iterable},{@link  Map},
+     *  {@link  Enumeration}
+     *  </li>
+     *  <li> if obj is {@link  Number}, return it's not 0 </li>
+     *  <li> if obj is boolean，return it self </li>
+     *  <li> if obj is {@link LiValue}, return {@link LiValue#present()}</li>
+     *  <li> other  return {@code obj != null} </li>
+     * </ul>
      *
-     * <li>当 {@code obj == null} 返回 false</li>
-     * <li> 当 obj 为集合类时，返回其是否包含元素</li>
-     * <li> 当 obj 为数值时，返回其是否不为0</li>
-     * <li>当 obj 为 boolean 时，返回 obj 即可</li>
-     * <li>当 为 {@link LiValue} 时 返回 {@link LiValue#present()}</li>
-     * <li>其他情况返回 true</li>
-     *     </ul>
+     * @param obj the obj
+     * @return parse obj to boolean depend on obj class
      */
     public static boolean parse(Object obj) {
 
@@ -40,6 +42,9 @@ public class BooleanUtil {
         }
         if (obj instanceof Iterator) {
             return parse((Iterator<?>) obj);
+        }
+        if (obj instanceof Enumeration) {
+            return parse((Enumeration<?>) obj);
         }
         if (obj instanceof Map) {
             return parse((Map<?, ?>) obj);
@@ -70,7 +75,7 @@ public class BooleanUtil {
 
     /**
      * @param iterable {@link Iterable#iterator()}
-     * @return 迭代器中包含元素
+     * @return iterable has element
      */
     public static boolean parse(Iterable<?> iterable) {
         return iterable != null && iterable.iterator().hasNext();
@@ -78,25 +83,33 @@ public class BooleanUtil {
 
     /**
      * @param iterator {@link Iterator}
-     * @return 迭代器中包含元素
+     * @return {@link  Iterator#hasNext()}
      */
     public static boolean parse(Iterator<?> iterator) {
         return iterator != null && iterator.hasNext();
     }
 
     /**
+     * @param enumeration {@link Enumeration}
+     * @return {@link  Enumeration#hasMoreElements()}
+     */
+    public static boolean parse(Enumeration<?> enumeration) {
+        return enumeration != null && enumeration.hasMoreElements();
+    }
+
+    /**
      * @param map {@link Map}
-     * @return map 的 集合不为空
+     * @return {@code !Map.isEmpty()}
      */
     public static boolean parse(Map<?, ?> map) {
         return map != null && !map.isEmpty();
     }
 
     /**
-     * @param value 数值
-     * @return 返回数值不为0
+     * @param value number
+     * @return {@code  number!=0}
      */
-    public static boolean parse(Number value) {
+    private static boolean parse(Number value) {
         return value != null && value.byteValue() != 0;
     }
 }
