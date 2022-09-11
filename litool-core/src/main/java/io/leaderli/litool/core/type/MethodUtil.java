@@ -51,7 +51,8 @@ public class MethodUtil {
     /**
      * Return the same signature method of lookup class
      *
-     * @param lookup the lookup class
+     * @param lookup    the lookup class
+     * @param signature the signature
      * @return the same signature method of lookup class
      */
     public static Lino<Method> findMethod(Class<?> lookup, MethodSignature signature) {
@@ -76,6 +77,7 @@ public class MethodUtil {
      * Return method is belong to {@link Object}
      *
      * @param method a method
+     * @param cls    a  class
      * @return method is belong to {@link Object}
      */
     public static boolean belongsTo(Method method, Class<?> cls) {

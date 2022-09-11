@@ -31,8 +31,11 @@ public class ClassUtil {
      * as  assumed class.
      * eg:
      * <pre>
-     *  Class&lt;CharSequence> type = ClassUtil.getClass("");
+     * {@code
+     *
+     *  Class<CharSequence> type = ClassUtil.getClass("");
      *  type == CharSequence // false
+     * }
      * </pre>
      * type cannot be used as CharSequence
      *
@@ -233,7 +236,7 @@ public class ClassUtil {
     }
 
     /**
-     * Return casted instance, if obj can not cast will return {@link  null}
+     * Return casted instance, if obj can not cast will return {@code null}
      * return wrapper  if obj is primitive and not array
      *
      * @param obj      obj

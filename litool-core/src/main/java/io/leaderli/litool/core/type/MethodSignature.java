@@ -26,7 +26,7 @@ public class MethodSignature {
      */
     public final Class<?>[] parameterTypes;
     /**
-     * if modifiers < 0, it means the modifiers will not be compared at {@link  #equals(Method)}
+     * if {@code modifiers < 0}, it means the modifiers will not be compared at {@link  #equals(Method)}
      *
      * @see Method#getModifiers()
      */

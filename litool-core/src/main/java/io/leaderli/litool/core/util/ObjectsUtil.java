@@ -12,10 +12,11 @@ import java.util.Objects;
  * @since 2022/6/16 1:02 PM
  */
 public class ObjectsUtil {
+
     public static void requireNotNull(Object... objects) {
         for (Object object : objects) {
             if (object == null) {
-                throw new RuntimeException();
+                throw new NullPointerException();
             }
         }
     }
@@ -23,16 +24,21 @@ public class ObjectsUtil {
     public static void requireNotNull(String msg, Object... objects) {
         for (Object object : objects) {
             if (object == null) {
-                throw new RuntimeException(msg);
+                throw new NullPointerException(msg);
             }
         }
     }
 
-    public static boolean sameAny(Object origin, Object... compares) {
+    /**
+     * @param comparing the comparing obj
+     * @param compares  the compared array
+     * @return compares elements have any element same as comparing
+     */
+    public static boolean sameAny(Object comparing, Object... compares) {
 
 
         for (Object compare : compares) {
-            if (compare == origin) {
+            if (compare == comparing) {
                 return true;
             }
         }
@@ -40,6 +46,21 @@ public class ObjectsUtil {
 
     }
 
+    /**
+     * <ul>
+     * <li>{@link  Number}, return {@code  a - b }</li>
+     * <li>Array, return {@code  a.length - b.length }</li>
+     * <li>{@link  String#compareTo(String)} </li>
+     * <li>{@link  Boolean#compareTo(Boolean)} </li>
+     * <li>{@link  ChronoLocalDate#compareTo(ChronoLocalDate)} </li>
+     * <li>{@link  LocalTime#compareTo(LocalTime)} </li>
+     * </ul>
+     *
+     * @param left  left object
+     * @param right right object
+     * @param <T>   the type of two parameter
+     * @return the union compare  of several class
+     */
     public static <T> int compare(T left, T right) {
 
         if (left == null && right == null) {
@@ -80,6 +101,7 @@ public class ObjectsUtil {
 
         Double aa = a.doubleValue();
         Double bb = b.doubleValue();
+
         return aa.compareTo(bb);
     }
 

@@ -28,6 +28,7 @@ public class TypeUtil {
 
     /**
      * <pre>
+     * {@code
      *  if (type == null) {
      *      return null;
      *  }
@@ -36,6 +37,7 @@ public class TypeUtil {
      *   }
      *  if (type instanceof ParameterizedType) {
      *      return (Class<?>) ((ParameterizedType) type).getRawType();
+     *  }
      *  }
      * </pre>
      *

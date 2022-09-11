@@ -12,38 +12,29 @@ import java.util.Random;
  */
 public class RandomUtil {
 
-    /**
-     * 用于随机选的数字
-     */
-    public static final String BASE_NUMBER = "0123456789";
-    /**
-     * 用于随机选的字符
-     */
-    public static final String BASE_CHAR = "abcdefghijklmnopqrstuvwxyz";
-    /**
-     * 用于随机选的字符和数字
-     */
-    public static final String BASE_CHAR_NUMBER = BASE_CHAR + BASE_NUMBER;
+    public static final String POSSIBLE_NUMBERS = "0123456789";
+    public static final String POSSIBLE_CHAR = "abcdefghijklmnopqrstuvwxyz";
+    public static final String POSSIBLE_CHAR_NUMBER = POSSIBLE_CHAR + POSSIBLE_NUMBERS;
     private static final Random RANDOM = new Random();
 
     /**
-     * 获得一个随机的字符串
+     * a random string, possible char is {@link  #POSSIBLE_CHAR_NUMBER}
      *
-     * @param length 字符串的长度
-     * @return 随机字符串
-     * @see #BASE_CHAR_NUMBER
+     * @param length the length of random string
+     * @return a random string
+     * @see #POSSIBLE_CHAR_NUMBER
      * @see #randomString(String, int)
      */
     public static String randomString(int length) {
-        return randomString(BASE_CHAR_NUMBER, length);
+        return randomString(POSSIBLE_CHAR_NUMBER, length);
     }
 
     /**
-     * 获得一个随机的字符串
+     * Return a random string consist of baseString
      *
-     * @param baseString 随机字符选取的样本
-     * @param length     字符串的长度
-     * @return 随机字符串
+     * @param baseString A sample of random characters
+     * @param length     the length of random string
+     * @return a random string
      */
     public static String randomString(String baseString, int length) {
         if (StringUtils.isEmpty(baseString)) {
@@ -63,25 +54,31 @@ public class RandomUtil {
     }
 
     /**
-     * @param max 上边界
-     * @return 返回 0 ~ max，包括 0
+     * Return random number of 0 to max, include 0 exclude max
+     *
+     * @param max upper boundary
+     * @return random number of 0 to max, include 0 exclude max
      */
     public static int nextInt(final int max) {
         return RANDOM.nextInt(max);
     }
 
     /**
-     * @return 随机自然数
+     * @return random natural number
+     * @see #nextInt(int)
      */
     public static int nextInt() {
 
         return RANDOM.nextInt(Integer.MAX_VALUE);
     }
 
+
     /**
-     * @param min 下边界
-     * @param max 上边界
-     * @return 返回 min ~ max ,包括 min
+     * Return random number of min to max, include min exclude max
+     *
+     * @param max upper boundary
+     * @param min lower boundary
+     * @return random number of 0 to max, include 0 exclude max
      */
     public static int nextInt(int min, int max) {
 

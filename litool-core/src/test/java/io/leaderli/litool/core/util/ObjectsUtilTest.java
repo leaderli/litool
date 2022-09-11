@@ -10,6 +10,11 @@ import org.junit.jupiter.api.Test;
  */
 class ObjectsUtilTest {
 
+    @Test
+    void requireNotNull() {
+        Assertions.assertThrows(NullPointerException.class, () -> ObjectsUtil.requireNotNull(1, null));
+
+    }
 
     @Test
     void sameAny() {

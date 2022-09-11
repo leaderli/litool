@@ -15,8 +15,6 @@ class BitStateTest {
     BitState bit = new BitState() {
         @Override
         public String toString() {
-            System.out.println(get());
-            System.out.println(BitStr.of(Modifier.class));
             return "Modifier:" + BitStr.of(Modifier.class).beauty(get());
         }
     };

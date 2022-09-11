@@ -50,12 +50,15 @@ public class ThreadUtil {
         }
     }
 
-    public static void printStack(int length) {
+    /**
+     * print  current thread stack, start with 3rd stack
+     *
+     * @param width the print stack with
+     */
+    public static void printStack(int width) {
 
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        for (int i = 2; i < length + 2; i++) {
-
-
+        for (int i = 2; i < width + 2; i++) {
             System.out.println(stackTrace[i]);
         }
     }
