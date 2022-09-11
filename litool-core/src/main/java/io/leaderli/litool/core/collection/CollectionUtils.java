@@ -122,7 +122,9 @@ public class CollectionUtils {
     /**
      * Return the wrapper array when it is a primitive array
      * <p>
-     * Return null if  obj is null or is not arr. if arr
+     * Return null if  obj is null or is not arr.
+     * <p>
+     * will always return a new array
      *
      * @param obj an obj
      * @return an array

@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.test;
 
-import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.collection.CollectionUtils;
 
 /**
  * @author leaderli
@@ -11,7 +11,7 @@ public class LongCartesian implements CartesianFunction<LongValues, Long> {
     public Long[] apply(LongValues longValues, CartesianContext context) {
         long[] value = longValues.value();
         if (value.length > 0) {
-            return (Long[]) PrimitiveEnum.toWrapperArray(value);
+            return (Long[]) CollectionUtils.toWrapperArray(value);
         }
         return CartesianUtil.cartesian_single_def(Long.class);
     }

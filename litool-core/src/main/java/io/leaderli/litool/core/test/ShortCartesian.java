@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.test;
 
-import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.collection.CollectionUtils;
 
 /**
  * @author leaderli
@@ -12,7 +12,7 @@ public class ShortCartesian implements CartesianFunction<ShortValues, Short> {
 
         short[] value = shortValues.value();
         if (value.length > 0) {
-            return (Short[]) PrimitiveEnum.toWrapperArray(value);
+            return (Short[]) CollectionUtils.toWrapperArray(value);
         }
         return CartesianUtil.cartesian_single_def(Short.class);
     }

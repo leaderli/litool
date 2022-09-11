@@ -357,14 +357,14 @@ public class ClassUtil {
      * @param <T>        the type of interface
      * @return a instance  declare as interface
      * @throws io.leaderli.litool.core.exception.AssertException if _interface  is not interface
-     * @see MethodUtil#getSameSignatureMethod(Method, Object)
+     * @see MethodUtil#getSameSignatureMethod(Object, Method)
      */
     public static <T> T addInterface(Class<T> _interface, Object obj) {
 
         LiAssertUtil.assertTrue(_interface.isInterface(), "only support interface");
 
         InvocationHandler invocationHandler = (proxy, method, params) ->
-                MethodUtil.getSameSignatureMethod(method, obj)
+                MethodUtil.getSameSignatureMethod(obj, method)
                         .throwable_map(m -> m.invoke(obj, params), Throwable::printStackTrace)
                         .get();
         Object proxy = Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{_interface},

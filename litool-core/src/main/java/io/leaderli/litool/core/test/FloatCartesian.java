@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.test;
 
-import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.collection.CollectionUtils;
 
 /**
  * @author leaderli
@@ -12,7 +12,7 @@ public class FloatCartesian implements CartesianFunction<FloatValues, Float> {
 
         float[] value = floatValues.value();
         if (value.length > 0) {
-            return (Float[]) PrimitiveEnum.toWrapperArray(value);
+            return (Float[]) CollectionUtils.toWrapperArray(value);
         }
         return CartesianUtil.cartesian_single_def(Float.class);
     }

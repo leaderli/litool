@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
@@ -7,7 +8,6 @@ import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.type.ClassUtil;
-import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.Enumeration;
@@ -491,7 +491,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
                 if (!componentType.isPrimitive()) {
                     return Lira.of(((Object[]) this.value));
                 }
-                return Lira.of(PrimitiveEnum.toWrapperArray(this.value));
+                return Lira.of(CollectionUtils.toWrapperArray(this.value));
 
             }
 

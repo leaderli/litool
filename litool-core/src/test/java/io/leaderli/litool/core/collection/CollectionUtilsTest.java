@@ -23,7 +23,24 @@ class CollectionUtilsTest {
         String[] ss = {"1"};
         Assertions.assertNotSame(ss, CollectionUtils.toWrapperArray(ss));
         Assertions.assertEquals(Arrays.toString(ss), Arrays.toString(CollectionUtils.toWrapperArray(ss)));
-
+        Assertions.assertSame(Boolean.class,
+                CollectionUtils.toWrapperArray(new boolean[]{}).getClass().getComponentType());
+        Assertions.assertSame(Byte.class, CollectionUtils.toWrapperArray(new byte[]{}).getClass().getComponentType());
+        Assertions.assertSame(Character.class,
+                CollectionUtils.toWrapperArray(new char[]{}).getClass().getComponentType());
+        Assertions.assertSame(Double.class,
+                CollectionUtils.toWrapperArray(new double[]{}).getClass().getComponentType());
+        Assertions.assertSame(Float.class, CollectionUtils.toWrapperArray(new float[]{}).getClass().getComponentType());
+        Assertions.assertSame(Integer.class, CollectionUtils.toWrapperArray(new int[]{}).getClass().getComponentType());
+        Assertions.assertSame(Long.class, CollectionUtils.toWrapperArray(new long[]{}).getClass().getComponentType());
+        Assertions.assertSame(Short.class, CollectionUtils.toWrapperArray(new short[]{}).getClass().getComponentType());
+        Assertions.assertSame(Object.class,
+                CollectionUtils.toWrapperArray(new Object[]{}).getClass().getComponentType());
+        Assertions.assertSame(String.class,
+                CollectionUtils.toWrapperArray(new String[]{}).getClass().getComponentType());
+        Assertions.assertNull(CollectionUtils.toWrapperArray(""));
+        Assertions.assertNull(CollectionUtils.toWrapperArray(null));
+        Assertions.assertSame(2, CollectionUtils.toWrapperArray(new int[]{1, 2}).length);
     }
 
     @Test

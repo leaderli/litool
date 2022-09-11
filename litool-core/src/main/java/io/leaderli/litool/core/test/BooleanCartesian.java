@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.test;
 
-import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.collection.CollectionUtils;
 
 /**
  * @author leaderli
@@ -11,7 +11,7 @@ public class BooleanCartesian implements CartesianFunction<BooleanValues, Boolea
     public Boolean[] apply(BooleanValues booleanValues, CartesianContext context) {
         boolean[] value = booleanValues.value();
         if (value.length > 0) {
-            return (Boolean[]) PrimitiveEnum.toWrapperArray(value);
+            return (Boolean[]) CollectionUtils.toWrapperArray(value);
         }
         return CartesianUtil.cartesian_single_def(Boolean.class);
 

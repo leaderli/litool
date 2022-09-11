@@ -26,7 +26,8 @@ public class CartesianUtil {
             if (value == ObjectCartesian.class) {
                 return true;
             }
-            Class<?> cartesianFunction2GenericType = ReflectUtil.getGenericInterfacesType(value, CartesianFunction.class, 1).get();
+            Class<?> cartesianFunction2GenericType = ReflectUtil.getGenericInterfacesType(value,
+                    CartesianFunction.class, 1).get();
             return cartesianFunction2GenericType == ClassUtil.primitiveToWrapper(type);
         }).first().map(an -> {
 
@@ -71,13 +72,13 @@ public class CartesianUtil {
      * @param <T> the type parameter of class
      * @return a one element arr with cls def value
      * @throws NumberFormatException if {@code  cls == null}
-     * @see PrimitiveEnum#def
+     * @see PrimitiveEnum#zero_value
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] cartesian_single_def(Class<T> cls) {
 
         PrimitiveEnum primitive = PrimitiveEnum.get(cls);
-        Object def = primitive.def;
+        Object def = primitive.zero_value;
         Object arr = Array.newInstance(ClassUtil.primitiveToWrapper(cls), 1);
         Array.set(arr, 0, def);
         return (T[]) arr;

@@ -19,7 +19,16 @@ class MethodScannerTest {
 
         Lira<Method> scan = methodScanner.scan();
         Assertions.assertEquals("test", scan.first().get().getName());
+        Assertions.assertTrue(scan.first(f -> f.getName().equals("toString")).absent());
 
+        methodScanner = new MethodScanner(MethodScannerTest.class, true, null);
+        methodScanner.set_scan_object();
+        scan = methodScanner.scan();
+        Assertions.assertTrue(scan.first(f -> f.getName().equals("toString")).present());
+
+        methodScanner = new MethodScanner(MethodScannerTest.class, true, Method::isDefault);
+        scan = methodScanner.scan();
+        Assertions.assertTrue(scan.absent());
 
     }
 

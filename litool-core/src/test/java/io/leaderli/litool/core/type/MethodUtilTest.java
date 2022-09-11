@@ -15,17 +15,17 @@ class MethodUtilTest {
     @Test
     void getSameSignatureMethod() throws NoSuchMethodException {
         Method method = Object.class.getMethod("toString");
-        Lino<Method> same = MethodUtil.getSameSignatureMethod(method, this);
+        Lino<Method> same = MethodUtil.getSameSignatureMethod(this, method);
         Assertions.assertEquals("123", same.throwable_map(m -> m.invoke(this)).get());
 
         method = Runnable.class.getMethod("run");
-        same = MethodUtil.getSameSignatureMethod(method, this);
-        Assertions.assertSame(Lino.none(), same);
+        same = MethodUtil.getSameSignatureMethod(this, method);
+        Assertions.assertTrue(same.present());
 
 
         method = this.getClass().getDeclaredMethod("run");
-        same = MethodUtil.getSameSignatureMethod(method, Runnable.class);
-        Assertions.assertSame(Lino.none(), same);
+        same = MethodUtil.getSameSignatureMethod(Runnable.class, method);
+        Assertions.assertTrue(same.present());
     }
 
     @Override
@@ -44,10 +44,7 @@ class MethodUtilTest {
     @Test
     void findMethod() {
 
-        Assertions.assertTrue(MethodUtil.findMethod(MethodUtilBean.class, "test", void.class).present());
-        Assertions.assertTrue(MethodUtil.findMethod(MethodUtil.class, "findMethod", Lino.class, Class.class,
-                String.class
-                , Class.class, Class[].class).present());
+        Assertions.assertTrue(MethodUtil.findMethod(MethodUtilBean.class, new MethodSignature("test")).present());
 
     }
 

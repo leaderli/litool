@@ -19,7 +19,6 @@ package io.leaderli.litool.core.collection;
 import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.type.ClassUtil;
-import io.leaderli.litool.core.type.PrimitiveEnum;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -1041,7 +1040,7 @@ public class ArrayUtils {
 
         if (isArray(obj)) {
 
-            Object[] arr = PrimitiveEnum.toWrapperArray(obj);
+            Object[] arr = CollectionUtils.toWrapperArray(obj);
 
 
             StringBuilder sb = new StringBuilder("[");

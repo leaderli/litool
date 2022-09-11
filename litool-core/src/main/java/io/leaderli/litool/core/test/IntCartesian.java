@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.test;
 
-import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.collection.CollectionUtils;
 
 /**
  * @author leaderli
@@ -11,7 +11,7 @@ class IntCartesian implements CartesianFunction<IntValues, Integer> {
     public Integer[] apply(IntValues intValues, CartesianContext context) {
         int[] value = intValues.value();
         if (value.length > 0) {
-            return (Integer[]) PrimitiveEnum.toWrapperArray(value);
+            return (Integer[]) CollectionUtils.toWrapperArray(value);
         }
         return CartesianUtil.cartesian_single_def(Integer.class);
     }

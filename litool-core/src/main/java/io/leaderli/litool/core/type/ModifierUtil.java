@@ -4,6 +4,8 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
 
 /**
+ * A  tool for {@link  Modifier}, it used at {@link  Member}
+ *
  * @author leaderli
  * @since 2022/8/9
  */
@@ -18,15 +20,18 @@ public class ModifierUtil {
     }
 
     /**
-     * 计算公式如下
-     * <p>
+     * the Calculation formula:
+     * <pre>
      * public  0b100
      * protected 0b10
      * default 0b1
      * private 0b0
+     * </pre>
+     * <p>
+     * Higher priority means easier access
      *
-     * @param member 返回可访问的权限的优先级
-     * @return 优先级
+     * @param member the member have modifier
+     * @return the priority of {@link  Member}
      */
     public static int priority(Member member) {
         int priority;

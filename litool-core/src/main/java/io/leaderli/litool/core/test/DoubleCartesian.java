@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.test;
 
-import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.collection.CollectionUtils;
 
 /**
  * @author leaderli
@@ -11,7 +11,7 @@ class DoubleCartesian implements CartesianFunction<DoubleValues, Double> {
     public Double[] apply(DoubleValues intValues, CartesianContext context) {
         double[] value = intValues.value();
         if (value.length > 0) {
-            return (Double[]) PrimitiveEnum.toWrapperArray(value);
+            return (Double[]) CollectionUtils.toWrapperArray(value);
         }
         return CartesianUtil.cartesian_single_def(Double.class);
     }

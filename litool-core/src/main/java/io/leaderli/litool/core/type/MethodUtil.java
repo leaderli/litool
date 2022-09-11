@@ -4,8 +4,6 @@ import io.leaderli.litool.core.meta.Lino;
 
 import java.lang.annotation.Repeatable;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
 
 /**
  * @author leaderli
@@ -14,69 +12,91 @@ import java.util.Arrays;
 public class MethodUtil {
 
     /**
-     * @param method 源方法
-     * @param obj    查找的类
-     * @return 返回 obj 中 同名、参数类型相同，返回类型的方法，且必须是 public 方法
+     * Return the method of lookup obj which have same signature with reference method
+     *
+     * @param lookup    the look up obj
+     * @param reference the method  will use to be compare
+     * @return the method of lookup obj which have same signature with reference method
+     * @see #getSameSignatureMethod(Class, Method)
      */
-    public static Lino<Method> getSameSignatureMethod(Method method, Object obj) {
+    public static Lino<Method> getSameSignatureMethod(Object lookup, Method reference) {
 
-        return getSameSignatureMethod(method, Lino.of(obj).map(Object::getClass));
+        if (lookup == null) {
+            return Lino.none();
+        }
+        return getSameSignatureMethod(lookup.getClass(), reference);
     }
 
-    private static Lino<Method> getSameSignatureMethod(Method origin, Lino<Class<?>> type) {
+    /**
+     * Return the method of lookup class which have same signature with reference method
+     *
+     * @param lookup    the look up  class
+     * @param reference the method  will use to be compare
+     * @return the method of lookup class which have same signature with reference method
+     * @see #getSameSignatureMethod(Class, Method)
+     */
+    public static Lino<Method> getSameSignatureMethod(Class<?> lookup, Method reference) {
 
-        return type.map(Class::getMethods)
-                .filter(Modifier.isPublic(origin.getModifiers()))
-                .toLira(Method.class)
-                .filter(m -> origin.getName().equals(m.getName()))
-                .filter(m -> Arrays.equals(m.getParameterTypes(), origin.getParameterTypes()))
+
+        if (lookup == null || reference == null) {
+            return Lino.none();
+        }
+        MethodSignature compare = MethodSignature.non_strict(reference);
+        return ReflectUtil.getMethods(lookup)
+                .filter(compare::equals)
                 .first();
     }
 
-    /**
-     * @param method 源方法
-     * @param type   查找的类型
-     * @return 返回 type 中 同名、参数类型相同，返回类型的方法，且必须是 public 方法
-     */
-    public static Lino<Method> getSameSignatureMethod(Method method, Class<?> type) {
-
-        return getSameSignatureMethod(method, Lino.of(type));
-    }
-
 
     /**
-     * @param source         类
-     * @param name           方法名
-     * @param returnType     方法返回类型
-     * @param parameterTypes 方法参数类数组
-     * @return 查找到的方法
+     * Return the same signature method of lookup class
+     *
+     * @param lookup the lookup class
+     * @return the same signature method of lookup class
      */
-    public static Lino<Method> findMethod(Class<?> source, String name, Class<?> returnType,
-                                          Class<?>... parameterTypes) {
+    public static Lino<Method> findMethod(Class<?> lookup, MethodSignature signature) {
 
-
-        MethodSignature signature = new MethodSignature(name, returnType, parameterTypes);
-        MethodScanner methodScanner = new MethodScanner(source, true, signature::same);
+        MethodScanner methodScanner = new MethodScanner(lookup, true, signature::equals);
         return methodScanner.scan().first();
     }
 
 
+    /**
+     * Return method is not belong to {@link Object}
+     *
+     * @param method a method
+     * @return method is not belong to {@link Object}
+     * @see #belongsTo(Method, Class)
+     */
     public static boolean notObjectMethod(Method method) {
         return !belongsTo(method, Object.class);
     }
 
+    /**
+     * Return method is belong to {@link Object}
+     *
+     * @param method a method
+     * @return method is belong to {@link Object}
+     */
     public static boolean belongsTo(Method method, Class<?> cls) {
         return method.getDeclaringClass() == cls;
     }
 
 
     /**
-     * @param method 方法
-     * @return 判断是否为重复注解的容器类注解方法 value
+     * Return method is  {@link  Repeatable#value()} class's value method
+     *
+     * @param method a method
+     * @return method is  {@link  Repeatable#value()} class's value method
      */
     public static boolean methodOfRepeatableContainer(Method method) {
 
+        if (method == null) {
+            return false;
+        }
         return method.getName().equals("value")
+                && method.getDeclaringClass().isAnnotation()
+                && method.getParameterTypes().length == 0
                 && method.getReturnType().isArray()
                 && method.getReturnType().getComponentType().isAnnotation()
                 && method.getReturnType().getComponentType().isAnnotationPresent(Repeatable.class);
