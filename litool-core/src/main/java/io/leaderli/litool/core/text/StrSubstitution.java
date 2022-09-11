@@ -150,7 +150,6 @@ public class StrSubstitution {
         private final Object[] placeholderValues;
         private final List<String> placeholderNames = new ArrayList<>();
         /**
-         * 当前填充的角标位置，当遇到新变量时，角标位置+1
          * the current placeholder variable index, self-increment when there are new placeholder
          */
         private int index = 0;

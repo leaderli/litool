@@ -857,7 +857,7 @@ public class ArrayUtils {
     @SuppressWarnings("unchecked")
     public static <T> T subArray(T origin, int beginIndex, int endIndex) {
 
-        Class<T> componentType = ClassUtil.getComponentType(origin);
+        Class<?> componentType = ClassUtil.getComponentType(origin);
 
         if (componentType == null) {
             return null;
@@ -943,7 +943,7 @@ public class ArrayUtils {
     @SuppressWarnings("unchecked")
     public static <T> T remove(T origin, int beginIndex, int endIndex) {
 
-        Class<T> componentType = ClassUtil.getComponentType(origin);
+        Class<?> componentType = ClassUtil.getComponentType(origin);
 
         if (componentType == null) {
             return null;
@@ -992,10 +992,11 @@ public class ArrayUtils {
      * @return new insert array
      */
 
+    @SuppressWarnings("unchecked")
     @SafeVarargs
     public static <T> T[] insert(T[] origin, int beginIndex, T... insert) {
 
-        Class<T> componentType = ClassUtil.getComponentType(origin);
+        Class<?> componentType = ClassUtil.getComponentType(origin);
         if (componentType == null) {
             return arraycopy(insert);
         }
@@ -1003,7 +1004,7 @@ public class ArrayUtils {
             return arraycopy(origin);
         }
         int length = origin.length;
-        T[] arr = ClassUtil.newWrapperArray(componentType, length + insert.length);
+        T[] arr = (T[]) ClassUtil.newWrapperArray(componentType, length + insert.length);
 
         beginIndex = correctBeginIndex(beginIndex, length);
         if (beginIndex >= length) {

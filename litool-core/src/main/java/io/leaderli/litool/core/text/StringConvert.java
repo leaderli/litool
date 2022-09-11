@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
+ * a tool that convert string to specifier class
+ *
  * @author leaderli
  * @since 2022/7/9 2:01 PM
  */

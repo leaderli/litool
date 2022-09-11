@@ -9,16 +9,15 @@ import java.security.PrivilegedAction;
  */
 public class ClassLoaderUtil {
     /**
-     * 获取{@link ClassLoader}<br>
-     * 获取顺序如下：<br>
-     *
+     * return the found {@link ClassLoader}<br>
+     * <p>
+     * find  in order:
      * <pre>
-     * 1、获取当前线程的ContextClassLoader
-     * 2、获取当前类对应的ClassLoader
-     * 3、获取系统ClassLoader（{@link ClassLoader#getSystemClassLoader()}）
+     * 1、get context classLoader {@link  #getContextClassLoader()}
+     * 2、get system classloader {@link ClassLoader#getSystemClassLoader()}）
      * </pre>
      *
-     * @return 类加载器
+     * @return the classLoader
      */
     public static ClassLoader getClassLoader() {
         ClassLoader classLoader = getContextClassLoader();
@@ -29,16 +28,18 @@ public class ClassLoaderUtil {
     }
 
     /**
-     * 获取当前线程的{@link ClassLoader}
+     * Return:
+     * <pre>
+     *     Thread.currentThread().getContextClassLoader()
+     * </pre>
      *
-     * @return 当前线程的class loader
+     * @return the CurrentThread  ClassLoader
      * @see Thread#getContextClassLoader()
      */
     public static ClassLoader getContextClassLoader() {
         if (System.getSecurityManager() == null) {
             return Thread.currentThread().getContextClassLoader();
         } else {
-            // 绕开权限检查
             return AccessController.doPrivileged(
                     (PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
         }
@@ -46,9 +47,12 @@ public class ClassLoaderUtil {
 
 
     /**
-     * 获取系统{@link ClassLoader}
+     * Return:
+     * <pre>
+     * ClassLoader.getSystemClassLoader();
+     * </pre>
      *
-     * @return 系统{@link ClassLoader}
+     * @return systemClassLoader
      * @see ClassLoader#getSystemClassLoader()
      * @since 5.7.0
      */
@@ -56,7 +60,6 @@ public class ClassLoaderUtil {
         if (System.getSecurityManager() == null) {
             return ClassLoader.getSystemClassLoader();
         } else {
-            // 绕开权限检查
             return AccessController.doPrivileged(
                     (PrivilegedAction<ClassLoader>) ClassLoader::getSystemClassLoader);
         }

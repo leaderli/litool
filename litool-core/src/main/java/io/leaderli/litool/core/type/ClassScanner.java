@@ -63,10 +63,7 @@ public class ClassScanner {
      * 类加载器
      */
     private ClassLoader classLoader;
-    /**
-     * 是否初始化类
-     */
-    private boolean initialize;
+
 
     private boolean forceScanJavaClassPaths;
 
@@ -246,7 +243,7 @@ public class ClassScanner {
 
         Class<?> clazz = null;
         try {
-            clazz = Class.forName(className, this.initialize, loader);
+            clazz = Class.forName(className, false, loader);
         } catch (NoClassDefFoundError | ClassNotFoundException |
                  UnsupportedClassVersionError e) {
 

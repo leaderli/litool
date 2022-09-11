@@ -5,7 +5,6 @@ import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.text.StringUtils;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -25,14 +24,24 @@ public class ClassUtil {
 
 
     /**
-     * @param def 实例
-     * @param <T> 实例父类泛型
-     * @param <E> 实例泛型
-     * @return 实例类型的父类
+     * Return the assumed class of instance , null-safe.
+     * <p>
+     * the assumed class may not the real class of instance,  it
+     * may only the super class of instance, and it can not be used
+     * as  assumed class.
+     * eg:
+     * <pre>
+     *  Class&lt;CharSequence> type = ClassUtil.getClass("");
+     *  type == CharSequence // false
+     * </pre>
+     * type cannot be used as CharSequence
+     *
+     * @param def the instance
+     * @param <T> the type of instance class
+     * @return the assumed class of instance
      */
     @SuppressWarnings("unchecked")
-    public static <T, E extends T> Class<T> getClass(E def) {
-
+    public static <T> Class<T> getClass(T def) {
         if (def == null) {
             return null;
         }
@@ -41,9 +50,11 @@ public class ClassUtil {
 
 
     /**
-     * @param cls 实际类型
-     * @param <T> 泛型，其为实际类型的父类或实际类型
-     * @return 返回 {@code Class<T>}
+     * narrow wild generic type to  specifier generic type
+     *
+     * @param cls the class
+     * @param <T> the type parameter of class or it's superclass
+     * @return {@code Class<T>}
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<T> narrow(final Class<? extends T> cls) {
@@ -52,29 +63,31 @@ public class ClassUtil {
     }
 
     /**
-     * @param cls 需要转换的 class
-     * @return 返回其基础类 class ，当类是数组 class 时，返回其基础数组 class ，例如 {@code Integer[].class --> int.class }
+     * Return primitive class  when class is wrapper class and is not
+     * array class, otherwise  return it self.
+     *
+     * <p>
+     * it's null-safe
+     *
+     * @param cls the class to be convert
+     * @return the converted class
      */
     public static Class<?> wrapperToPrimitive(final Class<?> cls) {
-        Class<?> convertedClass = null;
-        if (cls != null) {
 
-            if (cls.isArray()) {
-                convertedClass = getArrayClass(cls.getComponentType());
-            } else {
-
-                convertedClass = PrimitiveEnum.WRAPPER_PRIMITIVE_MAP.get(cls);
+        if (cls != null && !cls.isArray()) {
+            Class<?> convertedClass = PrimitiveEnum.WRAPPER_PRIMITIVE_MAP.get(cls);
+            if (convertedClass != null) {
+                return convertedClass;
             }
-        }
-        if (convertedClass != null) {
-            return convertedClass;
         }
         return cls;
     }
 
     /**
-     * @param type class 类型
-     * @return 获取 class 类 的数组类 class
+     * The type of an array consisting of the elements of instance of the class
+     *
+     * @param type a class
+     * @return type of an array consisting of the elements of
      */
     public static Class<?> getArrayClass(Class<?> type) {
 
@@ -83,7 +96,7 @@ public class ClassUtil {
     }
 
     /**
-     * @return classpath 路径下的所有 jar 包
+     * @return get all jar file path under classPath
      */
     public static List<String> getAppJars() {
 
@@ -92,53 +105,71 @@ public class ClassUtil {
     }
 
     /**
-     * @return 获得Java ClassPath路径，不包括 jre
+     * @return get all classPath except jre
      */
     public static Lira<String> getJavaClassPaths() {
         return Lira.of(System.getProperty("java.class.path").split(System.getProperty("path.separator"))).map(path -> path.replace(File.separatorChar, '/'));
     }
 
     /**
-     * @param cls 类
-     * @return 类是否为基础类型或者包装类
+     * Return whether class is primitive or wrapper
+     *
+     * @param cls the class
+     * @return whether class is primitive or wrapper
      */
     public static boolean isPrimitiveOrWrapper(Class<?> cls) {
 
         return PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.containsKey(cls) || PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.containsValue(cls);
     }
 
-
+    /**
+     * return {@code  null} if obj is not array otherwise cast to array
+     * <p>
+     * if array's element is primitive, will convert to  wrapper array
+     *
+     * @param Obj the array that declare as Object
+     * @param <T> the type of array
+     * @return casted array
+     */
     @SuppressWarnings("unchecked")
-    public static <T> T[] toArray(Object arr) {
+    public static <T> T[] toArray(Object Obj) {
 
-        Class<?> componentType = getComponentType(arr);
+        Class<?> componentType = getComponentType(Obj);
         if (componentType == null) {
             return null;
         }
-        int length = Array.getLength(arr);
+        int length = Array.getLength(Obj);
         T[] objects = (T[]) newWrapperArray(componentType, length);
 
         for (int i = 0; i < length; i++) {
-            objects[i] = (T) Array.get(arr, i);
+            objects[i] = (T) Array.get(Obj, i);
         }
 
         return objects;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> Class<T> getComponentType(Object obj) {
+    /**
+     * Return the componentType of obj class, it's null-safe
+     *
+     * @param obj the obj
+     * @return the componentType of obj class
+     */
+    public static Class<?> getComponentType(Object obj) {
 
         if (obj == null) {
             return null;
         }
-        return (Class<T>) obj.getClass().getComponentType();
+        return obj.getClass().getComponentType();
     }
 
     /**
-     * @param componentType 数组元素的 class 类型
-     * @param length        数组长度
-     * @param <T>           数组的泛型，可以为实际 class 的父类
-     * @return 返回一个指定长度的数组，因为基础类型无法使用声明为泛型，因此所有 基础类型都会被转换为包装类数组
+     * Return a specified length array, if the componentType is primitive, will
+     * convert to it's wrapper
+     *
+     * @param componentType the class of  new array elements
+     * @param length        the length of new array
+     * @param <T>           the type of new array elements
+     * @return a specified length array
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] newWrapperArray(Class<? extends T> componentType, int length) {
@@ -146,32 +177,40 @@ public class ClassUtil {
     }
 
     /**
-     * @param cls 需要转换的 class
-     * @return 返回其包装类 class ，当类是数组 class 时，返回其包装数组 class ，例如 {@code int[].class --> Integer.class }
+     * Return wrapper class  when class is primitive class and is not
+     * array class, otherwise  return it self.
+     *
+     * <p>
+     * it's null-safe
+     *
+     * @param cls the class to be convert
+     * @return the converted class
      */
     public static Class<?> primitiveToWrapper(final Class<?> cls) {
-        Class<?> convertedClass = cls;
-        if (cls != null) {
 
-            if (cls.isPrimitive()) {
-                convertedClass = PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.get(cls);
-            } else if (cls.isArray()) {
-                convertedClass = Array.newInstance(cls.getComponentType(), 0).getClass();
-
+        if (cls != null && !cls.isArray()) {
+            Class<?> convertedClass = PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.get(cls);
+            if (convertedClass != null) {
+                return convertedClass;
             }
         }
-        return convertedClass;
+        return cls;
+
     }
 
     /**
-     * @param origin 数据
-     * @return 自动装箱
+     * Return return the box value
+     *
+     * @param origin obj
+     * @return return the box value
      */
     public static Object box(Object origin) {
         return origin;
     }
 
     /**
+     * Return the map  cast key and value type and filter the element can not cast
+     *
      * @param map       An map object
      * @param keyType   the type of map key can cast to
      * @param valueType the type of map value can cast to
@@ -179,7 +218,8 @@ public class ClassUtil {
      * @param <V>       the type parameter of valueType
      * @return the map  cast key and value type and filter the element can not cast
      */
-    public static <K, V> Map<K, V> filterCanCast(Map<?, ?> map, Class<? extends K> keyType, Class<? extends V> valueType) {
+    public static <K, V> Map<K, V> filterCanCast(Map<?, ?> map, Class<? extends K> keyType,
+                                                 Class<? extends V> valueType) {
 
         if (map == null || keyType == null || valueType == null) {
             return new HashMap<>();
@@ -193,10 +233,13 @@ public class ClassUtil {
     }
 
     /**
-     * @param obj      实例
-     * @param castType 强转后的 class 类型
-     * @param <T>      泛型
-     * @return 强转后的实例，如果实例无法进行强转将会返回 null，对于基础类型因为泛型的缘故，会返回其包装类型，基础类型数组 还是会直接返回基础类型数组
+     * Return casted instance, if obj can not cast will return {@link  null}
+     * return wrapper  if obj is primitive and not array
+     *
+     * @param obj      obj
+     * @param castType the class that obj can cast
+     * @param <T>      the type parameter of  castType
+     * @return casted instance
      */
     @SuppressWarnings("unchecked")
     public static <T> T cast(Object obj, Class<T> castType) {
@@ -214,9 +257,13 @@ public class ClassUtil {
     }
 
     /**
-     * @param father 父类或包装类
-     * @param son    子类或包装类
-     * @return {@code son} 是否继承或等于或是包装类 {@code father}，需要注意的是 数组类型的基础类型与包装类无法进行互相 cast
+     * Return {@code  son} is instanceof or wrapper of {@code  father}. if {@code  son} , {@code  father}
+     * is array class, because wrapper array cannot cast to primitive ,so judge  {@code son} componentType
+     * is instanceof {@code father} componentType
+     *
+     * @param father the super class  or wrapper class
+     * @param son    the sub class or primitive class
+     * @return {@code  son} is instanceof or wrapper of {@code  father}
      */
     public static boolean isAssignableFromOrIsWrapper(Class<?> father, Class<?> son) {
 
@@ -229,9 +276,9 @@ public class ClassUtil {
 
             if (son.isArray()) {
 
-                //对于数组，基础类型的数组无法进行强转,所以这里不能将 基础类型 视作可以继承自其包装类
                 father = father.getComponentType();
                 son = son.getComponentType();
+                // the primitive array cannot cast to wrapper array
                 if (father.isPrimitive() || son.isPrimitive()) {
                     return father == son;
                 }
@@ -245,6 +292,25 @@ public class ClassUtil {
             return primitiveToWrapper(son) == primitiveToWrapper(father);
         }
         return false;
+    }
+
+    /**
+     * Return {@code  son} is instanceof or wrapper of {@code  father}. if {@code  son} , {@code  father}
+     * is array class, because wrapper array cannot cast to primitive ,so judge  {@code son} componentType
+     * is instanceof {@code father} componentType
+     *
+     * @param son    the sub instance
+     * @param father the super class  or wrapper class
+     * @return {@code  son} is instanceof or wrapper of {@code  father}
+     */
+    public static boolean _instanceof(Object son, Class<?> father) {
+
+        if (father == null || son == null) {
+            return false;
+        }
+
+        return isAssignableFromOrIsWrapper(father, son.getClass());
+
     }
 
     /**
@@ -280,41 +346,31 @@ public class ClassUtil {
         }
     }
 
-    public static boolean _instanceof(Object son, Class<?> father) {
-
-        if (father == null || son == null) {
-            return false;
-        }
-
-        return isAssignableFromOrIsWrapper(father, son.getClass());
-
-    }
-
     /**
-     * @param _interface 一个不含泛型的接口
-     * @param aop        代理类
-     * @param <T>        接口泛型
-     * @return 返回一个使用了  _interface 接口的代理类，其实际接口的方法调用是通过 proxy 调用具有相同 signature 的方法使用的
-     * @see MethodUtil#getSameSignatureMethod(Method, Object)
+     * Return  a proxy that add the interface to obj, the interface method will invoke the obj
+     * same signature method.
      * <p>
-     * 可能会抛出 io.leaderli.litool.core.exception.AssertException
+     * when the interface is generic, will invoke generic-erasure  method
+     *
+     * @param _interface a interface
+     * @param obj        the real instance that actually execute method
+     * @param <T>        the type of interface
+     * @return a instance  declare as interface
+     * @throws io.leaderli.litool.core.exception.AssertException if _interface  is not interface
+     * @see MethodUtil#getSameSignatureMethod(Method, Object)
      */
-    public static <T> T addInterface(Class<T> _interface, Object aop) {
-
+    public static <T> T addInterface(Class<T> _interface, Object obj) {
 
         LiAssertUtil.assertTrue(_interface.isInterface(), "only support interface");
-        LiAssertUtil.assertTrue(_interface.getTypeParameters().length == 0, "not support interface with generic of :  " + _interface.toGenericString());
-        LiAssertUtil.assertTrue(_interface.getInterfaces().length == 0, "not support interface extends other " + "interface:  " + StringUtils.join(",", (Object[]) _interface.getInterfaces()));
 
-        InvocationHandler invocationHandler = (proxy, method, params) -> MethodUtil.getSameSignatureMethod(method, aop).throwable_map(m -> m.invoke(aop, params), Throwable::printStackTrace).get();
-        return _interface.cast(Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{_interface}, invocationHandler));
+        InvocationHandler invocationHandler = (proxy, method, params) ->
+                MethodUtil.getSameSignatureMethod(method, obj)
+                        .throwable_map(m -> m.invoke(obj, params), Throwable::printStackTrace)
+                        .get();
+        Object proxy = Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{_interface},
+                invocationHandler);
+        return _interface.cast(proxy);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> Class<T> getComponentType(T[] arr) {
-        if (arr == null) {
-            return null;
-        }
-        return (Class<T>) arr.getClass().getComponentType();
-    }
+
 }

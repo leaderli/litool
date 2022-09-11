@@ -58,6 +58,10 @@ class ClassUtilTest {
         Assertions.assertNull(ClassUtil.getClass(null));
 
         Assertions.assertEquals(Integer.class, ClassUtil.getClass(1));
+        Class<CharSequence> type = ClassUtil.getClass("");
+        Assertions.assertNotSame(type, CharSequence.class);
+        Assertions.assertSame(type, String.class);
+
     }
 
     @Test
@@ -70,12 +74,14 @@ class ClassUtilTest {
 
     }
 
+    @SuppressWarnings("UnusedAssignment")
     @Test
     void narrow() {
 
 
         Assertions.assertDoesNotThrow(() -> {
             Class<CharSequence> narrow = ClassUtil.narrow(String.class);
+            narrow = ClassUtil.narrow(null);
         });
     }
 
@@ -187,7 +193,7 @@ class ClassUtilTest {
 
 
     @Test
-    void newArray() {
+    void newWrapperArray() {
 
 
         Assertions.assertSame(Integer[].class, ClassUtil.newWrapperArray(Integer.class, 0).getClass());
@@ -205,10 +211,15 @@ class ClassUtilTest {
         Assertions.assertThrows(NullPointerException.class, () -> ClassUtil.newWrapperArray(null, 0));
 
 
+    }
+
+    @Test
+    void toArray() {
+
         Assertions.assertNull(ClassUtil.toArray(null));
         Assertions.assertNull(ClassUtil.toArray(1));
-        Assertions.assertEquals(1, ClassUtil.toArray(new int[]{1})[0]);
-        Assertions.assertEquals(1, ClassUtil.toArray(new Integer[]{1})[0]);
+        Assertions.assertArrayEquals(new Integer[]{1}, ClassUtil.toArray(new int[]{1}));
+        Assertions.assertArrayEquals(new Integer[]{1}, ClassUtil.toArray(new Integer[]{1}));
 
     }
 
@@ -270,9 +281,7 @@ class ClassUtilTest {
     @Test
     void addInterface() {
 
-        Assertions.assertThrows(AssertException.class, () -> ClassUtil.addInterface(Fuck.class, new Proxy()));
         Assertions.assertThrows(AssertException.class, () -> ClassUtil.addInterface(Proxy.class, new Proxy()));
-        Assertions.assertThrows(AssertException.class, () -> ClassUtil.addInterface(Function.class, new Proxy()));
 
 
         ClassUtil.addInterface(Runnable.class, 1);
@@ -280,6 +289,8 @@ class ClassUtilTest {
         MyFunction function = ClassUtil.addInterface(MyFunction.class, new Proxy());
 
         Assertions.assertSame(123, function.apply("123"));
+        Function<String, Integer> function2 = ClassUtil.addInterface(MyFunction.class, new Proxy());
+        Assertions.assertSame(123, function2.apply("123"));
 
     }
 
@@ -294,14 +305,17 @@ class ClassUtilTest {
         Assertions.assertTrue(ClassUtil.isPrimitiveOrWrapper(Void.class));
     }
 
+    @FunctionalInterface
     public interface Fuck extends Function<String, Integer> {
-        @Override
-        Integer apply(String s);
+
     }
 
-    interface MyFunction {
+    interface MyFunction extends Function<String, Integer> {
 
-        Integer apply(String value);
+        @Override
+        default Integer apply(String s) {
+            return null;
+        }
     }
 
     public static class Proxy {
@@ -311,7 +325,7 @@ class ClassUtilTest {
         }
 
         public Object apply(Object s) {
-            return s;
+            return apply((String) s);
         }
 
     }
