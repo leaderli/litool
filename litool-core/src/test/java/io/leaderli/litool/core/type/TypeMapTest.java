@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
  */
 class TypeMapTest {
 
+
     @Test
     void put() {
         TypeMap typeMap = new TypeMap();
@@ -21,6 +22,12 @@ class TypeMapTest {
         typeMap.put(String.class, "");
         value = typeMap.get(String.class).get();
         Assertions.assertNotNull(value);
+
+        typeMap.put(Integer.class, 1);
+        typeMap.put(int.class, 2);
+        System.out.println(typeMap.get(Integer.class));
+        System.out.println(typeMap.get(int.class));
+        System.out.println(typeMap);
     }
 
     @Test
@@ -62,5 +69,10 @@ class TypeMapTest {
 
         Assertions.assertNull(typeMap.get(String.class).get());
         Assertions.assertEquals("", typeMap.get(CharSequence.class).get());
+
+
+        typeMap.put(int.class, 1);
+        typeMap.remove(int.class);
+        Assertions.assertTrue(typeMap.get(int.class).absent());
     }
 }

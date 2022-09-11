@@ -14,16 +14,35 @@ import java.util.Objects;
 public class TypeUtil {
 
     /**
-     * 是否未知类型<br>
-     * type为null或者{@link TypeVariable} 都视为未知类型
+     * the type is unknown
+     * <pre>
+     * null == type || type instanceof TypeVariable;
+     * </pre>
      *
-     * @param type Type类型
-     * @return 是否未知类型
+     * @param type the type
+     * @return the type is unknown
      */
     public static boolean isUnknown(Type type) {
         return null == type || type instanceof TypeVariable;
     }
 
+    /**
+     * <pre>
+     *  if (type == null) {
+     *      return null;
+     *  }
+     *  if (type instanceof Class) {
+     *      return (Class<?>) type;
+     *   }
+     *  if (type instanceof ParameterizedType) {
+     *      return (Class<?>) ((ParameterizedType) type).getRawType();
+     *  }
+     * </pre>
+     *
+     * @param type the type
+     * @return return the class type represent by the type
+     * @throws UnsupportedTypeException if type is not Class or ParameterizedType
+     */
     public static Class<?> getClass(Type type) {
         if (type == null) {
             return null;
@@ -45,11 +64,12 @@ public class TypeUtil {
      * @param right a TypeVariable
      * @return two TypeVariable typeName is equals
      */
-    public static boolean equals(TypeVariable<?> left, TypeVariable<?> right) {
+    private static boolean equals(TypeVariable<?> left, TypeVariable<?> right) {
         return Objects.equals(left.getTypeName(), right.getTypeName());
     }
 
-    public static boolean equals(ParameterizedType left, ParameterizedType right) {
+
+    private static boolean equals(ParameterizedType left, ParameterizedType right) {
 
         if (left.getRawType() == right.getRawType()) {
 
@@ -71,9 +91,11 @@ public class TypeUtil {
     }
 
     /**
+     * Return two type is equals
+     *
      * @param left  type
      * @param right type
-     * @return 判断两个 type 是否相等
+     * @return two type is equals
      */
     public static boolean equals(Type left, Type right) {
         if (left instanceof ParameterizedType && right instanceof ParameterizedType) {
