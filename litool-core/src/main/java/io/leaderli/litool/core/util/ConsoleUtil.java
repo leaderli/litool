@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
+import io.leaderli.litool.core.text.StrPool;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.io.PrintStream;
@@ -16,13 +17,16 @@ public class ConsoleUtil {
 
     public static final String LINE_SEPARATOR = System.lineSeparator();
 
+    /**
+     * the default print behavior, could be replace appropriate time
+     */
     @SuppressWarnings("all")
     public static PrintStream CONSOLE = System.out;
 
     /**
-     * 快速打印多个参数值，使用空格分割
+     * Quickly print multiple parameter values, separated by spaces
      *
-     * @param args 参数
+     * @param args the args
      */
     public static void print(Iterable<?> args) {
 
@@ -40,7 +44,7 @@ public class ConsoleUtil {
     private static void print0(String delimiter, Iterable<?> args) {
 
         if (StringUtils.isEmpty(delimiter)) {
-            delimiter = " ";
+            delimiter = StrPool.SPACE;
         }
         CONSOLE.println(StringUtils.join(delimiter, args));
     }
@@ -97,7 +101,7 @@ public class ConsoleUtil {
      */
     public static void print0(String delimiter, Object... args) {
         if (StringUtils.isEmpty(delimiter)) {
-            delimiter = " ";
+            delimiter = StrPool.SPACE;
         }
         CONSOLE.println(StringUtils.join(delimiter, args));
     }

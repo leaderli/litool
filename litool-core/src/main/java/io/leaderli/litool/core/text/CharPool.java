@@ -8,9 +8,9 @@ package io.leaderli.litool.core.text;
 public interface CharPool {
 
     /**
-     * 字符常量：空格符 {@code ' '}
+     * 字符常量：空格符 {@code '\u0020'}
      */
-    char SPACE = ' ';
+    char SPACE = '\u0020';
     /**
      * 字符常量：制表符 {@code '\t'}
      */

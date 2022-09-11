@@ -24,7 +24,7 @@ public interface StrPool {
     /**
      * 字符串常量空格 {@code " "}
      */
-    String SPACE = " ";
+    String SPACE = "\u0020";
     /**
      * 字符串常量：点 {@code "."}
      */

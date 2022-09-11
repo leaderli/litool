@@ -19,7 +19,7 @@ class PrimitiveEnumTest {
     }
 
     @Test
-    void def() {
+    void zero_value() {
 
         Assertions.assertEquals(0, PrimitiveEnum.zero_value(int.class));
         Assertions.assertEquals(0, PrimitiveEnum.zero_value(Integer.class));
@@ -28,7 +28,7 @@ class PrimitiveEnumTest {
 
 
     @Test
-    void test() {
+    void get() {
 
         Assertions.assertSame(PrimitiveEnum.VOID, PrimitiveEnum.get(void.class));
         Assertions.assertSame(PrimitiveEnum.VOID, PrimitiveEnum.get(Void.class));

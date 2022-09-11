@@ -84,7 +84,7 @@ public class MethodScanner {
             }
 
             if (not_scan_lambda) {
-                methods = methods.filter(m -> !m.getName().contains(cls.getName() + ".lambda$"));
+                methods = methods.filter(m -> !m.getName().startsWith(MethodSignature.LAMBDA_METHOD_PREFIX));
             }
             return methods.filter(filter);
 

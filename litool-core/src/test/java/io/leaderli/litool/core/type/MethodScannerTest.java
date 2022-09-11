@@ -20,10 +20,12 @@ class MethodScannerTest {
     void test() throws InvocationTargetException, IllegalAccessException {
 
 
-        MethodScanner methodScanner = new MethodScanner(MethodScannerTest.class, true, null);
-
-
+        MethodScanner methodScanner = new MethodScanner(MethodScannerTest.class, true, f -> f.getName().contains("$"));
         Lira<Method> scan = methodScanner.scan();
+        Assertions.assertTrue(scan.absent());
+
+        methodScanner = new MethodScanner(MethodScannerTest.class, true, null);
+        scan = methodScanner.scan();
         Assertions.assertEquals("test", scan.first().get().getName());
         Assertions.assertTrue(scan.first(f -> f.getName().equals("toString")).absent());
 

@@ -8495,7 +8495,7 @@ public class StringUtils implements StrPool {
         if (length(str) < chunkSize) {
             return str;
         }
-        return String.join(" ", str.split(String.format("(?<=\\G.{%d})", chunkSize)));
+        return String.join(StrPool.SPACE, str.split(String.format("(?<=\\G.{%d})", chunkSize)));
 
     }
 

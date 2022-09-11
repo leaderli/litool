@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 public class MethodSignature {
 
+    public static final String LAMBDA_METHOD_PREFIX = "lambda$";
     /**
      * @see Method#getName()
      */
