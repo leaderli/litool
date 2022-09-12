@@ -22,11 +22,11 @@ class LiLinkTest {
 
         LiLink.of()
                 .then(() -> t1.value(1))
-                .error(LiAssertUtil::assertNotRun)
+                .interrupt(LiAssertUtil::assertNotRun)
                 .then(() -> 0)
                 .then(LiAssertUtil::assertNotRun)
-                .error(() -> e1.value(1))
-                .error(() -> e2.value(1))
+                .interrupt(() -> e1.value(1))
+                .interrupt(() -> e2.value(1))
                 .present();
 
         Assertions.assertEquals(1, t1.value());
@@ -37,7 +37,7 @@ class LiLinkTest {
         e1.reset();
 
         LiLink.none()
-                .error(v -> LiAssertUtil.assertNotRun()).error(() -> e1.value(1))
+                .interrupt(v -> LiAssertUtil.assertNotRun()).interrupt(() -> e1.value(1))
                 .present();
         Assertions.assertEquals(1, e1.value());
 
@@ -46,8 +46,8 @@ class LiLinkTest {
         e2.reset();
         LiLink.of(10)
                 .then(() -> 0)
-                .error((Consumer<Integer>) e1::value)
-                .error(() -> e2.value(1))
+                .interrupt((Consumer<Integer>) e1::value)
+                .interrupt(() -> e2.value(1))
                 .onFinally(LiAssertUtil::assertFalse);
 
         Assertions.assertEquals(10, e1.value());
@@ -80,62 +80,62 @@ class LiLinkTest {
 
     @Test
     void request() {
-        Assertions.assertDoesNotThrow(() -> LiLink.none()
-                .error(LiAssertUtil::assertNotRun)
-                .request(1));
-        Assertions.assertThrows(IllegalStateException.class, () -> LiLink.of(1)
-                .error(LiAssertUtil::assertNotRun)
-                .request(null));
+        Assertions.assertDoesNotThrow(() -> LiLink.of(1)
+                .interrupt(LiAssertUtil::assertNotRun)
+                .run());
+        Assertions.assertThrows(IllegalStateException.class, () -> LiLink.none()
+                .interrupt(LiAssertUtil::assertNotRun)
+                .run());
 
 
         LiBox<Integer> t1 = LiBox.none();
         LiBox<Integer> e1 = LiBox.none();
 
-        LiLink.<Integer>none()
-                .error(LiAssertUtil::assertNotRun)
+        LiLink.of(1)
+                .interrupt(LiAssertUtil::assertNotRun)
                 .then((Consumer<? super Integer>) t1::value)
-                .request(1);
+                .run();
 
         Assertions.assertEquals(1, t1.value());
 
         t1.value(0);
-        LiLink.<Integer>none()
-                .error(LiAssertUtil::assertNotRun)
+        LiLink.of(1)
+                .interrupt(LiAssertUtil::assertNotRun)
                 .then((Consumer<? super Integer>) v -> t1.value(t1.value() + v))
                 .then((Consumer<? super Integer>) v -> t1.value(t1.value() + v))
-                .request(1);
+                .run();
 
         Assertions.assertEquals(2, t1.value());
 
         e1.value(0);
-        LiLink.of(1)
-                .error(() -> e1.value(e1.value() + 1))
+        LiLink.<Integer>of(null)
+                .interrupt(() -> e1.value(e1.value() + 1))
                 .then((Consumer<? super Integer>) v -> t1.value(t1.value() + v))
-                .error(() -> e1.value(e1.value() + 1))
+                .interrupt(() -> e1.value(e1.value() + 1))
                 .then((Consumer<? super Integer>) v -> t1.value(t1.value() + v))
-                .error(() -> e1.value(e1.value() + 1))
-                .request(null);
+                .interrupt(() -> e1.value(e1.value() + 1))
+                .run();
 
         Assertions.assertEquals(1, e1.value());
 
         e1.value(0);
-        LiLink.of(1)
+        LiLink.of((Integer) null)
                 .then((Consumer<? super Integer>) v -> t1.value(t1.value() + v))
                 .then((Consumer<? super Integer>) v -> t1.value(t1.value() + v))
-                .error(() -> e1.value(e1.value() + 1))
-                .error(() -> e1.value(e1.value() + 1))
-                .error(() -> e1.value(e1.value() + 1))
-                .request(null);
+                .interrupt(() -> e1.value(e1.value() + 1))
+                .interrupt(() -> e1.value(e1.value() + 1))
+                .interrupt(() -> e1.value(e1.value() + 1))
+                .run();
 
         Assertions.assertEquals(3, e1.value());
 
         t1.value(0);
-        LiLink.<Integer>none()
-                .error(LiAssertUtil::assertNotRun)
+        LiLink.of(1)
+                .interrupt(LiAssertUtil::assertNotRun)
                 .then((Consumer<? super Integer>) v -> t1.value(t1.value() + v))
-                .error(LiAssertUtil::assertNotRun)
+                .interrupt(LiAssertUtil::assertNotRun)
                 .then((Consumer<? super Integer>) v -> t1.value(t1.value() + v))
-                .request(1);
+                .run();
 
         Assertions.assertEquals(2, t1.value());
 
@@ -144,7 +144,7 @@ class LiLinkTest {
         LiLink.of(1)
                 .then((Consumer<? super Integer>) v -> t1.value(0))
                 .map(Object::toString)
-                .error(LiAssertUtil::assertNotRun)
+                .interrupt(LiAssertUtil::assertNotRun)
                 .run();
 
         e1.value(0);
@@ -152,7 +152,7 @@ class LiLinkTest {
                 .then(v -> v)
                 .map(Object::toString)
                 .then(LiAssertUtil::assertNotRun)
-                .error(() -> e1.value(1))
+                .interrupt(() -> e1.value(1))
                 .run();
 
         Assertions.assertEquals(1, e1.value());
@@ -161,10 +161,10 @@ class LiLinkTest {
         e1.value(0);
         LiLink.of(1)
                 .then((Consumer<? super Integer>) v -> t1.value(0))
-                .error(LiAssertUtil::assertNotRun)
+                .interrupt(LiAssertUtil::assertNotRun)
                 .map(Object::toString)
                 .then(v -> 0)
-                .error(() -> e1.value(1))
+                .interrupt(() -> e1.value(1))
                 .run();
         Assertions.assertEquals(1, e1.value());
 
@@ -172,11 +172,15 @@ class LiLinkTest {
         e1.value(0);
         LiLink.of(1)
                 .then((Consumer<? super Integer>) v -> t1.value(0))
-                .error(LiAssertUtil::assertNotRun)
-                .union("1")
-                .then(v -> 0)
-                .error(() -> e1.value(1))
-                .run();
+                .interrupt(LiAssertUtil::assertNotRun)
+                .onFinally(r -> {
+                    if (r) {
+                        LiLink.of("1")
+                                .then(v -> 0)
+                                .interrupt(() -> e1.value(1))
+                                .run();
+                    }
+                });
         Assertions.assertEquals(1, e1.value());
 
     }

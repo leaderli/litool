@@ -1,10 +1,10 @@
-package io.leaderli.litool.core.stream;
+package io.leaderli.litool.core.meta.logic;
 
 /**
  * @author leaderli
  * @since 2022/9/12
  */
-public class NotSome<T> extends Some<T> {
+class NotSome<T> extends LogicSome<T> {
     public NotSome(PublisherLogic<T> prePublisher) {
         super(prePublisher);
     }

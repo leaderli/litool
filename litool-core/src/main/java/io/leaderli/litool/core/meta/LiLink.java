@@ -4,7 +4,6 @@ import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableRunner;
 import io.leaderli.litool.core.function.ThrowableSupplier;
-import io.leaderli.litool.core.meta.link.OnErrorConsumerLink;
 import io.leaderli.litool.core.meta.link.PublisherLink;
 import io.leaderli.litool.core.meta.link.ValueLink;
 import io.leaderli.litool.core.util.BooleanUtil;
@@ -52,142 +51,123 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     }
 
     /**
-     * 新的 liLink 是否执行，取决于之前的链条执行结果。
-     * 如果后续有 request(R r)，也只会停留在 map 处，而不会请求到链条头节点
+     * when the filter throw a exception or it result is null, interrupt the execution chain
      *
-     * @param mapper 转换函数
-     * @param <R>    转换后的泛型
-     * @return 返回一个新的LiLink
+     * @param mapper the mapper function
+     * @param <R>    the type of mapper result
+     * @return new link
      */
     <R> LiLink<R> map(Function<? super T, ? extends R> mapper);
 
 
     /**
-     * 新的 liLink 是否执行，取决于之前的链条执行结果。
-     * 如果后续有 request(R r)，也只会停留在 union 处，而不会请求到链条头节点
+     * when the filter throw a exception or it result is false, interrupt the execution chain
      *
-     * @param value 新值
-     * @param <R>   转换后的泛型
-     * @return 返回一个新的LiLink
-     */
-    <R> LiLink<R> union(R value);
-
-    /**
-     * 新的 liLink 是否执行，取决于之前的链条执行结果。
-     * 如果后续有 request(R r)，也只会停留在 union 处，而不会请求到链条头节点
-     *
-     * @param supplier 新值
-     * @param <R>      转换后的泛型
-     * @return 返回一个新的LiLink
-     */
-    <R> LiLink<R> union(Supplier<R> supplier);
-
-    /**
-     * 当返回 false 时 ，跳过执行后续的  filter,then, 执行最近的 连续的 error 节点，并且终止执行
-     *
-     * @param filter 过滤器
-     * @return this
+     * @param filter the filter
+     * @return new link
      * @see BooleanUtil#parse(Object)
      */
     LiLink<T> then(Function<? super T, ?> filter);
 
     /**
-     * @param supplier 过滤器
-     * @return this
-     * @see #then(Function)
+     * when the supplier throw a exception, interrupt the execution chain
+     *
+     * @param supplier the supplier
+     * @return new link
      */
     LiLink<T> then(Supplier<?> supplier);
 
     /**
-     * 未中断链条时执行，且继续执行下一个节点，该节点不会捕获异常，
+     * when the runnable throw a exception, interrupt the execution chain
      *
-     * @param consumer 消费者
-     * @return this
+     * @param consumer the consumer
+     * @return new link
      */
     LiLink<T> then(Consumer<? super T> consumer);
 
     /**
-     * 未中断链条时执行，且继续执行下一个节点，该节点不会捕获异常，
+     * when the runnable throw a exception, interrupt the execution chain
      *
-     * @param runnable 运行函数
-     * @return this
+     * @param runnable the runnable
+     * @return new link
      */
     LiLink<T> then(Runnable runnable);
 
 
     /**
-     * 当抛出异常时，中断链条执行
+     * when the filter throw a exception or it result is false, interrupt the execution chain
      *
-     * @param filter 过滤器
-     * @return this
-     * @see #then(Function)
+     * @param filter the filter
+     * @return new link
+     * @see BooleanUtil#parse(Object)
      */
     LiLink<T> throwable_then(ThrowableFunction<? super T, ?> filter);
 
     /**
-     * 当抛出异常时，中断链条执行
+     * when the supplier throw a exception, interrupt the execution chain
      *
-     * @param filter 过滤器
-     * @return this
-     * @see #then(Supplier)
+     * @param supplier the supplier
+     * @return new link
      */
-    LiLink<T> throwable_then(ThrowableSupplier<?> filter);
+    LiLink<T> throwable_then(ThrowableSupplier<?> supplier);
 
     /**
-     * 当抛出异常时，中断链条执行
+     * when the consumer throw a exception, interrupt the execution chain
      *
-     * @param consumer 消费者
-     * @return this
-     * @see #then(Consumer)
+     * @param consumer the consumer
+     * @return new link
      */
     LiLink<T> throwable_then(ThrowableConsumer<? super T> consumer);
 
     /**
-     * 当抛出异常时，中断链条执行
+     * when the runnable throw a exception, interrupt the execution chain
      *
-     * @param runner 运行函数
-     * @return this
-     * @see #then(Runnable)
+     * @param runner the runnable
+     * @return new link
      */
     LiLink<T> throwable_then(ThrowableRunner runner);
 
 
     /**
-     * 当链条失败时执行
+     * runnable only run when the execution chain has interrupt
      *
-     * @param runnable 执行函数
-     * @return this
-     */
-    LiLink<T> error(Runnable runnable);
-
-    /**
-     * 当链条失败且 value 不为 null 时执行
-     *
-     * @param consumer 消费者
-     * @return this
-     */
-    OnErrorConsumerLink<T> error(Consumer<? super T> consumer);
-
-    /**
-     * 当链条失败时执行，无视异常
-     *
-     * @param runnable 执行函数
-     * @return this
+     * @param runnable the runnable
+     * @return new link
      * @see LiConstant#WHEN_THROW
      */
-    LiLink<T> throwable_error(ThrowableRunner runnable);
+    LiLink<T> interrupt(Runnable runnable);
 
     /**
-     * 当链条失败且 value 不为 null 时执行，无视异常
+     * consumer only accept when the execution chain has interrupt and the  notify value is not null
      *
-     * @param consumer 消费者
-     * @return this
+     * @param consumer the consumer
+     * @return new link
      * @see LiConstant#WHEN_THROW
      */
-    OnErrorConsumerLink<T> throwable_error(ThrowableConsumer<? super T> consumer);
+    LiLink<T> interrupt(Consumer<? super T> consumer);
 
     /**
-     * @return 链条是否正确执行完成，没有任何 error 节点执行
+     * runnable only run when the execution chain has interrupt
+     *
+     * @param runnable the runnable
+     * @return new link
+     * @see LiConstant#WHEN_THROW
+     */
+    LiLink<T> throwable_interrupt(ThrowableRunner runnable);
+
+    /**
+     * consumer only accept when the execution chain has interrupt and the  notify value is not null
+     *
+     * @param consumer the consumer
+     * @return new link
+     * @see LiConstant#WHEN_THROW
+     */
+    LiLink<T> throwable_interrupt(ThrowableConsumer<? super T> consumer);
+
+    /**
+     * the terminal action
+     *
+     * @return {@code  true} if the execution chain has not interrupted
      */
     @Override
     boolean present();
@@ -195,16 +175,17 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     @Override
     String name();
 
-    void request(T t);
 
     /**
-     * @param onFinally 最后一个消费者
+     * the terminal action, call finally with the parameter of whether the execution chains is not interrupted
+     *
+     * @param onFinally the last consumer, will always called
      * @see #present()
      */
     void onFinally(Consumer<Boolean> onFinally);
 
     /**
-     * 触发执行动作
+     * the terminal action,  behavior like {@link  Runnable}
      *
      * @see #present()
      */

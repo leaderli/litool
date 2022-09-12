@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.stream;
+package io.leaderli.litool.core.meta.logic;
 
 import io.leaderli.litool.core.util.BooleanUtil;
 
@@ -8,7 +8,7 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/9/12
  */
-public class TestSome<T> extends Some<T> {
+class TestSome<T> extends LogicSome<T> {
     private final Function<T, ?> predicate;
 
     public TestSome(PublisherLogic<T> prePublisher, Function<T, ?> predicate) {

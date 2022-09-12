@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.stream;
+package io.leaderli.litool.core.meta.logic;
 
 import org.junit.jupiter.api.Test;
 
@@ -60,14 +60,14 @@ class LiLogicPipeLineTest {
 
     private interface MyInterPredicateSink extends UnionOperation<String> {
         @Override
-        MyInterCombineOperationSink and();
+        MyTestCombineOperation and();
 
         @Override
-        MyInterCombineOperationSink or();
+        MyTestCombineOperation or();
 
     }
 
-    private interface MyInterOperationSink extends InterOperationSink<String> {
+    private interface MyTestOperation extends TestOperation<String> {
         MyInterPredicateSink len(int size);
 
         @Override
@@ -77,19 +77,19 @@ class LiLogicPipeLineTest {
     @FunctionalInterface
     private interface MyInterNotOperationSink extends NotOperation<String> {
         @Override
-        MyInterOperationSink not();
+        MyTestOperation not();
     }
 
 
-    private interface MyInterCombineOperationSink extends MyInterOperationSink, MyInterNotOperationSink,
+    private interface MyTestCombineOperation extends MyTestOperation, MyInterNotOperationSink,
             CombineOperation<String> {
     }
 
-    private interface MyInterLogicPipeLineSink extends MyInterCombineOperationSink, MyInterPredicateSink {
+    private interface MyTestLogicPipeLine extends MyTestCombineOperation, MyInterPredicateSink {
 
     }
 
-    private static class MyLiLogicPipeLine implements MyInterLogicPipeLineSink {
+    private static class MyLiLogicPipeLine implements MyTestLogicPipeLine {
 
         private final LiLogicPipeLine<String> proxy = (LiLogicPipeLine<String>) LiLogicPipeLine.<String>begin();
 
@@ -103,19 +103,19 @@ class LiLogicPipeLineTest {
         }
 
         @Override
-        public MyInterCombineOperationSink and() {
+        public MyTestCombineOperation and() {
             proxy.and();
             return this;
         }
 
         @Override
-        public MyInterCombineOperationSink or() {
+        public MyTestCombineOperation or() {
             proxy.or();
             return this;
         }
 
         @Override
-        public MyInterOperationSink not() {
+        public MyTestOperation not() {
             proxy.not();
             return this;
         }

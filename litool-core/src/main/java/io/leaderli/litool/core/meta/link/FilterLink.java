@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.meta.link;
 
-import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.function.Function;
@@ -45,7 +44,7 @@ class FilterLink<T> extends SomeLink<T, T> {
             if (next) {
                 this.actualSubscriber.next(value);
             } else {
-                this.actualSubscriber.onError(Lino.of(value));
+                this.actualSubscriber.onInterrupt(value);
             }
         }
     }

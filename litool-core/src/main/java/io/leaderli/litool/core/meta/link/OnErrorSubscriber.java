@@ -1,10 +1,13 @@
 package io.leaderli.litool.core.meta.link;
 
 /**
+ * For marking, the next error node can be consumed continuously
+ *
  * @author leaderli
+ * @see SubscriberLink#onInterrupt(Object)
+ * @see OnInterruptConsumerLink
+ * @see OnInterruptRunnableLink
  * @since 2022/7/17
- * <p>
- * 用于标记用，紧挨着的 error 节点可以连续消费
  */
 public interface OnErrorSubscriber {
 }

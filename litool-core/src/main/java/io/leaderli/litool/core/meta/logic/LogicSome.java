@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.stream;
+package io.leaderli.litool.core.meta.logic;
 
 import io.leaderli.litool.core.meta.LiBox;
 
@@ -8,11 +8,11 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/9/12
  */
-public abstract class Some<T> implements CombineOperation<T>, UnionOperation<T>,
+abstract class LogicSome<T> implements CombineOperation<T>, UnionOperation<T>,
         PublisherLogic<T> {
     protected final PublisherLogic<T> prevPublisher;
 
-    protected Some(PublisherLogic<T> prevPublisher) {
+    protected LogicSome(PublisherLogic<T> prevPublisher) {
         this.prevPublisher = prevPublisher;
     }
 
@@ -23,7 +23,7 @@ public abstract class Some<T> implements CombineOperation<T>, UnionOperation<T>,
 
 
     @Override
-    public InterOperationSink<T> not() {
+    public TestOperation<T> not() {
         return new NotSome<>(this);
     }
 

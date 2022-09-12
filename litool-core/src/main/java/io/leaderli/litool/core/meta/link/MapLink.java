@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.link;
 
-import io.leaderli.litool.core.meta.Lino;
-
 import java.util.function.Function;
 
 /**
@@ -28,39 +26,26 @@ class MapLink<T, R> extends SomeLink<T, R> {
     private class MapSubscriber extends IntermediateSubscriber<T, R> {
 
 
-        private R newValue;
-
         protected MapSubscriber(SubscriberLink<R> actualSubscriber) {
             super(actualSubscriber);
         }
 
 
-        /**
-         * 当前置节点正确执行时触发该函数，通过对值进行转换，有效的值则会进行下一轮的链条
-         *
-         * @param value 上一个节点传递的值
-         * @see #request(Object)
-         * @see #mapper
-         */
         @Override
         public void next(T value) {
-
-            Lino.of(newValue)
-                    .or(mapper.apply(value))
-                    .ifPresent(actualSubscriber::next)
-                    .ifAbsent(() -> actualSubscriber.onError(Lino.none()));
-
+            R apply = mapper.apply(value);
+            if (apply != null) {
+                this.actualSubscriber.next(apply);
+            } else {
+                this.actualSubscriber.onInterrupt(null);
+            }
         }
 
         @Override
-        public void onError(Lino<T> value) {
-            this.actualSubscriber.onError(Lino.of(newValue).or(value.map(mapper)));
+        public void onInterrupt(T value) {
+            this.actualSubscriber.onInterrupt(mapper.apply(value));
         }
 
-        @Override
-        public void request(R newValue) {
-            this.newValue = newValue;
-            this.prevSubscription.request();
-        }
+
     }
 }

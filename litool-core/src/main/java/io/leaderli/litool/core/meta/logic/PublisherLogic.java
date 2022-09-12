@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.stream;
+package io.leaderli.litool.core.meta.logic;
 
 /**
  * @author leaderli

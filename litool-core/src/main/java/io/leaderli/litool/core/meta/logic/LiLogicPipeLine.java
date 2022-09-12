@@ -1,10 +1,10 @@
-package io.leaderli.litool.core.stream;
+package io.leaderli.litool.core.meta.logic;
 
 import java.util.function.Function;
 
 public class LiLogicPipeLine<T> implements CombineOperation<T>, UnionOperation<T> {
 
-    private Some<T> logic = new BeginSome<>();
+    private LogicSome<T> logic = new BeginSome<>();
 
     @SuppressWarnings("unchecked")
     public static <T> CombineOperation<T> begin() {
@@ -20,7 +20,7 @@ public class LiLogicPipeLine<T> implements CombineOperation<T>, UnionOperation<T
 
 
     @Override
-    public InterOperationSink<T> not() {
+    public TestOperation<T> not() {
         logic = new NotSome<>(logic);
         return this;
     }

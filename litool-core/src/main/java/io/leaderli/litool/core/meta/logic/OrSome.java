@@ -1,12 +1,12 @@
-package io.leaderli.litool.core.stream;
+package io.leaderli.litool.core.meta.logic;
 
 /**
  * @author leaderli
  * @since 2022/9/12
  */
-public class AndSome<T> extends Some<T> {
+class OrSome<T> extends LogicSome<T> {
 
-    public AndSome(PublisherLogic<T> prePublisher) {
+    public OrSome(PublisherLogic<T> prePublisher) {
         super(prePublisher);
     }
 
@@ -27,9 +27,9 @@ public class AndSome<T> extends Some<T> {
         public void next(T t, boolean last) {
 
             if (last) {
-                super.next(t, last);
+                this.actualSubscriber.onComplete(true);
             } else {
-                this.actualSubscriber.onComplete(false);
+                super.next(t, last);
             }
         }
     }

@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.stream;
+package io.leaderli.litool.core.meta.logic;
 
 /**
  * @author leaderli
@@ -8,6 +8,11 @@ package io.leaderli.litool.core.stream;
 public interface SubscriptionLogic<T> {
 
 
+    /**
+     * request the test value
+     *
+     * @param value the test value
+     */
     void request(T value);
 
 

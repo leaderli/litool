@@ -1,17 +1,15 @@
 package io.leaderli.litool.core.meta.link;
 
-import io.leaderli.litool.core.meta.Lino;
-
 /**
  * @author leaderli
  * @since 2022/7/16
  */
-public class OnErrorRunnableLink<T> extends SomeLink<T, T> {
+class OnInterruptRunnableLink<T> extends SomeLink<T, T> {
 
     private final Runnable runnable;
 
 
-    public OnErrorRunnableLink(PublisherLink<T> prevPublisher, final Runnable runnable) {
+    public OnInterruptRunnableLink(PublisherLink<T> prevPublisher, final Runnable runnable) {
         super(prevPublisher);
         this.runnable = runnable;
     }
@@ -37,12 +35,12 @@ public class OnErrorRunnableLink<T> extends SomeLink<T, T> {
             this.actualSubscriber.next(value);
         }
 
-        @Override
-        public void onError(Lino<T> lino) {
-            runnable.run();
 
+        @Override
+        public void onInterrupt(T value) {
+            runnable.run();
             if (this.actualSubscriber instanceof OnErrorSubscriber) {
-                this.actualSubscriber.onError(lino);
+                this.actualSubscriber.onInterrupt(value);
 
             }
         }

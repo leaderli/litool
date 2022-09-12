@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.link;
 
-import io.leaderli.litool.core.meta.Lino;
-
 /**
  * @author leaderli
  * @since 2022/7/16
@@ -19,15 +17,14 @@ public class ValueLink<T> extends SomeLink<T, T> {
 
     @Override
     public void subscribe(SubscriberLink<T> actualSubscriber) {
-        SubscriptionLink<T> subscription = new ValueSubscription(actualSubscriber);
-        actualSubscriber.onSubscribe(subscription);
+        actualSubscriber.onSubscribe(new ValueSubscription(actualSubscriber));
     }
 
     /**
      * @author leaderli
      * @since 2022/7/16
      */
-    private class ValueSubscription implements SubscriptionLink<T> {
+    private class ValueSubscription implements SubscriptionLink {
 
         private final SubscriberLink<? super T> actualSubscriber;
 
@@ -39,15 +36,12 @@ public class ValueLink<T> extends SomeLink<T, T> {
         @Override
         public void request() {
 
-            request(value);
+            if (value != null) {
 
-        }
-
-        @Override
-        public void request(T t) {
-
-            Lino.of(t).ifPresent(actualSubscriber::next)
-                    .ifAbsent(() -> actualSubscriber.onError(Lino.none()));
+                this.actualSubscriber.next(value);
+            } else {
+                this.actualSubscriber.onInterrupt(null);
+            }
         }
     }
 }

@@ -1,10 +1,10 @@
-package io.leaderli.litool.core.stream;
+package io.leaderli.litool.core.meta.logic;
 
 /**
  * @author leaderli
  * @since 2022/9/12
  */
-public class BeginSome<T> extends Some<T> {
+class BeginSome<T> extends LogicSome<T> {
     protected BeginSome() {
         super(null);
     }

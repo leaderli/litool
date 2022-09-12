@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.link;
 
-import io.leaderli.litool.core.meta.Lino;
-
 /**
  * @author leaderli
  * @since 2022/7/18
@@ -15,13 +13,9 @@ abstract class SameTypeIntermediateSubscriber<T> extends IntermediateSubscriber<
 
 
     @Override
-    public void onError(Lino<T> lino) {
-        this.actualSubscriber.onError(lino);
+    public void onInterrupt(T value) {
+        this.actualSubscriber.onInterrupt(value);
     }
 
 
-    @Override
-    public void request(T t) {
-        this.prevSubscription.request(t);
-    }
 }

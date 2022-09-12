@@ -1,29 +1,27 @@
 package io.leaderli.litool.core.meta.link;
 
-import io.leaderli.litool.core.meta.Lino;
-
 /**
  * @author leaderli
  * @since 2022/6/27
  */
 public interface SubscriberLink<T> {
 
-    void onSubscribe(SubscriptionLink<T> subscription);
+    void onSubscribe(SubscriptionLink subscription);
 
     /**
-     * 发布者推送了一个消息
+     * deliver execute to next node
      *
-     * @param lino 消息
+     * @param value the value
      */
-    void next(T lino);
+    void next(T value);
 
 
     /**
-     * 执行链条中断时调用
+     * called on the execution chain is interrupted
      *
-     * @param lino 实际值
+     * @param value the value
      */
-    default void onError(Lino<T> lino) {
+    default void onInterrupt(T value) {
 
     }
 
