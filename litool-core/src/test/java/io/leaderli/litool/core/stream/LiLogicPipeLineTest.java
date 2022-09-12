@@ -2,11 +2,10 @@ package io.leaderli.litool.core.stream;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 class LiLogicPipeLineTest {
 
-    @SuppressWarnings("AssertWithSideEffects")
     @Test
     void test() {
 
@@ -59,7 +58,7 @@ class LiLogicPipeLineTest {
         assert MyLiLogicPipeLine.instance().len(1).or().len(2).apply("1");
     }
 
-    private interface MyInterPredicateSink extends InterPredicateSink<String> {
+    private interface MyInterPredicateSink extends UnionOperation<String> {
         @Override
         MyInterCombineOperationSink and();
 
@@ -72,18 +71,18 @@ class LiLogicPipeLineTest {
         MyInterPredicateSink len(int size);
 
         @Override
-        MyInterPredicateSink test(Predicate<String> predicate);
+        MyInterPredicateSink test(Function<String, ?> predicate);
     }
 
     @FunctionalInterface
-    private interface MyInterNotOperationSink extends InterNotOperationSink<String> {
+    private interface MyInterNotOperationSink extends NotOperation<String> {
         @Override
         MyInterOperationSink not();
     }
 
 
     private interface MyInterCombineOperationSink extends MyInterOperationSink, MyInterNotOperationSink,
-            InterCombineOperationSink<String> {
+            CombineOperation<String> {
     }
 
     private interface MyInterLogicPipeLineSink extends MyInterCombineOperationSink, MyInterPredicateSink {
@@ -133,7 +132,7 @@ class LiLogicPipeLineTest {
         }
 
         @Override
-        public MyInterPredicateSink test(Predicate<String> predicate) {
+        public MyInterPredicateSink test(Function<String, ?> predicate) {
             proxy.test(predicate);
             return this;
         }

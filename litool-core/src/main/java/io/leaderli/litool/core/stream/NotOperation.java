@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.stream;
 
-public interface InterNotOperationSink<T> {
+@FunctionalInterface
+public interface NotOperation<T> {
     InterOperationSink<T> not();
 }

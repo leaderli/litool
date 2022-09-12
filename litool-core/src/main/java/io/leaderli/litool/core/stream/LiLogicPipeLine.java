@@ -1,88 +1,46 @@
 package io.leaderli.litool.core.stream;
 
-import java.util.function.Predicate;
+import java.util.function.Function;
 
-public class LiLogicPipeLine<T> implements InterLogicPipeLineSink<T> {
+public class LiLogicPipeLine<T> implements CombineOperation<T>, UnionOperation<T> {
 
+    private Some<T> logic = new BeginSome<>();
 
-    private Sink<T, Boolean> sink;
-
-    private LiLogicPipeLine() {
-
-    }
-
-    public static <T> InterCombineOperationSink<T> begin() {
-
-        LiLogicPipeLine<T> logic = new LiLogicPipeLine<>();
-        logic.sink = new Head<>();
-        return logic;
+    @SuppressWarnings("unchecked")
+    public static <T> CombineOperation<T> begin() {
+        LiLogicPipeLine<Object> objectLiLogicPipeLine = new LiLogicPipeLine<>();
+        return (CombineOperation<T>) objectLiLogicPipeLine;
     }
 
     @Override
-    public Boolean apply(T t) {
-        return sink.request(t);
+    public UnionOperation<T> test(Function<T, ?> predicate) {
+        logic = new TestSome<>(logic, predicate);
+        return this;
     }
+
 
     @Override
     public InterOperationSink<T> not() {
-        this.sink = new Sink<T, Boolean>(this.sink) {
-            @Override
-            public Boolean apply(T request, Boolean last) {
-                return next(request, PredicateSink.IS_NOT_OPERATION);
-            }
-        };
+        logic = new NotSome<>(logic);
+        return this;
+    }
+
+
+    @Override
+    public CombineOperation<T> and() {
+        logic = new AndSome<>(logic);
         return this;
     }
 
     @Override
-    public InterPredicateSink<T> test(Predicate<T> predicate) {
-
-        this.sink = new PredicateSink<>(this.sink, predicate);
-
+    public CombineOperation<T> or() {
+        logic = new OrSome<>(logic);
         return this;
     }
+
 
     @Override
-    public InterCombineOperationSink<T> and() {
-
-        this.sink = new Sink<T, Boolean>(this.sink) {
-            @Override
-            public Boolean apply(T request, Boolean lastPredicateResult) {
-                //短路
-                if (Boolean.TRUE.equals(lastPredicateResult)) {
-                    return next(request, PredicateSink.NO_NOT_OPERATION);
-                }
-                return false;
-            }
-        };
-        return this;
+    public Boolean apply(T t) {
+        return logic.apply(t);
     }
-
-    @Override
-    public InterCombineOperationSink<T> or() {
-        this.sink = new Sink<T, Boolean>(this.sink) {
-            @Override
-            public Boolean apply(T request, Boolean lastPredicateResult) {
-                //短路
-                if (Boolean.TRUE.equals(lastPredicateResult)) {
-                    return true;
-                }
-                return next(request, PredicateSink.NO_NOT_OPERATION);
-            }
-        };
-        return this;
-    }
-
-    private static class Head<T> extends Sink<T, Boolean> {
-
-        public Head() {
-            super(null);
-        }
-
-        @Override
-        public Boolean apply(T request, Boolean last) {
-            return next(request, PredicateSink.NO_NOT_OPERATION);
-        }
-    }
-
 }

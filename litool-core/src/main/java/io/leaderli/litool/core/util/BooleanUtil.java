@@ -12,6 +12,15 @@ import java.util.Map;
  */
 public class BooleanUtil {
 
+
+    /**
+     * @param bool boolean value
+     * @return !bool
+     */
+    public static boolean negate(boolean bool) {
+        return !bool;
+    }
+
     /**
      * <ul>
      *  <li> if obj is collection, return is not empty, support {@link  Iterator}, {@link Iterable},{@link  Map},

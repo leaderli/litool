@@ -2,7 +2,6 @@ package io.leaderli.litool.core.bit;
 
 import io.leaderli.litool.core.exception.AssertException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Modifier;
@@ -18,11 +17,6 @@ class BitStateTest {
             return "Modifier:" + BitStr.of(Modifier.class).beauty(get());
         }
     };
-
-    @BeforeEach
-    public void before() {
-    }
-
 
     @Test
     void set() {

@@ -1,7 +1,8 @@
 package io.leaderli.litool.core.stream;
 
-import java.util.function.Predicate;
+import java.util.function.Function;
 
+@FunctionalInterface
 public interface InterOperationSink<T> {
-    InterPredicateSink<T> test(Predicate<T> predicate);
+    UnionOperation<T> test(Function<T, ?> predicate);
 }

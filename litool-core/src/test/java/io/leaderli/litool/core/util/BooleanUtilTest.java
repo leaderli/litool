@@ -56,4 +56,10 @@ class BooleanUtilTest {
 
         Assertions.assertDoesNotThrow(() -> BooleanUtil.parse((LiValue) null));
     }
+
+    @Test
+    void negate() {
+        Assertions.assertTrue(BooleanUtil.negate(false));
+        Assertions.assertFalse(BooleanUtil.negate(true));
+    }
 }
