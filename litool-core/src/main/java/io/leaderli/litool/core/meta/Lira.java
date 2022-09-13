@@ -6,10 +6,7 @@ import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
-import io.leaderli.litool.core.meta.ra.DebugConsumer;
-import io.leaderli.litool.core.meta.ra.Exceptionable;
-import io.leaderli.litool.core.meta.ra.IterableRa;
-import io.leaderli.litool.core.meta.ra.PublisherRa;
+import io.leaderli.litool.core.meta.ra.*;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.util.BooleanUtil;
 
@@ -21,7 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * a collection provide some convenient method
+ * a collection provide some convenient method, the action only execute when the terminal action are performed
  *
  * <p>
  * lira should not use  the tool class that contain lira, such as {@link  io.leaderli.litool.core.bit.BitStr}
@@ -35,7 +32,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Lira<?> NONE_INSTANCE = new IterableRa<>(NoneItr.of());
 
     /**
-     * Returns the narrow type lira, convert {@code <? extends T>} to {@code  <T>}
+     * Returns the narrow type lira, convert {@code <? extends T>} to {@code  <T>}, same as {@link  Lino#narrow(Lino)}
      *
      * @param lira the lira with wild type
      * @param <T>  the type of the lira
@@ -78,6 +75,10 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
         return none();
     }
 
+    /**
+     * @return the lira of a infinity generator of auto-increment integer start with 0
+     * @see Generators#range()
+     */
     static Lira<Integer> range() {
         return Lira.of(Generators.range());
     }
@@ -150,6 +151,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
     /**
      * Returns if this lira contains the specified element
+     * <p>
+     * it's terminal action
      *
      * @param t element whose presence in this lira is to be tested
      * @return if this lira contains the specified element
@@ -157,105 +160,196 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     boolean contains(T t);
 
     /**
-     * @param filter 过滤函数
-     * @return 一个新的过滤后的 Lira , 实际通过对对底层集合或数组，执行 filter
+     * filter the element beyond lira, the element will remain if  the result. the null element will be removed
+     * {@link  Function#apply(Object)} parsed  by {@link  BooleanUtil#parse(Boolean)} is {@code  true}
+     *
+     * @param filter the filter function
+     * @return a new lira
      * @see BooleanUtil#parse(Object)
      */
     Lira<T> filter(Function<? super T, ?> filter);
 
     /**
-     * @return 一个新的过滤后的 Lira , 实际通过对对底层集合或数组，执行 {@link BooleanUtil#parse(Object)}
+     * remove null element
+     *
+     * @return a new lira
      * @see #filter(Function)
      */
-    Lira<T> filter();
+    Lira<T> filter_null();
 
     /**
-     * @return 返回第一个元素 , 当无元素时返回 {@link Lino#none()}
+     * if lira {@link  #present()} return the lino of first element, otherwise return {@link  Lino#none()}
+     * <p>
+     * it's terminal action
+     *
+     * @return the first element  under lira
      */
     Lino<T> first();
 
     /**
-     * @return 返回最后一个元素 , 当无元素时返回 {@link Lino#none()}
+     * if lira {@link  #present()} return the lino of last element, otherwise return {@link  Lino#none()}
+     * <p>
+     * it's terminal action
+     *
+     * @return the last element  under lira
      */
     Lino<T> last();
 
-    /**
-     * @param filter 过滤函数
-     * @return 过滤后返回第一个元素 , 当无元素时返回 {@link Lino#none()}
-     * @see #filter(Function)
-     */
 
+    /**
+     * if lira {@link  #present()} after filter return the lino of first element, otherwise return {@link  Lino#none()}
+     * <p>
+     * it's terminal action
+     *
+     * <pre>
+     *    return  filter(filter).first()
+     * </pre>
+     *
+     * @param filter the filter function
+     * @return the first element  under lira
+     */
     Lino<T> first(Function<? super T, ?> filter);
 
     /**
-     * @param index 角标
-     * @return 返回指定角标的位置的元素，当元素不存在时返回 {@link Lino#none()}
+     * if lira element at index is exists return the lino of index element, otherwise return
+     * {@link  Lino#none()}
+     *
+     * @param index the index of element
+     * @return the lino of index element
      */
     Lino<T> get(int index);
 
     /**
-     * @return 返回迭代器
+     * a terminal action
+     *
+     * @return the iterator of lira that has removed element of {@code null}
      */
     @Override
     Iterator<T> iterator();
 
-    Iterator<T> nullableIterator();
-
+    /**
+     * a terminal action
+     *
+     * @param consumer The action to be performed for each element
+     */
     @Override
     void forEach(Consumer<? super T> consumer);
 
     /**
-     * @param n 最多保留的元素
-     * @return 仅保留几位元素
+     * a terminal action
+     *
+     * @return the iterator of lira that may contain element of {@code null}
      */
-    Lira<T> limit(int n);
+    Iterator<T> nullableIterator();
 
     /**
-     * 使用 {@link  Iterator}作为迭代器
+     * will only remain at most n element
      *
-     * @param <R> 迭代器的值类型
-     * @return 展开后的 lira
+     * @param max the limit of max element
+     * @return a new lira
+     */
+    Lira<T> limit(int max);
+
+    /**
+     * use {@link IterableItr#of(Object)} as iterator mapper
+     *
+     * @param <R> the type of the flatted lira
+     * @return a new lira
      * @see #flatMap(Function)
      */
     <R> Lira<R> flatMap();
 
     /**
-     * @param mapper 转换为一个迭代器
-     * @param <R>    迭代器的值类型
-     * @return 展开后的 lira
+     * @param mapper the function that accept element and provide iterator
+     * @param <R>    the type of the flatted lira
+     * @return a new lira
+     * @see #flatMap(Function)
      */
     <R> Lira<R> flatMap(Function<? super T, Iterator<? extends R>> mapper);
 
     /**
-     * @param mapper 返回 Lino 的转换函数
-     * @param <R>    转换后的泛型
-     * @return 返回转换后的 Lira ,会自动将 mapping 执行后的  Lino 展开
+     * <pre>
+     *     return map(mapper).map(Supplier::get)
+     * </pre>
+     *
+     * @param mapper the function accept element and return lino
+     * @param <R>    the type of after unzip
+     * @return a new lira of type R
      */
     default <R> Lira<R> unzip(Function<? super T, Supplier<? extends R>> mapper) {
         return map(mapper).map(Supplier::get);
     }
 
     /**
-     * @param mapper 转换函数
-     * @param <R>    转换后的泛型
-     * @return 转换后的 Lira
+     * @param mapper the  mapper
+     * @param <R>    the type of after mapper
+     * @return a new lira of type R
      */
     <R> Lira<R> map(Function<? super T, ? extends R> mapper);
 
+    /**
+     * <pre>
+     *     return throwable_map(mapper).map(Supplier::get)
+     * </pre>
+     *
+     * @param mapper the function accept element and return lino
+     * @param <R>    the type of after unzip
+     * @return a new lira of type R
+     * @see #throwable_map(ThrowableFunction)
+     */
+    default <R> Lira<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper) {
+        return throwable_map(mapper).map(Supplier::get);
+    }
+
+    /**
+     * @param mapper the  mapper
+     * @param <R>    the type of after mapper
+     * @return a new lira of type R
+     * @see #throwable_map(ThrowableFunction, Consumer)
+     * @see LiConstant#WHEN_THROW
+     */
+    <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
+
+    /**
+     * @param mapper    the  mapper
+     * @param <R>       the type of after mapper
+     * @param whenThrow the consumer when {@link  ThrowableFunction#apply(Object)} throw
+     * @return a new lira of type R
+     */
+    <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
+
+    /**
+     * a terminal action, trigger the lira to execute and store the element
+     * at list
+     *
+     * @param deliverAction the consumer perform on the cache list
+     * @return a new lira
+     */
     Lira<T> terminal(Function<List<T>, Iterable<T>> deliverAction);
 
     /**
+     * consumer the elements until filter is satisfied
+     *
      * @param filter cancel signal push
-     * @return this
+     * @return a new lira
+     * @see BooleanUtil#parse(Object)
      */
 
     Lira<T> takeWhile(Function<? super T, ?> filter);
 
+    /**
+     * @param filter drop element util filter is satisfied
+     * @return a new lira
+     * @see BooleanUtil#parse(Object)
+     */
     Lira<T> dropWhile(Function<? super T, ?> filter);
 
 
     /**
-     * @param supplier get a result
+     * if element is null will converted to a element by this supplier.
+     * if element is not null, just deliver it self
+     *
+     * @param supplier provide a  new element
      * @return a result if call {@link  io.leaderli.litool.core.meta.ra.SubscriberRa#next_null()}
      */
     Lira<T> nullable(Supplier<? extends T> supplier);
@@ -265,57 +359,50 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * @param n 跳过多少个元素
-     * @return 截掉前 n 位元素
-     */
-    Lira<T> skip(int n);
-
-    /**
-     * @param mapper 返回 Lino 的转换函数
-     * @param <R>    转换后的泛型
-     * @return 返回转换后的 Lira ,会自动将 mapping 执行后的  Lino 展开
-     * @see #throwable_map(ThrowableFunction)
-     */
-    default <R> Lira<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper) {
-        return throwable_map(mapper).map(Supplier::get);
-    }
-
-    /**
-     * 实际调用 {@link #throwable_map(ThrowableFunction, Consumer)},  第二个参数传  {@link LiConstant#WHEN_THROW}
+     * skip the first n element, only  accept the element after min
      *
-     * @param mapper 转换函数
-     * @param <R>    转换后的泛型
-     * @return 转换后的 Lira
-     * @see LiConstant#WHEN_THROW
+     * @param min skip the first n element
+     * @return a new lira
      */
-    <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
+    Lira<T> skip(int min);
+
 
     /**
-     * @param mapper    转换函数
-     * @param whenThrow 当转换函数抛出异常时执行的函数
-     * @param <R>       转换后的泛型
-     * @return 转换后的 Lira
+     * if lira throw a exception when perform an action on the element, the lira will not call
+     * {@link SubscriberRa#next(Object)}, replaced it will call {@link  SubscriberRa#next_null()}
+     * and {@link  SubscriberRa#onError(Throwable, CancelSubscription)}. eventually the error will
+     * deliver to {@link  Exceptionable#onError(Throwable, CancelSubscription)}
+     *
+     * @param onError a onError action
+     * @return a new lira
      */
-    <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
-
     Lira<T> onError(Exceptionable onError);
 
     /**
-     * @param others 数组
-     * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(other)}
+     * a terminal action, will call {@link  #present()} to judge the element at here
+     * whether present. if present just return this, or return a {@link  #of(Object[])}
+     *
+     * @param others the arr
+     * @return lira
      */
     @SuppressWarnings("unchecked")
     Lira<T> or(T... others);
 
     /**
-     * @param others 数组
-     * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(other)}
+     * a terminal action, will call {@link  #present()} to judge the element at here
+     * whether present. if present just return this, or return a {@link  #of(Iterator)} }
+     *
+     * @param others the iterator
+     * @return lira
      */
     Lira<T> or(Iterator<? extends T> others);
 
     /**
-     * @param others 数组
-     * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(other)}
+     * a terminal action, will call {@link  #present()} to judge the element at here
+     * whether present. if present just return this, or return a {@link  #of(Iterable)} }
+     *
+     * @param others the iterable
+     * @return lira
      */
     Lira<T> or(Iterable<? extends T> others);
 
@@ -368,6 +455,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Lino<T> reduce(T identity, BinaryOperator<T> accumulator);
 
     /**
+     * a terminal action
+     *
      * @return the number of elements in this list
      */
     int size();
@@ -389,42 +478,68 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Lira<T> debug(DebugConsumer<T> action);
 
     /**
-     * return this lira that consisting of the distinct elements (according to {@link Object#equals(Object)})
+     * just sleep a while when perform on this action
      *
      * @param milliseconds sleep duration
-     * @return this
+     * @return a new lira
      */
 
     default Lira<T> sleep(long milliseconds) {
         return sleep(1, milliseconds);
     }
 
+    /**
+     * just sleep a while when perform on this action on every n time
+     *
+     * @param countdown    the count
+     * @param milliseconds sleep duration
+     * @return a new lira
+     */
+
+
     Lira<T> sleep(int countdown, long milliseconds);
 
     /**
-     * Return this that consisting of the distinct elements according to {@code EqualComparator}
+     * use {@link  Objects#equals(Object, Object)} as {@link  EqualComparator}
      *
-     * @param comparator a {@code EqualComparator}  to be used to compare lira elements is equals
-     * @return this
+     * @return a new lira
+     * @see #distinct(EqualComparator)
+     * @see Objects#equals(Object, Object)
+     * @see EqualComparator
      */
-    Lira<T> distinct(EqualComparator<T> comparator);
-
     default Lira<T> distinct() {
         return distinct(Objects::equals);
     }
 
     /**
-     * Returns a lira consisting of the elements of this lira ,sorted  according to natural order
+     * Return this that consisting of the distinct elements according to {@code EqualComparator}
+     * <p>
+     * it's a middle terminal action
+     *
+     * @param comparator a {@code EqualComparator}  to be used to compare lira elements is equals
+     * @return a new lira
+     * @see #terminal(Function)
+     */
+    Lira<T> distinct(EqualComparator<T> comparator);
+
+    /**
+     * use default {@link  Comparator}, {@code  {sorted(null)}}
      *
      * @return the new lira
+     * @see #terminal(Function)
      */
-    Lira<T> sorted();
+    default Lira<T> sorted() {
+        return sorted(null);
+    }
 
     /**
      * Returns a lira consisting of the elements of this lira ,sorted  according to  the provided {@code Comparator}
+     * <p>
+     * it's a middle terminal action
      *
      * @param comparator the provided {@link Comparator}
      * @return the new lira
+     * @see #terminal(Function)
      */
     Lira<T> sorted(Comparator<? super T> comparator);
 
@@ -446,6 +561,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     void forThrowableEach(ThrowableConsumer<? super T> action, Consumer<Throwable> whenThrow);
 
     /**
+     * it's a terminal action
+     *
      * @return the new stream
      * @see Stream
      */
@@ -455,6 +572,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
     /**
      * return an {@code List} consisting of the elements
+     * <p>
+     * it's a terminal action
      *
      * @return the new list
      */
@@ -462,6 +581,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
     /**
      * return an {@code List} consisting of the elements
+     * <p>
+     * it's a terminal action
      *
      * @return the new list
      * @deprecated use {@link #get()}
@@ -483,7 +604,12 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * Returns an typed array containing the typed elements  in this lira
+     * Returns an typed array containing the typed elements in this lira, if the element is not satisfied
+     * the type will be removed
+     *
+     * <pre>
+     *     cast(type).get().toArray(new T[0])
+     * </pre>
      *
      * <p>This is a terminal operation
      *

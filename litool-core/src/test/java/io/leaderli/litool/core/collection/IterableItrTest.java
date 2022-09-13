@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.collection;
 
+import io.leaderli.litool.core.collection.IterableItr.ArrayItr;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -23,19 +24,19 @@ class IterableItrTest {
         Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
 
         obj = IterableItr.ofs(1, 2);
-        Assertions.assertSame(IterableItr.ArrayItr.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
 
         obj = Arrays.asList(1, 1);
-        Assertions.assertSame(IterableItr.ArrayItr.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
         obj = Stream.of(1, 1);
-        Assertions.assertSame(IterableItr.ArrayItr.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
         obj = enumeration();
-        Assertions.assertSame(IterableItr.ArrayItr.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
         obj = new int[]{1, 2};
-        Assertions.assertSame(IterableItr.ArrayItr.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
         obj = 1;
         Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
@@ -46,7 +47,7 @@ class IterableItrTest {
         obj = new HashMap<>();
         Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
         ((HashMap<String, String>) obj).put("1", "1");
-        Assertions.assertSame(IterableItr.ArrayItr.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
         // generator
         obj = Generators.range();
@@ -75,7 +76,7 @@ class IterableItrTest {
 
         arrItr = IterableItr.ofs((Object) null);
         Assertions.assertNull(arrItr.next());
-        Assertions.assertSame(IterableItr.ArrayItr.class, arrItr.getClass());
+        Assertions.assertSame(ArrayItr.class, arrItr.getClass());
 
         Object[] elements = {};
         Assertions.assertSame(IterableItr.ofs(elements), NoneItr.of());
@@ -84,7 +85,7 @@ class IterableItrTest {
 
     }
 
-    private class IteratorEnumeration implements Iterator<Integer>, Enumeration<Integer> {
+    private static class IteratorEnumeration implements Iterator<Integer>, Enumeration<Integer> {
 
         final Iterator<Integer> iterator;
 

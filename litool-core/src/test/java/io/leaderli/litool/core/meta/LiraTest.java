@@ -208,16 +208,16 @@ class LiraTest {
 
     @Test
     void filter() {
-        Assertions.assertArrayEquals(new Integer[]{100, 1}, Lira.of(null, 1).filter().nullable(() -> 100).toArray());
+        Assertions.assertArrayEquals(new Integer[]{1}, Lira.of(null, 1).filter_null().nullable(() -> 100).toArray());
 
         Assertions.assertTrue(Lira.of(1, 2, 3).filter(i -> i > 4).absent());
         Assertions.assertSame(2, Lira.of(1, 2, 3).filter(i -> i > 1).size());
         Assertions.assertSame(2, Lira.of(1, 2, 3).filter(i -> i > 1).get().get(0));
 
-        Lira.of(1, 2, 3).filter();
-        Assertions.assertEquals(3, Lira.of(1, 2, 3).filter().size());
-        Assertions.assertEquals(2, Lira.of(1, null, 3).filter().size());
-        Assertions.assertEquals(0, Lira.of((Object) null).filter().size());
+        Lira.of(1, 2, 3).filter_null();
+        Assertions.assertEquals(3, Lira.of(1, 2, 3).filter_null().size());
+        Assertions.assertEquals(2, Lira.of(1, null, 3).filter_null().nullable(() -> 100).size());
+        Assertions.assertFalse(Lira.of((Object) null).filter_null().iterator().hasNext());
     }
 
     @Test
