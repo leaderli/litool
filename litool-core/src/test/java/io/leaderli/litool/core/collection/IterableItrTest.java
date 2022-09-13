@@ -23,6 +23,9 @@ class IterableItrTest {
         Object obj = null;
         Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
 
+        obj = NoneItr.of();
+        Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
+
         obj = IterableItr.ofs(1, 2);
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 

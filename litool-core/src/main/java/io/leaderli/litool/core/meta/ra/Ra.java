@@ -4,10 +4,7 @@ import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
-import io.leaderli.litool.core.meta.LiBox;
-import io.leaderli.litool.core.meta.LiTuple2;
-import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.meta.*;
 import io.leaderli.litool.core.type.ClassUtil;
 
 import java.util.*;
@@ -197,23 +194,23 @@ public abstract class Ra<T> implements Lira<T> {
 
     @SafeVarargs
     @Override
-    public final Lira<T> or(T... others) {
+    public final Lira<T> or(T... alternate) {
 
-        return or(Arrays.asList(others));
+        return or(Arrays.asList(alternate));
     }
 
     @Override
-    public Lira<T> or(Iterator<? extends T> others) {
+    public Lira<T> or(Iterator<? extends T> alternate) {
         List<T> raw = get();
         if (raw.isEmpty()) {
-            return Lira.of(others);
+            return Lira.of(alternate);
         }
         return Lira.of(raw);
     }
 
     @Override
-    public Lira<T> or(Iterable<? extends T> others) {
-        return or(others.iterator());
+    public Lira<T> or(Iterable<? extends T> alternate) {
+        return or(alternate.iterator());
     }
 
     @Override
@@ -333,7 +330,7 @@ public abstract class Ra<T> implements Lira<T> {
 
     @Override
     public void forThrowableEach(ThrowableConsumer<? super T> action) {
-        forThrowableEach(action, Throwable::printStackTrace);
+        forThrowableEach(action, LiConstant.WHEN_THROW);
     }
 
     @Override

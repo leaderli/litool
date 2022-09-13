@@ -145,7 +145,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <V>       the generic parameter of casted map value type
      * @param keyType   the type of casted map key
      * @param valueType the type of casted map value
-     * @return this
+     * @return the new lira
      */
     <K, V> Lira<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType);
 
@@ -288,6 +288,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     <R> Lira<R> map(Function<? super T, ? extends R> mapper);
 
     /**
+     * when the error occurs will  perform {@link  SubscriberRa#next_null()} and
+     * {@link SubscriberRa#onError(Throwable, CancelSubscription)}
      * <pre>
      *     return throwable_map(mapper).map(Supplier::get)
      * </pre>
@@ -302,6 +304,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
+     * when the error occurs will  perform {@link  SubscriberRa#next_null()} and
+     * {@link SubscriberRa#onError(Throwable, CancelSubscription)}
+     *
      * @param mapper the  mapper
      * @param <R>    the type of after mapper
      * @return a new lira of type R
@@ -311,6 +316,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
 
     /**
+     * when the error occurs will  perform {@link  SubscriberRa#next_null()} and
+     * {@link SubscriberRa#onError(Throwable, CancelSubscription)}
+     *
      * @param mapper    the  mapper
      * @param <R>       the type of after mapper
      * @param whenThrow the consumer when {@link  ThrowableFunction#apply(Object)} throw
@@ -382,29 +390,29 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * a terminal action, will call {@link  #present()} to judge the element at here
      * whether present. if present just return this, or return a {@link  #of(Object[])}
      *
-     * @param others the arr
+     * @param alternate the arr
      * @return lira
      */
     @SuppressWarnings("unchecked")
-    Lira<T> or(T... others);
+    Lira<T> or(T... alternate);
 
     /**
      * a terminal action, will call {@link  #present()} to judge the element at here
      * whether present. if present just return this, or return a {@link  #of(Iterator)} }
      *
-     * @param others the iterator
+     * @param alternate the iterator
      * @return lira
      */
-    Lira<T> or(Iterator<? extends T> others);
+    Lira<T> or(Iterator<? extends T> alternate);
 
     /**
      * a terminal action, will call {@link  #present()} to judge the element at here
      * whether present. if present just return this, or return a {@link  #of(Iterable)} }
      *
-     * @param others the iterable
+     * @param alternate the iterable
      * @return lira
      */
-    Lira<T> or(Iterable<? extends T> others);
+    Lira<T> or(Iterable<? extends T> alternate);
 
 
     /**
@@ -544,7 +552,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Lira<T> sorted(Comparator<? super T> comparator);
 
     /**
-     * <p>This is a terminal operation
+     * use {@link  LiConstant#WHEN_THROW} as error consumer
+     * <p>
+     * This is a terminal operation
      * <p>
      * when exception occur , it will perform Throwable on {@link LiConstant#WHEN_THROW} action
      *

@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
@@ -103,68 +102,83 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
 
     /**
-     * 当为 none 时 直接抛出异常
+     * assert {@link  #present()}
      *
-     * @param msg 断言信息
+     * @param msg the error msg
      * @return this
      */
     Lino<T> assertNotNone(String msg);
 
 
     /**
-     * @param <R>  可转换的类型的泛型
-     * @param type 可转换的类型
-     * @return 若 value 可以转换为 type 类型 ，则返回 转换后的类型，否则返回 {@link #none()}
+     * @param <R>  the type parameter of casted
+     * @param type the type of casted
+     * @return return this if value instanceof type  otherwise return {@link  #none()}
      */
     <R> Lino<R> cast(Class<? extends R> type);
 
+
     /**
-     * @param <K>       key 的泛型
-     * @param <V>       value 的泛型
-     * @param keyType   map 的 key 的类型
-     * @param valueType map 的 value 的类型
-     * @return 当 {@link Lino#get()} 的值为 map 时，且其 key 和 value 的类型可以转换为 keyType valueType 时，
-     * 则返回泛型 {@code Lino<Map<K,V>>} 的 Lino，否则返回 {@link #none()}
+     * filter element that can be cast to map , and  the map key, value can be cast
+     *
+     * @param <K>       the generic parameter of casted map key type
+     * @param <V>       the generic parameter of casted map value type
+     * @param keyType   the type of casted map key
+     * @param valueType the type of casted map value
+     * @return if the value is map, will convert map by {@link  ClassUtil#filterCanCast(Map, Class, Class)}
+     * if the value is not map or the converted map is empty, will also return {@link  #none()}
      */
     <K, V> Lino<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType);
 
 
     /**
-     * @return 通过 {@link BooleanUtil#parse(Object)} 对 实际值 进行过滤
+     * @return return this if {@link BooleanUtil#parse(Object)} is true otherwise return {@link  #none()}
      * @see BooleanUtil
      * @see #filter(boolean)
      */
     Lino<T> filter();
 
     /**
-     * @param remain 是否保留
-     * @return 当 {@code remain == true} 则返回 this ， 否则 返回 {@link #none()}
+     * @param remain the filter function
+     * @return return this if remain is true otherwise return {@link  #none()}
      */
     Lino<T> filter(boolean remain);
 
     /**
-     * @param function 转换函数
-     * @return lino 实际值经过转换函数转换后，通过 {@link BooleanUtil#parse(Object)} 后，调用 {@link #filter(boolean)}
+     * @param filter the filter function
+     * @return return this if   the result of function and parse to boolean by {@link BooleanUtil#parse(Object)} is
+     * true otherwise return {@link  #none()}
      * @see #filter(boolean)
      * @see BooleanUtil#parse(Object)
      */
-    Lino<T> filter(Function<? super T, ?> function);
+    Lino<T> filter(Function<? super T, ?> filter);
 
+    /**
+     * @return the underlying value
+     */
     @Override
     T get();
 
-    T get(T other);
+    /**
+     * @param alternate the alternate value
+     * @return the underlying value if {@link  #present()} otherwise return alternate
+     */
+
+    T get(T alternate);
 
 
     /**
-     * @param consumer 当 {@link #present()}  时消费
+     * perform action only when {@link #present()}}
+     *
+     * @param consumer the consumer
      * @return this
      */
     Lino<T> ifPresent(Consumer<? super T> consumer);
 
-
     /**
-     * @param consumer 当 {@link #present()}  时消费，可能会抛出 {@link RuntimeException}
+     * perform action only when {@link #present()}, the action may throw a exception
+     *
+     * @param consumer the consumer
      * @return this
      * @see RuntimeExceptionTransfer
      */
@@ -172,113 +186,149 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
 
     /**
-     * @param runnable 当 {@link #absent()}   时执行
+     * perform action only when {@link #absent()}
+     *
+     * @param runnable the runnable
      * @return this
      */
     Lino<T> ifAbsent(Runnable runnable);
 
+
     /**
-     * @return 当实际值为数组或者集合时保留，否则返回 {@link #none()}
-     * @see #filter(boolean)
+     * <pre>
+     *     of(map(mapper))
+     * </pre>
+     *
+     * @param mapper the mapper provide lino
+     * @param <R>    the type of mapper provide value
+     * @return a new lino
      */
-    Lino<T> isArray();
+    <R> Lino<R> map(Function<? super T, ? extends R> mapper);
 
     /**
-     * @param mapping 转换函数
-     * @param <R>     转换后的泛型
-     * @return 转换后的 Lino
+     * <pre>
+     *     of(map(mapper).map(Supplier::get))
+     * </pre>
+     *
+     * @param mapper the mapper provide lino
+     * @param <R>    the type of mapper provide lino's value
+     * @return a new lino
      */
-    <R> Lino<R> map(Function<? super T, ? extends R> mapping);
+    <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapper);
 
     /**
-     * @param mapping 返回 Lino 的转换函数
-     * @param <R>     转换后的泛型
-     * @return 返回转换后的 Lino ,会自动将 mapping 执行后的  Lino 展开
+     * @param mapper the provide function of {@link  LiTuple2}
+     * @param <R>    the type of {@link  LiTuple2} 2rd
+     * @return a new lino consist of {@link  LiTuple2}
      */
-    <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapping);
-
-    <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapping);
+    <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper);
 
     /**
-     * @param consumer 以 Lino 作为参数的消费者
+     * @param consumer the consumer of lino
      * @return this
      */
     Lino<T> nest(Consumer<? super Lino<T>> consumer);
 
+    /**
+     * use {@code system.out.println} as consumer
+     *
+     * @return this
+     * @see #debug(Consumer)
+     */
     Lino<T> debug();
 
+    /**
+     * @param debug the consumer perform on value
+     * @return this
+     */
     Lino<T> debug(Consumer<T> debug);
 
+
     /**
-     * @param other 值
-     * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(other)}
+     * @param other the other
+     * @return return {@link  #of(Object)} if this is {@link  #none()} otherwise return this
      */
     Lino<T> or(T other);
 
+
     /**
-     * @param supplier 提供值的函数
-     * @return 当 值 存在时返回 this，不存在时则返回新的 {@code  of(supplier.get())}
+     * @param supplier the other
+     * @return return {@link  #of(Supplier)} if this is {@link  #none()} otherwise return this
      */
     Lino<T> or(Supplier<? extends T> supplier);
 
-    Lino<T> or(Lino<? extends T> lino);
-
-
     /**
-     * @param other 实例
-     * @return 当 other 与 lino 实际值 equals 时，返回 this，否则返回 {@link #none()}
+     * @param other the other
+     * @return return other if this is {@link  #none()} otherwise return this
      */
-    Lino<T> contain(T other);
+    Lino<T> or(Lino<? extends T> other);
 
 
     /**
-     * 实际调用 {@link #throwable_map(ThrowableFunction, Consumer)}, 第二个参数传  {@link LiConstant#WHEN_THROW}
+     * @param comparing the comparing value
+     * @return if {@code  comparing.equals(value)} return this, otherwise return {@link  #none()}
+     */
+    Lino<T> contain(T comparing);
+
+
+    /**
+     * when the error occurs will return {@link  Lino#none()}
+     * <p>
+     * use {@link  LiConstant#WHEN_THROW} as error consumer
      *
-     * @param mapping 转换函数
-     * @param <R>     转换后的泛型
-     * @return 转换后的 Lino
+     * @param mapper the  mapper
+     * @param <R>    the type of after mapper
+     * @return a new lino of type R
+     * @see #throwable_map(ThrowableFunction, Consumer)
      * @see LiConstant#WHEN_THROW
      */
-    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping);
+    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
 
     /**
-     * @param mapping 返回 Lino 的转换函数
-     * @param <R>     转换后的泛型
-     * @return 返回转换后的 Lino ,会自动将 mapping 执行后的  Lino 展开
+     * when the error occurs will return {@link  Lino#none()}
+     * <pre>
+     *     return throwable_map(mapper).map(Supplier::get)
+     * </pre>
+     *
+     * @param mapper the function accept element and return lino
+     * @param <R>    the type of after unzip
+     * @return a new lira of type R
      * @see #throwable_map(ThrowableFunction)
      */
-    <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapping);
+    <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper);
 
     /**
-     * @param mapping   转换函数
-     * @param whenThrow 当转换函数抛出异常时执行的函数
-     * @param <R>       转换后的泛型
-     * @return 转换后的 Lino
+     * when the error occurs will return {@link  Lino#none()}
+     *
+     * @param mapper    the  mapper
+     * @param <R>       the type of after mapper
+     * @param whenThrow the consumer when {@link  ThrowableFunction#apply(Object)} throw
+     * @return a new lino of type R
      */
-    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow);
+    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
 
     /**
-     * @param <R> 泛型
-     * @return 返回 LiCase 实例
+     * @param <R> the type of lira result
+     * @return a liIf
      */
     <R> LiIf<T, R> toIf();
 
     /**
-     * 支持的转换的类型有
-     * {@link Iterable}
-     * {@link Iterator}
-     * {@link Enumeration}
-     * 数组
+     * if the value type of supported by {@link  IterableItr#of(Object)}, will return a new lira by
+     * call {@link  Lira#of(IterableItr)} otherwise return {@link  Lira#of(Object[])} with one single
+     * element
      *
-     * @return 根据实际值的类型，将数组或集合转换为 {@link Lira}
+     * @return convert to lira according to the type of value
      */
     Lira<Object> toLira();
 
     /**
-     * @param <R>  泛型
-     * @param type 类型
-     * @return 根据实际值的类型，将数组或集合转换为 {@link Lira}
-     * @see #toLira()
+     * support convert to lira type is: {@link Iterable}, {@link Iterator}, {@link Enumeration} and the array.
+     * otherwise will return {@link  Lira#none()}
+     *
+     * @param <R>  the type parameter of lira
+     * @param type the type of lira
+     * @return convert to lira according to the type of value, and will perform an action of {@link Lira#cast(Class)}
      */
     <R> Lira<R> toLira(Class<? extends R> type);
 
@@ -346,11 +396,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public Lino<T> filter(Function<? super T, ?> function) {
-            if (function == null) {
+        public Lino<T> filter(Function<? super T, ?> filter) {
+            if (filter == null) {
                 return this;
             }
-            return filter(BooleanUtil.parse(function.apply(this.value)));
+            return filter(BooleanUtil.parse(filter.apply(this.value)));
         }
 
         @Override
@@ -359,7 +409,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public T get(T other) {
+        public T get(T alternate) {
             return value;
         }
 
@@ -380,35 +430,21 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             return this;
         }
 
-        @Override
-        public Lino<T> isArray() {
-            if (this.value.getClass().isArray()) {
-                return this;
-            }
 
-            if (this.value instanceof Iterable) {
-                return this;
-            }
-            if (this.value instanceof Iterator) {
-                return this;
-            }
-            return Lino.none();
+        @Override
+        public <R> Lino<R> map(Function<? super T, ? extends R> mapper) {
+            return of(mapper.apply(this.value));
         }
 
         @Override
-        public <R> Lino<R> map(Function<? super T, ? extends R> mapping) {
-            return of(mapping.apply(this.value));
+        public <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapper) {
+
+            return map(mapper).map(Supplier::get);
         }
 
         @Override
-        public <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapping) {
-
-            return map(mapping).map(Supplier::get);
-        }
-
-        @Override
-        public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapping) {
-            return map(mapping).map(r -> LiTuple.of(value, r));
+        public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper) {
+            return map(mapper).map(r -> LiTuple.of(value, r));
         }
 
         @Override
@@ -440,13 +476,13 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public Lino<T> or(Lino<? extends T> lino) {
+        public Lino<T> or(Lino<? extends T> other) {
             return this;
         }
 
         @Override
-        public Lino<T> contain(T other) {
-            if (this.value.equals(other)) {
+        public Lino<T> contain(T comparing) {
+            if (this.value.equals(comparing)) {
                 return this;
             }
             return none();
@@ -454,21 +490,21 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping) {
-            return throwable_map(mapping, LiConstant.WHEN_THROW);
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
+            return throwable_map(mapper, LiConstant.WHEN_THROW);
         }
 
         @Override
-        public <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapping) {
-            return throwable_map(mapping).map(Supplier::get);
+        public <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper) {
+            return throwable_map(mapper).map(Supplier::get);
         }
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping,
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper,
                                          Consumer<Throwable> whenThrow) {
             try {
 
-                return of(mapping.apply(this.value));
+                return of(mapper.apply(this.value));
             } catch (Throwable throwable) {
                 if (whenThrow != null) {
                     whenThrow.accept(throwable);
@@ -484,20 +520,9 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public Lira<Object> toLira() {
-            Class<?> valueClass = this.value.getClass();
-            if (valueClass.isArray()) {
-                Class<?> componentType = valueClass.getComponentType();
-
-                if (!componentType.isPrimitive()) {
-                    return Lira.of(((Object[]) this.value));
-                }
-                return Lira.of(CollectionUtils.toWrapperArray(this.value));
-
-            }
 
             IterableItr<Object> iterable = IterableItr.of(this.value);
             if (!NoneItr.same(iterable)) {
-
                 return Lira.of(iterable);
             }
 
@@ -561,7 +586,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public Lino<T> filter(Function<? super T, ?> function) {
+        public Lino<T> filter(Function<? super T, ?> filter) {
             return this;
         }
 
@@ -571,8 +596,8 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public T get(T other) {
-            return other;
+        public T get(T alternate) {
+            return alternate;
         }
 
         @Override
@@ -591,23 +616,19 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             return this;
         }
 
-        @Override
-        public Lino<T> isArray() {
-            return this;
-        }
 
         @Override
-        public <R> Lino<R> map(Function<? super T, ? extends R> mapping) {
+        public <R> Lino<R> map(Function<? super T, ? extends R> mapper) {
             return none();
         }
 
         @Override
-        public <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapping) {
+        public <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapper) {
             return Lino.none();
         }
 
         @Override
-        public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapping) {
+        public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper) {
             return none();
         }
 
@@ -638,28 +659,28 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public Lino<T> or(Lino<? extends T> lino) {
-            return Lino.narrow(lino);
+        public Lino<T> or(Lino<? extends T> other) {
+            return Lino.narrow(other);
         }
 
         @Override
-        public Lino<T> contain(T other) {
+        public Lino<T> contain(T comparing) {
             return this;
         }
 
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
             return none();
         }
 
         @Override
-        public <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapping) {
+        public <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper) {
             return Lino.none();
         }
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping,
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper,
                                          Consumer<Throwable> whenThrow) {
             return none();
         }
