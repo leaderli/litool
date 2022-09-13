@@ -8753,7 +8753,7 @@ public class StringUtils implements StrPool {
      * @param elements  an array
      * @return joined elements
      */
-    private static String join0(String delimiter, Object[] elements) {
+    public static String join0(String delimiter, Object[] elements) {
 
         if (elements == null) {
             return "";
