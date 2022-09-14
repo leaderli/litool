@@ -137,7 +137,7 @@ public interface LiTuple {
     int arity();
 
     /**
-     * @return 是否包含 null 值
+     * @return the values contains null
      */
     boolean notIncludeNull();
 

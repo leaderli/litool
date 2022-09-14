@@ -18,6 +18,7 @@ public class LiConstant {
      * {@link  StringUtils#join(String, Iterable)}
      * {@link  StringUtils#join(String, Iterator)}
      * {@link  StringUtils#join(String, Object...)}
+     * {@link  StringUtils#join0(String, Object[])}
      */
     public static final String JOIN_DELIMITER = ",";
     public static final String ATTRIBUTE_NAME_RULE = "[a-zA-Z0-9_]+";
@@ -38,28 +39,30 @@ public class LiConstant {
     }
 
     /**
-     * 在函数执行前将默认异常关闭，执行后复位
+     * the action only provide for junit test, it clear the default
+     * exception consumer, and run the code, and then reset the default
+     * consumer back
      *
-     * @param runnable 执行函数
-     * @see #clear()
+     * @param runnable the action
+     * @see #clear_when_throw()
      * @see #reset()
      */
     public static void temporary(Runnable runnable) {
-        clear();
+        clear_when_throw();
         runnable.run();
         reset();
 
     }
 
     /**
-     * 清除异常处理
+     * clear the default error consumer
      */
-    public static void clear() {
+    public static void clear_when_throw() {
         WHEN_THROW = null;
     }
 
     /**
-     * 恢复默认异常处理
+     * reset the default error consumer
      */
     public static void reset() {
         WHEN_THROW = Throwable::printStackTrace;

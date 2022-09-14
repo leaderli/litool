@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta.logic;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;
@@ -48,6 +49,10 @@ class LiLogicPipeLineTest {
 
         LiLogicPipeLine.begin().test(str -> false);
         assert LiLogicPipeLine.<String>begin().not().test(str -> false).and().not().test(str -> false).apply("hello");
+
+
+        LiLogicPipeLine<Object> or = (LiLogicPipeLine<Object>) LiLogicPipeLine.begin().test(str -> false).or();
+        Assertions.assertFalse(or.apply("123"));
 
     }
 

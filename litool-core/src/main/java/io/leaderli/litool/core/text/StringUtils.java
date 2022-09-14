@@ -33,6 +33,7 @@ import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>Operations on {@link String} that are
@@ -8802,5 +8803,38 @@ public class StringUtils implements StrPool {
         );
         return joiner.toString();
     }
+
+    /**
+     * join elements with delimiter, if element is null, it will be regard as ''
+     *
+     * @param delimiter delimiter str, if {@code  null} will use {@link  LiConstant#JOIN_DELIMITER}
+     * @param stream  an stream
+     * @return joined elements
+     */
+    public static String join(String delimiter, Stream<?> stream) {
+
+
+        if (stream == null) {
+            return "";
+        }
+        if (delimiter == null) {
+            delimiter = LiConstant.JOIN_DELIMITER;
+        }
+        StringJoiner joiner = new StringJoiner(delimiter);
+        stream.forEach(
+                element -> {
+                    String value;
+                    if (element == null) {
+                        value = "";
+                    } else {
+                        value = String.valueOf(element);
+                    }
+
+                    joiner.add(value);
+                }
+        );
+        return joiner.toString();
+    }
+
 
 }

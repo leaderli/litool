@@ -19,22 +19,23 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
+ * Base on the functional programming thinking, all operation
+ * on the value is type-safe and null-safe, the most action will
+ * invoked only when {@link  #present()}.
+ *
  * @author leaderli
  * @since 2022/6/16
- * <p>
- * 基于函数式编程思维，所有对其包含的value的值的操作，都是类型安全的。
- * <p>
- * 当且仅当value的值 {@link #present()} 时，才会实际对其进行方法调用
  */
 public interface Lino<T> extends LiValue, Supplier<T> {
 
 
     /**
-     * @param supplier 获取值的提供者函数
-     * @param <T>      泛型
-     * @return 返回一个实例，
-     * 当 {@code supplier == null} 时返回 {@link #none()}
-     * 否则返回 {@link #of(Object)}
+     * when {@code supplier == null} return {@link #none()},
+     * or return {@link #of(Object)} by the {@link  Supplier#get()}
+     *
+     * @param supplier the supplier provide value
+     * @param <T>      the type of lino
+     * @return a lino
      * @see #of(Object)
      */
     static <T> Lino<T> of(Supplier<T> supplier) {
@@ -45,21 +46,24 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     }
 
     /**
-     * @param <T> 泛型
-     * @return 返回全局唯一的空 Lino
+     * all lino with value of null is the same instance of {@link  None#INSTANCE},
+     * all operation on {@link  None} is stateless
+     *
+     * @param <T> the type of lino
+     * @return the unique instance of  {@link  None#INSTANCE}
      */
     @SuppressWarnings("unchecked")
     static <T> Lino<T> none() {
         return (Lino<T>) None.INSTANCE;
-
     }
 
     /**
-     * @param value 值
-     * @param <T>   泛型
-     * @return 返回一个实例，
-     * 当 {@code value == null} 时返回 {@link #none()}
-     * 否则返回 {@link Some}
+     * if {@code value == null} return {@link #none()}
+     * or return a new {@link Some}
+     *
+     * @param value the value beyond lino
+     * @param <T>   the type of lino
+     * @return a lino
      */
     static <T> Lino<T> of(T value) {
         if (value == null) {
@@ -69,11 +73,12 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     }
 
     /**
-     * @param supplier 获取值的提供者函数
-     * @param <T>      泛型
-     * @return 返回一个实例，
-     * 当 {@code supplier == null}，或异常时时返回 {@link #none()}
-     * 否则返回 {@link #of(Object)}
+     * when {@code supplier == null} or {@link  ThrowableSupplier#get()} throw a error
+     * return {@link #none()}, or return {@link #of(Object)} by the {@link  ThrowableSupplier#get()}
+     *
+     * @param supplier the supplier provide value
+     * @param <T>      the type of lino
+     * @return a lino
      * @see #of(Object)
      */
     static <T> Lino<T> throwable_of(ThrowableSupplier<T> supplier) {
@@ -88,11 +93,14 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     }
 
     /**
-     * 需要注意的是，所有窄化 extend 的操作，是只需要读取操作，不允许写操作的，因为 Lino 不涉及更新值，所以此处是安全的，也因此我们是无法窄化 super
+     * narrow the generic type of lino, {@code <? extends T> } convert {@code  <T> }.
+     * it should be noted that all operation on lino is readable but writeable, the value
+     * under lino cannot be updated, so the narrow operation of extend is allowed. that also
+     * the reason of narrow cannot action on super
      *
-     * @param value 值
-     * @param <T>   泛型
-     * @return 窄化一个宽泛的泛型， {@code <? extends T> } 转换为  {@code  <T> }
+     * @param value the lino
+     * @param <T>   the type of lino
+     * @return a narrowed  lino
      */
     @SuppressWarnings("unchecked")
     static <T> Lino<T> narrow(Lino<? extends T> value) {
@@ -464,8 +472,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping,
-                                         Consumer<Throwable> whenThrow) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
             try {
 
                 return of(mapping.apply(this.value));
@@ -659,8 +666,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping,
-                                         Consumer<Throwable> whenThrow) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapping, Consumer<Throwable> whenThrow) {
             return none();
         }
 

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.stream.Stream;
 
 /**
  * @author leaderli
@@ -60,6 +61,7 @@ class StringUtilsTest {
         Assertions.assertEquals(",1", StringUtils.join(null, Arrays.asList(null, 1)));
         Assertions.assertEquals(",1", StringUtils.join(",", Arrays.asList(null, 1)));
         Assertions.assertEquals("1,2", StringUtils.join(null, Arrays.asList(1, 2)));
+        Assertions.assertEquals("1,2", StringUtils.join(null, Stream.of(1, 2)));
     }
 
     @Test
