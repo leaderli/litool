@@ -65,7 +65,7 @@ class LiDomUtilTest {
                 "  </t3> \n" +
                 "</test>", LiDomUtil.pretty(dom));
 
-        LiDomUtil.prettyPrint(dom);
+//        LiDomUtil.prettyPrint(dom);
     }
 
     private static class Visitor {

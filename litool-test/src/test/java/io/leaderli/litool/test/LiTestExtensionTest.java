@@ -3,7 +3,6 @@ package io.leaderli.litool.test;
 import io.leaderli.litool.core.test.BooleanValues;
 import io.leaderli.litool.core.test.IntValues;
 import io.leaderli.litool.core.test.ObjectValues;
-import io.leaderli.litool.core.util.ConsoleUtil;
 import org.junit.jupiter.api.Assertions;
 
 /**
@@ -25,8 +24,7 @@ class LiTestExtensionTest {
     void test(@IntValues({1, 2}) int age, @IntValues({3, 4}) int size, @BooleanValues boolean have) {
 
 
-        ConsoleUtil.print(age, size, have);
-//        Assertions.assertEquals(1,age);
+        Assertions.assertTrue(age < 3);
     }
 
     private static class TestA {
