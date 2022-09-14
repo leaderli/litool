@@ -25,9 +25,9 @@ class TypeMapTest {
 
         typeMap.put(Integer.class, 1);
         typeMap.put(int.class, 2);
-        System.out.println(typeMap.get(Integer.class));
-        System.out.println(typeMap.get(int.class));
-        System.out.println(typeMap);
+
+        Assertions.assertEquals(2, typeMap.get(Integer.class).get());
+        Assertions.assertEquals(2, typeMap.get(int.class).get());
     }
 
     @Test
