@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.util;
 
-import jdk.nashorn.internal.ir.debug.ObjectSizeCalculator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +26,6 @@ class HumanSizeUtilTest {
 
         test.forEach((in, expected) -> Assertions.assertEquals(expected, HumanSizeUtil.toHumanReadable(in)));
 
-        System.out.println(HumanSizeUtil.toHumanReadable(ObjectSizeCalculator.getObjectSize(test)));
     }
 
 }
