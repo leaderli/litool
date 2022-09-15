@@ -20,19 +20,19 @@ import java.util.function.Supplier;
  */
 public abstract class LiThen<T, M extends T, R> implements PublisherIf<T, R> {
 
-    public LiIf<T, R> then(Function<? super M, ? extends R> mapping) {
+    public LiIf<T, R> _then(Function<? super M, ? extends R> mapping) {
 
         return new FulfillNode<>(this, mapping);
     }
 
 
-    public LiIf<T, R> then(Supplier<R> supplier) {
+    public LiIf<T, R> _then(Supplier<R> supplier) {
 
         return new FulfillNode<>(this, v -> supplier.get());
     }
 
 
-    public LiIf<T, R> then(R value) {
+    public LiIf<T, R> _then(R value) {
 
         return new FulfillNode<>(this, v -> value);
     }

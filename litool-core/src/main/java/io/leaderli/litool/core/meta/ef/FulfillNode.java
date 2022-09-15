@@ -13,9 +13,9 @@ import java.util.function.Supplier;
  * @param <M> the  real type of source value  {@link  LiIf#_instanceof(Class)}
  * @param <R> the type of target value
  * @author leaderli
- * @see LiThen#then(Supplier)
- * @see LiThen#then(Function)
- * @see LiThen#then(Object)
+ * @see LiThen#_then(Supplier)
+ * @see LiThen#_then(Function)
+ * @see LiThen#_then(Object)
  * @since 2022/7/17
  */
 public class FulfillNode<T, M extends T, R> extends Node<T, R> {
