@@ -28,6 +28,7 @@ class RunnerTest {
         assertEquals(0, interceptor.getParseErrorMsgs().size());
 
         executor = new MainElementExecutor(element);
+
     }
 
     /**

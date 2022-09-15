@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
+import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
@@ -61,7 +62,12 @@ public class ReflectUtil {
             return Lira.none();
         }
 
-        return CollectionUtils.union(Lira.of(cls.getFields()), Lira.of(cls.getDeclaredFields()));
+        Lira<Field> union = CollectionUtils.union(Lira.of(cls.getFields()), Lira.of(cls.getDeclaredFields()));
+        if (cls.isMemberClass()) {
+
+            return union.filter(f -> !f.isSynthetic() || !f.getName().equals(LiConstant.INNER_CLASS_THIS_FIELD));
+        }
+        return union;
     }
 
     /**

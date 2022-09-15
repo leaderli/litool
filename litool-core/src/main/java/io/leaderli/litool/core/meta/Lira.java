@@ -177,6 +177,23 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     Lira<T> filter_null();
 
+
+    /**
+     * remove element that equals with
+     *
+     * @param t the removed element
+     * @return a new lira
+     * @see #filter(Function)
+     * @see #filter_null()
+     */
+    default Lira<T> remove(T t) {
+
+        if (t == null) {
+            return filter_null();
+        }
+        return filter(v -> !t.equals(v));
+    }
+
     /**
      * if lira {@link  #present()} return the lino of first element, otherwise return {@link  Lino#none()}
      * <p>

@@ -22,6 +22,13 @@ class LiraTest {
 
 
     @Test
+    void remove() {
+
+        Assertions.assertTrue(Lira.of(1).remove(1).absent());
+        Assertions.assertFalse(Lira.of(1, null).remove(1).remove(null).iterator().hasNext());
+    }
+
+    @Test
     void terminal() {
 
         Lira<Integer> lira = Lira.of(1, 2, 3).terminal(null);

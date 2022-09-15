@@ -27,6 +27,13 @@ class ReflectUtilTest {
 
     }
 
+    @Test
+    void getFields() {
+        Assertions.assertEquals(3, ReflectUtil.getFields(LittleBean.class).size());
+        Assertions.assertTrue(ReflectUtil.getFields(Test1.class).absent());
+    }
+
+
     @SuppressWarnings("ConstantConditions")
     @Test
     void testGetClass() throws NoSuchFieldException, NoSuchMethodException {
@@ -155,9 +162,9 @@ class ReflectUtilTest {
         Assertions.assertEquals(0, ReflectUtil.findAnnotationsWithMark(TestBean.class, NotNull.class).size());
     }
 
-    @Test
-    void getFields() {
-        Assertions.assertEquals(3, ReflectUtil.getFields(LittleBean.class).size());
+    @SuppressWarnings("InnerClassMayBeStatic")
+    public class Test1 {
+
     }
 
     @Test
