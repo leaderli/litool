@@ -18,14 +18,14 @@ class BeanPathTest {
 
 
     @ParameterizedTest
-    @ValueSource(strings = {"", " ", ".", "key1.", "key1..a", "[", "]", "[]", "a[", "a]", "a[]", "a[a]"})
+    @ValueSource(strings = {"", " ", ".", "key1.", "key1..a", "[", "]", "[]", "a[", "a]", "a[]", "a[a]", "a[1-1]"})
     void valid_build(String expression) {
         Assertions.assertThrows(IllegalStateException.class, () -> BeanPath.parse(null, expression));
 
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"key", "key1.key2", "key1[0]", "key1[0].key2", "key1[0][0]", "[0]", "[0][0]", "[0].key"})
+    @ValueSource(strings = {"key", "key1.key2", "key1[0]", "key1[0].key2", "key1[0][0]", "[0]", "[0][0]", "[0].key", "[-1]"})
     void illegal_build(String expression) {
         Assertions.assertDoesNotThrow(() -> BeanPath.parse(null, expression));
     }
@@ -74,6 +74,7 @@ class BeanPathTest {
         Assertions.assertEquals(3, BeanPath.parse(origin, "list[2]").get());
         Assertions.assertEquals(Lino.none(), BeanPath.parse(origin, "list[3]"));
         Assertions.assertEquals(12, BeanPath.parse(origin, "list2[1][1]").get());
+        Assertions.assertEquals(12, BeanPath.parse(origin, "list2[-1][-4]").get());
         Assertions.assertEquals(Lino.none(), BeanPath.parse(origin, "list2[1][5]"));
         Assertions.assertEquals(Lino.none(), BeanPath.parse(origin, "list2[3][5]"));
 

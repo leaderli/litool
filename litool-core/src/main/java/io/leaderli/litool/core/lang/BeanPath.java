@@ -135,7 +135,7 @@ public class BeanPath {
                     break;
                 case ARR_BEGIN:
 
-                    if (ch >= '0' && ch <= '9') {
+                    if (ch >= '0' && ch <= '9' || ch == '-') {
 
                         temp.append(ch);
                         state = ARR_IN;
@@ -149,12 +149,11 @@ public class BeanPath {
                         temp.append(ch);
                     } else if (ch == CHAR_ARR_END) {
 
-                        int index = StringConvert.parser(temp.toString(), -1);
-                        if (index == -1) {
-                            throw new IllegalStateException("[index] only support number:" + temp);
-                        }
-
-                        this.setArrFunction(index);
+                        String number = temp.toString();
+                        //                            throw new IllegalStateException();
+                        StringConvert.parser(Integer.class, number)
+                                .ifPresent(this::setArrFunction)
+                                .assertNotNone("[index] only support number:" + number);
 
                         temp = new StringBuilder();
                         state = ARR_END;

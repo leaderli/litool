@@ -99,8 +99,7 @@ class LiraTest {
 
         Assertions.assertEquals(2, Lira.of(1, 2, 3).dropWhile(i -> i > 1).first().get());
         Assertions.assertEquals(3, Lira.of(1, null, 2, 3).dropWhile(i -> i > 2).first().get());
-        Assertions.assertEquals("[3, 4]",
-                Lira.of(1, null, 2, 3, null, 4, 5, 6).dropWhile(i -> i > 2).takeWhile(i -> i > 4).toString());
+        Assertions.assertEquals("[3, 4]", Lira.of(1, null, 2, 3, null, 4, 5, 6).dropWhile(i -> i > 2).takeWhile(i -> i > 4).toString());
 
     }
 
@@ -125,7 +124,10 @@ class LiraTest {
         Assertions.assertEquals(0, Lira.range().get(0).get());
         Assertions.assertEquals(1, Lira.range().get(1).get());
         Assertions.assertEquals(2, Lira.range().get(2).get());
-        Assertions.assertEquals(Lino.none(), Lira.range().get(-1));
+        Assertions.assertThrows(InfiniteException.class, () -> Lira.range().get(-1));
+        Assertions.assertEquals(2, Lira.range().limit(3).get(-1).get());
+        Assertions.assertEquals(3, Lira.of(1, 2, 3).get(-1).get());
+        Assertions.assertNull(Lira.of(1, 2, 3).get(-100).get());
 
     }
 
@@ -354,13 +356,11 @@ class LiraTest {
         }).distinct();
 
         Assertions.assertNull(Lira.of(null, 2, 1, 2).distinct().nullableIterator().next());
-        Assertions.assertArrayEquals(new Integer[]{100, 1, 2},
-                Lira.of(null, null, 1, 2).distinct().nullable(() -> 100).toArray());
+        Assertions.assertArrayEquals(new Integer[]{100, 1, 2}, Lira.of(null, null, 1, 2).distinct().nullable(() -> 100).toArray());
         Assertions.assertArrayEquals(new Integer[]{1, 2}, Lira.of(1, 2, 1, 2).distinct().toArray());
 
 
-        Assertions.assertArrayEquals(new Integer[]{0, 1, 2},
-                Lira.of(1, 2, 3, 4, 1).distinct().map(i -> i / 2).distinct().toArray());
+        Assertions.assertArrayEquals(new Integer[]{0, 1, 2}, Lira.of(1, 2, 3, 4, 1).distinct().map(i -> i / 2).distinct().toArray());
 
         Assertions.assertEquals(1, Lira.of(1, 2, 3, 4, 1).distinct((left, right) -> left - right < 2).first().get());
     }
@@ -370,10 +370,9 @@ class LiraTest {
 
         Assertions.assertEquals(Lira.none(), Lira.of(1).filter(i -> i > 10));
         Assertions.assertEquals(Lira.of(1), Lira.of(1).filter(i -> i < 10));
-        Assertions.assertThrows(InfiniteException.class,
-                () -> {
-                    boolean equals = Lira.range().equals(Lira.of(1).filter(i -> i < 10));
-                });
+        Assertions.assertThrows(InfiniteException.class, () -> {
+            boolean equals = Lira.range().equals(Lira.of(1).filter(i -> i < 10));
+        });
     }
 
     @Test
@@ -430,8 +429,7 @@ class LiraTest {
         Assertions.assertArrayEquals(new Object[]{10, 20, 30}, terminate.map(i -> i * 10).get().toArray());
         Assertions.assertEquals(1, Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator().next());
 
-        Assertions.assertEquals("1,2,10,20", StringUtils.join(",",
-                Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator()));
+        Assertions.assertEquals("1,2,10,20", StringUtils.join(",", Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator()));
 
         Assertions.assertThrows(NoSuchElementException.class, () -> Lira.of().iterator().next());
         iterator = Lira.of(1, 2).iterator();

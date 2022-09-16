@@ -230,6 +230,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     /**
      * if lira element at index is exists return the lino of index element, otherwise return
      * {@link  Lino#none()}
+     * <p>
+     * index support negative , indicate calculating the position calculated from the back, if
+     * the negative is outbound, it will also return {@link  Lino#none()}
      *
      * @param index the index of element
      * @return the lino of index element

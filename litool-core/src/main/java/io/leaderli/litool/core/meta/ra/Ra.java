@@ -83,10 +83,21 @@ public abstract class Ra<T> implements Lira<T> {
 
     @Override
     public Lino<T> get(int index) {
-        LiBox<T> box = LiBox.none();
-        // limit n element and skip n-1 element
-        limit(index + 1).skip(index).subscribe(new ConsumerSubscriber<>(box::value));
-        return box.lino();
+
+        if (index > -1) {
+            LiBox<T> box = LiBox.none();
+            // limit n element and skip n-1 element
+            limit(index + 1).skip(index).subscribe(new ConsumerSubscriber<>(box::value));
+            return box.lino();
+        } else {
+            // to avoid avoid generator duplicate request problem, convert to a limit iterator
+            Lira<T> of = Lira.of(get());
+            index = of.size() + index;
+            if (index < 0) {
+                return Lino.none();
+            }
+            return of.get(index);
+        }
     }
 
 
@@ -376,21 +387,14 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
-    public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper,
-                                  Function<? super T, ? extends V> valueMapper) {
+    public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
 
         Map<K, V> result = new HashMap<>();
 
-        subscribe((new ConsumerSubscriber<>(e ->
-                Lino.of(e)
-                        .map(keyMapper)
-                        .ifPresent(key ->
-                                {
-                                    V value = Lino.of(e).map(valueMapper).get();
-                                    result.put(key, value);
-                                }
-                        ))
-        ));
+        subscribe((new ConsumerSubscriber<>(e -> Lino.of(e).map(keyMapper).ifPresent(key -> {
+            V value = Lino.of(e).map(valueMapper).get();
+            result.put(key, value);
+        }))));
 
         return result;
     }
@@ -399,12 +403,7 @@ public abstract class Ra<T> implements Lira<T> {
     @Override
     public <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> mapper) {
         Map<K, V> result = new HashMap<>();
-        subscribe(new ConsumerSubscriber<>(e ->
-                Lino.of(e)
-                        .map(mapper)
-                        .filter(tuple2 -> tuple2._1 != null)
-                        .ifPresent(tuple2 -> result.put(tuple2._1, tuple2._2))
-        ));
+        subscribe(new ConsumerSubscriber<>(e -> Lino.of(e).map(mapper).filter(tuple2 -> tuple2._1 != null).ifPresent(tuple2 -> result.put(tuple2._1, tuple2._2))));
         return result;
     }
 

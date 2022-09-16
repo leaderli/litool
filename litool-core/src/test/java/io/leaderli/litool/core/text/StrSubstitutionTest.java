@@ -37,6 +37,7 @@ class StrSubstitutionTest {
         map.put("b", "b");
         map.put("d", map);
         map.put("e", Arrays.asList(1, 2, 3));
+
         Assertions.assertEquals("a true b", StrSubstitution.beanPath("a {a} {b}", map));
         Assertions.assertEquals("true", StrSubstitution.beanPath("{cc}", map));
         Assertions.assertEquals("true", StrSubstitution.beanPath("{cc}", map));
@@ -44,6 +45,7 @@ class StrSubstitutionTest {
         Assertions.assertEquals("b", StrSubstitution.beanPath("{d.d.b}", map));
         Assertions.assertEquals("2", StrSubstitution.beanPath("{e[1]}", map));
         Assertions.assertEquals("", StrSubstitution.beanPath("{e[3]}", map));
+        Assertions.assertEquals("3", StrSubstitution.beanPath("{e[-1]}", map));
 
     }
 
