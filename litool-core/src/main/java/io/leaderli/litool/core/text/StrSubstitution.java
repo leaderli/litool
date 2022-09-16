@@ -1,8 +1,9 @@
 package io.leaderli.litool.core.text;
 
+import io.leaderli.litool.core.lang.BeanPath;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -48,6 +49,23 @@ public class StrSubstitution {
     public static String format(String format, Object... args) {
         return format(format, new VariablesFunction(args));
     }
+
+    /**
+     * Returns a formatted string using the specified format string and bean.
+     * <pre>
+     * replace("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}})
+     * </pre>
+     *
+     * @param format a format string
+     * @param bean   Arguments referenced by the format, get argument by it's placeholder bean-path, it not find  will use
+     *               the ''
+     * @return a formatted string
+     * @see BeanPath#parse(Object)
+     */
+    public static String beanPath(String format, Object bean) {
+        return format(format, s -> BeanPath.parse(bean, s).map(String::valueOf).get(""));
+    }
+
 
     public static String format(String text, Function<String, String> convert) {
 
@@ -130,20 +148,6 @@ public class StrSubstitution {
         return substitutionModelList;
     }
 
-    /**
-     * Returns a formatted string using the specified format string and map.
-     * <pre>
-     * replace("a={a},b={b}",{a=1,b=2})
-     * </pre>
-     *
-     * @param format a format string
-     * @param map    Arguments referenced by the format, get argument by it's placeholder name, it not find  will use
-     *               the ''
-     * @return a formatted string
-     */
-    public static String format(String format, Map<String, Object> map) {
-        return format(format, s -> map.getOrDefault(s, "").toString());
-    }
 
     private static class VariablesFunction implements Function<String, String> {
 

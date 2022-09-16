@@ -3,6 +3,7 @@ package io.leaderli.litool.core.text;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import java.util.Map;
  */
 class StrSubstitutionTest {
 
+    @SuppressWarnings("CollectionAddedToSelf")
     @Test
     void format() {
 
@@ -33,8 +35,15 @@ class StrSubstitutionTest {
         map.put("a", true);
         map.put("cc", true);
         map.put("b", "b");
-        Assertions.assertEquals("a true b", StrSubstitution.format("a {a} {b}", map));
-        Assertions.assertEquals("true", StrSubstitution.format("{cc}", map));
+        map.put("d", map);
+        map.put("e", Arrays.asList(1, 2, 3));
+        Assertions.assertEquals("a true b", StrSubstitution.beanPath("a {a} {b}", map));
+        Assertions.assertEquals("true", StrSubstitution.beanPath("{cc}", map));
+        Assertions.assertEquals("true", StrSubstitution.beanPath("{cc}", map));
+
+        Assertions.assertEquals("b", StrSubstitution.beanPath("{d.d.b}", map));
+        Assertions.assertEquals("2", StrSubstitution.beanPath("{e[1]}", map));
+        Assertions.assertEquals("", StrSubstitution.beanPath("{e[3]}", map));
 
     }
 
