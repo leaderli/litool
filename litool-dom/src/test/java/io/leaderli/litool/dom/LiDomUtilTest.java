@@ -23,7 +23,7 @@ class LiDomUtilTest {
 
         DOMElement root = LiDomUtil.getDOMRootByString(xml);
 
-        Assertions.assertEquals(xml, StringUtils.read(LiDomUtil.write(root)));
+        Assertions.assertEquals(LiDomUtil.pretty(root), StringUtils.read(LiDomUtil.write(root)));
 
     }
 
