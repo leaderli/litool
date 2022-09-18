@@ -11,6 +11,7 @@ import org.dom4j.dom.DOMElement;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.dom4j.tree.AbstractElement;
 import org.xml.sax.SAXException;
 
 import java.io.*;
@@ -106,15 +107,23 @@ public class LiDomUtil {
         return (DOMElement) element.element(name);
     }
 
+    public static InputStream write(AbstractElement element) {
+        try (StringWriter writer = new StringWriter()) {
+            element.write(writer);
+            return new ByteArrayInputStream(writer.toString().getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void prettyPrint(Node node) {
         try {
             //document
-            StringWriter writer = new StringWriter();
-            XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
-            xmlWriter.write(node);
-            xmlWriter.close();
-            LOGGER.println(writer);
-
+            try (StringWriter writer = new StringWriter()) {
+                XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
+                xmlWriter.write(node);
+                LOGGER.println(writer);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

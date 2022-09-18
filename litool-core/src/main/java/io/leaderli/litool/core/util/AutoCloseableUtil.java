@@ -2,8 +2,7 @@ package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
-
-import java.util.function.Supplier;
+import io.leaderli.litool.core.function.ThrowableSupplier;
 
 /**
  * a util provide a normalize closeable resource action
@@ -22,7 +21,7 @@ public class AutoCloseableUtil {
      * @param consumer a  consumer
      * @param <T>      the type that extends {@link  AutoCloseable}
      */
-    public static <T extends AutoCloseable> void closeableConsumer(Supplier<T> supplier,
+    public static <T extends AutoCloseable> void closeableConsumer(ThrowableSupplier<T> supplier,
                                                                    ThrowableConsumer<T> consumer) {
 
         try (T closeable = supplier.get()) {
@@ -42,7 +41,7 @@ public class AutoCloseableUtil {
      * @param <R>      the type of  function provide
      * @return the function  result
      */
-    public static <T extends AutoCloseable, R> R closeableFunction(Supplier<T> supplier,
+    public static <T extends AutoCloseable, R> R closeableFunction(ThrowableSupplier<T> supplier,
                                                                    ThrowableFunction<T, R> function) {
 
         try (T closeable = supplier.get()) {

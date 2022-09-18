@@ -43,6 +43,7 @@ class UnitElementTest {
 
     }
 
+
     @Test
     void test2() throws DocumentException {
         DOMElement mainElement = LiDomUtil.getDOMRootByPath("unit_error.xml");
@@ -50,6 +51,7 @@ class UnitElementTest {
         Map<String, Object> read = XmlMapConvert.read(mainElement);
 
         String write = XmlMapConvert.write(read).asXML();
+
 
         read = XmlMapConvert.read(LiDomUtil.getDOMRootByString(write));
 

@@ -1,5 +1,6 @@
 package io.leaderli.litool.dom;
 
+import io.leaderli.litool.core.text.StringUtils;
 import org.dom4j.DocumentException;
 import org.dom4j.dom.DOMElement;
 import org.junit.jupiter.api.Assertions;
@@ -9,6 +10,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LiDomUtilTest {
 
+
+    @Test
+    void write() throws DocumentException {
+        String xml = "<test>\n" +
+                "    <t1>1</t1>\n" +
+                "    <t2>1</t2>\n" +
+                "    <t3>\n" +
+                "        <tt3>tt3</tt3>\n" +
+                "    </t3>\n" +
+                "</test>";
+
+        DOMElement root = LiDomUtil.getDOMRootByString(xml);
+
+        Assertions.assertEquals(xml, StringUtils.read(LiDomUtil.write(root)));
+
+    }
 
     @Test
     void test() throws DocumentException {
