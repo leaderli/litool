@@ -26,7 +26,7 @@ public class CartesianUtil {
             if (value == ObjectCartesian.class) {
                 return true;
             }
-            Class<?> cartesianFunction2GenericType = ReflectUtil.getGenericInterfacesType(value,
+            Class<?> cartesianFunction2GenericType = ReflectUtil.getDeclareTypeAt(value,
                     CartesianFunction.class, 1).get();
             return cartesianFunction2GenericType == ClassUtil.primitiveToWrapper(type);
         }).first().map(an -> {

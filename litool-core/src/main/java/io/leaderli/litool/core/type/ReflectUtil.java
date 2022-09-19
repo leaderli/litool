@@ -14,6 +14,7 @@ import java.util.function.Function;
 /**
  * @author leaderli
  * @since 2022/7/12
+ * TODO 补充注释
  */
 public class ReflectUtil {
 
@@ -382,18 +383,25 @@ public class ReflectUtil {
     }
 
 
-    /**
-     * 查找第一个
-     *
-     * @param cls      类
-     * @param inter    泛型接口
-     * @param position 泛型接口的位置
-     * @return 获取指定泛型接口的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
-     * @see #getGenericInterfacesType(Class, Class, int)
-     */
-    public static Lino<Class<?>> getGenericInterfacesType(Class<?> cls, Class<?> inter, int position) {
+    public static <T> Class<T> getClass(Constructor<T> constructor) {
+        if (constructor == null) {
+            return null;
+        }
+        return constructor.getDeclaringClass();
+    }
 
-        return Lira.of(getDeclareTypes(cls, inter)).get(position);
+    public static Class<?> getClass(Method method) {
+        if (method == null) {
+            return null;
+        }
+        return method.getReturnType();
+    }
+
+    public static Class<?> getClass(Field field) {
+        if (field == null) {
+            return null;
+        }
+        return field.getType();
     }
 
     /**
@@ -416,37 +424,9 @@ public class ReflectUtil {
      * @return 获取指定泛型父类的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
      */
     public static Lino<Class<?>> getDeclareTypeAt(Class<?> cls, Class<?> sup, int position) {
-
-        if (cls == null || sup == null || position < 0 || cls == Object.class || sup.getTypeParameters().length < position + 1) {
-            return Lino.none();
-        }
-
-
         return Lira.of(getDeclareTypes(cls, sup)).get(position);
-
     }
 
-
-    public static <T> Class<T> getClass(Constructor<T> constructor) {
-        if (constructor == null) {
-            return null;
-        }
-        return constructor.getDeclaringClass();
-    }
-
-    public static Class<?> getClass(Method method) {
-        if (method == null) {
-            return null;
-        }
-        return method.getReturnType();
-    }
-
-    public static Class<?> getClass(Field field) {
-        if (field == null) {
-            return null;
-        }
-        return field.getType();
-    }
 
     @SuppressWarnings({"unchecked"})
     public static Class<?>[] getDeclareTypes(Class<?> cls, final Class<?> find) {
