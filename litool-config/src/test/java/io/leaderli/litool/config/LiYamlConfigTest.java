@@ -13,6 +13,12 @@ import java.net.MalformedURLException;
 class LiYamlConfigTest {
 
     @Test
+    void test() {
+
+        System.out.println(LiYamlConfig.loadResourcesYmlFiles("d.yml"));
+    }
+
+    @Test
     void checkYamlFormat() {
 
 

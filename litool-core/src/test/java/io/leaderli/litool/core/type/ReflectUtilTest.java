@@ -344,4 +344,27 @@ class ReflectUtilTest {
 
         }
     }
+
+    @Test
+    void test() {
+
+        System.out.println(ReflectUtil.getGenericSuperclassType(Ge3.class, Ge1.class, 1));
+        System.out.println(ReflectUtil.getGenericSuperclassType(Ge3.class, Ge1.class, 0));
+    }
+
+    private class Ge1<A, B> {
+
+        void log(A a, B b) {
+
+        }
+
+    }
+
+    private class Ge2<A> extends Ge1<A, String> {
+
+    }
+
+    private class Ge3 extends Ge2<Integer> {
+
+    }
 }

@@ -2,6 +2,7 @@ package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.meta.LiConstant;
+import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
@@ -498,12 +499,24 @@ public class ReflectUtil {
             return Lino.none();
         }
 
-        return getSuperclassType(cls)
+        Lino<Type> map = getSuperclassType(cls)
                 .cast(ParameterizedType.class)
                 .filter(type -> type.getRawType() == sup)
                 .first()
-                .map(type -> type.getActualTypeArguments()[position])
-                .map(TypeUtil::getClass);
+                .tuple(type -> type.getActualTypeArguments()[position])
+                .debug(tu -> System.out.println(tu._1.getRawType()))
+                .map(LiTuple2::_1);
+
+        if (map.present()) {
+
+            Type type = map.get();
+            if (type instanceof TypeVariable) {
+
+                System.out.println(type);
+            }
+            return Lino.of(TypeUtil.getClass(type));
+        }
+        return Lino.none();
 
 
     }
