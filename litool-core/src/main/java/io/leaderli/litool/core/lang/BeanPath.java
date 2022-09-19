@@ -77,7 +77,6 @@ public class BeanPath {
      *     <li>a[]</li>
      *     <li>a[a]</li>
      * </ul>
-     * <p>
      *
      * @param expression the xpath-like expression
      */
@@ -150,7 +149,6 @@ public class BeanPath {
                     } else if (ch == CHAR_ARR_END) {
 
                         String number = temp.toString();
-                        //                            throw new IllegalStateException();
                         StringConvert.parser(Integer.class, number)
                                 .ifPresent(this::setArrFunction)
                                 .assertNotNone("[index] only support number:" + number);

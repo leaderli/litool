@@ -1,19 +1,22 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.meta.LiConstant;
-import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.meta.Lira;
 import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author leaderli
@@ -29,20 +32,20 @@ class ReflectUtilTest {
 
     @Test
     void getFields() {
-        Assertions.assertEquals(3, ReflectUtil.getFields(LittleBean.class).size());
-        Assertions.assertTrue(ReflectUtil.getFields(Test1.class).absent());
+        assertEquals(3, ReflectUtil.getFields(LittleBean.class).size());
+        assertTrue(ReflectUtil.getFields(Test1.class).absent());
     }
 
 
     @Test
     void testGetClass() throws NoSuchFieldException, NoSuchMethodException {
 
-        Assertions.assertEquals(String.class, ReflectUtil.getClass(LittleBean.class.getDeclaredField("name")));
-        Assertions.assertEquals(int.class, ReflectUtil.getClass(LittleBean.class.getDeclaredField("age")));
+        assertEquals(String.class, ReflectUtil.getClass(LittleBean.class.getDeclaredField("name")));
+        assertEquals(int.class, ReflectUtil.getClass(LittleBean.class.getDeclaredField("age")));
         Assertions.assertNull(ReflectUtil.getClass((Field) null));
 
-        Assertions.assertEquals(void.class, ReflectUtil.getClass(LittleBean.class.getDeclaredMethod("m3")));
-        Assertions.assertEquals(LittleBean.class, ReflectUtil.getClass(LittleBean.class.getConstructor()));
+        assertEquals(void.class, ReflectUtil.getClass(LittleBean.class.getDeclaredMethod("m3")));
+        assertEquals(LittleBean.class, ReflectUtil.getClass(LittleBean.class.getConstructor()));
 
 
     }
@@ -51,18 +54,18 @@ class ReflectUtilTest {
     void getField() {
 
         LittleBean littleBean = new LittleBean();
-        Assertions.assertEquals("bean",
+        assertEquals("bean",
                 ReflectUtil.getField(LittleBean.class, "name").throwable_map(f -> f.get(littleBean)).get());
-        Assertions.assertEquals(8,
+        assertEquals(8,
                 ReflectUtil.getField(LittleBean.class, "age").throwable_map(f -> f.get(littleBean)).get());
 
         Lino<Field> name = ReflectUtil.getField(LittleBean.class, "name", true);
         Assertions.assertNull(name.throwable_map(f -> f.get(littleBean), null).get());
-        Assertions.assertEquals("little", name.throwable_map(f -> {
+        assertEquals("little", name.throwable_map(f -> {
             f.setAccessible(true);
             return f.get(littleBean);
         }).get());
-        Assertions.assertEquals(8,
+        assertEquals(8,
                 ReflectUtil.getField(LittleBean.class, "age", true).throwable_map(f -> f.get(littleBean)).get());
     }
 
@@ -70,22 +73,22 @@ class ReflectUtilTest {
     void getFieldValue() throws NoSuchFieldException {
 
         LittleBean littleBean = new LittleBean();
-        Assertions.assertEquals("bean", ReflectUtil.getFieldValue(littleBean, "name").get());
-        Assertions.assertEquals(8, ReflectUtil.getFieldValue(littleBean, "age").get());
+        assertEquals("bean", ReflectUtil.getFieldValue(littleBean, "name").get());
+        assertEquals(8, ReflectUtil.getFieldValue(littleBean, "age").get());
 
-        Assertions.assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name", true).get());
-        Assertions.assertEquals(8, ReflectUtil.getFieldValue(littleBean, "age", true).get());
-
-
-        Assertions.assertEquals(Lino.none(), ReflectUtil.getFieldValue(null, "name"));
-        Assertions.assertEquals(Lino.none(), ReflectUtil.getFieldValue(null, "name", true));
+        assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name", true).get());
+        assertEquals(8, ReflectUtil.getFieldValue(littleBean, "age", true).get());
 
 
-        Assertions.assertEquals("bean", ReflectUtil.getFieldValue(littleBean, LittleBean.class.getField("name")).get());
+        assertEquals(Lino.none(), ReflectUtil.getFieldValue(null, "name"));
+        assertEquals(Lino.none(), ReflectUtil.getFieldValue(null, "name", true));
+
+
+        assertEquals("bean", ReflectUtil.getFieldValue(littleBean, LittleBean.class.getField("name")).get());
         Assertions.assertNull(ReflectUtil.getFieldValue(littleBean, Lino.Some.class.getDeclaredField("value")).get());
 
 
-        Assertions.assertEquals(1, ReflectUtil.getFieldValue(null, Static.class.getField("age")).get());
+        assertEquals(1, ReflectUtil.getFieldValue(null, Static.class.getField("age")).get());
     }
 
     @SuppressWarnings("JavaReflectionMemberAccess")
@@ -96,29 +99,29 @@ class ReflectUtilTest {
         Assertions.assertFalse(ReflectUtil.setFieldValue(null, "name", null));
         Assertions.assertFalse(ReflectUtil.setFieldValue(null, "name", null, true));
 
-        Assertions.assertEquals("bean", ReflectUtil.getFieldValue(littleBean, "name").get());
-        Assertions.assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name", true).get());
-        Assertions.assertTrue(ReflectUtil.setFieldValue(littleBean, "name", "hello"));
-        Assertions.assertEquals("hello", ReflectUtil.getFieldValue(littleBean, "name").get());
-        Assertions.assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name", true).get());
+        assertEquals("bean", ReflectUtil.getFieldValue(littleBean, "name").get());
+        assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name", true).get());
+        assertTrue(ReflectUtil.setFieldValue(littleBean, "name", "hello"));
+        assertEquals("hello", ReflectUtil.getFieldValue(littleBean, "name").get());
+        assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name", true).get());
 
         littleBean = new LittleBean();
 
-        Assertions.assertEquals("bean", ReflectUtil.getFieldValue(littleBean, "name").get());
-        Assertions.assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name", true).get());
-        Assertions.assertTrue(ReflectUtil.setFieldValue(littleBean, "name", "hello", true));
-        Assertions.assertEquals("bean", ReflectUtil.getFieldValue(littleBean, "name").get());
-        Assertions.assertEquals("hello", ReflectUtil.getFieldValue(littleBean, "name", true).get());
+        assertEquals("bean", ReflectUtil.getFieldValue(littleBean, "name").get());
+        assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name", true).get());
+        assertTrue(ReflectUtil.setFieldValue(littleBean, "name", "hello", true));
+        assertEquals("bean", ReflectUtil.getFieldValue(littleBean, "name").get());
+        assertEquals("hello", ReflectUtil.getFieldValue(littleBean, "name", true).get());
 
 
-        Assertions.assertFalse(ReflectUtil.setFieldValue(littleBean, "name", 123, true));
+        assertFalse(ReflectUtil.setFieldValue(littleBean, "name", 123, true));
 
-        Assertions.assertEquals("hello", ReflectUtil.getFieldValue(littleBean, "name", true).get());
+        assertEquals("hello", ReflectUtil.getFieldValue(littleBean, "name", true).get());
 
 
-        Assertions.assertTrue(ReflectUtil.setFieldValue(littleBean, LittleBean.class.getField("name"), "hello"));
+        assertTrue(ReflectUtil.setFieldValue(littleBean, LittleBean.class.getField("name"), "hello"));
 
-        Assertions.assertFalse(ReflectUtil.setFieldValue(littleBean, Lino.Some.class.getDeclaredField("value"),
+        assertFalse(ReflectUtil.setFieldValue(littleBean, Lino.Some.class.getDeclaredField("value"),
                 "hello"));
 
 
@@ -127,17 +130,17 @@ class ReflectUtilTest {
     @Test
     void newInstance() {
 
-        Assertions.assertTrue(ReflectUtil.newInstance(Integer.class).absent());
-        Assertions.assertTrue(ReflectUtil.newInstance(ConstructorBean.class).present());
-        Assertions.assertTrue(ReflectUtil.newInstance(Bean.class).present());
+        assertTrue(ReflectUtil.newInstance(Integer.class).absent());
+        assertTrue(ReflectUtil.newInstance(ConstructorBean.class).present());
+        assertTrue(ReflectUtil.newInstance(Bean.class).present());
 
-        Assertions.assertTrue(ReflectUtil.newInstance(Integer.class, new Object[]{}).absent());
+        assertTrue(ReflectUtil.newInstance(Integer.class, new Object[]{}).absent());
 
-        Assertions.assertTrue(ReflectUtil.newInstance(Integer.class, (String) null).absent());
-        Assertions.assertTrue(ReflectUtil.newInstance(Integer.class, (Integer) null).absent());
-        Assertions.assertTrue(ReflectUtil.newInstance(Integer.class, 1).present());
+        assertTrue(ReflectUtil.newInstance(Integer.class, (String) null).absent());
+        assertTrue(ReflectUtil.newInstance(Integer.class, (Integer) null).absent());
+        assertTrue(ReflectUtil.newInstance(Integer.class, 1).present());
 
-        Assertions.assertTrue(ReflectUtil.newInstance(TestBean.class, (String) null).present());
+        assertTrue(ReflectUtil.newInstance(TestBean.class, (String) null).present());
     }
 
 
@@ -145,10 +148,10 @@ class ReflectUtilTest {
     void findAnnotations() {
 
         NotNull annotation = (NotNull) ReflectUtil.findAnnotations(TestBean.class).first().get();
-        Assertions.assertEquals("1", annotation.value());
+        assertEquals("1", annotation.value());
         Assertions.assertSame(annotation, ReflectUtil.getAnnotation(TestBean.class, NotNull.class).get());
 
-        Assertions.assertEquals(0, ReflectUtil.findAnnotations(TestBean.class,
+        assertEquals(0, ReflectUtil.findAnnotations(TestBean.class,
                 an -> an.annotationType() != NotNull.class).size());
     }
 
@@ -157,8 +160,8 @@ class ReflectUtilTest {
     void findAnnotationsWithMark() {
 
 
-        Assertions.assertEquals(2, ReflectUtil.findAnnotationsWithMark(TestBean.class, API.class).size());
-        Assertions.assertEquals(0, ReflectUtil.findAnnotationsWithMark(TestBean.class, NotNull.class).size());
+        assertEquals(2, ReflectUtil.findAnnotationsWithMark(TestBean.class, API.class).size());
+        assertEquals(0, ReflectUtil.findAnnotationsWithMark(TestBean.class, NotNull.class).size());
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
@@ -168,15 +171,15 @@ class ReflectUtilTest {
 
     @Test
     void getMethods() {
-        Assertions.assertEquals(2 + Object.class.getMethods().length, ReflectUtil.getMethods(Bean.class).size());
+        assertEquals(2 + Object.class.getMethods().length, ReflectUtil.getMethods(Bean.class).size());
     }
 
     @Test
     void getMethod() {
 
-        Assertions.assertTrue(ReflectUtil.getMethod(LittleBean.class, "m1").present());
-        Assertions.assertTrue(ReflectUtil.getMethod(LittleBean.class, "m3").present());
-        Assertions.assertTrue(ReflectUtil.getMethod(LittleBean.class, "m1", true).absent());
+        assertTrue(ReflectUtil.getMethod(LittleBean.class, "m1").present());
+        assertTrue(ReflectUtil.getMethod(LittleBean.class, "m3").present());
+        assertTrue(ReflectUtil.getMethod(LittleBean.class, "m1", true).absent());
     }
 
     @Test
@@ -197,35 +200,43 @@ class ReflectUtilTest {
         Method m1 = ReflectUtil.getMethod(Static.class, "m1").get();
         Method m2 = ReflectUtil.getMethod(Static.class, "m2").get();
         Method m3 = ReflectUtil.getMethod(Static.class, "m3").get();
-        Assertions.assertEquals(1, ReflectUtil.getMethodValue(m1, null).get());
-        Assertions.assertEquals(2, ReflectUtil.getMethodValue(m2, null).get());
-        Assertions.assertEquals(1, ReflectUtil.getMethodValue(m3, null, 1).get());
-        Assertions.assertEquals(2, ReflectUtil.getMethodValue(m3, null, 2).get());
+        assertEquals(1, ReflectUtil.getMethodValue(m1, null).get());
+        assertEquals(2, ReflectUtil.getMethodValue(m2, null).get());
+        assertEquals(1, ReflectUtil.getMethodValue(m3, null, 1).get());
+        assertEquals(2, ReflectUtil.getMethodValue(m3, null, 2).get());
     }
 
-
     @Test
-    void getGenericSuperclassType() {
+    void getDeclareTypeHead() {
         Consumer<?> consumer = new StringConsumer();
 
-        Assertions.assertEquals(String.class,
+        assertEquals(String.class,
                 ReflectUtil.getDeclareTypeHead(consumer.getClass(), Consumer.class).get());
 
-        Assertions.assertTrue(ReflectUtil.getDeclareTypeAt(Object.class, Object.class, 1).absent());
-        Assertions.assertTrue(ReflectUtil.getDeclareTypeAt(Object.class, null, 1).absent());
-        Assertions.assertTrue(ReflectUtil.getDeclareTypeAt(null, Object.class, -1).absent());
+        List<String> list = new ArrayList<String>() {
+        };
+        Assertions.assertSame(String.class,
+                ReflectUtil.getDeclareTypeHead(list.getClass(), ArrayList.class).get());
+    }
+
+    @Test
+    void getDeclareTypeAt() {
+
+
+        assertTrue(ReflectUtil.getDeclareTypeAt(Object.class, Object.class, 1).absent());
+        assertTrue(ReflectUtil.getDeclareTypeAt(Object.class, null, 1).absent());
+        assertTrue(ReflectUtil.getDeclareTypeAt(null, Object.class, -1).absent());
         List<String> list = new ArrayList<String>() {
         };
         Assertions.assertSame(String.class,
                 ReflectUtil.getDeclareTypeAt(list.getClass(), ArrayList.class, 0).get());
-        Assertions.assertSame(String.class,
-                ReflectUtil.getDeclareTypeHead(list.getClass(), ArrayList.class).get());
-        Assertions.assertTrue(ReflectUtil.getDeclareTypeAt(list.getClass(), ArrayList.class, 1).absent());
+
+        assertTrue(ReflectUtil.getDeclareTypeAt(list.getClass(), ArrayList.class, 1).absent());
         Map<String, String> map = new HashMap<String, String>() {
         };
-        Assertions.assertSame(String.class,
+        assertSame(String.class,
                 ReflectUtil.getDeclareTypeAt(map.getClass(), HashMap.class, 0).get());
-        Assertions.assertSame(String.class,
+        assertSame(String.class,
                 ReflectUtil.getDeclareTypeAt(map.getClass(), HashMap.class, 1).get());
     }
 
@@ -317,66 +328,20 @@ class ReflectUtilTest {
     }
 
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private Class[] test(Class<?> cls, final Class<?> find, LiTuple2<TypeVariable, Class>[] declareTypes) {
-        if (cls == null || cls == Object.class || find == null || find.getTypeParameters().length == 0 || !find.isInterface()) {
-            return null;
-        }
-        if (cls == find) {
-            Lira<Class> map = Lira.of(declareTypes).map(LiTuple2::_2).map(TypeUtil::getClass);
-            return map.toArray(Class.class);
-        }
-
-        for (Type genericInterface : cls.getGenericInterfaces()) {
-            LiTuple2<TypeVariable, Class>[] declareSuperTypes =
-                    ReflectUtil.toReal(genericInterface, declareTypes);
-            Class<?> inter;
-            if (genericInterface instanceof Class) {
-                inter = (Class<?>) genericInterface;
-            } else if (genericInterface instanceof ParameterizedType) {
-                inter = (Class<?>) ((ParameterizedType) genericInterface).getRawType();
-            } else {
-                throw new UnsupportedOperationException();
-            }
-            Class[] test = test(inter, find, declareSuperTypes);
-            if (test != null) {
-                return test;
-            }
-        }
-        ParameterizedType parameterizedType = (ParameterizedType) cls.getGenericSuperclass();
-        if (parameterizedType == null) {
-            return null;
-        }
-        LiTuple2<TypeVariable, Class>[] declareSuperTypes = ReflectUtil.toReal(parameterizedType, declareTypes);
-
-        return test(cls.getSuperclass(), find, declareSuperTypes);
-//        return null;
-
-
-    }
-
-
     @Test
     void getDeclareTypes() {
 
 
-        Assertions.assertArrayEquals(new Class[]{ArrayList.class, String.class},
-                ReflectUtil.getDeclareTypes(In4.class, In1.class));
-        Assertions.assertArrayEquals(new Class[]{List.class, String.class}, ReflectUtil.getDeclareTypes(In3.class,
-                In1.class));
-        Assertions.assertArrayEquals(new Class[]{Object.class, String.class}, ReflectUtil.getDeclareTypes(In2.class,
-                In1.class));
-        Assertions.assertArrayEquals(new Class[]{ArrayList.class}, ReflectUtil.getDeclareTypes(In4.class,
-                Consumer.class));
-        Assertions.assertArrayEquals(new Class[]{List.class}, ReflectUtil.getDeclareTypes(In3.class, Consumer.class));
-        Assertions.assertArrayEquals(new Class[]{Object.class}, ReflectUtil.getDeclareTypes(In2.class, Consumer.class));
+        assertArrayEquals(new Class[]{ArrayList.class, String.class}, ReflectUtil.getDeclareTypes(In4.class, In1.class));
+        assertArrayEquals(new Class[]{List.class, String.class}, ReflectUtil.getDeclareTypes(In3.class, In1.class));
+        assertArrayEquals(new Class[]{Object.class, String.class}, ReflectUtil.getDeclareTypes(In2.class, In1.class));
+        assertArrayEquals(new Class[]{ArrayList.class}, ReflectUtil.getDeclareTypes(In4.class, Consumer.class));
+        assertArrayEquals(new Class[]{List.class}, ReflectUtil.getDeclareTypes(In3.class, Consumer.class));
+        assertArrayEquals(new Class[]{Object.class}, ReflectUtil.getDeclareTypes(In2.class, Consumer.class));
 
-        Assertions.assertArrayEquals(new Class[]{ArrayList.class, String.class}, ReflectUtil.getDeclareTypes(Ge4.class,
-                Ge1.class));
-        Assertions.assertArrayEquals(new Class[]{ArrayList.class, String.class}, ReflectUtil.getDeclareTypes(Ge3.class,
-                Ge1.class));
-        Assertions.assertArrayEquals(new Class[]{List.class, String.class}, ReflectUtil.getDeclareTypes(Ge2.class,
-                Ge1.class));
+        assertArrayEquals(new Class[]{ArrayList.class, String.class}, ReflectUtil.getDeclareTypes(Ge4.class, Ge1.class));
+        assertArrayEquals(new Class[]{ArrayList.class, String.class}, ReflectUtil.getDeclareTypes(Ge3.class, Ge1.class));
+        assertArrayEquals(new Class[]{List.class, String.class}, ReflectUtil.getDeclareTypes(Ge2.class, Ge1.class));
     }
 
     private static interface In1<A, B> {

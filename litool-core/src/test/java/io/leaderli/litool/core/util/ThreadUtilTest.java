@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.util;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -10,6 +11,6 @@ class ThreadUtilTest {
 
     @Test
     void printStack() {
-        ThreadUtil.printStack(1);
+        Assertions.assertDoesNotThrow(() -> ThreadUtil.printStack(1));
     }
 }

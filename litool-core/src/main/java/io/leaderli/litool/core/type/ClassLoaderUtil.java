@@ -1,8 +1,5 @@
 package io.leaderli.litool.core.type;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
 /**
  * @author leaderli
  * @since 2022/7/17
@@ -37,12 +34,7 @@ public class ClassLoaderUtil {
      * @see Thread#getContextClassLoader()
      */
     public static ClassLoader getContextClassLoader() {
-        if (System.getSecurityManager() == null) {
-            return Thread.currentThread().getContextClassLoader();
-        } else {
-            return AccessController.doPrivileged(
-                    (PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
-        }
+        return Thread.currentThread().getContextClassLoader();
     }
 
 
@@ -57,11 +49,6 @@ public class ClassLoaderUtil {
      * @since 5.7.0
      */
     public static ClassLoader getSystemClassLoader() {
-        if (System.getSecurityManager() == null) {
-            return ClassLoader.getSystemClassLoader();
-        } else {
-            return AccessController.doPrivileged(
-                    (PrivilegedAction<ClassLoader>) ClassLoader::getSystemClassLoader);
-        }
+        return ClassLoader.getSystemClassLoader();
     }
 }

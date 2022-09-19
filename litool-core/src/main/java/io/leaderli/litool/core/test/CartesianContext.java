@@ -20,7 +20,8 @@ public class CartesianContext {
      * Return the potential values of annotation provide
      *
      * @param valuableAnnotation the annotation that annotated by {@link Valuable}
-     * @return the value called the {@link  CartesianFunction#apply(Annotation, CartesianContext)} by the  instance of {@link Valuable#value()}
+     * @return the value called the {@link  CartesianFunction#apply(Annotation, CartesianContext)} by the  instance
+     * of {@link Valuable#value()}
      * @see CartesianFunction#apply(Annotation, CartesianContext)
      */
     @SuppressWarnings("unchecked")
@@ -32,7 +33,7 @@ public class CartesianContext {
                 .computeIfAbsent(valuable, an -> {
 
                     Class<? extends CartesianFunction<?, ?>> value = an.value();
-                    return (CartesianFunction<Annotation, Object>) RuntimeExceptionTransfer.get(value::newInstance);
+                    return (CartesianFunction<Annotation, Object>) RuntimeExceptionTransfer.get(() -> value.getDeclaredConstructor().newInstance());
                 })
                 .apply(valuableAnnotation, this);
     }
