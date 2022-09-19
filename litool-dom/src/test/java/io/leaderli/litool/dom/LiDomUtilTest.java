@@ -25,6 +25,7 @@ class LiDomUtilTest {
 
         Assertions.assertEquals(LiDomUtil.pretty(root), StringUtils.read(LiDomUtil.write(root)));
 
+
     }
 
     @Test

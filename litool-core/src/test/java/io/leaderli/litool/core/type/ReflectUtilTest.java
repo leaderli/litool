@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.meta.LiConstant;
+import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import org.apiguardian.api.API;
@@ -13,13 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * @author leaderli
  * @since 2022/7/12
  */
-@SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "JavaReflectionMemberAccess"})
+@SuppressWarnings("ALL")
 class ReflectUtilTest {
 
     static {
@@ -34,7 +34,6 @@ class ReflectUtilTest {
     }
 
 
-    @SuppressWarnings("ConstantConditions")
     @Test
     void testGetClass() throws NoSuchFieldException, NoSuchMethodException {
 
@@ -204,58 +203,30 @@ class ReflectUtilTest {
         Assertions.assertEquals(2, ReflectUtil.getMethodValue(m3, null, 2).get());
     }
 
-    @Test
-    void getSuperclassType() {
-
-        Assertions.assertSame(0, ReflectUtil.getSuperclassType(Object.class).size());
-        Assertions.assertSame(0, ReflectUtil.getSuperclassType(Function.class).size());
-        List<?> list = new ArrayList<String>() {
-
-        };
-        Lira<Type> superclassType = ReflectUtil.getSuperclassType(list.getClass());
-        Assertions.assertTrue(superclassType.first().get() instanceof ParameterizedType);
-    }
 
     @Test
-    void getSuperInterface() {
-
-        Assertions.assertTrue(ReflectUtil.getInterfacesType(Object.class).absent());
-        Lira<Type> superInterface = ReflectUtil.getInterfacesType(ArrayList.class);
-
-        Assertions.assertSame(6, superInterface.size());
-    }
-
-
-    @Test
-    void getGenericInterfacesType() {
-
+    void getGenericSuperclassType() {
         Consumer<?> consumer = new StringConsumer();
 
         Assertions.assertEquals(String.class,
-                ReflectUtil.getGenericInterfacesType(consumer.getClass(), Consumer.class).get());
-    }
+                ReflectUtil.getDeclareTypeHead(consumer.getClass(), Consumer.class).get());
 
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    @Test
-    void getGenericSuperclassType() {
-
-
-        Assertions.assertTrue(ReflectUtil.getGenericSuperclassType(Object.class, Object.class, 1).absent());
-        Assertions.assertTrue(ReflectUtil.getGenericSuperclassType(Object.class, null, 1).absent());
-        Assertions.assertTrue(ReflectUtil.getGenericSuperclassType(null, Object.class, -1).absent());
+        Assertions.assertTrue(ReflectUtil.getDeclareTypeAt(Object.class, Object.class, 1).absent());
+        Assertions.assertTrue(ReflectUtil.getDeclareTypeAt(Object.class, null, 1).absent());
+        Assertions.assertTrue(ReflectUtil.getDeclareTypeAt(null, Object.class, -1).absent());
         List<String> list = new ArrayList<String>() {
         };
         Assertions.assertSame(String.class,
-                ReflectUtil.getGenericSuperclassType(list.getClass(), ArrayList.class, 0).get());
+                ReflectUtil.getDeclareTypeAt(list.getClass(), ArrayList.class, 0).get());
         Assertions.assertSame(String.class,
-                ReflectUtil.getGenericSuperclassType(list.getClass(), ArrayList.class).get());
-        Assertions.assertTrue(ReflectUtil.getGenericSuperclassType(list.getClass(), ArrayList.class, 1).absent());
+                ReflectUtil.getDeclareTypeHead(list.getClass(), ArrayList.class).get());
+        Assertions.assertTrue(ReflectUtil.getDeclareTypeAt(list.getClass(), ArrayList.class, 1).absent());
         Map<String, String> map = new HashMap<String, String>() {
         };
         Assertions.assertSame(String.class,
-                ReflectUtil.getGenericSuperclassType(map.getClass(), HashMap.class, 0).get());
+                ReflectUtil.getDeclareTypeAt(map.getClass(), HashMap.class, 0).get());
         Assertions.assertSame(String.class,
-                ReflectUtil.getGenericSuperclassType(map.getClass(), HashMap.class, 1).get());
+                ReflectUtil.getDeclareTypeAt(map.getClass(), HashMap.class, 1).get());
     }
 
 
@@ -345,26 +316,106 @@ class ReflectUtilTest {
         }
     }
 
-    @Test
-    void test() {
 
-        System.out.println(ReflectUtil.getGenericSuperclassType(Ge3.class, Ge1.class, 1));
-        System.out.println(ReflectUtil.getGenericSuperclassType(Ge3.class, Ge1.class, 0));
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private Class[] test(Class<?> cls, final Class<?> find, LiTuple2<TypeVariable, Class>[] declareTypes) {
+        if (cls == null || cls == Object.class || find == null || find.getTypeParameters().length == 0 || !find.isInterface()) {
+            return null;
+        }
+        if (cls == find) {
+            Lira<Class> map = Lira.of(declareTypes).map(LiTuple2::_2).map(TypeUtil::getClass);
+            return map.toArray(Class.class);
+        }
+
+        for (Type genericInterface : cls.getGenericInterfaces()) {
+            LiTuple2<TypeVariable, Class>[] declareSuperTypes =
+                    ReflectUtil.toReal(genericInterface, declareTypes);
+            Class<?> inter;
+            if (genericInterface instanceof Class) {
+                inter = (Class<?>) genericInterface;
+            } else if (genericInterface instanceof ParameterizedType) {
+                inter = (Class<?>) ((ParameterizedType) genericInterface).getRawType();
+            } else {
+                throw new UnsupportedOperationException();
+            }
+            Class[] test = test(inter, find, declareSuperTypes);
+            if (test != null) {
+                return test;
+            }
+        }
+        ParameterizedType parameterizedType = (ParameterizedType) cls.getGenericSuperclass();
+        if (parameterizedType == null) {
+            return null;
+        }
+        LiTuple2<TypeVariable, Class>[] declareSuperTypes = ReflectUtil.toReal(parameterizedType, declareTypes);
+
+        return test(cls.getSuperclass(), find, declareSuperTypes);
+//        return null;
+
+
     }
 
-    private class Ge1<A, B> {
 
-        void log(A a, B b) {
+    @Test
+    void getDeclareTypes() {
+
+
+        Assertions.assertArrayEquals(new Class[]{ArrayList.class, String.class},
+                ReflectUtil.getDeclareTypes(In4.class, In1.class));
+        Assertions.assertArrayEquals(new Class[]{List.class, String.class}, ReflectUtil.getDeclareTypes(In3.class,
+                In1.class));
+        Assertions.assertArrayEquals(new Class[]{Object.class, String.class}, ReflectUtil.getDeclareTypes(In2.class,
+                In1.class));
+        Assertions.assertArrayEquals(new Class[]{ArrayList.class}, ReflectUtil.getDeclareTypes(In4.class,
+                Consumer.class));
+        Assertions.assertArrayEquals(new Class[]{List.class}, ReflectUtil.getDeclareTypes(In3.class, Consumer.class));
+        Assertions.assertArrayEquals(new Class[]{Object.class}, ReflectUtil.getDeclareTypes(In2.class, Consumer.class));
+
+        Assertions.assertArrayEquals(new Class[]{ArrayList.class, String.class}, ReflectUtil.getDeclareTypes(Ge4.class,
+                Ge1.class));
+        Assertions.assertArrayEquals(new Class[]{ArrayList.class, String.class}, ReflectUtil.getDeclareTypes(Ge3.class,
+                Ge1.class));
+        Assertions.assertArrayEquals(new Class[]{List.class, String.class}, ReflectUtil.getDeclareTypes(Ge2.class,
+                Ge1.class));
+    }
+
+    private static interface In1<A, B> {
+
+    }
+
+    private static interface In2<A> extends In1<A, String>, Consumer<A> {
+
+    }
+
+    private static class In3<C extends List> implements In2<C> {
+
+        @Override
+        public void accept(C c) {
+
+        }
+    }
+
+    private static class In4 extends In3<ArrayList> {
+
+    }
+
+    private static class Ge1<A, B> {
+
+        public void log(A a, B b) {
 
         }
 
     }
 
-    private class Ge2<A> extends Ge1<A, String> {
+    private static class Ge2<C extends List> extends Ge1<C, String> {
 
     }
 
-    private class Ge3 extends Ge2<Integer> {
+    private static class Ge3 extends Ge2<ArrayList> {
+
+    }
+
+    private static class Ge4 extends Ge3 {
 
     }
 }

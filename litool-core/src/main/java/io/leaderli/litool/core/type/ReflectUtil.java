@@ -1,10 +1,7 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
-import io.leaderli.litool.core.meta.LiConstant;
-import io.leaderli.litool.core.meta.LiTuple2;
-import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.meta.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -119,9 +116,7 @@ public class ReflectUtil {
     }
 
     public static void setAccessible(AccessibleObject obj) {
-        if (!obj.isAccessible()) {
-            obj.setAccessible(true);
-        }
+        obj.setAccessible(true);
     }
 
     /**
@@ -330,7 +325,8 @@ public class ReflectUtil {
      * @return 查找类的所有注解中被 mark 注解的注解
      * @see #findAnnotations(AnnotatedElement, Function)
      */
-    public static Lira<Annotation> findAnnotationsWithMark(AnnotatedElement annotatedElement, Class<? extends Annotation> mark) {
+    public static Lira<Annotation> findAnnotationsWithMark(AnnotatedElement annotatedElement, Class<?
+            extends Annotation> mark) {
 
         return findAnnotations(annotatedElement, annotation -> annotation.annotationType().isAnnotationPresent(mark));
     }
@@ -385,46 +381,6 @@ public class ReflectUtil {
         return Lino.throwable_of(() -> method.invoke(obj, args));
     }
 
-    /**
-     * @param cls 类
-     * @return 获取类上所有的接口 type ，包括继承类上的，对于重复的接口，以最先查找到的为准
-     */
-    public static Lira<Type> getInterfacesType(Class<?> cls) {
-        List<Type> list = new ArrayList<>();
-        while (cls != null && cls != Object.class) {
-            list.addAll(getGenericInterfacesOfInterface(cls));
-            cls = cls.getSuperclass();
-        }
-        return Lira.of(list).distinct(TypeUtil::equals);
-    }
-
-    private static List<Type> getGenericInterfacesOfInterface(Class<?> type) {
-
-        // 优先添加同一层级
-        List<Type> interfaces = new ArrayList<>(Arrays.asList(type.getGenericInterfaces()));
-
-        for (Type genericInterface : type.getGenericInterfaces()) {
-            if (genericInterface instanceof ParameterizedType) {
-                interfaces.addAll(getGenericInterfacesOfInterface((Class<?>) ((ParameterizedType) genericInterface).getRawType()));
-            } else if (genericInterface instanceof Class) {
-                interfaces.addAll(getGenericInterfacesOfInterface((Class<?>) genericInterface));
-            }
-        }
-        return interfaces;
-    }
-
-    /**
-     * 查找第一个
-     *
-     * @param cls 类
-     * @param sup 泛型接口
-     * @return 获取指定泛型接口的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
-     * @see #getGenericInterfacesType(Class, Class, int)
-     */
-    public static Lino<Class<?>> getGenericInterfacesType(Class<?> cls, Class<?> sup) {
-
-        return getGenericInterfacesType(cls, sup, 0);
-    }
 
     /**
      * 查找第一个
@@ -437,41 +393,7 @@ public class ReflectUtil {
      */
     public static Lino<Class<?>> getGenericInterfacesType(Class<?> cls, Class<?> inter, int position) {
 
-
-        if (cls == null || inter == null || !inter.isInterface() || inter.getTypeParameters().length < position + 1) {
-            return Lino.none();
-        }
-
-        Lino<Class<?>> find = getInterfacesType(cls)
-                .cast(ParameterizedType.class)
-                .filter(type -> type.getRawType() == inter)
-                .first()
-                .map(type -> type.getActualTypeArguments()[position])
-                .filter(type -> !(type instanceof TypeVariable))
-                .map(TypeUtil::getClass);
-        if (find.present()) {
-            return find;
-        }
-
-
-        Lino<ParameterizedType> superType = Lino.none();
-        for (Type type : getSuperclassType(cls)) {
-
-
-            superType = Lino.of(type)
-                    .cast(ParameterizedType.class)
-                    .filter(f -> ClassUtil.isAssignableFromOrIsWrapper(inter, (Class<?>) f.getRawType()));
-//
-            if (superType.present()) {
-                break;
-            }
-
-        }
-        return superType
-                .map(type -> type.getActualTypeArguments()[position])
-                .filter(type -> !(type instanceof TypeVariable))
-                .map(TypeUtil::getClass);
-
+        return Lira.of(getDeclareTypes(cls, inter)).get(position);
     }
 
     /**
@@ -480,10 +402,10 @@ public class ReflectUtil {
      * @param cls 类
      * @param sup 泛型父类
      * @return 获取指定泛型父类的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
-     * @see #getGenericSuperclassType(Class, Class, int)
+     * @see #getDeclareTypeAt(Class, Class, int)
      */
-    public static Lino<Class<?>> getGenericSuperclassType(Class<?> cls, Class<?> sup) {
-        return getGenericSuperclassType(cls, sup, 0);
+    public static Lino<Class<?>> getDeclareTypeHead(Class<?> cls, Class<?> sup) {
+        return getDeclareTypeAt(cls, sup, 0);
 
     }
 
@@ -493,63 +415,17 @@ public class ReflectUtil {
      * @param position 泛型父类的位置
      * @return 获取指定泛型父类的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
      */
-    public static Lino<Class<?>> getGenericSuperclassType(Class<?> cls, Class<?> sup, int position) {
+    public static Lino<Class<?>> getDeclareTypeAt(Class<?> cls, Class<?> sup, int position) {
 
-        if (cls == null || sup == null || position < 0 || cls == Object.class || sup.isInterface() || sup.getTypeParameters().length < position + 1) {
+        if (cls == null || sup == null || position < 0 || cls == Object.class || sup.getTypeParameters().length < position + 1) {
             return Lino.none();
         }
 
-        Lino<Type> map = getSuperclassType(cls)
-                .cast(ParameterizedType.class)
-                .filter(type -> type.getRawType() == sup)
-                .first()
-                .tuple(type -> type.getActualTypeArguments()[position])
-                .debug(tu -> System.out.println(tu._1.getRawType()))
-                .map(LiTuple2::_1);
 
-        if (map.present()) {
-
-            Type type = map.get();
-            if (type instanceof TypeVariable) {
-
-                System.out.println(type);
-            }
-            return Lino.of(TypeUtil.getClass(type));
-        }
-        return Lino.none();
-
+        return Lira.of(getDeclareTypes(cls, sup)).get(position);
 
     }
 
-    /**
-     * @param cls 获取类的父类 type ， 会优先使用泛型 type
-     * @return 所有父类 type
-     * @see Type
-     * @see Class#getGenericSuperclass()
-     */
-    public static Lira<Type> getSuperclassType(Class<?> cls) {
-        if (cls == null || cls == Object.class) {
-            return Lira.none();
-        }
-
-        List<Type> list = new ArrayList<>();
-        while (cls != Objects.class) {
-
-            Type temp = cls.getGenericSuperclass();
-            if (temp instanceof ParameterizedType) {
-                cls = (Class<?>) ((ParameterizedType) temp).getRawType();
-            } else {
-                temp = cls.getSuperclass();
-                cls = (Class<?>) temp;
-            }
-            if (cls != null && cls != Object.class) {
-                list.add(temp);
-            } else {
-                break;
-            }
-        }
-        return Lira.of(list);
-    }
 
     public static <T> Class<T> getClass(Constructor<T> constructor) {
         if (constructor == null) {
@@ -570,5 +446,119 @@ public class ReflectUtil {
             return null;
         }
         return field.getType();
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static Class<?>[] getDeclareTypes(Class<?> cls, final Class<?> find) {
+        return getDeclareTypes(cls, find, new LiTuple2[0]);
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    private static Class<?>[] getDeclareTypes(Class<?> cls, final Class<?> find,
+                                              LiTuple2<TypeVariable, Class>[] declareTypes) {
+
+        if (cls == null || cls == Object.class || find == null || find.getTypeParameters().length == 0) {
+            return null;
+        }
+        if (cls == find) {
+            return Lira.of(declareTypes).map(LiTuple2::_2)
+                    .map(TypeUtil::getClass)
+                    .toArray(Class.class);
+
+        }
+
+        Class<?> raw;
+        if (find.isInterface()) {
+            // first order to find interface of cls
+            for (Type genericInterface : cls.getGenericInterfaces()) {
+                LiTuple2<TypeVariable, Class>[] declareSuperTypes =
+                        ReflectUtil.toReal(genericInterface, declareTypes);
+                if (genericInterface instanceof Class) {
+                    raw = (Class<?>) genericInterface;
+                } else if (genericInterface instanceof ParameterizedType) {
+                    raw = (Class<?>) ((ParameterizedType) genericInterface).getRawType();
+                } else {
+                    throw new UnsupportedOperationException();
+                }
+                Class[] match = getDeclareTypes(raw, find, declareSuperTypes);
+                if (match != null) {
+                    return match;
+                }
+            }
+        }
+        Type genericSuperclass = cls.getGenericSuperclass();
+        if (genericSuperclass == null) {
+            return null;
+        }
+        LiTuple2<TypeVariable, Class>[] declareSuperTypes = toReal(genericSuperclass, declareTypes);
+        raw = cls.getSuperclass();
+        return getDeclareTypes(raw, find, declareSuperTypes);
+
+
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    static LiTuple2<TypeVariable, Class>[] toReal(Type type, LiTuple2<TypeVariable, Class>[] declareTypes) {
+
+        if (!(type instanceof ParameterizedType)) {
+            return new LiTuple2[0];
+        }
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+
+        TypeVariable[] typeParameters = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
+        Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+
+        LiTuple2<TypeVariable, Class>[] declareSuperTypes = new LiTuple2[typeParameters.length];
+        for (int i = 0; i < actualTypeArguments.length; i++) {
+
+            Type actualTypeArgument = actualTypeArguments[i];
+            Class real;
+            if (actualTypeArgument instanceof TypeVariable) {
+                real = erase(actualTypeArgument);
+                for (LiTuple2<TypeVariable, Class> sub : declareTypes) {
+                    if (sub._1 == actualTypeArgument) {
+                        real = sub._2;
+                        break;
+                    }
+                }
+
+            } else if (actualTypeArgument instanceof Class) {
+                real = (Class) actualTypeArgument;
+            } else {
+                throw new UnsupportedOperationException();
+            }
+            declareSuperTypes[i] = LiTuple.of(typeParameters[i], real);
+
+        }
+        return declareSuperTypes;
+    }
+
+    public static Class<?> erase(Type type) {
+        if (type instanceof Class) {
+            return (Class<?>) type;
+        }
+        if (type instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) type;
+            return (Class<?>) pt.getRawType();
+        }
+        if (type instanceof TypeVariable) {
+            TypeVariable<?> tv = (TypeVariable<?>) type;
+            Type[] bounds = tv.getBounds();
+            return (0 < bounds.length)
+                    ? erase(bounds[0])
+                    : Object.class;
+        }
+        if (type instanceof WildcardType) {
+            WildcardType wt = (WildcardType) type;
+            Type[] bounds = wt.getUpperBounds();
+            return (0 < bounds.length)
+                    ? erase(bounds[0])
+                    : Object.class;
+        }
+        if (type instanceof GenericArrayType) {
+            GenericArrayType gat = (GenericArrayType) type;
+            return Array.newInstance(erase(gat.getGenericComponentType()), 0).getClass();
+        }
+        throw new IllegalArgumentException("Unknown Type kind: " + type.getClass());
     }
 }

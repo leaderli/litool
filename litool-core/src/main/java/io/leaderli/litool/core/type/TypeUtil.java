@@ -45,7 +45,8 @@ public class TypeUtil {
      * @return return the class type represent by the type
      * @throws UnsupportedTypeException if type is not Class or ParameterizedType
      */
-    public static Class<?> getClass(Type type) {
+    @SuppressWarnings("rawtypes")
+    public static Class getClass(Type type) {
         if (type == null) {
             return null;
         }

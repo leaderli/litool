@@ -20,6 +20,7 @@ import io.leaderli.litool.core.type.ReflectUtil;
  * @param <T> the type of  listened event
  * @see LiEventBus
  */
+@FunctionalInterface
 public interface ILiEventListener<T> extends ComponentType<T>, OnError {
 
     /**
@@ -86,7 +87,7 @@ public interface ILiEventListener<T> extends ComponentType<T>, OnError {
     @SuppressWarnings("unchecked")
     @Override
     default Class<T> componentType() {
-        return (Class<T>) ReflectUtil.getGenericInterfacesType(getClass(), ILiEventListener.class).get();
+        return (Class<T>) ReflectUtil.getDeclareTypeHead(getClass(), ILiEventListener.class).get();
     }
 
 
