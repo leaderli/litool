@@ -343,6 +343,7 @@ class ReflectUtilTest {
 
         assertArrayEquals(new Object[]{Object.class, Consumer.class}, ReflectUtil.getDeclareClasses(In5.class, In1.class).toArray());
 
+
         ParameterizedType parameterizedType = new ParameterizedType() {
             @Override
             public Type[] getActualTypeArguments() {
@@ -363,6 +364,8 @@ class ReflectUtilTest {
 
         ParameterizedType genericInterface = (ParameterizedType) In5.class.getGenericInterfaces()[0];
         System.out.println(genericInterface.getOwnerType());
+
+        In1.class.getTypeParameters();
 
     }
 
