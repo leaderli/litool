@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
  */
 class GsonUtilTest {
 
+
     @Test
     void toJson() {
         GsonBuilder gsonBuilder = new GsonBuilder();

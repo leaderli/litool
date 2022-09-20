@@ -1,14 +1,13 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
-import io.leaderli.litool.core.meta.*;
+import io.leaderli.litool.core.meta.LiConstant;
+import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.Lira;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -410,10 +409,11 @@ public class ReflectUtil {
      * @param cls 类
      * @param sup 泛型父类
      * @return 获取指定泛型父类的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
-     * @see #getDeclareTypeAt(Class, Class, int)
+     * @see #getDeclareClassAt(Class, Class, int)
      */
-    public static Lino<Class<?>> getDeclareTypeHead(Class<?> cls, Class<?> sup) {
-        return getDeclareTypeAt(cls, sup, 0);
+    @SuppressWarnings("rawtypes")
+    public static Lino<Class> getDeclareClassHead(Class<?> cls, Class<?> sup) {
+        return getDeclareClassAt(cls, sup, 0);
 
     }
 
@@ -423,99 +423,85 @@ public class ReflectUtil {
      * @param position 泛型父类的位置
      * @return 获取指定泛型父类的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
      */
-    public static Lino<Class<?>> getDeclareTypeAt(Class<?> cls, Class<?> sup, int position) {
-        return Lira.of(getDeclareTypes(cls, sup)).get(position);
+    @SuppressWarnings("rawtypes")
+    public static Lino<Class> getDeclareClassAt(Class<?> cls, Class<?> sup, int position) {
+        return getDeclareClasses(cls, sup).get(position);
     }
 
 
-    @SuppressWarnings({"unchecked"})
-    public static Class<?>[] getDeclareTypes(Class<?> cls, final Class<?> find) {
-        return getDeclareTypes(cls, find, new LiTuple2[0]);
+    @SuppressWarnings("rawtypes")
+    public static Lira<Class> getDeclareClasses(Class<?> cls, final Class<?> find) {
+
+
+        return getDeclareTypes(cls, find).map(ReflectUtil::erase);
+
     }
 
-    @SuppressWarnings({"rawtypes"})
-    private static Class<?>[] getDeclareTypes(Class<?> cls, final Class<?> find,
-                                              LiTuple2<TypeVariable, Class>[] declareTypes) {
-
-        if (cls == null || cls == Object.class || find == null || find.getTypeParameters().length == 0) {
-            return null;
+    public static Lira<Type> getDeclareTypes(Class<?> resolving, final Class<?> toResolve) {
+        if (toResolve == null || toResolve.getTypeParameters().length == 0 || resolving == toResolve) {
+            return Lira.none();
         }
-        if (cls == find) {
-            return Lira.of(declareTypes).map(LiTuple2::_2)
-                    .map(TypeUtil::getClass)
-                    .toArray(Class.class);
+        Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
+        resolve(resolving, resolving, toResolve, visitedTypeVariables);
+        return Lira.of(toResolve.getTypeParameters()).map(visitedTypeVariables::get);
 
+    }
+
+
+    /**
+     * @param resolving            the resolving type
+     * @param raw                  the resolving raw class
+     * @param toResolve            the resolve class
+     * @param visitedTypeVariables typeVariable and it's actual declare class
+     * @return find the resolve class generic typeParameter declare class
+     */
+    static boolean resolve(Type resolving, Class<?> raw, Class<?> toResolve, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+
+        if (resolving == toResolve) { // found
+            return true;
+        }
+        if (raw == null) {
+            // interface should continue resolve by super interfaces
+            return !toResolve.isInterface();
         }
 
-        Class<?> raw;
-        if (find.isInterface()) {
-            // first order to find interface of cls
-            for (Type genericInterface : cls.getGenericInterfaces()) {
-                LiTuple2<TypeVariable, Class>[] declareSuperTypes =
-                        ReflectUtil.getDeclareTuple(genericInterface, declareTypes);
-                if (genericInterface instanceof Class) {
-                    raw = (Class<?>) genericInterface;
-                } else if (genericInterface instanceof ParameterizedType) {
-                    raw = (Class<?>) ((ParameterizedType) genericInterface).getRawType();
-                } else {
-                    throw new UnsupportedOperationException();
+
+        if (resolving instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) resolving;
+            TypeVariable<?>[] typeParameters = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
+            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+            for (int i = 0; i < actualTypeArguments.length; i++) {
+                Type actualTypeArgument = actualTypeArguments[i];
+                if (actualTypeArgument instanceof TypeVariable) {
+                    actualTypeArgument = visitedTypeVariables.getOrDefault(actualTypeArgument, actualTypeArgument);
                 }
-                Class[] match = getDeclareTypes(raw, find, declareSuperTypes);
-                if (match != null) {
-                    return match;
-                }
+                visitedTypeVariables.put(typeParameters[i], actualTypeArgument);
             }
         }
-        Type genericSuperclass = cls.getGenericSuperclass();
-        if (genericSuperclass == null) {
-            return null;
-        }
-        LiTuple2<TypeVariable, Class>[] declareSuperTypes = getDeclareTuple(genericSuperclass, declareTypes);
-        raw = cls.getSuperclass();
-        return getDeclareTypes(raw, find, declareSuperTypes);
+        if (toResolve.isInterface()) {
+            for (Type genericInterface : raw.getGenericInterfaces()) {
 
-
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    static LiTuple2<TypeVariable, Class>[] getDeclareTuple(Type type, LiTuple2<TypeVariable, Class>[] declareTypes) {
-
-        if (!(type instanceof ParameterizedType)) {
-            return new LiTuple2[0];
-        }
-        ParameterizedType parameterizedType = (ParameterizedType) type;
-
-        TypeVariable[] typeParameters = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
-        Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-
-        LiTuple2<TypeVariable, Class>[] declareSuperTypes = new LiTuple2[typeParameters.length];
-        for (int i = 0; i < actualTypeArguments.length; i++) {
-
-            Type actualTypeArgument = actualTypeArguments[i];
-            Class real;
-            if (actualTypeArgument instanceof TypeVariable) {
-                real = erase(actualTypeArgument);
-                for (LiTuple2<TypeVariable, Class> sub : declareTypes) {
-                    if (sub._1 == actualTypeArgument) {
-                        real = sub._2;
-                        break;
-                    }
+                if (resolve(genericInterface, erase(genericInterface), toResolve, visitedTypeVariables)) {
+                    return true;
                 }
-
-            } else if (actualTypeArgument instanceof Class) {
-                real = (Class) actualTypeArgument;
-            } else if (actualTypeArgument instanceof ParameterizedType) {
-                real = (Class) ((ParameterizedType) actualTypeArgument).getRawType();
-            } else {
-                throw new UnsupportedOperationException();
             }
-            declareSuperTypes[i] = LiTuple.of(typeParameters[i], real);
+
+            return resolve(raw.getGenericSuperclass(), raw.getSuperclass(), toResolve, visitedTypeVariables);
+
+        } else {
+
+            return resolve(raw.getGenericSuperclass(), raw.getSuperclass(), toResolve, visitedTypeVariables);
 
         }
-        return declareSuperTypes;
     }
 
-    public static Class<?> erase(Type type) {
+
+    /**
+     * @param type the type
+     * @return the type raw class
+     */
+    @SuppressWarnings("rawtypes")
+    public static Class erase(Type type) {
         if (type instanceof Class) {
             return (Class<?>) type;
         }

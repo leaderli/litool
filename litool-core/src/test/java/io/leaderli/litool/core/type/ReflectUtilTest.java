@@ -211,33 +211,33 @@ class ReflectUtilTest {
         Consumer<?> consumer = new StringConsumer();
 
         assertEquals(String.class,
-                ReflectUtil.getDeclareTypeHead(consumer.getClass(), Consumer.class).get());
+                ReflectUtil.getDeclareClassHead(consumer.getClass(), Consumer.class).get());
 
         List<String> list = new ArrayList<String>() {
         };
         Assertions.assertSame(String.class,
-                ReflectUtil.getDeclareTypeHead(list.getClass(), ArrayList.class).get());
+                ReflectUtil.getDeclareClassHead(list.getClass(), ArrayList.class).get());
     }
 
     @Test
     void getDeclareTypeAt() {
 
 
-        assertTrue(ReflectUtil.getDeclareTypeAt(Object.class, Object.class, 1).absent());
-        assertTrue(ReflectUtil.getDeclareTypeAt(Object.class, null, 1).absent());
-        assertTrue(ReflectUtil.getDeclareTypeAt(null, Object.class, -1).absent());
+        assertTrue(ReflectUtil.getDeclareClassAt(Object.class, Object.class, 1).absent());
+        assertTrue(ReflectUtil.getDeclareClassAt(Object.class, null, 1).absent());
+        assertTrue(ReflectUtil.getDeclareClassAt(null, Object.class, -1).absent());
         List<String> list = new ArrayList<String>() {
         };
         Assertions.assertSame(String.class,
-                ReflectUtil.getDeclareTypeAt(list.getClass(), ArrayList.class, 0).get());
+                ReflectUtil.getDeclareClassAt(list.getClass(), ArrayList.class, 0).get());
 
-        assertTrue(ReflectUtil.getDeclareTypeAt(list.getClass(), ArrayList.class, 1).absent());
+        assertTrue(ReflectUtil.getDeclareClassAt(list.getClass(), ArrayList.class, 1).absent());
         Map<String, String> map = new HashMap<String, String>() {
         };
         assertSame(String.class,
-                ReflectUtil.getDeclareTypeAt(map.getClass(), HashMap.class, 0).get());
+                ReflectUtil.getDeclareClassAt(map.getClass(), HashMap.class, 0).get());
         assertSame(String.class,
-                ReflectUtil.getDeclareTypeAt(map.getClass(), HashMap.class, 1).get());
+                ReflectUtil.getDeclareClassAt(map.getClass(), HashMap.class, 1).get());
     }
 
 
@@ -329,26 +329,28 @@ class ReflectUtilTest {
 
 
     @Test
-    void getDeclareTypes() {
+    void getDeclareClasses() {
 
 
-        assertArrayEquals(new Class[]{ArrayList.class, String.class}, ReflectUtil.getDeclareTypes(In4.class, In1.class));
-        assertArrayEquals(new Class[]{List.class, String.class}, ReflectUtil.getDeclareTypes(In3.class, In1.class));
-        assertArrayEquals(new Class[]{Object.class, String.class}, ReflectUtil.getDeclareTypes(In2.class, In1.class));
-        assertArrayEquals(new Class[]{ArrayList.class}, ReflectUtil.getDeclareTypes(In4.class, Consumer.class));
-        assertArrayEquals(new Class[]{List.class}, ReflectUtil.getDeclareTypes(In3.class, Consumer.class));
-        assertArrayEquals(new Class[]{Object.class}, ReflectUtil.getDeclareTypes(In2.class, Consumer.class));
+        assertArrayEquals(new Object[]{ArrayList.class, String.class}, ReflectUtil.getDeclareClasses(In4.class, In1.class).toArray());
+        assertArrayEquals(new Object[]{List.class, String.class}, ReflectUtil.getDeclareClasses(In3.class, In1.class).toArray());
+        assertArrayEquals(new Object[]{Object.class, String.class}, ReflectUtil.getDeclareClasses(In2.class, In1.class).toArray());
+        assertArrayEquals(new Object[]{ArrayList.class}, ReflectUtil.getDeclareClasses(In4.class, Consumer.class).toArray());
+        assertArrayEquals(new Object[]{List.class}, ReflectUtil.getDeclareClasses(In3.class, Consumer.class).toArray());
+        assertArrayEquals(new Object[]{Object.class}, ReflectUtil.getDeclareClasses(In2.class, Consumer.class).toArray());
 
-        assertArrayEquals(new Class[]{ArrayList.class, String.class}, ReflectUtil.getDeclareTypes(Ge4.class, Ge1.class));
-        assertArrayEquals(new Class[]{ArrayList.class, String.class}, ReflectUtil.getDeclareTypes(Ge3.class, Ge1.class));
-        assertArrayEquals(new Class[]{List.class, String.class}, ReflectUtil.getDeclareTypes(Ge2.class, Ge1.class));
+        assertArrayEquals(new Object[]{ArrayList.class, String.class}, ReflectUtil.getDeclareClasses(Ge4.class, Ge1.class).toArray());
+        assertArrayEquals(new Object[]{ArrayList.class, String.class}, ReflectUtil.getDeclareClasses(Ge3.class, Ge1.class).toArray());
+        assertArrayEquals(new Object[]{List.class, String.class}, ReflectUtil.getDeclareClasses(Ge2.class, Ge1.class).toArray());
 
 
-        assertArrayEquals(new Class[]{Object.class, Consumer.class}, ReflectUtil.getDeclareTypes(In5.class, In1.class));
+        assertArrayEquals(new Object[]{Object.class, Consumer.class}, ReflectUtil.getDeclareClasses(In5.class, In1.class).toArray());
+
 
     }
 
-    private static interface In5<A> extends In1<A, Consumer<A>> {
+
+    private static interface In5<A> extends In1<A, Consumer<? extends Number>> {
 
     }
 

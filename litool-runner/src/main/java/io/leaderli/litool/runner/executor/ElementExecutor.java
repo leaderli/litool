@@ -12,7 +12,7 @@ public interface ElementExecutor<S extends SaxBean & ElementExecutor<S, E>, E ex
     @SuppressWarnings({"unchecked", "java:S1452"})
     default BaseElementExecutor<?> executor() {
         // 获取继承类指明的第二个泛型类
-        Class<?> executorClass = ReflectUtil.getDeclareTypeAt(getClass(), ElementExecutor.class, 1).get();
+        Class<?> executorClass = ReflectUtil.getDeclareClassAt(getClass(), ElementExecutor.class, 1).get();
         return (E) ReflectUtil.newInstance(executorClass, this).get();
 
     }
