@@ -342,6 +342,14 @@ class ReflectUtilTest {
         assertArrayEquals(new Class[]{ArrayList.class, String.class}, ReflectUtil.getDeclareTypes(Ge4.class, Ge1.class));
         assertArrayEquals(new Class[]{ArrayList.class, String.class}, ReflectUtil.getDeclareTypes(Ge3.class, Ge1.class));
         assertArrayEquals(new Class[]{List.class, String.class}, ReflectUtil.getDeclareTypes(Ge2.class, Ge1.class));
+
+
+        assertArrayEquals(new Class[]{Object.class, Consumer.class}, ReflectUtil.getDeclareTypes(In5.class, In1.class));
+
+    }
+
+    private static interface In5<A> extends In1<A, Consumer<A>> {
+
     }
 
     private static interface In1<A, B> {

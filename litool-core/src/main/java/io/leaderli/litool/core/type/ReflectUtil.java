@@ -452,7 +452,7 @@ public class ReflectUtil {
             // first order to find interface of cls
             for (Type genericInterface : cls.getGenericInterfaces()) {
                 LiTuple2<TypeVariable, Class>[] declareSuperTypes =
-                        ReflectUtil.toReal(genericInterface, declareTypes);
+                        ReflectUtil.getDeclareTuple(genericInterface, declareTypes);
                 if (genericInterface instanceof Class) {
                     raw = (Class<?>) genericInterface;
                 } else if (genericInterface instanceof ParameterizedType) {
@@ -470,7 +470,7 @@ public class ReflectUtil {
         if (genericSuperclass == null) {
             return null;
         }
-        LiTuple2<TypeVariable, Class>[] declareSuperTypes = toReal(genericSuperclass, declareTypes);
+        LiTuple2<TypeVariable, Class>[] declareSuperTypes = getDeclareTuple(genericSuperclass, declareTypes);
         raw = cls.getSuperclass();
         return getDeclareTypes(raw, find, declareSuperTypes);
 
@@ -478,7 +478,7 @@ public class ReflectUtil {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    static LiTuple2<TypeVariable, Class>[] toReal(Type type, LiTuple2<TypeVariable, Class>[] declareTypes) {
+    static LiTuple2<TypeVariable, Class>[] getDeclareTuple(Type type, LiTuple2<TypeVariable, Class>[] declareTypes) {
 
         if (!(type instanceof ParameterizedType)) {
             return new LiTuple2[0];
@@ -504,6 +504,8 @@ public class ReflectUtil {
 
             } else if (actualTypeArgument instanceof Class) {
                 real = (Class) actualTypeArgument;
+            } else if (actualTypeArgument instanceof ParameterizedType) {
+                real = (Class) ((ParameterizedType) actualTypeArgument).getRawType();
             } else {
                 throw new UnsupportedOperationException();
             }
