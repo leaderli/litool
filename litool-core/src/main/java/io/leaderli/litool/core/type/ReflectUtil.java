@@ -436,6 +436,7 @@ public class ReflectUtil {
 
     }
 
+    // 自定义 ParameterizedType
     public static Lira<Type> getDeclareTypes(Class<?> resolving, final Class<?> toResolve) {
         if (toResolve == null || toResolve.getTypeParameters().length == 0 || resolving == toResolve) {
             return Lira.none();

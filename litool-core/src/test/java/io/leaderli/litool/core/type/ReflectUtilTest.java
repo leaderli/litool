@@ -6,10 +6,7 @@ import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -346,6 +343,26 @@ class ReflectUtilTest {
 
         assertArrayEquals(new Object[]{Object.class, Consumer.class}, ReflectUtil.getDeclareClasses(In5.class, In1.class).toArray());
 
+        ParameterizedType parameterizedType = new ParameterizedType() {
+            @Override
+            public Type[] getActualTypeArguments() {
+                return new Type[]{String.class};
+            }
+
+            @Override
+            public Type getRawType() {
+                return Consumer.class;
+            }
+
+            @Override
+            public Type getOwnerType() {
+                return null;
+            }
+        };
+        System.out.println(parameterizedType);
+
+        ParameterizedType genericInterface = (ParameterizedType) In5.class.getGenericInterfaces()[0];
+        System.out.println(genericInterface.getOwnerType());
 
     }
 
