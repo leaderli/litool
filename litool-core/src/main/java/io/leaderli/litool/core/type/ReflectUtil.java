@@ -13,7 +13,6 @@ import java.util.function.Function;
 /**
  * @author leaderli
  * @since 2022/7/12
- * TODO 补充注释
  */
 public class ReflectUtil {
 
@@ -486,13 +485,8 @@ public class ReflectUtil {
                 }
             }
 
-            return resolve(raw.getGenericSuperclass(), raw.getSuperclass(), toResolve, visitedTypeVariables);
-
-        } else {
-
-            return resolve(raw.getGenericSuperclass(), raw.getSuperclass(), toResolve, visitedTypeVariables);
-
         }
+        return resolve(raw.getGenericSuperclass(), raw.getSuperclass(), toResolve, visitedTypeVariables);
     }
 
 
