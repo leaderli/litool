@@ -22,7 +22,7 @@ public class CartesianUtil {
 
     private static <T> Object[] cartesian(Class<T> type, AnnotatedElement annotatedElement, CartesianContext context) {
 
-        return ReflectUtil.findAnnotationsWithMark(annotatedElement, Valuable.class).filter(an -> {
+        return ReflectUtil.findAnnotationsWithMetaAnnotation(annotatedElement, Valuable.class).filter(an -> {
             Class<? extends CartesianFunction<?, ?>> value = an.annotationType().getAnnotation(Valuable.class).value();
             if (value == ObjectCartesian.class) {
                 return true;

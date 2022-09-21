@@ -7,7 +7,10 @@ import io.leaderli.litool.core.meta.Lira;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -15,14 +18,12 @@ import java.util.function.Function;
  * @since 2022/7/12
  */
 public class ReflectUtil {
-
-
     /**
      * onlyCurrentClass = false
      *
-     * @param cls  查找的类
-     * @param name 查找的属性名
-     * @return #getField(Class, String, boolean)
+     * @param cls  the class
+     * @param name the name of field
+     * @return {@link #getField(Class, String, boolean))
      */
     public static Lino<Field> getField(Class<?> cls, String name) {
 
@@ -32,10 +33,10 @@ public class ReflectUtil {
     }
 
     /**
-     * @param cls              查找的类
-     * @param name             查找的属性名
-     * @param onlyCurrentClass 是否仅查找当前类，不查找父类
-     * @return 返回 包含 {@link Field} 的 {@link Lino}
+     * @param cls              the class
+     * @param name             the name of field
+     * @param onlyCurrentClass whether only find cls and not find supper class
+     * @return the lino of field that  cls contain
      */
     public static Lino<Field> getField(Class<?> cls, String name, boolean onlyCurrentClass) {
 
@@ -48,8 +49,12 @@ public class ReflectUtil {
     }
 
     /**
-     * @param cls 查找的类
-     * @return 查找类所有的属性
+     * get all field of class or it's super class, if {@link  Class#isMemberClass()} it will
+     * have a jvm default field that named {@link  LiConstant#INNER_CLASS_THIS_FIELD}, the result
+     * of this method will remove this default jvm  field
+     *
+     * @param cls the class
+     * @return all field of class or it's super class
      * @see Class#getFields()
      * @see Class#getDeclaredFields()
      */
@@ -67,12 +72,13 @@ public class ReflectUtil {
         return union;
     }
 
+
     /**
      * onlyCurrentClass = false
      *
-     * @param obj  查找的实例
-     * @param name 查找的属性名
-     * @return #getFieldValue(Object, String, boolean)
+     * @param obj  the obj
+     * @param name the name of field
+     * @return {@link #getFieldValue(Object, String, boolean))
      */
     public static Lino<?> getFieldValue(Object obj, String name) {
 
@@ -81,11 +87,13 @@ public class ReflectUtil {
     }
 
     /**
-     * @param obj              查找的实例
-     * @param name             查找的属性名
-     * @param onlyCurrentClass 是否只查找当前类
-     * @return 包含属性实际值的 {@link Lino}, 当类不存在或者属性不存在时返回 {@link Lino#none()}
+     * @param obj              the obj
+     * @param name             the name of field
+     * @param onlyCurrentClass whether only find cls and not find supper class
+     * @return the lino of field value, if cannot find the field or field value is not present,
+     * will return {@link  Lino#none()}
      * @see #getField(Class, String, boolean)
+     * @see #getFieldValue(Object, Field)
      */
     public static Lino<?> getFieldValue(Object obj, String name, boolean onlyCurrentClass) {
 
@@ -93,15 +101,16 @@ public class ReflectUtil {
         if (obj == null) {
             return Lino.none();
         }
-        return getField(obj.getClass(), name, onlyCurrentClass)
-                .map(f -> getFieldValue(obj, f).get());
+        return getField(obj.getClass(), name, onlyCurrentClass).map(f -> getFieldValue(obj, f).get());
 
     }
 
     /**
-     * @param obj   查找的实例 , obj 为空时，一般为调用静态方法
-     * @param field 查找的属性
-     * @return 包含属性实际值的 {@link Lino}, 当类不存在或者属性不存在时返回 {@link Lino#none()}
+     * @param obj   the obj is instance of the  {@link  Field#getDeclaringClass()},
+     *              if {@code obj == null}, it's commonly mean the static field
+     * @param field the field
+     * @return the lino of field value, if cannot find the field or field value is not present,
+     * will return {@link  Lino#none()}
      */
     public static Lino<?> getFieldValue(Object obj, Field field) {
 
@@ -115,31 +124,35 @@ public class ReflectUtil {
     }
 
     public static void setAccessible(AccessibleObject obj) {
-        obj.setAccessible(true);
+        if (obj != null) {
+            obj.setAccessible(true);
+        }
     }
+
 
     /**
      * onlyCurrentClass = false
      *
-     * @param obj   查找的实例
-     * @param name  查找的属性名
-     * @param value 设置的值
+     * @param obj   the obj
+     * @param name  the name of field
+     * @param value the new value of field
      * @return {@link #setFieldValue(Object, String, Object, boolean)}
      */
     public static boolean setFieldValue(Object obj, String name, Object value) {
 
-
         return setFieldValue(obj, name, value, false);
     }
 
-    /**
-     * @param obj              查找的实例
-     * @param name             查找的属性名
-     * @param value            设置的值
-     * @param onlyCurrentClass 是否只查找当前类
-     * @return 返回是否成功修改值
-     */
 
+    /**
+     * @param obj              the obj
+     * @param name             the name of field
+     * @param value            the new value of field
+     * @param onlyCurrentClass whether only find cls and not find supper class
+     * @return whether the value was set successfully
+     * @see #getField(Class, String, boolean)
+     * @see #setFieldValue(Object, Field, Object)
+     */
     public static boolean setFieldValue(Object obj, String name, Object value, boolean onlyCurrentClass) {
 
         if (obj == null) {
@@ -152,10 +165,10 @@ public class ReflectUtil {
     }
 
     /**
-     * @param obj   查找的实例
-     * @param field 查找的属性
-     * @param value 设置的值
-     * @return 返回是否成功修改值
+     * @param obj   the obj
+     * @param field the field
+     * @param value the new value of field
+     * @return whether the value was set successfully
      */
     public static boolean setFieldValue(Object obj, Field field, Object value) {
 
@@ -175,9 +188,10 @@ public class ReflectUtil {
 
     /**
      * @param cls  cls
-     * @param args 构造器参数 , 对于可选参数，需要手动传递数组类型
-     * @param <T>  泛型
-     * @return 根据参数个数和参数的类型，调用最接近的一个构造器
+     * @param args the constructor arguments, for the optional parameter, it should manually use arr.
+     *             such as {@code  Demo(String ... names) }, should called by {@code  newInstance(Demo.class,new String[]{"li","yang"})}
+     * @param <T>  the type of instance
+     * @return according to the number of parameters and it's class type, choose a similar one constructor to new a obj
      */
     public static <T> Lino<T> newInstance(Class<T> cls, Object... args) {
 
@@ -198,26 +212,28 @@ public class ReflectUtil {
     }
 
     /**
-     * @param <T> 泛型
      * @param cls class
-     * @return 返回一个新的实例
+     * @param <T> the type of instance
+     * @return return the new instance create by the no-argument constructor of cls
      */
     public static <T> Lino<T> newInstance(Class<T> cls) {
         Objects.requireNonNull(cls);
-        return getConstructor(cls).throwable_map(constructor -> {
-            setAccessible(constructor);
-            return constructor.newInstance();
-        });
+        return getConstructor(cls)
+                .throwable_map(constructor -> {
+                    setAccessible(constructor);
+                    return constructor.newInstance();
+                });
 
 
     }
 
+
     /**
-     * @param cls 类
-     * @param <T> 泛型
-     * @return 查找类的所有构造器
-     * @see Class#getConstructors()
-     * @see Class#getDeclaredConstructors()
+     * union of {@link  Class#getConstructors()} and {@link  Class#getDeclaredConstructors()}
+     *
+     * @param cls class
+     * @param <T> the type of instance
+     * @return all constructor of cls, public constructor is ahead of private constructor
      */
     @SuppressWarnings("unchecked")
     public static <T> Lira<Constructor<T>> getConstructors(Class<T> cls) {
@@ -238,7 +254,7 @@ public class ReflectUtil {
 
             if (parameterType.isPrimitive()) {
 
-                // 基础类型，参数传 null 时，不符合
+                // primitive value don't have null
                 if (arg == null) {
                     return false;
                 }
@@ -255,10 +271,11 @@ public class ReflectUtil {
         return true;
     }
 
+
     /**
-     * @param cls 类
-     * @param <T> 泛型
-     * @return 获取无参构造器
+     * @param cls class
+     * @param <T> the type of instance
+     * @return the no-argument constructor, it's may be private constructor.
      */
     public static <T> Lino<Constructor<T>> getConstructor(Class<T> cls) {
 
@@ -267,19 +284,35 @@ public class ReflectUtil {
                 .first();
     }
 
-    public static <T extends Annotation> Lino<T> getAnnotation(Annotation annotation, Class<T> an) {
+    /**
+     * @param annotationInstance the  annotation instance
+     * @param annotated          the annotation that the annotation class of annotationInstance may  annotated
+     * @param <T>                the type of  annotated annotation
+     * @return the first found annotation annotated at the annotation class of annotationInstance
+     * @see Annotation#annotationType()
+     * @see #getAnnotation(AnnotatedElement, Class)
+     */
+    public static <T extends Annotation> Lino<T> getAnnotation(Annotation annotationInstance, Class<T> annotated) {
 
-        return Lino.of(annotation)
+        return Lino.of(annotationInstance)
                 .map(Annotation::annotationType)
-                .unzip(type -> getAnnotation(type, an));
-    }
-
-    public static <T extends Annotation> Lino<T> getAnnotation(AnnotatedElement annotatedElement, Class<T> an) {
-        return Lira.of(annotatedElement.getAnnotationsByType(an)).first();
+                .unzip(type -> getAnnotation(type, annotated));
     }
 
     /**
-     * @param cls 类
+     * @param annotatedElement the annotatedElement
+     * @param annotated        the annotation that annotatedElement may  annotated
+     * @param <T>              the type of  annotated annotation
+     * @return the first found annotation annotated at annotatedElement
+     */
+    public static <T extends Annotation> Lino<T> getAnnotation(AnnotatedElement annotatedElement, Class<T> annotated) {
+        return Lira.of(annotatedElement.getAnnotationsByType(annotated)).first();
+    }
+
+    /**
+     * filter = null
+     *
+     * @param cls the class
      * @return #findAnnotations(Class, Function)
      */
     public static Lira<Annotation> findAnnotations(AnnotatedElement cls) {
@@ -287,9 +320,29 @@ public class ReflectUtil {
     }
 
     /**
-     * @param cls    类
-     * @param filter 过滤
-     * @return 获取所有注解，包括重复注解，忽略重复注解的容器注解
+     * @param cls    the class
+     * @param filter the  {@link  Function} accept annotation and return a value that convert to boolean by {@link  io.leaderli.litool.core.util.BooleanUtil#parse(Boolean)}
+     * @return get all annotation, include repeatable annotation, and will remove the container annotation of repeatable annotation.
+     * eg:
+     * will exclude {@code NotNulls}
+     * <pre>
+     * {@code
+     * @Retention(RetentionPolicy.RUNTIME)
+     * @Target(ElementType.TYPE)
+     * @Repeatable(NotNulls.class)
+     * @interface NotNull {
+     *  String value();
+     * }
+     *
+     * @Retention(RetentionPolicy.RUNTIME)
+     * @Target(ElementType.TYPE)
+     * @interface NotNulls {
+     *  NotNull[] value();
+     *  String name() default "";
+     * }
+     * }
+     * </pre>
+     * @see io.leaderli.litool.core.util.BooleanUtil#parse(Boolean)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static Lira<Annotation> findAnnotations(AnnotatedElement cls, Function<? super Annotation, ?> filter) {
@@ -306,12 +359,11 @@ public class ReflectUtil {
             MethodScanner methodScanner = new MethodScanner(annotation.annotationType(), false,
                     MethodUtil::methodOfRepeatableContainer);
             methodScanner.scan().first()
-                    // 属于重复注解
                     .ifPresent(m -> {
+                        //  repeatable annotation
                         Class componentType = m.getReturnType().getComponentType();
                         result.addAll(Arrays.asList(cls.getAnnotationsByType(componentType)));
                     })
-                    // 非重复注解
                     .ifAbsent(() -> result.add(annotation));
         }
         return Lira.of(result).filter(filter);
@@ -319,35 +371,34 @@ public class ReflectUtil {
     }
 
     /**
-     * @param annotatedElement 类
-     * @param mark             标记注解类
-     * @return 查找类的所有注解中被 mark 注解的注解
+     * @param annotatedElement the annotatedElement
+     * @param metaAnnotation   the annotation annotated at an annotation class
+     * @return the lira of annotation of annotatedElement and each annotation is annotated by metaAnnotation
      * @see #findAnnotations(AnnotatedElement, Function)
      */
-    public static Lira<Annotation> findAnnotationsWithMark(AnnotatedElement annotatedElement, Class<?
-            extends Annotation> mark) {
+    public static Lira<Annotation> findAnnotationsWithMetaAnnotation(AnnotatedElement annotatedElement, Class<? extends Annotation> metaAnnotation) {
 
-        return findAnnotations(annotatedElement, annotation -> annotation.annotationType().isAnnotationPresent(mark));
+        return findAnnotations(annotatedElement, annotation -> annotation.annotationType().isAnnotationPresent(metaAnnotation));
     }
 
+
     /**
-     * 查找当前类或父类的同名方法
+     * onlyCurrentClass = false
      *
-     * @param cls  查找的类
-     * @param name 方法名
-     * @return 查找的方法
-     * @see #getMethod(Class, String, boolean)
+     * @param cls  the class
+     * @param name the name of  method
+     * @return {@link #getMethod(Class, String, boolean)}
      */
     public static Lino<Method> getMethod(Class<?> cls, String name) {
         return getMethod(cls, name, false);
     }
 
+
     /**
-     * @param cls              查找的类
-     * @param name             方法名
-     * @param onlyCurrentClass 是否仅查找当前类
-     * @return 查找的方法
-     * @see #getMethod(Class, String, boolean)
+     * @param cls              the class
+     * @param name             the name of  method
+     * @param onlyCurrentClass whether only find cls and not find supper class
+     * @return the lino of method that cls contain
      */
     public static Lino<Method> getMethod(Class<?> cls, String name, boolean onlyCurrentClass) {
 
@@ -357,9 +408,12 @@ public class ReflectUtil {
                 .first();
     }
 
+
     /**
-     * @param cls 查找的类
-     * @return 查找类所有的方法
+     * get all method of class or it's super class
+     *
+     * @param cls the class
+     * @return all method of class or it's super class
      * @see Class#getMethods()
      * @see Class#getDeclaredMethods()
      */
@@ -370,6 +424,12 @@ public class ReflectUtil {
         return CollectionUtils.union(cls.getMethods(), cls.getDeclaredMethods());
     }
 
+    /**
+     * @param method the method
+     * @param obj    the obj, if {@code  obj == null}, the method should be static method
+     * @param args   the args of method
+     * @return return value that method return, if method is void, it always return {@code null}
+     */
     public static Lino<?> getMethodValue(Method method, Object obj, Object... args) {
 
         if (method == null) {
@@ -380,25 +440,61 @@ public class ReflectUtil {
         return Lino.throwable_of(() -> method.invoke(obj, args));
     }
 
-
+    /**
+     * @param constructor the constructor
+     * @param <T>         the type of constructor
+     * @return the declare class of constructor
+     */
     public static <T> Class<T> getClass(Constructor<T> constructor) {
+
         if (constructor == null) {
             return null;
         }
         return constructor.getDeclaringClass();
     }
 
+    /**
+     * @param method the  method
+     * @return the declare class of method
+     */
     public static Class<?> getClass(Method method) {
         if (method == null) {
             return null;
         }
-        return method.getReturnType();
+        return method.getDeclaringClass();
     }
 
+    /**
+     * @param field the  field
+     * @return the declare class of field
+     */
     public static Class<?> getClass(Field field) {
         if (field == null) {
             return null;
         }
+        return field.getDeclaringClass();
+    }
+
+    /**
+     * @param field the field
+     * @return the type of field
+     */
+    public static Class<?> getType(Field field) {
+        if (field == null) {
+            return null;
+        }
         return field.getType();
+    }
+
+
+    /**
+     * @param method the method
+     * @return the type of  method return
+     */
+    public static Class<?> getType(Method method) {
+        if (method == null) {
+            return null;
+        }
+        return method.getReturnType();
     }
 }

@@ -26,21 +26,25 @@ class ReflectUtilTest {
 
     }
 
+
     @Test
     void getFields() {
         assertEquals(3, ReflectUtil.getFields(LittleBean.class).size());
         assertTrue(ReflectUtil.getFields(Test1.class).absent());
+        assertTrue(ReflectUtil.getFields(Out.In.class).absent());
     }
 
 
     @Test
     void testGetClass() throws NoSuchFieldException, NoSuchMethodException {
 
-        assertEquals(String.class, ReflectUtil.getClass(LittleBean.class.getDeclaredField("name")));
-        assertEquals(int.class, ReflectUtil.getClass(LittleBean.class.getDeclaredField("age")));
-        Assertions.assertNull(ReflectUtil.getClass((Field) null));
+        assertEquals(String.class, ReflectUtil.getType(LittleBean.class.getDeclaredField("name")));
+        assertEquals(int.class, ReflectUtil.getType(LittleBean.class.getDeclaredField("age")));
+        assertNull(ReflectUtil.getType((Field) null));
+        assertEquals(void.class, ReflectUtil.getType(LittleBean.class.getDeclaredMethod("m3")));
 
-        assertEquals(void.class, ReflectUtil.getClass(LittleBean.class.getDeclaredMethod("m3")));
+        assertEquals(LittleBean.class, ReflectUtil.getClass(LittleBean.class.getDeclaredField("age")));
+        assertEquals(LittleBean.class, ReflectUtil.getClass(LittleBean.class.getDeclaredMethod("m3")));
         assertEquals(LittleBean.class, ReflectUtil.getClass(LittleBean.class.getConstructor()));
 
 
@@ -56,7 +60,7 @@ class ReflectUtilTest {
                 ReflectUtil.getField(LittleBean.class, "age").throwable_map(f -> f.get(littleBean)).get());
 
         Lino<Field> name = ReflectUtil.getField(LittleBean.class, "name", true);
-        Assertions.assertNull(name.throwable_map(f -> f.get(littleBean), null).get());
+        assertNull(name.throwable_map(f -> f.get(littleBean), null).get());
         assertEquals("little", name.throwable_map(f -> {
             f.setAccessible(true);
             return f.get(littleBean);
@@ -144,6 +148,9 @@ class ReflectUtilTest {
     void findAnnotations() {
 
         NotNull annotation = (NotNull) ReflectUtil.findAnnotations(TestBean.class).first().get();
+
+        System.out.println(annotation.annotationType());
+        System.out.println(annotation.getClass());
         assertEquals("1", annotation.value());
         Assertions.assertSame(annotation, ReflectUtil.getAnnotation(TestBean.class, NotNull.class).get());
 
@@ -156,8 +163,8 @@ class ReflectUtilTest {
     void findAnnotationsWithMark() {
 
 
-        assertEquals(2, ReflectUtil.findAnnotationsWithMark(TestBean.class, API.class).size());
-        assertEquals(0, ReflectUtil.findAnnotationsWithMark(TestBean.class, NotNull.class).size());
+        assertEquals(2, ReflectUtil.findAnnotationsWithMetaAnnotation(TestBean.class, API.class).size());
+        assertEquals(0, ReflectUtil.findAnnotationsWithMetaAnnotation(TestBean.class, NotNull.class).size());
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
@@ -203,6 +210,11 @@ class ReflectUtilTest {
     }
 
 
+    public static class Out {
+        public class In {
+
+        }
+    }
 
     @NotNull("1")
     @NotNull("2")
