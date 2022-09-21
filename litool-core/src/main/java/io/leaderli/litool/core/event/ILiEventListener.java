@@ -87,7 +87,7 @@ public interface ILiEventListener<T> extends ComponentType<T>, OnError {
     @SuppressWarnings("unchecked")
     @Override
     default Class<T> componentType() {
-        return (Class<T>) ReflectUtil.getDeclareTypeHead(getClass(), ILiEventListener.class).get();
+        return (Class<T>) ReflectUtil.getDeclareClassHead(getClass(), ILiEventListener.class).get();
     }
 
 

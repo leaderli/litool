@@ -29,6 +29,6 @@ public interface ComponentType<T> {
      */
     @SuppressWarnings("unchecked")
     default Class<T> componentType() {
-        return (Class<T>) ReflectUtil.getDeclareTypeHead(getClass(), ComponentType.class).get();
+        return (Class<T>) ReflectUtil.getDeclareClassHead(getClass(), ComponentType.class).get();
     }
 }

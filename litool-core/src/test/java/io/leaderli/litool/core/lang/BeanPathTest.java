@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.lang;
 
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.util.RandomUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -91,6 +92,15 @@ class BeanPathTest {
         Assertions.assertEquals(15.0, BeanPath.parse(origin, "list2[0][1]", l -> l.toLira().size() > 2,
                 l -> l.cast(Double.class)).get());
 
+
     }
 
+
+    private static class Inner {
+
+        private final String name = RandomUtil.randomString(4);
+        private int age;
+
+
+    }
 }
