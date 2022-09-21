@@ -94,16 +94,12 @@ public class TypeUtil {
         if (type instanceof TypeVariable) {
             TypeVariable<?> tv = (TypeVariable<?>) type;
             Type[] bounds = tv.getBounds();
-            return (0 < bounds.length)
-                    ? erase(bounds[0])
-                    : Object.class;
+            return (0 < bounds.length) ? erase(bounds[0]) : Object.class;
         }
         if (type instanceof WildcardType) {
             WildcardType wt = (WildcardType) type;
             Type[] bounds = wt.getUpperBounds();
-            return (0 < bounds.length)
-                    ? erase(bounds[0])
-                    : Object.class;
+            return (0 < bounds.length) ? erase(bounds[0]) : Object.class;
         }
         if (type instanceof GenericArrayType) {
             GenericArrayType gat = (GenericArrayType) type;
@@ -122,9 +118,7 @@ public class TypeUtil {
 
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Class<?> rawType = (Class<?>) parameterizedType.getRawType();
-            Type[] actualTypeArguments = Lira.of(parameterizedType.getActualTypeArguments())
-                    .map(arg -> resolve(arg, visitedTypeVariables))
-                    .toArray(Type.class);
+            Type[] actualTypeArguments = Lira.of(parameterizedType.getActualTypeArguments()).map(arg -> resolve(arg, visitedTypeVariables)).toArray(Type.class);
             return LiParameterizedType.make(rawType, parameterizedType.getOwnerType(), actualTypeArguments);
         } else if (type instanceof TypeVariable) {
             return visitedTypeVariables.getOrDefault(type, erase(type));
@@ -135,6 +129,17 @@ public class TypeUtil {
         return erase(type);
     }
 
+    /**
+     * the generic class type will be declared at actual class that can be new.
+     * the resolving progress will replace {@link  TypeVariable} to the {@link  Class},
+     * at end, it will return  {@link  ParameterizedType} with the resolve class and with
+     * actual declare typeParameters
+     *
+     * @param declare the declare class
+     * @param resolve the resolve class that has generic typeParameter
+     * @param <T>     the type parameter of resolve
+     * @return the  LiParameterizedType with resolve class with declare class typeParameters
+     */
     public static <T> LiParameterizedType resolve(Class<?> declare, Class<T> resolve) {
         Objects.requireNonNull(resolve);
         if (resolve.getTypeParameters().length == 0 || resolve == declare) {
@@ -146,14 +151,7 @@ public class TypeUtil {
         return LiParameterizedType.make(resolve, null, declareTypeArguments);
     }
 
-    /**
-     * @param resolving            the resolving type
-     * @param raw                  the resolving raw class
-     * @param toResolve            the resolve class
-     * @param visitedTypeVariables typeVariable and it's actual declare class
-     * @return find the resolve class generic typeParameter declare class
-     */
-    static boolean resolve(Type resolving, Class<?> raw, Class<?> toResolve, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+    private static boolean resolve(Type resolving, Class<?> raw, Class<?> toResolve, Map<TypeVariable<?>, Type> visitedTypeVariables) {
 
         if (resolving == toResolve) { // found
             return true;
@@ -173,7 +171,6 @@ public class TypeUtil {
                 if (actualTypeArgument instanceof TypeVariable) {
                     actualTypeArgument = resolve(actualTypeArgument, visitedTypeVariables);
                 } else if (actualTypeArgument instanceof ParameterizedType) {
-
                     actualTypeArgument = resolve(actualTypeArgument, visitedTypeVariables);
                 }
                 visitedTypeVariables.put(typeParameters[i], actualTypeArgument);

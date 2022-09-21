@@ -401,19 +401,4 @@ public class ReflectUtil {
         }
         return field.getType();
     }
-
-
-
-    // 自定义 ParameterizedType
-    public static Lira<Type> getDeclareTypes(Class<?> resolving, final Class<?> toResolve) {
-        if (toResolve == null || toResolve.getTypeParameters().length == 0 || resolving == toResolve) {
-            return Lira.none();
-        }
-        Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
-        TypeUtil.resolve(resolving, resolving, toResolve, visitedTypeVariables);
-        return Lira.of(toResolve.getTypeParameters()).map(visitedTypeVariables::get);
-
-    }
-
-
 }
