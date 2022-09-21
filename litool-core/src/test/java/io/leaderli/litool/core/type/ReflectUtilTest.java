@@ -149,8 +149,6 @@ class ReflectUtilTest {
 
         NotNull annotation = (NotNull) ReflectUtil.findAnnotations(TestBean.class).first().get();
 
-        System.out.println(annotation.annotationType());
-        System.out.println(annotation.getClass());
         assertEquals("1", annotation.value());
         Assertions.assertSame(annotation, ReflectUtil.getAnnotation(TestBean.class, NotNull.class).get());
 
