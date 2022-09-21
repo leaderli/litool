@@ -101,6 +101,10 @@ class TypeUtilTest {
     }
 
 
+    private static interface In2<A> extends In1<A, String>, Consumer<A> {
+
+    }
+
     private static interface In5<A> extends In1<A, Consumer<? extends Number>> {
 
     }
@@ -114,10 +118,6 @@ class TypeUtilTest {
     }
 
     private static interface Con2 extends Con<String> {
-    }
-
-    private static interface In2<A> extends In1<A, String>, Consumer<A> {
-
     }
 
     ;

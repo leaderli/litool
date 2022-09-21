@@ -26,12 +26,13 @@ public class LiParameterizedType implements ParameterizedType {
         return new LiParameterizedType(cls, cls.getTypeParameters(), null);
     }
 
-    public static LiParameterizedType make(ParameterizedType parameterizedType) {
-        return make((Class<?>) parameterizedType.getRawType(), parameterizedType.getOwnerType(), parameterizedType.getActualTypeArguments());
-    }
 
     public static LiParameterizedType make(Class<?> cls, Type ownerType, Type... actualTypeArguments) {
         return new LiParameterizedType(cls, actualTypeArguments, ownerType);
+    }
+
+    public static LiParameterizedType make(ParameterizedType parameterizedType) {
+        return make((Class<?>) parameterizedType.getRawType(), parameterizedType.getOwnerType(), parameterizedType.getActualTypeArguments());
     }
 
 
@@ -46,13 +47,13 @@ public class LiParameterizedType implements ParameterizedType {
     }
 
     @SuppressWarnings("rawtypes")
-    public Lino<Class> getActualClassArgument() {
-        return getActualClassArgument(0);
+    public Lino<Class> getActualClassArgument(int index) {
+        return Lira.of(actualTypeArguments).get(index).map(TypeUtil::erase);
     }
 
     @SuppressWarnings("rawtypes")
-    public Lino<Class> getActualClassArgument(int index) {
-        return Lira.of(actualTypeArguments).get(index).map(TypeUtil::erase);
+    public Lino<Class> getActualClassArgument() {
+        return getActualClassArgument(0);
     }
 
     @Override
