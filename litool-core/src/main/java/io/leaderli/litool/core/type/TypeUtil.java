@@ -1,10 +1,11 @@
 package io.leaderli.litool.core.type;
 
-import io.leaderli.litool.core.exception.UnsupportedTypeException;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
+import io.leaderli.litool.core.meta.Lira;
+
+import java.lang.reflect.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -26,39 +27,6 @@ public class TypeUtil {
         return null == type || type instanceof TypeVariable;
     }
 
-    /**
-     * <pre>
-     * {@code
-     *  if (type == null) {
-     *      return null;
-     *  }
-     *  if (type instanceof Class) {
-     *      return (Class<?>) type;
-     *   }
-     *  if (type instanceof ParameterizedType) {
-     *      return (Class<?>) ((ParameterizedType) type).getRawType();
-     *  }
-     *  }
-     * </pre>
-     *
-     * @param type the type
-     * @return return the class type represent by the type
-     * @throws UnsupportedTypeException if type is not Class or ParameterizedType
-     */
-    @SuppressWarnings("rawtypes")
-    public static Class getClass(Type type) {
-        if (type == null) {
-            return null;
-        }
-        if (type instanceof Class) {
-            return (Class<?>) type;
-        }
-        if (type instanceof ParameterizedType) {
-            return (Class<?>) ((ParameterizedType) type).getRawType();
-        }
-
-        throw new UnsupportedTypeException(type);
-    }
 
     /**
      * Return two TypeVariable typeName is equals
@@ -110,4 +78,116 @@ public class TypeUtil {
         return Objects.equals(left, right);
     }
 
+    /**
+     * @param type the type
+     * @return the type raw class
+     */
+    @SuppressWarnings("rawtypes")
+    public static Class erase(Type type) {
+        if (type instanceof Class) {
+            return (Class<?>) type;
+        }
+        if (type instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) type;
+            return (Class<?>) pt.getRawType();
+        }
+        if (type instanceof TypeVariable) {
+            TypeVariable<?> tv = (TypeVariable<?>) type;
+            Type[] bounds = tv.getBounds();
+            return (0 < bounds.length)
+                    ? erase(bounds[0])
+                    : Object.class;
+        }
+        if (type instanceof WildcardType) {
+            WildcardType wt = (WildcardType) type;
+            Type[] bounds = wt.getUpperBounds();
+            return (0 < bounds.length)
+                    ? erase(bounds[0])
+                    : Object.class;
+        }
+        if (type instanceof GenericArrayType) {
+            GenericArrayType gat = (GenericArrayType) type;
+            return Array.newInstance(erase(gat.getGenericComponentType()), 0).getClass();
+        }
+        if (type == null) {
+            return null;
+        }
+        throw new IllegalArgumentException("Unknown Type kind: " + type.getClass());
+    }
+
+
+    private static Type resolve(Type type, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+
+        if (type instanceof ParameterizedType) {
+
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+            Type[] actualTypeArguments = Lira.of(parameterizedType.getActualTypeArguments())
+                    .map(arg -> resolve(arg, visitedTypeVariables))
+                    .toArray(Type.class);
+            return LiParameterizedType.make(rawType, parameterizedType.getOwnerType(), actualTypeArguments);
+        } else if (type instanceof TypeVariable) {
+            return visitedTypeVariables.getOrDefault(type, erase(type));
+        } else if (type instanceof Class) {
+            return type;
+        }
+
+        return erase(type);
+    }
+
+    public static <T> LiParameterizedType resolve(Class<?> declare, Class<T> resolve) {
+        Objects.requireNonNull(resolve);
+        if (resolve.getTypeParameters().length == 0 || resolve == declare) {
+            return LiParameterizedType.make(resolve);
+        }
+        Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
+        TypeUtil.resolve(declare, declare, resolve, visitedTypeVariables);
+        Type[] declareTypeArguments = Lira.of(resolve.getTypeParameters()).map(visitedTypeVariables::get).toArray(Type.class);
+        return LiParameterizedType.make(resolve, null, declareTypeArguments);
+    }
+
+    /**
+     * @param resolving            the resolving type
+     * @param raw                  the resolving raw class
+     * @param toResolve            the resolve class
+     * @param visitedTypeVariables typeVariable and it's actual declare class
+     * @return find the resolve class generic typeParameter declare class
+     */
+    static boolean resolve(Type resolving, Class<?> raw, Class<?> toResolve, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+
+        if (resolving == toResolve) { // found
+            return true;
+        }
+        if (raw == null) {
+            // interface should continue resolve by super interfaces
+            return !toResolve.isInterface();
+        }
+
+
+        if (resolving instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) resolving;
+            TypeVariable<?>[] typeParameters = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
+            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+            for (int i = 0; i < actualTypeArguments.length; i++) {
+                Type actualTypeArgument = actualTypeArguments[i];
+                if (actualTypeArgument instanceof TypeVariable) {
+                    actualTypeArgument = resolve(actualTypeArgument, visitedTypeVariables);
+                } else if (actualTypeArgument instanceof ParameterizedType) {
+
+                    actualTypeArgument = resolve(actualTypeArgument, visitedTypeVariables);
+                }
+                visitedTypeVariables.put(typeParameters[i], actualTypeArgument);
+            }
+        }
+        if (toResolve.isInterface()) {
+            for (Type genericInterface : raw.getGenericInterfaces()) {
+
+                if (resolve(genericInterface, erase(genericInterface), toResolve, visitedTypeVariables)) {
+                    return true;
+                }
+            }
+
+        }
+        return resolve(raw.getGenericSuperclass(), raw.getSuperclass(), toResolve, visitedTypeVariables);
+    }
 }

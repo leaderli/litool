@@ -402,39 +402,7 @@ public class ReflectUtil {
         return field.getType();
     }
 
-    /**
-     * 查找第一个
-     *
-     * @param cls 类
-     * @param sup 泛型父类
-     * @return 获取指定泛型父类的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
-     * @see #getDeclareClassAt(Class, Class, int)
-     */
-    @SuppressWarnings("rawtypes")
-    public static Lino<Class> getDeclareClassHead(Class<?> cls, Class<?> sup) {
-        return getDeclareClassAt(cls, sup, 0);
 
-    }
-
-    /**
-     * @param cls      类
-     * @param sup      泛型父类
-     * @param position 泛型父类的位置
-     * @return 获取指定泛型父类的泛型类型，如果没有指定泛型类型会返回 {@link Lino#none()}
-     */
-    @SuppressWarnings("rawtypes")
-    public static Lino<Class> getDeclareClassAt(Class<?> cls, Class<?> sup, int position) {
-        return getDeclareClasses(cls, sup).get(position);
-    }
-
-
-    @SuppressWarnings("rawtypes")
-    public static Lira<Class> getDeclareClasses(Class<?> cls, final Class<?> find) {
-
-
-        return getDeclareTypes(cls, find).map(ReflectUtil::erase);
-
-    }
 
     // 自定义 ParameterizedType
     public static Lira<Type> getDeclareTypes(Class<?> resolving, final Class<?> toResolve) {
@@ -442,86 +410,10 @@ public class ReflectUtil {
             return Lira.none();
         }
         Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
-        resolve(resolving, resolving, toResolve, visitedTypeVariables);
+        TypeUtil.resolve(resolving, resolving, toResolve, visitedTypeVariables);
         return Lira.of(toResolve.getTypeParameters()).map(visitedTypeVariables::get);
 
     }
 
 
-    /**
-     * @param resolving            the resolving type
-     * @param raw                  the resolving raw class
-     * @param toResolve            the resolve class
-     * @param visitedTypeVariables typeVariable and it's actual declare class
-     * @return find the resolve class generic typeParameter declare class
-     */
-    static boolean resolve(Type resolving, Class<?> raw, Class<?> toResolve, Map<TypeVariable<?>, Type> visitedTypeVariables) {
-
-        if (resolving == toResolve) { // found
-            return true;
-        }
-        if (raw == null) {
-            // interface should continue resolve by super interfaces
-            return !toResolve.isInterface();
-        }
-
-
-        if (resolving instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) resolving;
-            TypeVariable<?>[] typeParameters = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
-            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-            for (int i = 0; i < actualTypeArguments.length; i++) {
-                Type actualTypeArgument = actualTypeArguments[i];
-                if (actualTypeArgument instanceof TypeVariable) {
-                    actualTypeArgument = visitedTypeVariables.getOrDefault(actualTypeArgument, actualTypeArgument);
-                }
-                visitedTypeVariables.put(typeParameters[i], actualTypeArgument);
-            }
-        }
-        if (toResolve.isInterface()) {
-            for (Type genericInterface : raw.getGenericInterfaces()) {
-
-                if (resolve(genericInterface, erase(genericInterface), toResolve, visitedTypeVariables)) {
-                    return true;
-                }
-            }
-
-        }
-        return resolve(raw.getGenericSuperclass(), raw.getSuperclass(), toResolve, visitedTypeVariables);
-    }
-
-
-    /**
-     * @param type the type
-     * @return the type raw class
-     */
-    @SuppressWarnings("rawtypes")
-    public static Class erase(Type type) {
-        if (type instanceof Class) {
-            return (Class<?>) type;
-        }
-        if (type instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType) type;
-            return (Class<?>) pt.getRawType();
-        }
-        if (type instanceof TypeVariable) {
-            TypeVariable<?> tv = (TypeVariable<?>) type;
-            Type[] bounds = tv.getBounds();
-            return (0 < bounds.length)
-                    ? erase(bounds[0])
-                    : Object.class;
-        }
-        if (type instanceof WildcardType) {
-            WildcardType wt = (WildcardType) type;
-            Type[] bounds = wt.getUpperBounds();
-            return (0 < bounds.length)
-                    ? erase(bounds[0])
-                    : Object.class;
-        }
-        if (type instanceof GenericArrayType) {
-            GenericArrayType gat = (GenericArrayType) type;
-            return Array.newInstance(erase(gat.getGenericComponentType()), 0).getClass();
-        }
-        throw new IllegalArgumentException("Unknown Type kind: " + type.getClass());
-    }
 }

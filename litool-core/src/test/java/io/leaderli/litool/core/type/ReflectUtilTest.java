@@ -6,11 +6,10 @@ import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -203,39 +202,6 @@ class ReflectUtilTest {
         assertEquals(2, ReflectUtil.getMethodValue(m3, null, 2).get());
     }
 
-    @Test
-    void getDeclareTypeHead() {
-        Consumer<?> consumer = new StringConsumer();
-
-        assertEquals(String.class,
-                ReflectUtil.getDeclareClassHead(consumer.getClass(), Consumer.class).get());
-
-        List<String> list = new ArrayList<String>() {
-        };
-        Assertions.assertSame(String.class,
-                ReflectUtil.getDeclareClassHead(list.getClass(), ArrayList.class).get());
-    }
-
-    @Test
-    void getDeclareTypeAt() {
-
-
-        assertTrue(ReflectUtil.getDeclareClassAt(Object.class, Object.class, 1).absent());
-        assertTrue(ReflectUtil.getDeclareClassAt(Object.class, null, 1).absent());
-        assertTrue(ReflectUtil.getDeclareClassAt(null, Object.class, -1).absent());
-        List<String> list = new ArrayList<String>() {
-        };
-        Assertions.assertSame(String.class,
-                ReflectUtil.getDeclareClassAt(list.getClass(), ArrayList.class, 0).get());
-
-        assertTrue(ReflectUtil.getDeclareClassAt(list.getClass(), ArrayList.class, 1).absent());
-        Map<String, String> map = new HashMap<String, String>() {
-        };
-        assertSame(String.class,
-                ReflectUtil.getDeclareClassAt(map.getClass(), HashMap.class, 0).get());
-        assertSame(String.class,
-                ReflectUtil.getDeclareClassAt(map.getClass(), HashMap.class, 1).get());
-    }
 
 
     @NotNull("1")
@@ -325,92 +291,4 @@ class ReflectUtilTest {
     }
 
 
-    @Test
-    void getDeclareClasses() {
-
-
-        assertArrayEquals(new Object[]{ArrayList.class, String.class}, ReflectUtil.getDeclareClasses(In4.class, In1.class).toArray());
-        assertArrayEquals(new Object[]{List.class, String.class}, ReflectUtil.getDeclareClasses(In3.class, In1.class).toArray());
-        assertArrayEquals(new Object[]{Object.class, String.class}, ReflectUtil.getDeclareClasses(In2.class, In1.class).toArray());
-        assertArrayEquals(new Object[]{ArrayList.class}, ReflectUtil.getDeclareClasses(In4.class, Consumer.class).toArray());
-        assertArrayEquals(new Object[]{List.class}, ReflectUtil.getDeclareClasses(In3.class, Consumer.class).toArray());
-        assertArrayEquals(new Object[]{Object.class}, ReflectUtil.getDeclareClasses(In2.class, Consumer.class).toArray());
-
-        assertArrayEquals(new Object[]{ArrayList.class, String.class}, ReflectUtil.getDeclareClasses(Ge4.class, Ge1.class).toArray());
-        assertArrayEquals(new Object[]{ArrayList.class, String.class}, ReflectUtil.getDeclareClasses(Ge3.class, Ge1.class).toArray());
-        assertArrayEquals(new Object[]{List.class, String.class}, ReflectUtil.getDeclareClasses(Ge2.class, Ge1.class).toArray());
-
-
-        assertArrayEquals(new Object[]{Object.class, Consumer.class}, ReflectUtil.getDeclareClasses(In5.class, In1.class).toArray());
-
-
-        ParameterizedType parameterizedType = new ParameterizedType() {
-            @Override
-            public Type[] getActualTypeArguments() {
-                return new Type[]{String.class};
-            }
-
-            @Override
-            public Type getRawType() {
-                return Consumer.class;
-            }
-
-            @Override
-            public Type getOwnerType() {
-                return null;
-            }
-        };
-        System.out.println(parameterizedType);
-
-        ParameterizedType genericInterface = (ParameterizedType) In5.class.getGenericInterfaces()[0];
-        System.out.println(genericInterface.getOwnerType());
-
-        In1.class.getTypeParameters();
-
-    }
-
-
-    private static interface In5<A> extends In1<A, Consumer<? extends Number>> {
-
-    }
-
-    private static interface In1<A, B> {
-
-    }
-
-    private static interface In2<A> extends In1<A, String>, Consumer<A> {
-
-    }
-
-    private static class In3<C extends List> implements In2<C> {
-
-        @Override
-        public void accept(C c) {
-
-        }
-    }
-
-    private static class In4 extends In3<ArrayList> {
-
-    }
-
-    private static class Ge1<A, B> {
-
-        public void log(A a, B b) {
-
-        }
-
-    }
-
-    private static class Ge2<C extends List> extends Ge1<C, String> {
-
-    }
-
-    private static class Ge3 extends Ge2<ArrayList> {
-
-    }
-
-    private static class Ge4 extends Ge3 {
-
-    }
 }

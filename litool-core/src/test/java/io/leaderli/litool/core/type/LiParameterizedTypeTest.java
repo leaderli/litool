@@ -12,13 +12,12 @@ import java.util.function.Consumer;
 class LiParameterizedTypeTest {
 
 
-    @SuppressWarnings("rawtypes")
     @Test
-    void test() {
+    void make() {
 
-        LiParameterizedType<Consumer> make = LiParameterizedType.make(Consumer.class);
+        LiParameterizedType make = LiParameterizedType.make(Consumer.class);
         Assertions.assertEquals("java.util.function.Consumer<T>", make.toString());
-        make = LiParameterizedType.make(Consumer.class, String.class);
+        make = LiParameterizedType.make(Consumer.class, null, String.class);
         Assertions.assertEquals("java.util.function.Consumer<java.lang.String>", make.toString());
 
 

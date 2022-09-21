@@ -4,6 +4,7 @@ import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.core.type.TypeUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -26,8 +27,8 @@ public class CartesianUtil {
             if (value == ObjectCartesian.class) {
                 return true;
             }
-            Class<?> cartesianFunction2GenericType = ReflectUtil.getDeclareClassAt(value,
-                    CartesianFunction.class, 1).get();
+            Class<?> cartesianFunction2GenericType = TypeUtil.resolve(value,
+                    CartesianFunction.class).getActualClassArgument(1).get();
             return cartesianFunction2GenericType == ClassUtil.primitiveToWrapper(type);
         }).first().map(an -> {
 

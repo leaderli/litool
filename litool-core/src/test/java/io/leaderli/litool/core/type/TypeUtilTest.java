@@ -5,36 +5,36 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.AbstractList;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author leaderli
  * @since 2022/6/27
  */
+@SuppressWarnings("ALL")
 class TypeUtilTest {
 
     @Test
     void isUnknown() {
 
         Assertions.assertTrue(TypeUtil.isUnknown(Consumer.class.getTypeParameters()[0]));
-//        LiPrintUtil.print((Object[]) Consumer.class.getTypeParameters());
-//        LiPrintUtil.print((Object[]) Function.class.getTypeParameters());
     }
 
     @Test
-    void testGetClass() {
+    void erase() {
 
 
-        Assertions.assertSame(null, TypeUtil.getClass(null));
-        Assertions.assertSame(Object.class, TypeUtil.getClass(Object.class));
-        Assertions.assertSame(Object[].class, TypeUtil.getClass(Object[].class));
+        assertSame(null, TypeUtil.erase(null));
+        assertSame(Object.class, TypeUtil.erase(Object.class));
+        assertSame(Object[].class, TypeUtil.erase(Object[].class));
 
         ParameterizedType genericSuperclass = (ParameterizedType) TestType.class.getGenericInterfaces()[0];
         Type actualTypeArgument = genericSuperclass.getActualTypeArguments()[0];
-        Assertions.assertSame(String.class, TypeUtil.getClass(actualTypeArgument));
+        assertSame(String.class, TypeUtil.erase(actualTypeArgument));
 
 
     }
@@ -43,14 +43,13 @@ class TypeUtilTest {
     void testEquals() {
 
 
-        Assertions.assertTrue(TypeUtil.equals(Consumer.class.getTypeParameters()[0],
-                Supplier.class.getTypeParameters()[0]));
+        assertTrue(TypeUtil.equals(Consumer.class.getTypeParameters()[0], Supplier.class.getTypeParameters()[0]));
         ParameterizedType left = (ParameterizedType) ArrayList.class.getGenericInterfaces()[0];
         ParameterizedType right = (ParameterizedType) AbstractList.class.getGenericInterfaces()[0];
-        Assertions.assertTrue(TypeUtil.equals(left, right));
-        Assertions.assertTrue(TypeUtil.equals(String.class, String.class));
-        Assertions.assertTrue(TypeUtil.equals(null, null));
-        Assertions.assertFalse(TypeUtil.equals(null, String.class));
+        assertTrue(TypeUtil.equals(left, right));
+        assertTrue(TypeUtil.equals(String.class, String.class));
+        assertTrue(TypeUtil.equals(null, null));
+        assertFalse(TypeUtil.equals(null, String.class));
     }
 
 
@@ -63,4 +62,102 @@ class TypeUtilTest {
         }
     }
 
+    @Test
+    void resolve() {
+
+
+        assertArrayEquals(new Object[]{ArrayList.class, String.class}, TypeUtil.resolve(In4.class, In1.class).getActualClassArguments());
+        assertArrayEquals(new Object[]{List.class, String.class}, TypeUtil.resolve(In3.class, In1.class).getActualClassArguments());
+        assertArrayEquals(new Object[]{Object.class, String.class}, TypeUtil.resolve(In2.class, In1.class).getActualClassArguments());
+        assertArrayEquals(new Object[]{ArrayList.class}, TypeUtil.resolve(In4.class, Consumer.class).getActualClassArguments());
+        assertArrayEquals(new Object[]{List.class}, TypeUtil.resolve(In3.class, Consumer.class).getActualClassArguments());
+        assertArrayEquals(new Object[]{Object.class}, TypeUtil.resolve(In2.class, Consumer.class).getActualClassArguments());
+
+        assertArrayEquals(new Object[]{ArrayList.class, String.class}, TypeUtil.resolve(Ge4.class, Ge1.class).getActualClassArguments());
+        assertArrayEquals(new Object[]{ArrayList.class, String.class}, TypeUtil.resolve(Ge3.class, Ge1.class).getActualClassArguments());
+        assertArrayEquals(new Object[]{List.class, String.class}, TypeUtil.resolve(Ge2.class, Ge1.class).getActualClassArguments());
+
+
+        assertArrayEquals(new Object[]{Object.class, Consumer.class}, TypeUtil.resolve(In5.class, In1.class).getActualClassArguments());
+
+
+        Consumer<?> consumer = new StringConsumer();
+
+
+        List<String> list = new ArrayList<String>() {
+        };
+        Map<String, String> map = new HashMap<String, String>() {
+        };
+
+        assertEquals(String.class, TypeUtil.resolve(consumer.getClass(), Consumer.class).getActualClassArgument().get());
+        assertSame(String.class, TypeUtil.resolve(list.getClass(), ArrayList.class).getActualClassArgument().get());
+        assertTrue(TypeUtil.resolve(Object.class, Object.class).getActualClassArgument(1).absent());
+        assertThrows(NullPointerException.class, () -> TypeUtil.resolve(Object.class, null).getActualClassArgument(1).absent());
+        assertTrue(TypeUtil.resolve(null, Object.class).getActualClassArgument(-1).absent());
+        assertSame(String.class, TypeUtil.resolve(list.getClass(), ArrayList.class).getActualClassArgument(0).get());
+        assertTrue(TypeUtil.resolve(list.getClass(), ArrayList.class).getActualClassArgument(1).absent());
+        assertSame(String.class, TypeUtil.resolve(map.getClass(), HashMap.class).getActualClassArgument(0).get());
+        assertSame(String.class, TypeUtil.resolve(map.getClass(), HashMap.class).getActualClassArgument(1).get());
+    }
+
+
+    private static interface In5<A> extends In1<A, Consumer<? extends Number>> {
+
+    }
+
+    private static interface In1<A, B> {
+
+    }
+
+    private static interface Con<A> extends In1<A, Consumer<A>> {
+
+    }
+
+    private static interface Con2 extends Con<String> {
+    }
+
+    private static interface In2<A> extends In1<A, String>, Consumer<A> {
+
+    }
+
+    ;
+
+    private static class StringConsumer implements Consumer<String> {
+        @Override
+        public void accept(String o) {
+
+        }
+    }
+
+    private static class In3<C extends List> implements In2<C> {
+
+        @Override
+        public void accept(C c) {
+
+        }
+    }
+
+    private static class In4 extends In3<ArrayList> {
+
+    }
+
+    private static class Ge1<A, B> {
+
+        public void log(A a, B b) {
+
+        }
+
+    }
+
+    private static class Ge2<C extends List> extends Ge1<C, String> {
+
+    }
+
+    private static class Ge3 extends Ge2<ArrayList> {
+
+    }
+
+    private static class Ge4 extends Ge3 {
+
+    }
 }

@@ -1,5 +1,8 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.Lira;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.StringJoiner;
@@ -8,29 +11,48 @@ import java.util.StringJoiner;
  * @author leaderli
  * @since 2022/9/21
  */
-public class LiParameterizedType<T> implements ParameterizedType {
-    private final Class<T> rawType;
+public class LiParameterizedType implements ParameterizedType {
+    private final Class<?> rawType;
     private final Type[] actualTypeArguments;
     private final Type ownerType;
 
-    public LiParameterizedType(Class<T> rawType, Type[] actualTypeArguments, Type ownerType) {
+    public LiParameterizedType(Class<?> rawType, Type[] actualTypeArguments, Type ownerType) {
         this.actualTypeArguments = actualTypeArguments;
         this.rawType = rawType;
         this.ownerType = ownerType;
     }
 
-    public static <T> LiParameterizedType<T> make(Class<T> cls) {
-
-        return new LiParameterizedType<>(cls, cls.getTypeParameters(), null);
+    public static LiParameterizedType make(Class<?> cls) {
+        return new LiParameterizedType(cls, cls.getTypeParameters(), null);
     }
 
-    public static <T> LiParameterizedType<T> make(Class<T> cls, Class<?>... actualTypeArguments) {
-        return new LiParameterizedType<>(cls, actualTypeArguments, null);
+    public static LiParameterizedType make(ParameterizedType parameterizedType) {
+        return make((Class<?>) parameterizedType.getRawType(), parameterizedType.getOwnerType(), parameterizedType.getActualTypeArguments());
     }
+
+    public static LiParameterizedType make(Class<?> cls, Type ownerType, Type... actualTypeArguments) {
+        return new LiParameterizedType(cls, actualTypeArguments, ownerType);
+    }
+
 
     @Override
     public Type[] getActualTypeArguments() {
         return actualTypeArguments;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public Class[] getActualClassArguments() {
+        return Lira.of(actualTypeArguments).map(TypeUtil::erase).toArray(Class.class);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public Lino<Class> getActualClassArgument() {
+        return getActualClassArgument(0);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public Lino<Class> getActualClassArgument(int index) {
+        return Lira.of(actualTypeArguments).get(index).map(TypeUtil::erase);
     }
 
     @Override
@@ -55,7 +77,7 @@ public class LiParameterizedType<T> implements ParameterizedType {
             if (ownerType instanceof LiParameterizedType) {
                 // Find simple name of nested type by removing the
                 // shared prefix with owner.
-                sb.append(rawType.getName().replace(((LiParameterizedType<?>) ownerType).rawType.getName() + "$",
+                sb.append(rawType.getName().replace(((LiParameterizedType) ownerType).rawType.getName() + "$",
                         ""));
             } else
                 sb.append(rawType.getSimpleName());

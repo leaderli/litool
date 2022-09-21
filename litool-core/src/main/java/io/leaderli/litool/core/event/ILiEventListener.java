@@ -3,7 +3,7 @@ package io.leaderli.litool.core.event;
 
 import io.leaderli.litool.core.function.OnError;
 import io.leaderli.litool.core.type.ComponentType;
-import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.core.type.TypeUtil;
 
 /**
  * Listener to listen the specific event, When {@link  LiEventBus#push(Object)} pushed event,
@@ -87,7 +87,7 @@ public interface ILiEventListener<T> extends ComponentType<T>, OnError {
     @SuppressWarnings("unchecked")
     @Override
     default Class<T> componentType() {
-        return (Class<T>) ReflectUtil.getDeclareClassHead(getClass(), ILiEventListener.class).get();
+        return (Class<T>) TypeUtil.resolve(getClass(), ILiEventListener.class).getActualClassArgument().get();
     }
 
 
