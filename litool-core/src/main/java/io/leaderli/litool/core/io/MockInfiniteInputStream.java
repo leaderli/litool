@@ -25,6 +25,7 @@ public class MockInfiniteInputStream extends InputStream {
 
     @Override
     public int read() throws IOException {
+        // don not use sleep
         return supplier.get();
     }
 
