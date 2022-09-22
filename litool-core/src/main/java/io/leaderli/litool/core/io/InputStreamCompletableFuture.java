@@ -5,8 +5,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.util.concurrent.*;
+
+import static io.leaderli.litool.core.util.ConsoleUtil.print;
 
 /**
  * @author leaderli
@@ -29,13 +30,22 @@ public class InputStreamCompletableFuture {
     }
 
     public void run() {
-        run(null);
+        CompletableFuture<Void> task = CompletableFuture.runAsync(this::read);
+        try {
+            print("task", task.get(3, TimeUnit.SECONDS));
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            e.printStackTrace();
+            print(sb.toString());
+        }
     }
 
     public void run(Executor executor) {
         CompletableFuture<Void> task = CompletableFuture.runAsync(this::read, executor);
-//        task.get()
-        System.out.println(sb);
+        try {
+            print("task", task.get());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void read() {

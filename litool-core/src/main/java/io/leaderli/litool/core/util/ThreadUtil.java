@@ -3,6 +3,7 @@ package io.leaderli.litool.core.util;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 /**
  * @author leaderli
@@ -65,6 +66,19 @@ public class ThreadUtil {
         } catch (InterruptedException ignore) {
             // ignore
         }
+    }
+
+    /**
+     * sleep a while and return a value
+     *
+     * @param timeUnit a timeUnit
+     * @param timeout  time timeout
+     * @param supplier provide a value after sleep
+     */
+    public static <T> T delay(TimeUnit timeUnit, long timeout, Supplier<T> supplier) {
+
+        sleep(timeUnit, timeout);
+        return supplier.get();
     }
 
     /**
