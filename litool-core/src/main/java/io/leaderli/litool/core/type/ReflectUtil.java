@@ -23,7 +23,7 @@ public class ReflectUtil {
      *
      * @param cls  the class
      * @param name the name of field
-     * @return {@link #getField(Class, String, boolean))
+     * @return {@link #getField(Class, String, boolean)}
      */
     public static Lino<Field> getField(Class<?> cls, String name) {
 
@@ -78,7 +78,7 @@ public class ReflectUtil {
      *
      * @param obj  the obj
      * @param name the name of field
-     * @return {@link #getFieldValue(Object, String, boolean))
+     * @return {@link #getFieldValue(Object, String, boolean)}
      */
     public static Lino<?> getFieldValue(Object obj, String name) {
 
