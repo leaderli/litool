@@ -13,7 +13,7 @@ import java.util.Random;
 public class RandomUtil {
 
     public static final String POSSIBLE_NUMBERS = "0123456789";
-    public static final String POSSIBLE_CHAR = "abcdefghijklmnopqrstuvwxyz";
+    public static final String POSSIBLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public static final String POSSIBLE_CHAR_NUMBER = POSSIBLE_CHAR + POSSIBLE_NUMBERS;
     private static final Random RANDOM = new Random();
 

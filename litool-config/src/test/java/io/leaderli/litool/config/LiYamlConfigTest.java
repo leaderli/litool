@@ -1,5 +1,6 @@
 package io.leaderli.litool.config;
 
+import io.leaderli.litool.core.lang.Shell;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,4 +41,12 @@ class LiYamlConfigTest {
         Assertions.assertTrue(LiYamlConfig.isYamlFile(new File("1.yml").toURI().toURL()));
     }
 
+
+    //    @Test
+    void shell() {
+
+        String task = (String) LiYamlConfig.loadResourcesYmlFiles("d.yml").get("task");
+
+        new Shell(new File("/")).command("/bin/bash", "-c", task);
+    }
 }

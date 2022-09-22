@@ -51,6 +51,23 @@ public class ThreadUtil {
     }
 
     /**
+     * sleep a while
+     *
+     * @param timeUnit a timeUnit
+     * @param timeout  time timeout
+     * @param runnable execute after sleep
+     */
+    @SuppressWarnings("java:S2142")
+    public static void sleep(TimeUnit timeUnit, long timeout, Runnable runnable) {
+        try {
+            timeUnit.sleep(timeout);
+            runnable.run();
+        } catch (InterruptedException ignore) {
+            // ignore
+        }
+    }
+
+    /**
      * print  current thread stack, start with 3rd stack
      *
      * @param width the print stack with

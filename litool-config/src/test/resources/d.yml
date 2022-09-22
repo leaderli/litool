@@ -1,2 +1,16 @@
-st: 'a
-bcd'
+task: |-
+  echo $PWD
+  cd ~/Downloads
+  tail -f site.xml
+  #  declare -a arr=(1 2 3 4 5 6 7 8 9)
+
+# now loop through the above array
+#  for i in "${arr[@]}"
+#  do
+#    for j in "${arr[@]}"
+#    do
+#    sleep 1
+#    echo "$i$j"
+#    # or do whatever with individual element of the array
+#    done
+#  done

@@ -17,22 +17,20 @@
 package io.leaderli.litool.core.text;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
+import io.leaderli.litool.core.io.StringReader;
 import io.leaderli.litool.core.lang.RegExUtils;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ReflectUtil;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -8669,7 +8667,7 @@ public class StringUtils implements StrPool {
      * @return a string
      */
     public static String read(InputStream inputStream) {
-        return read(inputStream, Charset.defaultCharset());
+        return new StringReader(inputStream).get();
     }
 
     /**
@@ -8680,9 +8678,7 @@ public class StringUtils implements StrPool {
      * @return a string
      */
     public static String read(InputStream inputStream, Charset charset) {
-        return new BufferedReader(
-                new InputStreamReader(inputStream, charset)).lines().collect(Collectors.joining("\n")
-        );
+        return new StringReader(inputStream, charset).get();
     }
 
     /**
@@ -8808,7 +8804,7 @@ public class StringUtils implements StrPool {
      * join elements with delimiter, if element is null, it will be regard as ''
      *
      * @param delimiter delimiter str, if {@code  null} will use {@link  LiConstant#JOIN_DELIMITER}
-     * @param stream  an stream
+     * @param stream    an stream
      * @return joined elements
      */
     public static String join(String delimiter, Stream<?> stream) {

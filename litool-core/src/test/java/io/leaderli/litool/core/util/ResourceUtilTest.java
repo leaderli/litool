@@ -88,7 +88,7 @@ class ResourceUtilTest {
                 return !file.getName().contains("$");
             }
         });
-        Assertions.assertEquals(4, resourceFile.size());
+        Assertions.assertEquals(5, resourceFile.size());
     }
 
     @Test

@@ -23,7 +23,7 @@ public abstract class BitState {
      * means
      * no permission
      */
-    private int states;
+    protected int states;
 
 
     /**
