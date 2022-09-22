@@ -35,20 +35,7 @@ class ReflectUtilTest {
     }
 
 
-    @Test
-    void testGetClass() throws NoSuchFieldException, NoSuchMethodException {
 
-        assertEquals(String.class, ReflectUtil.getType(LittleBean.class.getDeclaredField("name")));
-        assertEquals(int.class, ReflectUtil.getType(LittleBean.class.getDeclaredField("age")));
-        assertNull(ReflectUtil.getType((Field) null));
-        assertEquals(void.class, ReflectUtil.getType(LittleBean.class.getDeclaredMethod("m3")));
-
-        assertEquals(LittleBean.class, ReflectUtil.getClass(LittleBean.class.getDeclaredField("age")));
-        assertEquals(LittleBean.class, ReflectUtil.getClass(LittleBean.class.getDeclaredMethod("m3")));
-        assertEquals(LittleBean.class, ReflectUtil.getClass(LittleBean.class.getConstructor()));
-
-
-    }
 
     @Test
     void getField() {

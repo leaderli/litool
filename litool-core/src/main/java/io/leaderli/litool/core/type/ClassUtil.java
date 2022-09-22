@@ -372,39 +372,60 @@ public class ClassUtil {
         return _interface.cast(proxy);
     }
 
+    /**
+     * @param constructor the constructor
+     * @param <T>         the type of constructor
+     * @return the declare class of constructor
+     */
+    public static <T> Class<T> getClass(Constructor<T> constructor) {
 
-    public static Class<?> getRawType(Type type) {
-        if (type instanceof Class<?>) {
-            // type is a normal class.
-            return (Class<?>) type;
-
-        } else if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-
-            // I'm not exactly sure why getRawType() returns Type instead of Class.
-            // Neal isn't either but suspects some pathological case related
-            // to nested classes exists.
-            Type rawType = parameterizedType.getRawType();
-            LiAssertUtil.assertTrue(rawType instanceof Class);
-            return (Class<?>) rawType;
-
-        } else if (type instanceof GenericArrayType) {
-            Type componentType = ((GenericArrayType) type).getGenericComponentType();
-            return Array.newInstance(getRawType(componentType), 0).getClass();
-
-        } else if (type instanceof TypeVariable) {
-            // we could use the variable's bounds, but that won't work if there are multiple.
-            // having a raw type that's more general than necessary is okay
-            return Object.class;
-
-        } else if (type instanceof WildcardType) {
-            return getRawType(((WildcardType) type).getUpperBounds()[0]);
-
-        } else {
-            String className = type == null ? "null" : type.getClass().getName();
-            throw new IllegalArgumentException("Expected a Class, ParameterizedType, or GenericArrayType, but <" + type + "> is of type " + className);
+        if (constructor == null) {
+            return null;
         }
+        return constructor.getDeclaringClass();
     }
 
+    /**
+     * @param method the  method
+     * @return the declare class of method
+     */
+    public static Class<?> getClass(Method method) {
+        if (method == null) {
+            return null;
+        }
+        return method.getDeclaringClass();
+    }
 
+    /**
+     * @param field the  field
+     * @return the declare class of field
+     */
+    public static Class<?> getClass(Field field) {
+        if (field == null) {
+            return null;
+        }
+        return field.getDeclaringClass();
+    }
+
+    /**
+     * @param field the field
+     * @return the type of field
+     */
+    public static Class<?> getType(Field field) {
+        if (field == null) {
+            return null;
+        }
+        return field.getType();
+    }
+
+    /**
+     * @param method the method
+     * @return the type of  method return
+     */
+    public static Class<?> getType(Method method) {
+        if (method == null) {
+            return null;
+        }
+        return method.getReturnType();
+    }
 }

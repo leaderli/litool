@@ -6,6 +6,8 @@ import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -13,6 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author leaderli
@@ -52,15 +57,26 @@ class ClassUtilTest {
     }
 
     @Test
-    void testGetClass() {
+    void testGetClass() throws NoSuchFieldException, NoSuchMethodException {
 
         //noinspection ConstantConditions
-        Assertions.assertNull(ClassUtil.getClass(null));
+        Assertions.assertNull(ClassUtil.getClass((Method) null));
 
         Assertions.assertEquals(Integer.class, ClassUtil.getClass(1));
         Class<CharSequence> type = ClassUtil.getClass("");
         Assertions.assertNotSame(type, CharSequence.class);
         Assertions.assertSame(type, String.class);
+
+
+        assertEquals(String.class, ClassUtil.getType(ReflectUtilTest.LittleBean.class.getDeclaredField("name")));
+        assertEquals(int.class, ClassUtil.getType(ReflectUtilTest.LittleBean.class.getDeclaredField("age")));
+        assertNull(ClassUtil.getType((Field) null));
+        assertEquals(void.class, ClassUtil.getType(ReflectUtilTest.LittleBean.class.getDeclaredMethod("m3")));
+
+        assertEquals(ReflectUtilTest.LittleBean.class, ClassUtil.getClass(ReflectUtilTest.LittleBean.class.getDeclaredField("age")));
+        assertEquals(ReflectUtilTest.LittleBean.class, ClassUtil.getClass(ReflectUtilTest.LittleBean.class.getDeclaredMethod("m3")));
+        assertEquals(ReflectUtilTest.LittleBean.class, ClassUtil.getClass(ReflectUtilTest.LittleBean.class.getConstructor()));
+
 
     }
 
