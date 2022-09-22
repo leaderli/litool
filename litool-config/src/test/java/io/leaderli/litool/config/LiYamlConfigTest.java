@@ -1,5 +1,6 @@
 package io.leaderli.litool.config;
 
+import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.lang.Shell;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,8 +46,14 @@ class LiYamlConfigTest {
     //    @Test
     void shell() {
 
-        String task = (String) LiYamlConfig.loadResourcesYmlFiles("d.yml").get("task");
+        String task = (String) LiYamlConfig.loadResourcesYmlFiles("d.yml", "d_win.yml").get("task");
 
-        new Shell(new File("/")).command("/bin/bash", "-c", task);
+        System.out.println(task);
+        String bash = "/bin/bash";
+        if (FileNameUtil.isWindows()) {
+
+            bash = "\"D:\\ProgramFiles\\Git\\bin\\bash.exe\"";
+        }
+        new Shell(new File("/")).command(bash, "-c", task);
     }
 }

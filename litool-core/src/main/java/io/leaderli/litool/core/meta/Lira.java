@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.Generators;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.NoneItr;
@@ -263,7 +264,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Iterator<T> nullableIterator();
 
     /**
-     * will only remain at most n element
+     * will only remain at most n element, should be aware of the {@link Generator} will lost the last element.
      *
      * @param max the limit of max element
      * @return a new lira

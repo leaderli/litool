@@ -13,12 +13,12 @@ public class ThreadUtil {
 
 
     /**
-     * sleep some second
+     * sleep some millis
      *
-     * @param second second of {@link  TimeUnit#SECONDS}
+     * @param millis millis of {@link  TimeUnit#SECONDS}
      */
-    public static void sleep(long second) {
-        sleep(TimeUnit.SECONDS, second);
+    public static void sleep(long millis) {
+        sleep(TimeUnit.MILLISECONDS, millis);
     }
 
     public static void sleep1s(Object... msgs) {
@@ -26,13 +26,13 @@ public class ThreadUtil {
     }
 
     /**
-     * sleep some second
+     * sleep some millis
      *
-     * @param second   second of {@link  TimeUnit#SECONDS}
+     * @param millis   millis of {@link  TimeUnit#SECONDS}
      * @param runnable execute after sleep
      */
-    public static void sleep(long second, Runnable runnable) {
-        sleep(TimeUnit.SECONDS, second);
+    public static void sleep(long millis, Runnable runnable) {
+        sleep(TimeUnit.MILLISECONDS, millis);
         runnable.run();
     }
 
@@ -91,6 +91,15 @@ public class ThreadUtil {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         for (int i = 2; i < width + 2; i++) {
             System.out.println(stackTrace[i]);
+        }
+    }
+
+    @SuppressWarnings("java:S2142")
+    public static void join() {
+        try {
+            Thread.currentThread().join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

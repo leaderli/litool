@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.io;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -12,16 +13,14 @@ import java.io.InputStreamReader;
  */
 class MockInfiniteInputStreamTest {
 
+
     @Test
     void read() throws IOException {
 
-
         MockInfiniteInputStream mockInputStream = new MockInfiniteInputStream();
 
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(mockInputStream));
+        Assertions.assertNotNull(new BufferedReader(new InputStreamReader(mockInputStream)).readLine());
 
-        System.out.println("---");
-//        System.out.println(bufferedReader.readLine());
     }
 
 }

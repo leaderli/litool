@@ -1,13 +1,13 @@
 package io.leaderli.litool.core.io;
 
+import io.leaderli.litool.core.util.ConsoleUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.util.concurrent.*;
-
-import static io.leaderli.litool.core.util.ConsoleUtil.print;
 
 /**
  * @author leaderli
@@ -30,32 +30,35 @@ public class InputStreamCompletableFuture {
     }
 
     public void run() {
-        CompletableFuture<Void> task = CompletableFuture.runAsync(this::read);
+        CompletableFuture<String> task = CompletableFuture.supplyAsync(this::read);
         try {
-            print("task", task.get(3, TimeUnit.SECONDS));
+            ConsoleUtil.print("task", task.get(3, TimeUnit.SECONDS));
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             e.printStackTrace();
-            print(sb.toString());
+            synchronized (sb) {
+                ConsoleUtil.print(sb.toString());
+            }
+        }
+    }
+
+    public String read() {
+        try (InputStreamReader reader = new InputStreamReader(this.inputStream, charset)) {
+            int read;
+            while ((read = inputStream.read()) != -1) {
+                sb.append((char) read);
+            }
+            return sb.toString();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
     public void run(Executor executor) {
         CompletableFuture<Void> task = CompletableFuture.runAsync(this::read, executor);
         try {
-            print("task", task.get());
+            ConsoleUtil.print("task", task.get());
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public void read() {
-        try (InputStreamReader reader = new InputStreamReader(this.inputStream, charset)) {
-            int read;
-            while ((read = inputStream.read()) != -1) {
-                sb.append((char) read);
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         }
     }
 

@@ -35,8 +35,6 @@ class ReflectUtilTest {
     }
 
 
-
-
     @Test
     void getField() {
 
@@ -145,7 +143,7 @@ class ReflectUtilTest {
 
 
     @Test
-    void findAnnotationsWithMark() {
+    void findAnnotationsWithMetaAnnotation() {
 
 
         assertEquals(2, ReflectUtil.findAnnotationsWithMetaAnnotation(TestBean.class, API.class).size());

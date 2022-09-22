@@ -11,10 +11,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static io.leaderli.litool.core.util.ConsoleUtil.line;
-import static io.leaderli.litool.core.util.ConsoleUtil.print;
 
 /**
  * @author leaderli
@@ -28,7 +28,6 @@ public class Shell extends BitState {
     final StringBuffer sb = new StringBuffer();
     private final File workDir;
     private final Charset charset;
-    private boolean cancel;
 
     public Shell(File workDir) {
         this(workDir, Charset.defaultCharset());
@@ -82,45 +81,31 @@ public class Shell extends BitState {
             new Thread(() -> {
 
                 LiBox<Integer> count = LiBox.of(0);
-                for (; ; )
-                    ThreadUtil.sleep(1, () -> {
-                        synchronized (sb) {
+                for (; ; ) {
 
+                    synchronized (sb) {
 
-                            count.value(count.value() + 1);
-                            if (count.value() == 5) {
-                                try {
-
-                                    futureTask.cancel(true);
-                                } catch (Throwable throwable) {
-                                    System.out.println("123");
-                                }
-                            }
-                            print("try", count.value());
-                            if (sb.length() > 0) {
-                                print("t", sb.toString());
-                                sb.setLength(0);
-                            }
+                        if (sb.length() > 0) {
+                            System.out.print(sb);
+                            sb.setLength(0);
                         }
-                    });
-            }).start();
-            try {
+                    }
+                    ThreadUtil.sleep(TimeUnit.MILLISECONDS, 500, () -> System.out.println(count));
+                }
 
-                print("get:", futureTask.get(1, TimeUnit.SECONDS));
-            } catch (Throwable throwable) {
-                System.out.println("---cancel" + " " + throwable);
-            }
+            }).start();
+
 
             line();
-//            for (Integer integer : Lira.range().limit(100)) {
-//
-//                ThreadUtil.sleep(1, () -> System.out.println(integer));
-//            }
+            futureTask.get();
 
+            ThreadUtil.join();
 
         } catch (IOException e) {
             enable(ERROR);
             e.printStackTrace();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
     }
