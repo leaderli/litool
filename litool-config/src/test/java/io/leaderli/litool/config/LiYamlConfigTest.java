@@ -1,5 +1,6 @@
 package io.leaderli.litool.config;
 
+import io.leaderli.litool.core.concurrent.CatchFuture;
 import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.lang.Shell;
 import org.junit.jupiter.api.Assertions;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author leaderli
@@ -54,6 +56,15 @@ class LiYamlConfigTest {
 
             bash = "\"D:\\ProgramFiles\\Git\\bin\\bash.exe\"";
         }
-        new Shell(new File("/")).command(bash, "-c", task);
+        CatchFuture<String> command = new Shell(new File("/")).command(bash, "-c", task);
+        System.out.println(command);
+
+        while (!command.isDone()) {
+            String x = command.get(100, TimeUnit.MILLISECONDS);
+            if (!x.isEmpty()) {
+
+                System.out.println(x);
+            }
+        }
     }
 }

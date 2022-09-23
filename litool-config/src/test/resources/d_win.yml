@@ -1,6 +1,7 @@
 task: |-
   tmp=`mktemp`
   echo $tmp > $tmp
+  echo $tmp
   tail -f $tmp
 
 # now loop through the above array
