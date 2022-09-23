@@ -101,6 +101,8 @@ public class ConsoleUtil {
 
     /**
      * simple print a line
+     *
+     * @param logo the badge
      */
     public static void line(Object logo) {
 

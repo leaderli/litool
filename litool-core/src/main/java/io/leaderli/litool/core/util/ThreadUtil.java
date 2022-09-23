@@ -69,11 +69,11 @@ public class ThreadUtil {
     }
 
     /**
-     * sleep a while and return a value
-     *
      * @param timeUnit a timeUnit
      * @param timeout  time timeout
+     * @param <T>      the type of supplier
      * @param supplier provide a value after sleep
+     * @return sleep a while and return a value
      */
     public static <T> T delay(TimeUnit timeUnit, long timeout, Supplier<T> supplier) {
 

@@ -326,20 +326,17 @@ public class ReflectUtil {
      * eg:
      * will exclude {@code NotNulls}
      * <pre>
-     * {@code
-     * @Retention(RetentionPolicy.RUNTIME)
-     * @Target(ElementType.TYPE)
-     * @Repeatable(NotNulls.class)
-     * @interface NotNull {
+     * {@code @Retention(RetentionPolicy.RUNTIME)}
+     * {@code @Target(ElementType.TYPE)}
+     * {@code @Repeatable(NotNulls.class)}
+     * {@code @interface} NotNull {
      *  String value();
      * }
-     *
-     * @Retention(RetentionPolicy.RUNTIME)
-     * @Target(ElementType.TYPE)
-     * @interface NotNulls {
+     * {@code @Retention(RetentionPolicy.RUNTIME)}
+     * {@code @Target(ElementType.TYPE)}
+     * {@code @interface} NotNulls {
      *  NotNull[] value();
      *  String name() default "";
-     * }
      * }
      * </pre>
      * @see io.leaderli.litool.core.util.BooleanUtil#parse(Boolean)
