@@ -4,17 +4,14 @@ import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.util.RandomUtil;
 import io.leaderli.litool.core.util.ThreadUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
-import static io.leaderli.litool.core.util.ConsoleUtil.line;
-import static io.leaderli.litool.core.util.ConsoleUtil.print;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author leaderli
@@ -24,7 +21,7 @@ class InputStreamCompletableFutureTest {
 
 
     @Test
-    void test() throws ExecutionException, InterruptedException, TimeoutException {
+    void test() {
 
 
         List<Byte> bytes = new ArrayList<>();
@@ -48,15 +45,13 @@ class InputStreamCompletableFutureTest {
 
         while (!fu.isDone()) {
 
-
-            print("fu", fu.get(500, MILLISECONDS));
+            fu.get(10, TimeUnit.MILLISECONDS);
             if (RandomUtil.shunt(5)) {
                 fu.cancel(true);
             }
-            line();
         }
-//        Assertions.assertTrue(fu.read().length() > 0);
-        line("end ");
+        Assertions.assertTrue(fu.isDone());
+        Assertions.assertThrows(CancellationException.class, fu::get);
 
     }
 

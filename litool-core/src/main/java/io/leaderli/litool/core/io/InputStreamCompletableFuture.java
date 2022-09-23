@@ -1,20 +1,31 @@
 package io.leaderli.litool.core.io;
 
+import io.leaderli.litool.core.concurrent.CatchFuture;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
+ * {@link  CatchFuture} provide {@link  CatchFuture#get()}, {@link CatchFuture#get(long, TimeUnit)}
+ * to get the script stdout, stderr.  some script suck as {@code  'tail -f xxx'} will never stop.
+ * so it's should use {@link  CatchFuture#get(long, TimeUnit)} to get arrived inputStream. when continue
+ * use this method, will get the next arrived inputStream. {@link  CatchFuture#get()} will always get
+ * the full inputStream content
+ *
  * @author leaderli
  * @since 2022/9/22 3:19 PM
  */
-public class InputStreamCompletableFuture implements Future<String> {
+public class InputStreamCompletableFuture implements CatchFuture<String> {
 
     private final StringBuffer sb = new StringBuffer();
-    final Object lock = new Object();
+    private int index;
 
     public InputStreamCompletableFuture(InputStream inputStream) {
         this(inputStream, Charset.defaultCharset());
@@ -31,19 +42,12 @@ public class InputStreamCompletableFuture implements Future<String> {
         try (InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
             int read;
             while ((read = inputStream.read()) != -1) {
-                synchronized (lock) {
-                    if ((char) read == ',') {
-                        lock.notify();
-                    }
-                    sb.append((char) read);
-                }
+                sb.append((char) read);
             }
-//            print("notify all");
-            lock.notify();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     @Override
@@ -64,28 +68,29 @@ public class InputStreamCompletableFuture implements Future<String> {
     }
 
     @Override
-    public String get() throws ExecutionException, InterruptedException {
+    public String get() {
 
-        return task.get();
+        try {
+            return task.get();
+        } catch (InterruptedException | ExecutionException e) {
+            return sb.toString().trim();
+        }
     }
 
     @Override
-    public String get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public String get(long timeout, TimeUnit unit) {
         try {
             return task.get(timeout, unit);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            String result;
-            synchronized (lock) {
-                if (!task.isDone() && !sb.toString().endsWith(",")) {
-                    lock.wait();
-                }
-            }
+        } catch (ExecutionException | TimeoutException | InterruptedException e) {
             synchronized (sb) {
-
-                result = sb.toString();
-                sb.setLength(0);
+                String result = sb.substring(index);
+                index = sb.length();
+                if (index < 0) {
+                    index = 0;
+                    sb.setLength(0);
+                }
+                return result.trim();
             }
-            return "timeout:" + result;
 
         }
     }

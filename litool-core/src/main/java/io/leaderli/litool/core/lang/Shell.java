@@ -1,33 +1,24 @@
 package io.leaderli.litool.core.lang;
 
-import io.leaderli.litool.core.bit.BitState;
+import io.leaderli.litool.core.concurrent.CatchFuture;
+import io.leaderli.litool.core.concurrent.CompletedCatchFuture;
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.meta.LiBox;
-import io.leaderli.litool.core.util.ThreadUtil;
+import io.leaderli.litool.core.io.InputStreamCompletableFuture;
+import io.leaderli.litool.core.meta.LiConstant;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import static io.leaderli.litool.core.util.ConsoleUtil.line;
 
 /**
  * @author leaderli
  * @since 2022/9/22 8:46 AM
  */
-public class Shell extends BitState {
+public class Shell {
 
-    public static final int INIT = 0;
-    public static final int SUCCESS = 1;
-    public static final int ERROR = 1 << 1;
-    final StringBuffer sb = new StringBuffer();
     private final File workDir;
     private final Charset charset;
+
 
     public Shell(File workDir) {
         this(workDir, Charset.defaultCharset());
@@ -43,11 +34,26 @@ public class Shell extends BitState {
         this(null, Charset.defaultCharset());
     }
 
-    public void command(String... commands) {
+    /**
+     * @param command the bash script content
+     * @return call {@link #command(String...)}  as {@code  command("sh", "-c", command)}
+     */
+    public CatchFuture<String> bash(String command) {
+        return command(LiConstant.BASH, "-c", command);
+    }
+
+    /**
+     * @param commands the script, the first parameter should be the program,
+     *                 such as {@code  "/bin/bash"}, {@code  "/usr/local/python3"}
+     * @return a {@link  InputStreamCompletableFuture} , or {@link  CompletedCatchFuture} if the {@link  Process} build error
+     */
+    public CatchFuture<String> command(String... commands) {
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory(this.workDir);
+        processBuilder.redirectErrorStream(true);
         processBuilder.command(commands);
+
 
         try {
             Process process = processBuilder.start();
@@ -56,56 +62,10 @@ public class Shell extends BitState {
                 outputStream.flush();
             }
 
+            return new InputStreamCompletableFuture(process.getInputStream(), charset);
 
-            CompletableFuture<String> futureTask = CompletableFuture.supplyAsync(
-
-                    () -> {
-
-                        try {
-                            InputStreamReader inputStream = new InputStreamReader(process.getInputStream(), Charset.defaultCharset());
-
-
-                            while (true) {
-                                int read = inputStream.read();
-                                if (read == -1) break;
-                                sb.append((char) read);
-                            }
-                        } catch (final Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        return sb.toString();
-                    });
-
-
-            new Thread(() -> {
-
-                LiBox<Integer> count = LiBox.of(0);
-                for (; ; ) {
-
-                    synchronized (sb) {
-
-                        if (sb.length() > 0) {
-                            System.out.print(sb);
-                            sb.setLength(0);
-                        }
-                    }
-                    ThreadUtil.sleep(TimeUnit.MILLISECONDS, 500, () -> System.out.println(count));
-                }
-
-            }).start();
-
-
-            line();
-            futureTask.get();
-
-            ThreadUtil.join();
-
-        } catch (IOException e) {
-            enable(ERROR);
-            e.printStackTrace();
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (Throwable e) {
+            return new CompletedCatchFuture<>("", e);
         }
 
     }

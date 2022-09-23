@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 public class LiConstant {
 
 
+    public static final String BASH = "sh";
     /**
      * the default delimiter of
      * {@link  StringUtils#join(String, Iterable)}
