@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://opensource.org/licenses/Apache-2.0) [![Maven Package](https://github.com/leaderli/litool/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/leaderli/litool/actions/workflows/maven-publish.yml)
 
 # litool
 
