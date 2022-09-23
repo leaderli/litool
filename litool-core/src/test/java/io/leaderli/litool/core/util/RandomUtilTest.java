@@ -11,6 +11,21 @@ class RandomUtilTest {
 
 
     @Test
+    void shunt() {
+
+        Assertions.assertTrue(RandomUtil.shunt(1));
+
+        boolean flag = true;
+        for (int i = 0; i < 10; i++) {
+            flag = RandomUtil.shunt(100);
+            if (!flag) {
+                break;
+            }
+        }
+        Assertions.assertFalse(flag);
+    }
+
+    @Test
     void nextInt() {
 
         Assertions.assertSame(0, RandomUtil.nextInt(1));

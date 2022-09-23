@@ -92,4 +92,12 @@ public class RandomUtil {
         return min + nextInt(max - min);
     }
 
+    /**
+     * @param hit probability hit
+     * @return 1/hit probability hit
+     */
+    public static boolean shunt(int hit) {
+        return nextInt(hit) == 0;
+    }
+
 }

@@ -264,7 +264,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Iterator<T> nullableIterator();
 
     /**
-     * will only remain at most n element, should be aware of the {@link Generator} will lost the last element.
+     * will only remain at most n element, should be aware of
+     * the {@link Generator} will drop the limit element. when
      *
      * @param max the limit of max element
      * @return a new lira

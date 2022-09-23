@@ -100,6 +100,15 @@ public class ConsoleUtil {
 
 
     /**
+     * simple print a line
+     */
+    public static void line(Object logo) {
+
+        CONSOLE.println(StringUtils.just(logo.toString(), 60, '-'));
+
+    }
+
+    /**
      * print formatted message, format rule is {@link  MessageFormat#format(String, Object...)}
      *
      * @param pattern   the message format
