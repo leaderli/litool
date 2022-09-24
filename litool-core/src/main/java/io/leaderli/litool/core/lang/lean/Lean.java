@@ -3,14 +3,13 @@ package io.leaderli.litool.core.lang.lean;
 import io.leaderli.litool.core.lang.BeanPath;
 import io.leaderli.litool.core.text.StringConvert;
 import io.leaderli.litool.core.type.ClassUtil;
+import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.type.TypeUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
-import static io.leaderli.litool.core.util.ConsoleUtil.print;
 
 /**
  * @author leaderli
@@ -20,23 +19,38 @@ public class Lean {
 
     private final List<TypeAdapterFactory> factories = new ArrayList<>();
 
-    public static <T> T parser(Object o, Class<T> parser) {
-        T instance = ReflectUtil.newInstance(parser).get();
-        populate(instance, o);
-        return instance;
+    public Lean() {
+
+        factories.add(TypeAdapters.INTEGER_FACTORY);
+        factories.add(TypeAdapters.STRING_FACTORY);
+//        factories.add(TypeAdapters.INTEGER_FACTORY);
     }
 
-    public static void populate(Object bean, Object properties) {
+    public <T> T parser(Object o, Class<T> parser) {
+        for (TypeAdapterFactory factory : factories) {
+            TypeAdapter<T> typeAdapter = factory.create(this, LiTypeToken.get(parser));
+            if (typeAdapter != null) {
+                return typeAdapter.read(o);
+            }
+        }
+
+        return ReflectUtil.newInstance(parser)
+                .ifPresent(bean -> populate(bean, o))
+                .get();
+
+
+    }
+
+    public void populate(Object bean, Object properties) {
 
         for (Field field : ReflectUtil.getFields(bean.getClass())) {
-            BeanPath.parse(properties, field.getName()).ifPresent(value -> {
-                print(field.getName(), value);
-                populate(bean, field, value);
-            });
+            BeanPath.parse(properties, field.getName())
+                    .map(value -> parser(value, field.getType()))
+                    .ifPresent(v -> ReflectUtil.setFieldValue(bean, field, v));
         }
     }
 
-    public static void populate(Object bean, Field field, Object value) {
+    public void populate(Object bean, Field field, Object value) {
 
         if (value != null) {
             Class<?> type = ClassUtil.getType(field);

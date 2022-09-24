@@ -21,7 +21,8 @@ class LeanTest {
         Gson gson = new Gson();
 
         Map map = gson.fromJson("{\"name\":\"1\",\"bean\": {\"name\": \"2\"},\"beans\": [{\"name\": \"3\"}]}", Map.class);
-        Bean1 parser = Lean.parser(map, Bean1.class);
+        Lean lean = new Lean();
+        Bean1 parser = lean.parser(map, Bean1.class);
 
         print(gson.toJson(parser));
 //        System.out.println(parser.beans.get(0).name);
