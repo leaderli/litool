@@ -10,6 +10,8 @@ import io.leaderli.litool.core.type.TypeUtil;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author leaderli
@@ -18,12 +20,27 @@ import java.util.List;
 public class Lean {
 
     private final List<TypeAdapterFactory> factories = new ArrayList<>();
+    private static final LiTypeToken<?> NULL_KEY_SURROGATE = LiTypeToken.get(Object.class);
+    private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenCache = new ConcurrentHashMap<>();
 
     public Lean() {
 
         factories.add(TypeAdapters.INTEGER_FACTORY);
         factories.add(TypeAdapters.STRING_FACTORY);
+
 //        factories.add(TypeAdapters.INTEGER_FACTORY);
+    }
+
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
+    public <T> TypeAdapter<T> getAdapter(LiTypeToken<T> type) {
+        TypeAdapter<?> cached = typeTokenCache.get(type == null || type.getRawType() == null ? NULL_KEY_SURROGATE : type);
+        if (cached != null) {
+            return (TypeAdapter<T>) cached;
+        }
+        return obj -> (T) ReflectUtil.newInstance(type.getRawType())
+                .ifPresent(bean -> populate(bean, obj))
+                .get();
+
     }
 
     public <T> T parser(Object o, Class<T> parser) {
@@ -34,9 +51,7 @@ public class Lean {
             }
         }
 
-        return ReflectUtil.newInstance(parser)
-                .ifPresent(bean -> populate(bean, o))
-                .get();
+        return null;
 
 
     }

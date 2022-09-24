@@ -2,8 +2,11 @@ package io.leaderli.litool.core.lang;
 
 import com.google.gson.Gson;
 import io.leaderli.litool.core.lang.lean.Lean;
+import io.leaderli.litool.core.lang.lean.TypeAdapter;
+import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +17,15 @@ import static io.leaderli.litool.core.util.ConsoleUtil.print;
  * @since 2022/9/24 9:41 AM
  */
 class LeanTest {
+
+    @Test
+    void test3() {
+        Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenCache = new HashMap<>();
+
+        typeTokenCache.put(null, null);
+        System.out.println(typeTokenCache.get(null));
+
+    }
 
     @SuppressWarnings("rawtypes")
     @Test
