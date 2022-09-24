@@ -19,8 +19,8 @@ class ShellTest {
     void bash() throws ExecutionException, InterruptedException, TimeoutException {
 
         Future<String> command = new Shell().bash("123");
-        Assertions.assertEquals("sh: 123: command not found", command.get());
-        Assertions.assertEquals("sh: 123: command not found", command.get());
+        Assertions.assertTrue(command.get().contains("not found"));
+        Assertions.assertTrue(command.get().contains("not found"));
 
 
         command = new Shell().bash("echo 123 && sleep 1 && echo 456 && sleep 1");

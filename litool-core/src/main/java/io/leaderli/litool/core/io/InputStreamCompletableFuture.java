@@ -24,7 +24,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class InputStreamCompletableFuture implements CatchFuture<String> {
 
-    private final StringBuffer sb = new StringBuffer();
+    private final StringBuffer buffer = new StringBuffer();
     private int index;
 
     public InputStreamCompletableFuture(InputStream inputStream) {
@@ -42,12 +42,12 @@ public class InputStreamCompletableFuture implements CatchFuture<String> {
         try (InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
             int read;
             while ((read = inputStream.read()) != -1) {
-                sb.append((char) read);
+                buffer.append((char) read);
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        return sb.toString().trim();
+        return buffer.toString().trim();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class InputStreamCompletableFuture implements CatchFuture<String> {
         try {
             return task.get();
         } catch (InterruptedException | ExecutionException e) {
-            return sb.toString().trim();
+            return buffer.toString().trim();
         }
     }
 
@@ -82,12 +82,12 @@ public class InputStreamCompletableFuture implements CatchFuture<String> {
         try {
             return task.get(timeout, unit);
         } catch (ExecutionException | TimeoutException | InterruptedException e) {
-            synchronized (sb) {
-                String result = sb.substring(index);
-                index = sb.length();
+            synchronized (buffer) {
+                String result = buffer.substring(index);
+                index = buffer.length();
                 if (index < 0) {
                     index = 0;
-                    sb.setLength(0);
+                    buffer.setLength(0);
                 }
                 return result.trim();
             }
