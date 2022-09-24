@@ -17,7 +17,15 @@ class LiParameterizedTypeTest {
     @Test
     void test() {
 
+
+    }
+
+    @Test
+    void make() {
+
         LiParameterizedType make = LiParameterizedType.make(Consumer.class);
+
+
         assertEquals("java.util.function.Consumer<T>", make.toString());
         make = LiParameterizedType.make(Consumer.class, null, String.class);
         assertEquals("java.util.function.Consumer<java.lang.String>", make.toString());

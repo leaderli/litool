@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.test;
 
+import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
@@ -27,8 +28,8 @@ public class CartesianUtil {
             if (value == ObjectCartesian.class) {
                 return true;
             }
-            Class<?> cartesianFunction2GenericType = TypeUtil.resolve(value,
-                    CartesianFunction.class).getActualClassArgument(1).get();
+            Lino<Class<?>> actualClassArgument = TypeUtil.resolve(value, CartesianFunction.class).getActualClassArgument(1);
+            Class<?> cartesianFunction2GenericType = actualClassArgument.get();
             return cartesianFunction2GenericType == ClassUtil.primitiveToWrapper(type);
         }).first().map(an -> {
 

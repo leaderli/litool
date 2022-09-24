@@ -82,8 +82,7 @@ public class TypeUtil {
      * @param type the type
      * @return the type raw class
      */
-    @SuppressWarnings("rawtypes")
-    public static Class erase(Type type) {
+    public static Class<?> erase(Type type) {
         if (type instanceof Class) {
             return (Class<?>) type;
         }

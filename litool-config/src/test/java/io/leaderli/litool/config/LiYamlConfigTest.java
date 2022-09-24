@@ -1,7 +1,7 @@
 package io.leaderli.litool.config;
 
 import io.leaderli.litool.core.concurrent.CatchFuture;
-import io.leaderli.litool.core.io.FileNameUtil;
+import io.leaderli.litool.core.env.OSInfo;
 import io.leaderli.litool.core.lang.Shell;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,14 +45,20 @@ class LiYamlConfigTest {
     }
 
 
-    //    @Test
+    @Test
     void shell() {
+        String[] configs = new String[]{"d.yml"};
 
-        String task = (String) LiYamlConfig.loadResourcesYmlFiles("d.yml", "d_win.yml").get("task");
+        if (OSInfo.isWindows()) {
+
+            configs = new String[]{"d.yml", "d_win.yml"};
+        }
+        String task = (String) LiYamlConfig.loadResourcesYmlFiles(configs).get("task");
+
 
         System.out.println(task);
         String bash = "/bin/bash";
-        if (FileNameUtil.isWindows()) {
+        if (OSInfo.isWindows()) {
 
             bash = "\"D:\\ProgramFiles\\Git\\bin\\bash.exe\"";
         }

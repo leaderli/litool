@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static io.leaderli.litool.core.util.ConsoleUtil.println;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -17,6 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SuppressWarnings("ALL")
 class TypeUtilTest {
+
+    @Test
+    void test() throws NoSuchFieldException {
+
+        ArrayList<String> strings = new ArrayList<>();
+
+        println(strings.getClass().getDeclaredMethods());
+
+    }
 
     @Test
     void isUnknown() {

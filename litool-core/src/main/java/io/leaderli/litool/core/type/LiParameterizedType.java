@@ -41,19 +41,18 @@ public class LiParameterizedType implements ParameterizedType {
         return actualTypeArguments;
     }
 
-    @SuppressWarnings("rawtypes")
-    public Class[] getActualClassArguments() {
-        return Lira.of(actualTypeArguments).map(TypeUtil::erase).toArray(Class.class);
+    public Class<?>[] getActualClassArguments() {
+        return Lira.of(actualTypeArguments).map(TypeUtil::erase)
+                .cast(Class.class)
+                .toArray(Class.class);
     }
 
-    @SuppressWarnings("rawtypes")
-    public Lino<Class> getActualClassArgument(int index) {
-        return Lira.of(actualTypeArguments).get(index).map(TypeUtil::erase);
-    }
-
-    @SuppressWarnings("rawtypes")
-    public Lino<Class> getActualClassArgument() {
+    public Lino<Class<?>> getActualClassArgument() {
         return getActualClassArgument(0);
+    }
+
+    public Lino<Class<?>> getActualClassArgument(int index) {
+        return Lira.of(actualTypeArguments).get(index).map(TypeUtil::erase);
     }
 
     @Override

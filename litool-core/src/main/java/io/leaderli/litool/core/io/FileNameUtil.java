@@ -161,13 +161,5 @@ public class FileNameUtil {
         return StringUtils.equalsAnyIgnoreCase(extName(fileName), extNames);
     }
 
-    /**
-     * Return Whether it is a Windows environment
-     *
-     * @return Whether it is a Windows environment
-     */
-    public static boolean isWindows() {
-        return WINDOWS_SEPARATOR == File.separatorChar;
-    }
-// -------------------------------------------------------------------------------------------- name end
+    // -------------------------------------------------------------------------------------------- name end
 }
