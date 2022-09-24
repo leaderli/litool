@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.lang;
 
 import com.google.gson.Gson;
+import io.leaderli.litool.core.lang.lean.Lean;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import static io.leaderli.litool.core.util.ConsoleUtil.print;
  * @author leaderli
  * @since 2022/9/24 9:41 AM
  */
-class BeanUtilTest {
+class LeanTest {
 
     @SuppressWarnings("rawtypes")
     @Test
@@ -20,10 +21,10 @@ class BeanUtilTest {
         Gson gson = new Gson();
 
         Map map = gson.fromJson("{\"name\":\"1\",\"bean\": {\"name\": \"2\"},\"beans\": [{\"name\": \"3\"}]}", Map.class);
-        Bean1 parser = BeanUtil.parser(map, Bean1.class);
+        Bean1 parser = Lean.parser(map, Bean1.class);
 
         print(gson.toJson(parser));
-        System.out.println(parser.beans.get(0).name);
+//        System.out.println(parser.beans.get(0).name);
     }
 
     @Test

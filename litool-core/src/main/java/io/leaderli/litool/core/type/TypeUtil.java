@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.type;
 
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lira;
 
 import java.lang.reflect.*;
@@ -83,33 +84,41 @@ public class TypeUtil {
      * @return the type raw class
      */
     public static Class<?> erase(Type type) {
-        if (type instanceof Class) {
+        if (type instanceof Class<?>) {
+            // type is a normal class.
             return (Class<?>) type;
-        }
-        if (type instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType) type;
-            return (Class<?>) pt.getRawType();
-        }
-        if (type instanceof TypeVariable) {
-            TypeVariable<?> tv = (TypeVariable<?>) type;
-            Type[] bounds = tv.getBounds();
-            return (0 < bounds.length) ? erase(bounds[0]) : Object.class;
-        }
-        if (type instanceof WildcardType) {
-            WildcardType wt = (WildcardType) type;
-            Type[] bounds = wt.getUpperBounds();
-            return (0 < bounds.length) ? erase(bounds[0]) : Object.class;
-        }
-        if (type instanceof GenericArrayType) {
-            GenericArrayType gat = (GenericArrayType) type;
-            return Array.newInstance(erase(gat.getGenericComponentType()), 0).getClass();
-        }
-        if (type == null) {
-            return null;
-        }
-        throw new IllegalArgumentException("Unknown Type kind: " + type.getClass());
-    }
 
+        } else if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+
+            // I'm not exactly sure why getRawType() returns Type instead of Class.
+            // Neal isn't either but suspects some pathological case related
+            // to nested classes exists.
+            Type rawType = parameterizedType.getRawType();
+            LiAssertUtil.assertTrue(rawType instanceof Class);
+            return (Class<?>) rawType;
+
+        } else if (type instanceof GenericArrayType) {
+            Type componentType = ((GenericArrayType) type).getGenericComponentType();
+            return Array.newInstance(erase(componentType), 0).getClass();
+
+        } else if (type instanceof TypeVariable) {
+            // we could use the variable's bounds, but that won't work if there are multiple.
+            // having a raw type that's more general than necessary is okay
+            return erase(((TypeVariable<?>) type).getBounds()[0]);
+
+        } else if (type instanceof WildcardType) {
+            return erase(((WildcardType) type).getUpperBounds()[0]);
+
+        } else if (type == null) {
+            return null;
+        } else {
+            String className = type.getClass().getName();
+            throw new IllegalArgumentException("Expected a Class, ParameterizedType, or "
+                    + "GenericArrayType, but <" + type + "> is of type " + className);
+        }
+
+    }
 
     private static Type resolve(Type type, Map<TypeVariable<?>, Type> visitedTypeVariables) {
 

@@ -22,18 +22,17 @@ public enum PrimitiveEnum {
     VOID(null, Void.TYPE, Void.class),
     OBJECT(null, null, null);
 
+    public static final PrimitiveEnum[] PRIMITIVES;
     static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>();
     static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>();
 
     static {
 
-        Arrays.stream(values())
-                .filter(e -> e != OBJECT)
-                .forEach(tu -> {
-
-                    PRIMITIVE_WRAPPER_MAP.put(tu.primitive, tu.wrapper);
-                    WRAPPER_PRIMITIVE_MAP.put(tu.wrapper, tu.primitive);
-                });
+        PRIMITIVES = Arrays.stream(values()).filter(e -> e != OBJECT).toArray(PrimitiveEnum[]::new);
+        for (PrimitiveEnum tu : PRIMITIVES) {
+            PRIMITIVE_WRAPPER_MAP.put(tu.primitive, tu.wrapper);
+            WRAPPER_PRIMITIVE_MAP.put(tu.wrapper, tu.primitive);
+        }
 
     }
 
@@ -147,7 +146,6 @@ public enum PrimitiveEnum {
     public static <T> T zero_value(Class<T> type) {
         return (T) get(type).zero_value;
     }
-
 
     @SuppressWarnings("all")
     static class PrimitiveZeroValue {
