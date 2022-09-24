@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
+import io.leaderli.litool.core.internal.ReflectionAccessor;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
@@ -18,6 +19,9 @@ import java.util.function.Function;
  * @since 2022/7/12
  */
 public class ReflectUtil {
+
+    private static final ReflectionAccessor REFLECTION_ACCESSOR = ReflectionAccessor.getInstance();
+
     /**
      * onlyCurrentClass = false
      *
@@ -125,7 +129,7 @@ public class ReflectUtil {
 
     public static void setAccessible(AccessibleObject obj) {
         if (obj != null) {
-            obj.setAccessible(true);
+            REFLECTION_ACCESSOR.makeAccessible(obj);
         }
     }
 

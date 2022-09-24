@@ -2,9 +2,13 @@ package io.leaderli.litool.core.type;
 
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.internal.GenericArrayTypeImpl;
+import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
+import io.leaderli.litool.core.internal.WildcardTypeImpl;
 import io.leaderli.litool.core.meta.Lira;
 
 import java.lang.reflect.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -28,56 +32,6 @@ public class TypeUtil {
         return null == type || type instanceof TypeVariable;
     }
 
-
-    /**
-     * Return two TypeVariable typeName is equals
-     *
-     * @param left  a TypeVariable
-     * @param right a TypeVariable
-     * @return two TypeVariable typeName is equals
-     */
-    private static boolean equals(TypeVariable<?> left, TypeVariable<?> right) {
-        return Objects.equals(left.getTypeName(), right.getTypeName());
-    }
-
-
-    private static boolean equals(ParameterizedType left, ParameterizedType right) {
-
-        if (left.getRawType() == right.getRawType()) {
-
-            Type[] leftActualTypeArguments = left.getActualTypeArguments();
-            Type[] rightActualTypeArguments = right.getActualTypeArguments();
-            if (leftActualTypeArguments.length != rightActualTypeArguments.length) {
-                return false;
-            }
-
-            for (int i = 0; i < leftActualTypeArguments.length; i++) {
-                if (!equals(leftActualTypeArguments[i], rightActualTypeArguments[i])) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Return two type is equals
-     *
-     * @param left  type
-     * @param right type
-     * @return two type is equals
-     */
-    public static boolean equals(Type left, Type right) {
-        if (left instanceof ParameterizedType && right instanceof ParameterizedType) {
-            return equals((ParameterizedType) left, (ParameterizedType) right);
-        }
-        if (left instanceof TypeVariable && right instanceof TypeVariable) {
-            return equals((TypeVariable<?>) left, (TypeVariable<?>) right);
-        }
-        return Objects.equals(left, right);
-    }
 
     /**
      * @param type the type
@@ -127,7 +81,7 @@ public class TypeUtil {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Class<?> rawType = (Class<?>) parameterizedType.getRawType();
             Type[] actualTypeArguments = Lira.of(parameterizedType.getActualTypeArguments()).map(arg -> resolve(arg, visitedTypeVariables)).toArray(Type.class);
-            return LiParameterizedType.make(rawType, parameterizedType.getOwnerType(), actualTypeArguments);
+            return ParameterizedTypeImpl.make(parameterizedType.getOwnerType(), rawType, actualTypeArguments);
         } else if (type instanceof TypeVariable) {
             return visitedTypeVariables.getOrDefault(type, erase(type));
         } else if (type instanceof Class) {
@@ -138,25 +92,39 @@ public class TypeUtil {
     }
 
     /**
+     * {@code  resolve(declare, erase(declare),resolve}
+     *
+     * @param declare the declare
+     * @param resolve the resolve class that has generic typeParameter
+     * @param <T>     the type parameter of resolve
+     * @return {@link  #resolve(Type, Class, Class)}
+     * @see #erase(Type)
+     */
+    public static <T> ParameterizedTypeImpl resolve(Type declare, Class<T> resolve) {
+        return resolve(declare, erase(declare), resolve);
+    }
+
+    /**
      * the generic class type will be declared at actual class that can be new.
      * the resolving progress will replace {@link  TypeVariable} to the {@link  Class},
      * at end, it will return  {@link  ParameterizedType} with the resolve class and with
      * actual declare typeParameters
      *
-     * @param declare the declare class
+     * @param declare the declare type
      * @param resolve the resolve class that has generic typeParameter
+     * @param rawType the rawType of declare class
      * @param <T>     the type parameter of resolve
      * @return the  LiParameterizedType with resolve class with declare class typeParameters
      */
-    public static <T> LiParameterizedType resolve(Class<?> declare, Class<T> resolve) {
+    public static <T> ParameterizedTypeImpl resolve(Type declare, Class<?> rawType, Class<T> resolve) {
         Objects.requireNonNull(resolve);
         if (resolve.getTypeParameters().length == 0 || resolve == declare) {
-            return LiParameterizedType.make(resolve);
+            return ParameterizedTypeImpl.make(resolve);
         }
         Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
-        TypeUtil.resolve(declare, declare, resolve, visitedTypeVariables);
+        TypeUtil.resolve(declare, rawType, resolve, visitedTypeVariables);
         Type[] declareTypeArguments = Lira.of(resolve.getTypeParameters()).map(visitedTypeVariables::get).toArray(Type.class);
-        return LiParameterizedType.make(resolve, null, declareTypeArguments);
+        return ParameterizedTypeImpl.make(null, resolve, declareTypeArguments);
     }
 
     private static boolean resolve(Type resolving, Class<?> raw, Class<?> toResolve, Map<TypeVariable<?>, Type> visitedTypeVariables) {
@@ -175,13 +143,8 @@ public class TypeUtil {
             TypeVariable<?>[] typeParameters = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
             Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
             for (int i = 0; i < actualTypeArguments.length; i++) {
-                Type actualTypeArgument = actualTypeArguments[i];
-                if (actualTypeArgument instanceof TypeVariable) {
-                    actualTypeArgument = resolve(actualTypeArgument, visitedTypeVariables);
-                } else if (actualTypeArgument instanceof ParameterizedType) {
-                    actualTypeArgument = resolve(actualTypeArgument, visitedTypeVariables);
-                }
-                visitedTypeVariables.put(typeParameters[i], actualTypeArgument);
+                Type resolve = resolve(actualTypeArguments[i], visitedTypeVariables);
+                visitedTypeVariables.put(typeParameters[i], resolve);
             }
         }
         if (toResolve.isInterface()) {
@@ -194,5 +157,99 @@ public class TypeUtil {
 
         }
         return resolve(raw.getGenericSuperclass(), raw.getSuperclass(), toResolve, visitedTypeVariables);
+    }
+
+    public static String typeToString(Type type) {
+        return type instanceof Class ? ((Class<?>) type).getName() : type.toString();
+    }
+
+    public static void checkNotPrimitive(Type type) {
+        LiAssertUtil.assertTrue(!(type instanceof Class<?>) || !((Class<?>) type).isPrimitive());
+    }
+
+    /**
+     * Returns a type that is functionally equal but not necessarily equal
+     * according to {@link Object#equals(Object) Object.equals()}. The returned
+     * type is {@link java.io.Serializable}.
+     */
+    public static Type canonicalize(Type type) {
+        if (type instanceof Class) {
+            Class<?> c = (Class<?>) type;
+            return c.isArray() ? new GenericArrayTypeImpl(canonicalize(c.getComponentType())) : c;
+
+        } else if (type instanceof ParameterizedType) {
+            ParameterizedType p = (ParameterizedType) type;
+            return ParameterizedTypeImpl.make(p);
+
+        } else if (type instanceof GenericArrayType) {
+            GenericArrayType g = (GenericArrayType) type;
+            return new GenericArrayTypeImpl(g.getGenericComponentType());
+
+        } else if (type instanceof WildcardType) {
+            WildcardType w = (WildcardType) type;
+            return new WildcardTypeImpl(w.getUpperBounds(), w.getLowerBounds());
+
+        } else {
+            // type is either serializable as-is or unsupported
+            return type;
+        }
+    }
+
+
+    /**
+     * Returns true if {@code a} and {@code b} are equal.
+     */
+    public static boolean equals(Type a, Type b) {
+        if (a == b) {
+            // also handles (a == null && b == null)
+            return true;
+
+        } else if (a instanceof Class) {
+            // Class already specifies equals().
+            return a.equals(b);
+
+        } else if (a instanceof ParameterizedType) {
+            if (!(b instanceof ParameterizedType)) {
+                return false;
+            }
+
+            ParameterizedType pa = (ParameterizedType) a;
+            ParameterizedType pb = (ParameterizedType) b;
+            return Objects.equals(pa.getOwnerType(), pb.getOwnerType())
+                    && pa.getRawType().equals(pb.getRawType())
+                    && Arrays.equals(pa.getActualTypeArguments(), pb.getActualTypeArguments());
+
+        } else if (a instanceof GenericArrayType) {
+            if (!(b instanceof GenericArrayType)) {
+                return false;
+            }
+
+            GenericArrayType ga = (GenericArrayType) a;
+            GenericArrayType gb = (GenericArrayType) b;
+            return equals(ga.getGenericComponentType(), gb.getGenericComponentType());
+
+        } else if (a instanceof WildcardType) {
+            if (!(b instanceof WildcardType)) {
+                return false;
+            }
+
+            WildcardType wa = (WildcardType) a;
+            WildcardType wb = (WildcardType) b;
+            return Arrays.equals(wa.getUpperBounds(), wb.getUpperBounds())
+                    && Arrays.equals(wa.getLowerBounds(), wb.getLowerBounds());
+
+        } else if (a instanceof TypeVariable) {
+            if (!(b instanceof TypeVariable)) {
+                return false;
+            }
+            TypeVariable<?> va = (TypeVariable<?>) a;
+            TypeVariable<?> vb = (TypeVariable<?>) b;
+            return va.getGenericDeclaration() == vb.getGenericDeclaration()
+                    && va.getName().equals(vb.getName());
+
+        } else {
+            // This isn't a type we support. Could be a generic array type, wildcard type, etc.
+            return false;
+        }
     }
 }

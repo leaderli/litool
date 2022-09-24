@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
@@ -11,26 +12,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author leaderli
  * @since 2022/9/21
  */
-class LiParameterizedTypeTest {
+class ParameterizedTypeImplTest {
 
-
-    @Test
-    void test() {
-
-
-    }
 
     @Test
     void make() {
 
-        LiParameterizedType make = LiParameterizedType.make(Consumer.class);
+        ParameterizedTypeImpl make = ParameterizedTypeImpl.make(Consumer.class);
 
 
         assertEquals("java.util.function.Consumer<T>", make.toString());
-        make = LiParameterizedType.make(Consumer.class, null, String.class);
+        make = ParameterizedTypeImpl.make(null, Consumer.class, String.class);
         assertEquals("java.util.function.Consumer<java.lang.String>", make.toString());
 
-        make = LiParameterizedType.make(make);
+        make = ParameterizedTypeImpl.make(make);
         assertEquals("java.util.function.Consumer<java.lang.String>", make.toString());
 
         assertArrayEquals(new Type[]{String.class}, make.getActualTypeArguments());

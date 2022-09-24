@@ -106,4 +106,18 @@ public class ObjectsUtil {
     }
 
 
+    public static int hashCodeOrZero(Object o) {
+        return o != null ? o.hashCode() : 0;
+    }
+
+    /**
+     * @param a an object
+     * @param b an object to be compared with {@code a} for equality
+     * @return {@code true} if the arguments are not equal to each other
+     * and {@code false} otherwise
+     */
+    @SuppressWarnings("all")
+    public static boolean notEquals(Object a, Object b) {
+        return a != b && (a == null || !a.equals(b));
+    }
 }

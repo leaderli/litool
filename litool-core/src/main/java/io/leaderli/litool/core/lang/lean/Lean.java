@@ -2,15 +2,12 @@ package io.leaderli.litool.core.lang.lean;
 
 import io.leaderli.litool.core.lang.BeanPath;
 import io.leaderli.litool.core.text.StringConvert;
-import io.leaderli.litool.core.type.ClassUtil;
-import io.leaderli.litool.core.type.LiTypeToken;
-import io.leaderli.litool.core.type.ReflectUtil;
-import io.leaderli.litool.core.type.TypeUtil;
+import io.leaderli.litool.core.type.*;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,9 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2022/9/24 9:39 AM
  */
 public class Lean {
-
     private final List<TypeAdapterFactory> factories = new ArrayList<>();
-    private static final LiTypeToken<?> NULL_KEY_SURROGATE = LiTypeToken.get(Object.class);
     private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenCache = new ConcurrentHashMap<>();
 
     public Lean() {
@@ -28,24 +23,72 @@ public class Lean {
         factories.add(TypeAdapters.INTEGER_FACTORY);
         factories.add(TypeAdapters.STRING_FACTORY);
 
-//        factories.add(TypeAdapters.INTEGER_FACTORY);
+        factories.add(new TypeAdapterFactory() {
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            @Override
+            public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
+                if (!Collection.class.isAssignableFrom(type.getRawType())) {
+                    return null;
+                }
+                Type type1 = type.getType();
+
+                if (type1 instanceof ParameterizedType) {
+                    type1 = ((ParameterizedType) type1).getActualTypeArguments()[0];
+                }
+                return new Adapter(getAdapter(LiTypeToken.of(type1)));
+
+            }
+        });
+
+        factories.add(new TypeAdapterFactory() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
+                return obj -> (T) ReflectUtil.newInstance(type.getRawType())
+                        .ifPresent(bean -> populate(bean, obj))
+                        .get();
+            }
+        });
     }
 
     @SuppressWarnings({"unchecked", "ConstantConditions"})
     public <T> TypeAdapter<T> getAdapter(LiTypeToken<T> type) {
-        TypeAdapter<?> cached = typeTokenCache.get(type == null || type.getRawType() == null ? NULL_KEY_SURROGATE : type);
+        Objects.requireNonNull(type);
+        TypeAdapter<?> cached = typeTokenCache.get(type);
         if (cached != null) {
             return (TypeAdapter<T>) cached;
         }
-        return obj -> (T) ReflectUtil.newInstance(type.getRawType())
-                .ifPresent(bean -> populate(bean, obj))
-                .get();
+
+        synchronized (typeTokenCache) {
+
+            for (TypeAdapterFactory factory : this.factories) {
+                TypeAdapter<T> candidate = factory.create(this, type);
+                if (candidate != null) {
+                    typeTokenCache.put(type, candidate);
+                    return candidate;
+                }
+            }
+        }
+
+        throw new IllegalArgumentException("Lean cannot handle " + type);
+
 
     }
 
-    public <T> T parser(Object o, Class<T> parser) {
+    public void populate(Object bean, Object properties) {
+
+        for (Field field : ReflectUtil.getFields(bean.getClass())) {
+            BeanPath.parse(properties, field.getName())
+                    .map(value -> parser(value, field.getGenericType()))
+                    .ifPresent(v -> ReflectUtil.setFieldValue(bean, field, v));
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public <T> T parser(Object o, Type parser) {
         for (TypeAdapterFactory factory : factories) {
-            TypeAdapter<T> typeAdapter = factory.create(this, LiTypeToken.get(parser));
+            LiTypeToken liTypeToken = LiTypeToken.of(parser);
+            TypeAdapter<T> typeAdapter = factory.create(this, liTypeToken);
             if (typeAdapter != null) {
                 return typeAdapter.read(o);
             }
@@ -56,12 +99,27 @@ public class Lean {
 
     }
 
-    public void populate(Object bean, Object properties) {
+    public static void main(String[] args) {
+        System.out.println(ClassScanner.getSubTypesOf("io", Iterable.class));
+    }
 
-        for (Field field : ReflectUtil.getFields(bean.getClass())) {
-            BeanPath.parse(properties, field.getName())
-                    .map(value -> parser(value, field.getType()))
-                    .ifPresent(v -> ReflectUtil.setFieldValue(bean, field, v));
+    private static final class Adapter<E> implements TypeAdapter<Collection<E>> {
+        private final TypeAdapter<E> elementTypeAdapter;
+
+        private Adapter(TypeAdapter<E> elementTypeAdapter) {
+            this.elementTypeAdapter = elementTypeAdapter;
+        }
+
+        @Override
+        public Collection<E> read(Object obj) {
+
+            Collection<E> collection = new ArrayList<>();
+            if (obj instanceof Iterable) {
+
+                ((Iterable<?>) obj).forEach(e -> collection.add(elementTypeAdapter.read(e)));
+            }
+
+            return collection;
         }
     }
 

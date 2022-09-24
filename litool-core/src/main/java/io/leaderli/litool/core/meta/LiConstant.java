@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.lang.Shell;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.util.Iterator;
@@ -13,6 +14,9 @@ import java.util.function.Consumer;
 public class LiConstant {
 
 
+    /**
+     * the bash path used for {@link  Shell}
+     */
     public static final String BASH = "sh";
     /**
      * the default delimiter of
