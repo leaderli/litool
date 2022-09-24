@@ -113,6 +113,7 @@ public class Lean {
         @Override
         public Collection<E> read(Object obj) {
 
+            //TODO  ConstructorConstructor
             Collection<E> collection = new ArrayList<>();
             if (obj instanceof Iterable) {
 
