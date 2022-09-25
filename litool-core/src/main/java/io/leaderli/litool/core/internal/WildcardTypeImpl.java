@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.internal;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.type.LiTypes;
 import io.leaderli.litool.core.type.TypeUtil;
 
 import java.io.Serializable;
@@ -45,7 +44,7 @@ public final class WildcardTypeImpl implements WildcardType, Serializable {
 
     @Override
     public Type[] getLowerBounds() {
-        return lowerBound != null ? new Type[]{lowerBound} : LiTypes.EMPTY_TYPE_ARRAY;
+        return lowerBound != null ? new Type[]{lowerBound} : ParameterizedTypeImpl.EMPTY_TYPE_ARRAY;
     }
 
     @Override

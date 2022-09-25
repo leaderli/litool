@@ -56,7 +56,6 @@ class LiYamlConfigTest {
         String task = (String) LiYamlConfig.loadResourcesYmlFiles(configs).get("task");
 
 
-        System.out.println(task);
         String bash = "/bin/bash";
         if (OSInfo.isWindows()) {
 

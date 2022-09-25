@@ -28,6 +28,7 @@ public class Lean {
         factories.add(TypeAdapters.INTEGER_FACTORY);
         factories.add(TypeAdapters.STRING_FACTORY);
         factories.add(TypeAdapters.ITERABLE_FACTORY);
+        factories.add(TypeAdapters.MAP_FACTORY);
 
 
         factories.add(new TypeAdapterFactory() {
@@ -35,7 +36,7 @@ public class Lean {
             @Override
             public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
                 return obj -> (T) ReflectUtil.newInstance(type.getRawType())
-                        .ifPresent(bean -> populate(type, bean, obj))
+                        .ifPresent(bean -> populate(type.getType(), bean, obj))
                         .get();
             }
         });
@@ -74,6 +75,16 @@ public class Lean {
 
     }
 
+    public <T> T parser(Object o, LiTypeToken<T> typeToken) {
+        for (TypeAdapterFactory factory : factories) {
+            TypeAdapter<T> typeAdapter = factory.create(this, typeToken);
+            if (typeAdapter != null) {
+                return typeAdapter.read(o);
+            }
+        }
+        return null;
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     public <T> T parser(Object o, Type parser) {
         for (TypeAdapterFactory factory : factories) {
@@ -93,28 +104,5 @@ public class Lean {
         return constructorConstructor.get(typeToken);
     }
 
-
-//    public void populate(Type declare,Object bean, Field field, Object value) {
-//
-//        if (value != null) {
-//            Class<?> type = ClassUtil.getType(field);
-//            if (ClassUtil.isAssignableFromOrIsWrapper(type, ClassUtil.getClass(value))) {
-//                System.out.println(TypeUtil.resolve(type, ClassUtil.getClass(value)));
-//
-//                ReflectUtil.setFieldValue(bean, field, value);
-//            } else if (type == CharSequence.class || type == String.class) {
-//                ReflectUtil.setFieldValue(bean, field, value.toString());
-//            } else if (value instanceof String) {
-//                StringConvert.parser(type, (String) value)
-//                        .ifPresent(v -> ReflectUtil.setFieldValue(bean, field, v));
-//                ReflectUtil.newInstance(type)
-//                        .filter(fv -> ReflectUtil.setFieldValue(bean, field, fv))
-//                        .ifPresent(fv -> populate(declare,fv, value));
-//            }
-//
-//
-//        }
-
-//    }
 
 }

@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.meta.LiConstant;
-import io.leaderli.litool.core.net.NetUtil;
+import io.leaderli.litool.core.resource.net.NetUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

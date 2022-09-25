@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.env;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -9,7 +10,8 @@ import org.junit.jupiter.api.Test;
 class OSInfoTest {
     @Test
     void test() {
-        System.out.println(System.getProperty("os.name"));
+
+        Assertions.assertEquals(System.getProperty("os.name").contains("Window"), OSInfo.isWindows());
 
     }
 

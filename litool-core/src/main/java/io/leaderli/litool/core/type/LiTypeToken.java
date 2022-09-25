@@ -17,6 +17,8 @@
 package io.leaderli.litool.core.type;
 
 
+import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
+
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -35,7 +37,7 @@ import java.util.Objects;
  * create an empty anonymous inner class:
  *
  * <p>
- * {@code TypeToken<List<String>> list = new TypeToken<List<String>>() {};}
+ * {@code LiTypeToken<List<String>> list = new LiTypeToken<List<String>>() {};}
  *
  * <p>This syntax cannot be used to create type literals that have wildcard
  * parameters, such as {@code Class<?>} or {@code List<? extends CharSequence>}.
@@ -47,9 +49,9 @@ import java.util.Objects;
  * copy form gson
  */
 public class LiTypeToken<T> implements ParameterizedType {
-    final Class<? super T> rawType;
-    final Type type;
-    final int hashCode;
+    private final Type type;
+    private final Class<? super T> rawType;
+    private final int hashCode;
 
     /**
      * Constructs a new type literal. Derives represented class from type
@@ -221,12 +223,6 @@ public class LiTypeToken<T> implements ParameterizedType {
         return of(LiTypes.newParameterizedTypeWithOwner(null, rawType, typeArguments));
     }
 
-    /**
-     * Gets type literal for the given {@code Class} instance.
-     */
-    public static <T> LiTypeToken<T> get(Class<T> type) {
-        return new LiTypeToken<>(type);
-    }
 
     /**
      * Gets type literal for the given {@code Type} instance.
@@ -249,11 +245,14 @@ public class LiTypeToken<T> implements ParameterizedType {
         return type instanceof ParameterizedType;
     }
 
+    //    @Override
+    @Override
     public final Type[] getActualTypeArguments() {
-        if (type instanceof ParameterizedType) {
+
+        if (isParameterizedType()) {
             return ((ParameterizedType) type).getActualTypeArguments();
         }
-        return LiTypes.EMPTY_TYPE_ARRAY;
+        return ParameterizedTypeImpl.make(rawType).getActualTypeArguments();
     }
 
     /**
@@ -266,6 +265,7 @@ public class LiTypeToken<T> implements ParameterizedType {
     /**
      * Returns the raw (non-generic) type for this type.
      */
+//    @Override
     @Override
     public final Class<? super T> getRawType() {
         return rawType;
@@ -273,7 +273,7 @@ public class LiTypeToken<T> implements ParameterizedType {
 
     @Override
     public Type getOwnerType() {
-        if (type instanceof ParameterizedType) {
+        if (isParameterizedType()) {
             return ((ParameterizedType) type).getOwnerType();
         }
         return null;

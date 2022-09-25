@@ -176,6 +176,7 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
      * @return A new Tuple where the first element is the second element of this Tuple
      * and the second element is the first element of this Tuple.
      */
+    @Override
     public LiTuple2<T2, T1> swap() {
         return LiTuple.of(_2, _1);
     }

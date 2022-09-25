@@ -22,7 +22,7 @@ public enum PrimitiveEnum {
     VOID(null, Void.TYPE, Void.class),
     OBJECT(null, null, null);
 
-    public static final PrimitiveEnum[] PRIMITIVES;
+    private static final PrimitiveEnum[] PRIMITIVES;
     static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>();
     static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>();
 

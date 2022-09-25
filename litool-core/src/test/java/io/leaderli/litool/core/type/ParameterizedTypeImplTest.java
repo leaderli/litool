@@ -1,9 +1,11 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,6 +34,9 @@ class ParameterizedTypeImplTest {
         assertArrayEquals(new Class[]{String.class}, make.getActualClassArguments());
         assertEquals(String.class, make.getActualClassArgument().get());
         assertNull(make.getActualClassArgument(1).get());
+
+        Assertions.assertArrayEquals(new Type[]{Object.class, Object.class}, ParameterizedTypeImpl.make(Map.class).getActualClassArguments());
+
 
     }
 

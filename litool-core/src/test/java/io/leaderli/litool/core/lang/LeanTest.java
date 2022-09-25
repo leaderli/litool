@@ -19,9 +19,10 @@ import static io.leaderli.litool.core.util.ConsoleUtil.print;
 class LeanTest {
 
 
+    Gson gson = new Gson();
+
     @Test
     void test() {
-        Gson gson = new Gson();
 
         String json = "{\"name\":\"1\",\"bean\": {\"name\": \"2\"},\"beans\": [{\"name\": \"3\"}]}";
         Map map = gson.fromJson(json, Map.class);
@@ -36,7 +37,6 @@ class LeanTest {
     @Test
     void test2() {
 
-        Gson gson = new Gson();
 
         Map map = gson.fromJson("{\"name\":\"1\",\"bean3\": {\"name\": \"2\",\"bean2\": {\"name\": \"3\"}}}", Map.class);
         Lean lean = new Lean();
@@ -45,6 +45,24 @@ class LeanTest {
         print(gson.toJson(parser));
         Assertions.assertNotNull(parser);
 
+    }
+
+    @Test
+    void test3() {
+        String json = "{\"name\":\"1\",\"bean\": {\"name\": \"2\"},\"beans\": [{\"name\": \"3\"}]}";
+        Map map = gson.fromJson(json, Map.class);
+        LiTypeToken<Bean4<Bean4>> parameterized = LiTypeToken.getParameterized(Bean4.class, Bean4.class);
+
+        Lean lean = new Lean();
+        Bean4<Bean4> parser = lean.parser(map, parameterized);
+        Assertions.assertEquals("3", parser.beans.get(0).name);
+
+    }
+
+    private static class Bean4<T> {
+        private String name;
+        private Map bean;
+        private List<T> beans;
     }
 
     private static class Bean1<T> {

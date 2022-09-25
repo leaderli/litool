@@ -120,7 +120,6 @@ public class TypeUtil {
         expansionTypeVariable(declare, visitedTypeVariables);
         if (resolving.getTypeParameters().length > 0 && resolving != declare) {
             TypeUtil.resolve(declare, erase(declare), resolving, visitedTypeVariables);
-            Type[] declareTypeArguments = Lira.of(resolving.getTypeParameters()).map(visitedTypeVariables::get).toArray(Type.class);
         }
         return resolve(resolve, visitedTypeVariables);
     }

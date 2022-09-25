@@ -21,7 +21,6 @@ import java.util.Properties;
  * copy form gson
  */
 public final class LiTypes {
-    public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 
     private LiTypes() {
         throw new UnsupportedOperationException();
@@ -61,7 +60,7 @@ public final class LiTypes {
         } else {
             upperBounds = new Type[]{bound};
         }
-        return new WildcardTypeImpl(upperBounds, EMPTY_TYPE_ARRAY);
+        return new WildcardTypeImpl(upperBounds, ParameterizedTypeImpl.EMPTY_TYPE_ARRAY);
     }
 
     /**

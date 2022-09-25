@@ -648,8 +648,10 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param type the array type
      * @return an array containing the elements in this lira
      */
-    default T[] toArray(Class<? extends T> type) {
-        return cast(type).get().toArray((T[]) ClassUtil.newWrapperArray(type, 0));
+    @SuppressWarnings("unchecked")
+    default T[] toArray(Class<? super T> type) {
+        Object[] a = ClassUtil.newWrapperArray(type, 0);
+        return (T[]) cast(type).get().toArray(a);
     }
 
     /**

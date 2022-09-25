@@ -4,10 +4,7 @@ import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * a collection that store a constructor-like value by the {@link  LiTypeToken} at {@link #instanceCreators}.
@@ -19,11 +16,13 @@ import java.util.List;
  */
 public final class ConstructorConstructor {
 
-    private final LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
+    private final Map<Type, InstanceCreator<?>> instanceCreators = instanceCreators();
 
-    {
+    static Map<Type, InstanceCreator<?>> instanceCreators() {
+        Map<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
         instanceCreators.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
         instanceCreators.put(HashMap.class, (InstanceCreator<HashMap<Object, Object>>) type -> new HashMap<>());
+        return instanceCreators;
     }
 
     public ConstructorConstructor() {

@@ -338,8 +338,9 @@ class LiraTest {
 
         Assertions.assertDoesNotThrow(() -> {
 
-            Number[] nums = Lira.of(1, 2, 3, 4.0).toArray(Integer.class);
+            Number[] nums = Lira.of(1, 2, 3, 4.0).cast(Integer.class).toArray(Integer.class);
             Number[] nums2 = Lira.of(1, 2, 3).toArray(int.class);
+            Number[] nums3 = Lira.of(1, 2, 3, 4.0).toArray(Number.class);
         });
     }
 

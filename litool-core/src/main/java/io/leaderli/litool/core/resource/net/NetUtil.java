@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.net;
+package io.leaderli.litool.core.resource.net;
 
 import io.leaderli.litool.core.meta.Lino;
 
