@@ -1,9 +1,10 @@
 package io.leaderli.litool.core.lang.lean;
 
-import io.leaderli.litool.core.lang.BeanPath;
-import io.leaderli.litool.core.type.*;
+import io.leaderli.litool.core.type.ConstructorConstructor;
+import io.leaderli.litool.core.type.InstanceCreator;
+import io.leaderli.litool.core.type.LiTypeToken;
+import io.leaderli.litool.core.type.ObjectConstructor;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,14 +35,6 @@ public class Lean {
 
     }
 
-    public void populate(Type declare, Object bean, Object properties) {
-
-        for (Field field : ReflectUtil.getFields(bean.getClass())) {
-            BeanPath.parse(properties, field.getName())
-                    .map(value -> parser(value, TypeUtil.resolve(declare, field.getGenericType())))
-                    .ifPresent(v -> ReflectUtil.setFieldValue(bean, field, v));
-        }
-    }
 
     @SuppressWarnings("unchecked")
     public <T> TypeAdapter<T> getCacheAdapter(LiTypeToken<T> type) {

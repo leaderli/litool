@@ -1,8 +1,12 @@
 package io.leaderli.litool.core.lang.lean;
 
+import io.leaderli.litool.core.lang.BeanPath;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.core.type.TypeUtil;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.function.Supplier;
 
 /**
@@ -31,25 +35,35 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
     private static class Adapter<T> implements TypeAdapter<T> {
 
         private final Lean lean;
-        private final LiTypeToken<T> type;
+        private final LiTypeToken<T> typeToken;
 
-        private Adapter(Lean lean, LiTypeToken<T> type) {
+        private Adapter(Lean lean, LiTypeToken<T> typeToken) {
             this.lean = lean;
-            this.type = type;
+            this.typeToken = typeToken;
         }
 
         @SuppressWarnings("unchecked")
         @Override
         public T read(Object obj) {
-            TypeAdapter<T> adapter = lean.getAdapter(type.getRawType());
+            TypeAdapter<T> adapter = lean.getAdapter(typeToken.getRawType());
 
             if (adapter instanceof Adapter) {
-                return (T) ReflectUtil.newInstance(type.getRawType())
-                        .ifPresent(bean -> lean.populate(type.getType(), bean, obj))
+                return (T) ReflectUtil.newInstance(typeToken.getRawType())
+                        .ifPresent(bean -> populate(obj, bean))
                         .get();
             }
             return adapter.read(obj);
         }
+
+        public void populate(Object source, Object target) {
+            Type declare = typeToken.getType();
+            for (Field field : ReflectUtil.getFields(target.getClass())) {
+                BeanPath.simple(source, field.getName())
+                        .map(value -> lean.parser(value, TypeUtil.resolve(declare, field.getGenericType())))
+                        .ifPresent(v -> ReflectUtil.setFieldValue(target, field, v));
+            }
+        }
+
     }
 
 }

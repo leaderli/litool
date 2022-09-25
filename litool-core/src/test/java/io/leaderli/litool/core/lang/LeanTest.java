@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 
-import static io.leaderli.litool.core.util.ConsoleUtil.print;
-
 /**
  * @author leaderli
  * @since 2022/9/24 9:41 AM
@@ -42,7 +40,7 @@ class LeanTest {
         Lean lean = new Lean();
         Bean2 parser = lean.parser(map, Bean2.class);
 
-        print(gson.toJson(parser));
+        Assertions.assertEquals("3", parser.bean3.bean2.name);
         Assertions.assertNotNull(parser);
 
     }
@@ -56,7 +54,6 @@ class LeanTest {
         Lean lean = new Lean();
         Bean4<Bean4> parser = lean.parser(map, parameterized);
         Assertions.assertEquals("3", parser.beans.get(0).name);
-        print(gson.toJson(parser));
 
     }
 

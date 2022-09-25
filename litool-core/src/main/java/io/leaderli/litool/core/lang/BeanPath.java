@@ -52,6 +52,17 @@ public class BeanPath {
     }
 
     /**
+     * @param obj the find obj
+     * @param key the key of map or the field name of obj
+     * @return the map value or field value
+     */
+    public static Lino<Object> simple(Object obj, String key) {
+        BeanPath beanPath = new BeanPath();
+        beanPath.setKeyFunction(key);
+        return beanPath.parse(obj);
+    }
+
+    /**
      * an valid expression can be as follow
      * <ul>
      *     <li>key1</li>
