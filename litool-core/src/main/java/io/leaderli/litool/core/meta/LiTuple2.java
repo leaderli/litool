@@ -24,10 +24,7 @@ package io.leaderli.litool.core.meta;
 \*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*/
 
 import java.io.Serializable;
-import java.util.AbstractMap;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -38,7 +35,7 @@ import java.util.function.Function;
  * @param <T2> type of the 2nd element
  * @author Daniel Dietrich
  */
-public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, T2>>, Serializable {
+public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, T2>>, Either<T1, T2>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -145,6 +142,32 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
      */
     public LiTuple2<T1, T2> update2(T2 value) {
         return new LiTuple2<>(_1, value);
+    }
+
+    @Override
+    public T1 getLeft() {
+        if (isRight()) {
+            throw new NoSuchElementException();
+        }
+        return _1;
+    }
+
+    @Override
+    public boolean isLeft() {
+        return _2 == null && _1 != null;
+    }
+
+    @Override
+    public T2 get() {
+        if (isLeft()) {
+            throw new NoSuchElementException();
+        }
+        return _2;
+    }
+
+    @Override
+    public boolean isRight() {
+        return _2 != null || _1 == null;
     }
 
     /**
@@ -262,4 +285,8 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
         return "(" + _1 + ", " + _2 + ")";
     }
 
+    @Override
+    public String name() {
+        return "tuple2";
+    }
 }
