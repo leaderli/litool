@@ -265,7 +265,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
     /**
      * will only remain at most n element, should be aware of
-     * the {@link Generator} will drop the limit element. when
+     * the {@link Generator} will drop the limit element. And
+     * and the null element will counted as
      *
      * @param max the limit of max element
      * @return a new lira

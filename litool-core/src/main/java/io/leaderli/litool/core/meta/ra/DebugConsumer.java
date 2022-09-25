@@ -20,6 +20,7 @@ public interface DebugConsumer<T> {
      */
     default void onNull() {
 
+        System.out.println("onNull");
     }
 
 }

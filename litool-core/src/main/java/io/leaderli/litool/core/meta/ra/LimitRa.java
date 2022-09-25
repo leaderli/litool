@@ -1,8 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
 /**
- * 限制元素的个数
- *
  * @author leaderli
  * @since 2022/6/27
  */

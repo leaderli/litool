@@ -69,6 +69,23 @@ class LeanTest {
 
     }
 
+    @Test
+    void tes6() {
+        String json = "{\"age\": 1.0}";
+        Map map = gson.fromJson(json, Map.class);
+
+        Lean lean = new Lean();
+        Bean6 parser = lean.parser(map, Bean6.class);
+
+        Assertions.assertEquals(1.0, parser.age);
+
+
+    }
+
+    private static class Bean6 {
+        private double age;
+    }
+
     private static class Bean5 {
         private Bean1 bean1;
         private Bean1 bean2;

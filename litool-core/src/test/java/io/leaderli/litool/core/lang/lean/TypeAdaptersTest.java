@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.lang.lean;
 
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ class TypeAdaptersTest {
     @Test
     void test() {
 
-        TypeAdapter<Integer> typeAdapter = TypeAdapters.INTEGER_FACTORY.create(new Lean(), LiTypeToken.of(int.class));
+        TypeAdapter<?> typeAdapter = Lira.of(TypeAdapters.PRIMITIVE_FACTORIES).debug().map(t -> t.create(new Lean(), LiTypeToken.of(int.class))).first().get();
 
         Assertions.assertEquals(1, typeAdapter.read("1"));
         Assertions.assertEquals(1, typeAdapter.read(1));

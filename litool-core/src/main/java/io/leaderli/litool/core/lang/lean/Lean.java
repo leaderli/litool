@@ -26,7 +26,8 @@ public class Lean {
 
         this.constructorConstructor = new ConstructorConstructor(instanceCreators);
 
-        factories.add(TypeAdapters.INTEGER_FACTORY);
+        TypeAdapters.PRIMITIVE_FACTORIES.forEach(factories::add);
+
         factories.add(TypeAdapters.STRING_FACTORY);
         factories.add(TypeAdapters.ITERABLE_FACTORY);
         factories.add(TypeAdapters.MAP_FACTORY);

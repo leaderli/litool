@@ -69,11 +69,7 @@ public abstract class Ra<T> implements Lira<T> {
 
     @Override
     public Lino<T> last() {
-
-        LiBox<T> value = LiBox.none();
-
-        subscribe(new ConsumerSubscriber<>(value::value));
-        return value.lino();
+        return get(-1);
     }
 
     @Override
@@ -86,8 +82,8 @@ public abstract class Ra<T> implements Lira<T> {
 
         if (index > -1) {
             LiBox<T> box = LiBox.none();
-            // limit n element and skip n-1 element
-            limit(index + 1).skip(index).subscribe(new ConsumerSubscriber<>(box::value));
+            // remove null element, then limit n element and skip n-1 element
+            filter_null().limit(index + 1).skip(index).subscribe(new ConsumerSubscriber<>(box::value));
             return box.lino();
         } else {
             // to avoid avoid generator duplicate request problem, convert to a limit iterator
