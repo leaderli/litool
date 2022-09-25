@@ -1,5 +1,5 @@
-package io.leaderli.litool.core.type;
-
+import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
+import io.leaderli.litool.core.type.TypeUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static io.leaderli.litool.core.util.ConsoleUtil.println;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,14 +18,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ALL")
 class TypeUtilTest {
 
+
     @Test
-    void test() throws NoSuchFieldException {
+    void checkNotPrimitive() {
 
-        ArrayList<String> strings = new ArrayList<>();
-
-        println(strings.getClass().getDeclaredMethods());
-
+        Assertions.assertThrows(RuntimeException.class, () -> TypeUtil.checkNotPrimitive(int.class));
+        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(Integer.class));
+        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(null));
+        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(ParameterizedTypeImpl.make(null, ArrayList.class, String.class)));
+        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(List.class.getTypeParameters()[0]));
     }
+
 
     @Test
     void isUnknown() {
@@ -53,10 +55,10 @@ class TypeUtilTest {
     void testEquals() {
 
 
-        assertTrue(TypeUtil.equals(Consumer.class.getTypeParameters()[0], Supplier.class.getTypeParameters()[0]));
+        assertFalse(TypeUtil.equals(Consumer.class.getTypeParameters()[0], Supplier.class.getTypeParameters()[0]));
         ParameterizedType left = (ParameterizedType) ArrayList.class.getGenericInterfaces()[0];
         ParameterizedType right = (ParameterizedType) AbstractList.class.getGenericInterfaces()[0];
-        assertTrue(TypeUtil.equals(left, right));
+        assertFalse(TypeUtil.equals(left, right));
         assertTrue(TypeUtil.equals(String.class, String.class));
         assertTrue(TypeUtil.equals(null, null));
         assertFalse(TypeUtil.equals(null, String.class));

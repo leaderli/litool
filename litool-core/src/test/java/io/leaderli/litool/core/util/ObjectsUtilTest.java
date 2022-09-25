@@ -11,6 +11,17 @@ import org.junit.jupiter.api.Test;
 class ObjectsUtilTest {
 
     @Test
+    void test() {
+
+        Assertions.assertFalse(ObjectsUtil.notEquals(null, null));
+        Assertions.assertTrue(ObjectsUtil.notEquals(1, null));
+        Assertions.assertTrue(ObjectsUtil.notEquals(null, 1));
+        Assertions.assertFalse(ObjectsUtil.notEquals(1, 1));
+        Assertions.assertTrue(ObjectsUtil.notEquals(1, 2));
+
+    }
+
+    @Test
     void requireNotNull() {
         Assertions.assertThrows(NullPointerException.class, () -> ObjectsUtil.requireNotNull(1, null));
 

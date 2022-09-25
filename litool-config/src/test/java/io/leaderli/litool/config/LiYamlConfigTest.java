@@ -65,12 +65,11 @@ class LiYamlConfigTest {
         CatchFuture<String> command = new Shell(new File("/")).command(bash, "-c", task);
         System.out.println(command);
 
-        while (!command.isDone()) {
-            String x = command.get(100, TimeUnit.MILLISECONDS);
-            if (!x.isEmpty()) {
+        String x = command.get(100, TimeUnit.MILLISECONDS);
+        if (!x.isEmpty()) {
 
-                System.out.println(x);
-            }
+            System.out.println(x);
         }
+        Assertions.assertNotNull(command);
     }
 }

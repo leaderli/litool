@@ -67,7 +67,17 @@ public class LiTypeToken<T> {
     }
 
     /**
-     * Returns the type from super class's type parameter in {@link LiTypes#canonicalize
+     * Unsafe. Constructs a type literal manually.
+     */
+    @SuppressWarnings("unchecked")
+    LiTypeToken(Type type) {
+        this.type = TypeUtil.canonicalize(Objects.requireNonNull(type));
+        this.rawType = (Class<? super T>) TypeUtil.erase(this.type);
+        this.hashCode = this.type.hashCode();
+    }
+
+    /**
+     * Returns the type from super class's type parameter in {@link TypeUtil#canonicalize
      * canonical form}.
      */
     static Type getSuperclassTypeParameter(Class<?> subclass) {
@@ -76,18 +86,9 @@ public class LiTypeToken<T> {
             throw new RuntimeException("Missing type parameter.");
         }
         ParameterizedType parameterized = (ParameterizedType) superclass;
-        return LiTypes.canonicalize(parameterized.getActualTypeArguments()[0]);
+        return TypeUtil.canonicalize(parameterized.getActualTypeArguments()[0]);
     }
 
-    /**
-     * Unsafe. Constructs a type literal manually.
-     */
-    @SuppressWarnings("unchecked")
-    LiTypeToken(Type type) {
-        this.type = LiTypes.canonicalize(Objects.requireNonNull(type));
-        this.rawType = (Class<? super T>) TypeUtil.erase(this.type);
-        this.hashCode = this.type.hashCode();
-    }
 
     /**
      * Private helper function that performs some assignability checks for
@@ -142,12 +143,12 @@ public class LiTypeToken<T> {
             TypeVariable<?>[] tParams = clazz.getTypeParameters();
             for (int i = 0; i < tArgs.length; i++) {
                 Type arg = tArgs[i];
-                TypeVariable<?> var = tParams[i];
+                TypeVariable<?> va = tParams[i];
                 while (arg instanceof TypeVariable<?>) {
                     TypeVariable<?> v = (TypeVariable<?>) arg;
                     arg = typeVarMap.get(v.getName());
                 }
-                typeVarMap.put(var.getName(), arg);
+                typeVarMap.put(va.getName(), arg);
             }
 
             // check if they are equivalent under our current mapping.
@@ -213,10 +214,11 @@ public class LiTypeToken<T> {
     }
 
     /**
-     * Gets type literal for the given {@code Type} instance.
+     * Gets type literal for the parameterized type represented by applying {@code typeArguments} to
+     * {@code rawType}.
      */
-    public static LiTypeToken<?> get(Type type) {
-        return new LiTypeToken<>(type);
+    public static <T> LiTypeToken<T> getParameterized(Type rawType, Type... typeArguments) {
+        return of(LiTypes.newParameterizedTypeWithOwner(null, rawType, typeArguments));
     }
 
     /**
@@ -227,11 +229,10 @@ public class LiTypeToken<T> {
     }
 
     /**
-     * Gets type literal for the parameterized type represented by applying {@code typeArguments} to
-     * {@code rawType}.
+     * Gets type literal for the given {@code Type} instance.
      */
-    public static LiTypeToken<?> getParameterized(Type rawType, Type... typeArguments) {
-        return new LiTypeToken<>(LiTypes.newParameterizedTypeWithOwner(null, rawType, typeArguments));
+    public static <T> LiTypeToken<T> of(Type type) {
+        return new LiTypeToken<>(type);
     }
 
     /**
@@ -315,11 +316,11 @@ public class LiTypeToken<T> {
     @Override
     public final boolean equals(Object o) {
         return o instanceof LiTypeToken<?>
-                && LiTypes.equals(type, ((LiTypeToken<?>) o).type);
+                && TypeUtil.equals(type, ((LiTypeToken<?>) o).type);
     }
 
     @Override
     public final String toString() {
-        return LiTypes.typeToString(type);
+        return TypeUtil.typeToString(type);
     }
 }
