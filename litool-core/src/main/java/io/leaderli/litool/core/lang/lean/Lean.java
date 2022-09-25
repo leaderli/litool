@@ -29,17 +29,9 @@ public class Lean {
         factories.add(TypeAdapters.STRING_FACTORY);
         factories.add(TypeAdapters.ITERABLE_FACTORY);
         factories.add(TypeAdapters.MAP_FACTORY);
+        factories.add(TypeAdapters.OBJECT_FACTORY);
+        factories.add(TypeAdapters.REFLECT_FACTORY);
 
-
-        factories.add(new TypeAdapterFactory() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
-                return obj -> (T) ReflectUtil.newInstance(type.getRawType())
-                        .ifPresent(bean -> populate(type.getType(), bean, obj))
-                        .get();
-            }
-        });
     }
 
     public void populate(Type declare, Object bean, Object properties) {
@@ -49,6 +41,16 @@ public class Lean {
                     .map(value -> parser(value, TypeUtil.resolve(declare, field.getGenericType())))
                     .ifPresent(v -> ReflectUtil.setFieldValue(bean, field, v));
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> TypeAdapter<T> getCacheAdapter(LiTypeToken<T> type) {
+        return (TypeAdapter<T>) typeTokenCache.get(type);
+    }
+
+    public <T> TypeAdapter<T> getAdapter(Type type) {
+
+        return getAdapter(LiTypeToken.of(type));
     }
 
     @SuppressWarnings({"unchecked"})
@@ -76,13 +78,7 @@ public class Lean {
     }
 
     public <T> T parser(Object o, LiTypeToken<T> typeToken) {
-        for (TypeAdapterFactory factory : factories) {
-            TypeAdapter<T> typeAdapter = factory.create(this, typeToken);
-            if (typeAdapter != null) {
-                return typeAdapter.read(o);
-            }
-        }
-        return null;
+        return getAdapter(typeToken).read(o);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

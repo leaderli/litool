@@ -28,7 +28,7 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         Type componentType = Lira.of(type.getActualTypeArguments()).first().get(Object.class);
-        return new Adapter(lean.getAdapter(LiTypeToken.of(componentType)), constructor);
+        return new Adapter(lean.getAdapter(componentType), constructor);
 
     }
 

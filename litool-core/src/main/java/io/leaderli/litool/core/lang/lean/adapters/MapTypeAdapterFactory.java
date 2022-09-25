@@ -30,15 +30,12 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
         if (constructor == null) {
             return null;
         }
-        Lira<TypeVariable> of = Lira.of(type.getRawType().getTypeParameters());
-        Type[] componentType = of.toArray(Type.class);
-
+        Type[] componentType = Lira.<TypeVariable>of(type.getRawType().getTypeParameters()).toArray(Type.class);
         Type keyType = componentType[0];
         if (keyType == String.class) {
-
-            return new StringAdapter(lean.getAdapter(LiTypeToken.of(String.class)), lean.getAdapter(LiTypeToken.of(componentType[1])), constructor);
+            return new StringAdapter(lean.getAdapter(String.class), lean.getAdapter(componentType[1]), constructor);
         }
-        return new Adapter(lean.getAdapter(LiTypeToken.of(keyType)), lean.getAdapter(LiTypeToken.of(componentType[1])), constructor);
+        return new Adapter(lean.getAdapter(LiTypeToken.of(keyType)), lean.getAdapter(componentType[1]), constructor);
 
     }
 

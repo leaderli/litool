@@ -29,7 +29,24 @@ class LiTypeTokenTest {
 
         LiTypeToken<Map> tokenMap = LiTypeToken.of(this.getClass().getField("map").getGenericType());
         Assertions.assertEquals("[K, V]", Arrays.toString(tokenMap.getActualTypeArguments()));
+        Assertions.assertEquals("[K, V]", Arrays.toString(LiTypeToken.of(Map.class).getActualTypeArguments()));
 
+//        ReflectUtilTest.LittleBean
+        Assertions.assertSame(ParameterizedTypeImpl.EMPTY_TYPE_ARRAY, LiTypeToken.of(Runnable.class).getActualTypeArguments());
+
+
+    }
+
+    @Test
+    void testEquals() {
+
+        Assertions.assertEquals(LiTypeToken.getParameterized(Bean.class).hashCode(), LiTypeToken.getParameterized(Bean.class).hashCode());
+
+        Assertions.assertEquals(LiTypeToken.getParameterized(Bean.class), LiTypeToken.getParameterized(Bean.class));
+
+    }
+
+    private static class Bean {
 
     }
 

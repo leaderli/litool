@@ -15,6 +15,8 @@ public class TypeAdapters {
     public static final TypeAdapterFactory STRING_FACTORY = newFactory(String.class, obj -> obj == null ? null : String.valueOf(obj));
     public static final TypeAdapterFactory MAP_FACTORY = new MapTypeAdapterFactory();
     public static final TypeAdapterFactory ITERABLE_FACTORY = new CollectionTypeAdapterFactory();
+    public static final TypeAdapterFactory OBJECT_FACTORY = newFactory(Object.class, obj -> obj);
+    public static final TypeAdapterFactory REFLECT_FACTORY = new ReflectAdapterFactory();
 
     public static <TT> TypeAdapterFactory newFactory(final Class<TT> unboxed, final Class<TT> boxed, final TypeAdapter<? super TT> typeAdapter) {
         return new TypeAdapterFactory() {

@@ -56,6 +56,25 @@ class LeanTest {
         Lean lean = new Lean();
         Bean4<Bean4> parser = lean.parser(map, parameterized);
         Assertions.assertEquals("3", parser.beans.get(0).name);
+        print(gson.toJson(parser));
+
+    }
+
+    @Test
+    void test5() {
+        String json = "{\"bean1\": {\"name\": \"2\"},\"bean2\": {\"name\": \"3\"}}";
+        Map map = gson.fromJson(json, Map.class);
+
+        Lean lean = new Lean();
+        Bean5 parser = lean.parser(map, Bean5.class);
+
+        Assertions.assertSame(lean.getAdapter(Bean1.class), lean.getAdapter(Bean1.class));
+
+    }
+
+    private static class Bean5 {
+        private Bean1 bean1;
+        private Bean1 bean2;
 
     }
 
