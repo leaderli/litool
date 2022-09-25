@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.exception.AssertException;
+import io.leaderli.litool.core.meta.LiValue;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
@@ -310,6 +311,29 @@ class ClassUtilTest {
 
     }
 
+
+    @Test
+    void rank() {
+
+        Assertions.assertThrows(NullPointerException.class, () -> ClassUtil.rank(null, null));
+        Assertions.assertEquals(1, ClassUtil.rank(Lino.class, LiValue.class));
+        Assertions.assertEquals(1, ClassUtil.rank(ArrayList.class, List.class));
+        Assertions.assertEquals(3, ClassUtil.rank(ArrayList.class, Iterable.class));
+        Assertions.assertEquals(3, ClassUtil.rank(ArrayList.class, Object.class));
+
+        Assertions.assertEquals(2, ClassUtil.rank(C.class, A.class));
+        Assertions.assertEquals(2, ClassUtil.rank(C.class, Object.class));
+
+    }
+
+    private interface A {
+    }
+
+    private static class B implements A {
+    }
+
+    private static class C extends B {
+    }
 
     @Test
     void isPrimitiveOrWrapper() {

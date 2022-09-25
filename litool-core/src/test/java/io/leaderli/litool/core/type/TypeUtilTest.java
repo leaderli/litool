@@ -75,7 +75,7 @@ class TypeUtilTest {
     }
 
     @Test
-    void resolve() {
+    void resolve() throws NoSuchFieldException {
 
 
         assertArrayEquals(new Object[]{ArrayList.class, String.class}, TypeUtil.resolve(In4.class, In1.class).getActualClassArguments());
@@ -110,8 +110,34 @@ class TypeUtilTest {
         assertTrue(TypeUtil.resolve(list.getClass(), ArrayList.class).getActualClassArgument(1).absent());
         assertSame(String.class, TypeUtil.resolve(map.getClass(), HashMap.class).getActualClassArgument(0).get());
         assertSame(String.class, TypeUtil.resolve(map.getClass(), HashMap.class).getActualClassArgument(1).get());
+
+
     }
 
+    @Test
+    void field() throws NoSuchFieldException {
+        Type resolve = TypeUtil.resolve(Li.class, Li.class.getTypeParameters()[0]);
+
+        Type make = Object.class;
+        Assertions.assertEquals(make, resolve);
+
+        Type gt = Li.class.getField("list").getGenericType();
+
+        resolve = TypeUtil.resolve(new Li<String>() {
+        }.getClass(), gt);
+        make = ParameterizedTypeImpl.make(null, List.class, String.class);
+        Assertions.assertEquals(make, resolve);
+        ParameterizedTypeImpl make1 = ParameterizedTypeImpl.make(null, List.class, List.class);
+
+        Assertions.assertEquals(List.class, TypeUtil.resolve(make1, List.class).getActualClassArgument().get());
+        Assertions.assertEquals(List.class, TypeUtil.resolve(make1, List.class.getTypeParameters()[0]));
+
+    }
+
+
+    private static class Li<T> {
+        public List<T> list;
+    }
 
     private static interface In2<A> extends In1<A, String>, Consumer<A> {
 

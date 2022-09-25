@@ -4,7 +4,9 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.io.File;
 import java.lang.reflect.*;
@@ -344,6 +346,57 @@ public class ClassUtil {
             default:
                 throw new IllegalStateException();
         }
+    }
+
+    private static int rank(Class<?> sub, Class<?> sup, int rank) {
+
+        if (sub == sup) {
+            return rank;
+        }
+        if (sub == null || sup == null || !sup.isAssignableFrom(sub)) {
+            return -1;
+        }
+        if (sup.isInterface()) {
+
+            Lino<Class<?>> first = Lira.of(sub.getInterfaces()).filter(sup::isAssignableFrom).first();
+            if (first.present()) {
+                return rank(first.get(), sup, rank + 1);
+            }
+        }
+        return rank(sub.getSuperclass(), sup, rank + 1);
+    }
+
+    /**
+     * @param sub the sub class
+     * @param sup the sup class
+     * @param <T> the type of sup class
+     * @return the rank of sub to sup, return 0 if sub == sup
+     */
+    public static <T> int rank(Class<? extends T> sub, Class<T> sup) {
+
+
+        ObjectsUtil.requireNotNull(sub, sup);
+
+        return rank(sub, sup, 0);
+    }
+
+    /**
+     * @param sub the sub class
+     * @param sup the sup class
+     * @return the rank of sub to sup, return 0 if sub == sup or sub,sup is no inheritance relationship
+     */
+    public static int rank0(Class<?> sub, Class<?> sup) {
+
+        ObjectsUtil.requireNotNull(sub, sup);
+
+        if (sup.isAssignableFrom(sub)) {
+            return rank(sub, sup, 0);
+        }
+        if (sub.isAssignableFrom(sup)) {
+            return -rank(sup, sub, 0);
+        }
+        return 0;
+
     }
 
     /**

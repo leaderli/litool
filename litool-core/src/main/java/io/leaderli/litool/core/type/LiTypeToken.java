@@ -46,7 +46,7 @@ import java.util.Objects;
  * <p>
  * copy form gson
  */
-public class LiTypeToken<T> {
+public class LiTypeToken<T> implements ParameterizedType {
     final Class<? super T> rawType;
     final Type type;
     final int hashCode;
@@ -243,10 +243,17 @@ public class LiTypeToken<T> {
     }
 
     /**
-     * Returns the raw (non-generic) type for this type.
+     * @return {@code type instanceof ParameterizedType; }
      */
-    public final Class<? super T> getRawType() {
-        return rawType;
+    public final boolean isParameterizedType() {
+        return type instanceof ParameterizedType;
+    }
+
+    public final Type[] getActualTypeArguments() {
+        if (type instanceof ParameterizedType) {
+            return ((ParameterizedType) type).getActualTypeArguments();
+        }
+        return LiTypes.EMPTY_TYPE_ARRAY;
     }
 
     /**
@@ -254,6 +261,22 @@ public class LiTypeToken<T> {
      */
     public final Type getType() {
         return type;
+    }
+
+    /**
+     * Returns the raw (non-generic) type for this type.
+     */
+    @Override
+    public final Class<? super T> getRawType() {
+        return rawType;
+    }
+
+    @Override
+    public Type getOwnerType() {
+        if (type instanceof ParameterizedType) {
+            return ((ParameterizedType) type).getOwnerType();
+        }
+        return null;
     }
 
     /**

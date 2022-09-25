@@ -105,6 +105,27 @@ public class TypeUtil {
     }
 
     /**
+     * normally use for {@link  Field#getGenericType()}, {@link  Method#getGenericReturnType()} and so on;
+     * <p>
+     * expand the declare typeVariable and fill to the resolve
+     *
+     * @param declare the declare
+     * @param resolve the resolve resolve that has generic typeParameter
+     * @return the  resolve with resolve class with declare class typeParameters
+     */
+    public static Type resolve(Type declare, Type resolve) {
+        Objects.requireNonNull(resolve);
+        Class<?> resolving = erase(resolve);
+        Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
+        expansionTypeVariable(declare, visitedTypeVariables);
+        if (resolving.getTypeParameters().length > 0 && resolving != declare) {
+            TypeUtil.resolve(declare, erase(declare), resolving, visitedTypeVariables);
+            Type[] declareTypeArguments = Lira.of(resolving.getTypeParameters()).map(visitedTypeVariables::get).toArray(Type.class);
+        }
+        return resolve(resolve, visitedTypeVariables);
+    }
+
+    /**
      * the generic class type will be declared at actual class that can be new.
      * the resolving progress will replace {@link  TypeVariable} to the {@link  Class},
      * at end, it will return  {@link  ParameterizedType} with the resolve class and with
@@ -137,19 +158,9 @@ public class TypeUtil {
             return !toResolve.isInterface();
         }
 
-
-        if (resolving instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) resolving;
-            TypeVariable<?>[] typeParameters = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
-            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-            for (int i = 0; i < actualTypeArguments.length; i++) {
-                Type resolve = resolve(actualTypeArguments[i], visitedTypeVariables);
-                visitedTypeVariables.put(typeParameters[i], resolve);
-            }
-        }
+        expansionTypeVariable(resolving, visitedTypeVariables);
         if (toResolve.isInterface()) {
             for (Type genericInterface : raw.getGenericInterfaces()) {
-
                 if (resolve(genericInterface, erase(genericInterface), toResolve, visitedTypeVariables)) {
                     return true;
                 }
@@ -157,6 +168,26 @@ public class TypeUtil {
 
         }
         return resolve(raw.getGenericSuperclass(), raw.getSuperclass(), toResolve, visitedTypeVariables);
+    }
+
+
+    /**
+     * the declare type have declare the actual {@link  ParameterizedType} of it's {@link  Class#getTypeParameters()}.
+     * store the corresponding pair
+     *
+     * @param declare              the type that have declare type
+     * @param visitedTypeVariables the typeVariable-type map
+     */
+    private static void expansionTypeVariable(Type declare, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+        if (declare instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) declare;
+            TypeVariable<?>[] typeParameters = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
+            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+            for (int i = 0; i < actualTypeArguments.length; i++) {
+                Type resolve = resolve(actualTypeArguments[i], visitedTypeVariables);
+                visitedTypeVariables.put(typeParameters[i], resolve);
+            }
+        }
     }
 
     public static String typeToString(Type type) {

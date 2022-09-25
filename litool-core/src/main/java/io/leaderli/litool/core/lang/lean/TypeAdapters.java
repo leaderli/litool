@@ -20,6 +20,7 @@ public class TypeAdapters {
         }
         return null;
     };
+    public static final TypeAdapterFactory ITERABLE_FACTORY = new CollectionTypeAdapterFactory();
     public static final TypeAdapterFactory INTEGER_FACTORY = newFactory(int.class, Integer.class, INTEGER);
 
     public static <TT> TypeAdapterFactory newFactory(final Class<TT> unboxed, final Class<TT> boxed, final TypeAdapter<? super TT> typeAdapter) {
@@ -58,5 +59,6 @@ public class TypeAdapters {
             }
         };
     }
+
 
 }
