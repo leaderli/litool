@@ -2,11 +2,9 @@ package io.leaderli.litool.core.lang.lean;
 
 import io.leaderli.litool.core.lang.BeanPath;
 import io.leaderli.litool.core.type.LiTypeToken;
-import io.leaderli.litool.core.type.MetaAnnotation;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.type.TypeUtil;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.function.Supplier;
@@ -17,7 +15,6 @@ import java.util.function.Supplier;
  */
 public class ReflectAdapterFactory implements TypeAdapterFactory {
 
-    private static final MetaAnnotation<LeanMeta, LeanField<Annotation>> meta = new MetaAnnotation<>(LeanMeta.class, LiTypeToken.of(LeanField.class));
 
     @Override
     public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
@@ -64,9 +61,7 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
             Type declare = typeToken.getType();
             for (Field field : ReflectUtil.getFields(target.getClass())) {
 
-                String key = meta.relative(field)
-                        .map(tu -> tu._1.apply(tu._2, field))
-                        .get(field::getName);
+                String key = ReflectUtil.getAnnotation(field, LeanKey.class).map(LeanKey::value).get(field.getName());
 
                 BeanPath.simple(source, key)
                         .map(value -> lean.fromBean(value, TypeUtil.resolve(declare, field.getGenericType())))

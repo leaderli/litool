@@ -4,6 +4,7 @@ import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.Generators;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.NoneItr;
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
@@ -408,6 +409,27 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return a new lira
      */
     Lira<T> onError(Exceptionable onError);
+
+    default Lira<T> assertTrue(Function<? super T, ?> filter) {
+        return debug(new DebugConsumer<T>() {
+
+            @Override
+            public void accept(T e) {
+                LiAssertUtil.assertTrue(BooleanUtil.parse(filter.apply(e)));
+            }
+
+            @Override
+            public void onNull() {
+                LiAssertUtil.assertNotRun();
+            }
+        }).assertNoError();
+    }
+
+    default Lira<T> assertNoError() {
+        return onError((t, c) -> {
+            throw new IllegalStateException(t);
+        });
+    }
 
     /**
      * a terminal action, will call {@link  #present()} to judge the element at here

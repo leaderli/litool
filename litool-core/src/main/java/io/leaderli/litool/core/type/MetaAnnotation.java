@@ -12,13 +12,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * @author leaderli
  * @since 2022/9/26 12:34 PM
  */
-public class MetaAnnotation<A extends Annotation, F extends MetaFunction<?, ?, ?>> {
+public class MetaAnnotation<A extends Annotation, F extends MetaFunction<? extends Annotation, ?, ?>> {
 
     public final Map<A, F> meta_function = new HashMap<>();
     public final Class<A> meta;
@@ -46,12 +45,6 @@ public class MetaAnnotation<A extends Annotation, F extends MetaFunction<?, ?, ?
         this.functionType = functionType;
     }
 
-    public <R> Function<AnnotatedElement, R> relative12(AnnotatedElement annotatedElement) {
-
-//        LiTuple2<F, Annotation> tu = relative(annotatedElement).get();
-//        tu._1.apply( tu._2, annotatedElement);
-        return null;
-    }
 
     public Lino<LiTuple2<F, Annotation>> relative(AnnotatedElement annotatedElement) {
         return relatives(annotatedElement).first();
@@ -60,18 +53,25 @@ public class MetaAnnotation<A extends Annotation, F extends MetaFunction<?, ?, ?
     public Lira<LiTuple2<F, Annotation>> relatives(AnnotatedElement annotatedElement) {
         return ReflectUtil.findAnnotationsWithMetaAnnotation(annotatedElement, meta)
                 .tuple(an -> an.annotationType().getAnnotation(meta))
-                .map(tu -> tu.map2(this::compute).swap());
-        // swap to human readable
+                .map(tu -> tu.map2(metaInstance -> this.compute(tu._1, tu._2))
+                        .swap()         // swap to human readable
+                )
+                .assertTrue(a ->
+                        // if the annotated-annotation with meta, and meta's metaFunction first generic-type is
+                        // not same the annotated-annotation
+                        TypeUtil.resolve(a._1.getClass(), MetaFunction.class).getActualClassArgument()
+                                .filter(annotatedByMeta -> annotatedByMeta == a._2.annotationType())
+                );
 
     }
 
-    private F compute(A ma) {
-        return meta_function.computeIfAbsent(ma, this::createBy);
+    private F compute(Annotation annotated, A metaInstance) {
+        return meta_function.computeIfAbsent(metaInstance, k -> createBy(annotated, metaInstance));
     }
 
     @SuppressWarnings("unchecked")
-    private F createBy(A ma) {
-        return (F) ReflectUtil.getMethodValueByName(ma, "value")
+    private F createBy(Annotation annotated, A metaInstance) {
+        return (F) ReflectUtil.getMethodValueByName(metaInstance, "value")
                 .cast(Class.class)
                 .unzip(ReflectUtil::newInstance)
                 .cast(functionType)

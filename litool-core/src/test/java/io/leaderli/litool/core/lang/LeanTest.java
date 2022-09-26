@@ -2,7 +2,7 @@ package io.leaderli.litool.core.lang;
 
 import com.google.gson.Gson;
 import io.leaderli.litool.core.lang.lean.Lean;
-import io.leaderli.litool.core.lang.lean.LeanName;
+import io.leaderli.litool.core.lang.lean.LeanKey;
 import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -96,7 +96,7 @@ class LeanTest {
     }
 
     private static class Bean7 {
-        @LeanName("age")
+        @LeanKey("age")
         private double fake;
     }
 

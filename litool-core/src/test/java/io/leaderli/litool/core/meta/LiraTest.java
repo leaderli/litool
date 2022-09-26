@@ -4,8 +4,6 @@ import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.InfiniteException;
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.meta.ra.CancelSubscription;
-import io.leaderli.litool.core.meta.ra.Exceptionable;
 import io.leaderli.litool.core.meta.ra.SubscriberRa;
 import io.leaderli.litool.core.meta.ra.SubscriptionRa;
 import io.leaderli.litool.core.text.StringUtils;
@@ -20,6 +18,15 @@ import java.util.*;
  */
 class LiraTest {
 
+
+    @Test
+    void assertNoError() {
+
+        Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertNoError());
+        Assertions.assertThrows(IllegalStateException.class, () -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertNoError().get());
+        Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertTrue(i -> i > 0));
+        Assertions.assertThrows(IllegalStateException.class, () -> Lira.of(1, 2, 9, 0).assertTrue(i -> i > 0).get());
+    }
 
     @Test
     void remove() {
@@ -495,12 +502,7 @@ class LiraTest {
     @Test
     void onError() {
         Assertions.assertEquals(2, Lira.of(1, 2, 3).map(i -> i / (i % 2)).size());
-        Lira<Integer> nullable = Lira.of(1, 2, 3).onError(new Exceptionable() {
-            @Override
-            public void onError(Throwable t, CancelSubscription cancel) {
-                cancel.cancel();
-            }
-        }).map(i -> i / (i % 2)).nullable(() -> 10);
+        Lira<Integer> nullable = Lira.of(1, 2, 3).onError((t, cancel) -> cancel.cancel()).map(i -> i / (i % 2)).nullable(() -> 10);
         Assertions.assertEquals("[1, 10]", nullable.toString());
     }
 
