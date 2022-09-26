@@ -14,6 +14,13 @@ class LinoTest {
 
 
     @Test
+    void test() {
+
+        Lino.of(1).or(() -> 2);
+
+    }
+
+    @Test
     void unzip() {
 
         Assertions.assertEquals(1, Lino.of(1).unzip(l -> Lino.of(1)).get());

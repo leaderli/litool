@@ -209,10 +209,17 @@ public class ReflectUtil {
                 .filter(constructor -> constructor.getParameterCount() == args.length)
                 .filter(constructor -> sameParameterTypes(constructor, args))
                 .first()
-                .throwable_map(c -> c.newInstance(args))
-                .cast(cls);
+                .unzip(c -> newInstance(c, args));
 
 
+    }
+
+    public static <T> Lino<T> newInstance(Constructor<T> cls, Object... args) {
+        if (cls == null) {
+            return Lino.none();
+        }
+        setAccessible(cls);
+        return Lino.throwable_of(() -> cls.newInstance(args));
     }
 
     /**
@@ -222,13 +229,7 @@ public class ReflectUtil {
      */
     public static <T> Lino<T> newInstance(Class<T> cls) {
         Objects.requireNonNull(cls);
-        return getConstructor(cls)
-                .throwable_map(constructor -> {
-                    setAccessible(constructor);
-                    return constructor.newInstance();
-                });
-
-
+        return getConstructor(cls).unzip(ReflectUtil::newInstance);
     }
 
 
@@ -441,5 +442,18 @@ public class ReflectUtil {
         return Lino.throwable_of(() -> method.invoke(obj, args));
     }
 
+    /**
+     * @param obj  the obj
+     * @param name the name of method in obj
+     * @param args the args of method
+     * @return return value that method return, if method is void, it always return {@code null}
+     */
+    public static Lino<?> getMethodValueByName(Object obj, String name, Object... args) {
+
+        if (obj == null || name == null) {
+            return Lino.none();
+        }
+        return ReflectUtil.getMethod(obj.getClass(), name).unzip(method -> getMethodValue(method, obj, args));
+    }
 
 }

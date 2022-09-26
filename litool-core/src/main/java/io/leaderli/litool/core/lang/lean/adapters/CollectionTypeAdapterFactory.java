@@ -22,7 +22,7 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
             return null;
         }
 
-        ObjectConstructor<T> constructor = lean.get(type);
+        ObjectConstructor<T> constructor = lean.getConstructor(type);
         if (constructor == null) {
             return null;
         }
@@ -42,12 +42,12 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         @Override
-        public Iterable<E> read(Object obj) {
+        public Iterable<E> read(Object source) {
 
             Collection<E> collection = constructor.get();
-            if (obj instanceof Iterable) {
+            if (source instanceof Iterable) {
 
-                ((Iterable<?>) obj).forEach(e -> collection.add(elementTypeAdapter.read(e)));
+                ((Iterable<?>) source).forEach(e -> collection.add(elementTypeAdapter.read(e)));
             }
 
             return collection;

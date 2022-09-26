@@ -35,6 +35,7 @@ public class StringConvert {
         CONVERTS.put(Integer.class, Integer::valueOf);
         CONVERTS.put(Long.class, Long::valueOf);
         CONVERTS.put(Short.class, Short::valueOf);
+
         CONVERTS.put(String.class, str -> str);
     }
 

@@ -13,7 +13,6 @@ public interface Exceptionable {
      * @param t      the element signaled
      * @param cancel use to cancel demand
      */
-    default void onError(Throwable t, CancelSubscription cancel) {
-    }
+    void onError(Throwable t, CancelSubscription cancel);
 
 }

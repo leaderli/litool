@@ -16,7 +16,7 @@ package io.leaderli.litool.core.meta.ra;
  * @author leaderli
  * @since 2022/6/27
  */
-public interface SubscriberRa<T> extends Exceptionable, Completable, Cancelable {
+public interface SubscriberRa<T> extends IgnoredExceptionable, Completable, Cancelable {
 
     /**
      * Invoked after calling {@link PublisherRa#subscribe(SubscriberRa)}

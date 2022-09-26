@@ -126,6 +126,7 @@ class ReflectUtilTest {
         assertTrue(ReflectUtil.newInstance(Integer.class, 1).present());
 
         assertTrue(ReflectUtil.newInstance(TestBean.class, (String) null).present());
+        assertTrue(ReflectUtil.newInstance(TestBean2.class, (String) null).present());
     }
 
 
@@ -188,8 +189,14 @@ class ReflectUtilTest {
         Method m3 = ReflectUtil.getMethod(Static.class, "m3").get();
         assertEquals(1, ReflectUtil.getMethodValue(m1, null).get());
         assertEquals(2, ReflectUtil.getMethodValue(m2, null).get());
-        assertEquals(1, ReflectUtil.getMethodValue(m3, null, 1).get());
+        assertEquals(null, ReflectUtil.getMethodValue(m3, null, null).get());
         assertEquals(2, ReflectUtil.getMethodValue(m3, null, 2).get());
+        assertEquals(null, ReflectUtil.getMethodValue(m3, null, 1, 2).get());
+
+        assertEquals(1, ReflectUtil.getMethodValueByName(new Static(), "m1", null).get());
+        assertEquals(2, ReflectUtil.getMethodValueByName(new Static(), "m2", null).get());
+        assertEquals(null, ReflectUtil.getMethodValueByName(new Static(), "m3").get());
+        assertEquals(2, ReflectUtil.getMethodValueByName(new Static(), "m3", 2).get());
     }
 
 
@@ -204,6 +211,15 @@ class ReflectUtilTest {
     public static class TestBean {
 
         public TestBean(String s) {
+
+        }
+
+
+    }
+
+    public static class TestBean2 {
+
+        private TestBean2(String s) {
 
         }
 

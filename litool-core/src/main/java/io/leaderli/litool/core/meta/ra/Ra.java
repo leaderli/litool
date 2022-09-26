@@ -134,6 +134,11 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
+    public <R> Lira<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper) {
+        return new TupleRa<>(this, mapper);
+    }
+
+    @Override
     public <R> Lira<R> flatMap() {
         return new FlatMap<>(this, IterableItr::of);
     }

@@ -26,7 +26,7 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
             return null;
         }
         // check objectConstructor exist
-        ObjectConstructor<T> constructor = lean.get(type);
+        ObjectConstructor<T> constructor = lean.getConstructor(type);
         if (constructor == null) {
             return null;
         }
@@ -52,24 +52,24 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         @Override
-        public Map<String, V> read(Object obj) {
-            if (obj == null) {
+        public Map<String, V> read(Object source) {
+            if (source == null) {
                 return null;
             }
 
             Map<String, V> map = constructor.get();
-            if (obj instanceof Map) {
+            if (source instanceof Map) {
 
-                ((Map<?, ?>) obj).forEach((k, v) -> {
+                ((Map<?, ?>) source).forEach((k, v) -> {
                     String rk = keyTypeAdapter.read(k);
                     V rv = valueTypeAdapter.read(v);
                     map.put(rk, rv);
                 });
-            } else if (PrimitiveEnum.get(obj) == PrimitiveEnum.OBJECT) {
+            } else if (PrimitiveEnum.get(source) == PrimitiveEnum.OBJECT) {
 
-                for (Field field : ReflectUtil.getFields(obj.getClass())) {
+                for (Field field : ReflectUtil.getFields(source.getClass())) {
                     String rk = field.getName();
-                    Object v = ReflectUtil.getFieldValue(obj, field).get();
+                    Object v = ReflectUtil.getFieldValue(source, field).get();
                     V rv = valueTypeAdapter.read(v);
                     map.put(rk, rv);
                 }
@@ -91,12 +91,12 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         @Override
-        public Map<K, V> read(Object obj) {
+        public Map<K, V> read(Object source) {
 
             Map<K, V> map = constructor.get();
-            if (obj instanceof Map) {
+            if (source instanceof Map) {
 
-                ((Map<?, ?>) obj).forEach((k, v) -> {
+                ((Map<?, ?>) source).forEach((k, v) -> {
                     K rk = keyTypeAdapter.read(k);
                     V rv = valueTypeAdapter.read(v);
                     map.put(rk, rv);

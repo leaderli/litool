@@ -14,6 +14,7 @@ import java.util.function.Supplier;
  * @since 2022/9/25
  */
 public class ReflectAdapterFactory implements TypeAdapterFactory {
+
     @Override
     public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
         // use the cache, to avoid stackoverflow should not use getAdapter
@@ -44,22 +45,23 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
 
         @SuppressWarnings("unchecked")
         @Override
-        public T read(Object obj) {
+        public T read(Object source) {
             TypeAdapter<T> adapter = lean.getAdapter(typeToken.getRawType());
 
             if (adapter instanceof Adapter) {
                 return (T) ReflectUtil.newInstance(typeToken.getRawType())
-                        .ifPresent(bean -> populate(obj, bean))
+                        .ifPresent(bean -> populate(source, bean))
                         .get();
             }
-            return adapter.read(obj);
+            return adapter.read(source);
         }
 
         public void populate(Object source, Object target) {
             Type declare = typeToken.getType();
             for (Field field : ReflectUtil.getFields(target.getClass())) {
+//                ReflectUtil.findAnnotationsWithMetaAnnotation(field,)
                 BeanPath.simple(source, field.getName())
-                        .map(value -> lean.parser(value, TypeUtil.resolve(declare, field.getGenericType())))
+                        .map(value -> lean.fromBean(value, TypeUtil.resolve(declare, field.getGenericType())))
                         .ifPresent(v -> ReflectUtil.setFieldValue(target, field, v));
             }
         }

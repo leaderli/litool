@@ -1,24 +1,64 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.text.StrSubstitution;
+import io.leaderli.litool.core.text.StringConvert;
+import io.leaderli.litool.core.util.BooleanUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @author leaderli
  * @since 2022/8/17 6:53 PM
  */
 public enum PrimitiveEnum {
-    BYTE(PrimitiveZeroValue.BYTE, Byte.TYPE, Byte.class),
-    BOOLEAN(PrimitiveZeroValue.BOOLEAN, Boolean.TYPE, Boolean.class),
-    CHAR(PrimitiveZeroValue.CHAR, Character.TYPE, Character.class),
-    DOUBLE(PrimitiveZeroValue.DOUBLE, Double.TYPE, Double.class),
-    FLOAT(PrimitiveZeroValue.FLOAT, Float.TYPE, Float.class),
-    LONG(PrimitiveZeroValue.LONG, Long.TYPE, Long.class),
-    INT(PrimitiveZeroValue.INT, Integer.TYPE, Integer.class),
-    SHORT(PrimitiveZeroValue.SHORT, Short.TYPE, Short.class),
+    BYTE(PrimitiveZeroValue.BYTE, Byte.TYPE, Byte.class, obj -> {
+        if (obj instanceof Number) {
+            return ((Number) obj).byteValue();
+        }
+        return null;
+    }),
+    BOOLEAN(PrimitiveZeroValue.BOOLEAN, Boolean.TYPE, Boolean.class, BooleanUtil::parse),
+    CHAR(PrimitiveZeroValue.CHAR, Character.TYPE, Character.class, obj -> {
+        if (obj instanceof Number) {
+            return (char) ((Number) obj).intValue();
+        }
+        return null;
+    }),
+    DOUBLE(PrimitiveZeroValue.DOUBLE, Double.TYPE, Double.class, obj -> {
+        if (obj instanceof Number) {
+            return ((Number) obj).doubleValue();
+        }
+        return null;
+    }),
+    FLOAT(PrimitiveZeroValue.FLOAT, Float.TYPE, Float.class, obj -> {
+        if (obj instanceof Number) {
+            return ((Number) obj).floatValue();
+        }
+        return null;
+    }),
+    LONG(PrimitiveZeroValue.LONG, Long.TYPE, Long.class, obj -> {
+        if (obj instanceof Number) {
+            return ((Number) obj).longValue();
+        }
+        return null;
+    }),
+    INT(PrimitiveZeroValue.INT, Integer.TYPE, Integer.class, obj -> {
+        if (obj instanceof Number) {
+            return ((Number) obj).intValue();
+        }
+        return null;
+    }),
+    SHORT(PrimitiveZeroValue.SHORT, Short.TYPE, Short.class, obj -> {
+        if (obj instanceof Number) {
+            return ((Number) obj).shortValue();
+        }
+        return null;
+    }),
     VOID(null, Void.TYPE, Void.class),
     OBJECT(null, null, null);
 
@@ -42,12 +82,34 @@ public enum PrimitiveEnum {
     public final Object zero_value;
     public final Class<?> primitive;
     public final Class<?> wrapper;
+    public final Function<Object, ?> convert;
 
-    PrimitiveEnum(Object zero_value, Class<?> primitive, Class<?> wrapper) {
+    @SuppressWarnings("unchecked")
+    <T> PrimitiveEnum(T zero_value, Class<?> primitive, Class<T> wrapper) {
+        this(zero_value, primitive, wrapper, o -> (T) o);
+    }
+
+    <T> PrimitiveEnum(T zero_value, Class<?> primitive, Class<T> wrapper, Function<Object, T> convert) {
         this.zero_value = zero_value;
         this.primitive = primitive;
         this.wrapper = wrapper;
+        this.convert = convert;
     }
+
+    @SuppressWarnings("unchecked")
+    public <T> T read(Object value) {
+
+        if (get(value) == this) {
+            return (T) value;
+        }
+        return (T) Lino.of(value)
+                .cast(String.class)
+                .map(v -> (Object) StringConvert.parser(wrapper, v).get())
+                .or(() -> convert.apply(value))
+                .assertNotNone(() -> StrSubstitution.format("{value} not support convert to {type}", value, this))
+                .get();
+    }
+
 
     /**
      * @param obj the obj

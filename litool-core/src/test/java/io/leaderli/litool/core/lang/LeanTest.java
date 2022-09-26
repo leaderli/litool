@@ -27,7 +27,7 @@ class LeanTest {
         LiTypeToken<Bean1<Bean1>> parameterized = LiTypeToken.getParameterized(Bean1.class, Bean1.class);
 
         Lean lean = new Lean();
-        Bean1<Bean1> parser = lean.parser(map, parameterized);
+        Bean1<Bean1> parser = lean.fromBean(map, parameterized);
         Assertions.assertEquals("3", parser.beans.get(0).name);
 
     }
@@ -38,7 +38,7 @@ class LeanTest {
 
         Map map = gson.fromJson("{\"name\":\"1\",\"bean3\": {\"name\": \"2\",\"bean2\": {\"name\": \"3\"}}}", Map.class);
         Lean lean = new Lean();
-        Bean2 parser = lean.parser(map, Bean2.class);
+        Bean2 parser = lean.fromBean(map, Bean2.class);
 
         Assertions.assertEquals("3", parser.bean3.bean2.name);
         Assertions.assertNotNull(parser);
@@ -52,7 +52,7 @@ class LeanTest {
         LiTypeToken<Bean4<Bean4>> parameterized = LiTypeToken.getParameterized(Bean4.class, Bean4.class);
 
         Lean lean = new Lean();
-        Bean4<Bean4> parser = lean.parser(map, parameterized);
+        Bean4<Bean4> parser = lean.fromBean(map, parameterized);
         Assertions.assertEquals("3", parser.beans.get(0).name);
 
     }
@@ -63,7 +63,7 @@ class LeanTest {
         Map map = gson.fromJson(json, Map.class);
 
         Lean lean = new Lean();
-        Bean5 parser = lean.parser(map, Bean5.class);
+        Bean5 parser = lean.fromBean(map, Bean5.class);
 
         Assertions.assertSame(lean.getAdapter(Bean1.class), lean.getAdapter(Bean1.class));
 
@@ -75,7 +75,7 @@ class LeanTest {
         Map map = gson.fromJson(json, Map.class);
 
         Lean lean = new Lean();
-        Bean6 parser = lean.parser(map, Bean6.class);
+        Bean6 parser = lean.fromBean(map, Bean6.class);
 
         Assertions.assertEquals(1.0, parser.age);
 

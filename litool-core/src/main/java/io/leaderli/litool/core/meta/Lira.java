@@ -636,6 +636,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
         return get().toArray();
     }
 
+    <R> Lira<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper);
+
+
     /**
      * Returns an typed array containing the typed elements in this lira, if the element is not satisfied
      * the type will be removed

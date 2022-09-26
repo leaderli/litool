@@ -6,5 +6,9 @@ package io.leaderli.litool.core.lang.lean;
  */
 public interface TypeAdapter<T> {
 
-    T read(Object obj);
+    /**
+     * @param source the source
+     * @return create target by source
+     */
+    T read(Object source);
 }

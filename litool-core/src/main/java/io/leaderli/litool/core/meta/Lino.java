@@ -119,6 +119,14 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
 
     /**
+     * assert {@link  #present()}
+     *
+     * @param supplier the error msg provider
+     * @return this
+     */
+    Lino<T> assertNotNone(Supplier<String> supplier);
+
+    /**
      * @param <R>  the type parameter of casted
      * @param type the type of casted
      * @return return this if value instanceof type  otherwise return {@link  #none()}
@@ -236,6 +244,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @return this
      */
     Lino<T> nest(Consumer<? super Lino<T>> consumer);
+
 
     /**
      * use {@code system.out.println} as consumer
@@ -379,6 +388,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public Lino<T> assertNotNone(String msg) {
+            return this;
+        }
+
+        @Override
+        public Lino<T> assertNotNone(Supplier<String> supplier) {
             return this;
         }
 
@@ -570,6 +584,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         @Override
         public Lino<T> assertNotNone(String msg) {
             throw new IllegalStateException(msg);
+        }
+
+        @Override
+        public Lino<T> assertNotNone(Supplier<String> supplier) {
+            throw new IllegalStateException(supplier.get());
         }
 
         @Override

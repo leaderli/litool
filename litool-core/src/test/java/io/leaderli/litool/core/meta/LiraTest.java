@@ -330,8 +330,16 @@ class LiraTest {
     @Test
     void map() {
 
-        Assertions.assertEquals("[4, 2]", Lira.of(1, 2, 0).throwable_map(i -> 4 / i).toString());
+        Assertions.assertEquals("[4, 2]", Lira.of(1, 2, 0).onError((t, c) -> {
+        }).map(i -> 4 / i).toString());
         Assertions.assertTrue(Lira.of(1).map(i -> null).absent());
+    }
+
+    @Test
+    void tuple() {
+
+        Assertions.assertEquals("[(1, 4), (2, 2)]", Lira.of(1, 2, 0).tuple(i -> 4 / i).toString());
+        Assertions.assertTrue(Lira.of(1).tuple(i -> null).first().get().isLeft());
     }
 
     @Test

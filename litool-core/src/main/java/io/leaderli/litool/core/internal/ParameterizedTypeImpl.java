@@ -41,6 +41,14 @@ public class ParameterizedTypeImpl implements ParameterizedType {
         }
     }
 
+    public static ParameterizedTypeImpl make(Type type) {
+
+        if (type instanceof ParameterizedType) {
+            return make((ParameterizedType) type);
+        }
+        return make(null, TypeUtil.erase(type));
+    }
+
     public static ParameterizedTypeImpl make(Class<?> rawType) {
         return new ParameterizedTypeImpl(null, rawType, rawType.getTypeParameters());
     }
