@@ -18,16 +18,14 @@ class MetaAnnotationTest {
     @LeanName("abc")
     public String name;
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     void test() throws NoSuchFieldException, InstantiationException, IllegalAccessException {
 
 
         Field field = getClass().getField("name");
 
-        MetaAnnotation<LeanMeta, LeanField> meta = new MetaAnnotation<>(LeanMeta.class, LeanField.class);
-
-        LiTuple2<LeanField, Annotation> mx = meta.relative(field).get();
+        MetaAnnotation<LeanMeta, LeanField<Annotation>> meta = new MetaAnnotation<>(LeanMeta.class, LiTypeToken.of(LeanField.class));
+        LiTuple2<LeanField<Annotation>, Annotation> mx = meta.relative(field).get();
         Assertions.assertEquals("abc", mx.apply((a, b) -> a.apply(b, field)));
     }
 }

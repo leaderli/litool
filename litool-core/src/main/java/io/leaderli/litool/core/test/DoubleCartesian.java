@@ -8,8 +8,8 @@ import io.leaderli.litool.core.collection.CollectionUtils;
  */
 class DoubleCartesian implements CartesianFunction<DoubleValues, Double> {
     @Override
-    public Double[] apply(DoubleValues intValues, CartesianContext context) {
-        double[] value = intValues.value();
+    public Double[] apply(DoubleValues annotatedByValuable, CartesianContext context) {
+        double[] value = annotatedByValuable.value();
         if (value.length > 0) {
             return (Double[]) CollectionUtils.toWrapperArray(value);
         }

@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.test;
 
+import io.leaderli.litool.core.type.MetaFunction;
+
 import java.lang.annotation.Annotation;
 
 /**
@@ -9,8 +11,9 @@ import java.lang.annotation.Annotation;
  * @since 2022/8/20
  */
 @FunctionalInterface
-public interface CartesianFunction<T extends Annotation, R> {
+public interface CartesianFunction<A extends Annotation, R> extends MetaFunction<A, CartesianContext, R[]> {
 
 
-    R[] apply(T t, CartesianContext context);
+    @Override
+    R[] apply(A annotatedByValuable, CartesianContext context);
 }

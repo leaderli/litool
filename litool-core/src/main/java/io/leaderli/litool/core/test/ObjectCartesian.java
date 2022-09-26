@@ -6,7 +6,7 @@ package io.leaderli.litool.core.test;
  */
 public class ObjectCartesian implements CartesianFunction<ObjectValues, Object> {
     @Override
-    public Object[] apply(ObjectValues objectValues, CartesianContext context) {
+    public Object[] apply(ObjectValues annotatedByValuable, CartesianContext context) {
         throw new UnsupportedOperationException();
     }
 }

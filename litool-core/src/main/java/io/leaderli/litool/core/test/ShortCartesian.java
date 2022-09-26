@@ -8,9 +8,9 @@ import io.leaderli.litool.core.collection.CollectionUtils;
  */
 public class ShortCartesian implements CartesianFunction<ShortValues, Short> {
     @Override
-    public Short[] apply(ShortValues shortValues, CartesianContext context) {
+    public Short[] apply(ShortValues annotatedByValuable, CartesianContext context) {
 
-        short[] value = shortValues.value();
+        short[] value = annotatedByValuable.value();
         if (value.length > 0) {
             return (Short[]) CollectionUtils.toWrapperArray(value);
         }

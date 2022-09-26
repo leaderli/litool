@@ -18,11 +18,16 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/9/26 12:34 PM
  */
-public class MetaAnnotation<A extends Annotation, F> {
+public class MetaAnnotation<A extends Annotation, F extends MetaFunction<?, ?, ?>> {
 
     public final Map<A, F> meta_function = new HashMap<>();
     public final Class<A> meta;
     public final Class<F> functionType;
+
+    @SuppressWarnings("unchecked")
+    public MetaAnnotation(Class<A> meta, LiTypeToken<F> typeToken) {
+        this(meta, (Class<F>) typeToken.getRawType());
+    }
 
     public MetaAnnotation(Class<A> meta, Class<F> functionType) {
 
@@ -43,6 +48,8 @@ public class MetaAnnotation<A extends Annotation, F> {
 
     public <R> Function<AnnotatedElement, R> relative12(AnnotatedElement annotatedElement) {
 
+//        LiTuple2<F, Annotation> tu = relative(annotatedElement).get();
+//        tu._1.apply( tu._2, annotatedElement);
         return null;
     }
 

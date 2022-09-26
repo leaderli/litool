@@ -9,8 +9,8 @@ import io.leaderli.litool.core.collection.CollectionUtils;
 public class ByteCartesian implements CartesianFunction<ByteValues, Byte> {
 
     @Override
-    public Byte[] apply(ByteValues byteValues, CartesianContext context) {
-        byte[] value = byteValues.value();
+    public Byte[] apply(ByteValues annotatedByValuable, CartesianContext context) {
+        byte[] value = annotatedByValuable.value();
         if (value.length > 0) {
             return (Byte[]) CollectionUtils.toWrapperArray(value);
         }

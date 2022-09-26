@@ -8,9 +8,9 @@ import io.leaderli.litool.core.collection.CollectionUtils;
  */
 public class FloatCartesian implements CartesianFunction<FloatValues, Float> {
     @Override
-    public Float[] apply(FloatValues floatValues, CartesianContext context) {
+    public Float[] apply(FloatValues annotatedByValuable, CartesianContext context) {
 
-        float[] value = floatValues.value();
+        float[] value = annotatedByValuable.value();
         if (value.length > 0) {
             return (Float[]) CollectionUtils.toWrapperArray(value);
         }

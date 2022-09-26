@@ -8,8 +8,8 @@ import io.leaderli.litool.core.collection.CollectionUtils;
  */
 class IntCartesian implements CartesianFunction<IntValues, Integer> {
     @Override
-    public Integer[] apply(IntValues intValues, CartesianContext context) {
-        int[] value = intValues.value();
+    public Integer[] apply(IntValues annotatedByValuable, CartesianContext context) {
+        int[] value = annotatedByValuable.value();
         if (value.length > 0) {
             return (Integer[]) CollectionUtils.toWrapperArray(value);
         }

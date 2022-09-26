@@ -6,7 +6,7 @@ package io.leaderli.litool.core.test;
  */
 public class StringCartesian implements CartesianFunction<StringValues, String> {
     @Override
-    public String[] apply(StringValues stringValues, CartesianContext context) {
-        return stringValues.value();
+    public String[] apply(StringValues annotatedByValuable, CartesianContext context) {
+        return annotatedByValuable.value();
     }
 }

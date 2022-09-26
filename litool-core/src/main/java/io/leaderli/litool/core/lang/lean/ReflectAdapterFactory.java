@@ -6,6 +6,7 @@ import io.leaderli.litool.core.type.MetaAnnotation;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.type.TypeUtil;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.function.Supplier;
@@ -15,8 +16,8 @@ import java.util.function.Supplier;
  * @since 2022/9/25
  */
 public class ReflectAdapterFactory implements TypeAdapterFactory {
-    @SuppressWarnings("rawtypes")
-    private static final MetaAnnotation<LeanMeta, LeanField> meta = new MetaAnnotation<>(LeanMeta.class, LeanField.class);
+
+    private static final MetaAnnotation<LeanMeta, LeanField<Annotation>> meta = new MetaAnnotation<>(LeanMeta.class, LiTypeToken.of(LeanField.class));
 
     @Override
     public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
@@ -59,7 +60,6 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
             return adapter.read(source);
         }
 
-        @SuppressWarnings("unchecked")
         public void populate(Object source, Object target) {
             Type declare = typeToken.getType();
             for (Field field : ReflectUtil.getFields(target.getClass())) {

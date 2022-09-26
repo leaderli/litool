@@ -8,8 +8,8 @@ import io.leaderli.litool.core.collection.CollectionUtils;
  */
 class CharCartesian implements CartesianFunction<CharValues, Character> {
     @Override
-    public Character[] apply(CharValues charValues, CartesianContext context) {
-        char[] value = charValues.value();
+    public Character[] apply(CharValues annotatedByValuable, CartesianContext context) {
+        char[] value = annotatedByValuable.value();
         if (value.length > 0) {
             return (Character[]) CollectionUtils.toWrapperArray(value);
         }

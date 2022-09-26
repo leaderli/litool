@@ -8,8 +8,8 @@ import io.leaderli.litool.core.collection.CollectionUtils;
  */
 public class LongCartesian implements CartesianFunction<LongValues, Long> {
     @Override
-    public Long[] apply(LongValues longValues, CartesianContext context) {
-        long[] value = longValues.value();
+    public Long[] apply(LongValues annotatedByValuable, CartesianContext context) {
+        long[] value = annotatedByValuable.value();
         if (value.length > 0) {
             return (Long[]) CollectionUtils.toWrapperArray(value);
         }

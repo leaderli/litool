@@ -8,8 +8,8 @@ import io.leaderli.litool.core.collection.CollectionUtils;
  */
 public class BooleanCartesian implements CartesianFunction<BooleanValues, Boolean> {
     @Override
-    public Boolean[] apply(BooleanValues booleanValues, CartesianContext context) {
-        boolean[] value = booleanValues.value();
+    public Boolean[] apply(BooleanValues annotatedByValuable, CartesianContext context) {
+        boolean[] value = annotatedByValuable.value();
         if (value.length > 0) {
             return (Boolean[]) CollectionUtils.toWrapperArray(value);
         }

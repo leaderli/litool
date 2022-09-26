@@ -10,7 +10,7 @@ public class FieldAnnotationName implements LeanField<LeanName> {
 
 
     @Override
-    public String apply(LeanName annotated, Field field) {
-        return annotated.value();
+    public String apply(LeanName annotatedByValuable, Field field) {
+        return annotatedByValuable.value();
     }
 }

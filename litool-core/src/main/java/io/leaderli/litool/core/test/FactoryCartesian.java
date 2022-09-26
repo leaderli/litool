@@ -8,9 +8,9 @@ import io.leaderli.litool.core.type.ReflectUtil;
  */
 public class FactoryCartesian implements CartesianFunction<FactoryValues, Object> {
     @Override
-    public Object[] apply(FactoryValues factoryValues, CartesianContext context) {
+    public Object[] apply(FactoryValues annotatedByValuable, CartesianContext context) {
 
-        return ReflectUtil.newInstance(factoryValues.value())
+        return ReflectUtil.newInstance(annotatedByValuable.value())
                 .map(f -> f.apply(context))
                 .or(new Object[0])
                 .get();

@@ -19,13 +19,11 @@ import java.util.Map;
  */
 public class CartesianUtil {
 
-    @SuppressWarnings("unchecked")
     private static <T> Object[] cartesian(Class<T> type, AnnotatedElement annotatedElement, CartesianContext context) {
 
-        return context.relatives(annotatedElement)
-                .first()
+        return context.relative(annotatedElement)
                 .map(tu -> {
-                    if (tu._1 instanceof ObjectCartesian) {
+                    if ((Object) tu._1 instanceof ObjectCartesian) {
                         return new CartesianObject<>(type, field -> CartesianUtil.cartesian(field, context)).cartesian().toArray();
                     }
 
