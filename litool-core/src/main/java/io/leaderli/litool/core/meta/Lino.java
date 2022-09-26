@@ -112,9 +112,10 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     /**
      * assert {@link  #present()}
      *
-     * @param msg the error msg
      * @return this
      */
+    Lino<T> assertNotNone();
+
     Lino<T> assertNotNone(String msg);
 
 
@@ -181,6 +182,12 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      */
 
     T get(T alternate);
+
+    /**
+     * @param alternate the alternate value provider
+     * @return the underlying value if {@link  #present()} otherwise return alternate
+     */
+    T get(Supplier<T> alternate);
 
 
     /**
@@ -387,6 +394,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
+        public Lino<T> assertNotNone() {
+            return this;
+        }
+
+        @Override
         public Lino<T> assertNotNone(String msg) {
             return this;
         }
@@ -432,6 +444,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public T get(T alternate) {
+            return value;
+        }
+
+        @Override
+        public T get(Supplier<T> alternate) {
             return value;
         }
 
@@ -582,6 +599,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
+        public Lino<T> assertNotNone() {
+            throw new IllegalStateException();
+        }
+
+        @Override
         public Lino<T> assertNotNone(String msg) {
             throw new IllegalStateException(msg);
         }
@@ -624,6 +646,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         @Override
         public T get(T alternate) {
             return alternate;
+        }
+
+        @Override
+        public T get(Supplier<T> alternate) {
+            return alternate.get();
         }
 
         @Override

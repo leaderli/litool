@@ -1,8 +1,13 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.lang.lean.LeanFieldFunction;
+import io.leaderli.litool.core.lang.lean.LeanFieldMetaAnnotation;
 import io.leaderli.litool.core.lang.lean.LeanFieldName;
+import io.leaderli.litool.core.meta.LiTuple2;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 /**
@@ -20,10 +25,9 @@ class MetaAnnotationTest {
 
         Field field = getClass().getField("name");
 
-//        MetaAnnotation<LeanFieldMetaAnnotation, LeanFieldFunction> meta = new
+        MetaAnnotation<LeanFieldMetaAnnotation, LeanFieldFunction> meta = new MetaAnnotation<>(LeanFieldMetaAnnotation.class, LeanFieldFunction.class);
 
-//        LiTuple2<LeanFieldFunction, Annotation> mx = meta.relative(field).get();
-//        System.out.println(mx);
-//        System.out.println((String) mx.apply((a, b) -> a.apply(b, field)));
+        LiTuple2<LeanFieldFunction, Annotation> mx = meta.relative(field).get();
+        Assertions.assertEquals("abc", mx.apply((a, b) -> a.apply(b, field)));
     }
 }

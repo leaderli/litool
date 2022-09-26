@@ -19,7 +19,7 @@ class TypeAdaptersTest {
         Assertions.assertEquals(1, typeAdapter.read("1"));
         Assertions.assertEquals(1, typeAdapter.read(1));
         Assertions.assertEquals(1, typeAdapter.read(1.0));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> typeAdapter.read(true));
+        Assertions.assertThrows(IllegalStateException.class, () -> typeAdapter.read(true));
         Assertions.assertThrows(IllegalStateException.class, () -> typeAdapter.read("a"));
 
     }

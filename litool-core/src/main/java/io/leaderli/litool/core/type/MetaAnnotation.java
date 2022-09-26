@@ -29,37 +29,39 @@ public class MetaAnnotation<A extends Annotation, F> {
         LiAssertUtil.assertTrue(meta.isAnnotation());
 
         Method method = ReflectUtil.getMethod(meta, "value").get();
-
         Objects.requireNonNull(method);
 
 
         Class<?> metaFunctionType = ParameterizedTypeImpl.make(method.getGenericReturnType()).getActualClassArgument().get();
-//        print(method.getGenericReturnType(), functionType);
+
         LiAssertUtil.assertTrue(metaFunctionType == functionType);
 
         this.meta = meta;
         this.functionType = functionType;
-//        println(meta, functionType);
     }
 
     public Lino<LiTuple2<F, Annotation>> relative(AnnotatedElement annotatedElement) {
         return relatives(annotatedElement).first();
     }
 
-    @SuppressWarnings("unchecked")
     public Lira<LiTuple2<F, Annotation>> relatives(AnnotatedElement annotatedElement) {
         return ReflectUtil.findAnnotationsWithMetaAnnotation(annotatedElement, meta)
                 .tuple(an -> an.annotationType().getAnnotation(meta))
-                .map(tu -> tu
-                        .map2(mt -> meta_function.computeIfAbsent(mt, k -> (F) ReflectUtil
-                                .getMethodValueByName(mt, "value")
-                                .cast(Class.class)
-                                .unzip(ReflectUtil::newInstance)
-                                .cast(functionType)
-                                .get())
-                        )
-                        .swap() // swap to human readable
-                );
+                .map(tu -> tu.map2(this::compute).swap());
+        // swap to human readable
 
+    }
+
+    private F compute(A ma) {
+        return meta_function.computeIfAbsent(ma, this::createBy);
+    }
+
+    @SuppressWarnings("unchecked")
+    private F createBy(A ma) {
+        return (F) ReflectUtil.getMethodValueByName(ma, "value")
+                .cast(Class.class)
+                .unzip(ReflectUtil::newInstance)
+                .cast(functionType)
+                .get();
     }
 }

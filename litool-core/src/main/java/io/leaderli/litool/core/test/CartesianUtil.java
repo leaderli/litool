@@ -1,11 +1,9 @@
 package io.leaderli.litool.core.test;
 
-import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
+import io.leaderli.litool.core.type.MetaAnnotation;
 import io.leaderli.litool.core.type.PrimitiveEnum;
-import io.leaderli.litool.core.type.ReflectUtil;
-import io.leaderli.litool.core.type.TypeUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -21,28 +19,20 @@ import java.util.Map;
 public class CartesianUtil {
 
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static <T> Object[] cartesian(Class<T> type, AnnotatedElement annotatedElement, CartesianContext context) {
 
-        return ReflectUtil.findAnnotationsWithMetaAnnotation(annotatedElement, Valuable.class).filter(an -> {
-            Class<? extends CartesianFunction<?, ?>> value = an.annotationType().getAnnotation(Valuable.class).value();
-            if (value == ObjectCartesian.class) {
-                return true;
-            }
-            Lino<Class<?>> actualClassArgument = TypeUtil.resolve(value, CartesianFunction.class).getActualClassArgument(1);
-            Class<?> cartesianFunction2GenericType = actualClassArgument.get();
-            return cartesianFunction2GenericType == ClassUtil.primitiveToWrapper(type);
-        }).first().map(an -> {
+        MetaAnnotation<Valuable, CartesianFunction> meta = new MetaAnnotation<>(Valuable.class, CartesianFunction.class);
 
-                    if (an instanceof ObjectValues) {
-
+        return meta.relatives(annotatedElement)
+                .first()
+                .map(tu -> {
+                    if (tu._1 instanceof ObjectCartesian) {
                         return new CartesianObject<>(type, field -> CartesianUtil.cartesian(field, context)).cartesian().toArray();
                     }
-                    return context.provideByValuable(an);
-                }
-
-        ).or(cartesian_single_def(type)).get();
-
-
+                    return tu._1.apply(tu._2, context);
+                })
+                .get(() -> cartesian_single_def(type));
     }
 
     /**
