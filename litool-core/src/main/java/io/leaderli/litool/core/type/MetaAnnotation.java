@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -38,6 +39,11 @@ public class MetaAnnotation<A extends Annotation, F> {
 
         this.meta = meta;
         this.functionType = functionType;
+    }
+
+    public <R> Function<AnnotatedElement, R> relative12(AnnotatedElement annotatedElement) {
+
+        return null;
     }
 
     public Lino<LiTuple2<F, Annotation>> relative(AnnotatedElement annotatedElement) {

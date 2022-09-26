@@ -69,26 +69,28 @@ class CartesianUtilTest {
     void cartesianByTemplate() {
 
         //language=JSON
-        String json = "{\n" +
-                "  \"height\": " +
-                "188,\n" +
-                "  \"gender\": [\n" +
-                "    true,\n" +
-                "    false\n" +
-                "  ],\n" +
-                "  \"age\": [\n" +
-                "    1,\n" +
-                "    2\n" +
-                "  ]\n" +
-                "}";
+        String json = "{\"height\": 188, \"gender\": [true, false], \"age\": [1, 2]}";
 
         Gson gson = new Gson();
         Map map = gson.fromJson(json, Map.class);
 
 
         int size = CartesianUtil.cartesianByTemplate(TestA.class, map).size();
+
         Assertions.assertEquals(4, size);
 
+    }
+
+    @Test
+    void testB() {
+        Field age = ReflectUtil.getField(TestB.class, "age").get();
+        Assertions.assertArrayEquals(new Integer[]{0}, CartesianUtil.cartesian(age, new CartesianContext()));
+    }
+
+    private static class TestB {
+
+        @DoubleValues({1, 2, 1})
+        private int age;
     }
 
     private static class TestA {

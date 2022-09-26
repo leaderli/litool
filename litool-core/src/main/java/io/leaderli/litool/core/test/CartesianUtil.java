@@ -1,9 +1,10 @@
 package io.leaderli.litool.core.test;
 
+import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
-import io.leaderli.litool.core.type.MetaAnnotation;
 import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.type.TypeUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -18,20 +19,25 @@ import java.util.Map;
  */
 public class CartesianUtil {
 
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("unchecked")
     private static <T> Object[] cartesian(Class<T> type, AnnotatedElement annotatedElement, CartesianContext context) {
 
-        MetaAnnotation<Valuable, CartesianFunction> meta = new MetaAnnotation<>(Valuable.class, CartesianFunction.class);
-
-        return meta.relatives(annotatedElement)
+        return context.relatives(annotatedElement)
                 .first()
                 .map(tu -> {
                     if (tu._1 instanceof ObjectCartesian) {
                         return new CartesianObject<>(type, field -> CartesianUtil.cartesian(field, context)).cartesian().toArray();
                     }
-                    return tu._1.apply(tu._2, context);
+
+                    ParameterizedTypeImpl canonicalize = TypeUtil.resolve(tu._1.getClass(), CartesianFunction.class);
+                    if (ClassUtil.primitiveToWrapper(type) != canonicalize.getActualClassArgument(1).get()) {
+                        return null;
+                    }
+                    Annotation annotated = tu._2;
+
+                    return tu._1.apply(annotated, context);
                 })
+                .filter()
                 .get(() -> cartesian_single_def(type));
     }
 

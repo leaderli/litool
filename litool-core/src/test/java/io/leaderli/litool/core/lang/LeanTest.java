@@ -2,6 +2,7 @@ package io.leaderli.litool.core.lang;
 
 import com.google.gson.Gson;
 import io.leaderli.litool.core.lang.lean.Lean;
+import io.leaderli.litool.core.lang.lean.LeanName;
 import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -80,6 +81,23 @@ class LeanTest {
         Assertions.assertEquals(1.0, parser.age);
 
 
+    }
+
+    @Test
+    void test7() {
+        String json = "{\"age\": 1.0}";
+        Map map = gson.fromJson(json, Map.class);
+
+        Lean lean = new Lean();
+        Bean7 parser = lean.fromBean(map, Bean7.class);
+
+        Assertions.assertEquals(1.0, parser.fake);
+
+    }
+
+    private static class Bean7 {
+        @LeanName("age")
+        private double fake;
     }
 
     private static class Bean6 {

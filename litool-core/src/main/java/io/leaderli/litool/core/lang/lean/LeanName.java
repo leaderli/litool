@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
  * @since 2022/9/26 11:47 AM
  */
 @Retention(RetentionPolicy.RUNTIME)
-@LeanFieldMetaAnnotation(FieldAnnotationName.class)
+@LeanMeta(FieldAnnotationName.class)
 @Target({ElementType.FIELD})
-public @interface LeanFieldName {
+public @interface LeanName {
     String value();
 }

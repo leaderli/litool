@@ -14,14 +14,14 @@ import java.lang.reflect.Parameter;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
-public @interface LeanFieldMetaAnnotation {
+public @interface LeanMeta {
 
     /**
      * @return a meta annotation that provide a {@link  CartesianFunction}
      * @see CartesianUtil#cartesian(Field, CartesianContext)
      * @see CartesianUtil#cartesian(Parameter, CartesianContext)
      */
-    Class<? extends LeanFieldFunction<? extends Annotation>> value();
+    Class<? extends LeanField<? extends Annotation>> value();
 
 
 }

@@ -10,5 +10,7 @@ import java.lang.annotation.Annotation;
  */
 @FunctionalInterface
 public interface CartesianFunction<T extends Annotation, R> {
+
+
     R[] apply(T t, CartesianContext context);
 }

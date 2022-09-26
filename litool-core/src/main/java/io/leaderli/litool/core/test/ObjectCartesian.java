@@ -8,6 +8,5 @@ public class ObjectCartesian implements CartesianFunction<ObjectValues, Object> 
     @Override
     public Object[] apply(ObjectValues objectValues, CartesianContext context) {
         throw new UnsupportedOperationException();
-
     }
 }

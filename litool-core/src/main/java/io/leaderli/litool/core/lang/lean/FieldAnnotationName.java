@@ -6,11 +6,11 @@ import java.lang.reflect.Field;
  * @author leaderli
  * @since 2022/9/26 11:53 AM
  */
-public class FieldAnnotationName implements LeanFieldFunction<LeanFieldName> {
+public class FieldAnnotationName implements LeanField<LeanName> {
 
 
     @Override
-    public String apply(LeanFieldName annotation, Field field) {
-        return annotation.value();
+    public String apply(LeanName annotated, Field field) {
+        return annotated.value();
     }
 }
