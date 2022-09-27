@@ -76,6 +76,9 @@ public class IterableRa<T> extends Ra<T> {
                 try {
                     SubscriberUtil.next(actualSubscriber, next);
                 } catch (Throwable throwable) {
+                    if (throwable instanceof LiraRuntimeException) {
+                        throw new LiraRuntimeException((LiraRuntimeException) throwable);
+                    }
                     actualSubscriber.next_null();
                     actualSubscriber.onError(throwable, this);
                 }

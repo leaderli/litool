@@ -14,7 +14,7 @@ import java.util.HashMap;
  * @author leaderli
  * @since 2022/7/24
  */
-class JsonTypeAdapterTest {
+class JsonTypeMapCollectionAdapterTest {
 
 
     HashMap<Type, InstanceCreator<?>> instanceCreators = new HashMap<>();

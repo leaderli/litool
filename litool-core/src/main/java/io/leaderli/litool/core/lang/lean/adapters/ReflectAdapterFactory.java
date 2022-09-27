@@ -1,13 +1,21 @@
-package io.leaderli.litool.core.lang.lean;
+package io.leaderli.litool.core.lang.lean.adapters;
 
+import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import io.leaderli.litool.core.lang.BeanPath;
+import io.leaderli.litool.core.lang.lean.Lean;
+import io.leaderli.litool.core.lang.lean.LeanFieldAdapter;
+import io.leaderli.litool.core.lang.lean.TypeAdapter;
+import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
+import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.ReflectUtil;
-import io.leaderli.litool.core.type.TypeUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.function.Supplier;
+
+import static io.leaderli.litool.core.type.TypeUtil.resolve;
 
 /**
  * @author leaderli
@@ -57,14 +65,35 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
             return adapter.read(source);
         }
 
+        @SuppressWarnings("unchecked")
         public void populate(Object source, Object target) {
             Type declare = typeToken.getType();
             for (Field field : ReflectUtil.getFields(target.getClass())) {
 
                 String key = lean.reflect_name_handlers.map(fu -> fu.apply(field)).first().get();
-                // TODO  field custom typeAdapter
+                Type targetType = resolve(declare, field.getGenericType());
+
+                Lino<LeanFieldAdapter> annotation = ReflectUtil.getAnnotation(field, LeanFieldAdapter.class);
+                TypeAdapter<T> typeAdapter;
+                if (annotation.present()) {
+                    typeAdapter = (TypeAdapter<T>) annotation
+                            .map(LeanFieldAdapter::value)
+                            .assertTrue(cls -> {
+                                ParameterizedTypeImpl adapterType = resolve(cls, TypeAdapter.class);
+                                if (adapterType.getActualTypeArguments()[0] == targetType) {
+                                    return true;
+                                }
+                                throw new IllegalArgumentException(StrSubstitution.format("the {adapter} is not satisfied the field type {type}", adapterType, targetType));
+                            })
+                            .unzip(ReflectUtil::newInstance)
+                            .assertNotNone()
+                            .get();
+                } else {
+                    typeAdapter = lean.getAdapter(targetType);
+
+                }
                 BeanPath.simple(source, key)
-                        .map(value -> lean.fromBean(value, TypeUtil.resolve(declare, field.getGenericType())))
+                        .map(typeAdapter::read)
                         .ifPresent(v -> ReflectUtil.setFieldValue(target, field, v));
             }
         }

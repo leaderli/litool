@@ -33,19 +33,19 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
         Type[] componentType = Lira.<TypeVariable>of(type.getRawType().getTypeParameters()).toArray(Type.class);
         Type keyType = componentType[0];
         if (keyType == String.class) {
-            return new StringAdapter(lean.getAdapter(String.class), lean.getAdapter(componentType[1]), constructor);
+            return new StringKeyAdapter(lean.getAdapter(String.class), lean.getAdapter(componentType[1]), constructor);
         }
-        return new Adapter(lean.getAdapter(LiTypeToken.of(keyType)), lean.getAdapter(componentType[1]), constructor);
+        return new MapAdapter(lean.getAdapter(LiTypeToken.of(keyType)), lean.getAdapter(componentType[1]), constructor);
 
     }
 
-    private static final class StringAdapter<V> implements TypeAdapter<Map<String, V>> {
+    private static final class StringKeyAdapter<V> implements TypeAdapter<Map<String, V>> {
         private final TypeAdapter<String> keyTypeAdapter;
 
         private final TypeAdapter<V> valueTypeAdapter;
         private final ObjectConstructor<Map<String, V>> constructor;
 
-        private StringAdapter(TypeAdapter<String> keyTypeAdapter, TypeAdapter<V> valueTypeAdapter, ObjectConstructor<Map<String, V>> constructor) {
+        private StringKeyAdapter(TypeAdapter<String> keyTypeAdapter, TypeAdapter<V> valueTypeAdapter, ObjectConstructor<Map<String, V>> constructor) {
             this.keyTypeAdapter = keyTypeAdapter;
             this.valueTypeAdapter = valueTypeAdapter;
             this.constructor = constructor;
@@ -79,12 +79,12 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
         }
     }
 
-    private static final class Adapter<K, V> implements TypeAdapter<Map<K, V>> {
+    private static final class MapAdapter<K, V> implements TypeAdapter<Map<K, V>> {
         private final TypeAdapter<K> keyTypeAdapter;
         private final TypeAdapter<V> valueTypeAdapter;
         private final ObjectConstructor<Map<K, V>> constructor;
 
-        private Adapter(TypeAdapter<K> keyTypeAdapter, TypeAdapter<V> valueTypeAdapter, ObjectConstructor<Map<K, V>> constructor) {
+        private MapAdapter(TypeAdapter<K> keyTypeAdapter, TypeAdapter<V> valueTypeAdapter, ObjectConstructor<Map<K, V>> constructor) {
             this.keyTypeAdapter = keyTypeAdapter;
             this.valueTypeAdapter = valueTypeAdapter;
             this.constructor = constructor;

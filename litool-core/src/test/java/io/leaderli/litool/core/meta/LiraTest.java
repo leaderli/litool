@@ -4,6 +4,7 @@ import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.InfiniteException;
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.ra.LiraRuntimeException;
 import io.leaderli.litool.core.meta.ra.SubscriberRa;
 import io.leaderli.litool.core.meta.ra.SubscriptionRa;
 import io.leaderli.litool.core.text.StringUtils;
@@ -20,8 +21,14 @@ class LiraTest {
 
 
     @Test
-    void test() {
-        System.out.println(Lira.of(1, 2, null, 3, 4, null, 5, 6).filter_null().limit(5).size());
+    void LiraRuntimeException() {
+
+        LiraRuntimeException liraRuntimeException = Assertions.assertThrows(LiraRuntimeException.class, () -> Lira.of(1, 2).debug(a -> {
+            throw new LiraRuntimeException(new IllegalArgumentException("123"));
+        }).get());
+
+        Assertions.assertEquals("java.lang.IllegalArgumentException: 123", liraRuntimeException.getMessage());
+        Assertions.assertTrue(liraRuntimeException.getCause() instanceof IllegalArgumentException);
 
     }
 
@@ -31,7 +38,7 @@ class LiraTest {
         Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertNoError());
         Assertions.assertThrows(IllegalStateException.class, () -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertNoError().get());
         Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertTrue(i -> i > 0));
-        Assertions.assertThrows(IllegalStateException.class, () -> Lira.of(1, 2, 9, 0).assertTrue(i -> i > 0).get());
+        Assertions.assertThrows(LiraRuntimeException.class, () -> Lira.of(1, 2, 9, 0).assertTrue(i -> i > 0).get());
     }
 
     @Test

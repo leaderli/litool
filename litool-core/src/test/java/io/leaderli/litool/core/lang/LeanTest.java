@@ -2,7 +2,9 @@ package io.leaderli.litool.core.lang;
 
 import com.google.gson.Gson;
 import io.leaderli.litool.core.lang.lean.Lean;
+import io.leaderli.litool.core.lang.lean.LeanFieldAdapter;
 import io.leaderli.litool.core.lang.lean.LeanKey;
+import io.leaderli.litool.core.lang.lean.TypeAdapter;
 import io.leaderli.litool.core.test.StringValues;
 import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
@@ -103,6 +105,75 @@ class LeanTest {
         Assertions.assertEquals(2.0, parser.fake2);
         Assertions.assertEquals(1.0, parser.custom);
 
+    }
+
+    @Test
+    void test8() {
+        String json = "{\"name\": [\"123\"],\"age\": 10}";
+        Map map = gson.fromJson(json, Map.class);
+        Lean lean = new Lean();
+        Assertions.assertThrows(IllegalArgumentException.class, () -> lean.fromBean(map, Bean8.class));
+
+    }
+
+    @Test
+    void test9() {
+        String json = "{\"name\": [\"123\"],\"age\": 10}";
+        Map map = gson.fromJson(json, Map.class);
+        Lean lean = new Lean();
+        Bean9 bean = lean.fromBean(map, Bean9.class);
+        Assertions.assertEquals("123", bean.name);
+    }
+
+    @Test
+    void test10() {
+        String json = "{\"name\": \"123\"}";
+        Map map = gson.fromJson(json, Map.class);
+        Lean lean = new Lean();
+        Bean10 bean = lean.fromBean(map, Bean10.class);
+        Assertions.assertEquals("123", bean.name);
+    }
+
+    @Test
+    void test11() {
+        String json = "{\"name\": [\"123\"],\"age\": [10,18]}";
+        Map map = gson.fromJson(json, Map.class);
+        Lean lean = new Lean();
+        Bean11<Integer> bean = lean.fromBean(map, LiTypeToken.getParameterized(Bean11.class, Integer.class));
+        Assertions.assertArrayEquals(new String[]{"123"}, bean.name);
+        Assertions.assertArrayEquals(new Integer[]{10, 18}, bean.ages);
+    }
+
+    private static class Bean11<T> {
+        private String[] name;
+        private T[] ages;
+    }
+
+    private static class Bean10 {
+        private String name;
+    }
+
+    private static class StringTypeAdapter implements TypeAdapter<String> {
+
+        @Override
+        public String read(Object source) {
+            if (source instanceof List) {
+                return (String) ((List<?>) source).get(0);
+            }
+            return source + "";
+        }
+    }
+
+    private static class Bean9 {
+        @LeanFieldAdapter(StringTypeAdapter.class)
+        private String name;
+    }
+
+    private static class Bean8 {
+        @LeanFieldAdapter(StringTypeAdapter.class)
+        private String name;
+        @LeanFieldAdapter(StringTypeAdapter.class)
+        private int age;
     }
 
     private static class Bean7 {

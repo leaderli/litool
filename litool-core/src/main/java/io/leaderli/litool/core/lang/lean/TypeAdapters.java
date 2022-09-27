@@ -1,8 +1,6 @@
 package io.leaderli.litool.core.lang.lean;
 
-import io.leaderli.litool.core.lang.lean.adapters.CollectionTypeAdapterFactory;
-import io.leaderli.litool.core.lang.lean.adapters.MapTypeAdapterFactory;
-import io.leaderli.litool.core.lang.lean.adapters.PrimitiveTypeAdapter;
+import io.leaderli.litool.core.lang.lean.adapters.*;
 import io.leaderli.litool.core.type.LiTypeToken;
 
 /**
@@ -17,6 +15,7 @@ public class TypeAdapters {
     public static final TypeAdapterFactory ITERABLE_FACTORY = new CollectionTypeAdapterFactory();
     public static final TypeAdapterFactory OBJECT_FACTORY = newFactory(Object.class, obj -> obj);
     public static final TypeAdapterFactory REFLECT_FACTORY = new ReflectAdapterFactory();
+    public static final TypeAdapterFactory ARRAY_FACTORY = new ArrayTypeAdapterFactory();
 
 
     public static <TT> TypeAdapterFactory newFactory(final Class<TT> type, final TypeAdapter<TT> typeAdapter) {
@@ -26,6 +25,7 @@ public class TypeAdapters {
             public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
                 return typeToken.getRawType() == type ? (TypeAdapter<T>) typeAdapter : null;
             }
+
         };
     }
 

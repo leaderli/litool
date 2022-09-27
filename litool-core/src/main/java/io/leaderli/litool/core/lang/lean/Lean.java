@@ -46,6 +46,7 @@ public class Lean {
         List<TypeAdapterFactory> factories = new ArrayList<>();
         factories.add(TypeAdapters.PRIMITIVE_FACTORY);
         factories.add(TypeAdapters.STRING_FACTORY);
+        factories.add(TypeAdapters.ARRAY_FACTORY);
         factories.add(TypeAdapters.ITERABLE_FACTORY);
         factories.add(TypeAdapters.MAP_FACTORY);
         factories.add(TypeAdapters.OBJECT_FACTORY);
@@ -63,6 +64,31 @@ public class Lean {
      */
     public <T> T fromBean(Object source, LiTypeToken<T> targetTypeToken) {
         return getAdapter(targetTypeToken).read(source);
+    }
+
+
+    /**
+     * @param source     the source bean
+     * @param targetType the target bean class
+     * @param <T>        the parameter of {@link  LiTypeToken}
+     * @return a new instance created by copy the properties of source deeply
+     * @see #getAdapter(Type)
+     */
+    @SuppressWarnings({"unchecked"})
+    public <T> T fromBean(Object source, Class<T> targetType) {
+        return (T) getAdapter(targetType).read(source);
+    }
+
+    /**
+     * @param source     the source bean
+     * @param targetType the target bean type
+     * @param <T>        the parameter of {@link  LiTypeToken}
+     * @return a new instance created by copy the properties of source deeply
+     * @see #getAdapter(Type)
+     */
+    @SuppressWarnings({"unchecked"})
+    public <T> T fromBean(Object source, Type targetType) {
+        return (T) getAdapter(targetType).read(source);
     }
 
     /**
@@ -109,17 +135,6 @@ public class Lean {
         return (TypeAdapter<T>) typeTokenCache.get(type);
     }
 
-    /**
-     * @param source     the source bean
-     * @param targetType the target bean type
-     * @param <T>        the parameter of {@link  LiTypeToken}
-     * @return a new instance created by copy the properties of source deeply
-     * @see #getAdapter(Type)
-     */
-    @SuppressWarnings({"unchecked"})
-    public <T> T fromBean(Object source, Type targetType) {
-        return (T) getAdapter(targetType).read(source);
-    }
 
     /**
      * {@code return getAdapter(LiTypeToken.of(type))}

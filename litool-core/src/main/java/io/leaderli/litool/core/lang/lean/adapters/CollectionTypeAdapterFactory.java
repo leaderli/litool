@@ -28,15 +28,15 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         Type componentType = Lira.of(type.getActualTypeArguments()).first().get(Object.class);
-        return new Adapter(lean.getAdapter(componentType), constructor);
+        return new CollectionAdapter(lean.getAdapter(componentType), constructor);
 
     }
 
-    private static final class Adapter<E> implements TypeAdapter<Iterable<E>> {
+    private static final class CollectionAdapter<E> implements TypeAdapter<Iterable<E>> {
         private final TypeAdapter<E> elementTypeAdapter;
         private final ObjectConstructor<Collection<E>> constructor;
 
-        private Adapter(TypeAdapter<E> elementTypeAdapter, ObjectConstructor<Collection<E>> constructor) {
+        private CollectionAdapter(TypeAdapter<E> elementTypeAdapter, ObjectConstructor<Collection<E>> constructor) {
             this.elementTypeAdapter = elementTypeAdapter;
             this.constructor = constructor;
         }

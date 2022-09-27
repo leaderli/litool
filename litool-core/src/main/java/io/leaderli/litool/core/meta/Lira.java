@@ -4,7 +4,6 @@ import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.Generators;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.NoneItr;
-import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
@@ -24,6 +23,13 @@ import java.util.stream.Stream;
  *
  * <p>
  * lira should not use  the tool class that contain lira, such as {@link  io.leaderli.litool.core.bit.BitStr}
+ * <p>
+ * <p>
+ * lira chain will catch all exception to perform an {@link  Exceptionable#onError(Throwable, CancelSubscription)} action
+ * , you can listen exception on {@link #onError(Exceptionable)}, and rethrow the exception
+ * to interrupt the chain with a runtimeException, or just cancel the chain by  {@link  CancelSubscription#cancel()}.
+ * to be convenient, you can use {@link  #assertNoError()} or {@link  #assertTrue(Function)} to interrupt the chain
+ * manually with runtimeException. or throw a specific {@link }
  *
  * @author leaderli
  * @since 2022/6/19
@@ -425,14 +431,16 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
             @Override
             public void accept(T e) {
-                LiAssertUtil.assertTrue(BooleanUtil.parse(filter.apply(e)));
+                if (!BooleanUtil.parse(filter.apply(e))) {
+                    throw new LiraRuntimeException();
+                }
             }
 
             @Override
             public void onNull() {
-                LiAssertUtil.assertNotRun();
+                throw new LiraRuntimeException();
             }
-        }).assertNoError();
+        });
     }
 
     default Lira<T> assertNoError() {

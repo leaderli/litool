@@ -115,28 +115,57 @@ class TypeUtilTest {
     }
 
     @Test
+    void test() throws NoSuchFieldException {
+        Type declare = new Li<String>() {
+        }.getClass();
+
+        Type t = Li.class.getField("t").getGenericType();
+        Type ts = Li.class.getField("ts").getGenericType();
+        Type tss = Li.class.getField("tss").getGenericType();
+        Type lt = Li.class.getField("lt").getGenericType();
+
+
+        Assertions.assertEquals(String.class, TypeUtil.resolve(declare, t));
+        Assertions.assertEquals(String[].class, TypeUtil.resolve(declare, ts));
+        Assertions.assertEquals(String[][].class, TypeUtil.resolve(declare, tss));
+        Assertions.assertEquals(ParameterizedTypeImpl.make(null, List.class, String.class), TypeUtil.resolve(declare, lt));
+
+    }
+
+    @Test
     void field() throws NoSuchFieldException {
         Type resolve = TypeUtil.resolve(Li.class, Li.class.getTypeParameters()[0]);
 
         Type make = Object.class;
         Assertions.assertEquals(make, resolve);
 
-        Type gt = Li.class.getField("list").getGenericType();
+        Type gt = Li.class.getField("lt").getGenericType();
 
         resolve = TypeUtil.resolve(new Li<String>() {
         }.getClass(), gt);
         make = ParameterizedTypeImpl.make(null, List.class, String.class);
         Assertions.assertEquals(make, resolve);
+
+        Type ts = Li.class.getField("ts").getGenericType();
+        resolve = TypeUtil.resolve(new Li<String>() {
+        }.getClass(), ts);
+        Assertions.assertEquals(String[].class, resolve);
+//        Assertions.assertEquals(List.class, TypeUtil.resolve(make1, List.class).getActualClassArgument().get());
+
         ParameterizedTypeImpl make1 = ParameterizedTypeImpl.make(null, List.class, List.class);
 
         Assertions.assertEquals(List.class, TypeUtil.resolve(make1, List.class).getActualClassArgument().get());
         Assertions.assertEquals(List.class, TypeUtil.resolve(make1, List.class.getTypeParameters()[0]));
 
+
     }
 
 
     private static class Li<T> {
-        public List<T> list;
+        public List<T> lt;
+        public T[][] tss;
+        public T[] ts;
+        public T t;
     }
 
     private static interface In2<A> extends In1<A, String>, Consumer<A> {
