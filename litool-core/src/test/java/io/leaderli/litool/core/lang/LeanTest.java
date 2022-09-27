@@ -141,6 +141,7 @@ class LeanTest {
         Lean lean = new Lean();
         Bean11<Integer> bean = lean.fromBean(map, LiTypeToken.getParameterized(Bean11.class, Integer.class));
         Assertions.assertArrayEquals(new String[]{"123"}, bean.name);
+        //TODO fix
         Assertions.assertArrayEquals(new Integer[]{10, 18}, bean.ages);
     }
 
