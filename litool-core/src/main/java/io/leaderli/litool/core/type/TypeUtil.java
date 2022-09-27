@@ -189,16 +189,7 @@ public class TypeUtil {
         if (resolving == Object.class) {
             return true;
         }
-        boolean allResolved = true;
-        for (TypeVariable<?> typeParameter : toResolve.getTypeParameters()) {
-            if (!visitedTypeVariables.containsKey(typeParameter)) {
-                allResolved = false;
-                break;
-            }
-        }
-        if (allResolved) {
-            return true;
-        }
+
 
         Class<?> raw = erase(resolving);
 
