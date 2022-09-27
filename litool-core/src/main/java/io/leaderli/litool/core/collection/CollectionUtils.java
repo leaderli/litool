@@ -3,7 +3,6 @@ package io.leaderli.litool.core.collection;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -129,20 +128,8 @@ public class CollectionUtils {
      * @param obj an obj
      * @return an array
      */
-    public static Object[] toWrapperArray(Object obj) {
-
-        if (obj == null || !obj.getClass().isArray()) {
-            return null;
-        }
-        Class<?> componentType = obj.getClass().getComponentType();
-        int length = Array.getLength(obj);
-        Object[] array = ClassUtil.newWrapperArray(componentType, length);
-
-        for (int i = 0; i < length; i++) {
-            array[i] = Array.get(obj, i);
-        }
-
-        return array;
+    public static <T> T[] toWrapperArray(Object obj) {
+        return ClassUtil.toArray(obj);
     }
 
     /**

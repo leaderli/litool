@@ -13,9 +13,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static io.leaderli.litool.core.type.TypeUtil.canonicalize;
-import static io.leaderli.litool.core.util.ConsoleUtil.print;
-
 /**
  * @author leaderli
  * @since 2022/9/25 3:44 PM
@@ -23,20 +20,15 @@ import static io.leaderli.litool.core.util.ConsoleUtil.print;
 public class ArrayTypeAdapterFactory implements TypeAdapterFactory {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
+    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
 
-        Type canonicalize = canonicalize(type.getType());
-        if (!(canonicalize instanceof GenericArrayType)) {
+        Type type = typeToken.getType();
+        if (!(type instanceof GenericArrayType)) {
             return null;
         }
-        GenericArrayType genericArrayType = (GenericArrayType) canonicalize;
+        type = ((GenericArrayType) type).getGenericComponentType();
 
-
-        Type componentType = genericArrayType.getGenericComponentType();
-        print(type, componentType);
-
-
-        return new ArrayAdapter(TypeUtil.erase(componentType), lean.getAdapter(componentType));
+        return new ArrayAdapter(TypeUtil.erase(type), lean.getAdapter(type));
 
     }
 
@@ -59,8 +51,8 @@ public class ArrayTypeAdapterFactory implements TypeAdapterFactory {
             if (source instanceof Iterable) {
                 ((Iterable<?>) source).forEach(e -> collection.add(elementTypeAdapter.read(e)));
             } else if (source.getClass().isArray()) {
-                Object[] objects = CollectionUtils.toWrapperArray(source);
-                for (Object e : objects) {
+                E[] objects = CollectionUtils.toWrapperArray(source);
+                for (E e : objects) {
                     collection.add(elementTypeAdapter.read(e));
                 }
             }
