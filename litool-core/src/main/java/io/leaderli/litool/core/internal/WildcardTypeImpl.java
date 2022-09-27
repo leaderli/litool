@@ -44,7 +44,7 @@ public final class WildcardTypeImpl implements WildcardType, Serializable {
 
     @Override
     public Type[] getLowerBounds() {
-        return lowerBound != null ? new Type[]{lowerBound} : ParameterizedTypeImpl.EMPTY_TYPE_ARRAY;
+        return lowerBound != null ? new Type[]{lowerBound} : TypeUtil.EMPTY_TYPE_ARRAY;
     }
 
     @Override

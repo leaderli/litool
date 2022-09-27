@@ -60,7 +60,7 @@ public class StringConvert {
      */
     public static <T> T parser(String value, T def) {
 
-        Class<T> cls = ClassUtil.getClass(def);
+        Class<T> cls = ClassUtil.getDeclaringClass(def);
 
         return parser(cls, value, def);
     }

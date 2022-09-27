@@ -1,10 +1,14 @@
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
+import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.type.TypeUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -20,20 +24,52 @@ class TypeUtilTest {
 
 
     @Test
-    void checkNotPrimitive() {
+    void resolveTypeVariable() {
 
-        Assertions.assertThrows(RuntimeException.class, () -> TypeUtil.checkNotPrimitive(int.class));
-        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(Integer.class));
-        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(null));
-        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(ParameterizedTypeImpl.make(null, ArrayList.class, String.class)));
-        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(List.class.getTypeParameters()[0]));
+        Type type = ReflectUtil.getField(T4.T3.class, "t").get().getGenericType();
+        Assertions.assertSame(String.class, TypeUtil.resolveTypeVariable(T5.class, (TypeVariable<?>) type));
+        Assertions.assertSame(T1[].class, TypeUtil.resolveTypeVariable(T2.class, List.class.getTypeParameters()[0]));
+        Assertions.assertSame(ArrayList.class, TypeUtil.resolveTypeVariable(T2.class, T1.class.getTypeParameters()[0]));
     }
 
+    @Test
+    void expansionTypeVariable() {
+
+        Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
+        TypeUtil.expandTypeVariables(T2.class.getGenericInterfaces()[0], visitedTypeVariables);
+        Assertions.assertEquals(3, visitedTypeVariables.size());
+    }
+
+    @Test
+    void typeVariables() {
+
+        Lira<TypeVariable> of = Lira.none();
+        Assertions.assertSame(Lira.none(), TypeUtil.typeVariables(Object.class));
+
+        of = Lira.of(T1.class.getTypeParameters()[0]);
+        Assertions.assertEquals(of, TypeUtil.typeVariables(T1.class));
+
+        of = Lira.of(Supplier.class.getTypeParameters()[0], List.class.getTypeParameters()[0]);
+        Assertions.assertEquals(of, TypeUtil.typeVariables(T1.class.getGenericInterfaces()[0]));
+
+        of = Lira.of(Consumer.class.getTypeParameters()[0]);
+        Assertions.assertEquals(of, TypeUtil.typeVariables(T1.class.getGenericInterfaces()[1]));
+
+        of = Lira.of(Class.class.getTypeParameters()[0]);
+
+        Field cls = ReflectUtil.getField(T1.class, "cls").get();
+        Assertions.assertEquals(of, TypeUtil.typeVariables(cls.getGenericType()));
+
+        cls = ReflectUtil.getField(T1.class, "cls2").get();
+        Assertions.assertEquals(of, TypeUtil.typeVariables(cls.getGenericType()));
+
+    }
 
     @Test
     void isUnknown() {
 
         Assertions.assertTrue(TypeUtil.isUnknown(Consumer.class.getTypeParameters()[0]));
+        Assertions.assertFalse(TypeUtil.isUnknown(Consumer.class));
     }
 
     @Test
@@ -49,35 +85,25 @@ class TypeUtilTest {
         assertSame(String.class, TypeUtil.erase(actualTypeArgument));
 
 
-    }
+        Assertions.assertSame(Supplier.class, TypeUtil.erase(T1.class.getGenericInterfaces()[0]));
 
-    @Test
-    void testEquals() {
-
-
-        assertFalse(TypeUtil.equals(Consumer.class.getTypeParameters()[0], Supplier.class.getTypeParameters()[0]));
-        ParameterizedType left = (ParameterizedType) ArrayList.class.getGenericInterfaces()[0];
-        ParameterizedType right = (ParameterizedType) AbstractList.class.getGenericInterfaces()[0];
-        assertFalse(TypeUtil.equals(left, right));
-        assertTrue(TypeUtil.equals(String.class, String.class));
-        assertTrue(TypeUtil.equals(null, null));
-        assertFalse(TypeUtil.equals(null, String.class));
-    }
+        Assertions.assertSame(Consumer.class, TypeUtil.erase(T1.class.getGenericInterfaces()[1]));
 
 
-    private static class TestType implements Consumer<String> {
+        Field cls = ReflectUtil.getField(T1.class, "cls").get();
+        Assertions.assertSame(Class.class, TypeUtil.erase(cls.getGenericType()));
+
+        cls = ReflectUtil.getField(T1.class, "cls2").get();
+        Assertions.assertSame(Class.class, TypeUtil.erase(cls.getGenericType()));
 
 
-        @Override
-        public void accept(String s) {
-
-        }
     }
 
     @Test
     void resolve() throws NoSuchFieldException {
 
 
+        assertArrayEquals(new Object[]{ArrayList.class}, TypeUtil.resolve(T2.class, T1.class).getActualClassArguments());
         assertArrayEquals(new Object[]{ArrayList.class, String.class}, TypeUtil.resolve(In4.class, In1.class).getActualClassArguments());
         assertArrayEquals(new Object[]{List.class, String.class}, TypeUtil.resolve(In3.class, In1.class).getActualClassArguments());
         assertArrayEquals(new Object[]{Object.class, String.class}, TypeUtil.resolve(In2.class, In1.class).getActualClassArguments());
@@ -115,7 +141,7 @@ class TypeUtilTest {
     }
 
     @Test
-    void test() throws NoSuchFieldException {
+    void resolve2() throws NoSuchFieldException {
         Type declare = new Li<String>() {
         }.getClass();
 
@@ -131,6 +157,78 @@ class TypeUtilTest {
         Assertions.assertEquals(ParameterizedTypeImpl.make(null, List.class, String.class), TypeUtil.resolve(declare, lt));
 
     }
+
+    @Test
+    void checkNotPrimitive() {
+
+        Assertions.assertThrows(RuntimeException.class, () -> TypeUtil.checkNotPrimitive(int.class));
+        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(Integer.class));
+        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(null));
+        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(ParameterizedTypeImpl.make(null, ArrayList.class, String.class)));
+        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(List.class.getTypeParameters()[0]));
+    }
+
+    @Test
+    void testEquals() {
+
+
+        assertFalse(TypeUtil.equals(Consumer.class.getTypeParameters()[0], Supplier.class.getTypeParameters()[0]));
+        ParameterizedType left = (ParameterizedType) ArrayList.class.getGenericInterfaces()[0];
+        ParameterizedType right = (ParameterizedType) AbstractList.class.getGenericInterfaces()[0];
+        assertFalse(TypeUtil.equals(left, right));
+        assertTrue(TypeUtil.equals(String.class, String.class));
+        assertTrue(TypeUtil.equals(null, null));
+        assertFalse(TypeUtil.equals(null, String.class));
+    }
+
+    private interface T2 extends Supplier<List<T1<ArrayList>[]>[]> {
+
+    }
+
+    private interface T6<T> {
+
+    }
+
+    private interface T8 extends T6<String> {
+
+    }
+
+    private static class TestType implements Consumer<String> {
+
+
+        @Override
+        public void accept(String s) {
+
+        }
+    }
+
+    class T1<T extends List> implements Supplier<List<? extends T>>, Consumer<T[]> {
+        public Class<?> cls;
+        public Class<? super T> cls2;
+
+
+        @Override
+        public List<T> get() {
+            return null;
+        }
+
+        @Override
+        public void accept(T[] ts) {
+
+        }
+    }
+
+    private class T5<T> extends T4<String> {
+
+    }
+
+    private class T4<T> {
+        private class T3 {
+
+            T t;
+        }
+    }
+
 
     @Test
     void field() throws NoSuchFieldException {

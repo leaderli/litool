@@ -8,9 +8,6 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Properties;
 
 
 /**
@@ -60,7 +57,7 @@ public final class LiTypes {
         } else {
             upperBounds = new Type[]{bound};
         }
-        return new WildcardTypeImpl(upperBounds, ParameterizedTypeImpl.EMPTY_TYPE_ARRAY);
+        return new WildcardTypeImpl(upperBounds, TypeUtil.EMPTY_TYPE_ARRAY);
     }
 
     /**
@@ -128,44 +125,6 @@ public final class LiTypes {
         return array instanceof GenericArrayType
                 ? ((GenericArrayType) array).getGenericComponentType()
                 : ((Class<?>) array).getComponentType();
-    }
-
-    /**
-     * Returns the element type of this collection type.
-     *
-     * @throws IllegalArgumentException if this type is not a collection.
-     */
-    public static Type getCollectionElementType(Type context, Class<?> contextRawType) {
-        Type collectionType = TypeUtil.resolve(context, contextRawType, Collection.class);
-
-        if (collectionType instanceof WildcardType) {
-            collectionType = ((WildcardType) collectionType).getUpperBounds()[0];
-        }
-        if (collectionType instanceof ParameterizedType) {
-            return ((ParameterizedType) collectionType).getActualTypeArguments()[0];
-        }
-        return Object.class;
-    }
-
-    /**
-     * Returns a two element array containing this map's key and value types in
-     * positions 0 and 1 respectively.
-     */
-    public static Type[] getMapKeyAndValueTypes(Type context, Class<?> contextRawType) {
-        /*
-         * Work around a problem with the declaration of java.util.Properties. That
-         * class should extend Hashtable<String, String>, but it's declared to
-         * extend Hashtable<Object, Object>.
-         */
-        if (context == Properties.class) {
-            return new Type[]{String.class, String.class};
-        }
-
-        ParameterizedType mapType = TypeUtil.resolve(context, contextRawType, Map.class);
-        if (mapType instanceof ParameterizedType) {
-            return mapType.getActualTypeArguments();
-        }
-        return new Type[]{Object.class, Object.class};
     }
 
 

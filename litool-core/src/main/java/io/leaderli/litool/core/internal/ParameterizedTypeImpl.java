@@ -17,7 +17,6 @@ import java.util.Objects;
  * @since 2022/9/21
  */
 public class ParameterizedTypeImpl implements ParameterizedType {
-    public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
     private final Type ownerType;
     private final Type rawType;
     private final Type[] typeArguments;
@@ -25,14 +24,13 @@ public class ParameterizedTypeImpl implements ParameterizedType {
     public ParameterizedTypeImpl(Type ownerType, Type rawType, Type... typeArguments) {
         if (rawType instanceof Class<?>) {
             Class<?> rawTypeAsClass = (Class<?>) rawType;
-            boolean isStaticOrTopLevelClass = Modifier.isStatic(rawTypeAsClass.getModifiers())
-                    || rawTypeAsClass.getEnclosingClass() == null;
+            boolean isStaticOrTopLevelClass = Modifier.isStatic(rawTypeAsClass.getModifiers()) || rawTypeAsClass.getEnclosingClass() == null;
             LiAssertUtil.assertTrue(ownerType != null || isStaticOrTopLevelClass);
         }
 
         this.ownerType = ownerType == null ? null : TypeUtil.canonicalize(ownerType);
         this.rawType = TypeUtil.canonicalize(rawType);
-        this.typeArguments = typeArguments.length == 0 ? EMPTY_TYPE_ARRAY : typeArguments.clone();
+        this.typeArguments = typeArguments.length == 0 ? TypeUtil.EMPTY_TYPE_ARRAY : typeArguments.clone();
 
         for (int t = 0, length = this.typeArguments.length; t < length; t++) {
             Objects.requireNonNull(this.typeArguments[t]);
@@ -77,7 +75,7 @@ public class ParameterizedTypeImpl implements ParameterizedType {
 
     @Override
     public Type[] getActualTypeArguments() {
-        return typeArguments == EMPTY_TYPE_ARRAY ? EMPTY_TYPE_ARRAY : typeArguments.clone();
+        return typeArguments == TypeUtil.EMPTY_TYPE_ARRAY ? TypeUtil.EMPTY_TYPE_ARRAY : typeArguments.clone();
     }
 
     @Override

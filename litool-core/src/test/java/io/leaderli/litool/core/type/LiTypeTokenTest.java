@@ -32,7 +32,7 @@ class LiTypeTokenTest {
         Assertions.assertEquals("[K, V]", Arrays.toString(LiTypeToken.of(Map.class).getActualTypeArguments()));
 
 //        ReflectUtilTest.LittleBean
-        Assertions.assertSame(ParameterizedTypeImpl.EMPTY_TYPE_ARRAY, LiTypeToken.of(Runnable.class).getActualTypeArguments());
+        Assertions.assertSame(TypeUtil.EMPTY_TYPE_ARRAY, LiTypeToken.of(Runnable.class).getActualTypeArguments());
 
 
     }
