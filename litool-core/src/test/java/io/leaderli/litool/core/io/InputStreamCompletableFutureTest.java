@@ -33,7 +33,7 @@ class InputStreamCompletableFutureTest {
                 Integer next = range.next();
                 String str = next + ",";
                 byte[] bytes1 = str.getBytes();
-                for (byte b : Lira.of(CollectionUtils.toWrapperArray(bytes1)).cast(Byte.class)) {
+                for (byte b : Lira.of(CollectionUtils.toArray(bytes1)).cast(Byte.class)) {
                     bytes.add(b);
                 }
             }

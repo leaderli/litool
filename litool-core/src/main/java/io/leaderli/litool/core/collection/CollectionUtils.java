@@ -3,6 +3,7 @@ package io.leaderli.litool.core.collection;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -118,18 +119,32 @@ public class CollectionUtils {
         return result;
     }
 
+
     /**
-     * Return the wrapper array when it is a primitive array
+     * return {@code  null} if obj is not array otherwise cast to array
      * <p>
-     * Return null if  obj is null or is not arr.
-     * <p>
-     * will always return a new array
+     * if array's element is primitive, will convert to  wrapper array
      *
-     * @param obj an obj
-     * @return an array
+     * @param obj the array that declare as Object
+     * @param <T> the type of array
+     * @return casted array
      */
-    public static <T> T[] toWrapperArray(Object obj) {
-        return ClassUtil.toArray(obj);
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[] toArray(Object obj) {
+
+        Class<?> componentType = ClassUtil.getComponentType(obj);
+        if (componentType == null) {
+            return null;
+        }
+        int length = Array.getLength(obj);
+        T[] objects = (T[]) ClassUtil.newWrapperArray(componentType, length);
+
+        for (int i = 0; i < length; i++) {
+            objects[i] = (T) Array.get(obj, i);
+        }
+
+        return objects;
     }
 
     /**
@@ -216,4 +231,6 @@ public class CollectionUtils {
 
         return union(Lira.of(a), Lira.of(b));
     }
+
+
 }

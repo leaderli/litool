@@ -12,7 +12,7 @@ public class FloatCartesian implements CartesianFunction<FloatValues, Float> {
 
         float[] value = annotatedByValuable.value();
         if (value.length > 0) {
-            return (Float[]) CollectionUtils.toWrapperArray(value);
+            return CollectionUtils.toArray(value);
         }
         return CartesianUtil.cartesian_single_def(Float.class);
     }

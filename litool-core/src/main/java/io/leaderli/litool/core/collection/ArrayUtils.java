@@ -1040,10 +1040,11 @@ public class ArrayUtils {
 
         if (isArray(obj)) {
 
-            Object[] arr = CollectionUtils.toWrapperArray(obj);
+            Object[] arr = CollectionUtils.toArray(obj);
 
 
             StringBuilder sb = new StringBuilder("[");
+            //noinspection ConstantConditions
             for (int i = 0; i < arr.length; i++) {
 
                 String element = toString(arr[i]);

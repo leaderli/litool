@@ -11,7 +11,7 @@ class IntCartesian implements CartesianFunction<IntValues, Integer> {
     public Integer[] apply(IntValues annotatedByValuable, CartesianContext context) {
         int[] value = annotatedByValuable.value();
         if (value.length > 0) {
-            return (Integer[]) CollectionUtils.toWrapperArray(value);
+            return CollectionUtils.toArray(value);
         }
         return CartesianUtil.cartesian_single_def(Integer.class);
     }

@@ -11,7 +11,7 @@ class DoubleCartesian implements CartesianFunction<DoubleValues, Double> {
     public Double[] apply(DoubleValues annotatedByValuable, CartesianContext context) {
         double[] value = annotatedByValuable.value();
         if (value.length > 0) {
-            return (Double[]) CollectionUtils.toWrapperArray(value);
+            return CollectionUtils.toArray(value);
         }
         return CartesianUtil.cartesian_single_def(Double.class);
     }

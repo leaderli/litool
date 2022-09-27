@@ -11,7 +11,7 @@ class CharCartesian implements CartesianFunction<CharValues, Character> {
     public Character[] apply(CharValues annotatedByValuable, CartesianContext context) {
         char[] value = annotatedByValuable.value();
         if (value.length > 0) {
-            return (Character[]) CollectionUtils.toWrapperArray(value);
+            return CollectionUtils.toArray(value);
         }
         return CartesianUtil.cartesian_single_def(Character.class);
     }

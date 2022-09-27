@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.meta.LiValue;
 import io.leaderli.litool.core.meta.Lino;
@@ -233,10 +234,10 @@ class ClassUtilTest {
     @Test
     void toArray() {
 
-        Assertions.assertNull(ClassUtil.toArray(null));
-        Assertions.assertNull(ClassUtil.toArray(1));
-        Assertions.assertArrayEquals(new Integer[]{1}, ClassUtil.toArray(new int[]{1}));
-        Assertions.assertArrayEquals(new Integer[]{1}, ClassUtil.toArray(new Integer[]{1}));
+        Assertions.assertNull(CollectionUtils.toArray(null));
+        Assertions.assertNull(CollectionUtils.toArray(1));
+        Assertions.assertArrayEquals(new Integer[]{1}, CollectionUtils.toArray(new int[]{1}));
+        Assertions.assertArrayEquals(new Integer[]{1}, CollectionUtils.toArray(new Integer[]{1}));
 
     }
 

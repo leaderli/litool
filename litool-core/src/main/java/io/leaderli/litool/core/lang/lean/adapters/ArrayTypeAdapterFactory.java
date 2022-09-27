@@ -51,7 +51,8 @@ public class ArrayTypeAdapterFactory implements TypeAdapterFactory {
             if (source instanceof Iterable) {
                 ((Iterable<?>) source).forEach(e -> collection.add(elementTypeAdapter.read(e)));
             } else if (source.getClass().isArray()) {
-                E[] objects = CollectionUtils.toWrapperArray(source);
+                E[] objects = CollectionUtils.toArray(source);
+                //noinspection ConstantConditions
                 for (E e : objects) {
                     collection.add(elementTypeAdapter.read(e));
                 }

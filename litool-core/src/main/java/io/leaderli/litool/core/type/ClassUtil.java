@@ -125,32 +125,6 @@ public class ClassUtil {
     }
 
     /**
-     * return {@code  null} if obj is not array otherwise cast to array
-     * <p>
-     * if array's element is primitive, will convert to  wrapper array
-     *
-     * @param Obj the array that declare as Object
-     * @param <T> the type of array
-     * @return casted array
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T[] toArray(Object Obj) {
-
-        Class<?> componentType = getComponentType(Obj);
-        if (componentType == null) {
-            return null;
-        }
-        int length = Array.getLength(Obj);
-        T[] objects = (T[]) newWrapperArray(componentType, length);
-
-        for (int i = 0; i < length; i++) {
-            objects[i] = (T) Array.get(Obj, i);
-        }
-
-        return objects;
-    }
-
-    /**
      * Return the componentType of obj class, it's null-safe
      *
      * @param obj the obj

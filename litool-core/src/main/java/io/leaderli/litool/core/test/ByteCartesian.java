@@ -12,7 +12,7 @@ public class ByteCartesian implements CartesianFunction<ByteValues, Byte> {
     public Byte[] apply(ByteValues annotatedByValuable, CartesianContext context) {
         byte[] value = annotatedByValuable.value();
         if (value.length > 0) {
-            return (Byte[]) CollectionUtils.toWrapperArray(value);
+            return CollectionUtils.toArray(value);
         }
         return CartesianUtil.cartesian_single_def(Byte.class);
     }

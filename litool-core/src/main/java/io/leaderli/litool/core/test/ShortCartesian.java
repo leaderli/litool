@@ -12,7 +12,7 @@ public class ShortCartesian implements CartesianFunction<ShortValues, Short> {
 
         short[] value = annotatedByValuable.value();
         if (value.length > 0) {
-            return (Short[]) CollectionUtils.toWrapperArray(value);
+            return CollectionUtils.toArray(value);
         }
         return CartesianUtil.cartesian_single_def(Short.class);
     }

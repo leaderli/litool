@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.collection;
 
-import io.leaderli.litool.core.type.ClassUtil;
-
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -70,7 +68,7 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
 
         if (obj.getClass().isArray()) {
 
-            return ofs(ClassUtil.toArray(obj));
+            return ofs(CollectionUtils.toArray(obj));
         }
 
         return NoneItr.of();
