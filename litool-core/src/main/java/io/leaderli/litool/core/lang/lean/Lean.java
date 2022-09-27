@@ -1,10 +1,10 @@
 package io.leaderli.litool.core.lang.lean;
 
-import io.leaderli.litool.core.type.ConstructorConstructor;
-import io.leaderli.litool.core.type.InstanceCreator;
-import io.leaderli.litool.core.type.LiTypeToken;
-import io.leaderli.litool.core.type.ObjectConstructor;
+import io.leaderli.litool.core.collection.CollectionUtils;
+import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.*;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,27 +14,45 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2022/9/24 9:39 AM
  */
 public class Lean {
-    private final List<TypeAdapterFactory> factories = new ArrayList<>();
     private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenCache = new ConcurrentHashMap<>();
+    public final Lira<LeanFieldKey> reflect_name_handlers;
     private final ConstructorConstructor constructorConstructor;
+    private final List<TypeAdapterFactory> factories;
+
 
     public Lean() {
-        this(new LinkedHashMap<>());
+        this(new LinkedHashMap<>(), null);
     }
 
-    public Lean(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators) {
+    public Lean(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators, List<LeanFieldKey> reflect_name_handlers) {
 
         this.constructorConstructor = new ConstructorConstructor(instanceCreators);
+        this.factories = initFactories();
+        this.reflect_name_handlers = initLeanKeyHandlers(reflect_name_handlers);
 
+    }
 
+    private static Lira<LeanFieldKey> initLeanKeyHandlers(List<LeanFieldKey> reflect_name_handlers) {
+        return CollectionUtils.union(reflect_name_handlers, defaultLeanKeyHandlers());
+    }
+
+    private static List<LeanFieldKey> defaultLeanKeyHandlers() {
+        LeanFieldKey leanKey = field -> ReflectUtil.getAnnotation(field, LeanKey.class).map(LeanKey::value).get();
+        LeanFieldKey fieldName = Field::getName;
+        return CollectionUtils.of(leanKey, fieldName);
+    }
+
+    private static List<TypeAdapterFactory> initFactories() {
+        List<TypeAdapterFactory> factories = new ArrayList<>();
         factories.add(TypeAdapters.PRIMITIVE_FACTORY);
         factories.add(TypeAdapters.STRING_FACTORY);
         factories.add(TypeAdapters.ITERABLE_FACTORY);
         factories.add(TypeAdapters.MAP_FACTORY);
         factories.add(TypeAdapters.OBJECT_FACTORY);
         factories.add(TypeAdapters.REFLECT_FACTORY);
-
+        return factories;
     }
+
 
     /**
      * @param source          the source bean

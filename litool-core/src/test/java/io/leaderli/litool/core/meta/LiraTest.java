@@ -20,6 +20,12 @@ class LiraTest {
 
 
     @Test
+    void test() {
+        System.out.println(Lira.of(1, 2, null, 3, 4, null, 5, 6).filter_null().limit(5).size());
+
+    }
+
+    @Test
     void assertNoError() {
 
         Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertNoError());

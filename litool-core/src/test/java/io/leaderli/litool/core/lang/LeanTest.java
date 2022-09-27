@@ -3,10 +3,13 @@ package io.leaderli.litool.core.lang;
 import com.google.gson.Gson;
 import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.lang.lean.LeanKey;
+import io.leaderli.litool.core.test.StringValues;
 import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,19 +88,30 @@ class LeanTest {
 
     @Test
     void test7() {
-        String json = "{\"age\": 1.0}";
+        String json = "{\"age\": 1.0,\"age2\": 2.0}";
         Map map = gson.fromJson(json, Map.class);
 
-        Lean lean = new Lean();
+        Lean lean = new Lean(new LinkedHashMap<>(), Collections.singletonList(f -> {
+            if (f.getName().equals("custom")) {
+                return "age";
+            }
+            return null;
+        }));
         Bean7 parser = lean.fromBean(map, Bean7.class);
 
         Assertions.assertEquals(1.0, parser.fake);
+        Assertions.assertEquals(2.0, parser.fake2);
+        Assertions.assertEquals(1.0, parser.custom);
 
     }
 
     private static class Bean7 {
         @LeanKey("age")
         private double fake;
+        @LeanKey("age2")
+        private double fake2;
+        @StringValues({"age3", "age2"})
+        private double custom;
     }
 
     private static class Bean6 {

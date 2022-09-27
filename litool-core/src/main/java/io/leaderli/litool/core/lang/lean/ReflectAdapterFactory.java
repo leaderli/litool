@@ -61,7 +61,7 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
             Type declare = typeToken.getType();
             for (Field field : ReflectUtil.getFields(target.getClass())) {
 
-                String key = ReflectUtil.getAnnotation(field, LeanKey.class).map(LeanKey::value).get(field.getName());
+                String key = lean.reflect_name_handlers.map(fu -> fu.apply(field)).first().get();
                 // TODO  field custom typeAdapter
                 BeanPath.simple(source, key)
                         .map(value -> lean.fromBean(value, TypeUtil.resolve(declare, field.getGenericType())))

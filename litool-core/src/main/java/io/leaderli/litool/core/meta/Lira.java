@@ -267,7 +267,17 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     /**
      * will only remain at most n element, should be aware of
      * the {@link Generator} will drop the limit element. And
-     * and the null element will counted as
+     * and the null element will counted as valid limit element,
+     * but the terminal action will drop the null-element.
+     * eg:
+     * <pre>
+     *     Lira.of(1,null,2,3).limit(3).size() == 2
+     * </pre>
+     * <p>
+     * to prevent that situation, you can code this way
+     * <pre>
+     *     Lira.of(1,null,2,3).filter_null().limit(3).size() == 3
+     * </pre>
      *
      * @param max the limit of max element
      * @return a new lira
