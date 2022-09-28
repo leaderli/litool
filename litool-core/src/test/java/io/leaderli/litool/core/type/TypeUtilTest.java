@@ -1,5 +1,4 @@
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
-import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.type.TypeUtil;
 import org.junit.jupiter.api.Assertions;
@@ -22,6 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ALL")
 class TypeUtilTest {
 
+    @Test
+    void test() {
+        assertArrayEquals(new Object[]{ArrayList.class}, TypeUtil.resolve(T2.class, T1.class).getActualClassArguments());
+
+    }
 
     @Test
     void resolveTypeVariable() {
@@ -40,30 +44,6 @@ class TypeUtilTest {
         Assertions.assertEquals(3, visitedTypeVariables.size());
     }
 
-    @Test
-    void typeVariables() {
-
-        Lira<TypeVariable> of = Lira.none();
-        Assertions.assertSame(Lira.none(), TypeUtil.typeVariables(Object.class));
-
-        of = Lira.of(T1.class.getTypeParameters()[0]);
-        Assertions.assertEquals(of, TypeUtil.typeVariables(T1.class));
-
-        of = Lira.of(Supplier.class.getTypeParameters()[0], List.class.getTypeParameters()[0]);
-        Assertions.assertEquals(of, TypeUtil.typeVariables(T1.class.getGenericInterfaces()[0]));
-
-        of = Lira.of(Consumer.class.getTypeParameters()[0]);
-        Assertions.assertEquals(of, TypeUtil.typeVariables(T1.class.getGenericInterfaces()[1]));
-
-        of = Lira.of(Class.class.getTypeParameters()[0]);
-
-        Field cls = ReflectUtil.getField(T1.class, "cls").get();
-        Assertions.assertEquals(of, TypeUtil.typeVariables(cls.getGenericType()));
-
-        cls = ReflectUtil.getField(T1.class, "cls2").get();
-        Assertions.assertEquals(of, TypeUtil.typeVariables(cls.getGenericType()));
-
-    }
 
     @Test
     void isUnknown() {
@@ -181,55 +161,6 @@ class TypeUtilTest {
         assertFalse(TypeUtil.equals(null, String.class));
     }
 
-    private interface T2 extends Supplier<List<T1<ArrayList>[]>[]> {
-
-    }
-
-    private interface T6<T> {
-
-    }
-
-    private interface T8 extends T6<String> {
-
-    }
-
-    private static class TestType implements Consumer<String> {
-
-
-        @Override
-        public void accept(String s) {
-
-        }
-    }
-
-    class T1<T extends List> implements Supplier<List<? extends T>>, Consumer<T[]> {
-        public Class<?> cls;
-        public Class<? super T> cls2;
-
-
-        @Override
-        public List<T> get() {
-            return null;
-        }
-
-        @Override
-        public void accept(T[] ts) {
-
-        }
-    }
-
-    private class T5<T> extends T4<String> {
-
-    }
-
-    private class T4<T> {
-        private class T3 {
-
-            T t;
-        }
-    }
-
-
     @Test
     void field() throws NoSuchFieldException {
         Type resolve = TypeUtil.resolve(Li.class, Li.class.getTypeParameters()[0]);
@@ -258,12 +189,16 @@ class TypeUtilTest {
 
     }
 
+    private interface T2 extends Supplier<List<T1<ArrayList>[]>[]> {
 
-    private static class Li<T> {
-        public List<T> lt;
-        public T[][] tss;
-        public T[] ts;
-        public T t;
+    }
+
+    private interface T6<T> {
+
+    }
+
+    private interface T8 extends T6<String> {
+
     }
 
     private static interface In2<A> extends In1<A, String>, Consumer<A> {
@@ -278,14 +213,30 @@ class TypeUtilTest {
 
     }
 
+
     private static interface Con<A> extends In1<A, Consumer<A>> {
 
     }
 
+
     private static interface Con2 extends Con<String> {
     }
 
-    ;
+    private static class TestType implements Consumer<String> {
+
+
+        @Override
+        public void accept(String s) {
+
+        }
+    }
+
+    private static class Li<T> {
+        public List<T> lt;
+        public T[][] tss;
+        public T[] ts;
+        public T t;
+    }
 
     private static class StringConsumer implements Consumer<String> {
         @Override
@@ -306,6 +257,8 @@ class TypeUtilTest {
 
     }
 
+    ;
+
     private static class Ge1<A, B> {
 
         public void log(A a, B b) {
@@ -324,5 +277,32 @@ class TypeUtilTest {
 
     private static class Ge4 extends Ge3 {
 
+    }
+
+    class T1<T extends List> implements Supplier<List<? extends T>>, Consumer<T[]> {
+        public Class<?> cls;
+        public Class<? super T> cls2;
+
+
+        @Override
+        public List<T> get() {
+            return null;
+        }
+
+        @Override
+        public void accept(T[] ts) {
+
+        }
+    }
+
+    private class T5<T> extends T4<String> {
+
+    }
+
+    private class T4<T> {
+        private class T3 {
+
+            T t;
+        }
     }
 }

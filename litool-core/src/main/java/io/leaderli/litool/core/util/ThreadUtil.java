@@ -21,21 +21,6 @@ public class ThreadUtil {
         sleep(TimeUnit.MILLISECONDS, millis);
     }
 
-    public static void sleep1s(Object... msgs) {
-        sleep(1, () -> System.out.println(StringUtils.join(" ", msgs)));
-    }
-
-    /**
-     * sleep some millis
-     *
-     * @param millis   millis of {@link  TimeUnit#SECONDS}
-     * @param runnable execute after sleep
-     */
-    public static void sleep(long millis, Runnable runnable) {
-        sleep(TimeUnit.MILLISECONDS, millis);
-        runnable.run();
-    }
-
     /**
      * sleep a while
      *
@@ -49,6 +34,21 @@ public class ThreadUtil {
         } catch (InterruptedException ignore) {
             // ignore
         }
+    }
+
+    public static void sleep1s(Object... msgs) {
+        sleep(1, () -> System.out.println(StringUtils.join(" ", msgs)));
+    }
+
+    /**
+     * sleep some millis
+     *
+     * @param millis   millis of {@link  TimeUnit#SECONDS}
+     * @param runnable execute after sleep
+     */
+    public static void sleep(long millis, Runnable runnable) {
+        sleep(TimeUnit.MILLISECONDS, millis);
+        runnable.run();
     }
 
     /**

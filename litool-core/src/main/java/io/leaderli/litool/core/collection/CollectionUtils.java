@@ -10,14 +10,14 @@ import java.util.*;
  * <p> Operations on collection
  *
  * @author leaderli
- * @since 2022/7/20
+ * @since 2022 /7/20
  */
 public class CollectionUtils {
     /**
      * Return the element that appears multiple times
      *
-     * @param iterable provide elements by {@link  Iterable#iterator()}
      * @param <T>      the type of elements returned by this iterable
+     * @param iterable provide elements by {@link  Iterable#iterator()}
      * @return a lira consists the element that appears multiple times
      */
     public static <T> Lira<T> getDuplicateElements(Iterable<? extends T> iterable) {
@@ -46,7 +46,9 @@ public class CollectionUtils {
      * @return an iterable has element
      */
     public static boolean isEmpty(Iterable<?> iterable) {
-        if (iterable == null) return true;
+        if (iterable == null) {
+            return true;
+        }
         Iterator<?> iterator = iterable.iterator();
         return !iterator.hasNext();
     }
@@ -62,6 +64,13 @@ public class CollectionUtils {
         return new ArrayList<>();
     }
 
+    /**
+     * Of list.
+     *
+     * @param <T>      the type parameter
+     * @param elements the elements
+     * @return the list
+     */
     @SafeVarargs
     public static <T> List<T> of(T... elements) {
 
@@ -125,11 +134,10 @@ public class CollectionUtils {
      * <p>
      * if array's element is primitive, will convert to  wrapper array
      *
-     * @param obj the array that declare as Object
      * @param <T> the type of array
+     * @param obj the array that declare as Object
      * @return casted array
      */
-
     @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Object obj) {
 
@@ -150,9 +158,9 @@ public class CollectionUtils {
     /**
      * Return the xor of two lira
      *
+     * @param <T> the  type of lira element
      * @param a   a lira
      * @param b   another lira
-     * @param <T> the  type of lira element
      * @return xor of two lira
      */
     public static <T> Lira<T> xor(Iterable<T> a, Iterable<T> b) {
@@ -165,9 +173,9 @@ public class CollectionUtils {
     /**
      * Return the union of two array
      *
+     * @param <T> the type of array
      * @param a   a array
      * @param b   another array
-     * @param <T> the type of array
      * @return the union of two array
      * @see #union(Iterable, Iterable)
      */
@@ -189,9 +197,9 @@ public class CollectionUtils {
     /**
      * Return intersection of two lira
      *
+     * @param <T> the type of lira
      * @param a   a lira
      * @param b   another lira
-     * @param <T> the type of lira
      * @return intersection of two lira
      */
     public static <T> Lira<T> intersection(Iterable<T> a, Iterable<T> b) {
@@ -221,11 +229,11 @@ public class CollectionUtils {
     /**
      * Return the union of two array
      *
+     * @param <T> the type of array
      * @param a   a array
      * @param b   another array
-     * @param <T> the type of array
      * @return the union of two array
-     * @see #union(Iterable, Iterable)
+     * @see #union(Iterable, Iterable) #union(Iterable, Iterable)
      */
     public static <T> Lira<T> union(T[] a, T[] b) {
 

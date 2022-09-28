@@ -88,35 +88,6 @@ class IterableItrTest {
 
     }
 
-    private static class IteratorEnumeration implements Iterator<Integer>, Enumeration<Integer> {
-
-        final Iterator<Integer> iterator;
-
-        private IteratorEnumeration(Iterator<Integer> iterator) {
-            this.iterator = iterator;
-        }
-
-        @Override
-        public boolean hasMoreElements() {
-            return hasNext();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
-
-        @Override
-        public Integer next() {
-            return iterator.next();
-        }
-
-        @Override
-        public Integer nextElement() {
-            return next();
-        }
-    }
-
     Enumeration<Integer> enumeration() {
 
         Vector<Integer> vector = new Vector<>(1);
@@ -200,5 +171,34 @@ class IterableItrTest {
     @Test
     void nextElement() {
         Assertions.assertThrows(NoSuchElementException.class, () -> NoneItr.of().nextElement());
+    }
+
+    private static class IteratorEnumeration implements Iterator<Integer>, Enumeration<Integer> {
+
+        final Iterator<Integer> iterator;
+
+        private IteratorEnumeration(Iterator<Integer> iterator) {
+            this.iterator = iterator;
+        }
+
+        @Override
+        public boolean hasMoreElements() {
+            return hasNext();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public Integer next() {
+            return iterator.next();
+        }
+
+        @Override
+        public Integer nextElement() {
+            return next();
+        }
     }
 }

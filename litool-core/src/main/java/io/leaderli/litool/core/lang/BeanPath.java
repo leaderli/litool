@@ -52,17 +52,6 @@ public class BeanPath {
     }
 
     /**
-     * @param obj the find obj
-     * @param key the key of map or the field name of obj
-     * @return the map value or field value
-     */
-    public static Lino<Object> simple(Object obj, String key) {
-        BeanPath beanPath = new BeanPath();
-        beanPath.setKeyFunction(key);
-        return beanPath.parse(obj);
-    }
-
-    /**
      * an valid expression can be as follow
      * <ul>
      *     <li>key1</li>
@@ -202,24 +191,6 @@ public class BeanPath {
         }
     }
 
-    /**
-     * @param obj 数据源
-     * @return 根据 {@link #path} 找到的数据
-     */
-    public Lino<Object> parse(Object obj) {
-
-        for (Function<Object, Object> function : Lira.of(path)) {
-
-            if (obj == null) {
-                return Lino.none();
-            }
-            obj = function.apply(obj);
-
-        }
-
-        return Lino.of(obj);
-    }
-
     private void setKeyFunction(String key) {
 
         path.add(obj -> {
@@ -242,6 +213,35 @@ public class BeanPath {
                     .get(index)
                     .get());
         }
+    }
+
+    /**
+     * @param obj the find obj
+     * @param key the key of map or the field name of obj
+     * @return the map value or field value
+     */
+    public static Lino<Object> simple(Object obj, String key) {
+        BeanPath beanPath = new BeanPath();
+        beanPath.setKeyFunction(key);
+        return beanPath.parse(obj);
+    }
+
+    /**
+     * @param obj 数据源
+     * @return 根据 {@link #path} 找到的数据
+     */
+    public Lino<Object> parse(Object obj) {
+
+        for (Function<Object, Object> function : Lira.of(path)) {
+
+            if (obj == null) {
+                return Lino.none();
+            }
+            obj = function.apply(obj);
+
+        }
+
+        return Lino.of(obj);
     }
 
     @SafeVarargs

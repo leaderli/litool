@@ -110,20 +110,6 @@ public class LiDomUtil {
         return new ByteArrayInputStream(pretty(element).getBytes());
     }
 
-    public static void prettyPrint(Node node) {
-        try {
-            //document
-            try (StringWriter writer = new StringWriter()) {
-                XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
-                xmlWriter.write(node);
-                LOGGER.println(writer);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     /**
      * @param node the xml node
      * @return the pretty format content of node
@@ -139,6 +125,20 @@ public class LiDomUtil {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static void prettyPrint(Node node) {
+        try {
+            //document
+            try (StringWriter writer = new StringWriter()) {
+                XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
+                xmlWriter.write(node);
+                LOGGER.println(writer);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

@@ -28,9 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @SuppressWarnings("ConstantConditions")
 class ClassUtilTest {
 
-    int test() {
-        return 1;
-    }
 
     @Test
     void castDouble() {
@@ -327,15 +324,6 @@ class ClassUtilTest {
 
     }
 
-    private interface A {
-    }
-
-    private static class B implements A {
-    }
-
-    private static class C extends B {
-    }
-
     @Test
     void isPrimitiveOrWrapper() {
         Assertions.assertFalse(ClassUtil.isPrimitiveOrWrapper(null));
@@ -344,6 +332,9 @@ class ClassUtilTest {
         Assertions.assertTrue(ClassUtil.isPrimitiveOrWrapper(Integer.class));
         Assertions.assertTrue(ClassUtil.isPrimitiveOrWrapper(void.class));
         Assertions.assertTrue(ClassUtil.isPrimitiveOrWrapper(Void.class));
+    }
+
+    private interface A {
     }
 
     @FunctionalInterface
@@ -359,14 +350,20 @@ class ClassUtilTest {
         }
     }
 
-    public static class Proxy {
+    private static class B implements A {
+    }
 
-        public Integer apply(String s) {
-            return Integer.valueOf(s);
-        }
+    private static class C extends B {
+    }
+
+    public static class Proxy {
 
         public Object apply(Object s) {
             return apply((String) s);
+        }
+
+        public Integer apply(String s) {
+            return Integer.valueOf(s);
         }
 
     }

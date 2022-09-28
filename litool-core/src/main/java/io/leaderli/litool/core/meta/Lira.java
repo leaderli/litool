@@ -84,14 +84,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * @return the lira of a infinity generator of auto-increment integer start with 0
-     * @see Generators#range()
-     */
-    static Lira<Integer> range() {
-        return Lira.of(Generators.range());
-    }
-
-    /**
      * Returns the unique none lira that not consisting any element
      *
      * @param <T> the type of lira
@@ -104,6 +96,13 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
     }
 
+    /**
+     * @return the lira of a infinity generator of auto-increment integer start with 0
+     * @see Generators#range()
+     */
+    static Lira<Integer> range() {
+        return Lira.of(Generators.range());
+    }
 
     /**
      * Returns an lira that consisting elements provided by given stream
@@ -168,6 +167,22 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     boolean contains(T t);
 
     /**
+     * remove element that equals with
+     *
+     * @param t the removed element
+     * @return a new lira
+     * @see #filter(Function)
+     * @see #filter_null()
+     */
+    default Lira<T> remove(T t) {
+
+        if (t == null) {
+            return filter_null();
+        }
+        return filter(v -> !t.equals(v));
+    }
+
+    /**
      * filter the element beyond lira, the element will remain if  the result. the null element will be removed
      * {@link  Function#apply(Object)} parsed  by {@link  BooleanUtil#parse(Boolean)} is {@code  true}
      *
@@ -184,23 +199,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @see #filter(Function)
      */
     Lira<T> filter_null();
-
-
-    /**
-     * remove element that equals with
-     *
-     * @param t the removed element
-     * @return a new lira
-     * @see #filter(Function)
-     * @see #filter_null()
-     */
-    default Lira<T> remove(T t) {
-
-        if (t == null) {
-            return filter_null();
-        }
-        return filter(v -> !t.equals(v));
-    }
 
     /**
      * if lira {@link  #present()} return the lino of first element, otherwise return {@link  Lino#none()}
@@ -392,6 +390,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     Lira<T> dropWhile(Function<? super T, ?> filter);
 
+    default Lira<T> nullable(T supplier) {
+        return nullable(() -> supplier);
+    }
 
     /**
      * if element is null will converted to a element by this supplier.
@@ -402,10 +403,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     Lira<T> nullable(Supplier<? extends T> supplier);
 
-    default Lira<T> nullable(T supplier) {
-        return nullable(() -> supplier);
-    }
-
     /**
      * skip the first n element, only  accept the element after min
      *
@@ -413,18 +410,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return a new lira
      */
     Lira<T> skip(int min);
-
-
-    /**
-     * if lira throw a exception when perform an action on the element, the lira will not call
-     * {@link SubscriberRa#next(Object)}, replaced it will call {@link  SubscriberRa#next_null()}
-     * and {@link  SubscriberRa#onError(Throwable, CancelSubscription)}. eventually the error will
-     * deliver to {@link  Exceptionable#onError(Throwable, CancelSubscription)}
-     *
-     * @param onError a onError action
-     * @return a new lira
-     */
-    Lira<T> onError(Exceptionable onError);
 
     default Lira<T> assertTrue(Function<? super T, ?> filter) {
         return debug(new DebugConsumer<T>() {
@@ -443,11 +428,30 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
         });
     }
 
+    /**
+     * Performs an action  for each element of this lira
+     *
+     * @param action a  action to perform on the elements
+     * @return this
+     */
+    Lira<T> debug(DebugConsumer<T> action);
+
     default Lira<T> assertNoError() {
         return onError((t, c) -> {
             throw new IllegalStateException(t);
         });
     }
+
+    /**
+     * if lira throw a exception when perform an action on the element, the lira will not call
+     * {@link SubscriberRa#next(Object)}, replaced it will call {@link  SubscriberRa#next_null()}
+     * and {@link  SubscriberRa#onError(Throwable, CancelSubscription)}. eventually the error will
+     * deliver to {@link  Exceptionable#onError(Throwable, CancelSubscription)}
+     *
+     * @param onError a onError action
+     * @return a new lira
+     */
+    Lira<T> onError(Exceptionable onError);
 
     /**
      * a terminal action, will call {@link  #present()} to judge the element at here
@@ -476,7 +480,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return lira
      */
     Lira<T> or(Iterable<? extends T> alternate);
-
 
     /**
      * Performs a reduction on the element of this lira, using the associative accumulation functions,
@@ -539,14 +542,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @see #debug(DebugConsumer)
      */
     Lira<T> debug();
-
-    /**
-     * Performs an action  for each element of this lira
-     *
-     * @param action a  action to perform on the elements
-     * @return this
-     */
-    Lira<T> debug(DebugConsumer<T> action);
 
     /**
      * just sleep a while when perform on this action

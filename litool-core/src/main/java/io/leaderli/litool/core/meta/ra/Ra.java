@@ -107,6 +107,11 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
+    public void forEach(Consumer<? super T> consumer) {
+        subscribe(new ConsumerSubscriber<>(consumer));
+    }
+
+    @Override
     public Iterator<T> nullableIterator() {
         IterableSubscriber<T> iterator = new IterableSubscriber<>();
         subscribe(iterator);
@@ -123,8 +128,14 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
-    public void forEach(Consumer<? super T> consumer) {
-        subscribe(new ConsumerSubscriber<>(consumer));
+    public <R> Lira<R> flatMap() {
+        return new FlatMap<>(this, IterableItr::of);
+    }
+
+    @Override
+    public <R> Lira<R> flatMap(Function<? super T, Iterator<? extends R>> mapper) {
+
+        return new FlatMap<>(this, mapper);
     }
 
     @Override
@@ -134,19 +145,16 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
-    public <R> Lira<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper) {
-        return new TupleRa<>(this, mapper);
+    public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
+        return new ThrowableMapRa<>(this, mapper);
+
+
     }
 
     @Override
-    public <R> Lira<R> flatMap() {
-        return new FlatMap<>(this, IterableItr::of);
-    }
+    public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
+        return new ThrowableMapRa<>(this, mapper);
 
-    @Override
-    public <R> Lira<R> flatMap(Function<? super T, Iterator<? extends R>> mapper) {
-
-        return new FlatMap<>(this, mapper);
     }
 
     @Override
@@ -180,28 +188,15 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
-    public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
-        return new ThrowableMapRa<>(this, mapper);
+    public Lira<T> debug(DebugConsumer<T> action) {
 
 
-    }
-
-    @Override
-    public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
-        return new ThrowableMapRa<>(this, mapper);
-
+        return new DebugRa<>(this, action);
     }
 
     @Override
     public Lira<T> onError(Exceptionable onError) {
         return new OnErrorRa<>(this, onError);
-    }
-
-    @Override
-    public Lira<T> debug(DebugConsumer<T> action) {
-
-
-        return new DebugRa<>(this, action);
     }
 
     @SafeVarargs
@@ -279,25 +274,6 @@ public abstract class Ra<T> implements Lira<T> {
         return new SleepRa<>(this, countdown, milliseconds);
     }
 
-
-    @Override
-    public int hashCode() {
-        return get().hashCode();
-
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj instanceof Ra) {
-
-            return get().equals(((Ra<?>) obj).get());
-        }
-        return false;
-    }
-
     @Override
     public Lira<T> distinct(EqualComparator<T> comparator) {
 
@@ -329,7 +305,6 @@ public abstract class Ra<T> implements Lira<T> {
         });
     }
 
-
     @Override
     public Lira<T> sorted(Comparator<? super T> comparator) {
         return terminal(l -> {
@@ -338,7 +313,6 @@ public abstract class Ra<T> implements Lira<T> {
             return l;
         });
     }
-
 
     @Override
     public void forThrowableEach(ThrowableConsumer<? super T> action) {
@@ -382,6 +356,11 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
+    public <R> Lira<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper) {
+        return new TupleRa<>(this, mapper);
+    }
+
+    @Override
     public <R> Lira<R> cast(Class<? extends R> type) {
         return map(m -> ClassUtil.cast(m, type));
 
@@ -400,12 +379,29 @@ public abstract class Ra<T> implements Lira<T> {
         return result;
     }
 
-
     @Override
     public <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> mapper) {
         Map<K, V> result = new HashMap<>();
         subscribe(new ConsumerSubscriber<>(e -> Lino.of(e).map(mapper).filter(tuple2 -> tuple2._1 != null).ifPresent(tuple2 -> result.put(tuple2._1, tuple2._2))));
         return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return get().hashCode();
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Ra) {
+
+            return get().equals(((Ra<?>) obj).get());
+        }
+        return false;
     }
 
     @Override

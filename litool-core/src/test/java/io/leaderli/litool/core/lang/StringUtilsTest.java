@@ -78,14 +78,6 @@ class StringUtilsTest {
 
     }
 
-    private static class FieldsString {
-
-        public static int size = 0;
-        private String name;
-        private int age;
-
-    }
-
     @Test
     void line() {
 
@@ -127,5 +119,13 @@ class StringUtilsTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static class FieldsString {
+
+        public static int size = 0;
+        private String name;
+        private int age;
+
     }
 }

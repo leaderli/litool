@@ -66,8 +66,9 @@ class LiIfTest {
                 LiIf.<Integer, Integer>of(1)._case((Integer[]) null)._then(i -> 456)._else(() -> 789));
 
         LiIf.of(1)._case(1)._then(i -> {
-            if (i == 1)
+            if (i == 1) {
                 throw new RuntimeException();
+            }
             return "1";
         });
 
@@ -75,8 +76,9 @@ class LiIfTest {
         Assertions.assertThrows(RuntimeException.class, () ->
                 LiIf.of(1)
                         ._case(1)._then(i -> {
-                            if (i == 1)
+                            if (i == 1) {
                                 throw new RuntimeException();
+                            }
                             return "1";
                         })
                         ._else(() -> 2)

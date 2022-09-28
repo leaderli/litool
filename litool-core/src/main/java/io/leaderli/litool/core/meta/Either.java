@@ -167,13 +167,13 @@ public interface Either<L, R> extends LiValue {
         }
 
         @Override
-        public R get() {
-            return value;
+        public boolean isLeft() {
+            return false;
         }
 
         @Override
-        public boolean isLeft() {
-            return false;
+        public R get() {
+            return value;
         }
 
         @Override
@@ -229,13 +229,13 @@ public interface Either<L, R> extends LiValue {
         }
 
         @Override
-        public R get() {
-            throw new NoSuchElementException("get() on Left");
+        public boolean isLeft() {
+            return true;
         }
 
         @Override
-        public boolean isLeft() {
-            return true;
+        public R get() {
+            throw new NoSuchElementException("get() on Left");
         }
 
         @Override

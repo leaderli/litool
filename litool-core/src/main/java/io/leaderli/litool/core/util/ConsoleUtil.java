@@ -35,6 +35,19 @@ public class ConsoleUtil {
     }
 
     /**
+     * Quickly print multiple parameter values, separated by  delimiter
+     *
+     * @param delimiter the separated string
+     * @param args      the args
+     */
+    public static void print0(String delimiter, Object... args) {
+        if (StringUtils.isEmpty(delimiter)) {
+            delimiter = StrPool.SPACE;
+        }
+        CONSOLE.println(StringUtils.join(delimiter, args));
+    }
+
+    /**
      * Quickly print multiple parameter values, separated by spaces
      *
      * @param args the args
@@ -46,13 +59,8 @@ public class ConsoleUtil {
 
     }
 
-    /**
-     * Quickly print multiple parameter values, separated by  delimiter
-     *
-     * @param delimiter the separated string
-     * @param args      the args
-     */
-    public static void print0(String delimiter, Object... args) {
+    private static void print0(String delimiter, Iterable<?> args) {
+
         if (StringUtils.isEmpty(delimiter)) {
             delimiter = StrPool.SPACE;
         }
@@ -69,14 +77,6 @@ public class ConsoleUtil {
 
         print0(LINE_SEPARATOR, args);
 
-    }
-
-    private static void print0(String delimiter, Iterable<?> args) {
-
-        if (StringUtils.isEmpty(delimiter)) {
-            delimiter = StrPool.SPACE;
-        }
-        CONSOLE.println(StringUtils.join(delimiter, args));
     }
 
     /**

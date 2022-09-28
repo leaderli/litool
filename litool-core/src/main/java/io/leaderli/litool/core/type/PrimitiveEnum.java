@@ -96,21 +96,6 @@ public enum PrimitiveEnum {
         this.convert = convert;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T read(Object value) {
-
-        if (get(value) == this) {
-            return (T) value;
-        }
-        return (T) Lino.of(value)
-                .cast(String.class)
-                .map(v -> (Object) StringConvert.parser(wrapper, v).get())
-                .or(() -> convert.apply(value))
-                .assertNotNone(() -> StrSubstitution.format("{value} not support convert to {type}", value, this))
-                .get();
-    }
-
-
     /**
      * @param obj the obj
      * @return is instanceof {@link Number}
@@ -207,6 +192,20 @@ public enum PrimitiveEnum {
     @SuppressWarnings({"unchecked", "java:S1845"})
     public static <T> T zero_value(Class<T> type) {
         return (T) get(type).zero_value;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T read(Object value) {
+
+        if (get(value) == this) {
+            return (T) value;
+        }
+        return (T) Lino.of(value)
+                .cast(String.class)
+                .map(v -> (Object) StringConvert.parser(wrapper, v).get())
+                .or(() -> convert.apply(value))
+                .assertNotNone(() -> StrSubstitution.format("{value} not support convert to {type}", value, this))
+                .get();
     }
 
     @SuppressWarnings("all")

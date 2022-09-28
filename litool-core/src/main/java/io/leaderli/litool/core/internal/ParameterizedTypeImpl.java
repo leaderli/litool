@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 public class ParameterizedTypeImpl implements ParameterizedType {
     private final Type ownerType;
-    private final Type rawType;
+    private final Class<?> rawType;
     private final Type[] typeArguments;
 
     public ParameterizedTypeImpl(Type ownerType, Type rawType, Type... typeArguments) {
@@ -29,7 +29,7 @@ public class ParameterizedTypeImpl implements ParameterizedType {
         }
 
         this.ownerType = ownerType == null ? null : TypeUtil.canonicalize(ownerType);
-        this.rawType = TypeUtil.canonicalize(rawType);
+        this.rawType = TypeUtil.erase(TypeUtil.canonicalize(rawType));
         this.typeArguments = typeArguments.length == 0 ? TypeUtil.EMPTY_TYPE_ARRAY : typeArguments.clone();
 
         for (int t = 0, length = this.typeArguments.length; t < length; t++) {
@@ -44,11 +44,11 @@ public class ParameterizedTypeImpl implements ParameterizedType {
         if (type instanceof ParameterizedType) {
             return make((ParameterizedType) type);
         }
-        return make(null, TypeUtil.erase(type));
+        return make(TypeUtil.erase(type));
     }
 
     public static ParameterizedTypeImpl make(Class<?> rawType) {
-        return new ParameterizedTypeImpl(null, rawType, rawType.getTypeParameters());
+        return new ParameterizedTypeImpl(rawType.getEnclosingClass(), rawType, rawType.getTypeParameters());
     }
 
     public static ParameterizedTypeImpl make(ParameterizedType parameterizedType) {
@@ -104,16 +104,46 @@ public class ParameterizedTypeImpl implements ParameterizedType {
 
     @Override
     public String toString() {
-        int length = typeArguments.length;
-        if (length == 0) {
-            return TypeUtil.typeToString(rawType);
+        StringBuilder sb = new StringBuilder();
+
+        if (ownerType != null) {
+            if (ownerType instanceof Class) {
+
+                sb.append(((Class<?>) ownerType).getName());
+            } else {
+                sb.append(ownerType);
+            }
+
+            sb.append("$");
+
+            if (ownerType instanceof ParameterizedTypeImpl) {
+                // Find simple name of nested type by removing the
+                // shared prefix with owner.
+                sb.append(rawType.getName().replace(((ParameterizedTypeImpl) ownerType).rawType.getName() + "$", ""));
+            } else {
+                sb.append(rawType.getSimpleName());
+            }
+        } else {
+
+            sb.append(rawType.getName());
         }
 
-        StringBuilder stringBuilder = new StringBuilder(30 * (length + 1));
-        stringBuilder.append(TypeUtil.typeToString(rawType)).append("<").append(TypeUtil.typeToString(typeArguments[0]));
-        for (int i = 1; i < length; i++) {
-            stringBuilder.append(", ").append(TypeUtil.typeToString(typeArguments[i]));
+        if (typeArguments != null &&
+                typeArguments.length > 0) {
+            sb.append("<");
+            boolean first = true;
+            for (Type t : typeArguments) {
+                if (!first) {
+                    sb.append(", ");
+                }
+                sb.append(t.getTypeName());
+                first = false;
+            }
+            sb.append(">");
         }
-        return stringBuilder.append(">").toString();
+
+        return sb.toString();
+
+
     }
 }

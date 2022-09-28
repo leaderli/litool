@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2022/9/24 9:39 AM
  */
 public class Lean {
-    private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenCache = new ConcurrentHashMap<>();
     public final Lira<LeanFieldKey> reflect_name_handlers;
+    private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenCache = new ConcurrentHashMap<>();
     private final ConstructorConstructor constructorConstructor;
     private final List<TypeAdapterFactory> factories;
 
@@ -66,31 +66,6 @@ public class Lean {
         return getAdapter(targetTypeToken).read(source);
     }
 
-
-    /**
-     * @param source     the source bean
-     * @param targetType the target bean class
-     * @param <T>        the parameter of {@link  LiTypeToken}
-     * @return a new instance created by copy the properties of source deeply
-     * @see #getAdapter(Type)
-     */
-    @SuppressWarnings({"unchecked"})
-    public <T> T fromBean(Object source, Class<T> targetType) {
-        return (T) getAdapter(targetType).read(source);
-    }
-
-    /**
-     * @param source     the source bean
-     * @param targetType the target bean type
-     * @param <T>        the parameter of {@link  LiTypeToken}
-     * @return a new instance created by copy the properties of source deeply
-     * @see #getAdapter(Type)
-     */
-    @SuppressWarnings({"unchecked"})
-    public <T> T fromBean(Object source, Type targetType) {
-        return (T) getAdapter(targetType).read(source);
-    }
-
     /**
      * @param type the key
      * @param <T>  the parameter of {@link  LiTypeToken}
@@ -135,6 +110,17 @@ public class Lean {
         return (TypeAdapter<T>) typeTokenCache.get(type);
     }
 
+    /**
+     * @param source     the source bean
+     * @param targetType the target bean class
+     * @param <T>        the parameter of {@link  LiTypeToken}
+     * @return a new instance created by copy the properties of source deeply
+     * @see #getAdapter(Type)
+     */
+    @SuppressWarnings({"unchecked"})
+    public <T> T fromBean(Object source, Class<T> targetType) {
+        return (T) getAdapter(targetType).read(source);
+    }
 
     /**
      * {@code return getAdapter(LiTypeToken.of(type))}
@@ -147,6 +133,18 @@ public class Lean {
     public <T> TypeAdapter<T> getAdapter(Type type) {
 
         return getAdapter(LiTypeToken.of(type));
+    }
+
+    /**
+     * @param source     the source bean
+     * @param targetType the target bean type
+     * @param <T>        the parameter of {@link  LiTypeToken}
+     * @return a new instance created by copy the properties of source deeply
+     * @see #getAdapter(Type)
+     */
+    @SuppressWarnings({"unchecked"})
+    public <T> T fromBean(Object source, Type targetType) {
+        return (T) getAdapter(targetType).read(source);
     }
 
     /**

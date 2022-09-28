@@ -8,6 +8,11 @@ import java.time.format.DateTimeFormatter;
 public class BetweenTimeInstruct implements Instruct {
 
 
+    @Override
+    public Object apply(Class<?> type, Object[] objects) {
+        return invoke((String) objects[0], (String) objects[1], (String) objects[2]);
+    }
+
     public Boolean invoke(String left, String right, String now) {
         DateTimeFormatter HHmm = DateTimeFormatter.ofPattern("HHmm");
 
@@ -23,11 +28,6 @@ public class BetweenTimeInstruct implements Instruct {
                     rightTime);
         }
 
-    }
-
-    @Override
-    public Object apply(Class<?> type, Object[] objects) {
-        return invoke((String) objects[0], (String) objects[1], (String) objects[2]);
     }
 
     @Override

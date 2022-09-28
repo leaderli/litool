@@ -298,12 +298,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      */
     Lino<T> or(Supplier<? extends T> supplier);
 
-    /**
-     * @param other the other
-     * @return return other if this is {@link  #none()} otherwise return this
-     */
-    Lino<T> or(Lino<? extends T> other);
-
 
     /**
      * @param comparing the comparing value
@@ -399,8 +393,12 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Some<?> some = (Some<?>) o;
             return Objects.equals(value, some.value);
         }
@@ -539,10 +537,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             return this;
         }
 
-        @Override
-        public Lino<T> or(Lino<? extends T> other) {
-            return this;
-        }
 
         @Override
         public Lino<T> contain(T comparing) {
@@ -722,6 +716,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public Lino<T> debug() {
+            System.out.println("none");
             return this;
         }
 
@@ -739,11 +734,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         @Override
         public Lino<T> or(Supplier<? extends T> supplier) {
             return of(supplier.get());
-        }
-
-        @Override
-        public Lino<T> or(Lino<? extends T> other) {
-            return Lino.narrow(other);
         }
 
         @Override

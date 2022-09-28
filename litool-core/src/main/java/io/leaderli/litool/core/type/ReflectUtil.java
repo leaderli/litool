@@ -215,9 +215,7 @@ public class ReflectUtil {
     }
 
     public static <T> Lino<T> newInstance(Constructor<T> cls, Object... args) {
-        if (cls == null) {
-            return Lino.none();
-        }
+        Objects.requireNonNull(cls);
         setAccessible(cls);
         return Lino.throwable_of(() -> cls.newInstance(args));
     }
@@ -228,10 +226,37 @@ public class ReflectUtil {
      * @return return the new instance create by the no-argument constructor of cls
      */
     public static <T> Lino<T> newInstance(Class<T> cls) {
+
         Objects.requireNonNull(cls);
-        return getConstructor(cls).unzip(ReflectUtil::newInstance);
+
+        Lino<T> instance = getConstructor(cls).unzip(ReflectUtil::newInstance);
+
+        if (instance.present()) {
+
+            return instance;
+        }
+        // inner class
+        return getMemberConstructor(cls).unzip(c -> memberInstance(c, cls.getEnclosingClass()));
+
     }
 
+    private static <T> Lino<T> memberInstance(Constructor<T> c, Class<?> enclose) {
+        return ReflectUtil
+                .newInstance(enclose)
+                .unzip(arg -> ReflectUtil.newInstance(c, arg));
+    }
+
+    public static <T> Lino<Constructor<T>> getMemberConstructor(Class<T> cls) {
+
+        Objects.requireNonNull(cls);
+        if (cls.isMemberClass()) {
+            return getConstructors(cls)
+                    .filter(c -> c.getParameterTypes().length == 1 && c.getParameterTypes()[0] == cls.getEnclosingClass())
+                    .first();
+        }
+
+        return Lino.none();
+    }
 
     /**
      * union of {@link  Class#getConstructors()} and {@link  Class#getDeclaredConstructors()}
@@ -383,6 +408,19 @@ public class ReflectUtil {
         return findAnnotations(annotatedElement, annotation -> annotation.annotationType().isAnnotationPresent(metaAnnotation));
     }
 
+    /**
+     * @param obj  the obj
+     * @param name the name of method in obj
+     * @param args the args of method
+     * @return return value that method return, if method is void, it always return {@code null}
+     */
+    public static Lino<?> getMethodValueByName(Object obj, String name, Object... args) {
+
+        if (obj == null || name == null) {
+            return Lino.none();
+        }
+        return ReflectUtil.getMethod(obj.getClass(), name).unzip(method -> getMethodValue(method, obj, args));
+    }
 
     /**
      * onlyCurrentClass = false
@@ -394,7 +432,6 @@ public class ReflectUtil {
     public static Lino<Method> getMethod(Class<?> cls, String name) {
         return getMethod(cls, name, false);
     }
-
 
     /**
      * @param cls              the class
@@ -409,7 +446,6 @@ public class ReflectUtil {
                 .filter(m -> !onlyCurrentClass || m.getDeclaringClass().equals(cls))
                 .first();
     }
-
 
     /**
      * get all method of class or it's super class
@@ -440,20 +476,6 @@ public class ReflectUtil {
         setAccessible(method);
 
         return Lino.throwable_of(() -> method.invoke(obj, args));
-    }
-
-    /**
-     * @param obj  the obj
-     * @param name the name of method in obj
-     * @param args the args of method
-     * @return return value that method return, if method is void, it always return {@code null}
-     */
-    public static Lino<?> getMethodValueByName(Object obj, String name, Object... args) {
-
-        if (obj == null || name == null) {
-            return Lino.none();
-        }
-        return ReflectUtil.getMethod(obj.getClass(), name).unzip(method -> getMethodValue(method, obj, args));
     }
 
 }

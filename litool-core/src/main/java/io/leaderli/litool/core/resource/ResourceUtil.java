@@ -41,22 +41,6 @@ public class ResourceUtil {
     }
 
     /**
-     * get file URL
-     *
-     * <pre>
-     * config/a/db.config
-     * spring/xml/test.xml
-     * </pre>
-     *
-     * @param path file path under classpath
-     * @return file url
-     */
-    public static URL getResource(String path) {
-
-        return getResource(path, null);
-    }
-
-    /**
      * Return a lira of resource files under classpath, include subdirectories
      *
      * @param walkFileFilter the filter of {@link  File}
@@ -66,22 +50,6 @@ public class ResourceUtil {
     public static Lira<File> getResourceFiles(WalkFileFilter walkFileFilter) {
 
         return getResourceFiles("", walkFileFilter);
-    }
-
-    /**
-     * Return the relative URL under benchmark class
-     *
-     * @param resource_name the relative path of resource, {@code null} and "" both represent classpath path
-     * @param baseClass     the benchmark Class，
-     * @return {@link URL}
-     */
-    public static URL getResource(String resource_name, Class<?> baseClass) {
-        resource_name = StringUtils.stripToEmpty(resource_name);
-        if (baseClass == null) {
-            resource_name = StringUtils.removeStart(resource_name, "/");
-            return ClassLoaderUtil.getClassLoader().getResource(resource_name);
-        }
-        return baseClass.getResource(resource_name);
     }
 
     /**
@@ -125,25 +93,6 @@ public class ResourceUtil {
     }
 
     /**
-     * Return  the map of line of content
-     *
-     * @param path file path under classpath
-     * @return a map of line of content
-     */
-    public static Map<Integer, String> lineStrOfResourcesFile(String path) {
-
-        return Lino.of(path).map(ResourceUtil::getResource).throwable_map(URL::openStream).map(InputStreamReader::new).map(BufferedReader::new).throwable_map(reader -> {
-            Map<Integer, String> lines = new HashMap<>();
-            int i = 0;
-            while (reader.ready()) {
-                lines.put(++i, reader.readLine());
-            }
-
-            return lines;
-        }).or(HashMap::new).get();
-    }
-
-    /**
      * Return a lira consist of {@link  URL} according to  {@link  ClassLoader#getResources(String)}
      *
      * @param resource_name the name of resource_name
@@ -153,6 +102,61 @@ public class ResourceUtil {
 
         return Lino.of(resource_name).throwable_map(ClassLoaderUtil.getClassLoader()::getResources).toLira(URL.class);
 
+    }
+
+    /**
+     * Return  the map of line of content
+     *
+     * @param path file path under classpath
+     * @return a map of line of content
+     */
+    public static Map<Integer, String> lineStrOfResourcesFile(String path) {
+
+        return Lino.of(path)
+                .map(ResourceUtil::getResource).throwable_map(URL::openStream)
+                .map(InputStreamReader::new).map(BufferedReader::new)
+                .throwable_map(reader -> {
+                    Map<Integer, String> lines = new HashMap<>();
+                    int i = 0;
+                    while (reader.ready()) {
+                        lines.put(++i, reader.readLine());
+                    }
+
+                    return lines;
+                })
+                .get(HashMap::new);
+    }
+
+    /**
+     * get file URL
+     *
+     * <pre>
+     * config/a/db.config
+     * spring/xml/test.xml
+     * </pre>
+     *
+     * @param path file path under classpath
+     * @return file url
+     */
+    public static URL getResource(String path) {
+
+        return getResource(path, null);
+    }
+
+    /**
+     * Return the relative URL under benchmark class
+     *
+     * @param resource_name the relative path of resource, {@code null} and "" both represent classpath path
+     * @param baseClass     the benchmark Class，
+     * @return {@link URL}
+     */
+    public static URL getResource(String resource_name, Class<?> baseClass) {
+        resource_name = StringUtils.stripToEmpty(resource_name);
+        if (baseClass == null) {
+            resource_name = StringUtils.removeStart(resource_name, "/");
+            return ClassLoaderUtil.getClassLoader().getResource(resource_name);
+        }
+        return baseClass.getResource(resource_name);
     }
 
     /**

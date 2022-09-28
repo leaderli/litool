@@ -69,16 +69,6 @@ public class LiTypeToken<T> implements ParameterizedType {
     }
 
     /**
-     * Unsafe. Constructs a type literal manually.
-     */
-    @SuppressWarnings("unchecked")
-    LiTypeToken(Type type) {
-        this.type = TypeUtil.canonicalize(Objects.requireNonNull(type));
-        this.rawType = (Class<? super T>) TypeUtil.erase(this.type);
-        this.hashCode = this.type.hashCode();
-    }
-
-    /**
      * Returns the type from super class's type parameter in {@link TypeUtil#canonicalize
      * canonical form}.
      */
@@ -91,6 +81,15 @@ public class LiTypeToken<T> implements ParameterizedType {
         return TypeUtil.canonicalize(parameterized.getActualTypeArguments()[0]);
     }
 
+    /**
+     * Unsafe. Constructs a type literal manually.
+     */
+    @SuppressWarnings("unchecked")
+    LiTypeToken(Type type) {
+        this.type = TypeUtil.canonicalize(Objects.requireNonNull(type));
+        this.rawType = (Class<? super T>) TypeUtil.erase(this.type);
+        this.hashCode = this.type.hashCode();
+    }
 
     /**
      * Private helper function that performs some assignability checks for
@@ -238,13 +237,6 @@ public class LiTypeToken<T> implements ParameterizedType {
         return new LiTypeToken<>(LiTypes.arrayOf(componentType));
     }
 
-    /**
-     * @return {@code type instanceof ParameterizedType; }
-     */
-    public final boolean isParameterizedType() {
-        return type instanceof ParameterizedType;
-    }
-
     //    @Override
     @Override
     public final Type[] getActualTypeArguments() {
@@ -256,10 +248,10 @@ public class LiTypeToken<T> implements ParameterizedType {
     }
 
     /**
-     * Gets underlying {@code Type} instance.
+     * @return {@code type instanceof ParameterizedType; }
      */
-    public final Type getType() {
-        return type;
+    public final boolean isParameterizedType() {
+        return type instanceof ParameterizedType;
     }
 
     /**
@@ -277,6 +269,13 @@ public class LiTypeToken<T> implements ParameterizedType {
             return ((ParameterizedType) type).getOwnerType();
         }
         return null;
+    }
+
+    /**
+     * Gets underlying {@code Type} instance.
+     */
+    public final Type getType() {
+        return type;
     }
 
     /**

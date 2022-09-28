@@ -18,13 +18,6 @@ public final class ConstructorConstructor {
 
     private final Map<Type, InstanceCreator<?>> instanceCreators = instanceCreators();
 
-    static Map<Type, InstanceCreator<?>> instanceCreators() {
-        Map<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
-        instanceCreators.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
-        instanceCreators.put(HashMap.class, (InstanceCreator<HashMap<Object, Object>>) type -> new HashMap<>());
-        return instanceCreators;
-    }
-
     public ConstructorConstructor() {
     }
 
@@ -32,6 +25,13 @@ public final class ConstructorConstructor {
         // put the same key don't refresh the order, so remove it to avoid the order is not correctly
         this.instanceCreators.keySet().removeIf(instanceCreators::containsKey);
         this.instanceCreators.putAll(instanceCreators);
+    }
+
+    static Map<Type, InstanceCreator<?>> instanceCreators() {
+        Map<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
+        instanceCreators.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
+        instanceCreators.put(HashMap.class, (InstanceCreator<HashMap<Object, Object>>) type -> new HashMap<>());
+        return instanceCreators;
     }
 
     @SuppressWarnings("unchecked")

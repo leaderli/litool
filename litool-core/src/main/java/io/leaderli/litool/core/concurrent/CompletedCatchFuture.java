@@ -40,17 +40,20 @@ public class CompletedCatchFuture<V> implements CatchFuture<V> {
 
     @Override
     public V get() {
-        if (exc != null)
+        if (exc != null) {
             throw new RuntimeException(exc);
+        }
         return result;
     }
 
     @Override
     public V get(long timeout, TimeUnit unit) {
-        if (unit == null)
+        if (unit == null) {
             throw new NullPointerException();
-        if (exc != null)
+        }
+        if (exc != null) {
             throw new RuntimeException(exc);
+        }
         return result;
     }
 }

@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ALL")
 class ReflectUtilTest {
 
+
     static {
         LiConstant.WHEN_THROW = null;
 
@@ -39,19 +40,18 @@ class ReflectUtilTest {
     void getField() {
 
         LittleBean littleBean = new LittleBean();
-        assertEquals("bean",
-                ReflectUtil.getField(LittleBean.class, "name").throwable_map(f -> f.get(littleBean)).get());
-        assertEquals(8,
-                ReflectUtil.getField(LittleBean.class, "age").throwable_map(f -> f.get(littleBean)).get());
+        assertEquals("bean", ReflectUtil.getField(LittleBean.class, "name").throwable_map(f -> f.get(littleBean)).get());
+        assertEquals(8, ReflectUtil.getField(LittleBean.class, "age").throwable_map(f -> f.get(littleBean)).get());
 
         Lino<Field> name = ReflectUtil.getField(LittleBean.class, "name", true);
         assertNull(name.throwable_map(f -> f.get(littleBean), null).get());
+
         assertEquals("little", name.throwable_map(f -> {
             f.setAccessible(true);
             return f.get(littleBean);
         }).get());
-        assertEquals(8,
-                ReflectUtil.getField(LittleBean.class, "age", true).throwable_map(f -> f.get(littleBean)).get());
+
+        assertEquals(8, ReflectUtil.getField(LittleBean.class, "age", true).throwable_map(f -> f.get(littleBean)).get());
     }
 
     @Test
@@ -113,7 +113,7 @@ class ReflectUtilTest {
     }
 
     @Test
-    void newInstance() {
+    void newInstance() throws NoSuchMethodException {
 
         assertTrue(ReflectUtil.newInstance(Integer.class).absent());
         assertTrue(ReflectUtil.newInstance(ConstructorBean.class).present());
@@ -127,6 +127,13 @@ class ReflectUtilTest {
 
         assertTrue(ReflectUtil.newInstance(TestBean.class, (String) null).present());
         assertTrue(ReflectUtil.newInstance(TestBean2.class, (String) null).present());
+
+        ;
+
+        // inner class
+
+        assertTrue(ReflectUtil.newInstance(Out.In.class).present());
+        assertTrue(ReflectUtil.newInstance(Out.In.InIn.class).present());
     }
 
 
@@ -151,11 +158,6 @@ class ReflectUtilTest {
         assertEquals(0, ReflectUtil.findAnnotationsWithMetaAnnotation(TestBean.class, NotNull.class).size());
     }
 
-    @SuppressWarnings("InnerClassMayBeStatic")
-    public class Test1 {
-
-    }
-
     @Test
     void getMethods() {
         assertEquals(2 + Object.class.getMethods().length, ReflectUtil.getMethods(Bean.class).size());
@@ -167,6 +169,15 @@ class ReflectUtilTest {
         assertTrue(ReflectUtil.getMethod(LittleBean.class, "m1").present());
         assertTrue(ReflectUtil.getMethod(LittleBean.class, "m3").present());
         assertTrue(ReflectUtil.getMethod(LittleBean.class, "m1", true).absent());
+    }
+
+    @Test
+    void getMemberConstructor() {
+
+        Assertions.assertTrue(Out.class.isMemberClass() && ReflectUtil.getMemberConstructor(Out.class).absent());
+        Assertions.assertTrue(ReflectUtil.getMemberConstructor(Out.In.class).present());
+        Assertions.assertTrue(ReflectUtil.getMemberConstructor(Out.In2.class).present());
+
     }
 
     @Test
@@ -199,10 +210,18 @@ class ReflectUtilTest {
         assertEquals(2, ReflectUtil.getMethodValueByName(new Static(), "m3", 2).get());
     }
 
-
     public static class Out {
         public class In {
+            public class InIn {
 
+            }
+
+        }
+
+        public class In2 {
+
+            private In2() {
+            }
         }
     }
 
@@ -299,6 +318,11 @@ class ReflectUtilTest {
         public void accept(String o) {
 
         }
+    }
+
+    @SuppressWarnings("InnerClassMayBeStatic")
+    public class Test1 {
+
     }
 
 

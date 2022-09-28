@@ -3,7 +3,9 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,18 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ParameterizedTypeImplTest {
 
+
+    private Out.In<String> in;
+
+    @Test
+    void test() {
+
+        ParameterizedType para = (ParameterizedType) ReflectUtil.getField(getClass(), "in").get().getGenericType();
+
+        System.out.println(para.getOwnerType());
+        System.out.println(para.getRawType());
+
+    }
 
     @Test
     void make() {
@@ -36,6 +50,7 @@ class ParameterizedTypeImplTest {
         assertEquals(String.class, make.getActualClassArgument().get());
         assertNull(make.getActualClassArgument(1).get());
 
+        Assertions.assertEquals(ParameterizedTypeImpl.make(Out.class, Out.In.class, TypeVariableImpl.make(Out.In.class, "T", null, null)), ParameterizedTypeImpl.make(Out.In.class));
 
     }
 
@@ -45,6 +60,12 @@ class ParameterizedTypeImplTest {
         Assertions.assertSame(TypeUtil.EMPTY_TYPE_ARRAY, ParameterizedTypeImpl.make(Runnable.class).getActualTypeArguments());
         Assertions.assertSame(TypeUtil.EMPTY_TYPE_ARRAY, ParameterizedTypeImpl.make(null, List.class).getActualTypeArguments());
 
+    }
+
+    private static class Out {
+        private static class In<T> {
+
+        }
     }
 
 }

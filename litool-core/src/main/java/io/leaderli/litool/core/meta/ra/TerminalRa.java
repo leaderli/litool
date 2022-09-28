@@ -30,8 +30,8 @@ class TerminalRa<T> extends RaWithPrevPublisher<T> {
 
 
         private final SubscriberRa<? super T> actualSubscriber;
-        SubscriptionRa prevSubscription;
         private final List<T> cache = new ArrayList<>();
+        SubscriptionRa prevSubscription;
         /**
          * not use  method reference to avoid null pointer
          */
@@ -75,11 +75,6 @@ class TerminalRa<T> extends RaWithPrevPublisher<T> {
             completeTerminal();
         }
 
-        @Override
-        public void onCancel() {
-            completeTerminal();
-        }
-
         void completeTerminal() {
 
             if (deliverAction != null) {
@@ -87,6 +82,11 @@ class TerminalRa<T> extends RaWithPrevPublisher<T> {
             } else {
                 terminalSubscription = new IterableRa<>(cache).newGenerator(actualSubscriber);
             }
+        }
+
+        @Override
+        public void onCancel() {
+            completeTerminal();
         }
 
     }

@@ -75,8 +75,12 @@ public class LiBox<T> implements LiValue {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         LiBox<?> liBox = (LiBox<?>) o;
         return Objects.equals(value, liBox.value);
     }

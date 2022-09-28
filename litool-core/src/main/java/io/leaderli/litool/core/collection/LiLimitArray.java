@@ -78,8 +78,9 @@ public class LiLimitArray<T> {
 
     private void fastRemove(int index) {
         int numMoved = size - index - 1;
-        if (numMoved > 0)
+        if (numMoved > 0) {
             System.arraycopy(elements, index + 1, elements, index, numMoved);
+        }
         elements[size - 1] = null;
     }
 

@@ -25,13 +25,12 @@ import java.util.concurrent.TimeoutException;
 public class InputStreamCompletableFuture implements CatchFuture<String> {
 
     private final StringBuffer buffer = new StringBuffer();
+    private final CompletableFuture<String> task;
     private int index;
 
     public InputStreamCompletableFuture(InputStream inputStream) {
         this(inputStream, Charset.defaultCharset());
     }
-
-    private final CompletableFuture<String> task;
 
 
     public InputStreamCompletableFuture(InputStream inputStream, Charset charset) {

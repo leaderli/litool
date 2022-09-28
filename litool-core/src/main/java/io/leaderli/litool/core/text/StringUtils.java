@@ -6721,6 +6721,31 @@ public class StringUtils implements StrPool {
 //-----------------------------------------------------------------------
 
     /**
+     * join elements with delimiter, if element is null, it will be regard as ''
+     *
+     * @param delimiter delimiter str, if {@code  null} will use {@link  LiConstant#JOIN_DELIMITER}
+     * @param elements  an array
+     * @return joined elements
+     */
+    public static String join0(String delimiter, Object[] elements) {
+
+        if (elements == null) {
+            return "";
+        }
+        if (delimiter == null) {
+            delimiter = LiConstant.JOIN_DELIMITER;
+        }
+
+        String[] arr = new String[elements.length];
+
+        for (int i = 0; i < elements.length; i++) {
+            arr[i] = elements[i] == null ? "" : String.valueOf(elements[i]);
+        }
+        return String.join(delimiter, arr);
+
+    }
+
+    /**
      * <p>Splits the provided text into an array, separator specified.
      * This is an alternative to using StringTokenizer.</p>
      *
@@ -6824,6 +6849,9 @@ public class StringUtils implements StrPool {
         return abbreviate(str, defaultAbbrevMarker, offset, maxWidth);
     }
 
+// Misc
+//-----------------------------------------------------------------------
+
     /**
      * <p>Abbreviates a String using another given String as replacement marker. This will turn
      * "Now is the time for all good men" into "Now is the time for..." if "..." was defined
@@ -6863,9 +6891,6 @@ public class StringUtils implements StrPool {
     public static String abbreviate(final String str, final String abbrevMarker, final int maxWidth) {
         return abbreviate(str, abbrevMarker, 0, maxWidth);
     }
-
-// Misc
-//-----------------------------------------------------------------------
 
     /**
      * <p>Abbreviates a String using a given replacement marker. This will turn
@@ -7071,6 +7096,9 @@ public class StringUtils implements StrPool {
         return INDEX_NOT_FOUND;
     }
 
+// startsWith
+//-----------------------------------------------------------------------
+
     /**
      * <p>Compares all Strings in an array and returns the initial sequence of
      * characters that is common to all of them.</p>
@@ -7123,9 +7151,6 @@ public class StringUtils implements StrPool {
             return strs[0].substring(0, smallestIndexOfDiff);
         }
     }
-
-// startsWith
-//-----------------------------------------------------------------------
 
     /**
      * <p>Compares all CharSequences in an array and returns the index at which the
@@ -7475,6 +7500,9 @@ public class StringUtils implements StrPool {
         return -1;
     }
 
+// endsWith
+//-----------------------------------------------------------------------
+
     /**
      * <p>Find the Jaro Winkler Distance which indicates the similarity score between two Strings.</p>
      *
@@ -7529,9 +7557,6 @@ public class StringUtils implements StrPool {
         final double jw = j < 0.7D ? j : j + Math.min(DEFAULT_SCALING_FACTOR, 1D / mtp[3]) * mtp[2] * (1D - j);
         return Math.round(jw * 100.0D) / 100.0D;
     }
-
-// endsWith
-//-----------------------------------------------------------------------
 
     private static int[] matches(final CharSequence first, final CharSequence second) {
         CharSequence max, min;
@@ -8345,6 +8370,9 @@ public class StringUtils implements StrPool {
         return result;
     }
 
+    //------------------------------------------------------------------litool
+    // ------------------------------------------------------------------
+
     /**
      * Returns the string representation of the {@code char} array or null.
      *
@@ -8356,9 +8384,6 @@ public class StringUtils implements StrPool {
     public static String valueOf(final char[] value) {
         return value == null ? null : String.valueOf(value);
     }
-
-    //------------------------------------------------------------------litool
-    // ------------------------------------------------------------------
 
     /**
      * Return the new string with fixed length, if the origin string length is
@@ -8404,7 +8429,6 @@ public class StringUtils implements StrPool {
 
     }
 
-
     /**
      * Return the new string with fixed length, if the origin string length is
      * less than min length, will padding ' ' at left
@@ -8443,7 +8467,6 @@ public class StringUtils implements StrPool {
 
     }
 
-
     /**
      * Return the new string with fixed length, if the origin string length is
      * less than min length, will padding ' ' at  right
@@ -8456,7 +8479,6 @@ public class StringUtils implements StrPool {
     public static String rjust(String origin, int min_length) {
         return rjust(origin, min_length, ' ');
     }
-
 
     /**
      * Return the new string with fixed length, if the origin string length is
@@ -8508,7 +8530,6 @@ public class StringUtils implements StrPool {
 
         return str == null ? 0 : str.length();
     }
-
 
     /**
      * get the bottom cause stackTrack, and return the first error message that occurs at the class
@@ -8741,31 +8762,6 @@ public class StringUtils implements StrPool {
     public static String join(String delimiter, Object... elements) {
 
         return join0(delimiter, elements);
-    }
-
-    /**
-     * join elements with delimiter, if element is null, it will be regard as ''
-     *
-     * @param delimiter delimiter str, if {@code  null} will use {@link  LiConstant#JOIN_DELIMITER}
-     * @param elements  an array
-     * @return joined elements
-     */
-    public static String join0(String delimiter, Object[] elements) {
-
-        if (elements == null) {
-            return "";
-        }
-        if (delimiter == null) {
-            delimiter = LiConstant.JOIN_DELIMITER;
-        }
-
-        String[] arr = new String[elements.length];
-
-        for (int i = 0; i < elements.length; i++) {
-            arr[i] = elements[i] == null ? "" : String.valueOf(elements[i]);
-        }
-        return String.join(delimiter, arr);
-
     }
 
     /**
