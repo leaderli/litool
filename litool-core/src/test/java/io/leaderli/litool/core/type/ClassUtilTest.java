@@ -62,10 +62,10 @@ class ClassUtilTest {
     void testGetClass() throws NoSuchFieldException, NoSuchMethodException {
 
         //noinspection ConstantConditions
-        Assertions.assertNull(ClassUtil.getClass((Method) null));
+        Assertions.assertNull(ClassUtil.getDeclaringClass((Method) null));
 
-        Assertions.assertEquals(Integer.class, ClassUtil.getClass(1));
-        Class<CharSequence> type = ClassUtil.getClass("");
+        Assertions.assertEquals(Integer.class, ClassUtil.getDeclaringClass(1));
+        Class<CharSequence> type = ClassUtil.getDeclaringClass("");
         Assertions.assertNotSame(type, CharSequence.class);
         Assertions.assertSame(type, String.class);
 
@@ -75,9 +75,9 @@ class ClassUtilTest {
         assertNull(ClassUtil.getType((Field) null));
         assertEquals(void.class, ClassUtil.getType(ReflectUtilTest.LittleBean.class.getDeclaredMethod("m3")));
 
-        assertEquals(ReflectUtilTest.LittleBean.class, ClassUtil.getClass(ReflectUtilTest.LittleBean.class.getDeclaredField("age")));
-        assertEquals(ReflectUtilTest.LittleBean.class, ClassUtil.getClass(ReflectUtilTest.LittleBean.class.getDeclaredMethod("m3")));
-        assertEquals(ReflectUtilTest.LittleBean.class, ClassUtil.getClass(ReflectUtilTest.LittleBean.class.getConstructor()));
+        assertEquals(ReflectUtilTest.LittleBean.class, ClassUtil.getDeclaringClass(ReflectUtilTest.LittleBean.class.getDeclaredField("age")));
+        assertEquals(ReflectUtilTest.LittleBean.class, ClassUtil.getDeclaringClass(ReflectUtilTest.LittleBean.class.getDeclaredMethod("m3")));
+        assertEquals(ReflectUtilTest.LittleBean.class, ClassUtil.getDeclaringClass(ReflectUtilTest.LittleBean.class.getConstructor()));
 
 
     }

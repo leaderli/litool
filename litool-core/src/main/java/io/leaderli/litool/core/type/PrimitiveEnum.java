@@ -144,7 +144,7 @@ public enum PrimitiveEnum {
      * @see #get(Class)
      */
     public static PrimitiveEnum get(Object obj) {
-        return get(ClassUtil.getClass(obj));
+        return get(ClassUtil.getDeclaringClass(obj));
     }
 
     /**

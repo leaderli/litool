@@ -10,12 +10,12 @@ import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.core.type.TypeUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.function.Supplier;
 
-import static io.leaderli.litool.core.type.TypeUtil.resolve;
 
 /**
  * @author leaderli
@@ -71,7 +71,7 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
             for (Field field : ReflectUtil.getFields(target.getClass())) {
 
                 String key = lean.reflect_name_handlers.map(fu -> fu.apply(field)).first().get();
-                Type targetType = resolve(declare, field.getGenericType());
+                Type targetType = TypeUtil.resolve(declare, field.getGenericType());
 
                 Lino<LeanFieldAdapter> annotation = ReflectUtil.getAnnotation(field, LeanFieldAdapter.class);
                 TypeAdapter<T> typeAdapter;
@@ -79,7 +79,7 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
                     typeAdapter = (TypeAdapter<T>) annotation
                             .map(LeanFieldAdapter::value)
                             .assertTrue(cls -> {
-                                ParameterizedTypeImpl adapterType = resolve(cls, TypeAdapter.class);
+                                ParameterizedTypeImpl adapterType = TypeUtil.resolve(cls, TypeAdapter.class);
                                 if (adapterType.getActualTypeArguments()[0] == targetType) {
                                     return true;
                                 }

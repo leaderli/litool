@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.type;
 
 
+import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.internal.GenericArrayTypeImpl;
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
@@ -18,6 +19,10 @@ import java.util.Objects;
  * @since 2022/6/27
  */
 public class TypeUtil {
+
+    public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
+    @SuppressWarnings("rawtypes")
+    public static final TypeVariable[] EMPTY_TYPE_VARIABLE_ARRAY = new TypeVariable[0];
 
     /**
      * the type is unknown
@@ -43,16 +48,16 @@ public class TypeUtil {
             return (Class<?>) type;
 
         } else if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
 
             // I'm not exactly sure why getRawType() returns Type instead of Class.
             // Neal isn't either but suspects some pathological case related
             // to nested classes exists.
-            Type rawType = parameterizedType.getRawType();
+            Type rawType = ((ParameterizedType) type).getRawType();
             LiAssertUtil.assertTrue(rawType instanceof Class);
             return (Class<?>) rawType;
 
         } else if (type instanceof GenericArrayType) {
+
             Type componentType = ((GenericArrayType) type).getGenericComponentType();
             return Array.newInstance(erase(componentType), 0).getClass();
 
@@ -62,52 +67,51 @@ public class TypeUtil {
             return erase(((TypeVariable<?>) type).getBounds()[0]);
 
         } else if (type instanceof WildcardType) {
+
             return erase(((WildcardType) type).getUpperBounds()[0]);
 
         } else if (type == null) {
+
             return null;
+
         } else {
+
             String className = type.getClass().getName();
-            throw new IllegalArgumentException("Expected a Class, ParameterizedType, or "
-                    + "GenericArrayType, but <" + type + "> is of type " + className);
+            throw new IllegalArgumentException("Expected a Class, ParameterizedType, or GenericArrayType, but <" + type + "> is of type " + className);
         }
 
     }
 
-    private static Type resolve(Type type, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+    private static Type resolveByTypeVariables(Type type, Map<TypeVariable<?>, Type> visitedTypeVariables) {
 
         if (type instanceof ParameterizedType) {
 
             ParameterizedType parameterizedType = (ParameterizedType) type;
-            Class<?> rawType = (Class<?>) parameterizedType.getRawType();
-            Type[] actualTypeArguments = Lira.of(parameterizedType.getActualTypeArguments()).map(arg -> resolve(arg, visitedTypeVariables)).toArray(Type.class);
-            return ParameterizedTypeImpl.make(parameterizedType.getOwnerType(), rawType, actualTypeArguments);
+
+            Type ownerType = parameterizedType.getOwnerType();
+            Class<?> rawTp = (Class<?>) parameterizedType.getRawType();
+            Type[] argType = Lira.of(parameterizedType.getActualTypeArguments())
+                    .map(arg -> resolveByTypeVariables(arg, visitedTypeVariables))
+                    .toArray(Type.class);
+
+            return ParameterizedTypeImpl.make(ownerType, rawTp, argType);
+
         } else if (type instanceof TypeVariable) {
+
             return visitedTypeVariables.getOrDefault(type, erase(type));
+
         } else if (type instanceof GenericArrayType) {
 
             Type componentType = ((GenericArrayType) type).getGenericComponentType();
-            componentType = resolve(componentType, visitedTypeVariables);
+            componentType = resolveByTypeVariables(componentType, visitedTypeVariables);
             return Array.newInstance(erase(componentType), 0).getClass();
 
         } else if (type instanceof Class) {
+
             return type;
         }
 
         return erase(type);
-    }
-
-    /**
-     * {@code  resolve(declare, erase(declare),resolve}
-     *
-     * @param declare the declare
-     * @param resolve the resolve class that has generic typeParameter
-     * @param <T>     the type parameter of resolve
-     * @return {@link  #resolve(Type, Class, Class)}
-     * @see #erase(Type)
-     */
-    public static <T> ParameterizedTypeImpl resolve(Type declare, Class<T> resolve) {
-        return resolve(declare, erase(declare), resolve);
     }
 
     /**
@@ -123,9 +127,9 @@ public class TypeUtil {
         Objects.requireNonNull(resolve);
         Class<?> resolving = erase(resolve);
         Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
-        expansionTypeVariable(declare, visitedTypeVariables);
+        expandTypeVariables(declare, visitedTypeVariables);
         if (resolving.getTypeParameters().length > 0 && resolving != declare) {
-            TypeUtil.resolve(declare, erase(declare), resolving, visitedTypeVariables);
+            TypeUtil.resolve(declare, resolving, visitedTypeVariables);
         } else if (resolve instanceof GenericArrayType) {
             Type componentType = ((GenericArrayType) resolve).getGenericComponentType();
             componentType = resolve(declare, componentType);
@@ -137,74 +141,76 @@ public class TypeUtil {
             return declareRaw;
         }
 
-        return resolve(resolve, visitedTypeVariables);
+        return resolveByTypeVariables(resolve, visitedTypeVariables);
     }
 
     /**
      * the generic class type will be declared at actual class that can be new.
      * the resolving progress will replace {@link  TypeVariable} to the {@link  Class},
-     * at end, it will return  {@link  ParameterizedType} with the resolve class and with
+     * at end, it will return  {@link  ParameterizedType} with the toResolve class and with
      * actual declare typeParameters
      *
-     * @param declare the declare type
-     * @param resolve the resolve class that has generic typeParameter
-     * @param rawType the rawType of declare class
-     * @param <T>     the type parameter of resolve
-     * @return the  LiParameterizedType with resolve class with declare class typeParameters
+     * @param declare   the declare type
+     * @param toResolve the toResolve class that has generic typeParameter
+     * @param <T>       the type parameter of toResolve
+     * @return the  LiParameterizedType with toResolve class with declare class typeParameters
      */
-    public static <T> ParameterizedTypeImpl resolve(Type declare, Class<?> rawType, Class<T> resolve) {
-        Objects.requireNonNull(resolve);
-        if (resolve.getTypeParameters().length == 0 || resolve == declare) {
-            return ParameterizedTypeImpl.make(resolve);
-        }
+    public static <T> ParameterizedTypeImpl resolve(Type declare, Class<T> toResolve) {
+        Objects.requireNonNull(toResolve);
         Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
-        TypeUtil.resolve(declare, rawType, resolve, visitedTypeVariables);
-        Type[] declareTypeArguments = Lira.of(resolve.getTypeParameters()).map(visitedTypeVariables::get).toArray(Type.class);
-        return ParameterizedTypeImpl.make(null, resolve, declareTypeArguments);
+        resolve(declare, toResolve, visitedTypeVariables);
+        Type[] declareTypeArguments = Lira.of(toResolve.getTypeParameters()).map(visitedTypeVariables::get).toArray(Type.class);
+        return ParameterizedTypeImpl.make(toResolve.getEnclosingClass(), toResolve, declareTypeArguments);
     }
 
-    private static Class<?> resolveTypeVariable(Type resolving, TypeVariable<?> typeVariable) {
+    public static Class<?> resolveTypeVariable(Type resolving, TypeVariable<?> typeVariable) {
 
 
-        Class<?> declaredByRaw = declaringClassOf(typeVariable);
+        Class<?> declaredByRaw = getDeclaringClass(typeVariable);
 
         // we can't reduce this further
         if (declaredByRaw == null) {
             return erase(typeVariable);
         }
         Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
-        resolve(resolving, erase(resolving), declaredByRaw, visitedTypeVariables);
+        resolve(resolving, declaredByRaw, visitedTypeVariables);
         return erase(visitedTypeVariables.getOrDefault(typeVariable, Object.class));
 
     }
 
-    private static Class<?> declaringClassOf(TypeVariable<?> typeVariable) {
+    public static Class<?> getDeclaringClass(TypeVariable<?> typeVariable) {
         GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
-        return genericDeclaration instanceof Class
-                ? (Class<?>) genericDeclaration
-                : null;
+        return genericDeclaration instanceof Class ? (Class<?>) genericDeclaration : null;
     }
 
-    private static boolean resolve(Type resolving, Class<?> raw, Class<?> toResolve, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+    // to recursively upward to find the toResolve class TypeVariables actualClass
+    private static boolean resolve(Type resolving, Class<?> toResolve, Map<TypeVariable<?>, Type> visitedTypeVariables) {
 
-        if (resolving == toResolve) { // found
+        if (resolving == Object.class) {
             return true;
         }
+
+
+        Class<?> raw = erase(resolving);
+
+        // interface should continue resolve by super interfaces
         if (raw == null) {
-            // interface should continue resolve by super interfaces
             return !toResolve.isInterface();
         }
-
-        expansionTypeVariable(resolving, visitedTypeVariables);
-        if (toResolve.isInterface()) {
-            for (Type genericInterface : raw.getGenericInterfaces()) {
-                if (resolve(genericInterface, erase(genericInterface), toResolve, visitedTypeVariables)) {
-                    return true;
-                }
-            }
-
+        if (raw == toResolve) { // found
+            expandTypeVariables(resolving, visitedTypeVariables);
+            return true;
         }
-        return resolve(raw.getGenericSuperclass(), raw.getSuperclass(), toResolve, visitedTypeVariables);
+        expandTypeVariables(resolving, visitedTypeVariables);
+
+        for (Type genericInterface : raw.getGenericInterfaces()) {
+            if (resolve(genericInterface, toResolve, visitedTypeVariables)) {
+                return true;
+            }
+        }
+
+
+        return resolve(raw.getGenericSuperclass(), toResolve, visitedTypeVariables);
     }
 
 
@@ -215,16 +221,27 @@ public class TypeUtil {
      * @param declare              the type that have declare type
      * @param visitedTypeVariables the typeVariable-type map
      */
-    private static void expansionTypeVariable(Type declare, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+    public static void expandTypeVariables(Type declare, Map<TypeVariable<?>, Type> visitedTypeVariables) {
         if (declare instanceof ParameterizedType) {
+
             ParameterizedType parameterizedType = (ParameterizedType) declare;
+
             TypeVariable<?>[] typeParameters = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
             Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+
             for (int i = 0; i < actualTypeArguments.length; i++) {
-                Type resolve = resolve(actualTypeArguments[i], visitedTypeVariables);
+                Type actualTypeArgument = actualTypeArguments[i];
+
+                Type resolve = resolveByTypeVariables(actualTypeArgument, visitedTypeVariables);
                 visitedTypeVariables.put(typeParameters[i], resolve);
+                // expand child
+                expandTypeVariables(actualTypeArgument, visitedTypeVariables);
             }
+        } else if (declare instanceof GenericArrayType) {
+            expandTypeVariables(((GenericArrayType) declare).getGenericComponentType(), visitedTypeVariables);
         }
+        // ignore the  not directly
+
     }
 
     public static String typeToString(Type type) {
@@ -260,6 +277,40 @@ public class TypeUtil {
         } else {
             // type is either serializable as-is or unsupported
             return type;
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static Lira<TypeVariable> typeVariables(Type type) {
+        if (type instanceof Class) {
+            TypeVariable[] typeParameters = ((Class<?>) type).getTypeParameters();
+            if (typeParameters.length == 0) {
+                return Lira.none();
+            }
+            return Lira.of(typeParameters);
+        } else if (type instanceof ParameterizedType) {
+
+            ParameterizedType parameterized = (ParameterizedType) type;
+            Lira<TypeVariable> raw = typeVariables(parameterized.getRawType());
+            Lira<TypeVariable> arguments = Lira.of(parameterized.getActualTypeArguments())
+                    .map(TypeUtil::typeVariables)
+                    .flatMap()
+                    .cast(TypeVariable.class);
+            return CollectionUtils.union(raw, arguments);
+
+        } else if (type instanceof GenericArrayType) {
+            return typeVariables(((GenericArrayType) type).getGenericComponentType());
+        } else if (type instanceof WildcardType) {
+            WildcardType w = (WildcardType) type;
+            return CollectionUtils.union(w.getUpperBounds(), w.getLowerBounds())
+                    .map(TypeUtil::typeVariables)
+                    .flatMap()
+                    .cast(TypeVariable.class);
+
+
+        } else {
+            return Lira.none();
+
         }
     }
 

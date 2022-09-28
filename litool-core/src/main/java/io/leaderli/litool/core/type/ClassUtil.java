@@ -43,7 +43,7 @@ public class ClassUtil {
      * @return the assumed class of instance
      */
     @SuppressWarnings("unchecked")
-    public static <T> Class<T> getClass(T def) {
+    public static <T> Class<T> getDeclaringClass(T def) {
         if (def == null) {
             return null;
         }
@@ -404,7 +404,7 @@ public class ClassUtil {
      * @param <T>         the type of constructor
      * @return the declare class of constructor
      */
-    public static <T> Class<T> getClass(Constructor<T> constructor) {
+    public static <T> Class<T> getDeclaringClass(Constructor<T> constructor) {
 
         if (constructor == null) {
             return null;
@@ -416,7 +416,7 @@ public class ClassUtil {
      * @param method the  method
      * @return the declare class of method
      */
-    public static Class<?> getClass(Method method) {
+    public static Class<?> getDeclaringClass(Method method) {
         if (method == null) {
             return null;
         }
@@ -427,7 +427,7 @@ public class ClassUtil {
      * @param field the  field
      * @return the declare class of field
      */
-    public static Class<?> getClass(Field field) {
+    public static Class<?> getDeclaringClass(Field field) {
         if (field == null) {
             return null;
         }
