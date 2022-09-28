@@ -185,11 +185,7 @@ class ClassUtilTest {
         Assertions.assertSame(ClassUtil.getArrayClass(Integer.class), Integer[].class);
         Assertions.assertSame(ClassUtil.getArrayClass(int[].class), int[][].class);
         Assertions.assertThrows(NullPointerException.class, () -> ClassUtil.getArrayClass(null));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-
-            ClassUtil.getArrayClass(void.class);
-            ClassUtil.getArrayClass(Void.class);
-        });
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ClassUtil.getArrayClass(void.class));
     }
 
     @Test

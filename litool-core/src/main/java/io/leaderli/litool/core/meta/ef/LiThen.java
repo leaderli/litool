@@ -18,21 +18,21 @@ import java.util.function.Supplier;
  * @see LiIf#_if(Function)
  * @see LiIf#_case(Object[])
  */
-public abstract class LiThen<T, M extends T, R> implements PublisherIf<T, R> {
+public interface LiThen<T, M extends T, R> extends PublisherIf<T, R> {
 
-    public LiIf<T, R> _then(Function<? super M, ? extends R> mapping) {
+    default LiIf<T, R> _then(Function<? super M, ? extends R> mapping) {
 
         return new FulfillNode<>(this, mapping);
     }
 
 
-    public LiIf<T, R> _then(Supplier<R> supplier) {
+    default LiIf<T, R> _then(Supplier<R> supplier) {
 
         return new FulfillNode<>(this, v -> supplier.get());
     }
 
 
-    public LiIf<T, R> _then(R value) {
+    default LiIf<T, R> _then(R value) {
 
         return new FulfillNode<>(this, v -> value);
     }

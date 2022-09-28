@@ -24,6 +24,8 @@ import java.util.concurrent.TimeoutException;
  */
 public class InputStreamCompletableFuture implements CatchFuture<String> {
 
+
+    @SuppressWarnings("java:S1149")
     private final StringBuffer buffer = new StringBuffer();
     private final CompletableFuture<String> task;
     private int index;
@@ -66,6 +68,7 @@ public class InputStreamCompletableFuture implements CatchFuture<String> {
         return task.isDone();
     }
 
+    @SuppressWarnings("java:S2142")
     @Override
     public String get() {
 
@@ -76,6 +79,7 @@ public class InputStreamCompletableFuture implements CatchFuture<String> {
         }
     }
 
+    @SuppressWarnings("java:S2142")
     @Override
     public String get(long timeout, TimeUnit unit) {
         try {

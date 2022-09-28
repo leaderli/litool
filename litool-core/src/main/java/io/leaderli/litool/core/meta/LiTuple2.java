@@ -42,12 +42,12 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     /**
      * The 1st element of this tuple.
      */
-    public final T1 _1;
+    public final transient T1 _1;
 
     /**
      * The 2nd element of this tuple.
      */
-    public final T2 _2;
+    public final transient T2 _2;
 
     /**
      * Constructs a tuple of two elements.

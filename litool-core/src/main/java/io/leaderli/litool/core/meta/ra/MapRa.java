@@ -37,8 +37,6 @@ public class MapRa<T, R> extends Ra<R> {
                 this.actualSubscriber.next_null();
             } else {
                 SubscriberUtil.next(this.actualSubscriber, mapper.apply(t));
-
-                R apply = mapper.apply(t);
             }
         }
 

@@ -5,6 +5,7 @@ import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.lang.lean.TypeAdapter;
 import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.TypeUtil;
 
@@ -45,7 +46,7 @@ public class ArrayTypeAdapterFactory implements TypeAdapterFactory {
         public E[] read(Object source) {
 
             if (source == null) {
-                return null;
+                return ClassUtil.newWrapperArray(componentType, 0);
             }
             Collection<E> collection = new ArrayList<>();
             if (source instanceof Iterable) {

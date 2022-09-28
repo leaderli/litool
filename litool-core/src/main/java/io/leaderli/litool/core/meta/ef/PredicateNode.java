@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 
-class PredicateNode<T, R> extends LiThen<T, T, R> {
+class PredicateNode<T, R> implements LiThen<T, T, R> {
     private final PublisherIf<T, R> prevPublisher;
     private final Function<? super T, ?> filter;
 

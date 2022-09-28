@@ -10,6 +10,7 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/9/22 7:38 PM
  */
+@SuppressWarnings("java:S4929")
 public class MockInfiniteInputStream extends InputStream {
     private static final byte[] SEED = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\n".getBytes();
 

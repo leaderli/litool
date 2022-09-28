@@ -14,6 +14,7 @@ public class CoordinateExpressionElementCheckVisitor extends ElementCheckVisitor
     }
 
 
+    @SuppressWarnings("all")
     public void check(Expression expression, SaxBean saxBean) {
         Inner inner = new Inner();
         ExpressionCheckVisitor visitor = new ExpressionCheckVisitor(inner);

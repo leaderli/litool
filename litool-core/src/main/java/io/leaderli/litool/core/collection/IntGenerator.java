@@ -10,6 +10,7 @@ public class IntGenerator implements Generator<Integer> {
 
     private int i = 0;
 
+    @SuppressWarnings("java:S2272")
     @Override
     public Integer next() {
         return i++;

@@ -41,7 +41,7 @@ public final class LiTuple1<T1> implements LiTuple, Comparable<LiTuple1<T1>>, Se
     /**
      * The 1st element of this tuple.
      */
-    public final T1 _1;
+    public final transient T1 _1;
 
     /**
      * Constructs a tuple of one element.

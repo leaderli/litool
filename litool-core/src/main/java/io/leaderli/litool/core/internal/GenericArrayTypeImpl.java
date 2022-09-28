@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
  */
 public final class GenericArrayTypeImpl implements GenericArrayType, Serializable {
     private static final long serialVersionUID = 0;
-    private final Type componentType;
+    private final transient Type componentType;
 
     public GenericArrayTypeImpl(Type componentType) {
         this.componentType = TypeUtil.canonicalize(componentType);

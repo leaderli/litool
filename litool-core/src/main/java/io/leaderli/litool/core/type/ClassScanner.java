@@ -201,7 +201,6 @@ public class ClassScanner {
                 addIfAccept(className);
             } else if (fileName.endsWith(FileNameUtil.EXT_JAR)) {
 
-                System.out.println(fileName);
                 RuntimeExceptionTransfer.run(() -> scanJar(new JarFile(file)));
             }
         } else if (file.isDirectory()) {

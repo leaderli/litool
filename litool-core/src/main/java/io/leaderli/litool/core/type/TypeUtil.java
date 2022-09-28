@@ -122,7 +122,10 @@ public class TypeUtil {
     }
 
     /**
-     * normally use for {@link  Field#getGenericType()}, {@link  Method#getGenericReturnType()} and so on;
+     * the generic class type be declared at a context type, the resolving progress will fill {@link  TypeVariable},
+     * {@link  GenericArrayType}, {@link  ParameterizedType} undefined type to the defined type. such as {@link  Class},
+     * {@link  ParameterizedType} with defined typed actualTypeArguments
+     * <p>
      * <p>
      * expand the context typeVariable and fill to the toResolve
      *
@@ -193,7 +196,7 @@ public class TypeUtil {
     }
 
 
-    // to recursively upward to find the toResolve class TypeVariables actualClass
+    // to recursively upward to find the toResolve class TypeVariables actualClass, don't find the inner class or enclosing class
     private static boolean resolve(Type resolving, Class<?> toResolve, Map<TypeVariable<?>, Type> visitedTypeVariables) {
 
         if (resolving == Object.class) {
@@ -221,8 +224,12 @@ public class TypeUtil {
             }
         }
 
+        // ignore inner class or enclosing class
+
 
         return resolve(raw.getGenericSuperclass(), toResolve, visitedTypeVariables);
+
+
     }
 
 

@@ -121,6 +121,8 @@ import java.util.stream.Stream;
  * @since 1.0
  */
 //@Immutable
+
+@SuppressWarnings("java:S1168")
 public class StringUtils implements StrPool {
 
 
@@ -2384,6 +2386,7 @@ public class StringUtils implements StrPool {
      * @since 2.0
      * @since 3.0 Changed signature from indexOfAnyBut(String, char[]) to indexOfAnyBut(CharSequence, char...)
      */
+    @SuppressWarnings("java:S1119")
     public static int indexOfAnyBut(final CharSequence cs, final char... searchChars) {
         if (isEmpty(cs) || ArrayUtils.isEmpty(searchChars)) {
             return INDEX_NOT_FOUND;

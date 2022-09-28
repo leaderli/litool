@@ -14,9 +14,8 @@ import java.util.Objects;
  * bound. If a lower bound is set, the upper bound must be Object.class.
  */
 public final class WildcardTypeImpl implements WildcardType, Serializable {
-    private static final long serialVersionUID = 0;
-    private final Type upperBound;
-    private final Type lowerBound;
+    private final transient Type upperBound;
+    private final transient Type lowerBound;
 
     public WildcardTypeImpl(Type[] upperBounds, Type[] lowerBounds) {
         LiAssertUtil.assertTrue(lowerBounds.length <= 1);

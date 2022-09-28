@@ -74,9 +74,9 @@ public class URLDecoder implements Serializable {
      * @return 解码后的bytes
      * @since 5.6.3
      */
+    @SuppressWarnings("all")
     public static byte[] decode(byte[] bytes, boolean isPlusToSpace) {
         if (bytes == null) {
-            return null;
         }
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream(bytes.length);
         int b;

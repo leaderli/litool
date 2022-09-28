@@ -53,11 +53,11 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
 
         @Override
         public Map<String, V> read(Object source) {
-            if (source == null) {
-                return null;
-            }
 
             Map<String, V> map = constructor.get();
+            if (source == null) {
+                return map;
+            }
             if (source instanceof Map) {
 
                 ((Map<?, ?>) source).forEach((k, v) -> {

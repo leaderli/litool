@@ -21,11 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ALL")
 class TypeUtilTest {
 
-    @Test
-    void test() {
-        assertArrayEquals(new Object[]{ArrayList.class}, TypeUtil.resolve2Parameterized(T2.class, T1.class).getActualClassArguments());
-
-    }
 
     @Test
     void resolveTypeVariable() {
@@ -83,7 +78,7 @@ class TypeUtilTest {
     @Test
     void resolve() throws NoSuchFieldException {
 
-
+        assertArrayEquals(new Object[]{ArrayList.class}, TypeUtil.resolve2Parameterized(T2.class, T1.class).getActualClassArguments());
         assertArrayEquals(new Object[]{ArrayList.class}, TypeUtil.resolve2Parameterized(T2.class, T1.class).getActualClassArguments());
         assertArrayEquals(new Object[]{ArrayList.class, String.class}, TypeUtil.resolve2Parameterized(In4.class, In1.class).getActualClassArguments());
         assertArrayEquals(new Object[]{List.class, String.class}, TypeUtil.resolve2Parameterized(In3.class, In1.class).getActualClassArguments());
@@ -185,7 +180,6 @@ class TypeUtilTest {
         resolve = TypeUtil.resolve(new Li<String>() {
         }.getClass(), ts);
         Assertions.assertEquals(String[].class, resolve);
-//        Assertions.assertEquals(List.class, TypeUtil.resolve(make1, List.class).getActualClassArgument().get());
 
         ParameterizedTypeImpl make1 = ParameterizedTypeImpl.make(null, List.class, List.class);
 

@@ -280,29 +280,29 @@ public abstract class Ra<T> implements Lira<T> {
         return terminal(list -> {
 
             List<T> distinct = new ArrayList<>();
-            out:
             for (T t : list) {
 
                 if (t == null) {
                     if (!distinct.contains(null)) {
                         distinct.add(null);
                     }
-                } else {
-
-                    for (T di : distinct) {
-
-                        if (di != null) {
-                            if (comparator.apply(t, di)) {
-                                continue out;
-                            }
-
-                        }
-                    }
-                    distinct.add(t);
+                    continue;
                 }
+
+                addIfAbsent(comparator, distinct, t);
             }
             return distinct;
         });
+    }
+
+    private void addIfAbsent(EqualComparator<T> comparator, List<T> distinct, T t) {
+        for (T di : distinct) {
+
+            if (di != null && comparator.apply(t, di)) {
+                return;
+            }
+        }
+        distinct.add(t);
     }
 
     @Override

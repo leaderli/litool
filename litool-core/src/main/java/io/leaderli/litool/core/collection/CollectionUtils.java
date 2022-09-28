@@ -138,7 +138,8 @@ public class CollectionUtils {
      * @param obj the array that declare as Object
      * @return casted array
      */
-    @SuppressWarnings("unchecked")
+
+    @SuppressWarnings({"unchecked", "java:S1168"})
     public static <T> T[] toArray(Object obj) {
 
         Class<?> componentType = ClassUtil.getComponentType(obj);
