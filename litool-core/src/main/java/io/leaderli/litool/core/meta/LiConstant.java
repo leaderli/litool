@@ -28,10 +28,6 @@ public class LiConstant {
     public static final String JOIN_DELIMITER = ",";
     public static final String ATTRIBUTE_NAME_RULE = "[a-zA-Z0-9_]+";
     /**
-     * the field of inner class create by jvm that reference the out class
-     */
-    public static final String INNER_CLASS_THIS_FIELD = "this$0";
-    /**
      * The default consumer when exception occurs, it suitable for
      *
      * @see Lino#throwable_map(ThrowableFunction)

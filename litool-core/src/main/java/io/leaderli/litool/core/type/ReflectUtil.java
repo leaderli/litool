@@ -2,7 +2,6 @@ package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.internal.ReflectionAccessor;
-import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
@@ -53,9 +52,7 @@ public class ReflectUtil {
     }
 
     /**
-     * get all field of class or it's super class, if {@link  Class#isMemberClass()} it will
-     * have a jvm default field that named {@link  LiConstant#INNER_CLASS_THIS_FIELD}, the result
-     * of this method will remove this default jvm  field
+     * get all field of class or it's super class, if {@link  Class#isMemberClass()}
      *
      * @param cls the class
      * @return all field of class or it's super class
@@ -71,7 +68,7 @@ public class ReflectUtil {
         Lira<Field> union = CollectionUtils.union(Lira.of(cls.getFields()), Lira.of(cls.getDeclaredFields()));
         if (cls.isMemberClass()) {
 
-            return union.filter(f -> !f.isSynthetic() || !f.getName().equals(LiConstant.INNER_CLASS_THIS_FIELD));
+            return union.filter(f -> !f.isSynthetic());
         }
         return union;
     }
@@ -236,22 +233,26 @@ public class ReflectUtil {
             return instance;
         }
         // inner class
-        return getMemberConstructor(cls).unzip(c -> memberInstance(c, cls.getEnclosingClass()));
+        return getMemberConstructor(cls).unzip(ReflectUtil::memberInstance);
 
     }
 
-    private static <T> Lino<T> memberInstance(Constructor<T> c, Class<?> enclose) {
+    private static <T> Lino<T> memberInstance(Constructor<T> c) {
         return ReflectUtil
-                .newInstance(enclose)
+                .newInstance(c.getParameterTypes()[0])
                 .unzip(arg -> ReflectUtil.newInstance(c, arg));
     }
 
     public static <T> Lino<Constructor<T>> getMemberConstructor(Class<T> cls) {
 
         Objects.requireNonNull(cls);
-        if (cls.isMemberClass()) {
+        if (cls.isMemberClass() || cls.isSynthetic()) {
             return getConstructors(cls)
-                    .filter(c -> c.getParameterTypes().length == 1 && c.getParameterTypes()[0] == cls.getEnclosingClass())
+                    .filter(c ->
+                            // find the constructor with out class parameter
+                            Lira.of(c.getParameterTypes()).first()
+                                    .filter(par -> par == cls.getEnclosingClass() || cls.getName().startsWith(par.getName()))
+                    )
                     .first();
         }
 

@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -113,7 +114,7 @@ class ReflectUtilTest {
     }
 
     @Test
-    void newInstance() throws NoSuchMethodException {
+    void newInstance() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         assertTrue(ReflectUtil.newInstance(Integer.class).absent());
         assertTrue(ReflectUtil.newInstance(ConstructorBean.class).present());
@@ -128,12 +129,18 @@ class ReflectUtilTest {
         assertTrue(ReflectUtil.newInstance(TestBean.class, (String) null).present());
         assertTrue(ReflectUtil.newInstance(TestBean2.class, (String) null).present());
 
-        ;
 
         // inner class
 
         assertTrue(ReflectUtil.newInstance(Out.In.class).present());
         assertTrue(ReflectUtil.newInstance(Out.In.InIn.class).present());
+
+
+        Supplier<String> supplier = () -> this + "123";
+
+        Class<? extends Supplier> cls = supplier.getClass();
+
+        System.out.println(ReflectUtil.newInstance(cls).get().get());
     }
 
 
@@ -213,6 +220,8 @@ class ReflectUtilTest {
     public static class Out {
         public class In {
             public class InIn {
+                private int this$1;
+                private int this$1$;
 
             }
 
