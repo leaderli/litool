@@ -1,8 +1,8 @@
 package io.leaderli.litool.runner.xml;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.text.StringConvert;
+import io.leaderli.litool.dom.LiDomConstant;
 import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
@@ -28,9 +28,9 @@ public class EntryElement extends SaxBean {
 
 
         String description = bodyEvent.description();
-        LiAssertUtil.assertTrue(description.matches(LiConstant.ATTRIBUTE_NAME_RULE), String.format("the entry key %s " +
+        LiAssertUtil.assertTrue(description.matches(LiDomConstant.ATTRIBUTE_NAME_RULE), String.format("the entry key %s " +
                 "is " +
-                "not match %s", description, LiConstant.ATTRIBUTE_NAME_RULE));
+                "not match %s", description, LiDomConstant.ATTRIBUTE_NAME_RULE));
         this.key = description;
     }
 

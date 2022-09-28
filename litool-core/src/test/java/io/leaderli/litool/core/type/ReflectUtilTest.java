@@ -220,8 +220,6 @@ class ReflectUtilTest {
     public static class Out {
         public class In {
             public class InIn {
-                private int this$1;
-                private int this$1$;
 
             }
 

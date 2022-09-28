@@ -2,6 +2,7 @@ package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.internal.ReflectionAccessor;
+import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
@@ -52,7 +53,9 @@ public class ReflectUtil {
     }
 
     /**
-     * get all field of class or it's super class, if {@link  Class#isMemberClass()}
+     * get all field of class or it's super class, if {@link  Class#isMemberClass()} it will
+     * have a jvm default field that named {@link  LiConstant#INNER_CLASS_THIS_FIELD}, the result
+     * of this method will remove this default jvm  field
      *
      * @param cls the class
      * @return all field of class or it's super class
@@ -68,7 +71,7 @@ public class ReflectUtil {
         Lira<Field> union = CollectionUtils.union(Lira.of(cls.getFields()), Lira.of(cls.getDeclaredFields()));
         if (cls.isMemberClass()) {
 
-            return union.filter(f -> !f.isSynthetic());
+            return union.filter(f -> !f.isSynthetic() || !f.getName().equals(LiConstant.INNER_CLASS_THIS_FIELD));
         }
         return union;
     }

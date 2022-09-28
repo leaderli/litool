@@ -26,7 +26,19 @@ public class LiConstant {
      * {@link  StringUtils#join0(String, Object[])}
      */
     public static final String JOIN_DELIMITER = ",";
-    public static final String ATTRIBUTE_NAME_RULE = "[a-zA-Z0-9_]+";
+
+
+    /**
+     * A prefix for a field that represents a property of a lambda expression.
+     */
+    public static final String LAMBDA_FIELD_PREFIX = "arg$";
+
+    /**
+     * the field of inner class create by jvm that reference the out class,
+     * if you manually define a field named {@code  this$0}, the jvm will
+     * choose {@code this$0$}
+     */
+    public static final String INNER_CLASS_THIS_FIELD = "this$0";
     /**
      * The default consumer when exception occurs, it suitable for
      *

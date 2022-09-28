@@ -2,9 +2,9 @@ package io.leaderli.litool.runner.xml.funcs;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.dom.LiDomConstant;
 import io.leaderli.litool.dom.sax.EndEvent;
 import io.leaderli.litool.dom.sax.SaxBean;
 import io.leaderli.litool.runner.InstructContainer;
@@ -45,9 +45,9 @@ public class FuncElement extends SaxBean {
     }
 
     public void setName(String name) {
-        LiAssertUtil.assertTrue(name.matches(LiConstant.ATTRIBUTE_NAME_RULE), String.format("the func name [%s] is " +
+        LiAssertUtil.assertTrue(name.matches(LiDomConstant.ATTRIBUTE_NAME_RULE), String.format("the func name [%s] is " +
                 "not " +
-                "match %s", name, LiConstant.ATTRIBUTE_NAME_RULE));
+                "match %s", name, LiDomConstant.ATTRIBUTE_NAME_RULE));
         this.name = name;
     }
 
