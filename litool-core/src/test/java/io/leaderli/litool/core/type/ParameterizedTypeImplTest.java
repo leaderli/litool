@@ -23,13 +23,9 @@ class ParameterizedTypeImplTest {
     private Out.In<String> in;
 
     @Test
-    void test() {
-
+    void testToString() {
         ParameterizedType para = (ParameterizedType) ReflectUtil.getField(getClass(), "in").get().getGenericType();
-
-        System.out.println(para.getOwnerType());
-        System.out.println(para.getRawType());
-
+        Assertions.assertEquals("io.leaderli.litool.core.type.ParameterizedTypeImplTest$Out$In<java.lang.String>", para.toString());
     }
 
     @Test

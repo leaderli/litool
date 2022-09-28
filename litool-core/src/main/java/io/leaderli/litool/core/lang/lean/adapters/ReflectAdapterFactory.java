@@ -79,7 +79,7 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
                     typeAdapter = (TypeAdapter<T>) annotation
                             .map(LeanFieldAdapter::value)
                             .assertTrue(cls -> {
-                                ParameterizedTypeImpl adapterType = TypeUtil.resolve(cls, TypeAdapter.class);
+                                ParameterizedTypeImpl adapterType = TypeUtil.resolve2Parameterized(cls, TypeAdapter.class);
                                 if (adapterType.getActualTypeArguments()[0] == targetType) {
                                     return true;
                                 }

@@ -64,6 +64,7 @@ class StringUtilsTest {
         Assertions.assertEquals("1,2", StringUtils.join(null, Stream.of(1, 2)));
     }
 
+    @SuppressWarnings("all")
     @Test
     void obj2String() {
 

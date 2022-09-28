@@ -108,7 +108,6 @@ public class ParameterizedTypeImpl implements ParameterizedType {
 
         if (ownerType != null) {
             if (ownerType instanceof Class) {
-
                 sb.append(((Class<?>) ownerType).getName());
             } else {
                 sb.append(ownerType);
@@ -128,8 +127,7 @@ public class ParameterizedTypeImpl implements ParameterizedType {
             sb.append(rawType.getName());
         }
 
-        if (typeArguments != null &&
-                typeArguments.length > 0) {
+        if (typeArguments != null && typeArguments.length > 0) {
             sb.append("<");
             boolean first = true;
             for (Type t : typeArguments) {

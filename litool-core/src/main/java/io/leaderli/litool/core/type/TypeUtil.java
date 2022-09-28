@@ -111,7 +111,11 @@ public class TypeUtil {
 
         } else if (type instanceof Class) {
 
-            return resolveByTypeVariables(ParameterizedTypeImpl.make(type), visitedTypeVariables);
+            Class<?> cls = (Class<?>) type;
+            if (cls.getTypeParameters().length == 0) {
+                return type;
+            }
+            return resolveByTypeVariables(ParameterizedTypeImpl.make(cls), visitedTypeVariables);
         }
 
         return erase(type);
@@ -120,64 +124,60 @@ public class TypeUtil {
     /**
      * normally use for {@link  Field#getGenericType()}, {@link  Method#getGenericReturnType()} and so on;
      * <p>
-     * expand the declare typeVariable and fill to the resolve
+     * expand the context typeVariable and fill to the toResolve
      *
-     * @param declare the declare
-     * @param resolve the resolve resolve that has generic typeParameter
-     * @return the  resolve with resolve class with declare class typeParameters
+     * @param context   the context
+     * @param toResolve the toResolve toResolve that has generic typeParameter
+     * @return the  toResolve with toResolve class with context class typeParameters
      */
-    public static Type resolve(Type declare, Type resolve) {
+    public static Type resolve(Type context, Type toResolve) {
 
-        Objects.requireNonNull(resolve);
-        Class<?> resolving = erase(resolve);
+        Objects.requireNonNull(toResolve);
+        Class<?> rawType = erase(toResolve);
+
         Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
 
-        expandTypeVariables(declare, visitedTypeVariables);
+        expandTypeVariables(context, visitedTypeVariables);
 
-        if (resolving.getTypeParameters().length > 0 && resolving != declare) {
+        if (rawType.getTypeParameters().length > 0 && rawType != context) {
 
-            resolve(declare, resolving, visitedTypeVariables);
+            resolve(context, rawType, visitedTypeVariables);
 
-        } else if (resolve instanceof GenericArrayType) {
+        } else if (toResolve instanceof GenericArrayType) {
 
-            Type componentType = ((GenericArrayType) resolve).getGenericComponentType();
-            componentType = resolve(declare, componentType);
+            Type componentType = ((GenericArrayType) toResolve).getGenericComponentType();
+            componentType = resolve(context, componentType);
             return ClassUtil.getArrayClass(erase(componentType));
 
-        } else if (resolve instanceof TypeVariable) {
+        } else if (toResolve instanceof TypeVariable) {
 
-            TypeVariable<?> typeVariable = (TypeVariable<?>) resolve;
-            Class<?> declareRaw = TypeUtil.resolveTypeVariable(declare, typeVariable);
+            TypeVariable<?> typeVariable = (TypeVariable<?>) toResolve;
+            Class<?> declareRaw = TypeUtil.resolveTypeVariable(context, typeVariable);
             visitedTypeVariables.put(typeVariable, declareRaw);
             return declareRaw;
         }
 
-        return resolveByTypeVariables(resolve, visitedTypeVariables);
+        return resolveByTypeVariables(toResolve, visitedTypeVariables);
     }
 
     /**
      * the generic class type will be declared at actual class that can be new.
      * the resolving progress will replace {@link  TypeVariable} to the {@link  Class},
      * at end, it will return  {@link  ParameterizedType} with the toResolve class and with
-     * actual declare typeParameters
+     * actual context typeParameters
      *
-     * @param declare   the declare type
+     * @param context   the context type
      * @param toResolve the toResolve class that has generic typeParameter
      * @param <T>       the type parameter of toResolve
-     * @return the  LiParameterizedType with toResolve class with declare class typeParameters
+     * @return the  LiParameterizedType with toResolve class with context class typeParameters
      */
-    public static <T> ParameterizedTypeImpl resolve(Type declare, Class<T> toResolve) {
-//        Objects.requireNonNull(toResolve);
-//        Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
-//        resolve(declare, toResolve, visitedTypeVariables);
-//        Type[] declareTypeArguments = Lira.of(toResolve.getTypeParameters()).map(visitedTypeVariables::get).toArray(Type.class);
-//        return ParameterizedTypeImpl.make(toResolve.getEnclosingClass(), toResolve, declareTypeArguments);
-
-        return ParameterizedTypeImpl.make(resolve(declare, (Type) toResolve));
+    public static <T> ParameterizedTypeImpl resolve2Parameterized(Type context, Class<T> toResolve) {
+        Type resolve = resolve(context, toResolve);
+        return ParameterizedTypeImpl.make(resolve);
     }
 
 
-    public static Class<?> resolveTypeVariable(Type resolving, TypeVariable<?> typeVariable) {
+    public static Class<?> resolveTypeVariable(Type context, TypeVariable<?> typeVariable) {
 
 
         Class<?> declaredByRaw = getDeclaringClass(typeVariable);
@@ -187,7 +187,7 @@ public class TypeUtil {
             return erase(typeVariable);
         }
         Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
-        resolve(resolving, declaredByRaw, visitedTypeVariables);
+        resolve(context, declaredByRaw, visitedTypeVariables);
         return erase(visitedTypeVariables.getOrDefault(typeVariable, Object.class));
 
     }
@@ -199,7 +199,9 @@ public class TypeUtil {
         if (resolving == Object.class) {
             return true;
         }
-
+        if (toResolve == Object.class) {
+            return false;
+        }
 
         Class<?> raw = erase(resolving);
 

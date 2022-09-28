@@ -28,7 +28,7 @@ public class CartesianUtil {
                         return new CartesianObject<>(type, field -> CartesianUtil.cartesian(field, context)).cartesian().toArray();
                     }
 
-                    ParameterizedTypeImpl canonicalize = TypeUtil.resolve(tu._1.getClass(), CartesianFunction.class);
+                    ParameterizedTypeImpl canonicalize = TypeUtil.resolve2Parameterized(tu._1.getClass(), CartesianFunction.class);
                     if (ClassUtil.primitiveToWrapper(type) != canonicalize.getActualClassArgument(1).get()) {
                         return null;
                     }
