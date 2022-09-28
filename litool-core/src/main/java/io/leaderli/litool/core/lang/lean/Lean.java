@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.lang.lean;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
+import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.*;
 
@@ -15,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Lean {
     public final Lira<LeanFieldKey> reflect_name_handlers;
+    public final Map<Class<? extends TypeAdapter<?>>, LiTuple2<TypeAdapter<?>, Type>> reflect_value_handlers = new HashMap<>();
     private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenCache = new ConcurrentHashMap<>();
     private final ConstructorConstructor constructorConstructor;
     private final List<TypeAdapterFactory> factories;

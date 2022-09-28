@@ -1,11 +1,11 @@
 package io.leaderli.litool.core.lang.lean.adapters;
 
-import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import io.leaderli.litool.core.lang.BeanPath;
 import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.lang.lean.LeanFieldAdapter;
 import io.leaderli.litool.core.lang.lean.TypeAdapter;
 import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
+import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.type.LiTypeToken;
@@ -78,14 +78,27 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
                 if (annotation.present()) {
                     typeAdapter = (TypeAdapter<T>) annotation
                             .map(LeanFieldAdapter::value)
-                            .assertTrue(cls -> {
-                                ParameterizedTypeImpl adapterType = TypeUtil.resolve2Parameterized(cls, TypeAdapter.class);
-                                if (adapterType.getActualTypeArguments()[0] == targetType) {
-                                    return true;
+                            .map(cls -> {
+
+                                LiTuple2<TypeAdapter<?>, Type> find = lean.reflect_value_handlers.get(cls);
+                                if (find == null) {
+                                    Type actualTypeArgument = TypeUtil.resolve2Parameterized(cls, TypeAdapter.class).getActualTypeArguments()[0];
+                                    find = ReflectUtil.newInstance(cls)
+                                            .tuple(adp -> actualTypeArgument)
+                                            .assertNotNone(() -> StrSubstitution.format("the {adapter} is cannot create instance}", cls))
+                                            .cast(LiTuple2.class)
+                                            .get();
                                 }
-                                throw new IllegalArgumentException(StrSubstitution.format("the {adapter} is not satisfied the field type {type}", adapterType, targetType));
+                                synchronized (lean.reflect_value_handlers) {
+                                    lean.reflect_value_handlers.put(cls, find);
+                                }
+                                if (!find._2.equals(targetType)) {
+                                    throw new IllegalArgumentException(StrSubstitution.format("the {adapter} is not satisfied the field type {type}", cls, targetType));
+                                }
+
+                                return find._1;
+
                             })
-                            .unzip(ReflectUtil::newInstance)
                             .assertNotNone()
                             .get();
                 } else {

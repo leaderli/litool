@@ -160,7 +160,11 @@ public class TypeUtil {
             return declareRaw;
         }
 
-        return resolveByTypeVariables(toResolve, visitedTypeVariables);
+        Type type = resolveByTypeVariables(toResolve, visitedTypeVariables);
+        if (type == rawType && rawType.getTypeParameters().length > 0) {
+            return resolveByTypeVariables(ParameterizedTypeImpl.make(rawType), visitedTypeVariables);
+        }
+        return type;
     }
 
     /**
@@ -191,7 +195,11 @@ public class TypeUtil {
         }
         Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
         resolve(context, declaredByRaw, visitedTypeVariables);
-        return erase(visitedTypeVariables.getOrDefault(typeVariable, Object.class));
+        Type type = visitedTypeVariables.get(typeVariable);
+        if (type != null) {
+            return erase(type);
+        }
+        return erase(typeVariable);
 
     }
 

@@ -164,9 +164,19 @@ class LeanTest {
         }
     }
 
-    private static class Bean9 {
+    private static class ObjectTypeAdapter implements TypeAdapter<List> {
+
+        @Override
+        public List read(Object source) {
+            return null;
+        }
+    }
+
+    private static class Bean9<T extends List> {
         @LeanFieldAdapter(StringTypeAdapter.class)
         private String name;
+        @LeanFieldAdapter(ObjectTypeAdapter.class)
+        private T age;
     }
 
     private static class Bean8 {

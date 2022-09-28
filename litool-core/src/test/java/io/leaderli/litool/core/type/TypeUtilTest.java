@@ -164,6 +164,11 @@ class TypeUtilTest {
 
     @Test
     void field() throws NoSuchFieldException {
+
+        TypeVariable<Class<T7>> typeParameter = T7.class.getTypeParameters()[0];
+        Assertions.assertEquals(List.class, TypeUtil.resolveTypeVariable(Object.class, typeParameter));
+        Assertions.assertEquals(ParameterizedTypeImpl.make(null, List.class, Object.class), TypeUtil.resolve(Object.class, typeParameter));
+
         Type resolve = TypeUtil.resolve(Li.class, Li.class.getTypeParameters()[0]);
 
         Type make = Object.class;
@@ -186,6 +191,10 @@ class TypeUtilTest {
         Assertions.assertEquals(List.class, TypeUtil.resolve2Parameterized(make1, List.class).getActualClassArgument().get());
         Assertions.assertEquals(List.class, TypeUtil.resolve(make1, List.class.getTypeParameters()[0]));
 
+
+    }
+
+    private class T7<T extends List> {
 
     }
 
