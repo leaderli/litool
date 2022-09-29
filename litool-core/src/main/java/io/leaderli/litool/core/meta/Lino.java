@@ -109,7 +109,8 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     }
 
     /**
-     * assert the result of function and parse to boolean by {@link BooleanUtil#parse(Object)} is true. otherwise throw a
+     * assert the result of function and parse to boolean by {@link BooleanUtil#parse(Object)} is true. otherwise
+     * throw a
      * {@link  IllegalStateException}
      *
      * @param filter the filter function
@@ -243,7 +244,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @param <R>    the type of mapper provide value
      * @return a new lino
      */
-    <R> Lino<R> map(Function<? super T, ? extends R> mapper);
+    <R> Lino<R> map(Function<T, R> mapper);
 
     /**
      * <pre>
@@ -254,14 +255,14 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @param <R>    the type of mapper provide lino's value
      * @return a new lino
      */
-    <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapper);
+    <R> Lino<R> unzip(Function<T, Supplier<R>> mapper);
 
     /**
      * @param mapper the provide function of {@link  LiTuple2}
      * @param <R>    the type of {@link  LiTuple2} 2rd
      * @return a new lino consist of {@link  LiTuple2}
      */
-    <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper);
+    <R> Lino<LiTuple2<T, R>> tuple(Function<T, R> mapper);
 
     /**
      * @param consumer the consumer of lino
@@ -317,20 +318,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @see #throwable_map(ThrowableFunction, Consumer)
      * @see LiConstant#WHEN_THROW
      */
-    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
-
-    /**
-     * when the error occurs will return {@link  Lino#none()}
-     * <pre>
-     *     return throwable_map(mapper).map(Supplier::get)
-     * </pre>
-     *
-     * @param mapper the function accept element and return lino
-     * @param <R>    the type of after unzip
-     * @return a new lira of type R
-     * @see #throwable_map(ThrowableFunction)
-     */
-    <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper);
+    <R> Lino<R> throwable_map(ThrowableFunction<T, R> mapper);
 
     /**
      * when the error occurs will return {@link  Lino#none()}
@@ -494,18 +482,18 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
 
         @Override
-        public <R> Lino<R> map(Function<? super T, ? extends R> mapper) {
+        public <R> Lino<R> map(Function<T, R> mapper) {
             return of(mapper.apply(this.value));
         }
 
         @Override
-        public <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapper) {
+        public <R> Lino<R> unzip(Function<T, Supplier<R>> mapper) {
 
             return map(mapper).map(Supplier::get);
         }
 
         @Override
-        public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper) {
+        public <R> Lino<LiTuple2<T, R>> tuple(Function<T, R> mapper) {
             return map(mapper).map(r -> LiTuple.of(value, r));
         }
 
@@ -548,17 +536,14 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<T, R> mapper) {
             return throwable_map(mapper, LiConstant.WHEN_THROW);
         }
 
-        @Override
-        public <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper) {
-            return throwable_map(mapper).map(Supplier::get);
-        }
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper,
+                                         Consumer<Throwable> whenThrow) {
             try {
 
                 return of(mapper.apply(this.value));
@@ -695,17 +680,17 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
 
         @Override
-        public <R> Lino<R> map(Function<? super T, ? extends R> mapper) {
+        public <R> Lino<R> map(Function<T, R> mapper) {
             return none();
         }
 
         @Override
-        public <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapper) {
+        public <R> Lino<R> unzip(Function<T, Supplier<R>> mapper) {
             return Lino.none();
         }
 
         @Override
-        public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper) {
+        public <R> Lino<LiTuple2<T, R>> tuple(Function<T, R> mapper) {
             return none();
         }
 
@@ -743,17 +728,14 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<T, R> mapper) {
             return none();
         }
 
-        @Override
-        public <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper) {
-            return Lino.none();
-        }
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper,
+                                         Consumer<Throwable> whenThrow) {
             return none();
         }
 

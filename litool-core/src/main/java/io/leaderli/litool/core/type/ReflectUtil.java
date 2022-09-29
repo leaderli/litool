@@ -193,7 +193,8 @@ public class ReflectUtil {
     /**
      * @param cls  cls
      * @param args the constructor arguments, for the optional parameter, it should manually use arr.
-     *             such as {@code  Demo(String ... names) }, should called by {@code  newInstance(Demo.class,new String[]{"li","yang"})}
+     *             such as {@code  Demo(String ... names) }, should called by {@code  newInstance(Demo.class,new
+     *             String[]{"li","yang"})}
      * @param <T>  the type of instance
      * @return according to the number of parameters and it's class type, choose a similar one constructor to new a obj
      */
@@ -354,9 +355,24 @@ public class ReflectUtil {
     }
 
     /**
+     * @param annotatedElement the annotatedElement
+     * @param metaAnnotation   the annotation annotated at an annotation class
+     * @return the lira of annotation of annotatedElement and each annotation is annotated by metaAnnotation
+     * @see #findAnnotations(AnnotatedElement, Function)
+     */
+    public static Lira<Annotation> findAnnotationsWithMetaAnnotation(AnnotatedElement annotatedElement, Class<?
+            extends Annotation> metaAnnotation) {
+
+        return findAnnotations(annotatedElement,
+                annotation -> annotation.annotationType().isAnnotationPresent(metaAnnotation));
+    }
+
+    /**
      * @param cls    the class
-     * @param filter the  {@link  Function} accept annotation and return a value that convert to boolean by {@link  io.leaderli.litool.core.util.BooleanUtil#parse(Boolean)}
-     * @return get all annotation, include repeatable annotation, and will remove the container annotation of repeatable annotation.
+     * @param filter the  {@link  Function} accept annotation and return a value that convert to boolean by
+     *               {@link  io.leaderli.litool.core.util.BooleanUtil#parse(Boolean)}
+     * @return get all annotation, include repeatable annotation, and will remove the container annotation of
+     * repeatable annotation.
      * eg:
      * will exclude {@code NotNulls}
      * <pre>
@@ -376,7 +392,7 @@ public class ReflectUtil {
      * @see io.leaderli.litool.core.util.BooleanUtil#parse(Boolean)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static Lira<Annotation> findAnnotations(AnnotatedElement cls, Function<? super Annotation, ?> filter) {
+    public static Lira<Annotation> findAnnotations(AnnotatedElement cls, Function<Annotation, ?> filter) {
 
 
         if (cls == null) {
@@ -399,17 +415,6 @@ public class ReflectUtil {
         }
         return Lira.of(result).filter(filter);
 
-    }
-
-    /**
-     * @param annotatedElement the annotatedElement
-     * @param metaAnnotation   the annotation annotated at an annotation class
-     * @return the lira of annotation of annotatedElement and each annotation is annotated by metaAnnotation
-     * @see #findAnnotations(AnnotatedElement, Function)
-     */
-    public static Lira<Annotation> findAnnotationsWithMetaAnnotation(AnnotatedElement annotatedElement, Class<? extends Annotation> metaAnnotation) {
-
-        return findAnnotations(annotatedElement, annotation -> annotation.annotationType().isAnnotationPresent(metaAnnotation));
     }
 
     /**
