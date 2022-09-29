@@ -3,7 +3,6 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -47,8 +46,8 @@ class ParameterizedTypeImplTest {
         assertEquals(String.class, make.getActualClassArgument().get());
         assertNull(make.getActualClassArgument(1).get());
 
-        Assertions.assertEquals(ParameterizedTypeImpl.make(Out.class, Out.In.class,
-                TypeVariableImpl.make(Out.In.class, "T", null, null)), ParameterizedTypeImpl.make(Out.In.class));
+        Assertions.assertEquals("io.leaderli.litool.core.type.ParameterizedTypeImplTest$Out$In<T>",
+                ParameterizedTypeImpl.make(Out.In.class).toString());
 
     }
 
