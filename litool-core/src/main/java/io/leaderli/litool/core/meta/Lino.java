@@ -248,6 +248,8 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      */
     <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper);
 
+    <R> Lino<LiTuple2<T, R>> tuple(R t2);
+
     /**
      * @param consumer the consumer of lino
      * @return this
@@ -503,6 +505,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
+        public <R> Lino<LiTuple2<T, R>> tuple(R t2) {
+            return Lino.of(LiTuple.of(value, t2));
+        }
+
+        @Override
         public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
             consumer.accept(this);
             return this;
@@ -707,6 +714,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public <R> Lino<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper) {
+            return none();
+        }
+
+        @Override
+        public <R> Lino<LiTuple2<T, R>> tuple(R t2) {
             return none();
         }
 
