@@ -4,7 +4,6 @@ import io.leaderli.litool.core.lang.BeanPath;
 import io.leaderli.litool.core.lang.lean.*;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiTuple2;
-import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiTypeToken;
@@ -64,64 +63,67 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
             return adapter.read(source);
         }
 
-        @SuppressWarnings("unchecked")
         public void populate(Object source, Object target) {
             Type declare = typeToken.getType();
             for (Field field : ReflectUtil.getFields(target.getClass())) {
-
-                String key = lean.reflect_name_handlers.map(fu -> fu.apply(field)).first().get();
                 Type targetType = TypeUtil.resolve(declare, field.getGenericType());
-
-                Lino<LeanFieldAdapter> annotation = ReflectUtil.getAnnotation(field, LeanFieldAdapter.class);
-                TypeAdapter<T> typeAdapter;
-                if (annotation.present()) {
-                    typeAdapter = (TypeAdapter<T>) annotation
-                            .map(LeanFieldAdapter::value)
-                            .map(cls -> {
-
-                                LiTuple2<TypeAdapter<?>, Type> find = lean.reflect_value_handlers.get(cls);
-                                if (find == null) {
-                                    Type actualTypeArgument =
-                                            TypeUtil.resolve2Parameterized(cls, TypeAdapter.class).getActualTypeArguments()[0];
-                                    find = ReflectUtil.newInstance(cls)
-                                            .tuple(adp -> actualTypeArgument)
-                                            .assertNotNone(() -> StrSubstitution.format("the {adapter} is cannot " +
-                                                    "create instance}", cls))
-                                            .cast(LiTuple2.class)
-                                            .get();
-                                }
-                                synchronized (lean.reflect_value_handlers) {
-                                    lean.reflect_value_handlers.put(cls, find);
-                                }
-
-                                // the 2nd of tuple is TypeAdapter actualClassParameter, is always wrapper class .
-                                // add primitive support
-                                if (!find._2.equals(targetType) && !find._2.equals(ClassUtil.primitiveToWrapper(TypeUtil.erase(targetType)))) {
-                                    throw new IllegalArgumentException(StrSubstitution.format("the {adapter} is not " +
-                                            "satisfied the field type {type}", cls, targetType));
-                                }
-
-                                return find._1;
-
-                            })
-                            .assertNotNone()
-                            .get();
-                } else {
-                    typeAdapter = lean.getAdapter(targetType);
-
-                }
-                BeanPath.simple(source, key)
-                        .map(fv -> typeAdapter.read(fv, lean))
-                        .eitherSupplier(() -> {
-                            if (typeAdapter instanceof NullableTypeAdapters) {
-                                return ((NullableTypeAdapters<T>) typeAdapter).read(lean, source, targetType);
-                            }
-                            return null;
-                        })
-                        .map(Either::fold)
-                        .ifPresent(v -> ReflectUtil.setFieldValue(target, field, v));
+                performField(source, targetType, target, field);
             }
         }
+
+
+        private void performField(Object source, Type targetType, Object target, Field field) {
+
+            String key = lean.reflect_name_handlers.map(fu -> fu.apply(field)).first().get();
+
+
+            TypeAdapter<T> typeAdapter = ReflectUtil.getAnnotation(field, LeanFieldAdapter.class)
+                    .map(lf -> getLeanFieldTypeAdapter(targetType, lf))
+                    .get(() -> lean.getAdapter(targetType));
+
+            BeanPath.simple(source, key)
+                    .map(fv -> typeAdapter.read(fv, lean))
+                    .eitherSupplier(() -> {
+                        if (typeAdapter instanceof NullableTypeAdapters) {
+                            return ((NullableTypeAdapters<T>) typeAdapter).read(lean, source, targetType);
+                        }
+                        return null;
+                    })
+                    .map(Either::fold)
+                    .ifPresent(v -> ReflectUtil.setFieldValue(target, field, v));
+        }
+
+
+        @SuppressWarnings("unchecked")
+        private TypeAdapter<T> getLeanFieldTypeAdapter(Type targetType, LeanFieldAdapter annotation) {
+
+            Class<? extends TypeAdapter<?>> cls = annotation.value();
+
+            LiTuple2<TypeAdapter<?>, Type> find = lean.reflect_value_handlers.get(cls);
+            if (find == null) {
+                Type actualTypeArgument =
+                        TypeUtil.resolve2Parameterized(cls, TypeAdapter.class).getActualTypeArguments()[0];
+                find = ReflectUtil.newInstance(cls)
+                        .tuple(adp -> actualTypeArgument)
+                        .assertNotNone(() -> StrSubstitution.format("the {adapter} is cannot " +
+                                "create instance}", cls))
+                        .cast(LiTuple2.class)
+                        .get();
+            }
+            synchronized (lean.reflect_value_handlers) {
+                lean.reflect_value_handlers.put(cls, find);
+            }
+
+            // the 2nd of tuple is TypeAdapter actualClassParameter, is always wrapper class .
+            // add primitive support
+            if (find._1 != null && !find._2.equals(targetType) && !find._2.equals(ClassUtil.primitiveToWrapper(TypeUtil.erase(targetType)))) {
+                throw new IllegalArgumentException(StrSubstitution.format("the {adapter} is not " +
+                        "satisfied the field type {type}", cls, targetType));
+            }
+
+            return (TypeAdapter<T>) find._1;
+        }
+
 
     }
 
