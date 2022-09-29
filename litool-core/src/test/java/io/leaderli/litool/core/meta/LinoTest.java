@@ -14,7 +14,7 @@ class LinoTest {
 
 
     @Test
-    void test() {
+    void assertTrue() {
 
         Assertions.assertThrows(IllegalStateException.class, () -> Lino.of(null).assertTrue(null));
         Assertions.assertThrows(IllegalStateException.class, () -> Lino.of(1).assertTrue(i -> i > 1));
@@ -74,6 +74,14 @@ class LinoTest {
 
 
         Assertions.assertEquals(1, Lino.of(new int[]{1, 2}).toLira(Object.class).first().get());
+    }
+
+    @Test
+    void either() {
+
+        Assertions.assertEquals(1, Lino.none().either(1).get().getLeft());
+        Assertions.assertNull(Lino.none().either(null).get().getLeft());
+        Assertions.assertThrows(NoSuchElementException.class, Lino.of(2).either(1).get()::getLeft);
     }
 
     @Test

@@ -279,6 +279,8 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      */
     Lino<T> debug();
 
+    <L> Lino<Either<L, T>> either(L l);
+
     /**
      * @param debug the consumer perform on value
      * @return this
@@ -511,6 +513,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
+        public <L> Lino<Either<L, T>> either(L l) {
+            return Lino.of(Either.right(value));
+        }
+
+        @Override
         public Lino<T> debug(Consumer<T> debug) {
             debug.accept(value);
             return this;
@@ -633,6 +640,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             return none();
         }
 
+
         @Override
         public Lino<T> filter() {
             return this;
@@ -704,6 +712,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         public Lino<T> debug() {
             System.out.println("none");
             return this;
+        }
+
+        @Override
+        public <L> Lino<Either<L, T>> either(L l) {
+            return Lino.of(Either.left(l));
         }
 
         @Override
