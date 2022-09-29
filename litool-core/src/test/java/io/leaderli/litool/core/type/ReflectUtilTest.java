@@ -41,7 +41,8 @@ class ReflectUtilTest {
     void getField() {
 
         LittleBean littleBean = new LittleBean();
-        assertEquals("bean", ReflectUtil.getField(LittleBean.class, "name").throwable_map(f -> f.get(littleBean)).get());
+        assertEquals("bean",
+                ReflectUtil.getField(LittleBean.class, "name").throwable_map(f -> f.get(littleBean)).get());
         assertEquals(8, ReflectUtil.getField(LittleBean.class, "age").throwable_map(f -> f.get(littleBean)).get());
 
         Lino<Field> name = ReflectUtil.getField(LittleBean.class, "name", true);
@@ -52,7 +53,8 @@ class ReflectUtilTest {
             return f.get(littleBean);
         }).get());
 
-        assertEquals(8, ReflectUtil.getField(LittleBean.class, "age", true).throwable_map(f -> f.get(littleBean)).get());
+        assertEquals(8,
+                ReflectUtil.getField(LittleBean.class, "age", true).throwable_map(f -> f.get(littleBean)).get());
     }
 
     @Test

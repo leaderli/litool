@@ -3,13 +3,12 @@ package io.leaderli.litool.runner.xml.router.task;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.runner.Expression;
+import io.leaderli.litool.runner.constant.VariablesModel;
 import io.leaderli.litool.runner.executor.router.task.IfElementExecutor;
-
-import static io.leaderli.litool.runner.constant.VariablesModel.*;
 
 public class IfElement extends TaskElement<IfElement, IfElementExecutor> {
 
-    private Expression cond = new Expression(true, LITERAL);
+    private Expression cond = new Expression(true, VariablesModel.LITERAL);
 
     public IfElement() {
         super("if");
@@ -43,11 +42,11 @@ public class IfElement extends TaskElement<IfElement, IfElementExecutor> {
     public void setCond(Expression cond) {
         String name = cond.getName();
         LiAssertUtil.assertTrue(StringUtils.isBlank(name)
-                        || cond.getModel().matchAny(FUNC, REQUEST, LITERAL)
+                        || cond.getModel().matchAny(VariablesModel.FUNC, VariablesModel.REQUEST, VariablesModel.LITERAL)
                 , "variable cond can only use func ref or request ref or string");
 
 
-        if (cond.getModel() == LITERAL) {
+        if (cond.getModel() == VariablesModel.LITERAL) {
             cond.setObject(StringUtils.equals(name, "") || Boolean.parseBoolean(name));
         }
         this.cond = cond;

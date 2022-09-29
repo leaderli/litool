@@ -11,9 +11,6 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.leaderli.litool.runner.instruct.FuncScope.CONTEXT;
-import static io.leaderli.litool.runner.instruct.FuncScope.RUNTIME;
-
 class IFuncTest {
     @Test
     void context() {
@@ -28,7 +25,7 @@ class IFuncTest {
         context.setReadonly_request(ImmutableMap.of(request_only));
 
         new FuncsElementExecutor(funcsElement).visit(context);
-        Assertions.assertSame(CONTEXT, context.getFuncFactory().get("func_a").funcScope);
+        Assertions.assertSame(FuncScope.CONTEXT, context.getFuncFactory().get("func_a").funcScope);
         Assertions.assertNull(context.getFuncResultCache("func_a"));
         Assertions.assertTrue((Boolean) context.getFuncResult("func_a"));
         Assertions.assertNotNull(context.getFuncResultCache("func_a"));
@@ -66,7 +63,7 @@ class IFuncTest {
         FuncsElementExecutor funcsElementExecutor = new FuncsElementExecutor(funcsElement);
         funcsElementExecutor.execute(context);
 
-        Assertions.assertSame(RUNTIME, context.getFuncFactory().get("func_a").funcScope);
+        Assertions.assertSame(FuncScope.RUNTIME, context.getFuncFactory().get("func_a").funcScope);
         Assertions.assertNull(context.getFuncResultCache("func_a"));
         Assertions.assertEquals(8, ((String) context.getFuncResult("func_a")).length());
         Assertions.assertNull(context.getFuncResultCache("func_a"));

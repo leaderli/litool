@@ -32,12 +32,14 @@ class ConstructorConstructorTest {
         factories.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
         ConstructorConstructor constructorConstructor = new ConstructorConstructor(factories);
 
-        ObjectConstructor<ArrayList<String>> arrayListSupplier = constructorConstructor.get(LiTypeToken.of(ArrayList.class));
+        ObjectConstructor<ArrayList<String>> arrayListSupplier =
+                constructorConstructor.get(LiTypeToken.of(ArrayList.class));
         List<String> actual = arrayListSupplier.get();
         Assertions.assertTrue(actual.isEmpty());
 
-        ObjectConstructor<List<String>> objectObjectConstructor = constructorConstructor.get(new LiTypeToken<List<String>>() {
-        });
+        ObjectConstructor<List<String>> objectObjectConstructor =
+                constructorConstructor.get(new LiTypeToken<List<String>>() {
+                });
 
         List<String> list = objectObjectConstructor.get();
         Assertions.assertTrue(list.iterator().hasNext());

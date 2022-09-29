@@ -9,7 +9,8 @@ import java.util.*;
 /**
  * a collection that store a constructor-like value by the {@link  LiTypeToken} at {@link #instanceCreators}.
  * if the instanceCreators don't have {@link LiTypeToken}, it will foreach the keys to find first the value
- * which key is sub-class of {@link LiTypeToken#getRawType()}. so the {@link  #instanceCreators} is {@link  LinkedHashMap}
+ * which key is sub-class of {@link LiTypeToken#getRawType()}. so the {@link  #instanceCreators} is
+ * {@link  LinkedHashMap}
  *
  * @author leaderli
  * @since 2022/9/25

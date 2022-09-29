@@ -10,7 +10,7 @@ import io.leaderli.litool.dom.sax.SaxList;
 public class RootBean extends NoBodyAndAttributeSaxBean {
 
 
-    public SaxList<Bean> beans = new BeanSaxList();
+    public final SaxList<Bean> beans = new BeanSaxList();
 
     private NoBean noBean;
 

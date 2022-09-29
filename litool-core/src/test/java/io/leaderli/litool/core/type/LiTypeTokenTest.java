@@ -40,7 +40,8 @@ class LiTypeTokenTest {
     @Test
     void testEquals() {
 
-        Assertions.assertEquals(LiTypeToken.getParameterized(Bean.class).hashCode(), LiTypeToken.getParameterized(Bean.class).hashCode());
+        Assertions.assertEquals(LiTypeToken.getParameterized(Bean.class).hashCode(),
+                LiTypeToken.getParameterized(Bean.class).hashCode());
 
         Assertions.assertEquals(LiTypeToken.getParameterized(Bean.class), LiTypeToken.getParameterized(Bean.class));
 

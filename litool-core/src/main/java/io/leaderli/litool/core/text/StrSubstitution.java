@@ -138,7 +138,8 @@ public class StrSubstitution {
      * </pre>
      *
      * @param format a format string
-     * @param bean   Arguments referenced by the format, get argument by it's placeholder bean-path, it not find  will use
+     * @param bean   Arguments referenced by the format, get argument by it's placeholder bean-path, it not find
+     *               will use
      *               the ''
      * @return a formatted string
      * @see BeanPath#parse(Object)

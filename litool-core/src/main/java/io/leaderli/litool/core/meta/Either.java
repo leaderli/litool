@@ -61,19 +61,19 @@ public interface Either<L, R> extends LiValue {
     }
 
     /**
+     * Returns whether this Either is a Left.
+     *
+     * @return true, if this is a Left, false otherwise
+     */
+    boolean isLeft();
+
+    /**
      * Returns the left value.
      *
      * @return The left value.
      * @throws NoSuchElementException if this is a {@code Right}.
      */
     L getLeft();
-
-    /**
-     * Returns whether this Either is a Left.
-     *
-     * @return true, if this is a Left, false otherwise
-     */
-    boolean isLeft();
 
     /**
      * @return the lino of right value if {@link  #isRight()} ()}  otherwise return {@link Lino#none()}
@@ -86,20 +86,19 @@ public interface Either<L, R> extends LiValue {
     }
 
     /**
-     * Gets the right value if this is a {@code Right} or throws if this is a {@code Left}.
-     *
-     * @return the right value
-     * @throws NoSuchElementException if this is a {@code Left}.
-     */
-    R get();
-
-    /**
      * Returns whether this Either is a Right.
      *
      * @return true, if this is a Right, false otherwise
      */
     boolean isRight();
 
+    /**
+     * Gets the right value if this is a {@code Right} or throws if this is a {@code Left}.
+     *
+     * @return the right value
+     * @throws NoSuchElementException if this is a {@code Left}.
+     */
+    R get();
 
     /**
      * Folds either the left or the right side of this disjunction.

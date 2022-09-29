@@ -23,9 +23,10 @@ class LiraTest {
     @Test
     void LiraRuntimeException() {
 
-        LiraRuntimeException liraRuntimeException = Assertions.assertThrows(LiraRuntimeException.class, () -> Lira.of(1, 2).debug(a -> {
-            throw new LiraRuntimeException(new IllegalArgumentException("123"));
-        }).get());
+        LiraRuntimeException liraRuntimeException = Assertions.assertThrows(LiraRuntimeException.class,
+                () -> Lira.of(1, 2).debug(a -> {
+                    throw new LiraRuntimeException(new IllegalArgumentException("123"));
+                }).get());
 
         Assertions.assertEquals("java.lang.IllegalArgumentException: 123", liraRuntimeException.getMessage());
         Assertions.assertTrue(liraRuntimeException.getCause() instanceof IllegalArgumentException);
@@ -36,7 +37,8 @@ class LiraTest {
     void assertNoError() {
 
         Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertNoError());
-        Assertions.assertThrows(IllegalStateException.class, () -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertNoError().get());
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertNoError().get());
         Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertTrue(i -> i > 0));
         Assertions.assertThrows(LiraRuntimeException.class, () -> Lira.of(1, 2, 9, 0).assertTrue(i -> i > 0).get());
     }
@@ -119,7 +121,8 @@ class LiraTest {
 
         Assertions.assertEquals(2, Lira.of(1, 2, 3).dropWhile(i -> i > 1).first().get());
         Assertions.assertEquals(3, Lira.of(1, null, 2, 3).dropWhile(i -> i > 2).first().get());
-        Assertions.assertEquals("[3, 4]", Lira.of(1, null, 2, 3, null, 4, 5, 6).dropWhile(i -> i > 2).takeWhile(i -> i > 4).toString());
+        Assertions.assertEquals("[3, 4]",
+                Lira.of(1, null, 2, 3, null, 4, 5, 6).dropWhile(i -> i > 2).takeWhile(i -> i > 4).toString());
 
     }
 
@@ -386,11 +389,13 @@ class LiraTest {
         }).distinct();
 
         Assertions.assertNull(Lira.of(null, 2, 1, 2).distinct().nullableIterator().next());
-        Assertions.assertArrayEquals(new Integer[]{100, 1, 2}, Lira.of(null, null, 1, 2).distinct().nullable(() -> 100).toArray());
+        Assertions.assertArrayEquals(new Integer[]{100, 1, 2},
+                Lira.of(null, null, 1, 2).distinct().nullable(() -> 100).toArray());
         Assertions.assertArrayEquals(new Integer[]{1, 2}, Lira.of(1, 2, 1, 2).distinct().toArray());
 
 
-        Assertions.assertArrayEquals(new Integer[]{0, 1, 2}, Lira.of(1, 2, 3, 4, 1).distinct().map(i -> i / 2).distinct().toArray());
+        Assertions.assertArrayEquals(new Integer[]{0, 1, 2},
+                Lira.of(1, 2, 3, 4, 1).distinct().map(i -> i / 2).distinct().toArray());
 
         Assertions.assertEquals(1, Lira.of(1, 2, 3, 4, 1).distinct((left, right) -> left - right < 2).first().get());
     }
@@ -459,7 +464,8 @@ class LiraTest {
         Assertions.assertArrayEquals(new Object[]{10, 20, 30}, terminate.map(i -> i * 10).get().toArray());
         Assertions.assertEquals(1, Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator().next());
 
-        Assertions.assertEquals("1,2,10,20", StringUtils.join(",", Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator()));
+        Assertions.assertEquals("1,2,10,20", StringUtils.join(",",
+                Lira.of(new int[]{1, 2}, new int[]{10, 20}).flatMap().iterator()));
 
         Assertions.assertThrows(NoSuchElementException.class, () -> Lira.of().iterator().next());
         iterator = Lira.of(1, 2).iterator();
@@ -515,7 +521,8 @@ class LiraTest {
     @Test
     void onError() {
         Assertions.assertEquals(2, Lira.of(1, 2, 3).map(i -> i / (i % 2)).size());
-        Lira<Integer> nullable = Lira.of(1, 2, 3).onError((t, cancel) -> cancel.cancel()).map(i -> i / (i % 2)).nullable(() -> 10);
+        Lira<Integer> nullable =
+                Lira.of(1, 2, 3).onError((t, cancel) -> cancel.cancel()).map(i -> i / (i % 2)).nullable(() -> 10);
         Assertions.assertEquals("[1, 10]", nullable.toString());
     }
 

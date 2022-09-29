@@ -18,6 +18,7 @@ import java.util.function.Supplier;
  * @see LiIf#_if(Function)
  * @see LiIf#_case(Object[])
  */
+@FunctionalInterface
 public interface LiThen<T, M extends T, R> extends PublisherIf<T, R> {
 
     default LiIf<T, R> _then(Function<? super M, ? extends R> mapping) {

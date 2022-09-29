@@ -28,7 +28,8 @@ public class CartesianUtil {
                         return new CartesianObject<>(type, field -> CartesianUtil.cartesian(field, context)).cartesian().toArray();
                     }
 
-                    ParameterizedTypeImpl canonicalize = TypeUtil.resolve2Parameterized(tu._1.getClass(), CartesianFunction.class);
+                    ParameterizedTypeImpl canonicalize = TypeUtil.resolve2Parameterized(tu._1.getClass(),
+                            CartesianFunction.class);
                     if (ClassUtil.primitiveToWrapper(type) != canonicalize.getActualClassArgument(1).get()) {
                         return null;
                     }
@@ -97,7 +98,8 @@ public class CartesianUtil {
                     result = objects;
                 }
             } else if (val.getClass().isArray()) {
-                Object[] objects = Lira.of(CollectionUtils.toArray(val)).map(item -> convertByType(item, type)).toArray();
+                Object[] objects =
+                        Lira.of(CollectionUtils.toArray(val)).map(item -> convertByType(item, type)).toArray();
                 if (objects.length > 0) {
                     result = objects;
                 }

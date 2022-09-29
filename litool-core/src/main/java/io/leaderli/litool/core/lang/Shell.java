@@ -45,7 +45,8 @@ public class Shell {
     /**
      * @param commands the script, the first parameter should be the program,
      *                 such as {@code  "/bin/bash"}, {@code  "/usr/local/python3"}
-     * @return a {@link  InputStreamCompletableFuture} , or {@link  CompletedCatchFuture} if the {@link  Process} build error
+     * @return a {@link  InputStreamCompletableFuture} , or {@link  CompletedCatchFuture} if the {@link  Process}
+     * build error
      */
     public CatchFuture<String> command(String... commands) {
 

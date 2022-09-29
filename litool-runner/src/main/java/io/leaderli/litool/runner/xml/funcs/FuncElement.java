@@ -45,7 +45,8 @@ public class FuncElement extends SaxBean {
     }
 
     public void setName(String name) {
-        LiAssertUtil.assertTrue(name.matches(LiDomConstant.ATTRIBUTE_NAME_RULE), String.format("the func name [%s] is " +
+        LiAssertUtil.assertTrue(name.matches(LiDomConstant.ATTRIBUTE_NAME_RULE), String.format("the func name [%s] is" +
+                " " +
                 "not " +
                 "match %s", name, LiDomConstant.ATTRIBUTE_NAME_RULE));
         this.name = name;

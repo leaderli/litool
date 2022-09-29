@@ -7,6 +7,7 @@ package io.leaderli.litool.core.event;
  * @author leaderli
  * @since 2022/8/28
  */
+@FunctionalInterface
 public interface LiEventBusBehavior<T> {
 
     /**

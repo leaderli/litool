@@ -126,7 +126,6 @@ public class TypeUtil {
      * {@link  GenericArrayType}, {@link  ParameterizedType} undefined type to the defined type. such as {@link  Class},
      * {@link  ParameterizedType} with defined typed actualTypeArguments
      * <p>
-     * <p>
      * expand the context typeVariable and fill to the toResolve
      *
      * @param context   the context
@@ -204,8 +203,10 @@ public class TypeUtil {
     }
 
 
-    // to recursively upward to find the toResolve class TypeVariables actualClass, don't find the inner class or enclosing class
-    private static boolean resolve(Type resolving, Class<?> toResolve, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+    // to recursively upward to find the toResolve class TypeVariables actualClass, don't find the inner class or
+    // enclosing class
+    private static boolean resolve(Type resolving, Class<?> toResolve,
+                                   Map<TypeVariable<?>, Type> visitedTypeVariables) {
 
         if (resolving == Object.class) {
             return true;

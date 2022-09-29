@@ -1,10 +1,9 @@
 package io.leaderli.litool.runner.util;
 
 import io.leaderli.litool.runner.Expression;
+import io.leaderli.litool.runner.constant.VariablesModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static io.leaderli.litool.runner.constant.VariablesModel.*;
 
 class ExpressionUtilTest {
 
@@ -12,10 +11,10 @@ class ExpressionUtilTest {
     void getExpression_blank() {
 
         Expression expression = ExpressionUtil.getExpression(null);
-        Assertions.assertSame(ERROR, expression.getModel());
+        Assertions.assertSame(VariablesModel.ERROR, expression.getModel());
 
         expression = ExpressionUtil.getExpression("");
-        Assertions.assertSame(LITERAL, expression.getModel());
+        Assertions.assertSame(VariablesModel.LITERAL, expression.getModel());
 
     }
 
@@ -24,7 +23,7 @@ class ExpressionUtilTest {
 
         Expression expression = ExpressionUtil.getExpression("123");
         Assertions.assertEquals("123", expression.getName());
-        Assertions.assertSame(LITERAL, expression.getModel());
+        Assertions.assertSame(VariablesModel.LITERAL, expression.getModel());
     }
 
     @Test
@@ -32,7 +31,7 @@ class ExpressionUtilTest {
 
         Expression expression = ExpressionUtil.getExpression("$123");
         Assertions.assertEquals("123", expression.getName());
-        Assertions.assertSame(REQUEST, expression.getModel());
+        Assertions.assertSame(VariablesModel.REQUEST, expression.getModel());
     }
 
     @Test
@@ -40,7 +39,7 @@ class ExpressionUtilTest {
 
         Expression expression = ExpressionUtil.getExpression("@123");
         Assertions.assertEquals("123", expression.getName());
-        Assertions.assertSame(RESPONSE, expression.getModel());
+        Assertions.assertSame(VariablesModel.RESPONSE, expression.getModel());
     }
 
     @Test
@@ -48,7 +47,7 @@ class ExpressionUtilTest {
 
         Expression expression = ExpressionUtil.getExpression("#123");
         Assertions.assertEquals("123", expression.getName());
-        Assertions.assertSame(TEMP, expression.getModel());
+        Assertions.assertSame(VariablesModel.TEMP, expression.getModel());
     }
 
     @Test
@@ -56,6 +55,6 @@ class ExpressionUtilTest {
 
         Expression expression = ExpressionUtil.getExpression("123()");
         Assertions.assertEquals("123", expression.getName());
-        Assertions.assertSame(FUNC, expression.getModel());
+        Assertions.assertSame(VariablesModel.FUNC, expression.getModel());
     }
 }

@@ -76,11 +76,6 @@ class UnitElementTest {
         context.registerListener(new EndEventILiEventListener(contextInfo));
 
         mainElement.executor().visit(context);
-//        context.visit(mainElement.executor());
-
-//        GsonUtil.print(context.origin_request_or_response);
-//        GsonUtil.print(contextInfo);
-
 
     }
 

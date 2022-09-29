@@ -25,14 +25,8 @@ class RequestElementTest {
         Map<String, String> request = new HashMap<>();
         request.put("CHANNEL", "IVR");
 
-
         Context context = new Context(request);
         requestElement.executor().visit(context);
-//        requestElement.visit(context);
-//        context.visit(requestElement);
-
-//        new RequestElementExecutor(requestElement).visit(context);
-
 
         Assertions.assertEquals("IVR", context.getRequest("CHANNEL"));
         Assertions.assertEquals(1, (int) context.getRequest("ID"));

@@ -15,10 +15,10 @@ import java.lang.reflect.AnnotatedElement;
  * @author leaderli
  * @since 2022/8/21
  */
-@SuppressWarnings({"rawtypes"})
 public class CartesianContext {
 
-    private final MetaAnnotation<Valuable, CartesianFunction<Annotation, Object>> valuableMeta = new MetaAnnotation<>(Valuable.class, LiTypeToken.of(CartesianFunction.class));
+    private final MetaAnnotation<Valuable, CartesianFunction<Annotation, Object>> valuableMeta =
+            new MetaAnnotation<>(Valuable.class, LiTypeToken.of(CartesianFunction.class));
 
     Lira<LiTuple2<CartesianFunction<Annotation, Object>, Annotation>> relatives(AnnotatedElement annotatedElement) {
         return valuableMeta.relatives(annotatedElement);

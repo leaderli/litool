@@ -82,10 +82,12 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
 
                                 LiTuple2<TypeAdapter<?>, Type> find = lean.reflect_value_handlers.get(cls);
                                 if (find == null) {
-                                    Type actualTypeArgument = TypeUtil.resolve2Parameterized(cls, TypeAdapter.class).getActualTypeArguments()[0];
+                                    Type actualTypeArgument =
+                                            TypeUtil.resolve2Parameterized(cls, TypeAdapter.class).getActualTypeArguments()[0];
                                     find = ReflectUtil.newInstance(cls)
                                             .tuple(adp -> actualTypeArgument)
-                                            .assertNotNone(() -> StrSubstitution.format("the {adapter} is cannot create instance}", cls))
+                                            .assertNotNone(() -> StrSubstitution.format("the {adapter} is cannot " +
+                                                    "create instance}", cls))
                                             .cast(LiTuple2.class)
                                             .get();
                                 }
@@ -93,7 +95,8 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
                                     lean.reflect_value_handlers.put(cls, find);
                                 }
                                 if (!find._2.equals(targetType)) {
-                                    throw new IllegalArgumentException(StrSubstitution.format("the {adapter} is not satisfied the field type {type}", cls, targetType));
+                                    throw new IllegalArgumentException(StrSubstitution.format("the {adapter} is not " +
+                                            "satisfied the field type {type}", cls, targetType));
                                 }
 
                                 return find._1;

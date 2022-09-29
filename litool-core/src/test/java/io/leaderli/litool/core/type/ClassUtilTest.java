@@ -72,9 +72,12 @@ class ClassUtilTest {
         assertNull(ClassUtil.getType((Field) null));
         assertEquals(void.class, ClassUtil.getType(ReflectUtilTest.LittleBean.class.getDeclaredMethod("m3")));
 
-        assertEquals(ReflectUtilTest.LittleBean.class, ClassUtil.getDeclaringClass(ReflectUtilTest.LittleBean.class.getDeclaredField("age")));
-        assertEquals(ReflectUtilTest.LittleBean.class, ClassUtil.getDeclaringClass(ReflectUtilTest.LittleBean.class.getDeclaredMethod("m3")));
-        assertEquals(ReflectUtilTest.LittleBean.class, ClassUtil.getDeclaringClass(ReflectUtilTest.LittleBean.class.getConstructor()));
+        assertEquals(ReflectUtilTest.LittleBean.class,
+                ClassUtil.getDeclaringClass(ReflectUtilTest.LittleBean.class.getDeclaredField("age")));
+        assertEquals(ReflectUtilTest.LittleBean.class,
+                ClassUtil.getDeclaringClass(ReflectUtilTest.LittleBean.class.getDeclaredMethod("m3")));
+        assertEquals(ReflectUtilTest.LittleBean.class,
+                ClassUtil.getDeclaringClass(ReflectUtilTest.LittleBean.class.getConstructor()));
 
 
     }

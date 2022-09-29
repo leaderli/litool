@@ -355,19 +355,6 @@ public class ReflectUtil {
     }
 
     /**
-     * @param annotatedElement the annotatedElement
-     * @param metaAnnotation   the annotation annotated at an annotation class
-     * @return the lira of annotation of annotatedElement and each annotation is annotated by metaAnnotation
-     * @see #findAnnotations(AnnotatedElement, Function)
-     */
-    public static Lira<Annotation> findAnnotationsWithMetaAnnotation(AnnotatedElement annotatedElement, Class<?
-            extends Annotation> metaAnnotation) {
-
-        return findAnnotations(annotatedElement,
-                annotation -> annotation.annotationType().isAnnotationPresent(metaAnnotation));
-    }
-
-    /**
      * @param cls    the class
      * @param filter the  {@link  Function} accept annotation and return a value that convert to boolean by
      *               {@link  io.leaderli.litool.core.util.BooleanUtil#parse(Boolean)}
@@ -418,6 +405,19 @@ public class ReflectUtil {
     }
 
     /**
+     * @param annotatedElement the annotatedElement
+     * @param metaAnnotation   the annotation annotated at an annotation class
+     * @return the lira of annotation of annotatedElement and each annotation is annotated by metaAnnotation
+     * @see #findAnnotations(AnnotatedElement, Function)
+     */
+    public static Lira<Annotation> findAnnotationsWithMetaAnnotation(AnnotatedElement annotatedElement, Class<?
+            extends Annotation> metaAnnotation) {
+
+        return findAnnotations(annotatedElement,
+                annotation -> annotation.annotationType().isAnnotationPresent(metaAnnotation));
+    }
+
+    /**
      * @param obj  the obj
      * @param name the name of method in obj
      * @param args the args of method
@@ -440,6 +440,22 @@ public class ReflectUtil {
      */
     public static Lino<Method> getMethod(Class<?> cls, String name) {
         return getMethod(cls, name, false);
+    }
+
+    /**
+     * @param method the method
+     * @param obj    the obj, if {@code  obj == null}, the method should be static method
+     * @param args   the args of method
+     * @return return value that method return, if method is void, it always return {@code null}
+     */
+    public static Lino<?> getMethodValue(Method method, Object obj, Object... args) {
+
+        if (method == null) {
+            return Lino.none();
+        }
+        setAccessible(method);
+
+        return Lino.throwable_of(() -> method.invoke(obj, args));
     }
 
     /**
@@ -469,22 +485,6 @@ public class ReflectUtil {
             return Lira.none();
         }
         return CollectionUtils.union(cls.getMethods(), cls.getDeclaredMethods());
-    }
-
-    /**
-     * @param method the method
-     * @param obj    the obj, if {@code  obj == null}, the method should be static method
-     * @param args   the args of method
-     * @return return value that method return, if method is void, it always return {@code null}
-     */
-    public static Lino<?> getMethodValue(Method method, Object obj, Object... args) {
-
-        if (method == null) {
-            return Lino.none();
-        }
-        setAccessible(method);
-
-        return Lino.throwable_of(() -> method.invoke(obj, args));
     }
 
 }

@@ -28,7 +28,8 @@ public class EntryElement extends SaxBean {
 
 
         String description = bodyEvent.description();
-        LiAssertUtil.assertTrue(description.matches(LiDomConstant.ATTRIBUTE_NAME_RULE), String.format("the entry key %s " +
+        LiAssertUtil.assertTrue(description.matches(LiDomConstant.ATTRIBUTE_NAME_RULE), String.format("the entry key " +
+                "%s " +
                 "is " +
                 "not match %s", description, LiDomConstant.ATTRIBUTE_NAME_RULE));
         this.key = description;

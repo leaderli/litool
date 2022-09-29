@@ -6,5 +6,6 @@ import io.leaderli.litool.core.event.ILiEventListener;
  * @author leaderli
  * @since 2022/8/16 8:21 AM
  */
+@FunctionalInterface
 public interface EchoListener extends ILiEventListener<EchoEvent> {
 }

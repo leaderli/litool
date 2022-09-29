@@ -94,14 +94,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * @return the lira of a infinity generator of auto-increment integer start with 0
-     * @see Generators#range()
-     */
-    static Lira<Integer> range() {
-        return Lira.of(Generators.range());
-    }
-
-    /**
      * Returns an lira that consisting elements provided by given iterableItr
      *
      * @param iterableItr the iterableItr that provide  elements
@@ -115,6 +107,14 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
             return new IterableRa<>(iterableItr);
         }
         return none();
+    }
+
+    /**
+     * @return the lira of a infinity generator of auto-increment integer start with 0
+     * @see Generators#range()
+     */
+    static Lira<Integer> range() {
+        return Lira.of(Generators.range());
     }
 
     /**
@@ -183,6 +183,14 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
+     * remove null element
+     *
+     * @return a new lira
+     * @see #filter(Function)
+     */
+    Lira<T> filter_null();
+
+    /**
      * filter the element beyond lira, the element will remain if  the result. the null element will be removed
      * {@link  Function#apply(Object)} parsed  by {@link  BooleanUtil#parse(Boolean)} is {@code  true}
      *
@@ -191,14 +199,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @see BooleanUtil#parse(Object)
      */
     Lira<T> filter(Function<T, ?> filter);
-
-    /**
-     * remove null element
-     *
-     * @return a new lira
-     * @see #filter(Function)
-     */
-    Lira<T> filter_null();
 
     /**
      * if lira {@link  #present()} return the lino of first element, otherwise return {@link  Lino#none()}

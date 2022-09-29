@@ -26,7 +26,8 @@ class BeanPathTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"key", "key1.key2", "key1[0]", "key1[0].key2", "key1[0][0]", "[0]", "[0][0]", "[0].key", "[-1]"})
+    @ValueSource(strings = {"key", "key1.key2", "key1[0]", "key1[0].key2", "key1[0][0]", "[0]", "[0][0]", "[0].key",
+            "[-1]"})
     void illegal_build(String expression) {
         Assertions.assertDoesNotThrow(() -> BeanPath.parse(null, expression));
     }

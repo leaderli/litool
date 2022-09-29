@@ -32,7 +32,8 @@ public abstract class ReflectionAccessor {
     // the singleton instance, use getInstance() to obtain
 
     @SuppressWarnings("StaticInitializerReferencesSubClass")
-    private static final ReflectionAccessor instance = JavaVersion.getMajorJavaVersion() < 9 ? new PreJava9ReflectionAccessor() : new UnsafeReflectionAccessor();
+    private static final ReflectionAccessor instance = JavaVersion.getMajorJavaVersion() < 9 ?
+            new PreJava9ReflectionAccessor() : new UnsafeReflectionAccessor();
 
     /**
      * Obtains a {@link ReflectionAccessor} instance suitable for the current Java version.

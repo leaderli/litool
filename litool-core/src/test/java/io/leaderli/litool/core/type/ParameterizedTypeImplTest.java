@@ -25,7 +25,8 @@ class ParameterizedTypeImplTest {
     @Test
     void testToString() {
         ParameterizedType para = (ParameterizedType) ReflectUtil.getField(getClass(), "in").get().getGenericType();
-        Assertions.assertEquals("io.leaderli.litool.core.type.ParameterizedTypeImplTest$Out$In<java.lang.String>", para.toString());
+        Assertions.assertEquals("io.leaderli.litool.core.type.ParameterizedTypeImplTest$Out$In<java.lang.String>",
+                para.toString());
     }
 
     @Test
@@ -46,15 +47,19 @@ class ParameterizedTypeImplTest {
         assertEquals(String.class, make.getActualClassArgument().get());
         assertNull(make.getActualClassArgument(1).get());
 
-        Assertions.assertEquals(ParameterizedTypeImpl.make(Out.class, Out.In.class, TypeVariableImpl.make(Out.In.class, "T", null, null)), ParameterizedTypeImpl.make(Out.In.class));
+        Assertions.assertEquals(ParameterizedTypeImpl.make(Out.class, Out.In.class,
+                TypeVariableImpl.make(Out.In.class, "T", null, null)), ParameterizedTypeImpl.make(Out.In.class));
 
     }
 
     @Test
     void getActualTypeArguments() {
-        Assertions.assertArrayEquals(new Type[]{Object.class, Object.class}, ParameterizedTypeImpl.make(Map.class).getActualClassArguments());
-        Assertions.assertSame(TypeUtil.EMPTY_TYPE_ARRAY, ParameterizedTypeImpl.make(Runnable.class).getActualTypeArguments());
-        Assertions.assertSame(TypeUtil.EMPTY_TYPE_ARRAY, ParameterizedTypeImpl.make(null, List.class).getActualTypeArguments());
+        Assertions.assertArrayEquals(new Type[]{Object.class, Object.class},
+                ParameterizedTypeImpl.make(Map.class).getActualClassArguments());
+        Assertions.assertSame(TypeUtil.EMPTY_TYPE_ARRAY,
+                ParameterizedTypeImpl.make(Runnable.class).getActualTypeArguments());
+        Assertions.assertSame(TypeUtil.EMPTY_TYPE_ARRAY,
+                ParameterizedTypeImpl.make(null, List.class).getActualTypeArguments());
 
     }
 

@@ -24,7 +24,8 @@ public class ParameterizedTypeImpl implements ParameterizedType {
     public ParameterizedTypeImpl(Type ownerType, Type rawType, Type... typeArguments) {
         if (rawType instanceof Class<?>) {
             Class<?> rawTypeAsClass = (Class<?>) rawType;
-            boolean isStaticOrTopLevelClass = Modifier.isStatic(rawTypeAsClass.getModifiers()) || rawTypeAsClass.getEnclosingClass() == null;
+            boolean isStaticOrTopLevelClass =
+                    Modifier.isStatic(rawTypeAsClass.getModifiers()) || rawTypeAsClass.getEnclosingClass() == null;
             LiAssertUtil.assertTrue(ownerType != null || isStaticOrTopLevelClass);
         }
 
@@ -47,12 +48,13 @@ public class ParameterizedTypeImpl implements ParameterizedType {
         return make(TypeUtil.erase(type));
     }
 
-    public static ParameterizedTypeImpl make(Class<?> rawType) {
-        return new ParameterizedTypeImpl(rawType.getEnclosingClass(), rawType, rawType.getTypeParameters());
+    public static ParameterizedTypeImpl make(ParameterizedType parameterizedType) {
+        return make(parameterizedType.getOwnerType(), (Class<?>) parameterizedType.getRawType(),
+                parameterizedType.getActualTypeArguments());
     }
 
-    public static ParameterizedTypeImpl make(ParameterizedType parameterizedType) {
-        return make(parameterizedType.getOwnerType(), (Class<?>) parameterizedType.getRawType(), parameterizedType.getActualTypeArguments());
+    public static ParameterizedTypeImpl make(Class<?> rawType) {
+        return new ParameterizedTypeImpl(rawType.getEnclosingClass(), rawType, rawType.getTypeParameters());
     }
 
     public static ParameterizedTypeImpl make(Type ownerType, Class<?> rawType, Type... actualTypeArguments) {

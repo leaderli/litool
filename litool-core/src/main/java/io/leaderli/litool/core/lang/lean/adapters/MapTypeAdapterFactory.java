@@ -45,7 +45,8 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
         private final TypeAdapter<V> valueTypeAdapter;
         private final ObjectConstructor<Map<String, V>> constructor;
 
-        private StringKeyAdapter(TypeAdapter<String> keyTypeAdapter, TypeAdapter<V> valueTypeAdapter, ObjectConstructor<Map<String, V>> constructor) {
+        private StringKeyAdapter(TypeAdapter<String> keyTypeAdapter, TypeAdapter<V> valueTypeAdapter,
+                                 ObjectConstructor<Map<String, V>> constructor) {
             this.keyTypeAdapter = keyTypeAdapter;
             this.valueTypeAdapter = valueTypeAdapter;
             this.constructor = constructor;
@@ -84,7 +85,8 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
         private final TypeAdapter<V> valueTypeAdapter;
         private final ObjectConstructor<Map<K, V>> constructor;
 
-        private MapAdapter(TypeAdapter<K> keyTypeAdapter, TypeAdapter<V> valueTypeAdapter, ObjectConstructor<Map<K, V>> constructor) {
+        private MapAdapter(TypeAdapter<K> keyTypeAdapter, TypeAdapter<V> valueTypeAdapter, ObjectConstructor<Map<K,
+                V>> constructor) {
             this.keyTypeAdapter = keyTypeAdapter;
             this.valueTypeAdapter = valueTypeAdapter;
             this.constructor = constructor;

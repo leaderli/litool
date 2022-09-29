@@ -191,6 +191,24 @@ public class BeanPath {
         }
     }
 
+    /**
+     * @param obj 数据源
+     * @return 根据 {@link #path} 找到的数据
+     */
+    public Lino<Object> parse(Object obj) {
+
+        for (Function<Object, Object> function : Lira.of(path)) {
+
+            if (obj == null) {
+                return Lino.none();
+            }
+            obj = function.apply(obj);
+
+        }
+
+        return Lino.of(obj);
+    }
+
     private void setKeyFunction(String key) {
 
         path.add(obj -> {
@@ -224,24 +242,6 @@ public class BeanPath {
         BeanPath beanPath = new BeanPath();
         beanPath.setKeyFunction(key);
         return beanPath.parse(obj);
-    }
-
-    /**
-     * @param obj 数据源
-     * @return 根据 {@link #path} 找到的数据
-     */
-    public Lino<Object> parse(Object obj) {
-
-        for (Function<Object, Object> function : Lira.of(path)) {
-
-            if (obj == null) {
-                return Lino.none();
-            }
-            obj = function.apply(obj);
-
-        }
-
-        return Lino.of(obj);
     }
 
     @SafeVarargs

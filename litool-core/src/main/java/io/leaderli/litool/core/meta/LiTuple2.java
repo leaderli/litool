@@ -144,43 +144,6 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
         return new LiTuple2<>(_1, value);
     }
 
-    @Override
-    public T1 getLeft() {
-        if (isRight()) {
-            throw new NoSuchElementException();
-        }
-        return _1;
-    }
-
-    @Override
-    public boolean isLeft() {
-        return _2 == null && _1 != null;
-    }
-
-    @Override
-    public T2 get() {
-        if (isLeft()) {
-            throw new NoSuchElementException();
-        }
-        return _2;
-    }
-
-    @Override
-    public boolean isRight() {
-        return _2 != null || _1 == null;
-    }
-
-    /**
-     * Swaps the elements of this {@code Tuple}.
-     *
-     * @return A new Tuple where the first element is the second element of this Tuple
-     * and the second element is the first element of this Tuple.
-     */
-    @Override
-    public LiTuple2<T2, T1> swap() {
-        return LiTuple.of(_2, _1);
-    }
-
     /**
      * Converts the tuple to java.util.Map.Entry {@code Tuple}.
      *
@@ -189,6 +152,14 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
      */
     public Map.Entry<T1, T2> toEntry() {
         return new AbstractMap.SimpleEntry<>(_1, _2);
+    }
+
+    @Override
+    public T1 getLeft() {
+        if (isRight()) {
+            throw new NoSuchElementException();
+        }
+        return _1;
     }
 
     /**
@@ -203,6 +174,11 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     public <U1, U2> LiTuple2<U1, U2> map(BiFunction<? super T1, ? super T2, LiTuple2<U1, U2>> mapper) {
         Objects.requireNonNull(mapper, "mapper is null");
         return mapper.apply(_1, _2);
+    }
+
+    @Override
+    public boolean isLeft() {
+        return _2 == null && _1 != null;
     }
 
     /**
@@ -221,6 +197,14 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
         return LiTuple.of(f1.apply(_1), f2.apply(_2));
     }
 
+    @Override
+    public T2 get() {
+        if (isLeft()) {
+            throw new NoSuchElementException();
+        }
+        return _2;
+    }
+
     /**
      * Maps the 1st component of this tuple to a new value.
      *
@@ -232,6 +216,11 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
         Objects.requireNonNull(mapper, "mapper is null");
         final U u = mapper.apply(_1);
         return LiTuple.of(u, _2);
+    }
+
+    @Override
+    public boolean isRight() {
+        return _2 != null || _1 == null;
     }
 
     /**
@@ -248,6 +237,17 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     }
 
     /**
+     * Swaps the elements of this {@code Tuple}.
+     *
+     * @return A new Tuple where the first element is the second element of this Tuple
+     * and the second element is the first element of this Tuple.
+     */
+    @Override
+    public LiTuple2<T2, T1> swap() {
+        return LiTuple.of(_2, _1);
+    }
+
+    /**
      * Transforms this tuple to an object of type U.
      *
      * @param f   Transformation which creates a new object of type U based on this tuple's contents.
@@ -259,9 +259,6 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
         Objects.requireNonNull(f, "f is null");
         return f.apply(_1, _2);
     }
-
-
-// -- Object
 
     @Override
     public int hashCode() {
@@ -290,4 +287,9 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     public String name() {
         return "tuple2";
     }
+
+
+// -- Object
+
+
 }

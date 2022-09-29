@@ -16,7 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Lean {
     public final Lira<LeanFieldKey> reflect_name_handlers;
-    public final Map<Class<? extends TypeAdapter<?>>, LiTuple2<TypeAdapter<?>, Type>> reflect_value_handlers = new HashMap<>();
+    public final Map<Class<? extends TypeAdapter<?>>, LiTuple2<TypeAdapter<?>, Type>> reflect_value_handlers =
+            new HashMap<>();
     private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenCache = new ConcurrentHashMap<>();
     private final ConstructorConstructor constructorConstructor;
     private final List<TypeAdapterFactory> factories;
@@ -34,16 +35,6 @@ public class Lean {
 
     }
 
-    private static Lira<LeanFieldKey> initLeanKeyHandlers(List<LeanFieldKey> reflect_name_handlers) {
-        return CollectionUtils.union(reflect_name_handlers, defaultLeanKeyHandlers());
-    }
-
-    private static List<LeanFieldKey> defaultLeanKeyHandlers() {
-        LeanFieldKey leanKey = field -> ReflectUtil.getAnnotation(field, LeanKey.class).map(LeanKey::value).get();
-        LeanFieldKey fieldName = Field::getName;
-        return CollectionUtils.of(leanKey, fieldName);
-    }
-
     private static List<TypeAdapterFactory> initFactories() {
         List<TypeAdapterFactory> factories = new ArrayList<>();
         factories.add(TypeAdapters.PRIMITIVE_FACTORY);
@@ -56,12 +47,22 @@ public class Lean {
         return factories;
     }
 
+    private static Lira<LeanFieldKey> initLeanKeyHandlers(List<LeanFieldKey> reflect_name_handlers) {
+        return CollectionUtils.union(reflect_name_handlers, defaultLeanKeyHandlers());
+    }
+
+    private static List<LeanFieldKey> defaultLeanKeyHandlers() {
+        LeanFieldKey leanKey = field -> ReflectUtil.getAnnotation(field, LeanKey.class).map(LeanKey::value).get();
+        LeanFieldKey fieldName = Field::getName;
+        return CollectionUtils.of(leanKey, fieldName);
+    }
 
     /**
      * @param source          the source bean
      * @param targetTypeToken the target bean typeToken
      * @param <T>             the parameter of {@link  LiTypeToken}
-     * @return a new instance with type {@link LiTypeToken#getType()} which created by copy the properties of source deeply
+     * @return a new instance with type {@link LiTypeToken#getType()} which created by copy the properties of source
+     * deeply
      * @see #getAdapter(LiTypeToken)
      */
     public <T> T fromBean(Object source, LiTypeToken<T> targetTypeToken) {

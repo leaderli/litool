@@ -37,7 +37,8 @@ public class MetaAnnotation<A extends Annotation, F extends MetaFunction<? exten
         Objects.requireNonNull(method);
 
 
-        Class<?> metaFunctionType = ParameterizedTypeImpl.make(method.getGenericReturnType()).getActualClassArgument().get();
+        Class<?> metaFunctionType =
+                ParameterizedTypeImpl.make(method.getGenericReturnType()).getActualClassArgument().get();
 
         LiAssertUtil.assertTrue(metaFunctionType == functionType);
 

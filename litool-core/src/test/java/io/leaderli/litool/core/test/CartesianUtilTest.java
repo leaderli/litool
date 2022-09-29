@@ -22,7 +22,8 @@ class CartesianUtilTest {
     @Test
     void test() {
 
-        CartesianObject<TestA> testACartesian = new CartesianObject<>(TestA.class, field -> CartesianUtil.cartesian(field, context));
+        CartesianObject<TestA> testACartesian = new CartesianObject<>(TestA.class,
+                field -> CartesianUtil.cartesian(field, context));
 
         Lira<TestA> cartesian = testACartesian.cartesian();
 

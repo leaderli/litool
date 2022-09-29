@@ -4,6 +4,7 @@ package io.leaderli.litool.core.lang.lean;
  * @author leaderli
  * @since 2022/9/24 2:47 PM
  */
+@FunctionalInterface
 public interface TypeAdapter<T> {
 
     /**

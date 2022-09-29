@@ -4,6 +4,7 @@ import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.test.CartesianContext;
 import io.leaderli.litool.core.test.CartesianMethodParameters;
 import org.junit.jupiter.api.extension.*;
+import org.junit.platform.commons.util.AnnotationUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -11,8 +12,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
 
 /**
  * @author leaderli
@@ -32,7 +31,7 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
         }
 
         return context.getTestMethod()
-                .map(testMethod -> isAnnotated(testMethod, LiTest.class))
+                .map(testMethod -> AnnotationUtils.isAnnotated(testMethod, LiTest.class))
                 .isPresent();
     }
 
