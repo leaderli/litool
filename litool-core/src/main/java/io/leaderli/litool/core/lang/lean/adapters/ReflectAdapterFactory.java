@@ -1,13 +1,12 @@
 package io.leaderli.litool.core.lang.lean.adapters;
 
 import io.leaderli.litool.core.lang.BeanPath;
-import io.leaderli.litool.core.lang.lean.Lean;
-import io.leaderli.litool.core.lang.lean.LeanFieldAdapter;
-import io.leaderli.litool.core.lang.lean.TypeAdapter;
-import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
+import io.leaderli.litool.core.lang.lean.*;
+import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.text.StrSubstitution;
+import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.type.TypeUtil;
@@ -55,7 +54,7 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
         @SuppressWarnings("unchecked")
         @Override
         public T read(Object source) {
-            TypeAdapter<T> adapter = lean.getAdapter(typeToken.getRawType());
+            TypeAdapter<T> adapter = this.lean.getAdapter(typeToken.getRawType());
 
             if (adapter instanceof Adapter) {
                 return (T) ReflectUtil.newInstance(typeToken.getRawType())
@@ -94,7 +93,10 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
                                 synchronized (lean.reflect_value_handlers) {
                                     lean.reflect_value_handlers.put(cls, find);
                                 }
-                                if (!find._2.equals(targetType)) {
+
+                                // the 2nd of tuple is TypeAdapter actualClassParameter, is always wrapper class .
+                                // add primitive support
+                                if (!find._2.equals(targetType) && !find._2.equals(ClassUtil.primitiveToWrapper(TypeUtil.erase(targetType)))) {
                                     throw new IllegalArgumentException(StrSubstitution.format("the {adapter} is not " +
                                             "satisfied the field type {type}", cls, targetType));
                                 }
@@ -109,11 +111,19 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
 
                 }
                 BeanPath.simple(source, key)
-                        .map(typeAdapter::read)
+                        .map(fv -> typeAdapter.read(fv, lean))
+                        .eitherSupplier(() -> {
+                            if (typeAdapter instanceof NullableTypeAdapters) {
+                                return ((NullableTypeAdapters<T>) typeAdapter).read(lean, source, targetType);
+                            }
+                            return null;
+                        })
+                        .map(Either::fold)
                         .ifPresent(v -> ReflectUtil.setFieldValue(target, field, v));
             }
         }
 
     }
+
 
 }

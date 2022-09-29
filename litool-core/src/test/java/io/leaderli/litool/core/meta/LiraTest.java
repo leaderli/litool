@@ -19,6 +19,17 @@ import java.util.*;
  */
 class LiraTest {
 
+    @Test
+    void either() {
+
+        Integer max = Lira.of(1, 2, null, 4)
+                .either(100)
+                .map(e -> e.fold(l -> l, r -> r))
+                .sorted((a, b) -> b - a)
+                .first().get();
+        Assertions.assertEquals(100, max);
+
+    }
 
     @Test
     void LiraRuntimeException() {

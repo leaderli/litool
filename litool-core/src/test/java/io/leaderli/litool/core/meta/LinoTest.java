@@ -80,7 +80,7 @@ class LinoTest {
     void either() {
 
         Assertions.assertEquals(1, Lino.none().either(1).get().getLeft());
-        Assertions.assertNull(Lino.none().either(null).get().getLeft());
+        Assertions.assertNull(Lino.none().eitherSupplier(null).get().getLeft());
         Assertions.assertThrows(NoSuchElementException.class, Lino.of(2).either(1).get()::getLeft);
     }
 
@@ -134,8 +134,8 @@ class LinoTest {
     void of() {
         Assertions.assertTrue(Lino.of(null).absent());
         Assertions.assertFalse(Lino.of(1).absent());
-        Assertions.assertTrue(Lino.of(() -> null).absent());
-        Assertions.assertFalse(Lino.of(() -> 1).absent());
+        Assertions.assertTrue(Lino.of(null).absent());
+        Assertions.assertFalse(Lino.of(1).absent());
     }
 
     @Test

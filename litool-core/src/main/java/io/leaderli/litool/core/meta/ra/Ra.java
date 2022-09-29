@@ -187,6 +187,10 @@ public abstract class Ra<T> implements Lira<T> {
         return this;
     }
 
+    public <L> Lira<Either<L, T>> eitherSupplier(Supplier<L> left) {
+        return new EitherRa<>(this, left);
+    }
+
     @Override
     public Lira<T> debug(DebugConsumer<T> action) {
 

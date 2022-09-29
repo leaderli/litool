@@ -3,12 +3,13 @@ package io.leaderli.litool.core.meta;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author leaderli
  * @since 2022/9/25 11:17 AM
  */
-public interface Either<L, R> extends LiValue {
+public interface Either<L, R> extends LiValue, Supplier<R> {
 
 
     /**
@@ -24,6 +25,17 @@ public interface Either<L, R> extends LiValue {
     }
 
     /**
+     * Constructs a {@link Right}
+     *
+     * @param <L> Type of left value.
+     * @param <R> Type of right value.
+     * @return A new {@code Left} instance.
+     */
+    static <L, R> Either<L, R> none() {
+        return new Left<>(null);
+    }
+
+    /**
      * Constructs a {@link Left}
      *
      * @param left The value.
@@ -33,6 +45,10 @@ public interface Either<L, R> extends LiValue {
      */
     static <L, R> Either<L, R> left(L left) {
         return new Left<>(left);
+    }
+
+    static <T> T fold(Either<T, T> either) {
+        return either.fold(l -> l, r -> r);
     }
 
     /**
@@ -99,6 +115,11 @@ public interface Either<L, R> extends LiValue {
      * @throws NoSuchElementException if this is a {@code Left}.
      */
     R get();
+
+
+    default Lino<Either<L, R>> lino() {
+        return Lino.of(this);
+    }
 
     /**
      * Folds either the left or the right side of this disjunction.

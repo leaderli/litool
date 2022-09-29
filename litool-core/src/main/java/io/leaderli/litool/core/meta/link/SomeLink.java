@@ -124,19 +124,19 @@ abstract class SomeLink<P, T> implements LiLink<T> {
 
 
     @Override
-    public LiLink<T> interrupt(Runnable runnable) {
+    public LiLink<T> onInterrupt(Runnable runnable) {
 
         return new OnInterruptRunnableLink<>(this, runnable);
     }
 
     @Override
-    public LiLink<T> interrupt(Consumer<? super T> consumer) {
+    public LiLink<T> onInterrupt(Consumer<? super T> consumer) {
         return new OnInterruptConsumerLink<>(this, consumer);
     }
 
 
     @Override
-    public LiLink<T> throwable_interrupt(ThrowableRunner runnable) {
+    public LiLink<T> onThrowableInterrupt(ThrowableRunner runnable) {
 
         return new OnInterruptRunnableLink<>(this, () -> {
             try {
@@ -149,7 +149,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
 
 
     @Override
-    public LiLink<T> throwable_interrupt(ThrowableConsumer<? super T> consumer) {
+    public LiLink<T> onThrowableInterrupt(ThrowableConsumer<? super T> consumer) {
         return new OnInterruptConsumerLink<>(this, v -> {
             try {
                 consumer.accept(v);

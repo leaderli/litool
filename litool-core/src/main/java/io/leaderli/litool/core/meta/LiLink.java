@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
 
     /**
-     * @return 返回一个值为 1 的实例
+     * @return a liLink with value 1, the value only to drive chain execute
      */
     static LiLink<Integer> of() {
 
@@ -32,8 +32,8 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     }
 
     /**
-     * @param <T> 泛型
-     * @return 返回一个新的实例
+     * @param <T> the type of value
+     * @return a none liLink
      */
     static <T> LiLink<T> none() {
 
@@ -41,13 +41,26 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     }
 
     /**
-     * @param value 实例
-     * @param <T>   泛型
-     * @return 返回一个新的实例
+     * @param value a value
+     * @param <T>   the type of value
+     * @return a liLink
      */
     static <T> LiLink<T> of(T value) {
 
         return new ValueLink<>(value);
+    }
+
+    /**
+     * @param supplier a value provider
+     * @param <T>      the type of value
+     * @return a liLink
+     */
+    static <T> LiLink<T> supplier(Supplier<T> supplier) {
+
+        if (supplier == null) {
+            return new ValueLink<>(null);
+        }
+        return new ValueLink<>(supplier.get());
     }
 
     /**
@@ -135,7 +148,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return new link
      * @see LiConstant#WHEN_THROW
      */
-    LiLink<T> interrupt(Runnable runnable);
+    LiLink<T> onInterrupt(Runnable runnable);
 
     /**
      * consumer only accept when the execution chain has interrupt and the  notify value is not null
@@ -144,7 +157,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return new link
      * @see LiConstant#WHEN_THROW
      */
-    LiLink<T> interrupt(Consumer<? super T> consumer);
+    LiLink<T> onInterrupt(Consumer<? super T> consumer);
 
     /**
      * runnable only run when the execution chain has interrupt
@@ -153,7 +166,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return new link
      * @see LiConstant#WHEN_THROW
      */
-    LiLink<T> throwable_interrupt(ThrowableRunner runnable);
+    LiLink<T> onThrowableInterrupt(ThrowableRunner runnable);
 
     /**
      * consumer only accept when the execution chain has interrupt and the  notify value is not null
@@ -162,7 +175,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return new link
      * @see LiConstant#WHEN_THROW
      */
-    LiLink<T> throwable_interrupt(ThrowableConsumer<? super T> consumer);
+    LiLink<T> onThrowableInterrupt(ThrowableConsumer<? super T> consumer);
 
     /**
      * the terminal action

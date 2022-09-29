@@ -413,6 +413,28 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
+     * if element is not null return {@link  Either#right(Object)}
+     * otherwise return {@link  Either#left(Object)}
+     *
+     * @param l   left value
+     * @param <L> the type of left value
+     * @return convert the lira value to   either value
+     */
+    default <L> Lira<Either<L, T>> either(L l) {
+        return eitherSupplier(() -> l);
+    }
+
+    /**
+     * if element is not null return {@link  Either#right(Object)}
+     * otherwise return {@link  Either#left(Object)}
+     *
+     * @param l   left value provider
+     * @param <L> the type of left value
+     * @return convert the lira value to   either value
+     */
+    <L> Lira<Either<L, T>> eitherSupplier(Supplier<L> l);
+
+    /**
      * Performs an action  for each element of this lira
      *
      * @param action a  action to perform on the elements

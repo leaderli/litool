@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.lang.lean;
 
+import java.lang.reflect.Type;
+
 /**
  * @author leaderli
  * @since 2022/9/24 2:47 PM
@@ -12,4 +14,14 @@ public interface TypeAdapter<T> {
      * @return create target by source
      */
     T read(Object source);
+
+    /**
+     * @param source the source
+     * @param lean   the lean, that can provide adapter by {@link  Lean#getAdapter(Type)}
+     *               for custom TypeAdapter do some trick thing
+     * @return create target by source
+     */
+    default T read(Object source, Lean lean) {
+        return read(source);
+    }
 }

@@ -29,22 +29,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
 
     /**
-     * when {@code supplier == null} return {@link #none()},
-     * or return {@link #of(Object)} by the {@link  Supplier#get()}
-     *
-     * @param supplier the supplier provide value
-     * @param <T>      the type of lino
-     * @return a lino
-     * @see #of(Object)
-     */
-    static <T> Lino<T> of(Supplier<T> supplier) {
-        if (supplier == null) {
-            return none();
-        }
-        return of(supplier.get());
-    }
-
-    /**
      * all lino with value of null is the same instance of {@link  None#INSTANCE},
      * all operation on {@link  None} is stateless
      *
@@ -279,7 +263,25 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      */
     Lino<T> debug();
 
+    /**
+     * if {@link  #present()} return {@link  Either#right(Object)}
+     * otherwise return {@link  Either#left(Object)}
+     *
+     * @param l   left value
+     * @param <L> the type of left value
+     * @return a  either value
+     */
     <L> Lino<Either<L, T>> either(L l);
+
+    /**
+     * if {@link  #present()} return {@link  Either#right(Object)}
+     * otherwise return {@link  Either#left(Object)}
+     *
+     * @param l   left value provider
+     * @param <L> the type of left value
+     * @return a  either value
+     */
+    <L> Lino<Either<L, T>> eitherSupplier(Supplier<L> l);
 
     /**
      * @param debug the consumer perform on value
@@ -297,7 +299,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
     /**
      * @param supplier the other
-     * @return return {@link  #of(Supplier)} if this is {@link  #none()} otherwise return this
+     * @return return {@link  #of(Object)} )} if this is {@link  #none()} otherwise return this
      */
     Lino<T> or(Supplier<? extends T> supplier);
 
@@ -518,6 +520,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
+        public <L> Lino<Either<L, T>> eitherSupplier(Supplier<L> l) {
+            return Lino.of(Either.right(value));
+        }
+
+        @Override
         public Lino<T> debug(Consumer<T> debug) {
             debug.accept(value);
             return this;
@@ -717,6 +724,14 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         @Override
         public <L> Lino<Either<L, T>> either(L l) {
             return Lino.of(Either.left(l));
+        }
+
+        @Override
+        public <L> Lino<Either<L, T>> eitherSupplier(Supplier<L> l) {
+            if (l == null) {
+                return Lino.of(Either.none());
+            }
+            return Lino.of(Either.left(l.get()));
         }
 
         @Override

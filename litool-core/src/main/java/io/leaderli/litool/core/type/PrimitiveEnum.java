@@ -194,6 +194,7 @@ public enum PrimitiveEnum {
         return (T) get(type).zero_value;
     }
 
+
     @SuppressWarnings("unchecked")
     public <T> T read(Object value) {
 

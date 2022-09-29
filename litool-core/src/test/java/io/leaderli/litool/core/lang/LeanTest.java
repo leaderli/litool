@@ -1,15 +1,13 @@
 package io.leaderli.litool.core.lang;
 
 import com.google.gson.Gson;
-import io.leaderli.litool.core.lang.lean.Lean;
-import io.leaderli.litool.core.lang.lean.LeanFieldAdapter;
-import io.leaderli.litool.core.lang.lean.LeanKey;
-import io.leaderli.litool.core.lang.lean.TypeAdapter;
+import io.leaderli.litool.core.lang.lean.*;
 import io.leaderli.litool.core.test.StringValues;
 import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -91,7 +89,7 @@ class LeanTest {
 
     @Test
     void test7() {
-        String json = "{\"age\": 1.0,\"age2\": 2.0}";
+        String json = "{\"age\": 1.0,\"age2\": 2.0,\"age4\":\"4\"}";
         Map map = gson.fromJson(json, Map.class);
 
         Lean lean = new Lean(new LinkedHashMap<>(), Collections.singletonList(f -> {
@@ -105,6 +103,8 @@ class LeanTest {
         Assertions.assertEquals(1.0, parser.fake);
         Assertions.assertEquals(2.0, parser.fake2);
         Assertions.assertEquals(1.0, parser.custom);
+        Assertions.assertEquals(10086.0, parser.custom2);
+        Assertions.assertEquals(4.0, parser.age4);
 
     }
 
@@ -165,6 +165,24 @@ class LeanTest {
         }
     }
 
+    private static class DoubleTypeAdapter implements NullableTypeAdapters<Double> {
+
+        @Override
+        public Double read(Lean lean, Object source, Type targetType) {
+            return (double) 10086;
+        }
+
+        @Override
+        public Double read(Object source) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Double read(Object source, Lean lean) {
+            return (Double) lean.getAdapter(Double.class).read(source);
+        }
+    }
+
     private static class ObjectTypeAdapter implements TypeAdapter<List> {
 
         @Override
@@ -194,6 +212,12 @@ class LeanTest {
         private double fake2;
         @StringValues({"age3", "age2"})
         private double custom;
+
+        @LeanFieldAdapter(DoubleTypeAdapter.class)
+        private double custom2;
+
+        @LeanFieldAdapter(DoubleTypeAdapter.class)
+        private double age4;
     }
 
     private static class Bean6 {
