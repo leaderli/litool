@@ -91,7 +91,7 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
 
             Class<? extends TypeAdapter<?>> cls = annotation.value();
 
-            LiTuple2<TypeAdapter<?>, Type> find = getTypeAdapterTypeLiTuple2(cls);
+            LiTuple2<TypeAdapter<?>, Type> find = computeIfAbsentHandler(cls);
 
             // the 2nd of tuple is TypeAdapter actualClassParameter, is always wrapper class .
             // add primitive support
@@ -104,7 +104,7 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
         }
 
         @SuppressWarnings("unchecked")
-        private LiTuple2<TypeAdapter<?>, Type> getTypeAdapterTypeLiTuple2(Class<? extends TypeAdapter<?>> cls) {
+        private LiTuple2<TypeAdapter<?>, Type> computeIfAbsentHandler(Class<? extends TypeAdapter<?>> cls) {
 
             LiTuple2<TypeAdapter<?>, Type> find = lean.reflect_value_handlers.get(cls);
             if (find != null) {
