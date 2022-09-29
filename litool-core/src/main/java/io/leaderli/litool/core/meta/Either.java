@@ -85,7 +85,8 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
 
 
     /**
-     * different with {@link  #getRight()}, it's will return null when {@link  #isLeft()} replace throw{@link  NoSuchElementException}
+     * different with {@link  #getRight()}, it's will return null when {@link  #isLeft()}
+     * replace throw{@link  NoSuchElementException}
      *
      * @return the right value
      */
