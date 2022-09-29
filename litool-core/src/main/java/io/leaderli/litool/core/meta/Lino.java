@@ -320,18 +320,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      */
     <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
 
-    /**
-     * when the error occurs will return {@link  Lino#none()}
-     * <pre>
-     *     return throwable_map(mapper).map(Supplier::get)
-     * </pre>
-     *
-     * @param mapper the function accept element and return lino
-     * @param <R>    the type of after unzip
-     * @return a new lira of type R
-     * @see #throwable_map(ThrowableFunction)
-     */
-    <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper);
 
     /**
      * when the error occurs will return {@link  Lino#none()}
@@ -553,10 +541,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             return throwable_map(mapper, LiConstant.WHEN_THROW);
         }
 
-        @Override
-        public <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper) {
-            return throwable_map(mapper).map(Supplier::get);
-        }
 
         @Override
         public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper,
@@ -749,10 +733,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             return none();
         }
 
-        @Override
-        public <R> Lino<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper) {
-            return Lino.none();
-        }
 
         @Override
         public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper,

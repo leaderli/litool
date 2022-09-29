@@ -328,22 +328,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     /**
      * when the error occurs will  perform {@link  SubscriberRa#next_null()} and
      * {@link SubscriberRa#onError(Throwable, CancelSubscription)}
-     * <pre>
-     *     return throwable_map(mapper).map(Supplier::get)
-     * </pre>
-     *
-     * @param mapper the function accept element and return lino
-     * @param <R>    the type of after unzip
-     * @return a new lira of type R
-     * @see #throwable_map(ThrowableFunction)
-     */
-    default <R> Lira<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper) {
-        return throwable_map(mapper).map(Supplier::get);
-    }
-
-    /**
-     * when the error occurs will  perform {@link  SubscriberRa#next_null()} and
-     * {@link SubscriberRa#onError(Throwable, CancelSubscription)}
      *
      * @param mapper the  mapper
      * @param <R>    the type of after mapper
