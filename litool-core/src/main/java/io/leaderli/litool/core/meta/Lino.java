@@ -56,6 +56,25 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     }
 
     /**
+     * if {@code supplier == null || supplier.get() == null } return {@link #none()}
+     * or return a new {@link Some}
+     *
+     * @param supplier the value provider
+     * @param <T>      the type of lino
+     * @return a lino
+     */
+    static <T> Lino<T> supplier(Supplier<T> supplier) {
+        if (supplier == null) {
+            return none();
+        }
+        T value = supplier.get();
+        if (value == null) {
+            return none();
+        }
+        return new Some<>(value);
+    }
+
+    /**
      * when {@code supplier == null} or {@link  ThrowableSupplier#get()} throw a error
      * return {@link #none()}, or return {@link #of(Object)} by the {@link  ThrowableSupplier#get()}
      *
@@ -64,12 +83,16 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @return a lino
      * @see #of(Object)
      */
-    static <T> Lino<T> throwable_of(ThrowableSupplier<T> supplier) {
+    static <T> Lino<T> throwable_of(ThrowableSupplier<? extends T> supplier) {
         if (supplier == null) {
             return none();
         }
         try {
-            return of(supplier.get());
+            T value = supplier.get();
+            if (value == null) {
+                return Lino.none();
+            }
+            return new Some<>(value);
         } catch (Throwable e) {
             return none();
         }
@@ -283,13 +306,13 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @param <L> the type of left value
      * @return a  either value
      */
-    <L> Lino<Either<L, T>> eitherSupplier(Supplier<L> l);
+    <L> Lino<Either<L, T>> eitherSupplier(Supplier<? extends L> l);
 
     /**
      * @param debug the consumer perform on value
      * @return this
      */
-    Lino<T> debug(Consumer<T> debug);
+    Lino<T> debug(Consumer<? super T> debug);
 
 
     /**
@@ -506,7 +529,8 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public <R> Lino<LiTuple2<T, R>> tuple2(R t2) {
-            return Lino.of(LiTuple.of(value, t2));
+            LiTuple2<T, R> of = LiTuple.of(value, t2);
+            return Lino.of(of);
         }
 
         @Override
@@ -527,12 +551,12 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public <L> Lino<Either<L, T>> eitherSupplier(Supplier<L> l) {
+        public <L> Lino<Either<L, T>> eitherSupplier(Supplier<? extends L> l) {
             return Lino.of(Either.right(value));
         }
 
         @Override
-        public Lino<T> debug(Consumer<T> debug) {
+        public Lino<T> debug(Consumer<? super T> debug) {
             debug.accept(value);
             return this;
         }
@@ -739,7 +763,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public <L> Lino<Either<L, T>> eitherSupplier(Supplier<L> l) {
+        public <L> Lino<Either<L, T>> eitherSupplier(Supplier<? extends L> l) {
             if (l == null) {
                 return Lino.of(Either.none());
             }
@@ -747,7 +771,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public Lino<T> debug(Consumer<T> debug) {
+        public Lino<T> debug(Consumer<? super T> debug) {
 
             return this;
         }

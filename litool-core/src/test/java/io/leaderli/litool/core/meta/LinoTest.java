@@ -45,6 +45,15 @@ class LinoTest {
         Assertions.assertSame(integerLino, Lino.none());
     }
 
+    @Test
+    void supplier() {
+
+        Assertions.assertEquals(Lino.of(1), Lino.supplier(Lino.of(1)));
+        Assertions.assertEquals(Lino.of(1), Lino.supplier(Lino.of(Lino.of(1)).get()));
+        Assertions.assertEquals(Lino.none(), Lino.supplier(null));
+        Assertions.assertEquals(Lino.none(), Lino.supplier(Lino.none()));
+        Assertions.assertEquals(Lino.none(), Lino.supplier(Either.left(1)));
+    }
 
     @Test
     void none() {
@@ -270,6 +279,7 @@ class LinoTest {
     void tuple() {
 
 
+        Lino<LiTuple2<Integer, String>> liTuple2Lino = Lino.of(123).tuple2("123");
         Assertions.assertEquals(3, Lino.of("123").tuple(String::length).get()._2);
         Assertions.assertNull(Lino.of("123").tuple2(null).map(LiTuple2::_2).get());
         Assertions.assertNull(Lino.of((String) null).tuple(String::length).get());

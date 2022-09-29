@@ -83,6 +83,20 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
      */
     boolean isLeft();
 
+
+    /**
+     * different with {@link  #getRight()}, it's will return null when {@link  #isLeft()} replace throw{@link  NoSuchElementException}
+     *
+     * @return the right value
+     */
+    @Override
+    default R get() {
+        if (isRight()) {
+            return getRight();
+        }
+        return null;
+    }
+
     /**
      * Returns the left value.
      *
@@ -92,14 +106,12 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
     L getLeft();
 
     /**
-     * @return the lino of right value if {@link  #isRight()} ()}  otherwise return {@link Lino#none()}
+     * Gets the right value if this is a {@code Right} or throws if this is a {@code Left}.
+     *
+     * @return the right value
+     * @throws NoSuchElementException if this is a {@code Left}.
      */
-    default Lino<R> getLino() {
-        if (isRight()) {
-            return Lino.of(get());
-        }
-        return Lino.none();
-    }
+    R getRight();
 
     /**
      * Returns whether this Either is a Right.
@@ -109,12 +121,14 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
     boolean isRight();
 
     /**
-     * Gets the right value if this is a {@code Right} or throws if this is a {@code Left}.
-     *
-     * @return the right value
-     * @throws NoSuchElementException if this is a {@code Left}.
+     * @return the lino of right value if {@link  #isRight()} ()}  otherwise return {@link Lino#none()}
      */
-    R get();
+    default Lino<R> getRightLino() {
+        if (isRight()) {
+            return Lino.of(getRight());
+        }
+        return Lino.none();
+    }
 
 
     default Lino<Either<L, R>> lino() {
@@ -133,7 +147,7 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
         Objects.requireNonNull(leftMapper, "leftMapper is null");
         Objects.requireNonNull(rightMapper, "rightMapper is null");
         if (isRight()) {
-            return rightMapper.apply(get());
+            return rightMapper.apply(getRight());
         } else {
             return leftMapper.apply(getLeft());
         }
@@ -147,7 +161,7 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
      */
     default Either<R, L> swap() {
         if (isRight()) {
-            return new Left<>(get());
+            return new Left<>(getRight());
         } else {
             return new Right<>(getLeft());
         }
@@ -192,7 +206,7 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
         }
 
         @Override
-        public R get() {
+        public R getRight() {
             return value;
         }
 
@@ -254,7 +268,7 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
         }
 
         @Override
-        public R get() {
+        public R getRight() {
             throw new NoSuchElementException("get() on Left");
         }
 

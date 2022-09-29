@@ -198,7 +198,7 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     }
 
     @Override
-    public T2 get() {
+    public T2 getRight() {
         if (isLeft()) {
             throw new NoSuchElementException();
         }
@@ -288,8 +288,7 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
         return "tuple2";
     }
 
-
-    // -- Object
+// -- Object
 
 
 }

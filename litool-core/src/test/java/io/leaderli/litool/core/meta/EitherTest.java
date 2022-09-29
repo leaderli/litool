@@ -16,16 +16,18 @@ class EitherTest {
 
         Either<Integer, Integer> either = Either.left(1);
         Assertions.assertEquals(1, either.getLeftLino().get());
-        Assertions.assertTrue(either.getLino().absent());
+        Assertions.assertTrue(either.getRightLino().absent());
 
 
         either = Either.right(2);
-        Assertions.assertEquals(2, either.getLino().get());
+        Assertions.assertEquals(2, either.getRightLino().get());
         Assertions.assertTrue(either.getLeftLino().absent());
 
         either = either.swap();
         Assertions.assertEquals(2, either.getLeftLino().get());
-        Assertions.assertTrue(either.getLino().absent());
+        Assertions.assertTrue(either.getRightLino().absent());
+
+
     }
 
     @Test

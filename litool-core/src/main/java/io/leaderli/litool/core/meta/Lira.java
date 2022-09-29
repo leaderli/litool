@@ -209,15 +209,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     Lino<T> first();
 
-    /**
-     * if lira {@link  #present()} return the lino of last element, otherwise return {@link  Lino#none()}
-     * <p>
-     * it's terminal action
-     *
-     * @return the last element  under lira
-     */
-    Lino<T> last();
-
 
     /**
      * if lira {@link  #present()} after filter return the lino of first element, otherwise return {@link  Lino#none()}
@@ -231,7 +222,34 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param filter the filter function
      * @return the first element  under lira
      */
-    Lino<T> first(Function<? super T, ?> filter);
+    default Lino<T> first(Function<? super T, ?> filter) {
+        return filter(filter).first();
+    }
+
+    /**
+     * if lira {@link  #present()} after filter return the lino of first last, otherwise return {@link  Lino#none()}
+     * <p>
+     * it's terminal action
+     *
+     * <pre>
+     *    return  filter(filter).last()
+     * </pre>
+     *
+     * @param filter the filter function
+     * @return the last element  under lira
+     */
+    default Lino<T> last(Function<? super T, ?> filter) {
+        return filter(filter).last();
+    }
+
+    /**
+     * if lira {@link  #present()} return the lino of last element, otherwise return {@link  Lino#none()}
+     * <p>
+     * it's terminal action
+     *
+     * @return the last element  under lira
+     */
+    Lino<T> last();
 
     /**
      * if lira element at index is exists return the lino of index element, otherwise return
@@ -432,7 +450,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <L> the type of left value
      * @return convert the lira value to   either value
      */
-    <L> Lira<Either<L, T>> eitherSupplier(Supplier<L> l);
+    <L> Lira<Either<L, T>> eitherSupplier(Supplier<? extends L> l);
 
     /**
      * Performs an action  for each element of this lira
@@ -592,7 +610,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return a new lira
      * @see #terminal(Function)
      */
-    Lira<T> distinct(EqualComparator<T> comparator);
+    Lira<T> distinct(EqualComparator<? super T> comparator);
 
     /**
      * use default {@link  Comparator}, {@code  {sorted(null)}}

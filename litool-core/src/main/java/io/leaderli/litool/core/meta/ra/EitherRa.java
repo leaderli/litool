@@ -11,9 +11,9 @@ import java.util.function.Supplier;
 public class EitherRa<L, T> extends Ra<Either<L, T>> {
 
     private final PublisherRa<T> prevPublisher;
-    private final Supplier<L> left;
+    private final Supplier<? extends L> left;
 
-    public EitherRa(PublisherRa<T> prevPublisher, Supplier<L> left) {
+    public EitherRa(PublisherRa<T> prevPublisher, Supplier<? extends L> left) {
         this.prevPublisher = prevPublisher;
         this.left = left;
     }

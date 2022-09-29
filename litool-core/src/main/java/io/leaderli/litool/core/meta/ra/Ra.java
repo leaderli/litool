@@ -72,10 +72,6 @@ public abstract class Ra<T> implements Lira<T> {
         return get(-1);
     }
 
-    @Override
-    public Lino<T> first(Function<? super T, ?> filter) {
-        return filter(filter).first();
-    }
 
     @Override
     public Lino<T> get(int index) {
@@ -187,7 +183,7 @@ public abstract class Ra<T> implements Lira<T> {
         return this;
     }
 
-    public <L> Lira<Either<L, T>> eitherSupplier(Supplier<L> left) {
+    public <L> Lira<Either<L, T>> eitherSupplier(Supplier<? extends L> left) {
         return new EitherRa<>(this, left);
     }
 
@@ -279,7 +275,7 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
-    public Lira<T> distinct(EqualComparator<T> comparator) {
+    public Lira<T> distinct(EqualComparator<? super T> comparator) {
 
         return terminal(list -> {
 
@@ -299,7 +295,7 @@ public abstract class Ra<T> implements Lira<T> {
         });
     }
 
-    private void addIfAbsent(EqualComparator<T> comparator, List<T> distinct, T t) {
+    private void addIfAbsent(EqualComparator<? super T> comparator, List<T> distinct, T t) {
         for (T di : distinct) {
 
             if (di != null && comparator.apply(t, di)) {
@@ -387,7 +383,8 @@ public abstract class Ra<T> implements Lira<T> {
     @Override
     public <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> mapper) {
         Map<K, V> result = new HashMap<>();
-        subscribe(new ConsumerSubscriber<>(e -> Lino.of(e).map(mapper).filter(tuple2 -> tuple2._1 != null).ifPresent(tuple2 -> result.put(tuple2._1, tuple2._2))));
+        subscribe(new ConsumerSubscriber<>(e -> Lino.of(e).map(mapper).filter(tuple2 -> tuple2._1 != null).ifPresent(tuple2 -> result.put(tuple2._1
+                , tuple2._2))));
         return result;
     }
 
