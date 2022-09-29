@@ -1,7 +1,5 @@
-package io.leaderli.litool.core.bit.concurrent;
+package io.leaderli.litool.core.concurrent;
 
-import io.leaderli.litool.core.concurrent.CatchFuture;
-import io.leaderli.litool.core.concurrent.CompletedCatchFuture;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

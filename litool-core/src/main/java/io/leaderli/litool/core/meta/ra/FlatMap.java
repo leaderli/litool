@@ -10,10 +10,10 @@ import java.util.function.Function;
 class FlatMap<T, R> extends Ra<R> {
 
 
-    private final Function<T, Iterator<R>> mapper;
+    private final Function<? super T, Iterator<? extends R>> mapper;
     private final PublisherRa<T> prevPublisher;
 
-    public FlatMap(PublisherRa<T> prevPublisher, Function<T, Iterator<R>> mapper) {
+    public FlatMap(PublisherRa<T> prevPublisher, Function<? super T, Iterator<? extends R>> mapper) {
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }

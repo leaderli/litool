@@ -74,7 +74,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <T>    the type of elements returned by this stream
      * @return the new lira
      */
-    static <T> Lira<T> of(Stream<T> stream) {
+    static <T> Lira<T> of(Stream<? extends T> stream) {
 
         return of(IterableItr.of(stream));
 
@@ -100,7 +100,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <T>         the type of elements returned by this iterableItr
      * @return the new lira
      */
-    static <T> Lira<T> of(IterableItr<T> iterableItr) {
+    static <T> Lira<T> of(IterableItr<? extends T> iterableItr) {
 
         if (iterableItr != null && iterableItr.hasNext()) {
 
@@ -124,7 +124,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <T>      the type of elements returned by this iterator
      * @return the new lira
      */
-    static <T> Lira<T> of(Iterator<T> iterator) {
+    static <T> Lira<T> of(Iterator<? extends T> iterator) {
 
         return of(IterableItr.of(iterator));
 
@@ -137,7 +137,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <T>      the type of elements returned by this iterable
      * @return the new lira
      */
-    static <T> Lira<T> of(Iterable<T> iterable) {
+    static <T> Lira<T> of(Iterable<? extends T> iterable) {
 
         if (iterable == null || !iterable.iterator().hasNext()) {
             return none();
@@ -154,7 +154,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param valueType the type of casted map value
      * @return the new lira
      */
-    <K, V> Lira<Map<K, V>> cast(Class<K> keyType, Class<V> valueType);
+    <K, V> Lira<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType);
 
     /**
      * Returns if this lira contains the specified element
@@ -183,14 +183,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * remove null element
-     *
-     * @return a new lira
-     * @see #filter(Function)
-     */
-    Lira<T> filter_null();
-
-    /**
      * filter the element beyond lira, the element will remain if  the result. the null element will be removed
      * {@link  Function#apply(Object)} parsed  by {@link  BooleanUtil#parse(Boolean)} is {@code  true}
      *
@@ -198,7 +190,15 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return a new lira
      * @see BooleanUtil#parse(Object)
      */
-    Lira<T> filter(Function<T, ?> filter);
+    Lira<T> filter(Function<? super T, ?> filter);
+
+    /**
+     * remove null element
+     *
+     * @return a new lira
+     * @see #filter(Function)
+     */
+    Lira<T> filter_null();
 
     /**
      * if lira {@link  #present()} return the lino of first element, otherwise return {@link  Lino#none()}
@@ -231,7 +231,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param filter the filter function
      * @return the first element  under lira
      */
-    Lino<T> first(Function<T, ?> filter);
+    Lino<T> first(Function<? super T, ?> filter);
 
     /**
      * if lira element at index is exists return the lino of index element, otherwise return
@@ -303,7 +303,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return a new lira
      * @see #flatMap(Function)
      */
-    <R> Lira<R> flatMap(Function<T, Iterator<R>> mapper);
+    <R> Lira<R> flatMap(Function<? super T, Iterator<? extends R>> mapper);
 
     /**
      * <pre>
@@ -314,7 +314,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <R>    the type of after unzip
      * @return a new lira of type R
      */
-    default <R> Lira<R> unzip(Function<T, Supplier<R>> mapper) {
+    default <R> Lira<R> unzip(Function<? super T, Supplier<? extends R>> mapper) {
         return map(mapper).map(Supplier::get);
     }
 
@@ -323,8 +323,23 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <R>    the type of after mapper
      * @return a new lira of type R
      */
-    <R> Lira<R> map(Function<T, R> mapper);
+    <R> Lira<R> map(Function<? super T, ? extends R> mapper);
 
+    /**
+     * when the error occurs will  perform {@link  SubscriberRa#next_null()} and
+     * {@link SubscriberRa#onError(Throwable, CancelSubscription)}
+     * <pre>
+     *     return throwable_map(mapper).map(Supplier::get)
+     * </pre>
+     *
+     * @param mapper the function accept element and return lino
+     * @param <R>    the type of after unzip
+     * @return a new lira of type R
+     * @see #throwable_map(ThrowableFunction)
+     */
+    default <R> Lira<R> throwable_unzip(ThrowableFunction<? super T, Supplier<? extends R>> mapper) {
+        return throwable_map(mapper).map(Supplier::get);
+    }
 
     /**
      * when the error occurs will  perform {@link  SubscriberRa#next_null()} and
@@ -336,7 +351,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @see #throwable_map(ThrowableFunction, Consumer)
      * @see LiConstant#WHEN_THROW
      */
-    <R> Lira<R> throwable_map(ThrowableFunction<T, R> mapper);
+    <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
 
     /**
      * when the error occurs will  perform {@link  SubscriberRa#next_null()} and
@@ -347,7 +362,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param whenThrow the consumer when {@link  ThrowableFunction#apply(Object)} throw
      * @return a new lira of type R
      */
-    <R> Lira<R> throwable_map(ThrowableFunction<T, R> mapper, Consumer<Throwable> whenThrow);
+    <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
 
     /**
      * a terminal action, trigger the lira to execute and store the element
@@ -366,14 +381,14 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @see BooleanUtil#parse(Object)
      */
 
-    Lira<T> takeWhile(Function<T, ?> filter);
+    Lira<T> takeWhile(Function<? super T, ?> filter);
 
     /**
      * @param filter drop element util filter is satisfied
      * @return a new lira
      * @see BooleanUtil#parse(Object)
      */
-    Lira<T> dropWhile(Function<T, ?> filter);
+    Lira<T> dropWhile(Function<? super T, ?> filter);
 
     default Lira<T> nullable(T supplier) {
         return nullable(() -> supplier);
@@ -386,7 +401,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param supplier provide a  new element
      * @return a result if call {@link  io.leaderli.litool.core.meta.ra.SubscriberRa#next_null()}
      */
-    Lira<T> nullable(Supplier<T> supplier);
+    Lira<T> nullable(Supplier<? extends T> supplier);
 
     /**
      * skip the first n element, only  accept the element after min
@@ -396,7 +411,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     Lira<T> skip(int min);
 
-    default Lira<T> assertTrue(Function<T, ?> filter) {
+    default Lira<T> assertTrue(Function<? super T, ?> filter) {
         return debug(new DebugConsumer<T>() {
 
             @Override
@@ -455,7 +470,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param alternate the iterator
      * @return lira
      */
-    Lira<T> or(Iterator<T> alternate);
+    Lira<T> or(Iterator<? extends T> alternate);
 
     /**
      * a terminal action, will call {@link  #present()} to judge the element at here
@@ -464,7 +479,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param alternate the iterable
      * @return lira
      */
-    Lira<T> or(Iterable<T> alternate);
+    Lira<T> or(Iterable<? extends T> alternate);
 
     /**
      * Performs a reduction on the element of this lira, using the associative accumulation functions,
@@ -592,7 +607,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return the new lira
      * @see #terminal(Function)
      */
-    Lira<T> sorted(Comparator<T> comparator);
+    Lira<T> sorted(Comparator<? super T> comparator);
 
     /**
      * use {@link  LiConstant#WHEN_THROW} as error consumer
@@ -603,7 +618,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @param action a  catchable action to perform on the elements
      */
-    void forThrowableEach(ThrowableConsumer<T> action);
+    void forThrowableEach(ThrowableConsumer<? super T> action);
 
     /**
      * <p>This is a terminal operation
@@ -611,7 +626,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param action    a  catchable action to perform on the elements
      * @param whenThrow use to perform on {@code action} throw an Throwable
      */
-    void forThrowableEach(ThrowableConsumer<T> action, Consumer<Throwable> whenThrow);
+    void forThrowableEach(ThrowableConsumer<? super T> action, Consumer<Throwable> whenThrow);
 
     /**
      * it's a terminal action
@@ -656,7 +671,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
         return get().toArray();
     }
 
-    <R> Lira<LiTuple2<T, R>> tuple(Function<T, R> mapper);
+    <R> Lira<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper);
 
 
     /**
@@ -702,7 +717,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return the new map
      */
 
-    <K, V> Map<K, V> toMap(Function<T, K> keyMapper, Function<T, V> valueMapper);
+    <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper);
 
     /**
      * Returns a map  consisting of the results of applying the given function to the elements of this stream
@@ -717,7 +732,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <V>    the type of  {@code Map} value
      * @return the new map
      */
-    <K, V> Map<K, V> toMap(Function<T, LiTuple2<K, V>> mapper);
+    <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> mapper);
 
 
 }
