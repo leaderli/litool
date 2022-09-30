@@ -279,7 +279,6 @@ class LinoTest {
     void tuple() {
 
 
-        Lino<LiTuple2<Integer, String>> liTuple2Lino = Lino.of(123).tuple2("123");
         Assertions.assertEquals(3, Lino.of("123").tuple(String::length).get()._2);
         Assertions.assertNull(Lino.of("123").tuple2(null).map(LiTuple2::_2).get());
         Assertions.assertNull(Lino.of((String) null).tuple(String::length).get());
