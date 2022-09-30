@@ -19,6 +19,7 @@
         <module>litool-config</module>
         <module>litool-json</module>
         <module>litool-test</module>
+        <module>litool-action</module>
     </modules>
 
 

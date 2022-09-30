@@ -20,6 +20,12 @@ class LiYamlConfigTest {
 
 
     @Test
+    void test() {
+        System.out.println(LiYamlConfig.loadResourcesYmlFiles("e.yml"));
+
+    }
+
+    @Test
     void checkYamlFormat() {
 
 

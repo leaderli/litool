@@ -27,6 +27,33 @@ class LiTestExtensionTest {
         Assertions.assertTrue(age < 3);
     }
 
+    @LiTest
+    void test3(@ObjectValues TestB testb) {
+        Assertions.assertNotNull(testb);
+    }
+
+    @LiTest
+    void test4(@ObjectValues TestA testA) {
+
+        new LiTestAssert<>((TestMatch<TestA>) testA1 -> true).test(testA);
+    }
+
+    private static class TestB {
+        @ObjectValues
+        TestA testA;
+
+        @IntValues({0, 1})
+        private int state;
+
+        @Override
+        public String toString() {
+            return "TestB{" +
+                    "testA=" + testA +
+                    ", state=" + state +
+                    '}';
+        }
+    }
+
     private static class TestA {
 
         @IntValues({1, 2})
@@ -40,6 +67,15 @@ class LiTestExtensionTest {
 
         public void have(@IntValues({10, 20}) int age) {
 
+        }
+
+        @Override
+        public String toString() {
+            return "TestA{" +
+                    "age=" + age +
+                    ", height=" + height +
+                    ", gender=" + gender +
+                    '}';
         }
     }
 

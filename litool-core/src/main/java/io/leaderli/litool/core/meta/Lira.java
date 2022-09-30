@@ -419,13 +419,13 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
             @Override
             public void accept(T e) {
                 if (!BooleanUtil.parse(filter.apply(e))) {
-                    throw new LiraRuntimeException();
+                    throw new LiraRuntimeException("assert fail of " + filter);
                 }
             }
 
             @Override
             public void onNull() {
-                throw new LiraRuntimeException();
+                throw new LiraRuntimeException("assert fail of " + filter);
             }
         });
     }

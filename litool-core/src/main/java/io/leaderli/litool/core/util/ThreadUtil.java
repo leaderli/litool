@@ -94,6 +94,16 @@ public class ThreadUtil {
         }
     }
 
+    public static String stackTrace(int width) {
+
+        StringBuilder sb = new StringBuilder();
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (int i = 2; i < width + 2; i++) {
+            sb.append(stackTrace[i]).append(System.lineSeparator());
+        }
+        return sb.toString();
+    }
+
     @SuppressWarnings("java:S2142")
     public static void join() {
         try {

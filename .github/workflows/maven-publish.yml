@@ -25,6 +25,11 @@ jobs:
         min-versions-to-keep: 0
     - uses: actions/delete-package-versions@v3
       with:   
+        package-name: 'io.leaderli.litool.litool-action'
+        ignore-versions: '^\\d+\\.\\d+\\.0$'
+        min-versions-to-keep: 0
+    - uses: actions/delete-package-versions@v3
+      with:   
         package-name: 'io.leaderli.litool.litool-config'
         ignore-versions: '^\\d+\\.\\d+\\.0$'
         min-versions-to-keep: 0
