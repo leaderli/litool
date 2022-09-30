@@ -3,6 +3,8 @@ package io.leaderli.litool.config;
 import io.leaderli.litool.core.concurrent.CatchFuture;
 import io.leaderli.litool.core.env.OSInfo;
 import io.leaderli.litool.core.lang.Shell;
+import io.leaderli.litool.core.resource.ResourceUtil;
+import io.leaderli.litool.core.text.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -62,13 +64,15 @@ class LiYamlConfigTest {
             bash = "\"D:\\ProgramFiles\\Git\\bin\\bash.exe\"";
         }
         CatchFuture<String> command = new Shell(new File("/")).command(bash, "-c", task);
-        System.out.println(command);
 
         String x = command.get(100, TimeUnit.MILLISECONDS);
-        if (!x.isEmpty()) {
+        Assertions.assertNotNull(x);
 
-            System.out.println(x);
-        }
-        Assertions.assertNotNull(command);
+
+        String script = StringUtils.read(ResourceUtil.getResourceAsStream("echo.sh"));
+
+        Assertions.assertEquals("123\n" +
+                "456", new Shell(new File("/")).bash(script).get());
+
     }
 }
