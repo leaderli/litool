@@ -8,7 +8,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author leaderli
@@ -17,15 +20,6 @@ import java.util.*;
 @SuppressWarnings("rawtypes")
 class LeanTest {
 
-
-    @Test
-    void test1() {
-
-        Lean lean = new Lean();
-
-        System.out.println(lean.fromBean(Arrays.asList(1, 2, 3), Object.class));
-
-    }
 
     Gson gson = new Gson();
 
