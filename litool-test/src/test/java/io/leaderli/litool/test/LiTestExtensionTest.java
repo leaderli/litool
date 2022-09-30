@@ -20,14 +20,14 @@ class LiTestExtensionTest {
         Assertions.assertNotNull(testA);
     }
 
-    //    @LiTest
+    @LiTest
     void test(@IntValues({1, 2}) int age, @IntValues({3, 4}) int size, @BooleanValues boolean have) {
 
 
         Assertions.assertTrue(age < 3);
     }
 
-    //    @LiTest
+    @LiTest
     void test3(@ObjectValues TestB testb) {
         Assertions.assertNotNull(testb);
     }
@@ -41,7 +41,10 @@ class LiTestExtensionTest {
     private static class TestB {
         @ObjectValues
         TestA testA;
-
+        @ObjectValues
+        TestA testb;
+        @ObjectValues
+        TestA testc;
         @IntValues({0, 1})
         private int state;
 
@@ -49,6 +52,8 @@ class LiTestExtensionTest {
         public String toString() {
             return "TestB{" +
                     "testA=" + testA +
+                    ", testb=" + testb +
+                    ", testc=" + testc +
                     ", state=" + state +
                     '}';
         }
