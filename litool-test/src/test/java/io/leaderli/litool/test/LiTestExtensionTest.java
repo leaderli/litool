@@ -10,29 +10,29 @@ import org.junit.jupiter.api.Assertions;
  * @since 2022/8/18 10:46 AM
  */
 class LiTestExtensionTest {
-    @LiTest
+    //    @LiTest
     void test(TestA testA) {
         Assertions.assertNull(testA);
     }
 
-    @LiTest
+    //    @LiTest
     void test2(@ObjectValues TestA testA) {
         Assertions.assertNotNull(testA);
     }
 
-    @LiTest
+    //    @LiTest
     void test(@IntValues({1, 2}) int age, @IntValues({3, 4}) int size, @BooleanValues boolean have) {
 
 
         Assertions.assertTrue(age < 3);
     }
 
-    @LiTest
+    //    @LiTest
     void test3(@ObjectValues TestB testb) {
         Assertions.assertNotNull(testb);
     }
 
-    @LiTest
+    //    @LiTest
     void test4(@ObjectValues TestA testA) {
 
         new LiTestAssert<>((TestMatch<TestA>) testA1 -> true).test(testA);
