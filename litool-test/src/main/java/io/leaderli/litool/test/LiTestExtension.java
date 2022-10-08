@@ -1,16 +1,19 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.collection.CollectionUtils;
+import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.test.CartesianContext;
 import io.leaderli.litool.core.test.CartesianMethodParameters;
-import io.leaderli.litool.core.util.ConsoleUtil;
-import org.junit.jupiter.api.extension.*;
+import io.leaderli.litool.core.type.ModifierUtil;
+import io.leaderli.litool.core.type.ReflectUtil;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
+import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
@@ -47,18 +50,44 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
 
         Lira<Object[]> cartesian = new CartesianMethodParameters(templateMethod, new CartesianContext()).cartesian();
 
-        ConsoleUtil.line();
 
-        for (Object[] objects : cartesian) {
-            System.out.println(Arrays.toString(objects));
+        Lino<Method> limock = ReflectUtil.getAnnotation(templateMethod, LiMock.class)
+                .map(LiMock::value)
+                .unzip(name -> ReflectUtil.getMethod(templateMethod.getDeclaringClass(), name));
+        if (limock.present()) {
+
+            limock.assertTrue(ModifierUtil::isStatic, "must be static method")
+                    .ifPresent(m -> ReflectUtil.getMethodValue(m, null));
         }
-        ConsoleUtil.line();
+
 
         // 返回多个 junit 执行案例
         for (Object[] parameters : cartesian) {
-            list.add(new MyTestTemplateInvocationContext(parameters));
+            Lira<Method> methods = Lira.of(LiMockCartesian.cache.keySet());
+
+            Object[][] objects = methods.map(LiMockCartesian.cache::get).toArray(Object[].class);
+            System.out.println(Arrays.deepToString(objects));
+            System.out.println(Arrays.deepToString(CollectionUtils.cartesian(objects)));
+
+            if (objects.length == 0) {
+                list.add(new LiTestTemplateInvocationContext(parameters, LiMockCartesian.mockClass, new HashMap<>()));
+            } else {
+
+                for (Object[] mapValues : CollectionUtils.cartesian(objects)) {
+
+
+                    AtomicInteger i = new AtomicInteger();
+                    Map<Method, Object> methodObjectMap = methods.toMap(m -> m, m -> mapValues[i.getAndIncrement()]);
+                    System.out.println(methodObjectMap);
+
+                    list.add(new LiTestTemplateInvocationContext(parameters, LiMockCartesian.mockClass, methodObjectMap));
+                }
+            }
         }
-        System.out.println(extensionContext.getDisplayName());
+//
+//        if (list.isEmpty()) {
+//            list.add(new MyTestTemplateInvocationContext());
+//        }
 
         return list.stream();
 
@@ -67,47 +96,3 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
 
 }
 
-class MyTestTemplateInvocationContext implements TestTemplateInvocationContext {
-    private final Object[] parameters;
-
-    MyTestTemplateInvocationContext(Object... parameters) {
-        this.parameters = parameters;
-    }
-
-    /**
-     * @param invocationIndex 执行案例编号
-     * @return 执行案例展示名
-     */
-    @Override
-    public String getDisplayName(int invocationIndex) {
-        return "li:" + Arrays.toString(parameters);
-    }
-
-    /**
-     * @return 执行案例的插件，可用于执行 {@link org.junit.jupiter.api.BeforeAll} ，填充参数等行为
-     */
-    @Override
-    public List<Extension> getAdditionalExtensions() {
-        return Collections.singletonList(new MyCartesianProductResolver(parameters));
-    }
-}
-
-class MyCartesianProductResolver implements ParameterResolver {
-
-    private final Object[] parameters;
-
-    MyCartesianProductResolver(Object[] parameters) {
-        this.parameters = parameters;
-    }
-
-    @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
-
-        return true;
-    }
-
-    @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
-        return parameters[parameterContext.getIndex()];
-    }
-}

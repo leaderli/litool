@@ -19,47 +19,15 @@ class LiTestExtensionTest {
 
     @LiTest
     void test2(@ObjectValues TestA testA) {
-        Assertions.assertNotNull(testA);
+        Assertions.assertTrue(testA.age >= 1);
     }
 
-    //    @LiTest
-    void test(@IntValues({1, 2}) int age, @IntValues({3, 4}) int size, @BooleanValues boolean have) {
-
+    @LiTest
+    void test(@IntValues({1, 2}) int age) {
 
         Assertions.assertTrue(age < 3);
     }
 
-    //    @LiTest
-    void test3(@ObjectValues TestB testb) {
-        Assertions.assertNotNull(testb);
-    }
-
-    //    @LiTest
-    void test4(@ObjectValues TestA testA) {
-
-        new LiTestAssert<>((TestMatch<TestA>) testA1 -> true).test(testA);
-    }
-
-    private static class TestB {
-        @ObjectValues
-        TestA testA;
-        @ObjectValues
-        TestA testb;
-        @ObjectValues
-        TestA testc;
-        @IntValues({0, 1})
-        private int state;
-
-        @Override
-        public String toString() {
-            return "TestB{" +
-                    "testA=" + testA +
-                    ", testb=" + testb +
-                    ", testc=" + testc +
-                    ", state=" + state +
-                    '}';
-        }
-    }
 
     private static class TestA {
 

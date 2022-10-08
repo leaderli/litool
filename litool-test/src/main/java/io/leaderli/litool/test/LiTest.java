@@ -14,7 +14,6 @@ import java.lang.annotation.Target;
  */
 @TestTemplate
 @ExtendWith(LiTestExtension.class)
-
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LiTest {

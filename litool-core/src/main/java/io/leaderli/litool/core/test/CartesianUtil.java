@@ -65,8 +65,8 @@ public class CartesianUtil {
     }
 
     /**
-     * Return a one element arr with cls def value, if the cls is not primitive it will
-     * try to return a new instance
+     * Return a one element arr with cls def value, if the cls is not primitive  the def value will be
+     * a new instance of cls or null
      *
      * @param cls a class
      * @param <T> the type parameter of class

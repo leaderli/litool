@@ -14,5 +14,6 @@ import java.lang.annotation.Target;
 @Valuable(ObjectCartesian.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface ObjectValues {
+
 }
 

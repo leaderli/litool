@@ -28,6 +28,9 @@ public class CartesianMethodParameters {
             return Lira.none();
         }
 
+        if (method.getParameters().length == 0) {
+            return Lira.of(new Object[1][0]);
+        }
         Object[][] parametersValues = Lira.of(method.getParameters())
                 .map(parameter -> CartesianUtil.cartesian(parameter, context))
                 .toArray(Object[].class);

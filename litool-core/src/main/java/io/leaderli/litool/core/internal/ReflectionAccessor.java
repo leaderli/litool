@@ -47,6 +47,8 @@ public abstract class ReflectionAccessor {
 
     /**
      * Does the same as {@code ao.setAccessible(true)}
+     *
+     * @param ao accessible obj
      */
     public abstract void makeAccessible(AccessibleObject ao);
 }

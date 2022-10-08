@@ -290,5 +290,8 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
 
 // -- Object
 
+    public static <K, V> LiTuple2<K, V> of(Map.Entry<K, V> entry) {
+        return LiTuple.of(entry.getKey(), entry.getValue());
+    }
 
 }
