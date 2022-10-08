@@ -5,6 +5,7 @@ import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.type.TypeUtil;
 
 import java.lang.annotation.Annotation;
@@ -64,12 +65,13 @@ public class CartesianUtil {
     }
 
     /**
-     * Return a one element arr with cls def value
+     * Return a one element arr with cls def value, if the cls is not primitive it will
+     * try to return a new instance
      *
      * @param cls a class
      * @param <T> the type parameter of class
      * @return a one element arr with cls def value
-     * @throws NumberFormatException if {@code  cls == null}
+     * @throws NullPointerException if {@code  cls == null}
      * @see PrimitiveEnum#zero_value
      */
     @SuppressWarnings("unchecked")
@@ -77,6 +79,9 @@ public class CartesianUtil {
 
         PrimitiveEnum primitive = PrimitiveEnum.get(cls);
         Object def = primitive.zero_value;
+        if (def == null) {
+            def = ReflectUtil.newInstance(cls).get();
+        }
         Object arr = Array.newInstance(ClassUtil.primitiveToWrapper(cls), 1);
         Array.set(arr, 0, def);
         return (T[]) arr;

@@ -3,8 +3,8 @@ package io.leaderli.litool.test;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.test.CartesianContext;
 import io.leaderli.litool.core.test.CartesianMethodParameters;
+import io.leaderli.litool.core.util.ConsoleUtil;
 import org.junit.jupiter.api.extension.*;
-import org.junit.platform.commons.util.AnnotationUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
+
+import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
 
 /**
  * @author leaderli
@@ -31,7 +33,7 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
         }
 
         return context.getTestMethod()
-                .map(testMethod -> AnnotationUtils.isAnnotated(testMethod, LiTest.class))
+                .map(testMethod -> isAnnotated(testMethod, LiTest.class))
                 .isPresent();
     }
 
@@ -44,13 +46,24 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
         List<TestTemplateInvocationContext> list = new ArrayList<>();
 
         Lira<Object[]> cartesian = new CartesianMethodParameters(templateMethod, new CartesianContext()).cartesian();
+
+        ConsoleUtil.line();
+
+        for (Object[] objects : cartesian) {
+            System.out.println(Arrays.toString(objects));
+        }
+        ConsoleUtil.line();
+
         // 返回多个 junit 执行案例
         for (Object[] parameters : cartesian) {
             list.add(new MyTestTemplateInvocationContext(parameters));
         }
+        System.out.println(extensionContext.getDisplayName());
 
         return list.stream();
+
     }
+
 
 }
 

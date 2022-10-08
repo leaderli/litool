@@ -50,20 +50,23 @@ public class CartesianObject<T> {
                 });
 
 
-        Object[][] objects = fields
+        if (fields.absent()) {
+            return Lira.of(instance);
+        }
+        Object[][] fieldsValues = fields
                 .map(fieldValueProvider)
                 .toArray(Object[].class);
 
-        Object[][] cartesian = CollectionUtils.cartesian(objects);
+        Object[][] objectsValues = CollectionUtils.cartesian(fieldsValues);
 
-        return Lira.of(cartesian).map(arr -> {
+        return Lira.of(objectsValues).map(fieldsValue -> {
 
             T obj = ReflectUtil.newInstance(cls).get();
 
             int i = 0;
             for (Field field : fields) {
 
-                ReflectUtil.setFieldValue(obj, field, arr[i++]);
+                ReflectUtil.setFieldValue(obj, field, fieldsValue[i++]);
             }
             return obj;
         });

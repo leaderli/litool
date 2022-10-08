@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * @author leaderli
@@ -25,13 +26,19 @@ class CartesianMethodParametersTest {
         CartesianMethodParameters cartesianMethodParameters = new CartesianMethodParameters(method, context);
         Lira<Object[]> parametersLira = cartesianMethodParameters.cartesian();
 
+        System.out.println(parametersLira.size());
         for (Object[] parameters : parametersLira) {
-            Assertions.assertDoesNotThrow(() -> ReflectUtil.getMethodValue(method, this, parameters));
+            System.out.println(Arrays.toString(parameters));
+            Assertions.assertTrue(ReflectUtil.getMethodValue(method, this, parameters).present());
         }
 
     }
 
-    public int have(@IntValues({10, 20}) int length, @IntValues({3, 4}) int width, @ObjectValues Class<?> ignore) {
+    public int have(@IntValues({10, 20}) int length, @IntValues({3, 4}) int width, @ObjectValues Bean v) {
         return length * width;
+    }
+
+    private static class Bean {
+
     }
 }
