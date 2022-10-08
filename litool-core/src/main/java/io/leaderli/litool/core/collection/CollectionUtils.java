@@ -1,7 +1,11 @@
 package io.leaderli.litool.core.collection;
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.LiTuple;
+import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
+import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -192,6 +196,27 @@ public class CollectionUtils {
         b.forEach(raw::add);
 
         return Lira.of(raw).distinct();
+
+    }
+
+    /**
+     * @param t1   arr 1
+     * @param t2   arr 2
+     * @param <T1> the type of t1
+     * @param <T2> the type of t2
+     * @return combine two same length arr  as a lira of {@link LiTuple2}
+     */
+    public static <T1, T2> Lira<LiTuple2<T1, T2>> tuple(T1[] t1, T2[] t2) {
+
+        ObjectsUtil.requireNotNull(t1, t2);
+        LiAssertUtil.assertTrue(t1.length == t2.length);
+
+        List<LiTuple2<T1, T2>> list = new ArrayList<>();
+        for (int i = 0; i < t1.length; i++) {
+
+            list.add(LiTuple.of(t1[i], t2[i]));
+        }
+        return Lira.of(list);
 
     }
 

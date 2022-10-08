@@ -12,7 +12,10 @@ import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -66,8 +69,8 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
             Lira<Method> methods = Lira.of(LiMockCartesian.cache.keySet());
 
             Object[][] objects = methods.map(LiMockCartesian.cache::get).toArray(Object[].class);
-            System.out.println(Arrays.deepToString(objects));
-            System.out.println(Arrays.deepToString(CollectionUtils.cartesian(objects)));
+//            System.out.println(Arrays.deepToString(objects));
+//            System.out.println(Arrays.deepToString(CollectionUtils.cartesian(objects)));
 
             if (objects.length == 0) {
                 list.add(new LiTestTemplateInvocationContext(parameters, LiMockCartesian.mockClass, new HashMap<>()));
@@ -77,8 +80,9 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
 
 
                     AtomicInteger i = new AtomicInteger();
-                    Map<Method, Object> methodObjectMap = methods.toMap(m -> m, m -> mapValues[i.getAndIncrement()]);
-                    System.out.println(methodObjectMap);
+                    Map<Method, Object> methodObjectMap = CollectionUtils.tuple(methods.toArray(Method.class), mapValues).toMap(l -> l);
+                    System.out.println("---->" + methodObjectMap);
+//                    System.out.println(methodObjectMap);
 
                     list.add(new LiTestTemplateInvocationContext(parameters, LiMockCartesian.mockClass, methodObjectMap));
                 }

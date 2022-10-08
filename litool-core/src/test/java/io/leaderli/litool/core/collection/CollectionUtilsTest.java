@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.collection;
 
+import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,15 @@ import java.util.List;
  */
 class CollectionUtilsTest {
 
+
+    @Test
+    void tuple() {
+
+        String[] s1 = new String[]{"a", "b"};
+        Integer[] s2 = new Integer[]{1, 2};
+
+        Assertions.assertEquals(Lira.of(LiTuple.of("a", 1), LiTuple.of("b", 2)), CollectionUtils.tuple(s1, s2));
+    }
 
     @SuppressWarnings("ConstantConditions")
     @Test
