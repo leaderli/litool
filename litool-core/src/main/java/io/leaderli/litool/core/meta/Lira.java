@@ -676,9 +676,10 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     @SuppressWarnings("unchecked")
     default T[] toArray(Class<? super T> type) {
-        Object[] zero = ClassUtil.newWrapperArray(type, 0);
 
-        return (T[]) cast(type).get().toArray(zero);
+        Object[] objects = cast(type).toArray();
+        Class<T[]> arrayClass = (Class<T[]>) ClassUtil.getArrayClass(ClassUtil.primitiveToWrapper(type));
+        return Arrays.copyOf(objects, objects.length, arrayClass);
     }
 
 
@@ -750,8 +751,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     @SuppressWarnings("unchecked")
     default T[] toNullableArray(Class<? super T> type) {
-        Object[] zero = ClassUtil.newWrapperArray(type, 0);
-        return (T[]) cast(type).nullableGet().toArray(zero);
+        Object[] objects = cast(type).toNullableArray();
+        Class<T[]> arrayClass = (Class<T[]>) ClassUtil.getArrayClass(ClassUtil.primitiveToWrapper(type));
+        return Arrays.copyOf(objects, objects.length, arrayClass);
     }
 
     <R> Lira<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper);
