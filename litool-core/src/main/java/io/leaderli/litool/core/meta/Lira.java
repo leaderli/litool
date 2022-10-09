@@ -674,12 +674,13 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param type the array type
      * @return an array containing the elements in this lira
      */
-    @SuppressWarnings("unchecked")
-    default T[] toArray(Class<? super T> type) {
+    default <R> R[] toArray(Class<R> type) {
 
-        Object[] objects = cast(type).toArray();
-        Class<T[]> arrayClass = (Class<T[]>) ClassUtil.getArrayClass(ClassUtil.primitiveToWrapper(type));
-        return Arrays.copyOf(objects, objects.length, arrayClass);
+        Object[] original = cast(type).toArray();
+
+        R[] copy = ClassUtil.newWrapperArray(type, original.length);
+        System.arraycopy(original, 0, copy, 0, original.length);
+        return copy;
     }
 
 

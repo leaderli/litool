@@ -393,13 +393,14 @@ class LiraTest {
 
             Number[] nums4 = Lira.of(1, 2, 3, 4.0).cast(Integer.class).toArray(Integer.class);
             Number[] nums5 = Lira.of(1, 2, 3).toArray(int.class);
-            Number[] nums6 = Lira.of(1, 2, 3, 4.0).toArray(Number.class);
+            Number[] nums6 = Lira.of(1, 2, 3, 4.0).toArray();
         });
 
-        Number[] nums7 = Lira.of(1, 2, 3).toArray(Number.class);
-        Assertions.assertSame(Number[].class, nums7.getClass());
+        Integer[] nums7 = Lira.of(1, 2, 3).toArray(Integer.class);
+        Assertions.assertSame(Integer[].class, nums7.getClass());
         Assertions.assertEquals(4, Lira.of(1, 2, 3, null).toNullableArray().length);
         Assertions.assertEquals(4, Lira.of(1, 2, 3, null).toNullableArray(int.class).length);
+        Integer[] nums4 = Lira.of(1, 2, 3, 4.0).cast(Integer.class).toArray(Integer.class);
 
 
         Integer[][] numArr = Lira.of(ArrayUtils.of(1, 2), ArrayUtils.of(3, 4)).toArray(Integer[].class);
