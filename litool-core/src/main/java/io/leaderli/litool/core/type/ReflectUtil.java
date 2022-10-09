@@ -423,12 +423,12 @@ public class ReflectUtil {
      * @param args the args of method
      * @return return value that method return, if method is void, it always return {@code null}
      */
-    public static Lino<?> getMethodValueByName(Object obj, String name, Object... args) {
+    public static Lino<?> invokeMethodByName(Object obj, String name, Object... args) {
 
         if (obj == null || name == null) {
             return Lino.none();
         }
-        return ReflectUtil.getMethod(obj.getClass(), name).unzip(method -> getMethodValue(method, obj, args));
+        return ReflectUtil.getMethod(obj.getClass(), name).unzip(method -> invokeMethod(method, obj, args));
     }
 
     /**
@@ -477,8 +477,8 @@ public class ReflectUtil {
      * @param args   the args of method
      * @return return value that method return, if method is void, it always return {@code null}
      */
-    
-    public static Lino<?> getMethodValue(Method method, Object obj, Object... args) {
+
+    public static Lino<?> invokeMethod(Method method, Object obj, Object... args) {
 
         if (method == null) {
             return Lino.none();

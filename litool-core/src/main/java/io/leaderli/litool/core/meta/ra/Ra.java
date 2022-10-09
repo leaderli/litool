@@ -356,6 +356,14 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
+    public final List<T> nullableGet() {
+
+        List<T> result = new ArrayList<>();
+        nullableIterator().forEachRemaining(result::add);
+        return result;
+    }
+
+    @Override
     public <R> Lira<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper) {
         return new TupleRa<>(this, mapper);
     }

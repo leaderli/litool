@@ -35,7 +35,7 @@ public abstract class ElementCheckVisitor<T extends SaxBean> extends CheckVisito
 
                 .filter(MethodUtil::notObjectMethod)
                 .filter(m -> !ClassUtil.isPrimitiveOrWrapper(m.getReturnType()))
-                .map(m -> ReflectUtil.getMethodValue(m, saxBean).get());
+                .map(m -> ReflectUtil.invokeMethod(m, saxBean).get());
 
         for (Object obj : lira) {
             visitor.check(obj, saxBean);

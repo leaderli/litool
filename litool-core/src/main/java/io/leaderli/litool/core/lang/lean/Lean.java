@@ -54,7 +54,7 @@ public class Lean {
     private static List<LeanFieldKey> defaultLeanKeyHandlers() {
         LeanFieldKey leanKey = field -> ReflectUtil.getAnnotation(field, LeanKey.class).map(LeanKey::value).get();
         LeanFieldKey fieldName = Field::getName;
-        return CollectionUtils.of(leanKey, fieldName);
+        return CollectionUtils.ofs(leanKey, fieldName);
     }
 
     /**

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 /**
  * @author leaderli
@@ -168,6 +169,19 @@ class ArrayUtilsTest {
     @Test
     void toArray() {
 
-        Assertions.assertArrayEquals(new Integer[]{1, 2}, ArrayUtils.toArray(Arrays.asList(1, 2)));
+        Number[] objects = ArrayUtils.toArray(1, 1.0);
+
+        Integer[] actual = ArrayUtils.toArray(Arrays.asList(1, 2).iterator());
+        Assertions.assertArrayEquals(new Integer[]{1, 2}, actual);
+
+        actual = ArrayUtils.toArray(Stream.of(1, 2));
+        Assertions.assertArrayEquals(new Integer[]{1, 2}, actual);
+
+        actual = ArrayUtils.toArray(Arrays.asList(1, 2));
+        Assertions.assertArrayEquals(new Integer[]{1, 2}, actual);
+
+        Integer[][] lists = ArrayUtils.toArray(new Integer[]{1, 2}, new Integer[]{3, 4});
+        Assertions.assertArrayEquals(new Integer[][]{new Integer[]{1, 2}, new Integer[]{3, 4}}, lists);
+
     }
 }

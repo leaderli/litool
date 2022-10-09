@@ -9,6 +9,7 @@ import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * <p> Operations on collection
@@ -76,13 +77,51 @@ public class CollectionUtils {
      * @return the list
      */
     @SafeVarargs
-    public static <T> List<T> of(T... elements) {
+    public static <T> List<T> ofs(T... elements) {
 
         List<T> arrayList = new ArrayList<>();
-        if (elements != null) {
-            Collections.addAll(arrayList, elements);
-        }
+        Collections.addAll(arrayList, elements);
         return arrayList;
+    }
+
+    /**
+     * Of list.
+     *
+     * @param <T>      the type parameter
+     * @param iterator the iterator
+     * @return the list
+     */
+    public static <T> List<T> of(Iterator<T> iterator) {
+        List<T> list = new ArrayList<>();
+        forEach(iterator, list::add);
+        return list;
+    }
+
+    public static <T> void forEach(Iterator<T> iterator, Consumer<T> consumer) {
+        iterator.forEachRemaining(consumer);
+    }
+
+    /**
+     * Of list.
+     *
+     * @param <T>      the type parameter
+     * @param iterable the iterable
+     * @return the list
+     */
+    public static <T> List<T> of(Iterable<T> iterable) {
+        List<T> list = new ArrayList<>();
+        forEach(iterable, list::add);
+        return list;
+    }
+
+    public static <T> void forEach(Iterable<T> iterable, Consumer<T> consumer) {
+        iterable.forEach(consumer);
+    }
+
+    public static <T> void forEach(Enumeration<T> enumeration, Consumer<T> consumer) {
+        while (enumeration.hasMoreElements()) {
+            consumer.accept(enumeration.nextElement());
+        }
     }
 
     /**
@@ -116,7 +155,7 @@ public class CollectionUtils {
             if (result.length == 0) {
                 return new Object[0][];
             }
-            Object[] right = Lira.of(elements[0]).distinct().toArray();
+            Object[] right = Lira.of(elements[0]).distinct().toNullableArray();
             Object[][] temps = new Object[result.length * right.length][];
 
             int i = 0;

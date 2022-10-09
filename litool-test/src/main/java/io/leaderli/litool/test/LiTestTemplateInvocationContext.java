@@ -1,15 +1,12 @@
 package io.leaderli.litool.test;
 
-import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.PrimitiveEnum;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
-import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
-import org.junit.jupiter.api.extension.Extension;
-import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
+import org.junit.jupiter.api.extension.*;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -18,71 +15,85 @@ import java.util.Map;
 
 class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
     private final Object[] parameters;
-    private final Iterable<Class<?>> mocks;
-    private final Map<Method, Object> cache;
+    private final Class<?>[] mockClasses;
+    private final Map<Method, Object> methodValue;
     private final ByteBuddy byteBuddy = new ByteBuddy();
 
-    LiTestTemplateInvocationContext(Object[] parameters, Iterable<Class<?>> mocks, Map<Method, Object> cache) {
+    LiTestTemplateInvocationContext(Object[] parameters, Class<?>[] mockClasses, Map<Method, Object> methodValue) {
         this.parameters = parameters;
-        this.mocks = mocks;
-        this.cache = cache;
+        this.mockClasses = mockClasses;
+        this.methodValue = methodValue;
     }
 
-    /**
-     * @param invocationIndex 执行案例编号
-     * @return 执行案例展示名
-     */
     @Override
     public String getDisplayName(int invocationIndex) {
 
 
-        return "li:" + Arrays.toString(parameters) + " " + Lira.of(cache.entrySet())
-                .map(LiTuple2::of)
-                .map(tu2 -> tu2.map1(Method::getName))
-                .toMap(t -> t);
+        Map<String, Object> nameValue = Lira.of(methodValue.entrySet())
+                .toMap(e -> e.getKey().getName(), Map.Entry::getValue);
+        return "li:" + invocationIndex + " " + Arrays.toString(parameters) + " " + nameValue;
 
     }
 
     /**
-     * @return 执行案例的插件，可用于执行 {@link org.junit.jupiter.api.BeforeAll} ，填充参数等行为
+     * @return the extension that used in test execution
+     * @see ExtendWith
      */
     @Override
     public List<Extension> getAdditionalExtensions() {
-        return Arrays.asList((BeforeTestExecutionCallback) context -> {
 
+        //redefine mockClass mock method returnValue
+        BeforeTestExecutionCallback beforeTestExecutionCallback = context -> {
 
-            for (Class<?> mock : mocks) {
-                byteBuddy.rebase(mock)
+            for (Class<?> mockClass : mockClasses) {
+                byteBuddy.redefine(mockClass)
                         .visit(Advice.to(MockMethodAdvice.class).on(target ->
-                                Lira.of(cache.keySet()).filter(target::represents).present()
+                                Lira.of(methodValue.keySet()).filter(target::represents).present()
                         ))
 
                         .make()
-                        .load(mock.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
+                        .load(mockClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
             }
-            MockMethodAdvice.cache = cache;
-        }, (AfterTestExecutionCallback) context -> {
-            for (Class<?> mock : mocks) {
-                byteBuddy.rebase(mock)
+            MockMethodAdvice.methodValue.set(methodValue);
+        };
+
+        // reset mockClass to origin after test executed
+        AfterTestExecutionCallback afterTestExecutionCallback = context -> {
+            for (Class<?> mockClass : mockClasses) {
+                byteBuddy.redefine(mockClass)
                         .make()
-                        .load(mock.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
+                        .load(mockClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
 
             }
 
-        }, new LiCartesianProductResolver(parameters));
+        };
+        LiCartesianParameterResolver liCartesianParameterResolver = new LiCartesianParameterResolver(parameters);
+
+        return Arrays.asList(beforeTestExecutionCallback, afterTestExecutionCallback, liCartesianParameterResolver);
     }
 
     public static class MockMethodAdvice {
-        public static Map<Method, Object> cache;
 
-        @SuppressWarnings("UnusedAssignment")
+        public static ThreadLocal<Map<Method, Object>> methodValue = new ThreadLocal<>();
+
+        @SuppressWarnings("all")
+        @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
+        public static Object enter(@Advice.Origin Method origin) {
+
+            Object value = methodValue.get().get(origin);
+            if (value == null && origin.getReturnType().isPrimitive()) {
+                return PrimitiveEnum.get(origin.getReturnType()).zero_value;
+            }
+            return value;
+        }
+
+        @SuppressWarnings("all")
         @Advice.OnMethodExit
-        public static void enter(
-                @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object ret,
-                @Advice.Origin Method origin,
-                @Advice.AllArguments Object[] arguments) {
+        public static void exit(
+                @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object _return,
+                @Advice.Enter Object mock) {
 
-            ret = cache.get(origin);
+            _return = mock;
         }
     }
 

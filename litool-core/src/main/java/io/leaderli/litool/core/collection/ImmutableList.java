@@ -138,6 +138,6 @@ public class ImmutableList<T> implements Iterable<T> {
      * @return convert to {@link  java.util.ArrayList}
      */
     public List<T> toList() {
-        return CollectionUtils.of(elements);
+        return CollectionUtils.ofs(elements);
     }
 }

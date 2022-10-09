@@ -72,7 +72,7 @@ public class MetaAnnotation<A extends Annotation, F extends MetaFunction<? exten
 
     @SuppressWarnings("unchecked")
     private F createBy(Annotation annotated, A metaInstance) {
-        return (F) ReflectUtil.getMethodValueByName(metaInstance, "value")
+        return (F) ReflectUtil.invokeMethodByName(metaInstance, "value")
                 .cast(Class.class)
                 .unzip(ReflectUtil::newInstance)
                 .cast(functionType)

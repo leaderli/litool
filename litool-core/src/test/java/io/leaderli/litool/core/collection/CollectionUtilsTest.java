@@ -129,9 +129,15 @@ class CollectionUtilsTest {
     @Test
     void of() {
 
-        Assertions.assertTrue(CollectionUtils.of().isEmpty());
-        Assertions.assertTrue(CollectionUtils.of((Object[]) null).isEmpty());
-        Assertions.assertSame(1, CollectionUtils.of(1).size());
+        Assertions.assertTrue(CollectionUtils.ofs().isEmpty());
+        List<Integer> of = CollectionUtils.ofs(1);
+        Assertions.assertSame(1, of.size());
+
+        Assertions.assertNotSame(of, CollectionUtils.of(of));
+        Assertions.assertNotSame(of, CollectionUtils.of(of.iterator()));
+        Assertions.assertEquals(of, CollectionUtils.of(of));
+        Assertions.assertEquals(of, CollectionUtils.of(of.iterator()));
+
     }
 
     @Test
@@ -169,6 +175,8 @@ class CollectionUtilsTest {
         Assertions.assertEquals(1, lists.length);
 
 
+        lists = CollectionUtils.cartesian(ArrayUtils.of(1, 2), ArrayUtils.of(null, 3));
+        Assertions.assertEquals(4, lists.length);
     }
 
 

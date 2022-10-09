@@ -1,7 +1,8 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.collection.CollectionUtils;
-import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.test.CartesianContext;
 import io.leaderli.litool.core.test.CartesianMethodParameters;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
@@ -47,51 +47,44 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext extensionContext) {
 
 
+        LiMockCartesian.clear();
         Method templateMethod = extensionContext.getRequiredTestMethod();
 
         List<TestTemplateInvocationContext> list = new ArrayList<>();
 
-        Lira<Object[]> cartesian = new CartesianMethodParameters(templateMethod, new CartesianContext()).cartesian();
+        Lira<Object[]> parameterCartesian = new CartesianMethodParameters(templateMethod, new CartesianContext()).cartesian();
 
 
-        Lino<Method> limock = ReflectUtil.getAnnotation(templateMethod, LiMock.class)
+        ReflectUtil.getAnnotation(templateMethod, LiMock.class)
                 .map(LiMock::value)
-                .unzip(name -> ReflectUtil.getMethod(templateMethod.getDeclaringClass(), name));
-        if (limock.present()) {
+                .unzip(name -> ReflectUtil.getMethod(templateMethod.getDeclaringClass(), name))
+                .ifPresent(staticInitMethod -> {
+                    LiAssertUtil.assertTrue(ModifierUtil.isStatic(staticInitMethod), "must be static method");
+                    ReflectUtil.invokeMethod(staticInitMethod, null);
+                });
 
-            limock.assertTrue(ModifierUtil::isStatic, "must be static method")
-                    .ifPresent(m -> ReflectUtil.getMethodValue(m, null));
-        }
 
+        Object[] classes = ArrayUtils.toArray(LiMockCartesian.mockClass);
+        Class<?>[] mockClasses = classes.length == 0 ? new Class[0] : (Class<?>[]) classes;
+        Lira<Method> methods = Lira.of(LiMockCartesian.methodValues.keySet());
+        Object[][] testScenario = CollectionUtils.cartesian(methods.map(LiMockCartesian.methodValues::get).toArray(Object[].class));
 
-        // 返回多个 junit 执行案例
-        for (Object[] parameters : cartesian) {
-            Lira<Method> methods = Lira.of(LiMockCartesian.cache.keySet());
+        for (Object[] parameters : parameterCartesian) {
+            if (testScenario.length == 0) {
 
-            Object[][] objects = methods.map(LiMockCartesian.cache::get).toArray(Object[].class);
-//            System.out.println(Arrays.deepToString(objects));
-//            System.out.println(Arrays.deepToString(CollectionUtils.cartesian(objects)));
-
-            if (objects.length == 0) {
-                list.add(new LiTestTemplateInvocationContext(parameters, LiMockCartesian.mockClass, new HashMap<>()));
+                list.add(new LiTestTemplateInvocationContext(parameters, mockClasses, new HashMap<>()));
             } else {
 
-                for (Object[] mapValues : CollectionUtils.cartesian(objects)) {
 
+                for (Object[] scenario : testScenario) {
 
-                    AtomicInteger i = new AtomicInteger();
-                    Map<Method, Object> methodObjectMap = CollectionUtils.tuple(methods.toArray(Method.class), mapValues).toMap(l -> l);
-                    System.out.println("---->" + methodObjectMap);
-//                    System.out.println(methodObjectMap);
-
-                    list.add(new LiTestTemplateInvocationContext(parameters, LiMockCartesian.mockClass, methodObjectMap));
+                    Map<Method, Object> methodValue = CollectionUtils.tuple(methods.toArray(Method.class), scenario).toMap(l -> l);
+                    list.add(new LiTestTemplateInvocationContext(parameters, mockClasses, methodValue));
                 }
             }
         }
-//
-//        if (list.isEmpty()) {
-//            list.add(new MyTestTemplateInvocationContext());
-//        }
+
+        LiMockCartesian.clear();
 
         return list.stream();
 

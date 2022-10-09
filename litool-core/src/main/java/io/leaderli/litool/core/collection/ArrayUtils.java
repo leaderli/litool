@@ -1068,11 +1068,18 @@ public class ArrayUtils {
      * @param <T>      the type of elements that iterable provide
      * @return Returns an array over the elements that iterable provide of type {@code T}.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Iterable<T> iterable) {
         List<T> list = new ArrayList<>();
         iterable.forEach(list::add);
-        return (T[]) list.toArray();
+        return toArray(list.toArray());
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[] toArray(Object... src) {
+        Class<?> commonSuperType = ClassUtil.getRecentlyInheritance(src);
+        T[] des = (T[]) ClassUtil.newWrapperArray(commonSuperType, src.length);
+        System.arraycopy(src, 0, des, 0, src.length);
+        return des;
     }
 
     /**
@@ -1082,9 +1089,9 @@ public class ArrayUtils {
      * @param <T>    the type of elements that stream provide
      * @return Returns an array over the elements that stream provide of type {@code T}.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Stream<T> stream) {
-        return (T[]) stream.toArray();
+        return toArray(stream.toArray());
+
     }
 
     /**
@@ -1094,12 +1101,10 @@ public class ArrayUtils {
      * @param <T>      the type of elements that iterator provide
      * @return Returns an array over the elements that iterator provide of type {@code T}.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Iterator<T> iterator) {
         List<T> list = new ArrayList<>();
         iterator.forEachRemaining(list::add);
-
-        return (T[]) list.toArray();
+        return toArray(list.toArray());
     }
 
     /**
@@ -1110,7 +1115,6 @@ public class ArrayUtils {
      * @return Returns an array over the elements that enumeration provide of type {@code T}.
      */
 
-    @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Enumeration<T> enumeration) {
         List<T> list = new ArrayList<>();
 
@@ -1118,6 +1122,6 @@ public class ArrayUtils {
             list.add(enumeration.nextElement());
         }
 
-        return (T[]) list.toArray();
+        return toArray(list.toArray());
     }
 }

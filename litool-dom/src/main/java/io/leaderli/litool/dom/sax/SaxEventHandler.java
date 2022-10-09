@@ -56,7 +56,7 @@ public interface SaxEventHandler {
                                 && get.getParameterCount() == 0
                                 && ClassUtil.isAssignableFromOrIsWrapper(SaxBean.class, get.getReturnType()));
                 methodScanner.scan().first()
-                        .ifPresent(get -> LiAssertUtil.assertTrue(ReflectUtil.getMethodValue(get, this).absent(),
+                        .ifPresent(get -> LiAssertUtil.assertTrue(ReflectUtil.invokeMethod(get, this).absent(),
                                 String.format("%s:%s already inited", getClass().getSimpleName(), tag)));
 
 

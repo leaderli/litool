@@ -53,7 +53,7 @@ public abstract class CheckVisitor extends VisitorAdapter {
 
         // 调用于obj类型相同的校验器进行校验
         Method method = specific_check.get(obj.getClass());
-        ReflectUtil.getMethodValue(method, this, obj, saxBean);
+        ReflectUtil.invokeMethod(method, this, obj, saxBean);
     }
 
 }

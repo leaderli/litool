@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.meta.LiTuple;
@@ -10,6 +11,7 @@ import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.io.File;
 import java.lang.reflect.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,6 +138,84 @@ public class ClassUtil {
             return null;
         }
         return obj.getClass().getComponentType();
+    }
+
+    /**
+     * @param a class a
+     * @param b class b
+     * @return get two class most recent inheritance, if any one is null, return the other
+     */
+    public static Class<?> getRecentlyInheritance(Class<?> a, Class<?> b) {
+
+        if (a == null) {
+            if (b == null) {
+                return Object.class;
+            }
+            return b;
+        }
+        if (b == null) {
+            return a;
+        }
+        if (a == Object.class || b == Object.class) {
+            return Object.class;
+        }
+
+        if (a.isArray()) {
+            if (b.isArray()) {
+                return getArrayClass(getRecentlyInheritance(a.getComponentType(), b.getComponentType()));
+            }
+            return Object.class;
+        }
+
+        if (a == b) {
+            return a;
+        }
+        if (a.isPrimitive()) {
+            return Object.class;
+        }
+        List<Class<?>> aList = new ArrayList<>();
+        List<Class<?>> bList = new ArrayList<>();
+
+        while (a != Object.class) {
+            aList.add(a);
+            a = a.getSuperclass();
+        }
+        while (b != Object.class) {
+            bList.add(b);
+            b = b.getSuperclass();
+        }
+
+        return Lira.of(CollectionUtils.intersection(aList, bList)).first().get(Object.class);
+    }
+
+    /**
+     * @param arr the arr
+     * @return get array elements most recent inheritance, if element is null, just ignore it
+     */
+    public static Class<?> getRecentlyInheritance(Object[] arr) {
+        if (arr == null || arr.length == 0) {
+            return Object.class;
+        }
+        Class<?> result = null;
+
+        for (Object o : arr) {
+            if (o != null) {
+                Class<?> elementType = o.getClass();
+
+                if (elementType == null) {
+                    continue;
+                }
+                result = getRecentlyInheritance(result, elementType);
+
+                if (result == Object.class) {
+                    break;
+                }
+
+            }
+        }
+
+        return result;
+
     }
 
     /**

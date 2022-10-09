@@ -207,16 +207,16 @@ class ReflectUtilTest {
         Method m1 = ReflectUtil.getMethod(Static.class, "m1").get();
         Method m2 = ReflectUtil.getMethod(Static.class, "m2").get();
         Method m3 = ReflectUtil.getMethod(Static.class, "m3").get();
-        assertEquals(1, ReflectUtil.getMethodValue(m1, null).get());
-        assertEquals(2, ReflectUtil.getMethodValue(m2, null).get());
-        assertEquals(null, ReflectUtil.getMethodValue(m3, null, null).get());
-        assertEquals(2, ReflectUtil.getMethodValue(m3, null, 2).get());
-        assertEquals(null, ReflectUtil.getMethodValue(m3, null, 1, 2).get());
+        assertEquals(1, ReflectUtil.invokeMethod(m1, null).get());
+        assertEquals(2, ReflectUtil.invokeMethod(m2, null).get());
+        assertEquals(null, ReflectUtil.invokeMethod(m3, null, null).get());
+        assertEquals(2, ReflectUtil.invokeMethod(m3, null, 2).get());
+        assertEquals(null, ReflectUtil.invokeMethod(m3, null, 1, 2).get());
 
-        assertEquals(1, ReflectUtil.getMethodValueByName(new Static(), "m1", null).get());
-        assertEquals(2, ReflectUtil.getMethodValueByName(new Static(), "m2", null).get());
-        assertEquals(null, ReflectUtil.getMethodValueByName(new Static(), "m3").get());
-        assertEquals(2, ReflectUtil.getMethodValueByName(new Static(), "m3", 2).get());
+        assertEquals(1, ReflectUtil.invokeMethodByName(new Static(), "m1", null).get());
+        assertEquals(2, ReflectUtil.invokeMethodByName(new Static(), "m2", null).get());
+        assertEquals(null, ReflectUtil.invokeMethodByName(new Static(), "m3").get());
+        assertEquals(2, ReflectUtil.invokeMethodByName(new Static(), "m3", 2).get());
     }
 
     public static class Out {

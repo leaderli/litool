@@ -94,7 +94,7 @@ public class ConsoleUtil {
      */
     public static void line() {
 
-        CONSOLE.println(StringUtils.just("", 60, '-'));
+        CONSOLE.println(StringUtils.just("", 80, '-'));
 
     }
 
@@ -106,7 +106,7 @@ public class ConsoleUtil {
      */
     public static void line(Object logo) {
 
-        CONSOLE.println(StringUtils.just(logo.toString(), 60, '-'));
+        CONSOLE.println(StringUtils.just(logo.toString(), 80, '-'));
 
     }
 

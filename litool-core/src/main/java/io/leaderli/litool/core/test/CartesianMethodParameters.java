@@ -31,10 +31,10 @@ public class CartesianMethodParameters {
         if (method.getParameters().length == 0) {
             return Lira.of(new Object[1][0]);
         }
-        Object[][] parametersValues = Lira.of(method.getParameters())
-                .map(parameter -> CartesianUtil.cartesian(parameter, context))
-                .toArray(Object[].class);
+        Lira<Object[]> map = Lira.of(method.getParameters())
+                .map(parameter -> CartesianUtil.cartesian(parameter, context));
 
+        Object[][] parametersValues = map.toArray(Object[].class);
         Object[][] cartesian = CollectionUtils.cartesian(parametersValues);
 
         return Lira.of(cartesian);

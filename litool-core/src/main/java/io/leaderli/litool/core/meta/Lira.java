@@ -25,11 +25,13 @@ import java.util.stream.Stream;
  * lira should not use  the tool class that contain lira, such as {@link  io.leaderli.litool.core.bit.BitStr}
  * <p>
  * lira chain will catch all exception to perform an {@link  Exceptionable#onError(Throwable, CancelSubscription)}
- * action
- * , you can listen exception on {@link #onError(Exceptionable)}, and rethrow the exception
+ * action, you can listen exception on {@link #onError(Exceptionable)}, and rethrow the exception
  * to interrupt the chain with a runtimeException, or just cancel the chain by  {@link  CancelSubscription#cancel()}.
  * to be convenient, you can use {@link  #assertNoError()} or {@link  #assertTrue(Function)} to interrupt the chain
  * manually with runtimeException. or throw a specific {@link }
+ * <p>
+ * <p>
+ * most terminal action will remove null element
  *
  * @author leaderli
  * @since 2022/6/19
@@ -663,13 +665,24 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * return an {@code List} consisting of the elements
-     * <p>
-     * it's a terminal action
+     * Returns an typed array containing the typed elements in this lira, if the element is not satisfied
+     * the type will be removed
      *
-     * @return the new list
+     * <pre>
+     *     cast(type).get().toArray(new T[0])
+     * </pre>
+     *
+     * <p>This is a terminal operation
+     *
+     * @param type the array type
+     * @return an array containing the elements in this lira
      */
-    List<T> get();
+    @SuppressWarnings("unchecked")
+    default T[] toArray(Class<? super T> type) {
+        Object[] zero = ClassUtil.newWrapperArray(type, 0);
+        return (T[]) cast(type).get().toArray(zero);
+    }
+
 
     /**
      * return an {@code List} consisting of the elements
@@ -695,27 +708,56 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
         return get().toArray();
     }
 
-    <R> Lira<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper);
+    /**
+     * return an {@code List} consisting of the elements exclude null element
+     * <p>
+     * it's a terminal action
+     *
+     * @return the new list
+     */
+    List<T> get();
 
+    /**
+     * Returns an array containing the elements of this stream.
+     *
+     * <p>This is a nullable terminal operation
+     *
+     * @return an array containing the elements of this  lira
+     */
+    default Object[] toNullableArray() {
+        return nullableGet().toArray();
+    }
+
+    /**
+     * return an {@code List} consisting of the elements include null element
+     * <p>
+     * it's a terminal action
+     *
+     * @return the new list
+     */
+    List<T> nullableGet();
 
     /**
      * Returns an typed array containing the typed elements in this lira, if the element is not satisfied
      * the type will be removed
      *
      * <pre>
-     *     cast(type).get().toArray(new T[0])
+     *     cast(type).nullableGet().toArray(new T[0])
      * </pre>
      *
-     * <p>This is a terminal operation
+     * <p>This is a nullable terminal operation
      *
      * @param type the array type
      * @return an array containing the elements in this lira
      */
     @SuppressWarnings("unchecked")
-    default T[] toArray(Class<? super T> type) {
-        Object[] a = ClassUtil.newWrapperArray(type, 0);
-        return (T[]) cast(type).get().toArray(a);
+    default T[] toNullableArray(Class<? super T> type) {
+        Object[] zero = ClassUtil.newWrapperArray(type, 0);
+        return (T[]) cast(type).nullableGet().toArray(zero);
     }
+
+    <R> Lira<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper);
+
 
     /**
      * filter element that can be cast

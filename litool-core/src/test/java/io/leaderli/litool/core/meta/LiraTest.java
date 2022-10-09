@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.InfiniteException;
@@ -292,6 +293,13 @@ class LiraTest {
         Assertions.assertSame(2, Lira.of(1, 2).size());
     }
 
+    @Test
+    void nullableGet() {
+        Lira<Integer> of = Lira.of(1, 2, null);
+        Assertions.assertEquals(2, of.get().size());
+        Assertions.assertEquals(3, of.nullableGet().size());
+    }
+
 
     @Test
     void or() {
@@ -385,10 +393,19 @@ class LiraTest {
             Number[] nums2 = Lira.of(1, 2, 3).toArray(int.class);
             Number[] nums3 = Lira.of(1, 2, 3, 4.0).toArray(Number.class);
         });
+
+        Assertions.assertEquals(4, Lira.of(1, 2, 3, null).toNullableArray().length);
+//        Assertions.assertEquals(4, Lira.of(1, 2, 3, null).toNullableArray(Number.class).length);
+
+
+        Integer[][] numArr = Lira.of(ArrayUtils.of(1, 2), ArrayUtils.of(3, 4)).toArray(Integer[].class);
+
+        Assertions.assertEquals(2, numArr.length);
     }
 
     @Test
     void distinct() {
+
         LiBox<Integer> box = LiBox.none();
         Lira.of(1).debug(box::value).distinct();
         Assertions.assertTrue(box.absent());
