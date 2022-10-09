@@ -142,7 +142,7 @@ class ReflectUtilTest {
 
         Class<? extends Supplier> cls = supplier.getClass();
 
-        System.out.println(ReflectUtil.newInstance(cls).get().get());
+        Assertions.assertNotNull(ReflectUtil.newInstance(cls).get().get());
     }
 
 
