@@ -1,9 +1,6 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.collection.Generator;
-import io.leaderli.litool.core.collection.Generators;
-import io.leaderli.litool.core.collection.IterableItr;
-import io.leaderli.litool.core.collection.NoneItr;
+import io.leaderli.litool.core.collection.*;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
@@ -704,8 +701,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @return an array containing the elements of this  lira
      */
-    default Object[] toArray() {
-        return get().toArray();
+    default T[] toArray() {
+        return ArrayUtils.toArray(get().toArray());
     }
 
     /**
@@ -724,8 +721,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @return an array containing the elements of this  lira
      */
-    default Object[] toNullableArray() {
-        return nullableGet().toArray();
+    default T[] toNullableArray() {
+        return ArrayUtils.toArray(nullableGet().toArray());
     }
 
     /**

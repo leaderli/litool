@@ -386,12 +386,14 @@ class LiraTest {
 
     @Test
     void toArray() {
-
+        Number[] nums = Lira.of(1, 2, 3, 4.0).cast(Integer.class).toArray();
+        Number[] nums2 = Lira.of(1, 2, 3).toArray();
+        Number[] nums3 = Lira.of(1, 2, 3, 4.0).toArray();
         Assertions.assertDoesNotThrow(() -> {
 
-            Number[] nums = Lira.of(1, 2, 3, 4.0).cast(Integer.class).toArray(Integer.class);
-            Number[] nums2 = Lira.of(1, 2, 3).toArray(int.class);
-            Number[] nums3 = Lira.of(1, 2, 3, 4.0).toArray(Number.class);
+            Number[] nums4 = Lira.of(1, 2, 3, 4.0).cast(Integer.class).toArray(Integer.class);
+            Number[] nums5 = Lira.of(1, 2, 3).toArray(int.class);
+            Number[] nums6 = Lira.of(1, 2, 3, 4.0).toArray(Number.class);
         });
 
         Assertions.assertEquals(4, Lira.of(1, 2, 3, null).toNullableArray().length);
