@@ -750,11 +750,12 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param type the array type
      * @return an array containing the elements in this lira
      */
-    @SuppressWarnings("unchecked")
-    default T[] toNullableArray(Class<? super T> type) {
-        Object[] objects = cast(type).toNullableArray();
-        Class<T[]> arrayClass = (Class<T[]>) ClassUtil.getArrayClass(ClassUtil.primitiveToWrapper(type));
-        return Arrays.copyOf(objects, objects.length, arrayClass);
+    default <R> R[] toNullableArray(Class<R> type) {
+
+        Object[] original = cast(type).toNullableArray();
+        R[] copy = ClassUtil.newWrapperArray(type, original.length);
+        System.arraycopy(original, 0, copy, 0, original.length);
+        return copy;
     }
 
     <R> Lira<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper);
