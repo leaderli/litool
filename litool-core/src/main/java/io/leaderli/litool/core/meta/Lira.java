@@ -677,6 +677,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     @SuppressWarnings("unchecked")
     default T[] toArray(Class<? super T> type) {
         Object[] zero = ClassUtil.newWrapperArray(type, 0);
+
         return (T[]) cast(type).get().toArray(zero);
     }
 
