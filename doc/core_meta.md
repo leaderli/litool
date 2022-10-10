@@ -1,4 +1,4 @@
-# core
+# meta
 
 ## lino
 
@@ -52,7 +52,12 @@ Assertions.assertEquals("3", copy.beans.get(0).name);
 
 you can custom the detail of copy pojo
 
-`LeanKey` to specific the copy another named field or map-value
+the progress of set pojo field is get a value from source by the fieldName, and use
+suitable `TypeAdapter` to parser the value to assign to pojo field. you can custom
+the find-value for source, such as
+
+1. `LeanKey` to specific a `name`
+2. register a `LeanFieldKey` at `lean`  constructor to set the `name`
 
 ```json
 {"age": 1.0}
@@ -64,12 +69,49 @@ class Bean {
     private double fake;
 }
 
-
+Lean lean = new Lean(new LinkedHashMap<>(), Collections.singletonList(f -> {
+    if (f.getName().equals("custom")) {
+        return "age";
+    }
+    return null;
+}));
 ```
 
-## lilink
+also you can custom the value parser progress by `LeanFieldAdapter`, `lean` will check the adapter parameterType
+whether suite the field type
 
-## liif 
+```java
+
+class StringTypeAdapter implements TypeAdapter<String> {
+
+    @Override
+    public String read(Object source) {
+        if (source instanceof List) {
+            return (String) ((List<?>) source).get(0);
+        }
+        return source + "";
+    }
+}
+
+class ObjectTypeAdapter implements TypeAdapter<List> {
+
+    @Override
+    public List read(Object source) {
+        return null;
+    }
+}
+
+class Bean<T extends List> {
+    @LeanFieldAdapter(StringTypeAdapter.class)
+    private String name;
+    @LeanFieldAdapter(ObjectTypeAdapter.class)
+    private T age;
+}
+```
+
+## liLink
+
+## liIf 
 
 
 

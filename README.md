@@ -4,7 +4,7 @@
 
 some handy tools
 
-## [core](litool-core/README.md)
+## [core](doc/core.md)
 
 core is an better alternative of optional on java 8, which aims to avoid
 `NullPointException` and `ClassCastException`
