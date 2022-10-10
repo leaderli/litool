@@ -74,7 +74,7 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
 
     public static class MockMethodAdvice {
 
-        public static ThreadLocal<Map<Method, Object>> methodValue = new ThreadLocal<>();
+        public static final ThreadLocal<Map<Method, Object>> methodValue = new ThreadLocal<>();
 
         @SuppressWarnings("all")
         @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)

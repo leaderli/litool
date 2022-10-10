@@ -33,9 +33,7 @@ public class LiTestAssert<T> {
                 .assertNoError().absent();
 
         if (absent) {
-            {
-                throw new RuntimeException("not test assert found for " + t);
-            }
+            throw new RuntimeException("not test assert found for " + t);
         }
     }
 }

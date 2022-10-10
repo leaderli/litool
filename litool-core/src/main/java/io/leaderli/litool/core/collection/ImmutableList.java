@@ -58,13 +58,12 @@ public class ImmutableList<T> implements Iterable<T> {
      * @param <T>      the type of elements in ImmutableList
      * @return new ImmutableList
      */
-    @SuppressWarnings("unchecked")
     public static <T> ImmutableList<T> of(Iterable<T> iterable) {
         Lira<T> lira = Lira.of(iterable);
         if (lira.absent()) {
             return none();
         }
-        return new ImmutableList<>((T[]) lira.toArray());
+        return new ImmutableList<>(lira.toArray());
 
     }
 
