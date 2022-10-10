@@ -1,17 +1,17 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
+import io.leaderli.litool.core.exception.AssertException;
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.internal.ReflectionAccessor;
 import io.leaderli.litool.core.meta.LiConstant;
+import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -486,6 +486,64 @@ public class ReflectUtil {
         setAccessible(method);
 
         return Lino.throwable_of(() -> method.invoke(obj, args));
+    }
+
+    /**
+     * @param type     used for genericType declare,such as Function<String,String>
+     * @param delegate the delegate bean
+     * @param <T>      the type of interface
+     * @return {@link #newInterfaceImpl(Class, Object)}
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T newInterfaceImpl(LiTypeToken<T> type, Object delegate) {
+        return (T) newInterfaceImpl(type.getRawType(), delegate);
+    }
+
+    /**
+     * @param _interface the interface
+     * @param delegation the delegation bean
+     * @param <T>        the type of interface
+     * @return a dynamic implement of interface, the method of interface will delegated to delegation to run
+     * <p>
+     * will chose same {@link  MethodSignature} method in delegation, if not found, will chose the method  annotated
+     * {@link  RuntimeType} and returnType, parameterType can-casted method
+     * <p>
+     * @throws AssertException if call the default method of interface or call method of {@link Object}
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T newInterfaceImpl(Class<T> _interface, Object delegation) {
+
+        final Map<Method, Method> delegateMethods = new HashMap<>();
+        Lira<Method> allMethods = ReflectUtil.getMethods(_interface).filter(m -> !m.isDefault());
+
+        for (Method method : allMethods) {
+            Method find = MethodUtil.getSameSignatureMethod(delegation, method).get();
+            if (find == null) {
+
+                find = ReflectUtil.getMethods(delegation.getClass())
+                        .filter(m -> ReflectUtil.getAnnotation(m, RuntimeType.class))
+                        .filter(m -> ClassUtil.isAssignableFromOrIsWrapper(method.getReturnType(), m.getReturnType()))
+                        .filter(m -> {
+                            for (LiTuple2<Class<?>, Class<?>> ab : CollectionUtils.tuple(method.getParameterTypes(), m.getParameterTypes())) {
+                                if (!ClassUtil.isAssignableFromOrIsWrapper(ab._1, ab._2)) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        })
+                        .first().get();
+            }
+            if (find != null) {
+                delegateMethods.put(method, find);
+            }
+        }
+
+        return (T) Proxy.newProxyInstance(_interface.getClassLoader(), new Class[]{_interface}, (proxy, method, args) -> {
+            Method delegate = delegateMethods.get(method);
+            LiAssertUtil.assertTrue(delegate != null, "not support " + method);
+            return delegate.invoke(delegation, args);
+        });
+
     }
 
 }

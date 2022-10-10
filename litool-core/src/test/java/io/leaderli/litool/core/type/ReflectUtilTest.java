@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import org.apiguardian.api.API;
@@ -11,6 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +24,37 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ALL")
 class ReflectUtilTest {
 
+    @Test
+    void newInterfaceImpl() {
+
+        Object delegate = new Delegate();
+        Function<String, String> func = ReflectUtil.newInterfaceImpl(new LiTypeToken<Function<String, String>>() {
+        }, delegate);
+
+
+        Assertions.assertEquals("123", func.apply("123"));
+        Assertions.assertThrows(AssertException.class, () -> {
+
+            func.andThen(new Function<String, String>() {
+                @Override
+                public String apply(String s) {
+                    return "sss";
+                }
+            });
+        });
+    }
+
+    class Delegate {
+        @RuntimeType
+        public Object apply(int arg) {
+            return arg;
+        }
+
+        @RuntimeType
+        public Object apply(Object arg) {
+            return arg;
+        }
+    }
 
     static {
         LiConstant.WHEN_THROW = null;
