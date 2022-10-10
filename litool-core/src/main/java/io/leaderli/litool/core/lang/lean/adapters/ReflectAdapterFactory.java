@@ -32,12 +32,12 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
     }
 
 
-    private static class ReflectAdapter<T> implements TypeAdapter<T> {
+    public static class ReflectAdapter<T> implements TypeAdapter<T> {
 
-        private final Lean lean;
+        protected final Lean lean;
         private final LiTypeToken<T> typeToken;
 
-        private ReflectAdapter(Lean lean, LiTypeToken<T> typeToken) {
+        public ReflectAdapter(Lean lean, LiTypeToken<T> typeToken) {
             this.lean = lean;
             this.typeToken = typeToken;
         }

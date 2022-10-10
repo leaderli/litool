@@ -1,6 +1,8 @@
 package io.leaderli.litool.core.lang.lean;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
+import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.lang.lean.adapters.ReflectAdapterFactory;
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.*;
@@ -67,6 +69,13 @@ public class Lean {
      */
     public <T> T fromBean(Object source, LiTypeToken<T> targetTypeToken) {
         return getAdapter(targetTypeToken).read(source);
+    }
+
+    public <T> void copyBean(Object source, T target) {
+
+        TypeAdapter<T> adapter = getAdapter(target.getClass());
+        LiAssertUtil.assertTrue(adapter instanceof ReflectAdapterFactory.ReflectAdapter, "only support copy to pojo bean");
+        ((ReflectAdapterFactory.ReflectAdapter<Object>) adapter).populate(source, target);
     }
 
     /**

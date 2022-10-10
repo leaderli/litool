@@ -32,6 +32,7 @@ public final class ConstructorConstructor {
         Map<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
         instanceCreators.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
         instanceCreators.put(HashMap.class, (InstanceCreator<HashMap<Object, Object>>) type -> new HashMap<>());
+        instanceCreators.put(LinkedHashMap.class, (InstanceCreator<HashMap<Object, Object>>) type -> new LinkedHashMap<>());
         return instanceCreators;
     }
 

@@ -2,7 +2,6 @@ package io.leaderli.litool.core.lang;
 
 import com.google.gson.Gson;
 import io.leaderli.litool.core.lang.lean.*;
-import io.leaderli.litool.core.test.StringValues;
 import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -89,7 +88,7 @@ class LeanTest {
 
     @Test
     void test7() {
-        String json = "{\"age\": 1.0,\"age2\": 2.0,\"age4\":\"4\"}";
+        String json = "{\"age\": 1.0,\"age2\": 2.0,\"age4\":\"4\",\"age3\": 5}";
         Map map = gson.fromJson(json, Map.class);
 
         Lean lean = new Lean(new LinkedHashMap<>(), Collections.singletonList(f -> {
@@ -143,6 +142,26 @@ class LeanTest {
         Bean11<Integer> bean = lean.fromBean(map, LiTypeToken.getParameterized(Bean11.class, Integer.class));
         Assertions.assertArrayEquals(new String[]{"123"}, bean.name);
         Assertions.assertArrayEquals(new Integer[]{10, 18}, bean.ages);
+    }
+
+
+    @Test
+    void test12() {
+        String json = "{\"name\": [\"123\"],\"ages\": [10,18]}";
+        Map map = gson.fromJson(json, Map.class);
+        Lean lean = new Lean();
+        Bean11<Integer> bean = lean.fromBean(map, LiTypeToken.getParameterized(Bean11.class, Integer.class));
+
+        Bean12<Integer> copy = new Bean12<>();
+        lean.copyBean(bean, copy);
+
+        Assertions.assertArrayEquals(new String[]{"123"}, copy.name);
+        Assertions.assertArrayEquals(new Integer[]{10, 18}, copy.ages);
+    }
+
+    private static class Bean12<T> {
+        private String[] name;
+        private T[] ages;
     }
 
     private static class Bean11<T> {
@@ -210,7 +229,6 @@ class LeanTest {
         private double fake;
         @LeanKey("age2")
         private double fake2;
-        @StringValues({"age3", "age2"})
         private double custom;
 
         @LeanFieldAdapter(DoubleTypeAdapter.class)
