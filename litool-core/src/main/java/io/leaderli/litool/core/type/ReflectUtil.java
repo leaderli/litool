@@ -489,7 +489,7 @@ public class ReflectUtil {
     }
 
     /**
-     * @param type     used for genericType declare,such as Function<String,String>
+     * @param type     used for genericType declare,such as {@code Function<String,String>}
      * @param delegate the delegate bean
      * @param <T>      the type of interface
      * @return {@link #newInterfaceImpl(Class, Object)}

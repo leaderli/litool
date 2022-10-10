@@ -4665,7 +4665,7 @@ public class StringUtils implements StrPool {
      * @param searchList      the Strings to search for, no-op if null
      * @param replacementList the Strings to replace them with, no-op if null
      * @param repeat          if true, then replace repeatedly
-     *                        until there are no more possible replacements or timeToLive < 0
+     *                        until there are no more possible replacements or {@code timeToLive < 0}
      * @param timeToLive      if less than 0 then there is a circular reference and endless
      *                        loop
      * @return the text with any replacements processed, {@code null} if
