@@ -51,6 +51,7 @@ public class StrSubstitution {
      * @see #format(String, Function)
      */
     public static String format(String format, Object... args) {
+
         return format(format, new VariablesFunction(args));
     }
 
@@ -70,10 +71,20 @@ public class StrSubstitution {
      * @return a formatted string
      */
     public static String format(String format, Function<String, Object> replaceFunction) {
-        return parse(format, replaceFunction);
+        return parse(format, VARIABLE_BEING_CHAR, VARIABLE_END_CHAR, replaceFunction);
     }
 
-    private static String parse(String format, Function<String, Object> convert) {
+
+    /**
+     * just like {@link  #format(String, Function)}, the different is placeholder define with custom char
+     *
+     * @param format          a format string
+     * @param variableBegin   the placeholder begin mark
+     * @param variableEnd     the placeholder end mark
+     * @param replaceFunction a function that accept the placeholder variable and return a value to replace it
+     * @return a formatted string
+     */
+    public static String parse(String format, char variableBegin, char variableEnd, Function<String, Object> replaceFunction) {
         if (format == null) {
             return "";
         }
@@ -88,7 +99,7 @@ public class StrSubstitution {
             switch (state) {
                 case START:
 
-                    if (c == VARIABLE_BEING_CHAR) {
+                    if (c == variableBegin) {
 
                         state = VARIABLE_BEGIN;
                     } else {
@@ -97,7 +108,7 @@ public class StrSubstitution {
                     }
                     break;
                 case LITERAL:
-                    if (c == VARIABLE_BEING_CHAR) {
+                    if (c == variableBegin) {
                         state = VARIABLE_BEGIN;
                         result.append(temp);
                         temp = new StringBuilder();
@@ -107,11 +118,11 @@ public class StrSubstitution {
                     }
                     break;
                 case VARIABLE_BEGIN:
-                    if (c == VARIABLE_BEING_CHAR) {
-                        result.append("{");
+                    if (c == variableBegin) {
+                        result.append(variableBegin);
                         state = START;
-                    } else if (c == VARIABLE_END_CHAR) {
-                        result.append("{}");
+                    } else if (c == variableEnd) {
+                        result.append(variableBegin).append(variableEnd);
                         state = START;
                     } else {
                         temp.append(c);
@@ -121,8 +132,10 @@ public class StrSubstitution {
 
                 case VARIABLE_LITERAL:
 
-                    if (c == VARIABLE_END_CHAR) {
-                        result.append(convert.apply(temp.toString()));
+                    if (c == variableEnd) {
+                        String key = temp.toString();
+                        Object value = replaceFunction.apply(key);
+                        result.append(value == null ? variableBegin + key + variableEnd : value);
                         temp = new StringBuilder();
                         state = START;
                     } else {
@@ -136,6 +149,9 @@ public class StrSubstitution {
             }
 
 
+        }
+        if (state == VARIABLE_BEGIN || state == VARIABLE_LITERAL) {
+            result.append(variableBegin);
         }
         return result.append(temp).toString();
     }
@@ -159,7 +175,7 @@ public class StrSubstitution {
      * @see #format(String, Function)
      */
     public static String beanPath(String format, Object bean) {
-        return format(format, s -> BeanPath.parse(bean, s).get("{" + s + "}"));
+        return format(format, s -> BeanPath.parse(bean, s).get());
     }
 
     private static class VariablesFunction implements Function<String, Object> {
@@ -186,7 +202,7 @@ public class StrSubstitution {
                 placeholderNames.add(s);
                 return placeholderValues[this.index++] + "";
             }
-            return VARIABLE_BEING_CHAR + s + VARIABLE_END_CHAR;
+            return null;
         }
     }
 
