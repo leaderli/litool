@@ -5,8 +5,6 @@ import io.leaderli.litool.core.lang.BeanPath;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * a simple str substitution tool
@@ -34,43 +32,57 @@ public class StrSubstitution {
     private static final int VARIABLE_LITERAL = 3;
 
     /**
-     * Returns a formatted string using the specified format string and arguments.
+     * format text by variable parameter. the placeholder in format text calculates it's index based on
+     * where it's appear, the same name placeholder reuse previous index. the placeholder will replaced
+     * the the index parameter string value. if index is outbound of provide args, the placeholder will
+     * not be replaced.
+     * <p>
+     * eg:
      * <pre>
-     *  replace("a={a},b={b}","1","2")
-     *  replace("a={a},b={b},a={a}","1","2")
+     *  format("a={a},b={b}","1") // "a=1,b={b}"
+     *  format("a={a},b={b}","1","2") // "a=1,b=2"
+     *  format("a={a},b={b},a={a}","1","2") // to "a=1,b=2,a=1"
      * </pre>
      *
      * @param format a format string
-     * @param args   Arguments referenced by the format, If there are more arguments than format
-     *               specifiers, the extra arguments are ignored. If there are less arguments than
-     *               format specifiers, will use the '{key}'
+     * @param args   Arguments referenced by the format
      * @return a formatted string
+     * @see VariablesFunction
+     * @see #format(String, Function)
      */
     public static String format(String format, Object... args) {
         return format(format, new VariablesFunction(args));
     }
 
-    public static String format(String text, Function<String, String> convert) {
-
-        List<SubstitutionModel> substitutionModelList = parse(text, convert);
-        return substitutionModelList.stream().map(Supplier::get).collect(Collectors.joining());
+    /**
+     * the {@code  {xxx}}  are regard as placeholder {@code  xxx}. not support recursive placeholder.
+     * the {} will not regard as placeholder, {{ will regard as escape {
+     * <p>
+     * eg:
+     *
+     * <pre>
+     *     format("a={}")   // "a={}"
+     *     format("a={{a}") // "a={a}"
+     * </pre>
+     *
+     * @param format          a format string
+     * @param replaceFunction a function that accept the placeholder variable and return a value to replace it
+     * @return a formatted string
+     */
+    public static String format(String format, Function<String, Object> replaceFunction) {
+        return parse(format, replaceFunction);
     }
 
-    /**
-     * @param format  a format string
-     * @param convert a function that accept the placeholder variable and return a value to replace it
-     * @return the  list of chunk string split by variable and literal
-     */
-    private static List<SubstitutionModel> parse(String format, Function<String, String> convert) {
+    private static String parse(String format, Function<String, Object> convert) {
         if (format == null) {
-            return new ArrayList<>();
+            return "";
         }
 
         int state = START;
 
-        List<SubstitutionModel> substitutionModelList = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-        // 解析状态机
+        StringBuilder result = new StringBuilder();
+        StringBuilder temp = new StringBuilder();
+        //  state machine
         for (char c : format.toCharArray()) {
 
             switch (state) {
@@ -80,29 +92,29 @@ public class StrSubstitution {
 
                         state = VARIABLE_BEGIN;
                     } else {
-                        sb.append(c);
+                        temp.append(c);
                         state = LITERAL;
                     }
                     break;
                 case LITERAL:
                     if (c == VARIABLE_BEING_CHAR) {
                         state = VARIABLE_BEGIN;
-                        substitutionModelList.add(new LiteralSubstitution(sb.toString()));
-                        sb = new StringBuilder();
+                        result.append(temp);
+                        temp = new StringBuilder();
 
                     } else {
-                        sb.append(c);
+                        temp.append(c);
                     }
                     break;
                 case VARIABLE_BEGIN:
                     if (c == VARIABLE_BEING_CHAR) {
-                        substitutionModelList.add(new LiteralSubstitution("{"));
+                        result.append("{");
                         state = START;
                     } else if (c == VARIABLE_END_CHAR) {
-                        substitutionModelList.add(new LiteralSubstitution("{}"));
+                        result.append("{}");
                         state = START;
                     } else {
-                        sb.append(c);
+                        temp.append(c);
                         state = VARIABLE_LITERAL;
                     }
                     break;
@@ -110,11 +122,11 @@ public class StrSubstitution {
                 case VARIABLE_LITERAL:
 
                     if (c == VARIABLE_END_CHAR) {
-                        substitutionModelList.add(new VariableSubstitution(sb.toString(), convert));
-                        sb = new StringBuilder();
+                        result.append(convert.apply(temp.toString()));
+                        temp = new StringBuilder();
                         state = START;
                     } else {
-                        sb.append(c);
+                        temp.append(c);
                     }
                     break;
 
@@ -125,30 +137,32 @@ public class StrSubstitution {
 
 
         }
-        if (sb.length() > 0) {
-            substitutionModelList.add(new LiteralSubstitution(sb.toString()));
-        }
-        return substitutionModelList;
+        return result.append(temp).toString();
     }
 
     /**
-     * Returns a formatted string using the specified format string and bean.
+     * format text by bean. the placeholder in format text are regard as a bean-path expression.
+     * and use {@link BeanPath#parse(Object, String)} to search the replace value. if replace value
+     * is {@code  null} the placeholder will not be replaced
+     * <p>
+     * eg:
      * <pre>
-     * replace("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}})
+     * format("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
+     * format("a={a},b={b}",{a=1}) // "a=1,b={b}"
      * </pre>
+     * <p>
      *
      * @param format a format string
-     * @param bean   Arguments referenced by the format, get argument by it's placeholder bean-path, it not find
-     *               will use
-     *               the ''
+     * @param bean   Arguments referenced by the format
      * @return a formatted string
      * @see BeanPath#parse(Object)
+     * @see #format(String, Function)
      */
     public static String beanPath(String format, Object bean) {
-        return format(format, s -> BeanPath.parse(bean, s).map(String::valueOf).get(""));
+        return format(format, s -> BeanPath.parse(bean, s).get("{" + s + "}"));
     }
 
-    private static class VariablesFunction implements Function<String, String> {
+    private static class VariablesFunction implements Function<String, Object> {
 
         private final Object[] placeholderValues;
         private final List<String> placeholderNames = new ArrayList<>();
@@ -172,47 +186,9 @@ public class StrSubstitution {
                 placeholderNames.add(s);
                 return placeholderValues[this.index++] + "";
             }
-            return "{" + s + "}";
-        }
-    }
-
-    private abstract static class SubstitutionModel implements Supplier<String> {
-
-        public final String value;
-
-        private SubstitutionModel(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return value;
+            return VARIABLE_BEING_CHAR + s + VARIABLE_END_CHAR;
         }
     }
 
 
-    private static class VariableSubstitution extends SubstitutionModel {
-        private final Function<String, String> convert;
-
-        private VariableSubstitution(String value, Function<String, String> convert) {
-            super(value);
-            this.convert = convert;
-        }
-
-        @Override
-        public String get() {
-            return convert.apply(value);
-        }
-    }
-
-    private static class LiteralSubstitution extends SubstitutionModel {
-        private LiteralSubstitution(String value) {
-            super(value);
-        }
-
-        @Override
-        public String get() {
-            return value;
-        }
-    }
 }

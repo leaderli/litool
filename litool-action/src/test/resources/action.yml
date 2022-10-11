@@ -1,0 +1,13 @@
+task: |-
+  echo $PWD
+
+# now loop through the above array
+#  for i in "${arr[@]}"
+#  do
+#    for j in "${arr[@]}"
+#    do
+#    sleep 1
+#    echo "$i$j"
+#    # or do whatever with individual element of the array
+#    done
+#  done

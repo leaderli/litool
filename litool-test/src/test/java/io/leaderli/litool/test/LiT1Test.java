@@ -17,38 +17,10 @@ public class LiT1Test {
     static void beforeAll() {
         ByteBuddyAgent.install();
     }
-//
-//    @BeforeEach
-//    void before() {
-//
-//        print("before", new Source().hello("world"));
-//        new ByteBuddy()
-//                .rebase(Source.class)
-//                .visit(Advice.to(MockMethodAdvice.class).on(target -> target.isMethod() && !target.isConstructor()))
-//                .make()
-//                .load(Source.class.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
-//
-//    }
-
-//    @AfterEach
-//    void after() {
-//        new ByteBuddy()
-//                .rebase(Source.class)
-//                .make()
-//                .load(Source.class.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
-//
-//        print("after", new Source().hello("world"));
-//    }
 
     @LiTest
     void test() {
-//        System.out.println(source);
-
-//        Systemm.out.println(source.hello("w1"));
-//        System.out.println(source.hello2("w2"))
         print("in", new Source().hello("world"));
-//        System.out.println(new Source().hello2("world"));
-
     }
 
     @SuppressWarnings("UnusedAssignment")
