@@ -11,6 +11,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -42,6 +43,26 @@ class ReflectUtilTest {
                 }
             });
         });
+
+        Service service = ReflectUtil.newInterfaceImpl(Service.class, delegate);
+        Assertions.assertEquals("request", service.service(new Request("request")).name);
+        assertThrows(AssertException.class, () -> ReflectUtil.newInterfaceImpl(BiFunction.class, delegate).apply(1, 2));
+
+        Delegate2 delegate2 = new Delegate2();
+        assertThrows(AssertException.class, () -> ReflectUtil.newInterfaceImpl(Function.class, delegate2).apply(1));
+        assertEquals(1, ReflectUtil.newInterfaceImpl(BiFunction.class, delegate2).apply(1, 2));
+    }
+
+    interface Service {
+        Request service(Request request);
+    }
+
+    class Request {
+        private String name;
+
+        public Request(String name) {
+            this.name = name;
+        }
     }
 
     class Delegate {
@@ -54,6 +75,19 @@ class ReflectUtilTest {
         public Object apply(Object arg) {
             return arg;
         }
+    }
+
+    class Delegate2 {
+        @RuntimeType
+        public Object apply(int arg) {
+            return arg;
+        }
+
+        @RuntimeType
+        public Object apply(Object o1, Object o2) {
+            return o1;
+        }
+
     }
 
     static {

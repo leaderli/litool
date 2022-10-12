@@ -5,7 +5,6 @@ import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.internal.ReflectionAccessor;
 import io.leaderli.litool.core.meta.LiConstant;
-import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
@@ -489,7 +488,15 @@ public class ReflectUtil {
     }
 
     /**
-     * @param type     used for genericType declare,such as {@code Function<String,String>}
+     * use {@link LiTypeToken} is for generic purpose
+     * <p>
+     * eg:
+     * <pre>{@code
+     * LiTypeToken token = new LiTypeToken<Function<String, String>>() {};
+     * Function<String, String> func = ReflectUtil.newInterfaceImpl(token, delegate);
+     * }</pre>
+     *
+     * @param type     the typeToken of interface
      * @param delegate the delegate bean
      * @param <T>      the type of interface
      * @return {@link #newInterfaceImpl(Class, Object)}
@@ -500,19 +507,25 @@ public class ReflectUtil {
     }
 
     /**
+     * use {@link  Proxy#newProxyInstance(ClassLoader, Class[], InvocationHandler)} to dynamic create a implement
+     * of the interface. the not-default method in interface will delegate to delegation bean with same {@link MethodSignature}
+     * or delegate the method which annotated by {@link RuntimeType} and type compatible. other method will throw {@link  AssertException}
+     * <p>
+     * eg:
+     * <pre>{@code
+     * Function func = ReflectUtil.newInterfaceImpl(Function.class, delegate);
+     * }</pre>
+     *
      * @param _interface the interface
      * @param delegation the delegation bean
      * @param <T>        the type of interface
-     * @return a dynamic implement of interface, the method of interface will delegated to delegation to run
-     * <p>
-     * will chose same {@link  MethodSignature} method in delegation, if not found, will chose the method  annotated
-     * {@link  RuntimeType} and returnType, parameterType can-casted method
-     * <p>
+     * @return a dynamic implement of interface
      * @throws AssertException if call the default method of interface or call method of {@link Object}
      */
     @SuppressWarnings("unchecked")
     public static <T> T newInterfaceImpl(Class<T> _interface, Object delegation) {
 
+        LiAssertUtil.assertTrue(_interface.isInterface(), "only support interface");
         final Map<Method, Method> delegateMethods = new HashMap<>();
         Lira<Method> allMethods = ReflectUtil.getMethods(_interface).filter(m -> !m.isDefault());
 
@@ -522,10 +535,14 @@ public class ReflectUtil {
 
                 find = ReflectUtil.getMethods(delegation.getClass())
                         .filter(m -> ReflectUtil.getAnnotation(m, RuntimeType.class))
-                        .filter(m -> ClassUtil.isAssignableFromOrIsWrapper(method.getReturnType(), m.getReturnType()))
+                        .filter(m -> ClassUtil.isAssignableFromOrIsWrapper(m.getReturnType(), method.getReturnType()))
                         .filter(m -> {
-                            for (LiTuple2<Class<?>, Class<?>> ab : CollectionUtils.tuple(method.getParameterTypes(), m.getParameterTypes())) {
-                                if (!ClassUtil.isAssignableFromOrIsWrapper(ab._1, ab._2)) {
+                            if (m.getParameterTypes().length != method.getParameterTypes().length) {
+                                return false;
+                            }
+                            for (int i = 0; i < m.getParameterTypes().length; i++) {
+
+                                if (!ClassUtil.isAssignableFromOrIsWrapper(m.getParameterTypes()[i], method.getParameterTypes()[i])) {
                                     return false;
                                 }
                             }
