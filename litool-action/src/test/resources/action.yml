@@ -8,5 +8,4 @@ map:
 
 hello: 1
 a: ${hello}
-ab: ${hello.b}
 b: ${map}

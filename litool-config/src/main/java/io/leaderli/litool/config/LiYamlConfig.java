@@ -58,6 +58,19 @@ public class LiYamlConfig {
      * better to call {@link #checkYamlFormat()}  check all yaml file is well format
      * <p>
      * support placeholder in yaml file. it can invoke {@link  System#getProperty(String)} or {@link BeanPath#parse(Object, String)} from it's own properties
+     * <p>
+     * eg:
+     * <pre>{@code
+     * task: '${java.home}'
+     * map:
+     *   k: 1
+     *   list:
+     *     - 1
+     *     - 2
+     * hello: 1
+     * a: ${hello}
+     * b: ${map}
+     * }</pre>
      *
      * @param names multi yaml file name
      * @return merged multi yaml configuration,  the latter have high priority
