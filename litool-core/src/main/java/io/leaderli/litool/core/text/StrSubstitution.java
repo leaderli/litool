@@ -56,15 +56,35 @@ public class StrSubstitution {
     }
 
     /**
+     * format text by bean. the placeholder in format text are regard as a bean-path expression.
+     * and use {@link BeanPath#parse(Object, String)} to search the replace value. if replace value
+     * is {@code  null} the placeholder will not be replaced
+     * eg:
+     * <pre>{@code
+     * beanPath("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
+     * beanPath("a={a},b={b}",{a=1}) // "a=1,b={b}"
+     * }</pre>
+     *
+     * @param format a format string
+     * @param bean   Arguments referenced by the format
+     * @return a formatted string
+     * @see BeanPath#parse(Object)
+     * @see #format(String, Function)
+     */
+    public static String beanPath(String format, Object bean) {
+        return format(format, s -> BeanPath.parse(bean, s).get());
+    }
+
+    /**
      * the {@code  {xxx}}  are regard as placeholder {@code  xxx}. not support recursive placeholder.
      * the {} will not regard as placeholder, {{ will regard as escape {
      * <p>
      * eg:
      *
-     * <pre>
+     * <pre>{@code
      *     format("a={}")   // "a={}"
      *     format("a={{a}") // "a={a}"
-     * </pre>
+     * }</pre>
      *
      * @param format          a format string
      * @param replaceFunction a function that accept the placeholder variable and return a value to replace it
@@ -73,7 +93,6 @@ public class StrSubstitution {
     public static String format(String format, Function<String, Object> replaceFunction) {
         return parse(format, VARIABLE_BEING_CHAR, VARIABLE_END_CHAR, replaceFunction);
     }
-
 
     /**
      * just like {@link  #format(String, Function)}, the different is placeholder define with custom char
@@ -157,25 +176,47 @@ public class StrSubstitution {
     }
 
     /**
-     * format text by bean. the placeholder in format text are regard as a bean-path expression.
-     * and use {@link BeanPath#parse(Object, String)} to search the replace value. if replace value
-     * is {@code  null} the placeholder will not be replaced
+     * just same as {@link  #beanPath(String, Object)}, use ${ as begin placeholder
      * <p>
      * eg:
-     * <pre>
-     * format("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
-     * format("a={a},b={b}",{a=1}) // "a=1,b={b}"
-     * </pre>
-     * <p>
+     * <pre>{@code
+     *
+     * $beanPath("a=${a},b=${b},c=${c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
+     * $beanPath("a=${a},b=${b}",${a=1}) // "a=1,b={b}"
+     * }</pre>
      *
      * @param format a format string
      * @param bean   Arguments referenced by the format
      * @return a formatted string
-     * @see BeanPath#parse(Object)
-     * @see #format(String, Function)
      */
-    public static String beanPath(String format, Object bean) {
-        return format(format, s -> BeanPath.parse(bean, s).get());
+    public static String $beanPath(String format, Object bean) {
+        return $format(format, s -> BeanPath.parse(bean, s).get());
+    }
+
+    /**
+     * just same as {@link  #format(String, Function)}, use ${ as begin placeholder
+     * the $},${} will not regard as placeholder, $$ will regard as escape {
+     * eg:
+     *
+     * <pre>{@code
+     *     $format("a=${}")   // "a=${}"
+     *     $format("a=$${a}") // "a=${a}"
+     * }</pre>*
+     *
+     * @param format          a format string
+     * @param replaceFunction a function that accept the placeholder variable and return a value to replace it
+     * @return a formatted string
+     */
+    public static String $format(String format, Function<String, Object> replaceFunction) {
+        return parse(format, '$', '}', name -> {
+            if (name.startsWith("{")) {
+                if (name.endsWith("{")) {
+                    return "${}";
+                }
+                return replaceFunction.apply(name.substring(1));
+            }
+            return name;
+        });
     }
 
     private static class VariablesFunction implements Function<String, Object> {

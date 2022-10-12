@@ -1,13 +1,12 @@
-task: |-
-  echo $PWD
+task: '${java.home}'
 
-# now loop through the above array
-#  for i in "${arr[@]}"
-#  do
-#    for j in "${arr[@]}"
-#    do
-#    sleep 1
-#    echo "$i$j"
-#    # or do whatever with individual element of the array
-#    done
-#  done
+map:
+  k: 1
+  list:
+    - 1
+    - 2
+
+hello: 1
+a: ${hello}
+ab: ${hello.b}
+b: ${map}

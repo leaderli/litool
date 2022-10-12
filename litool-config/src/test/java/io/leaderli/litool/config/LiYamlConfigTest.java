@@ -33,7 +33,6 @@ class LiYamlConfigTest {
         Assertions.assertEquals("a", LiYamlConfig.loadResourcesYmlFiles("b.yml", "a.yml").get("value"));
         Assertions.assertEquals("b", LiYamlConfig.loadResourcesYmlFiles("a.yml", "b.yml").get("value"));
 
-
     }
 
     @Test

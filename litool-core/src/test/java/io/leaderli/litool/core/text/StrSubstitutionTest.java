@@ -28,6 +28,12 @@ class StrSubstitutionTest {
         Assertions.assertEquals("{", StrSubstitution.format("{"));
         Assertions.assertEquals("{123", StrSubstitution.format("{123"));
 
+        Assertions.assertEquals("$}", StrSubstitution.$format("$$}", s -> s));
+        Assertions.assertEquals("$", StrSubstitution.$format("$$", s -> s));
+        Assertions.assertEquals("$}", StrSubstitution.$format("$}", s -> s));
+        Assertions.assertEquals("${}", StrSubstitution.$format("${}", s -> s));
+        Assertions.assertEquals("${x}", StrSubstitution.$format("$${x}", s -> s));
+
 
         Assertions.assertEquals("a true b", StrSubstitution.format("a {a} {b}", true, 'b'));
         Assertions.assertEquals("a a a", StrSubstitution.format("a {a} {a}", 'a', 'b'));
