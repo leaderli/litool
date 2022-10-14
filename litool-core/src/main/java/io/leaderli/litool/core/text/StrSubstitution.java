@@ -81,10 +81,11 @@ public class StrSubstitution {
      * <p>
      * eg:
      *
-     * <pre>{@code
+     * <pre>
      *     format("a={}")   // "a={}"
      *     format("a={{a}") // "a={a}"
-     * }</pre>
+     *
+     * </pre>
      *
      * @param format          a format string
      * @param replaceFunction a function that accept the placeholder variable and return a value to replace it
