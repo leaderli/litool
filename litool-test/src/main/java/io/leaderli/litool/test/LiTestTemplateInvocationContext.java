@@ -80,7 +80,11 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
         @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
         public static Object enter(@Advice.Origin Method origin) {
 
+
             Object value = methodValue.get().get(origin);
+            if (origin.getReturnType() == void.class) {
+                return 0;
+            }
             if (value == null && origin.getReturnType().isPrimitive()) {
                 return PrimitiveEnum.get(origin.getReturnType()).zero_value;
             }
