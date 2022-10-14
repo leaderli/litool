@@ -67,7 +67,7 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
         Object[] classes = ArrayUtils.toArray(LiMockCartesian.mockClass);
         Class<?>[] mockClasses = classes.length == 0 ? new Class[0] : (Class<?>[]) classes;
         Lira<Method> methods = Lira.of(LiMockCartesian.methodValues.keySet());
-        Object[][] testScenario = CollectionUtils.cartesian(methods.map(LiMockCartesian.methodValues::get).toArray(Object[].class));
+        Object[][] testScenario = CollectionUtils.cartesian(methods.map(LiMockCartesian.methodValues::get).toNullableArray(Object[].class));
 
         for (Object[] parameters : parameterCartesian) {
             if (testScenario.length == 0) {

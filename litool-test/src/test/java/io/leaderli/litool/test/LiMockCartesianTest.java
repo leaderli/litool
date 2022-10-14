@@ -6,14 +6,14 @@ class LiMockCartesianTest {
 
     static void init() {
         LiMockCartesian.mock(LiMockCartesianTest.class);
-        LiMockCartesian.when(new LiMockCartesianTest()::m1, 100, 200);
+        LiMockCartesian.when(() -> new LiMockCartesianTest().m1());
 //        LiMockCartesian.when(new LiMockCartesianTest()::m2, -100, null);
-        LiMockCartesian.when(new LiMockCartesianTest()::m2);
+        LiMockCartesian.when(new LiMockCartesianTest()::m2, 3, 4);
 
     }
 
-    int m1() {
-        return 1;
+    void m1() {
+        System.out.println("m1");
     }
 
     int m2() {
@@ -24,7 +24,8 @@ class LiMockCartesianTest {
     @LiTest
     void test() {
 
-        print(this.m1(), this.m2());
+        m1();
+        print(this.m2());
 
     }
 }

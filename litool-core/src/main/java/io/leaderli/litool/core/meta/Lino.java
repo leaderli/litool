@@ -95,6 +95,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             }
             return new Some<>(value);
         } catch (Throwable e) {
+            LiConstant.accept(e);
             return none();
         }
     }

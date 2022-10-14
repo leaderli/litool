@@ -39,6 +39,20 @@ public class LiMockCartesian {
 
     }
 
+    public static <T> void when(Runnable runnable) {
+
+        mockMethod = null;
+        mockProgress = true;
+        runnable.run();
+
+        Objects.requireNonNull(mockMethod);
+        methodValues.put(mockMethod, new Object[]{null});
+        mockClass.add(mockMethod.getDeclaringClass());
+
+        mockMethod = null;
+        mockProgress = false;
+    }
+
     @SafeVarargs
     public static <T> void when(Supplier<T> runnable, T... mockValues) {
 
