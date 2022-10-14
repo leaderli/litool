@@ -7,6 +7,7 @@ import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.type.ClassUtil;
+import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.Enumeration;
@@ -168,6 +169,15 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @return return this if value instanceof type  otherwise return {@link  #none()}
      */
     <R> Lino<R> cast(Class<? extends R> type);
+
+    /**
+     * the typeToken is for generic use, the real cast class is {@link LiTypeToken#getRawType()}
+     *
+     * @param <R>       the type parameter of casted
+     * @param typeToken the typeToken of casted
+     * @return return this if value instanceof type  otherwise return {@link  #none()}
+     */
+    <R> Lino<R> cast(LiTypeToken<R> typeToken);
 
 
     /**
@@ -464,6 +474,12 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             return of(ClassUtil.cast(this.value, type));
         }
 
+        @SuppressWarnings("unchecked")
+        @Override
+        public <R> Lino<R> cast(LiTypeToken<R> typeToken) {
+            return (Lino<R>) cast(typeToken.getRawType());
+        }
+
         @Override
         public <K, V> Lino<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType) {
 
@@ -680,6 +696,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public <R> Lino<R> cast(Class<? extends R> type) {
+            return none();
+        }
+
+        @Override
+        public <R> Lino<R> cast(LiTypeToken<R> typeToken) {
             return none();
         }
 

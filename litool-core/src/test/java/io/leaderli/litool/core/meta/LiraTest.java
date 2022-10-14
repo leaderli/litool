@@ -9,16 +9,30 @@ import io.leaderli.litool.core.meta.ra.LiraRuntimeException;
 import io.leaderli.litool.core.meta.ra.SubscriberRa;
 import io.leaderli.litool.core.meta.ra.SubscriptionRa;
 import io.leaderli.litool.core.text.StringUtils;
+import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * @author leaderli
  * @since 2022/6/19
  */
 class LiraTest {
+
+    @Test
+    void test() {
+
+        Lira<String> of = Lira.of("123");
+        System.out.println(of.get());
+        Lino<Function<String, Integer>> cast = Lino.of((Function<String, Integer>) String::length).cast(new LiTypeToken<Function<String, Integer>>() {
+        });
+
+        System.out.println(cast.get().apply("123"));
+
+    }
 
     @Test
     void either() {
@@ -180,6 +194,12 @@ class LiraTest {
 
     @Test
     void cast() {
+
+        Lira<Function<String, Integer>> cast = Lira.of((Function<String, Integer>) String::length).cast(new LiTypeToken<Function<String, Integer>>() {
+        });
+
+        Assertions.assertEquals(3, cast.first().get().apply("123"));
+
         Map<Object, Object> map = new HashMap<>();
         map.put("1", "1");
         map.put("2", 2);

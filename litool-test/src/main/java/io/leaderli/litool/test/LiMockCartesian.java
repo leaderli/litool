@@ -16,8 +16,8 @@ public class LiMockCartesian {
 
     public static final Map<Method, Object[]> methodValues = new HashMap<>();
     public static final Set<Class<?>> mockClass = new HashSet<>();
-    private static Method mockMethod;
-    private static boolean mockProgress;
+    public static Method mockMethod;
+    public static boolean mockProgress;
 
     public static void clear() {
         mockClass.clear();
@@ -26,6 +26,7 @@ public class LiMockCartesian {
         mockProgress = false;
     }
 
+    @SuppressWarnings("resource")
     public static void mock(Class<?> cls) {
 
         ByteBuddyAgent.install();

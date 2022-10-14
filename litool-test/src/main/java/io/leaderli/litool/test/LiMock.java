@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 @API(status = API.Status.STABLE)
-@interface LiMock {
+public @interface LiMock {
     String value();
 }
 

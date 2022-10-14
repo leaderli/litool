@@ -1,10 +1,12 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -63,8 +65,14 @@ class LinoTest {
 
     @Test
     void cast() {
+        Lino<Function<String, Integer>> cast = Lino.of((Function<String, Integer>) String::length).cast(new LiTypeToken<Function<String, Integer>>() {
+        });
+
+        Assertions.assertEquals(3, cast.get().apply("123"));
+
         Assertions.assertSame(Lino.none(), Lino.of(null).cast(String.class).cast(Integer.class));
-        Assertions.assertSame(Lino.none(), Lino.of("1").cast(null));
+
+//        Assertions.assertSame(Lino.none(), Lino.of("1").cast(null));
         Object a = 1;
         Assertions.assertSame(1, Lino.of(a).cast(Integer.class).get());
 

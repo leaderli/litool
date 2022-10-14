@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.lang;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -15,7 +14,7 @@ import java.util.concurrent.TimeoutException;
 class ShellTest {
 
 
-    @Test
+    //    @Test
     void bash() throws ExecutionException, InterruptedException, TimeoutException {
 
         Future<String> command = new Shell().bash("123");

@@ -183,5 +183,9 @@ class ArrayUtilsTest {
         Integer[][] lists = ArrayUtils.toArray(new Integer[]{1, 2}, new Integer[]{3, 4});
         Assertions.assertArrayEquals(new Integer[][]{new Integer[]{1, 2}, new Integer[]{3, 4}}, lists);
 
+        Object[] ss = new Object[]{"123", null, ""};
+
+        System.out.println(ArrayUtils.toArray(ss).getClass());
+
     }
 }

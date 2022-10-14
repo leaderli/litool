@@ -6,6 +6,7 @@ import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.ra.*;
 import io.leaderli.litool.core.type.ClassUtil;
+import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.*;
@@ -25,8 +26,7 @@ import java.util.stream.Stream;
  * action, you can listen exception on {@link #onError(Exceptionable)}, and rethrow the exception
  * to interrupt the chain with a runtimeException, or just cancel the chain by  {@link  CancelSubscription#cancel()}.
  * to be convenient, you can use {@link  #assertNoError()} or {@link  #assertTrue(Function)} to interrupt the chain
- * manually with runtimeException. or throw a specific {@link }
- * <p>
+ * manually with runtimeException. or throw a specific {@link LiraRuntimeException}
  * <p>
  * most terminal action will remove null element
  *
@@ -672,6 +672,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * <p>This is a terminal operation
      *
      * @param type the array type
+     * @param <R>  the type of arr
      * @return an array containing the elements in this lira
      */
     default <R> R[] toArray(Class<R> type) {
@@ -748,6 +749,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * <p>This is a nullable terminal operation
      *
      * @param type the array type
+     * @param <R>  the type parameter of arr
      * @return an array containing the elements in this lira
      */
     default <R> R[] toNullableArray(Class<R> type) {
@@ -769,6 +771,22 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return this
      */
     <R> Lira<R> cast(Class<? extends R> type);
+
+    /**
+     * filter element that can be cast
+     * <p>
+     * the typeToken is for generic use, the real cast class is {@link LiTypeToken#getRawType()}
+     *
+     * @param typeToken the typeToken of cast class
+     * @param <R>       the generic parameter of {@code typeToken}
+     * @return this
+     * @see #cast(Class)
+     */
+
+    @SuppressWarnings("unchecked")
+    default <R> Lira<R> cast(LiTypeToken<R> typeToken) {
+        return (Lira<R>) cast(typeToken.getRawType());
+    }
 
     /**
      * Returns a map  consisting of the results of applying the given function to the elements of this stream

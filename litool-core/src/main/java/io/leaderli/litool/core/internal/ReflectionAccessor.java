@@ -40,6 +40,8 @@ public abstract class ReflectionAccessor {
      * <p>
      * In such a case, use {@link ReflectionAccessor#makeAccessible(AccessibleObject)} on a field, method or constructor
      * (instead of basic {@link AccessibleObject#setAccessible(boolean)}).
+     *
+     * @return reflect accessor
      */
     public static ReflectionAccessor getInstance() {
         return instance;
