@@ -30,7 +30,7 @@ class LiMockTest {
     @LiTest
     void test(@IntValues({0, 1}) int length) {
 
-        LiTestAssert.record(Foo.class);
+        LiTestAssert.recording(Foo.class);
         m1();
         this.m2(1);
         new Foo().init(length, length);

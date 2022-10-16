@@ -101,9 +101,6 @@ public class LiYamlConfig {
                 return property;
             }
             Object value = BeanPath.parse(config, variable).get();
-//            if (value == null || PrimitiveEnum.get(value) != PrimitiveEnum.OBJECT) {
-//                return value;
-//            }
             return yaml.dumpAs(value, null, DumperOptions.FlowStyle.FLOW);
         });
         System.out.println(mergeYaml);

@@ -22,17 +22,6 @@ import java.util.function.Function;
  */
 class LiraTest {
 
-    @Test
-    void test() {
-
-        Lira<String> of = Lira.of("123");
-        System.out.println(of.get());
-        Lino<Function<String, Integer>> cast = Lino.of((Function<String, Integer>) String::length).cast(new LiTypeToken<Function<String, Integer>>() {
-        });
-
-        System.out.println(cast.get().apply("123"));
-
-    }
 
     @Test
     void either() {

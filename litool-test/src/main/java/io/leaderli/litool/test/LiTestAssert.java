@@ -17,14 +17,14 @@ import java.util.function.BiConsumer;
  * @author leaderli
  * @since 2022/9/30 5:16 PM
  */
-public class LiTestAssert<T> {
+public class LiTestAssert {
 
     public static final Set<Class<?>> recordClasses = new HashSet<>();
 
     private static final Map<String, LiTuple2<Object[], Object>> method_call_history = new HashMap<>();
 
 
-    public static void record(Class<?> recordClass) {
+    public static void recording(Class<?> recordClass) {
 
         LiAssertUtil.assertFalse(recordClasses.contains(recordClass), "duplicate record class");
 

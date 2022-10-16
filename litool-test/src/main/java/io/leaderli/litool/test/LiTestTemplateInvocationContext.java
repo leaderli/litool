@@ -39,6 +39,7 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
      * @return the extension that used in test execution
      * @see ExtendWith
      */
+    @SuppressWarnings("java:S2696")
     @Override
     public List<Extension> getAdditionalExtensions() {
 
