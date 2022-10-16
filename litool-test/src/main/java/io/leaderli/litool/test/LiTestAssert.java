@@ -7,6 +7,7 @@ import io.leaderli.litool.core.type.ReflectUtil;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
+import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import org.junit.jupiter.api.Assertions;
 
 import java.lang.reflect.Method;
@@ -22,7 +23,7 @@ import static io.leaderli.litool.test.LiMock.NONE;
 public class LiTestAssert {
 
     public static final Set<Class<?>> assertClasses = new HashSet<>();
-    private static final Map<Method, LiTuple2<Object[], Object>> assert_method_call_records = new HashMap<>();
+    public static final Map<Method, LiTuple2<Object[], Object>> assert_method_call_records = new HashMap<>();
     public static Method assertMethod;
     public static Object assertObj;
 
@@ -85,7 +86,7 @@ public class LiTestAssert {
         @SuppressWarnings("all")
         @Advice.OnMethodExit
         public static void exit(
-                @Advice.Return Object _return,
+                @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object _return,
                 @Advice.Origin Method origin,
                 @Advice.AllArguments Object[] args,
                 @Advice.This Object _this) {
@@ -96,8 +97,6 @@ public class LiTestAssert {
 
             LiTuple2<Object[], Object> argsReturn = LiTuple.of(args, _return);
             assert_method_call_records.put(origin, argsReturn);
-            assert_method_call_records.put(origin, argsReturn);
-
         }
     }
 

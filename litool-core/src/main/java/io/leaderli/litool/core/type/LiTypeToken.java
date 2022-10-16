@@ -232,12 +232,13 @@ public class LiTypeToken<T> implements ParameterizedType {
 
     /**
      * Gets type literal for the array type whose elements are all instances of {@code componentType}.
+     *
+     * @param componentType the componentType
      */
     public static LiTypeToken<?> getArray(Type componentType) {
         return new LiTypeToken<>(LiTypes.arrayOf(componentType));
     }
 
-    //    @Override
     @Override
     public final Type[] getActualTypeArguments() {
 
@@ -255,9 +256,8 @@ public class LiTypeToken<T> implements ParameterizedType {
     }
 
     /**
-     * Returns the raw (non-generic) type for this type.
+     * @return the raw (non-generic) type for this type.
      */
-//    @Override
     @Override
     public final Class<? super T> getRawType() {
         return rawType;
