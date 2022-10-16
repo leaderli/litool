@@ -41,9 +41,7 @@ public class LiTestAssert<T> {
     }
 
     public static void assertReturn(String shortName, Object expectRet) {
-        assertion(shortName, (args, ret) -> {
-            Assertions.assertEquals(expectRet, ret);
-        });
+        assertion(shortName, (args, ret) -> Assertions.assertEquals(expectRet, ret));
     }
 
     public static void assertion(String shortName, BiConsumer<Object[], Object> assertLambda) {
@@ -53,9 +51,7 @@ public class LiTestAssert<T> {
     }
 
     public static void assertArgs(String shortName, Object... expectArgs) {
-        assertion(shortName, (args, ret) -> {
-            Assertions.assertArrayEquals(expectArgs, args);
-        });
+        assertion(shortName, (args, ret) -> Assertions.assertArrayEquals(expectArgs, args));
     }
 
     public static void assertCalled(String shortName) {
