@@ -47,7 +47,7 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext extensionContext) {
 
 
-        LiMockCartesian.clear();
+        LiMock.reset();
         Method templateMethod = extensionContext.getRequiredTestMethod();
 
         List<TestTemplateInvocationContext> list = new ArrayList<>();
@@ -55,8 +55,8 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
         Lira<Object[]> parameterCartesian = new CartesianMethodParameters(templateMethod, new CartesianContext()).cartesian();
 
 
-        ReflectUtil.getAnnotation(templateMethod, LiMock.class)
-                .map(LiMock::value)
+        ReflectUtil.getAnnotation(templateMethod, MockInit.class)
+                .map(MockInit::value)
                 .unzip(name -> ReflectUtil.getMethod(templateMethod.getDeclaringClass(), name))
                 .ifPresent(staticInitMethod -> {
                     LiAssertUtil.assertTrue(ModifierUtil.isStatic(staticInitMethod), "must be static method");
@@ -64,12 +64,12 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
                 });
 
 
-        Object[] classes = ArrayUtils.toArray(LiMockCartesian.mockClass);
+        Object[] classes = ArrayUtils.toArray(LiMock.mockedClasses);
         Class<?>[] mockClasses = classes.length == 0 ? new Class[0] : (Class<?>[]) classes;
-        Lira<Method> methods = Lira.of(LiMockCartesian.methodValues.keySet());
-        Object[][] testScenario = CollectionUtils.cartesian(methods.map(LiMockCartesian.methodValues::get).toNullableArray(Object[].class));
+        Lira<Method> methods = Lira.of(LiMock.methodValues.keySet());
 
         for (Object[] parameters : parameterCartesian) {
+            Object[][] testScenario = CollectionUtils.cartesian(methods.map(m -> LiMock.methodValues.get(m).apply(parameters)).assertNoError().toNullableArray(Object[].class));
             if (testScenario.length == 0) {
 
                 list.add(new LiTestTemplateInvocationContext(parameters, mockClasses, new HashMap<>()));
@@ -84,7 +84,7 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
             }
         }
 
-        LiMockCartesian.clear();
+        LiMock.reset();
 
         return list.stream();
 

@@ -26,6 +26,7 @@ class MethodUtilTest {
         method = this.getClass().getDeclaredMethod("run");
         same = MethodUtil.getSameSignatureMethod(Runnable.class, method);
         Assertions.assertTrue(same.present());
+
     }
 
     @Override

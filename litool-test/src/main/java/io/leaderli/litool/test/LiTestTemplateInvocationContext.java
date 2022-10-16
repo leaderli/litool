@@ -47,14 +47,15 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
 
             for (Class<?> mockClass : mockClasses) {
                 byteBuddy.redefine(mockClass)
-                        .visit(Advice.to(MockMethodAdvice.class).on(target ->
+                        .visit(Advice.to(TemplateInvocationMockMethodAdvice.class).on(target ->
                                 Lira.of(methodValue.keySet()).filter(target::represents).present()
                         ))
 
                         .make()
                         .load(mockClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
             }
-            MockMethodAdvice.methodValue.set(methodValue);
+            LiTestAssert.reset();
+            TemplateInvocationMockMethodAdvice.methodValue = methodValue;
         };
 
         // reset mockClass to origin after test executed
@@ -72,18 +73,18 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
         return Arrays.asList(beforeTestExecutionCallback, afterTestExecutionCallback, liCartesianParameterResolver);
     }
 
-    public static class MockMethodAdvice {
+    public static class TemplateInvocationMockMethodAdvice {
 
-        public static final ThreadLocal<Map<Method, Object>> methodValue = new ThreadLocal<>();
+
+        public static Map<Method, Object> methodValue;
 
         @SuppressWarnings("all")
         @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
-        public static Object enter(@Advice.Origin Method origin) {
+        public static Object enter(@Advice.Origin Method origin, @Advice.AllArguments Object[] args) {
 
-
-            Object value = methodValue.get().get(origin);
+            Object value = methodValue.get(origin);
             if (origin.getReturnType() == void.class) {
-                return 0;
+                return LiMock.NONE;
             }
             if (value == null && origin.getReturnType().isPrimitive()) {
                 return PrimitiveEnum.get(origin.getReturnType()).zero_value;
@@ -95,7 +96,9 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
         @Advice.OnMethodExit
         public static void exit(
                 @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object _return,
-                @Advice.Enter Object mock) {
+                @Advice.Enter Object mock,
+                @Advice.Origin Method origin,
+                @Advice.AllArguments Object[] args) {
 
             _return = mock;
         }

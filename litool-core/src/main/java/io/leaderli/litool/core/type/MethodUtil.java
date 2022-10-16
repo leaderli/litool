@@ -4,6 +4,8 @@ import io.leaderli.litool.core.meta.Lino;
 
 import java.lang.annotation.Repeatable;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * @author leaderli
@@ -102,5 +104,40 @@ public class MethodUtil {
                 && method.getReturnType().isArray()
                 && method.getReturnType().getComponentType().isAnnotation()
                 && method.getReturnType().getComponentType().isAnnotationPresent(Repeatable.class);
+    }
+
+
+    /**
+     * eg:
+     * <p>
+     * {@link Object#toString()}
+     * <pre>
+     *  Object#toString():String
+     * </pre>
+     *
+     * @param method a method
+     * @return get a short toString of Method
+     */
+    public static String shortString(Method method) {
+
+        String parameters = Arrays.stream(method.getParameterTypes())
+                .map(Class::getSimpleName)
+                .collect(Collectors.joining(",", "(", ")"));
+        return veryShortString(method) + parameters + ":" + method.getReturnType().getSimpleName();
+    }
+
+    /**
+     * eg:
+     * <p>
+     * {@link Object#toString()}
+     * <pre>
+     *  Object#toString
+     * </pre>
+     *
+     * @param method a method
+     * @return get a very short toString of Method
+     */
+    public static String veryShortString(Method method) {
+        return method.getDeclaringClass().getSimpleName() + "#" + method.getName();
     }
 }
