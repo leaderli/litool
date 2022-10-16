@@ -1,6 +1,7 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.Advice;
@@ -29,9 +30,9 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
     public String getDisplayName(int invocationIndex) {
 
 
-        Map<String, Object> nameValue = Lira.of(methodValue.entrySet())
-                .toMap(e -> e.getKey().getName(), Map.Entry::getValue);
-        return "li:" + invocationIndex + " " + Arrays.toString(parameters) + " " + nameValue;
+        String paramsString = Lira.of(parameters).map(StringUtils::obj2String).toString();
+        Map<String, Object> nameValue = Lira.of(methodValue.entrySet()).toMap(e -> e.getKey().getName(), e -> StringUtils.obj2String(e.getValue()));
+        return "li:" + invocationIndex + " " + paramsString + " " + nameValue;
 
     }
 

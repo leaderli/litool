@@ -6,8 +6,8 @@ class LiMockTest {
 
     static void init() {
         LiMock.mock(LiMockTest.class);
-        LiMock.disable(() -> new LiMockTest().m1());
-//        LiMockCartesian.when(new LiMockCartesianTest()::m2, -100, null);
+        LiMock.light(() -> new LiMockTest().m1());
+        LiMock.light(() -> new LiMockTest().m3());
         LiMock.whenArgs(() -> new LiMockTest().m2(0), params -> {
             int len = (int) params[0];
             if (len == 0) {
@@ -26,19 +26,28 @@ class LiMockTest {
         System.out.println("m1");
     }
 
+    Foo m3() {
+
+        return null;
+    }
+
     @MockInit
     @LiTest
     void test(@IntValues({0, 1}) int length) {
 
-        LiTestAssert.recording(Foo.class);
+        Foo foo = LiTestAssert.recording(Foo.class);
         m1();
         this.m2(1);
-        new Foo().init(length, length);
+        Foo foo1 = m3();
+        foo1.init(length, length);
 
-        LiTestAssert.assertReturn("Foo#init", length * 2);
-        LiTestAssert.assertArgs("Foo#init", length, length);
-        LiTestAssert.assertCalled("Foo#init");
-        LiTestAssert.assertNotCalled("Foo#notCall");
+        LiTestAssert.assertReturn(() -> foo.init(1, 1), length * 2);
+        LiTestAssert.assertArgs(() -> foo.init(1, 1), length, length);
+        LiTestAssert.assertCalled(() -> foo.init(1, 1));
+        LiTestAssert.assertNotCalled(() -> foo.notCall(1, 1));
+
+        foo1.notCall(0, 0);
+        LiTestAssert.assertCalled(() -> foo.notCall(1, 1));
 
     }
 

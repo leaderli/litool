@@ -1,6 +1,8 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.type.ReflectUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.asm.Advice;
@@ -69,15 +71,33 @@ public class LiMock {
 
     }
 
-    public static <T> void disable(Runnable runnable) {
+    /**
+     * support void,primitive,pojo returnType mock, auto generate one element of method returnValue
+     *
+     * @param runnable the method call
+     */
+    public static void light(Runnable runnable) {
 
         mockMethod = null;
         mockProgress = true;
         runnable.run();
 
         Objects.requireNonNull(mockMethod);
-        LiAssertUtil.assertTrue(mockMethod.getReturnType() == void.class, "disable only support void method");
-        methodValues.put(mockMethod, params -> new Object[]{void.class});
+        PrimitiveEnum primitiveEnum = PrimitiveEnum.get(mockMethod.getReturnType());
+
+        Object zero_value;
+        switch (primitiveEnum) {
+            case VOID:
+                zero_value = NONE;
+                break;
+            case OBJECT:
+                zero_value = ReflectUtil.newInstance(mockMethod.getReturnType()).get();
+                break;
+            default:
+                zero_value = primitiveEnum.zero_value;
+        }
+        Object finalZero_value = zero_value;
+        methodValues.put(mockMethod, params -> new Object[]{finalZero_value});
         mockedClasses.add(mockMethod.getDeclaringClass());
 
         mockMethod = null;
@@ -107,7 +127,7 @@ public class LiMock {
     public static class MockInitAdvice {
         /**
          * used to record the mocking class method has be called, and mark method potention return values by {@link  #when(Supplier, Object[])}
-         * or disable some void-method call by {@link  #disable(Runnable)}
+         * or disable some void-method call by {@link  #light(Runnable)}
          * <p>
          * this is a delegate for all method of mockindg class, will ignore actual inovation of all methods.
          * to prevent call actual method on the void-method, return a meaningless {@link #NONE}.

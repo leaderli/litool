@@ -22,6 +22,7 @@ import io.leaderli.litool.core.lang.RegExUtils;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.ReflectUtil;
 
 import java.io.InputStream;
@@ -8713,12 +8714,18 @@ public class StringUtils implements StrPool {
      */
     public static String obj2String(Object obj) {
 
+        if (PrimitiveEnum.get(obj) != PrimitiveEnum.OBJECT) {
+            return obj.toString();
+        }
+        if (obj == null) {
+            return "null";
+        }
         Lira<String> fields =
                 ReflectUtil.getFields(obj.getClass())
                         .filter(field -> !Modifier.isStatic(field.getModifiers()))
                         .map(f -> f.getName() + "=" + ReflectUtil.getFieldValue(obj, f).get());
 
-        return join(", ", fields);
+        return obj.getClass().getSimpleName() + "{" + join(", ", fields) + "}";
 
     }
 

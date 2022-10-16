@@ -72,9 +72,9 @@ class StringUtilsTest {
         obj.name = "hello";
 
 
-        Assertions.assertEquals("name=hello, age=0", StringUtils.obj2String(obj));
-
-        Assertions.assertThrows(NullPointerException.class, () -> StringUtils.obj2String(null));
+        Assertions.assertEquals("FieldsString{name=hello, age=0}", StringUtils.obj2String(obj));
+        Assertions.assertEquals("1", StringUtils.obj2String(1));
+        Assertions.assertEquals("null", StringUtils.obj2String(null));
 
 
     }
