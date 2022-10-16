@@ -35,7 +35,6 @@ class LiMockTest {
         this.m2(1);
         new Foo().init(length, length);
 
-
         LiTestAssert.assertReturn("Foo#init", length * 2);
         LiTestAssert.assertArgs("Foo#init", length, length);
         LiTestAssert.assertCalled("Foo#init");
@@ -43,7 +42,7 @@ class LiMockTest {
 
     }
 
-    class Foo {
+    static class Foo {
         public int init(int a, int b) {
             return a + b;
         }
