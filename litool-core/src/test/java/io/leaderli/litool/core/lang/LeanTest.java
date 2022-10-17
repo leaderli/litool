@@ -36,6 +36,16 @@ class LeanTest {
     }
 
     @Test
+    void test1() {
+        Lean lean = new Lean();
+        Assertions.assertEquals(1, lean.fromBean(1, Integer.class));
+        Assertions.assertEquals("1", lean.fromBean("1", String.class));
+        Assertions.assertNull(lean.fromBean(null, String.class));
+        Assertions.assertEquals(0, lean.fromBean(null, Integer.class));
+
+    }
+
+    @Test
     void test2() {
 
 
@@ -250,12 +260,14 @@ class LeanTest {
 
     }
 
+    @SuppressWarnings("all")
     private static class Bean4<T> {
         private String name;
         private Map bean;
         private List<T> beans;
     }
 
+    @SuppressWarnings("all")
     private static class Bean1<T> {
         private String name;
         private Bean1 bean;

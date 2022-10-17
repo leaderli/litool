@@ -16,6 +16,11 @@ import java.util.Map;
 @SuppressWarnings("rawtypes")
 class LiTypeTokenTest {
 
+    @Test
+    void test() {
+
+    }
+
     public Map map;
 
     @Test

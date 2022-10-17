@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.lang.lean;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 class ReflectBeanTest {
 
-    Gson gson = new Gson();
+    Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 
     @Test
     void test() {
@@ -27,9 +28,13 @@ class ReflectBeanTest {
 
         System.out.println(gson.toJson(fooBar));
 
+        System.out.println(fooBar.getBar());
+        System.out.println(fooBar.getFoo());
+//        fooBar.setBar(fooBar);
+
     }
 
-    static class Foo<T, R> {
+    static abstract class Foo<T, R> {
 
         private T t;
         private R r;
@@ -57,6 +62,7 @@ class ReflectBeanTest {
         private T[] wrapper;
         private List<T> list;
         private Bar<T, R> bar;
+        private Foo<T, R> foo;
 
         public int getSize() {
             return size;
@@ -96,6 +102,14 @@ class ReflectBeanTest {
 
         public void setBar(Bar<T, R> bar) {
             this.bar = bar;
+        }
+
+        public Foo<T, R> getFoo() {
+            return foo;
+        }
+
+        public void setFoo(Foo<T, R> foo) {
+            this.foo = foo;
         }
     }
 

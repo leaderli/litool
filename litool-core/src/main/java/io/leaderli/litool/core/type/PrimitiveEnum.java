@@ -201,6 +201,9 @@ public enum PrimitiveEnum {
         if (get(value) == this) {
             return (T) value;
         }
+        if (value == null) {
+            return (T) zero_value;
+        }
         return (T) Lino.of(value)
                 .cast(String.class)
                 .map(v -> (Object) StringConvert.parser(wrapper, v).get())

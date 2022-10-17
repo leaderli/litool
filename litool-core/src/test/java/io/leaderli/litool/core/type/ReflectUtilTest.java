@@ -204,13 +204,13 @@ class ReflectUtilTest {
         assertTrue(ReflectUtil.newInstance(Out.In.class).present());
         assertTrue(ReflectUtil.newInstance(Out.In.InIn.class).present());
 
-        assertThrows(AssertException.class, () -> ReflectUtil.newInstance(Number.class).present());
-        assertThrows(AssertException.class, () -> ReflectUtil.newInstance(Consumer.class).present());
+        assertFalse(ReflectUtil.newInstance(Number.class).present());
+        assertFalse(ReflectUtil.newInstance(Consumer.class).present());
 
-        assertThrows(AssertException.class, () -> ReflectUtil.newInstance(Number.class, null).present());
-        assertThrows(AssertException.class, () -> ReflectUtil.newInstance(Consumer.class, null).present());
+        assertFalse(ReflectUtil.newInstance(Number.class, null).present());
+        assertFalse(ReflectUtil.newInstance(Consumer.class, null).present());
 
-        assertThrows(AssertException.class, () -> ReflectUtil.newInstance(Number.class.getConstructors()[0]).present());
+        assertFalse(ReflectUtil.newInstance(Number.class.getConstructors()[0]).present());
 
         Supplier<String> supplier = () -> this + "123";
 

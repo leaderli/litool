@@ -200,9 +200,6 @@ public class ReflectUtil {
     public static <T> Lino<T> newInstance(Class<T> cls, Object... args) {
 
 
-        Objects.requireNonNull(cls);
-        LiAssertUtil.assertFalse(cls.isInterface() || Modifier.isAbstract(cls.getModifiers()), () -> cls + " is abstract or interface");
-
         if (args == null || args.length == 0) {
             return newInstance(cls);
         }
@@ -216,23 +213,15 @@ public class ReflectUtil {
 
     }
 
-    public static <T> Lino<T> newInstance(Constructor<T> constructor, Object... args) {
-        Objects.requireNonNull(constructor);
-        LiAssertUtil.assertFalse(constructor.getDeclaringClass().isInterface() || Modifier.isAbstract(constructor.getDeclaringClass().getModifiers()), () -> constructor + " is abstract or interface");
-
-        setAccessible(constructor);
-        return Lino.throwable_of(() -> constructor.newInstance(args));
-    }
-
     /**
      * @param cls class
      * @param <T> the type of instance
      * @return return the new instance create by the no-argument constructor of cls
+     * @throws NullPointerException if {@code  cls == null}
+     * @throws AssertException      if  cls is interface or abstract class
      */
     public static <T> Lino<T> newInstance(Class<T> cls) {
 
-        Objects.requireNonNull(cls);
-        LiAssertUtil.assertFalse(cls.isInterface() || Modifier.isAbstract(cls.getModifiers()), () -> cls + " is abstract or interface");
 
         Lino<T> instance = getConstructor(cls).unzip(ReflectUtil::newInstance);
 
@@ -243,6 +232,19 @@ public class ReflectUtil {
         // inner class
         return getMemberConstructor(cls).unzip(ReflectUtil::memberInstance);
 
+    }
+
+    /**
+     * @param constructor the constructor
+     * @param args        the args of constructor
+     * @param <T>         the type of constructor
+     * @return a new instance create by constructor
+     * @throws NullPointerException if {@code  cls == null}
+     * @throws AssertException      if  cls is interface or abstract class
+     */
+    public static <T> Lino<T> newInstance(Constructor<T> constructor, Object... args) {
+        setAccessible(constructor);
+        return Lino.throwable_of(() -> constructor.newInstance(args));
     }
 
     private static <T> Lino<T> memberInstance(Constructor<T> c) {

@@ -12,7 +12,7 @@ class PrimitiveEnumTest {
     @Test
     void read() {
 
-        Assertions.assertThrows(IllegalStateException.class, () -> PrimitiveEnum.INT.read(null));
+        Assertions.assertEquals(0, (int) PrimitiveEnum.INT.read(null));
         Assertions.assertEquals(1, (int) PrimitiveEnum.INT.read(1));
         Assertions.assertEquals(1, (int) PrimitiveEnum.INT.read(1.0));
         Assertions.assertEquals(true, PrimitiveEnum.BOOLEAN.read(1.0));

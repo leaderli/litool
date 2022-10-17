@@ -23,6 +23,10 @@ public class ModifierUtil {
         return Modifier.isAbstract(member.getModifiers());
     }
 
+    public static boolean isAbstract(Class<?> cls) {
+        return Modifier.isAbstract(cls.getModifiers());
+    }
+
     /**
      * the Calculation formula:
      * <pre>
