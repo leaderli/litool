@@ -201,6 +201,8 @@ public class ReflectUtil {
 
 
         Objects.requireNonNull(cls);
+        LiAssertUtil.assertFalse(cls.isInterface() || Modifier.isAbstract(cls.getModifiers()), () -> cls + " is abstract or interface");
+
         if (args == null || args.length == 0) {
             return newInstance(cls);
         }
@@ -214,10 +216,12 @@ public class ReflectUtil {
 
     }
 
-    public static <T> Lino<T> newInstance(Constructor<T> cls, Object... args) {
-        Objects.requireNonNull(cls);
-        setAccessible(cls);
-        return Lino.throwable_of(() -> cls.newInstance(args));
+    public static <T> Lino<T> newInstance(Constructor<T> constructor, Object... args) {
+        Objects.requireNonNull(constructor);
+        LiAssertUtil.assertFalse(constructor.getDeclaringClass().isInterface() || Modifier.isAbstract(constructor.getDeclaringClass().getModifiers()), () -> constructor + " is abstract or interface");
+
+        setAccessible(constructor);
+        return Lino.throwable_of(() -> constructor.newInstance(args));
     }
 
     /**
@@ -228,6 +232,7 @@ public class ReflectUtil {
     public static <T> Lino<T> newInstance(Class<T> cls) {
 
         Objects.requireNonNull(cls);
+        LiAssertUtil.assertFalse(cls.isInterface() || Modifier.isAbstract(cls.getModifiers()), () -> cls + " is abstract or interface");
 
         Lino<T> instance = getConstructor(cls).unzip(ReflectUtil::newInstance);
 

@@ -123,6 +123,8 @@ class LeanTest {
         Lean lean = new Lean();
         Bean9 bean = lean.fromBean(map, Bean9.class);
         Assertions.assertEquals("123", bean.name);
+
+        System.out.println(gson.toJson(lean.fromBean(null, Bean9.class)));
     }
 
     @Test

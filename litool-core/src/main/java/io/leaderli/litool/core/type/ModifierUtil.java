@@ -19,6 +19,10 @@ public class ModifierUtil {
         return Modifier.isStatic(member.getModifiers());
     }
 
+    public static boolean isAbstract(Member member) {
+        return Modifier.isAbstract(member.getModifiers());
+    }
+
     /**
      * the Calculation formula:
      * <pre>
