@@ -3,6 +3,7 @@ package io.leaderli.litool.test;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.core.type.TypeUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.asm.Advice;
@@ -83,7 +84,8 @@ public class LiMock {
         runnable.run();
 
         Objects.requireNonNull(mockMethod);
-        PrimitiveEnum primitiveEnum = PrimitiveEnum.get(mockMethod.getReturnType());
+        Class<?> returnType = TypeUtil.erase(TypeUtil.resolve(mockMethod.getDeclaringClass(), mockMethod.getGenericReturnType()));
+        PrimitiveEnum primitiveEnum = PrimitiveEnum.get(returnType);
 
         Object zero_value;
         switch (primitiveEnum) {
@@ -91,7 +93,7 @@ public class LiMock {
                 zero_value = NONE;
                 break;
             case OBJECT:
-                zero_value = ReflectUtil.newInstance(mockMethod.getReturnType()).get();
+                zero_value = ReflectUtil.newInstance(returnType).get();
                 break;
             default:
                 zero_value = primitiveEnum.zero_value;
