@@ -16,4 +16,8 @@ public class Foo {
     public void run() {
 
     }
+
+    public static Foo instance() {
+        return new Foo();
+    }
 }

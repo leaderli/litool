@@ -3,6 +3,7 @@ package io.leaderli.litool.test;
 import io.leaderli.litool.core.test.IntValues;
 import io.leaderli.litool.test.limock.Foo;
 import io.leaderli.litool.test.limock.MockBean;
+import org.junit.jupiter.api.Assertions;
 
 class LiMockTest {
 
@@ -21,6 +22,7 @@ class LiMockTest {
     }
 
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @MockInit
     @LiTest
     void test(@IntValues({0, 1}) int length) {
@@ -32,6 +34,8 @@ class LiMockTest {
         Foo foo1 = mockBean.m3();
         foo1.init(length, length);
 
+        Foo instance = Foo.instance();
+
         LiTestAssert.assertReturn(() -> foo.init(1, 1), length * 2);
         LiTestAssert.assertArgs(() -> foo.init(1, 1), length, length);
         LiTestAssert.assertCalled(() -> foo.init(1, 1));
@@ -40,6 +44,8 @@ class LiMockTest {
         foo1.notCall(0, 0);
         LiTestAssert.assertCalled(() -> foo.notCall(1, 1));
 
+        LiTestAssert.assertion(Foo::instance, (args, ret) -> Assertions.assertSame(instance, ret));
+        LiTestAssert.assertion(Foo::instance, (args, ret) -> Assertions.assertSame(instance, ret));
     }
 
 
