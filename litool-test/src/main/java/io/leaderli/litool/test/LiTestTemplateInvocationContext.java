@@ -102,7 +102,7 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
                 if (_this != null) {
                     type = TypeUtil.resolve(_this.getClass(), origin.getGenericReturnType());
                 }
-                return MockBean.instance(type).create();
+                return LiMock.mockBean(type);
             }
             return value;
         }

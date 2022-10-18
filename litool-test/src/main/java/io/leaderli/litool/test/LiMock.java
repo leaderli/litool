@@ -1,6 +1,7 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.type.InstanceCreator;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.TypeUtil;
 import net.bytebuddy.ByteBuddy;
@@ -10,6 +11,7 @@ import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -32,6 +34,7 @@ public class LiMock {
     public static final ByteBuddy byteBuddy = new ByteBuddy();
     public static Method mockMethod;
     public static boolean mockProgress;
+    public static LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
 
     static {
         ByteBuddyAgent.install();
@@ -52,6 +55,7 @@ public class LiMock {
         methodValues.clear();
         mockMethod = null;
         mockProgress = false;
+        instanceCreators.clear();
     }
 
     /**
@@ -142,5 +146,9 @@ public class LiMock {
             }
             return NONE;
         }
+    }
+
+    public static Object mockBean(Type type) {
+        return MockBean.instance(type, instanceCreators).create();
     }
 }
