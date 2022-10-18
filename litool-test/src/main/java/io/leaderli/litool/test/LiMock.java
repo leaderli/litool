@@ -2,7 +2,6 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
-import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.type.TypeUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
@@ -88,15 +87,13 @@ public class LiMock {
         PrimitiveEnum primitiveEnum = PrimitiveEnum.get(returnType);
 
         Object zero_value;
-        switch (primitiveEnum) {
-            case VOID:
-                zero_value = NONE;
-                break;
-            case OBJECT:
-                zero_value = ReflectUtil.newInstance(returnType).get();
-                break;
-            default:
-                zero_value = primitiveEnum.zero_value;
+        if (primitiveEnum == PrimitiveEnum.VOID) {
+            zero_value = NONE;
+            //            case OBJECT:
+//                zero_value = ReflectUtil.newInstance(returnType).get();
+//                break;
+        } else {
+            zero_value = primitiveEnum.zero_value;
         }
         Object finalZero_value = zero_value;
         methodValues.put(mockMethod, params -> new Object[]{finalZero_value});

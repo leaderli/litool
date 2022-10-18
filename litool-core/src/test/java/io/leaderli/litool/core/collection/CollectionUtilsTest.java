@@ -159,6 +159,9 @@ class CollectionUtilsTest {
         lists = CollectionUtils.cartesian(new Object[]{}, new Object[]{1, 2});
         Assertions.assertEquals("[]", ArrayUtils.toString(lists));
 
+        lists = CollectionUtils.cartesian(new Object[]{null}, new Object[]{1, 2});
+        Assertions.assertEquals("[[null, 1], [null, 2]]", ArrayUtils.toString(lists));
+
         lists = CollectionUtils.cartesian(ArrayUtils.of(1, 2, 3), ArrayUtils.of(4, 5, 6));
         Assertions.assertEquals("[[1, 4], [1, 5], [1, 6], [2, 4], [2, 5], [2, 6], [3, 4], [3, 5], [3, 6]]",
                 ArrayUtils.toString(lists));

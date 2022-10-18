@@ -3,6 +3,7 @@ package io.leaderli.litool.test;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.type.TypeUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
@@ -10,6 +11,7 @@ import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import org.junit.jupiter.api.extension.*;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -82,14 +84,25 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
 
         @SuppressWarnings("all")
         @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
-        public static Object enter(@Advice.Origin Method origin, @Advice.AllArguments Object[] args) {
+        public static Object enter(@Advice.Origin Method origin,
+                                   @Advice.AllArguments Object[] args,
+                                   @Advice.This(optional = true) Object _this) {
 
             Object value = methodValue.get(origin);
-            if (origin.getReturnType() == void.class) {
+            Class<?> returnType = origin.getReturnType();
+            if (returnType == void.class) {
                 return LiMock.NONE;
             }
-            if (value == null && origin.getReturnType().isPrimitive()) {
-                return PrimitiveEnum.get(origin.getReturnType()).zero_value;
+            if (value == null && returnType.isPrimitive()) {
+                return PrimitiveEnum.get(returnType).zero_value;
+            }
+            if (value == null) {
+
+                Type type = origin.getGenericReturnType();
+                if (_this != null) {
+                    type = TypeUtil.resolve(_this.getClass(), origin.getGenericReturnType());
+                }
+                return MockBean.instance(type).create();
             }
             return value;
         }

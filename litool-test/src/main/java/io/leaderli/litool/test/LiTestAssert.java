@@ -5,6 +5,7 @@ import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.type.ReflectUtil;
 import net.bytebuddy.asm.Advice;
+import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import org.junit.jupiter.api.Assertions;
@@ -33,8 +34,7 @@ public class LiTestAssert {
         LiAssertUtil.assertFalse(assertClasses.contains(assertClass), "duplicate record class");
 
         LiMock.byteBuddy.redefine(assertClass)
-                .visit(Advice.to(RecordAdvice.class).on(me -> me.isMethod() && !me.isStatic()))
-                .visit(Advice.to(StaticRecordAdvice.class).on(me -> me.isMethod() && me.isStatic()))
+                .visit(Advice.to(RecordAdvice.class).on(MethodDescription::isMethod))
                 .make()
                 .load(assertClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
         assertClasses.add(assertClass);
@@ -81,40 +81,13 @@ public class LiTestAssert {
     }
 
 
-    public static class StaticRecordAdvice {
-
-
-        @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
-        public static Object enter(@Advice.Origin Method origin) {
-            if (staticRecord) {
-                assertMethod = origin;
-                return NONE;
-            }
-            return null;
-        }
-
-        @SuppressWarnings("all")
-        @Advice.OnMethodExit
-        public static void exit(
-                @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object _return,
-                @Advice.Origin Method origin,
-                @Advice.AllArguments Object[] args) {
-
-            if (staticRecord) {
-                return;
-            }
-
-            LiTuple2<Object[], Object> argsReturn = LiTuple.of(args, _return);
-            assert_method_call_records.put(origin, argsReturn);
-        }
-    }
-
     public static class RecordAdvice {
 
 
         @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
-        public static Object enter(@Advice.Origin Method origin, @Advice.This Object _this) {
-            if (assertObj == _this) {
+        public static Object enter(@Advice.Origin Method origin,
+                                   @Advice.This(optional = true) Object _this) {
+            if (assertObj == _this || _this == null && staticRecord) {
                 assertMethod = origin;
                 return NONE;
             }
@@ -127,9 +100,9 @@ public class LiTestAssert {
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object _return,
                 @Advice.Origin Method origin,
                 @Advice.AllArguments Object[] args,
-                @Advice.This Object _this) {
+                @Advice.This(optional = true) Object _this) {
 
-            if (assertObj == _this) {
+            if (assertObj == _this || _this == null && staticRecord) {
                 return;
             }
 

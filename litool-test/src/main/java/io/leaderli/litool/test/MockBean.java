@@ -30,12 +30,24 @@ public class MockBean<T> {
         return instance(cls, new LinkedHashMap<>());
     }
 
-    public static <T> MockBean<T> instance(Class<T> cls, LinkedHashMap<Type, InstanceCreator<?>> instanceCreators) {
+    public static <T> MockBean<T> instance(Type type, LinkedHashMap<Type, InstanceCreator<?>> instanceCreators) {
+        LiTypeToken<T> token = LiTypeToken.of(type);
+        return instance(token, instanceCreators);
+    }
 
-        LiTypeToken<T> token = LiTypeToken.of(cls);
+    public static <T> MockBean<T> instance(LiTypeToken<T> token, LinkedHashMap<Type, InstanceCreator<?>> instanceCreators) {
+
         instanceCreators.put(String.class, t -> "");
         ConstructorConstructor constructorConstructor = new ConstructorConstructor(instanceCreators);
         return new MockBean<>(token, constructorConstructor, new HashMap<>());
+    }
+
+    public static <T> MockBean<T> instance(Type type) {
+        return instance(type, new LinkedHashMap<>());
+    }
+
+    public static <T> MockBean<T> instance(LiTypeToken<T> token) {
+        return instance(token, new LinkedHashMap<>());
     }
 
     @SuppressWarnings("unchecked")

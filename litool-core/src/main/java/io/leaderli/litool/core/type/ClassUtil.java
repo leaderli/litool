@@ -189,6 +189,8 @@ public class ClassUtil {
     }
 
     /**
+     * if all element is null, return Object.class
+     *
      * @param arr the arr
      * @return get array elements most recent inheritance, if element is null, just ignore it
      */
@@ -214,6 +216,9 @@ public class ClassUtil {
             }
         }
 
+        if (result == null) {
+            result = Object.class;
+        }
         return result;
 
     }

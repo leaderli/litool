@@ -55,6 +55,7 @@ class ClassUtilTest {
         Double[] of2 = ArrayUtils.of(3.0, 4.0);
         Number[][] of = ArrayUtils.of(of1, of2);
         Assertions.assertSame(Number[].class, ClassUtil.getRecentlyInheritance(of));
+        Assertions.assertSame(Object.class, ClassUtil.getRecentlyInheritance(new Object[]{null, null, null}));
     }
 
     @Test

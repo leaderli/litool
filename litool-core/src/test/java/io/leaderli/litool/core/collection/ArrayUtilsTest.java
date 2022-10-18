@@ -169,6 +169,7 @@ class ArrayUtilsTest {
     @Test
     void toArray() {
 
+        Assertions.assertArrayEquals(new Object[]{null, null}, ArrayUtils.toArray(null, null));
         Number[] objects = ArrayUtils.toArray(1, 1.0);
 
         Integer[] actual = ArrayUtils.toArray(Arrays.asList(1, 2).iterator());
@@ -183,9 +184,6 @@ class ArrayUtilsTest {
         Integer[][] lists = ArrayUtils.toArray(new Integer[]{1, 2}, new Integer[]{3, 4});
         Assertions.assertArrayEquals(new Integer[][]{new Integer[]{1, 2}, new Integer[]{3, 4}}, lists);
 
-        Object[] ss = new Object[]{"123", null, ""};
-
-        System.out.println(ArrayUtils.toArray(ss).getClass());
 
     }
 }

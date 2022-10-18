@@ -24,6 +24,11 @@ class LiraTest {
 
 
     @Test
+    void test() {
+
+    }
+
+    @Test
     void either() {
 
         Integer max = Lira.of(1, 2, null, 4)

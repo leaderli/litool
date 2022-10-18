@@ -5,12 +5,15 @@ import io.leaderli.litool.test.limock.Foo;
 import io.leaderli.litool.test.limock.MockBean;
 import org.junit.jupiter.api.Assertions;
 
+import java.util.ArrayList;
+
 class LiMockTest {
 
     static void init() {
         LiMock.mock(MockBean.class);
         LiMock.light(() -> new MockBean().m1());
         LiMock.light(() -> new MockBean().m3());
+        LiMock.light(() -> new MockBean().m4());
         LiMock.whenArgs(() -> new MockBean().m2(0), params -> {
             int len = (int) params[0];
             if (len == 0) {
@@ -32,6 +35,8 @@ class LiMockTest {
         mockBean.m1();
         mockBean.m2(1);
         Foo foo1 = mockBean.m3();
+        Assertions.assertEquals(ArrayList.class, mockBean.m4().getClass());
+
         foo1.init(length, length);
 
         Foo instance = Foo.instance();

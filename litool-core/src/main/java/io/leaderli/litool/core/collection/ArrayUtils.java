@@ -1076,7 +1076,7 @@ public class ArrayUtils {
 
     /**
      * forEach elements of src arr, and find a common inheritance type, use this type
-     * as new array componentType
+     * as new array componentType.
      *
      * @param src the source arr
      * @param <T> the type of arr
@@ -1086,6 +1086,7 @@ public class ArrayUtils {
     @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Object... src) {
         Class<?> commonSuperType = ClassUtil.getRecentlyInheritance(src);
+
         T[] des = (T[]) ClassUtil.newWrapperArray(commonSuperType, src.length);
         System.arraycopy(src, 0, des, 0, src.length);
         return des;
