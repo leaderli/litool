@@ -4,6 +4,7 @@ import io.leaderli.litool.core.lang.BeanPath;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -32,6 +33,25 @@ public class StrSubstitution {
     private static final int VARIABLE_LITERAL = 3;
 
     /**
+     * format text by map. the placeholder in format text are regard as a map key.
+     * and use {@link BeanPath#parse(Object, String)} to get the replace value. if replace value
+     * is {@code  null} the placeholder will not be replaced
+     * eg:
+     * <pre>{@code
+     * beanPath("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
+     * beanPath("a={a},b={b}",{a=1}) // "a=1,b={b}"
+     * }</pre>
+     *
+     * @param format a format string
+     * @param map    the map
+     * @return a formatted string
+     * @see #format(String, Function)
+     */
+    public static String forMap(String format, Map<String, ?> map) {
+        return format(format, map::get);
+    }
+
+    /**
      * format text by variable parameter. the placeholder in format text calculates it's index based on
      * where it's appear, the same name placeholder reuse previous index. the placeholder will replaced
      * the the index parameter string value. if index is outbound of provide args, the placeholder will
@@ -56,26 +76,6 @@ public class StrSubstitution {
     }
 
     /**
-     * format text by bean. the placeholder in format text are regard as a bean-path expression.
-     * and use {@link BeanPath#parse(Object, String)} to search the replace value. if replace value
-     * is {@code  null} the placeholder will not be replaced
-     * eg:
-     * <pre>{@code
-     * beanPath("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
-     * beanPath("a={a},b={b}",{a=1}) // "a=1,b={b}"
-     * }</pre>
-     *
-     * @param format a format string
-     * @param bean   Arguments referenced by the format
-     * @return a formatted string
-     * @see BeanPath#parse(Object)
-     * @see #format(String, Function)
-     */
-    public static String beanPath(String format, Object bean) {
-        return format(format, s -> BeanPath.parse(bean, s).get());
-    }
-
-    /**
      * the {@code  {xxx}}  are regard as placeholder {@code  xxx}. not support recursive placeholder.
      * the {} will not regard as placeholder, {{ will regard as escape {
      * <p>
@@ -96,6 +96,26 @@ public class StrSubstitution {
     }
 
     /**
+     * format text by bean. the placeholder in format text are regard as a bean-path expression.
+     * and use {@link BeanPath#parse(Object, String)} to search the replace value. if replace value
+     * is {@code  null} the placeholder will not be replaced
+     * eg:
+     * <pre>{@code
+     * beanPath("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
+     * beanPath("a={a},b={b}",{a=1}) // "a=1,b={b}"
+     * }</pre>
+     *
+     * @param format a format string
+     * @param bean   Arguments referenced by the format
+     * @return a formatted string
+     * @see BeanPath#parse(Object)
+     * @see #format(String, Function)
+     */
+    public static String beanPath(String format, Object bean) {
+        return format(format, s -> BeanPath.parse(bean, s).get());
+    }
+
+    /**
      * just like {@link  #format(String, Function)}, the different is placeholder define with custom char
      *
      * @param format          a format string
@@ -104,6 +124,8 @@ public class StrSubstitution {
      * @param replaceFunction a function that accept the placeholder variable and return a value to replace it
      * @return a formatted string
      */
+
+
     public static String parse(String format, char variableBegin, char variableEnd, Function<String, Object> replaceFunction) {
         if (format == null) {
             return "";
@@ -177,21 +199,24 @@ public class StrSubstitution {
     }
 
     /**
-     * just same as {@link  #beanPath(String, Object)}, use ${ as begin placeholder
+     * just same as {@link  #format(String, Object...)}, use ${ as begin placeholder
      * <p>
      * eg:
-     * <pre>{@code
-     *
-     * $beanPath("a=${a},b=${b},c=${c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
-     * $beanPath("a=${a},b=${b}",${a=1}) // "a=1,b={b}"
-     * }</pre>
+     * <pre>
+     *  format("a=${a},b=${b}","1") // "a=1,b={b}"
+     *  format("a=${a},b=${b}","1","2") // "a=1,b=2"
+     *  format("a=${a},b=${b},a=${a}","1","2") // to "a=1,b=2,a=1"
+     * </pre>
      *
      * @param format a format string
-     * @param bean   Arguments referenced by the format
+     * @param args   Arguments referenced by the format
      * @return a formatted string
+     * @see VariablesFunction
+     * @see #$format(String, Function)
      */
-    public static String $beanPath(String format, Object bean) {
-        return $format(format, s -> BeanPath.parse(bean, s).get());
+    public static String $format(String format, Object... args) {
+
+        return $format(format, new VariablesFunction(args));
     }
 
     /**
@@ -218,6 +243,42 @@ public class StrSubstitution {
             }
             return name;
         });
+    }
+
+    /**
+     * just same as {@link  #forMap(String, Map)}, use ${ as begin placeholder
+     * <p>
+     * eg:
+     * <pre>{@code
+     * beanPath("a=${a},b=${b},c=${c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
+     * beanPath("a=${a},b=${b}",${a=1}) // "a=1,b={b}"
+     * }</pre>
+     *
+     * @param format a format string
+     * @param map    the map
+     * @return a formatted string
+     * @see #$format(String, Function)
+     */
+    public static String $forMap(String format, Map<String, ?> map) {
+        return $format(format, map::get);
+    }
+
+    /**
+     * just same as {@link  #beanPath(String, Object)}, use ${ as begin placeholder
+     * <p>
+     * eg:
+     * <pre>{@code
+     *
+     * $beanPath("a=${a},b=${b},c=${c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
+     * $beanPath("a=${a},b=${b}",${a=1}) // "a=1,b={b}"
+     * }</pre>
+     *
+     * @param format a format string
+     * @param bean   Arguments referenced by the format
+     * @return a formatted string
+     */
+    public static String $beanPath(String format, Object bean) {
+        return $format(format, s -> BeanPath.parse(bean, s).get());
     }
 
     private static class VariablesFunction implements Function<String, Object> {

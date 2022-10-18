@@ -75,7 +75,9 @@ class StrSubstitutionTest {
         Assertions.assertEquals("{e[3]}", StrSubstitution.beanPath("{e[3]}", map));
 
         Assertions.assertEquals("3", StrSubstitution.beanPath("{e[-1]}", map));
+        Assertions.assertEquals("true", StrSubstitution.$beanPath("${cc}", map));
 
+        Assertions.assertEquals("true", StrSubstitution.$forMap("${cc}", map));
 
     }
 

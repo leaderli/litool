@@ -27,8 +27,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>utf-8
-        </project.reporting.outputEncoding>
+        <project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
 
         <!-- versions -->
         <compile.version>8</compile.version>
