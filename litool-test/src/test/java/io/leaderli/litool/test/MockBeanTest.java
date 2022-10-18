@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.lang.lean;
+package io.leaderli.litool.test;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-class ReflectBeanTest {
+class MockBeanTest {
 
     Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 
     @Test
     void test() {
 
-        FooBar fooBar = ReflectBean.instance(FooBar.class).create();
+        FooBar fooBar = MockBean.instance(FooBar.class).create();
 
 
 //        System.out.println(Arrays.toString(FooBar.class.getFields()));

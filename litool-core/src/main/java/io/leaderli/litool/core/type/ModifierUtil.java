@@ -27,6 +27,10 @@ public class ModifierUtil {
         return Modifier.isAbstract(cls.getModifiers());
     }
 
+    public static boolean isStatic(Class<?> cls) {
+        return Modifier.isStatic(cls.getModifiers());
+    }
+
     /**
      * the Calculation formula:
      * <pre>

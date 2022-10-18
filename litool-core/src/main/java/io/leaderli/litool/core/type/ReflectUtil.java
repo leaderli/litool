@@ -223,9 +223,12 @@ public class ReflectUtil {
     public static <T> Lino<T> newInstance(Class<T> cls) {
 
 
+        if (cls.isInterface() || ModifierUtil.isAbstract(cls)) {
+            return Lino.none();
+        }
         Lino<T> instance = getConstructor(cls).unzip(ReflectUtil::newInstance);
 
-        if (instance.present()) {
+        if (instance.present() || ModifierUtil.isStatic(cls)) {
 
             return instance;
         }
@@ -243,6 +246,11 @@ public class ReflectUtil {
      * @throws AssertException      if  cls is interface or abstract class
      */
     public static <T> Lino<T> newInstance(Constructor<T> constructor, Object... args) {
+
+        Class<T> cls = constructor.getDeclaringClass();
+        if (cls.isInterface() || ModifierUtil.isAbstract(cls)) {
+            return Lino.none();
+        }
         setAccessible(constructor);
         return Lino.throwable_of(() -> constructor.newInstance(args));
     }
