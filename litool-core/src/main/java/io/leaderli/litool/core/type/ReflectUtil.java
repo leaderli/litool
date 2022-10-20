@@ -7,6 +7,8 @@ import io.leaderli.litool.core.internal.ReflectionAccessor;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.proxy.DynamicDelegation;
+import io.leaderli.litool.core.text.StrSubstitution;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -507,24 +509,28 @@ public class ReflectUtil {
      * <p>
      * eg:
      * <pre>{@code
-     * LiTypeToken token = new LiTypeToken<Function<String, String>>() {};
+     * LiTypeToken token = new LiTypeToken<Supplier<String>>() {};
      * Function<String, String> func = ReflectUtil.newInterfaceImpl(token, delegate);
      * }</pre>
      *
      * @param type     the typeToken of interface
      * @param delegate the delegate bean
      * @param <T>      the type of interface
-     * @return {@link #newInterfaceImpl(Class, Object)}
+     * @return {@link #newInterfaceImpl(Class, DynamicDelegation)}
      */
     @SuppressWarnings("unchecked")
-    public static <T> T newInterfaceImpl(LiTypeToken<T> type, Object delegate) {
+    public static <T> T newInterfaceImpl(LiTypeToken<T> type, DynamicDelegation delegate) {
         return (T) newInterfaceImpl(type.getRawType(), delegate);
     }
 
     /**
      * use {@link  Proxy#newProxyInstance(ClassLoader, Class[], InvocationHandler)} to dynamic create a implement
-     * of the interface. the not-default method in interface will delegate to delegation bean with same {@link MethodSignature}
-     * or delegate the method which annotated by {@link RuntimeType} and type compatible. other method will throw {@link  AssertException}
+     * of the interface. the origin method in interface will delegate to delegation bean with same {@link MethodSignature}
+     * or delegate the method which annotated by {@link RuntimeType} and type compatible.
+     * <p>
+     * the interface should only have one method, and don't have super class
+     * <p>
+     * the delegation will be inject the origin method by {@link  DynamicDelegation#setOrigin(Method)}
      * <p>
      * eg:
      * <pre>{@code
@@ -535,46 +541,46 @@ public class ReflectUtil {
      * @param delegation the delegation bean
      * @param <T>        the type of interface
      * @return a dynamic implement of interface
-     * @throws AssertException if call the default method of interface or call method of {@link Object}
+     * @throws AssertException if _interface is not the single-method and no super class interface or delegation don't
+     *                         have delegate method
+     * @see DynamicDelegation
      */
     @SuppressWarnings("unchecked")
-    public static <T> T newInterfaceImpl(Class<T> _interface, Object delegation) {
+    public static <T> T newInterfaceImpl(Class<T> _interface, DynamicDelegation delegation) {
 
-        LiAssertUtil.assertTrue(_interface.isInterface(), "only support interface");
+        LiAssertUtil.assertTrue(_interface.isInterface() && _interface.getInterfaces().length == 0, "only support interface and without super class");
         final Map<Method, Method> delegateMethods = new HashMap<>();
-        Lira<Method> allMethods = ReflectUtil.getMethods(_interface).filter(m -> !m.isDefault());
+        Method[] methods = ReflectUtil.getMethods(_interface).toArray();
+        LiAssertUtil.assertTrue(methods.length == 1, "only support one method interface");
 
-        for (Method method : allMethods) {
-            Method find = MethodUtil.getSameSignatureMethod(delegation, method).get();
-            if (find == null) {
+        Method origin = methods[0];
+        delegation.setOrigin(origin);
+        Method find = MethodUtil.getSameSignatureMethod(delegation, origin).or(() ->
 
-                find = ReflectUtil.getMethods(delegation.getClass())
-                        .filter(m -> ReflectUtil.getAnnotation(m, RuntimeType.class))
-                        .filter(m -> ClassUtil.isAssignableFromOrIsWrapper(m.getReturnType(), method.getReturnType()))
-                        .filter(m -> {
-                            if (m.getParameterTypes().length != method.getParameterTypes().length) {
-                                return false;
-                            }
-                            for (int i = 0; i < m.getParameterTypes().length; i++) {
+                        ReflectUtil.getMethods(delegation.getClass())
+                                .filter(m -> ReflectUtil.getAnnotation(m, RuntimeType.class))
+                                .filter(m -> ClassUtil.isAssignableFromOrIsWrapper(m.getReturnType(), origin.getReturnType()))
+                                .filter(m -> {
+                                    if (m.getParameterTypes().length != origin.getParameterTypes().length) {
+                                        return false;
+                                    }
+                                    for (int i = 0; i < m.getParameterTypes().length; i++) {
 
-                                if (!ClassUtil.isAssignableFromOrIsWrapper(m.getParameterTypes()[i], method.getParameterTypes()[i])) {
-                                    return false;
-                                }
-                            }
-                            return true;
-                        })
-                        .first().get();
-            }
-            if (find != null) {
-                delegateMethods.put(method, find);
-            }
+                                        if (!ClassUtil.isAssignableFromOrIsWrapper(m.getParameterTypes()[i], origin.getParameterTypes()[i])) {
+                                            return false;
+                                        }
+                                    }
+                                    return true;
+                                })
+                                .first().get())
+                .assertNotNone(() -> StrSubstitution.format("{delegation} cannot delegate {origin}", delegation, origin))
+                .get();
+        delegateMethods.put(origin, find);
+        for (Method om : ReflectUtil.getMethods(Object.class)) {
+            delegateMethods.put(om, om);
         }
 
-        return (T) Proxy.newProxyInstance(_interface.getClassLoader(), new Class[]{_interface}, (proxy, method, args) -> {
-            Method delegate = delegateMethods.get(method);
-            LiAssertUtil.assertTrue(delegate != null, "not support " + method);
-            return delegate.invoke(delegation, args);
-        });
+        return (T) Proxy.newProxyInstance(_interface.getClassLoader(), new Class[]{_interface}, (proxy, method, args) -> delegateMethods.get(method).invoke(delegation, args));
 
     }
 

@@ -413,12 +413,20 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Lira<T> skip(int min);
 
     default Lira<T> assertTrue(Function<? super T, ?> filter) {
+        return assertTrue(filter, "");
+    }
+
+    default Lira<T> assertTrue(Function<? super T, ?> filter, String err) {
+        return assertTrue(filter, () -> err);
+    }
+
+    default Lira<T> assertTrue(Function<? super T, ?> filter, Supplier<String> errMsg) {
         return debug(new DebugConsumer<T>() {
 
             @Override
             public void accept(T e) {
                 if (!BooleanUtil.parse(filter.apply(e))) {
-                    throw new LiraRuntimeException("assert fail of " + filter);
+                    throw new LiraRuntimeException("assert fail of " + filter + " : " + errMsg.get());
                 }
             }
 

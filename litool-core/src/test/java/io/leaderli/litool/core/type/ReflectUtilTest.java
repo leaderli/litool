@@ -3,6 +3,7 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.proxy.DynamicDelegation;
 import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -28,29 +28,16 @@ class ReflectUtilTest {
     @Test
     void newInterfaceImpl() {
 
-        Object delegate = new Delegate();
-        Function<String, String> func = ReflectUtil.newInterfaceImpl(new LiTypeToken<Function<String, String>>() {
-        }, delegate);
+        DynamicDelegation1 delegate = new DynamicDelegation1();
 
-
-        Assertions.assertEquals("123", func.apply("123"));
-        Assertions.assertThrows(AssertException.class, () -> {
-
-            func.andThen(new Function<String, String>() {
-                @Override
-                public String apply(String s) {
-                    return "sss";
-                }
-            });
-        });
 
         Service service = ReflectUtil.newInterfaceImpl(Service.class, delegate);
         Assertions.assertEquals("request", service.service(new Request("request")).name);
-        assertThrows(AssertException.class, () -> ReflectUtil.newInterfaceImpl(BiFunction.class, delegate).apply(1, 2));
 
-        Delegate2 delegate2 = new Delegate2();
-        assertThrows(AssertException.class, () -> ReflectUtil.newInterfaceImpl(Function.class, delegate2).apply(1));
-        assertEquals(1, ReflectUtil.newInterfaceImpl(BiFunction.class, delegate2).apply(1, 2));
+        Assertions.assertEquals(delegate.toString(), service.toString());
+        Assertions.assertEquals(delegate.hashCode(), service.hashCode());
+
+        assertThrows(AssertException.class, () -> ReflectUtil.newInterfaceImpl(Function.class, null));
     }
 
     interface Service {
@@ -65,7 +52,7 @@ class ReflectUtilTest {
         }
     }
 
-    class Delegate {
+    class DynamicDelegation1 extends DynamicDelegation {
         @RuntimeType
         public Object apply(int arg) {
             return arg;
@@ -73,11 +60,12 @@ class ReflectUtilTest {
 
         @RuntimeType
         public Object apply(Object arg) {
+            System.out.println(origin.getReturnType());
             return arg;
         }
     }
 
-    class Delegate2 {
+    class DynamicDelegation2 extends DynamicDelegation {
         @RuntimeType
         public Object apply(int arg) {
             return arg;
