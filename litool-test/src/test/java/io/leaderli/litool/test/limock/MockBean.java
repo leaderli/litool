@@ -25,7 +25,4 @@ public class MockBean {
         return null;
     }
 
-    public T2 m5() {
-        return null;
-    }
 }
