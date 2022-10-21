@@ -20,7 +20,6 @@ class LiMockTest {
         Assertions.assertNotNull((LiMock.mockBean(Integer.class)));
         Assertions.assertNull(LiMock.mockBean(Consumer.class));
 
-
     }
 
     static void init() {
