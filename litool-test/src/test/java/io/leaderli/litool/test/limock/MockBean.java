@@ -24,4 +24,5 @@ public class MockBean {
 
         return null;
     }
+
 }
