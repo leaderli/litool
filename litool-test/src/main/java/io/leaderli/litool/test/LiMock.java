@@ -171,7 +171,6 @@ public class LiMock {
 
         // mock run pojo set get
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-
             Object value = ReflectUtil.invokeMethod(propertyDescriptor.getReadMethod(), instance).get();
             ReflectUtil.invokeMethod(propertyDescriptor.getWriteMethod(), value);
         }
