@@ -108,6 +108,11 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
+    public void forNullableEach(Consumer<? super T> consumer) {
+        nullableIterator().forEachRemaining(consumer);
+    }
+
+    @Override
     public Iterator<T> nullableIterator() {
         IterableSubscriber<T> iterator = new IterableSubscriber<>();
         subscribe(iterator);

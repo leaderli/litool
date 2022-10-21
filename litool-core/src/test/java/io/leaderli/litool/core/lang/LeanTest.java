@@ -7,10 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author leaderli
@@ -30,12 +27,11 @@ class LeanTest {
 
         Lean lean = new Lean();
 
-        Map map1 = lean.fromBean(bean1, Map.class);
-        Assertions.assertTrue(map1.get("bean") instanceof Map);
-        Assertions.assertTrue(map1.get("beans") instanceof List);
-        List list = (List) map1.get("beans");
-        System.out.println(list.get(0).getClass());
-        Assertions.assertTrue(list.get(0) instanceof Map);
+        Map map = lean.fromBean(bean1, Map.class);
+        Assertions.assertTrue(map.get("bean") instanceof Map);
+        Assertions.assertTrue(map.get("beans") instanceof List);
+        List list = (List) map.get("beans");
+        Assertions.assertTrue(list.get(0) instanceof HashMap);
 
     }
 
@@ -138,7 +134,6 @@ class LeanTest {
         Bean9 bean = lean.fromBean(map, Bean9.class);
         Assertions.assertEquals("123", bean.name);
 
-        System.out.println(gson.toJson(lean.fromBean(null, Bean9.class)));
     }
 
     @Test

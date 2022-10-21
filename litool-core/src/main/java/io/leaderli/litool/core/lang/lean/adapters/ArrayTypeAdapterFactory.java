@@ -1,18 +1,14 @@
 package io.leaderli.litool.core.lang.lean.adapters;
 
-import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.lang.lean.TypeAdapter;
 import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.TypeUtil;
 
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * @author leaderli
@@ -33,7 +29,7 @@ public class ArrayTypeAdapterFactory implements TypeAdapterFactory {
 
     }
 
-    private static final class ArrayAdapter<E> implements TypeAdapter<E[]> {
+    public static final class ArrayAdapter<E> implements TypeAdapter<E[]> {
         private final Class<E> componentType;
         private final TypeAdapter<E> elementTypeAdapter;
 
@@ -45,21 +41,8 @@ public class ArrayTypeAdapterFactory implements TypeAdapterFactory {
         @Override
         public E[] read(Object source, Lean lean) {
 
-            if (source == null) {
-                return ClassUtil.newWrapperArray(componentType, 0);
-            }
-            Collection<E> collection = new ArrayList<>();
-            if (source instanceof Iterable) {
-                ((Iterable<?>) source).forEach(e -> collection.add(elementTypeAdapter.read(e, lean)));
-            } else if (source.getClass().isArray()) {
-                E[] objects = CollectionUtils.toArray(source);
-                //noinspection ConstantConditions
-                for (E e : objects) {
-                    collection.add(elementTypeAdapter.read(e, lean));
-                }
-            }
-
-            return Lira.of(collection).toArray(componentType);
+            return Lira.iterableItr(source).map(e -> elementTypeAdapter.read(e, lean)).toNullableArray(componentType);
         }
     }
+
 }

@@ -5,6 +5,7 @@ import io.leaderli.litool.core.lang.lean.TypeAdapter;
 import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
 import io.leaderli.litool.core.type.LiTypeToken;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,8 +29,12 @@ public class ObjectTypeAdapterFactory implements TypeAdapterFactory {
                 TypeAdapter<Object> adapter = lean.getAdapter(source.getClass());
                 if (adapter instanceof MapTypeAdapterFactory.MapAdapter || adapter instanceof ReflectAdapterFactory.ReflectAdapter) {
                     return lean.fromBean(source, Map.class);
+                } else if (adapter instanceof CollectionTypeAdapterFactory.CollectionAdapter || adapter instanceof ArrayTypeAdapterFactory.ArrayAdapter) {
+
+                    return lean.fromBean(source, List.class);
+
                 }
-//
+
             }
             return source;
         }

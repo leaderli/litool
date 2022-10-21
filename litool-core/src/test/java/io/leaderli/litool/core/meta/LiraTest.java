@@ -29,6 +29,14 @@ class LiraTest {
     }
 
     @Test
+    void forEach() {
+        Collection<Integer> collection = new ArrayList<>();
+        Lira.of(null, 1, 2).forNullableEach(collection::add);
+        Assertions.assertSame(3, collection.size());
+
+    }
+
+    @Test
     void either() {
 
         Integer max = Lira.of(1, 2, null, 4)
@@ -423,6 +431,8 @@ class LiraTest {
 
         Assertions.assertEquals(2, numArr.length);
 
+        Assertions.assertSame(String[].class, Lira.of((Object) null).toNullableArray(String.class).getClass());
+        Assertions.assertSame(String[].class, Lira.none().toNullableArray(String.class).getClass());
     }
 
     @Test

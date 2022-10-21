@@ -109,6 +109,19 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
+     * Returns an lira that consisting elements provided by given obj
+     *
+     * @param obj the obj
+     * @param <T> the type of elements returned by this obj
+     * @return the new lira
+     * @see IterableItr#of(Object)
+     */
+    static <T> Lira<T> iterableItr(Object obj) {
+        return of(IterableItr.of(obj));
+
+    }
+
+    /**
      * @return the lira of a infinity generator of auto-increment integer start with 0
      * @see Generators#range()
      */
@@ -277,6 +290,13 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     @Override
     void forEach(Consumer<? super T> consumer);
+
+    /**
+     * a terminal action
+     *
+     * @param consumer The action to be performed for each element that may contain element of {@code null}
+     */
+    void forNullableEach(Consumer<? super T> consumer);
 
     /**
      * a terminal action

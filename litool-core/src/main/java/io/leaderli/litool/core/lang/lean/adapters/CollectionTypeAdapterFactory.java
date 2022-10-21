@@ -32,7 +32,7 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
 
     }
 
-    private static final class CollectionAdapter<E> implements TypeAdapter<Iterable<E>> {
+    public static final class CollectionAdapter<E> implements TypeAdapter<Iterable<E>> {
         private final TypeAdapter<E> elementTypeAdapter;
         private final ObjectConstructor<Collection<E>> constructor;
 
@@ -45,15 +45,13 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
         public Iterable<E> read(Object source, Lean lean) {
 
             Collection<E> collection = constructor.get();
-            if (source instanceof Iterable) {
 
-                ((Iterable<?>) source).forEach(e -> {
-                    E value = elementTypeAdapter.read(e, lean);
-                    collection.add(value);
-                });
-            }
+            Lira.iterableItr(source)
+                    .map(e -> elementTypeAdapter.read(e, lean))
+                    .forNullableEach(collection::add);
 
             return collection;
+
         }
     }
 }
