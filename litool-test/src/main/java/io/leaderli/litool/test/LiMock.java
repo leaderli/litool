@@ -1,8 +1,11 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.InstanceCreator;
 import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.type.TypeUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
@@ -10,6 +13,9 @@ import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -149,6 +155,14 @@ public class LiMock {
     }
 
     public static Object mockBean(Type type) {
-        return MockBean.instance(type, instanceCreators).create();
+        Object instance = MockBean.instance(type, instanceCreators).create();
+        Lino.of(TypeUtil.erase(type))
+                .filter(c -> c == instance.getClass())
+                .throwable_map(Introspector::getBeanInfo)
+                .map(BeanInfo::getPropertyDescriptors)
+                .toLira(PropertyDescriptor.class)
+                .filter(p -> !StringUtils.equals(p.getName(), "class"))
+                .forEach(p -> ReflectUtil.invokeMethod(p.getReadMethod(),instance).ifPresent(o -> ReflectUtil.invokeMethod(p.getWriteMethod(),o)));
+        return instance;
     }
 }
