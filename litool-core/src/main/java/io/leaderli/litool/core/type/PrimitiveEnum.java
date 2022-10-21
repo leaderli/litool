@@ -12,58 +12,99 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
+ * The enum Primitive enum.
+ *
  * @author leaderli
- * @since 2022/8/17 6:53 PM
+ * @since 2022 /8/17 6:53 PM
  */
 public enum PrimitiveEnum {
+    /**
+     * The Byte.
+     */
     BYTE(PrimitiveZeroValue.BYTE, Byte.TYPE, Byte.class, obj -> {
         if (obj instanceof Number) {
             return ((Number) obj).byteValue();
         }
         return null;
     }),
+    /**
+     * Boolean primitive enum.
+     */
     BOOLEAN(PrimitiveZeroValue.BOOLEAN, Boolean.TYPE, Boolean.class, BooleanUtil::parse),
+    /**
+     * The Char.
+     */
     CHAR(PrimitiveZeroValue.CHAR, Character.TYPE, Character.class, obj -> {
         if (obj instanceof Number) {
             return (char) ((Number) obj).intValue();
         }
         return null;
     }),
+    /**
+     * The Double.
+     */
     DOUBLE(PrimitiveZeroValue.DOUBLE, Double.TYPE, Double.class, obj -> {
         if (obj instanceof Number) {
             return ((Number) obj).doubleValue();
         }
         return null;
     }),
+    /**
+     * The Float.
+     */
     FLOAT(PrimitiveZeroValue.FLOAT, Float.TYPE, Float.class, obj -> {
         if (obj instanceof Number) {
             return ((Number) obj).floatValue();
         }
         return null;
     }),
+    /**
+     * The Long.
+     */
     LONG(PrimitiveZeroValue.LONG, Long.TYPE, Long.class, obj -> {
         if (obj instanceof Number) {
             return ((Number) obj).longValue();
         }
         return null;
     }),
+    /**
+     * The Int.
+     */
     INT(PrimitiveZeroValue.INT, Integer.TYPE, Integer.class, obj -> {
         if (obj instanceof Number) {
             return ((Number) obj).intValue();
         }
         return null;
     }),
+    /**
+     * The Short.
+     */
     SHORT(PrimitiveZeroValue.SHORT, Short.TYPE, Short.class, obj -> {
         if (obj instanceof Number) {
             return ((Number) obj).shortValue();
         }
         return null;
     }),
+    /**
+     * Void primitive enum.
+     */
     VOID(null, Void.TYPE, Void.class),
+    /**
+     * Object primitive enum.
+     */
     OBJECT(null, null, null);
 
+    /**
+     * The constant PRIMITIVES.
+     */
     public static final PrimitiveEnum[] PRIMITIVES;
+    /**
+     * The Primitive wrapper map.
+     */
     static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>();
+    /**
+     * The Wrapper primitive map.
+     */
     static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>();
 
     static {
@@ -80,8 +121,17 @@ public enum PrimitiveEnum {
      * zero value
      */
     public final Object zero_value;
+    /**
+     * The Primitive.
+     */
     public final Class<?> primitive;
+    /**
+     * The Wrapper.
+     */
     public final Class<?> wrapper;
+    /**
+     * The Convert.
+     */
     public final Function<Object, ?> convert;
 
     @SuppressWarnings("unchecked")
@@ -97,6 +147,8 @@ public enum PrimitiveEnum {
     }
 
     /**
+     * Is number boolean.
+     *
      * @param obj the obj
      * @return is instanceof {@link Number}
      */
@@ -126,7 +178,7 @@ public enum PrimitiveEnum {
      *
      * @param obj the obj
      * @return the primitive enum related to obj
-     * @see #get(Class)
+     * @see #get(Class) #get(Class)
      */
     public static PrimitiveEnum get(Object obj) {
         return get(ClassUtil.getDeclaringClass(obj));
@@ -137,7 +189,7 @@ public enum PrimitiveEnum {
      *
      * @param cls the cls
      * @return the primitive enum related to cls
-     * @see #get(Class)
+     * @see #get(Class) #get(Class)
      */
     public static PrimitiveEnum get(Class<?> cls) {
         cls = ClassUtil.primitiveToWrapper(cls);
@@ -176,6 +228,8 @@ public enum PrimitiveEnum {
     }
 
     /**
+     * Is number boolean.
+     *
      * @param cls the class
      * @return the class is one of sub class of  {@link  Number}
      */
@@ -185,8 +239,10 @@ public enum PrimitiveEnum {
     }
 
     /**
-     * @param type the class
+     * Zero value t.
+     *
      * @param <T>  the type parameter of class
+     * @param type the class
      * @return the class zero value
      */
     @SuppressWarnings({"unchecked", "java:S1845"})
@@ -195,6 +251,13 @@ public enum PrimitiveEnum {
     }
 
 
+    /**
+     * Read t.
+     *
+     * @param <T>   the type parameter
+     * @param value the value
+     * @return the t
+     */
     @SuppressWarnings("unchecked")
     public <T> T read(Object value) {
 
@@ -212,15 +275,42 @@ public enum PrimitiveEnum {
                 .get();
     }
 
+    /**
+     * The type Primitive zero value.
+     */
     @SuppressWarnings("all")
     static class PrimitiveZeroValue {
+        /**
+         * The constant BYTE.
+         */
         public static byte BYTE;
+        /**
+         * The constant BOOLEAN.
+         */
         public static boolean BOOLEAN;
+        /**
+         * The constant CHAR.
+         */
         public static char CHAR;
+        /**
+         * The constant DOUBLE.
+         */
         public static double DOUBLE;
+        /**
+         * The constant FLOAT.
+         */
         public static float FLOAT;
+        /**
+         * The constant LONG.
+         */
         public static long LONG;
+        /**
+         * The constant INT.
+         */
         public static int INT;
+        /**
+         * The constant SHORT.
+         */
         public static short SHORT;
     }
 }

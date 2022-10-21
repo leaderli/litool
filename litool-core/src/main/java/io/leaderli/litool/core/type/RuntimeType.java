@@ -1,6 +1,8 @@
 package io.leaderli.litool.core.type;
 
 
+import io.leaderli.litool.core.proxy.DynamicDelegation;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,7 +13,7 @@ import java.lang.annotation.Target;
  * the method with this annotation and  returnType, parameterTypes can casted from origin method
  * will used to delegate origin method
  *
- * @see ReflectUtil#newInterfaceImpl(LiTypeToken, Object)
+ * @see ReflectUtil#newInterfaceImpl(LiTypeToken, DynamicDelegation)
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})

@@ -19,7 +19,7 @@ public class PrimitiveTypeAdapter implements TypeAdapterFactory {
         if (primitiveEnum == PrimitiveEnum.OBJECT) {
             return null;
         }
-        return primitiveEnum::read;
+        return (source, l) -> primitiveEnum.read(source);
 
     }
 

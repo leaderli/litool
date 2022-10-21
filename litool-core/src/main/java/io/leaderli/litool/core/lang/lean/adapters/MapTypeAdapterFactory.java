@@ -32,55 +32,15 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
         }
         Type[] componentType = Lira.<TypeVariable>of(type.getRawType().getTypeParameters()).toArray(Type.class);
         Type keyType = componentType[0];
-        if (keyType == String.class) {
-            return new StringKeyAdapter(lean.getAdapter(String.class), lean.getAdapter(componentType[1]), constructor);
-        }
-        return new MapAdapter(lean.getAdapter(LiTypeToken.of(keyType)), lean.getAdapter(componentType[1]), constructor);
+        Type valueType = componentType[1];
+        TypeAdapter keyTypeAdapter = lean.getAdapter(LiTypeToken.of(keyType));
+        TypeAdapter valueTypeAdapter = lean.getAdapter(LiTypeToken.of(valueType));
+        return new MapAdapter(keyTypeAdapter, valueTypeAdapter, constructor);
 
     }
 
-    private static final class StringKeyAdapter<V> implements TypeAdapter<Map<String, V>> {
-        private final TypeAdapter<String> keyTypeAdapter;
 
-        private final TypeAdapter<V> valueTypeAdapter;
-        private final ObjectConstructor<Map<String, V>> constructor;
-
-        private StringKeyAdapter(TypeAdapter<String> keyTypeAdapter, TypeAdapter<V> valueTypeAdapter,
-                                 ObjectConstructor<Map<String, V>> constructor) {
-            this.keyTypeAdapter = keyTypeAdapter;
-            this.valueTypeAdapter = valueTypeAdapter;
-            this.constructor = constructor;
-        }
-
-        @Override
-        public Map<String, V> read(Object source) {
-
-            Map<String, V> map = constructor.get();
-            if (source == null) {
-                return map;
-            }
-            if (source instanceof Map) {
-
-                ((Map<?, ?>) source).forEach((k, v) -> {
-                    String rk = keyTypeAdapter.read(k);
-                    V rv = valueTypeAdapter.read(v);
-                    map.put(rk, rv);
-                });
-            } else if (PrimitiveEnum.get(source) == PrimitiveEnum.OBJECT) {
-
-                for (Field field : ReflectUtil.getFields(source.getClass())) {
-                    String rk = field.getName();
-                    Object v = ReflectUtil.getFieldValue(source, field).get();
-                    V rv = valueTypeAdapter.read(v);
-                    map.put(rk, rv);
-                }
-            }
-
-            return map;
-        }
-    }
-
-    private static final class MapAdapter<K, V> implements TypeAdapter<Map<K, V>> {
+    public static final class MapAdapter<K, V> implements TypeAdapter<Map<K, V>> {
         private final TypeAdapter<K> keyTypeAdapter;
         private final TypeAdapter<V> valueTypeAdapter;
         private final ObjectConstructor<Map<K, V>> constructor;
@@ -92,21 +52,33 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
             this.constructor = constructor;
         }
 
+
         @Override
-        public Map<K, V> read(Object source) {
+        public Map<K, V> read(Object source, Lean lean) {
 
             Map<K, V> map = constructor.get();
+
             if (source instanceof Map) {
 
-                ((Map<?, ?>) source).forEach((k, v) -> {
-                    K rk = keyTypeAdapter.read(k);
-                    V rv = valueTypeAdapter.read(v);
-                    map.put(rk, rv);
-                });
+                ((Map<?, ?>) source).forEach((k, v) -> handle(lean, map, k, v));
+            } else if (PrimitiveEnum.get(source) == PrimitiveEnum.OBJECT) {
+                for (Field field : ReflectUtil.getFields(source.getClass())) {
+                    Object v = ReflectUtil.getFieldValue(source, field).get();
+                    handle(lean, map, field.getName(), v);
+                }
             }
 
 
             return map;
         }
+
+        public void handle(Lean lean, Map<K, V> map, Object k, Object v) {
+            K rk = keyTypeAdapter.read(k, lean);
+            V rv = valueTypeAdapter.read(v, lean);
+            if (rk != null) {
+                map.put(rk, rv);
+            }
+        }
+
     }
 }

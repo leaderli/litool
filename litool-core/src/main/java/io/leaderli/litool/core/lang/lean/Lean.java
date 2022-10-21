@@ -68,14 +68,14 @@ public class Lean {
      * @see #getAdapter(LiTypeToken)
      */
     public <T> T fromBean(Object source, LiTypeToken<T> targetTypeToken) {
-        return getAdapter(targetTypeToken).read(source);
+        return getAdapter(targetTypeToken).read(source, this);
     }
 
     public <T> void copyBean(Object source, T target) {
 
         TypeAdapter<T> adapter = getAdapter(target.getClass());
         LiAssertUtil.assertTrue(adapter instanceof ReflectAdapterFactory.ReflectAdapter, "only support copy to pojo bean");
-        ((ReflectAdapterFactory.ReflectAdapter<Object>) adapter).populate(source, target);
+        ((ReflectAdapterFactory.ReflectAdapter<Object>) adapter).populate(source, target, this);
     }
 
     /**
@@ -131,7 +131,7 @@ public class Lean {
      */
     @SuppressWarnings({"unchecked"})
     public <T> T fromBean(Object source, Class<T> targetType) {
-        return (T) getAdapter(targetType).read(source);
+        return (T) getAdapter(targetType).read(source, this);
     }
 
     /**
@@ -156,7 +156,7 @@ public class Lean {
      */
     @SuppressWarnings({"unchecked"})
     public <T> T fromBean(Object source, Type targetType) {
-        return (T) getAdapter(targetType).read(source);
+        return (T) getAdapter(targetType).read(source, this);
     }
 
     /**

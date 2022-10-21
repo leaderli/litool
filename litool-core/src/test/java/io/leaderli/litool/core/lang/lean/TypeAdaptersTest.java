@@ -16,11 +16,12 @@ class TypeAdaptersTest {
 
         TypeAdapter<?> typeAdapter = TypeAdapters.PRIMITIVE_FACTORY.create(new Lean(), LiTypeToken.of(int.class));
 
-        Assertions.assertEquals(1, typeAdapter.read("1"));
-        Assertions.assertEquals(1, typeAdapter.read(1));
-        Assertions.assertEquals(1, typeAdapter.read(1.0));
-        Assertions.assertThrows(IllegalStateException.class, () -> typeAdapter.read(true));
-        Assertions.assertThrows(IllegalStateException.class, () -> typeAdapter.read("a"));
+        Lean lean = null;
+        Assertions.assertEquals(1, typeAdapter.read("1", lean));
+        Assertions.assertEquals(1, typeAdapter.read(1, lean));
+        Assertions.assertEquals(1, typeAdapter.read(1.0, lean));
+        Assertions.assertThrows(IllegalStateException.class, () -> typeAdapter.read(true, lean));
+        Assertions.assertThrows(IllegalStateException.class, () -> typeAdapter.read("a", lean));
 
     }
 }

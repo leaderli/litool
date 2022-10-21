@@ -23,15 +23,19 @@ class LeanTest {
     Gson gson = new Gson();
 
     @Test
-    void test() {
+    void test13() {
 
         String json = "{\"name\":\"1\",\"bean\": {\"name\": \"2\"},\"beans\": [{\"name\": \"3\"}]}";
-        Map map = gson.fromJson(json, Map.class);
-        LiTypeToken<Bean1<Bean1>> parameterized = LiTypeToken.getParameterized(Bean1.class, Bean1.class);
+        Bean1 bean1 = gson.fromJson(json, Bean1.class);
 
         Lean lean = new Lean();
-        Bean1<Bean1> parser = lean.fromBean(map, parameterized);
-        Assertions.assertEquals("3", parser.beans.get(0).name);
+
+        Map map1 = lean.fromBean(bean1, Map.class);
+        Assertions.assertTrue(map1.get("bean") instanceof Map);
+        Assertions.assertTrue(map1.get("beans") instanceof List);
+        List list = (List) map1.get("beans");
+        System.out.println(list.get(0).getClass());
+        Assertions.assertTrue(list.get(0) instanceof Map);
 
     }
 
@@ -188,7 +192,7 @@ class LeanTest {
     private static class StringTypeAdapter implements TypeAdapter<String> {
 
         @Override
-        public String read(Object source) {
+        public String read(Object source, Lean lean) {
             if (source instanceof List) {
                 return (String) ((List<?>) source).get(0);
             }
@@ -203,21 +207,17 @@ class LeanTest {
             return (double) 10086;
         }
 
-        @Override
-        public Double read(Object source) {
-            throw new UnsupportedOperationException();
-        }
 
         @Override
         public Double read(Object source, Lean lean) {
-            return (Double) lean.getAdapter(Double.class).read(source);
+            return (Double) lean.getAdapter(Double.class).read(source, lean);
         }
     }
 
     private static class ObjectTypeAdapter implements TypeAdapter<List> {
 
         @Override
-        public List read(Object source) {
+        public List read(Object source, Lean lean) {
             return null;
         }
     }

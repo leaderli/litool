@@ -42,11 +42,10 @@ import java.util.Objects;
  * <p>This syntax cannot be used to create type literals that have wildcard
  * parameters, such as {@code Class<?>} or {@code List<? extends CharSequence>}.
  *
+ * @param <T> the type parameter
  * @author Bob Lee
  * @author Sven Mawson
- * @author Jesse Wilson
- * <p>
- * copy form gson
+ * @author Jesse Wilson <p> copy form gson
  */
 public class LiTypeToken<T> implements ParameterizedType {
     private final Type type;
@@ -69,8 +68,23 @@ public class LiTypeToken<T> implements ParameterizedType {
     }
 
     /**
+     * Unsafe. Constructs a type literal manually.
+     *
+     * @param type -
+     */
+    @SuppressWarnings("unchecked")
+    LiTypeToken(Type type) {
+        this.type = TypeUtil.canonicalize(Objects.requireNonNull(type));
+        this.rawType = (Class<? super T>) TypeUtil.erase(this.type);
+        this.hashCode = this.type.hashCode();
+    }
+
+    /**
      * Returns the type from super class's type parameter in {@link TypeUtil#canonicalize
-     * canonical form}.
+     * canonical form}*.
+     *
+     * @param subclass -
+     * @return -
      */
     static Type getSuperclassTypeParameter(Class<?> subclass) {
         Type superclass = subclass.getGenericSuperclass();
@@ -82,18 +96,12 @@ public class LiTypeToken<T> implements ParameterizedType {
     }
 
     /**
-     * Unsafe. Constructs a type literal manually.
-     */
-    @SuppressWarnings("unchecked")
-    LiTypeToken(Type type) {
-        this.type = TypeUtil.canonicalize(Objects.requireNonNull(type));
-        this.rawType = (Class<? super T>) TypeUtil.erase(this.type);
-        this.hashCode = this.type.hashCode();
-    }
-
-    /**
      * Private helper function that performs some assignability checks for
      * the provided GenericArrayType.
+     *
+     * @param from -
+     * @param to   -
+     * @return -
      */
     private static boolean isAssignableFrom(Type from, GenericArrayType to) {
         Type toGenericComponentType = to.getGenericComponentType();
@@ -119,6 +127,11 @@ public class LiTypeToken<T> implements ParameterizedType {
     /**
      * Private recursive helper function to actually do the type-safe checking
      * of assignability.
+     *
+     * @param from       -
+     * @param to         -
+     * @param typeVarMap -
+     * @return -
      */
     private static boolean isAssignableFrom(Type from, ParameterizedType to,
                                             Map<String, Type> typeVarMap) {
@@ -172,6 +185,11 @@ public class LiTypeToken<T> implements ParameterizedType {
     /**
      * Checks if two parameterized types are exactly equal, under the variable
      * replacement described in the typeVarMap.
+     *
+     * @param from       -
+     * @param to         -
+     * @param typeVarMap -
+     * @return -
      */
     private static boolean typeEquals(ParameterizedType from,
                                       ParameterizedType to, Map<String, Type> typeVarMap) {
@@ -206,6 +224,11 @@ public class LiTypeToken<T> implements ParameterizedType {
     /**
      * Checks if two types are the same or are equivalent under a variable mapping
      * given in the type map that was provided.
+     *
+     * @param from    -
+     * @param to      -
+     * @param typeMap -
+     * @return -
      */
     private static boolean matches(Type from, Type to, Map<String, Type> typeMap) {
         return to.equals(from)
@@ -217,6 +240,11 @@ public class LiTypeToken<T> implements ParameterizedType {
     /**
      * Gets type literal for the parameterized type represented by applying {@code typeArguments} to
      * {@code rawType}.
+     *
+     * @param <T>           the type parameter
+     * @param rawType       the raw type
+     * @param typeArguments the type arguments
+     * @return the parameterized
      */
     public static <T> LiTypeToken<T> getParameterized(Type rawType, Type... typeArguments) {
         return of(LiTypes.newParameterizedTypeWithOwner(null, rawType, typeArguments));
@@ -225,6 +253,10 @@ public class LiTypeToken<T> implements ParameterizedType {
 
     /**
      * Gets type literal for the given {@code Type} instance.
+     *
+     * @param <T>  the type parameter
+     * @param type the type
+     * @return the li type token
      */
     public static <T> LiTypeToken<T> of(Type type) {
         return new LiTypeToken<>(type);
@@ -234,6 +266,7 @@ public class LiTypeToken<T> implements ParameterizedType {
      * Gets type literal for the array type whose elements are all instances of {@code componentType}.
      *
      * @param componentType the componentType
+     * @return the array
      */
     public static LiTypeToken<?> getArray(Type componentType) {
         return new LiTypeToken<>(LiTypes.arrayOf(componentType));
@@ -249,6 +282,8 @@ public class LiTypeToken<T> implements ParameterizedType {
     }
 
     /**
+     * Is parameterized type boolean.
+     *
      * @return {@code type instanceof ParameterizedType; }
      */
     public final boolean isParameterizedType() {
@@ -273,6 +308,8 @@ public class LiTypeToken<T> implements ParameterizedType {
 
     /**
      * Gets underlying {@code Type} instance.
+     *
+     * @return the type
      */
     public final Type getType() {
         return type;
@@ -281,8 +318,9 @@ public class LiTypeToken<T> implements ParameterizedType {
     /**
      * Check if this type is assignable from the given class object.
      *
-     * @deprecated this implementation may be inconsistent with javac for types
-     * with wildcards.
+     * @param cls the cls
+     * @return the boolean
+     * @deprecated this implementation may be inconsistent with javac for types with wildcards.
      */
     @Deprecated
     public boolean isAssignableFrom(Class<?> cls) {
@@ -292,8 +330,9 @@ public class LiTypeToken<T> implements ParameterizedType {
     /**
      * Check if this type is assignable from the given Type.
      *
-     * @deprecated this implementation may be inconsistent with javac for types
-     * with wildcards.
+     * @param from the from
+     * @return the boolean
+     * @deprecated this implementation may be inconsistent with javac for types with wildcards.
      */
     @Deprecated
     public boolean isAssignableFrom(Type from) {
@@ -322,8 +361,9 @@ public class LiTypeToken<T> implements ParameterizedType {
     /**
      * Check if this type is assignable from the given type token.
      *
-     * @deprecated this implementation may be inconsistent with javac for types
-     * with wildcards.
+     * @param token the token
+     * @return the boolean
+     * @deprecated this implementation may be inconsistent with javac for types with wildcards.
      */
     @Deprecated
     public boolean isAssignableFrom(LiTypeToken<?> token) {

@@ -9,11 +9,6 @@ import java.lang.reflect.Type;
 @FunctionalInterface
 public interface TypeAdapter<T> {
 
-    /**
-     * @param source the source
-     * @return create target by source
-     */
-    T read(Object source);
 
     /**
      * @param source the source
@@ -21,7 +16,5 @@ public interface TypeAdapter<T> {
      *               for custom TypeAdapter do some trick thing
      * @return create target by source
      */
-    default T read(Object source, Lean lean) {
-        return read(source);
-    }
+    T read(Object source, Lean lean);
 }

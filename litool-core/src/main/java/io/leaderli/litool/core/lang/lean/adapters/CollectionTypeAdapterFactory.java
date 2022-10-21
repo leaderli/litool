@@ -42,12 +42,15 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         @Override
-        public Iterable<E> read(Object source) {
+        public Iterable<E> read(Object source, Lean lean) {
 
             Collection<E> collection = constructor.get();
             if (source instanceof Iterable) {
 
-                ((Iterable<?>) source).forEach(e -> collection.add(elementTypeAdapter.read(e)));
+                ((Iterable<?>) source).forEach(e -> {
+                    E value = elementTypeAdapter.read(e, lean);
+                    collection.add(value);
+                });
             }
 
             return collection;

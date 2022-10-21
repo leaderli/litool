@@ -14,8 +14,7 @@ import java.lang.reflect.WildcardType;
  * Static methods for working with types.
  *
  * @author Bob Lee
- * @author Jesse Wilson
- * copy form gson
+ * @author Jesse Wilson copy form gson
  */
 public final class LiTypes {
 
@@ -27,6 +26,9 @@ public final class LiTypes {
      * Returns a new parameterized type, applying {@code typeArguments} to
      * {@code rawType} and enclosed by {@code ownerType}.
      *
+     * @param ownerType     ownerType
+     * @param rawType       rawType
+     * @param typeArguments typeArguments
      * @return a {@link java.io.Serializable serializable} parameterized type.
      */
     public static ParameterizedType newParameterizedTypeWithOwner(
@@ -38,6 +40,7 @@ public final class LiTypes {
      * Returns an array type whose elements are all instances of
      * {@code componentType}.
      *
+     * @param componentType componentType
      * @return a {@link java.io.Serializable serializable} generic array type.
      */
     public static GenericArrayType arrayOf(Type componentType) {
@@ -49,6 +52,9 @@ public final class LiTypes {
      * For example, if {@code bound} is {@code CharSequence.class}, this returns
      * {@code ? extends CharSequence}. If {@code bound} is {@code Object.class},
      * this returns {@code ?}, which is shorthand for {@code ? extends Object}.
+     *
+     * @param bound bound
+     * @return wild wildcard type
      */
     public static WildcardType subtypeOf(Type bound) {
         Type[] upperBounds;
@@ -63,7 +69,10 @@ public final class LiTypes {
     /**
      * Returns a type that represents an unknown supertype of {@code bound}. For
      * example, if {@code bound} is {@code String.class}, this returns {@code ?
-     * super String}.
+     * super String}**.
+     *
+     * @param bound bound
+     * @return wild wildcard type
      */
     public static WildcardType supertypeOf(Type bound) {
         Type[] lowerBounds;
@@ -78,8 +87,13 @@ public final class LiTypes {
 
     /**
      * Returns the generic supertype for {@code supertype}. For example, given a class {@code
-     * IntegerSet}, the result for when supertype is {@code Set.class} is {@code Set<Integer>} and the
+     * IntegerSet}**, the result for when supertype is {@code Set.class} is {@code Set<Integer>} and the
      * result when the supertype is {@code Collection.class} is {@code Collection<Integer>}.
+     *
+     * @param context   -
+     * @param rawType   -
+     * @param toResolve -
+     * @return -
      */
     static Type getGenericSupertype(Type context, Class<?> rawType, Class<?> toResolve) {
         if (toResolve == rawType) {
@@ -119,6 +133,8 @@ public final class LiTypes {
     /**
      * Returns the component type of this array type.
      *
+     * @param array the array
+     * @return the array component type
      * @throws ClassCastException if this type is not an array.
      */
     public static Type getArrayComponentType(Type array) {
