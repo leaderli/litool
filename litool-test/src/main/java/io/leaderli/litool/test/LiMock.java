@@ -99,9 +99,6 @@ public class LiMock {
         Object zero_value;
         if (primitiveEnum == PrimitiveEnum.VOID) {
             zero_value = NONE;
-            //            case OBJECT:
-//                zero_value = ReflectUtil.newInstance(returnType).get();
-//                break;
         } else {
             zero_value = primitiveEnum.zero_value;
         }
@@ -162,7 +159,7 @@ public class LiMock {
                 .map(BeanInfo::getPropertyDescriptors)
                 .toLira(PropertyDescriptor.class)
                 .filter(p -> !StringUtils.equals(p.getName(), "class"))
-                .forEach(p -> ReflectUtil.invokeMethod(p.getReadMethod(),instance).ifPresent(o -> ReflectUtil.invokeMethod(p.getWriteMethod(),o)));
+                .forEach(p -> ReflectUtil.invokeMethod(p.getReadMethod(), instance).ifPresent(o -> ReflectUtil.invokeMethod(p.getWriteMethod(), o)));
         return instance;
     }
 }
