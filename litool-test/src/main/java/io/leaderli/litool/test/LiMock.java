@@ -2,18 +2,14 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.text.StringUtils;
-import io.leaderli.litool.core.type.InstanceCreator;
-import io.leaderli.litool.core.type.PrimitiveEnum;
-import io.leaderli.litool.core.type.ReflectUtil;
-import io.leaderli.litool.core.type.TypeUtil;
+import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.*;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 
-import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
@@ -151,15 +147,35 @@ public class LiMock {
         }
     }
 
+    /**
+     * return a instance of type, if the instance class is same as type
+     *
+     * @param type the type
+     * @return a instanceof type
+     * @see MockBean#create()
+     */
     public static Object mockBean(Type type) {
+
         Object instance = MockBean.instance(type, instanceCreators).create();
-        Lino.of(TypeUtil.erase(type))
-                .filter(c -> c == instance.getClass())
-                .throwable_map(Introspector::getBeanInfo)
-                .map(BeanInfo::getPropertyDescriptors)
-                .toLira(PropertyDescriptor.class)
-                .filter(p -> !StringUtils.equals(p.getName(), "class"))
-                .forEach(p -> ReflectUtil.invokeMethod(p.getReadMethod(), instance).ifPresent(o -> ReflectUtil.invokeMethod(p.getWriteMethod(), o)));
+
+        Lira<PropertyDescriptor> propertyDescriptors = Lino.of(instance)
+                .map(Object::getClass)
+                .filter(c -> {
+                    if (c == Object.class || c.isArray()) {
+                        return false;
+                    }
+                    return c == TypeUtil.erase(type);
+                })
+                .throwable_map(cls -> Introspector.getBeanInfo(cls).getPropertyDescriptors())
+                .toLira(PropertyDescriptor.class);
+
+        // mock run pojo set get
+        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+
+            Object value = ReflectUtil.invokeMethod(propertyDescriptor.getReadMethod(), instance).get();
+            ReflectUtil.invokeMethod(propertyDescriptor.getWriteMethod(), value);
+        }
+
         return instance;
     }
 }

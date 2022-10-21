@@ -4,10 +4,14 @@ import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.proxy.DynamicDelegation;
+import io.leaderli.litool.core.util.ConsoleUtil;
 import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.MethodDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -230,8 +234,9 @@ class ReflectUtilTest {
     }
 
     @Test
-    void getMethods() {
+    void getMethods() throws IntrospectionException {
         assertEquals(2 + Object.class.getMethods().length, ReflectUtil.getMethods(Bean.class).size());
+
     }
 
     @Test

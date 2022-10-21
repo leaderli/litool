@@ -4,10 +4,24 @@ import io.leaderli.litool.core.test.IntValues;
 import io.leaderli.litool.test.limock.Foo;
 import io.leaderli.litool.test.limock.MockBean;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 class LiMockTest {
+
+    @Test
+    void mockBean() {
+
+        Assertions.assertNotNull(LiMock.mockBean(Consumer[].class));
+        Assertions.assertNotNull(LiMock.mockBean(List.class));
+        Assertions.assertNotNull((LiMock.mockBean(Integer.class)));
+        Assertions.assertNull(LiMock.mockBean(Consumer.class));
+
+
+    }
 
     static void init() {
         LiMock.mock(MockBean.class);
