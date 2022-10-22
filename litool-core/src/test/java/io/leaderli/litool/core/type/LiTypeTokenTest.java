@@ -16,10 +16,6 @@ import java.util.Map;
 @SuppressWarnings("rawtypes")
 class LiTypeTokenTest {
 
-    @Test
-    void test() {
-
-    }
 
     public Map map;
 
@@ -36,7 +32,6 @@ class LiTypeTokenTest {
         Assertions.assertEquals("[K, V]", Arrays.toString(tokenMap.getActualTypeArguments()));
         Assertions.assertEquals("[K, V]", Arrays.toString(LiTypeToken.of(Map.class).getActualTypeArguments()));
 
-//        ReflectUtilTest.LittleBean
         Assertions.assertSame(TypeUtil.EMPTY_TYPE_ARRAY, LiTypeToken.of(Runnable.class).getActualTypeArguments());
 
 

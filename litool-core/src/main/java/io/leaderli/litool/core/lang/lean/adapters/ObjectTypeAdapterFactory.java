@@ -30,9 +30,7 @@ public class ObjectTypeAdapterFactory implements TypeAdapterFactory {
                 if (adapter instanceof MapTypeAdapterFactory.MapAdapter || adapter instanceof ReflectAdapterFactory.ReflectAdapter) {
                     return lean.fromBean(source, Map.class);
                 } else if (adapter instanceof CollectionTypeAdapterFactory.CollectionAdapter || adapter instanceof ArrayTypeAdapterFactory.ArrayAdapter) {
-
                     return lean.fromBean(source, List.class);
-
                 }
 
             }
