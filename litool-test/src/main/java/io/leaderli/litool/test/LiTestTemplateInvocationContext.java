@@ -82,6 +82,15 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
 
         public static Map<Method, Object> methodValue;
 
+        /**
+         * for skip real method call, the return value must not be null. use {@link LiMock#SKIP} to
+         * mark the return null. and put it back at {@link #exit(Object, Object, Method, Object[])}
+         *
+         * @param origin origin method
+         * @param args   origin args
+         * @param _this  origin  this
+         * @return the method return value
+         */
         @SuppressWarnings("all")
         @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
         public static Object enter(@Advice.Origin Method origin,
@@ -89,20 +98,29 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
                                    @Advice.This(optional = true) Object _this) {
 
             Object value = methodValue.get(origin);
+
             Class<?> returnType = origin.getReturnType();
-            if (returnType == void.class) {
-                return LiMock.NONE;
-            }
-            if (value == null && returnType.isPrimitive()) {
-                return PrimitiveEnum.get(returnType).zero_value;
+            if (value == LiMock.SKIP) {
+
+                if (returnType == void.class) {
+                    value = LiMock.SKIP;
+                } else {
+
+                    Type type = origin.getGenericReturnType();
+                    if (_this != null) {
+                        type = TypeUtil.resolve(_this.getClass(), origin.getGenericReturnType());
+                    }
+                    value = LiMock.mockBean(type);
+                }
+            } else {
+
+                PrimitiveEnum primitiveEnum = PrimitiveEnum.get(returnType);
+                if (value == null && primitiveEnum != PrimitiveEnum.OBJECT) {
+                    value = primitiveEnum.zero_value;
+                }
             }
             if (value == null) {
-
-                Type type = origin.getGenericReturnType();
-                if (_this != null) {
-                    type = TypeUtil.resolve(_this.getClass(), origin.getGenericReturnType());
-                }
-                return LiMock.mockBean(type);
+                return LiMock.SKIP;
             }
             return value;
         }
@@ -111,10 +129,13 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
         @Advice.OnMethodExit
         public static void exit(
                 @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object _return,
-                @Advice.Enter Object mock,
+                @Advice.Enter(readOnly = false) Object mock,
                 @Advice.Origin Method origin,
                 @Advice.AllArguments Object[] args) {
 
+            if (mock == LiMock.SKIP) {
+                mock = null;
+            }
             _return = mock;
         }
     }

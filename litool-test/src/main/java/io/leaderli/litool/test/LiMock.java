@@ -23,10 +23,13 @@ import java.util.function.Supplier;
  */
 public class LiMock {
 
-    public static final Object NONE = new Object() {
+    /**
+     * it's used for mark method return void or the to be mocked bean
+     */
+    public static final Object SKIP = new Object() {
         @Override
         public String toString() {
-            return "void";
+            return "skip";
         }
     };
 
@@ -81,6 +84,8 @@ public class LiMock {
      * support void,primitive,pojo returnType mock, auto generate one element of method returnValue
      *
      * @param runnable the method call
+     * @see MockBean#create()
+     * @see PrimitiveEnum#zero_value
      */
     public static void light(Runnable runnable) {
 
@@ -92,14 +97,8 @@ public class LiMock {
         Class<?> returnType = TypeUtil.erase(TypeUtil.resolve(mockMethod.getDeclaringClass(), mockMethod.getGenericReturnType()));
         PrimitiveEnum primitiveEnum = PrimitiveEnum.get(returnType);
 
-        Object zero_value;
-        if (primitiveEnum == PrimitiveEnum.VOID) {
-            zero_value = NONE;
-        } else {
-            zero_value = primitiveEnum.zero_value;
-        }
-        Object finalZero_value = zero_value;
-        methodValues.put(mockMethod, params -> new Object[]{finalZero_value});
+        Object zero_value = primitiveEnum == PrimitiveEnum.VOID || primitiveEnum == PrimitiveEnum.OBJECT ? SKIP : primitiveEnum.zero_value;
+        methodValues.put(mockMethod, params -> new Object[]{zero_value});
         mockedClasses.add(mockMethod.getDeclaringClass());
 
         mockMethod = null;
@@ -107,16 +106,16 @@ public class LiMock {
     }
 
     @SafeVarargs
-    public static <T> void when(Supplier<T> runnable, T... mockValues) {
-        whenArgs(runnable, params -> mockValues);
+    public static <T> void when(Supplier<T> supplier, T... mockValues) {
+        whenArgs(supplier, params -> mockValues);
     }
 
-    public static <T> void whenArgs(Supplier<T> runnable, Function<Object[], Object[]> mockValuesProvideByParams) {
+    public static <T> void whenArgs(Supplier<T> supplier, Function<Object[], Object[]> mockValuesProvideByParams) {
 
 
         mockMethod = null;
         mockProgress = true;
-        runnable.get();
+        supplier.get();
 
         Objects.requireNonNull(mockMethod);
         methodValues.put(mockMethod, mockValuesProvideByParams);
@@ -132,10 +131,10 @@ public class LiMock {
          * or disable some void-method call by {@link  #light(Runnable)}
          * <p>
          * this is a delegate for all method of mockindg class, will ignore actual inovation of all methods.
-         * to prevent call actual method on the void-method, return a meaningless {@link #NONE}.
+         * to prevent call actual method on the void-method, return a meaningless {@link #SKIP}.
          *
          * @param origin the origin method of mocking class
-         * @return return a meaningless {@link #NONE}
+         * @return return a meaningless {@link #SKIP}
          */
         @SuppressWarnings("all")
         @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
@@ -143,7 +142,7 @@ public class LiMock {
             if (mockProgress) {
                 mockMethod = origin;
             }
-            return NONE;
+            return SKIP;
         }
     }
 
@@ -169,7 +168,7 @@ public class LiMock {
                 .throwable_map(cls -> Introspector.getBeanInfo(cls).getPropertyDescriptors())
                 .toLira(PropertyDescriptor.class);
 
-        // mock run pojo set get
+        // mock run pojo set get achieve test coverage
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             Object value = ReflectUtil.invokeMethod(propertyDescriptor.getReadMethod(), instance).get();
             ReflectUtil.invokeMethod(propertyDescriptor.getWriteMethod(), value);

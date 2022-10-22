@@ -14,8 +14,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-import static io.leaderli.litool.test.LiMock.NONE;
-
 /**
  * @author leaderli
  * @since 2022/9/30 5:16 PM
@@ -89,7 +87,7 @@ public class LiTestAssert {
                                    @Advice.This(optional = true) Object _this) {
             if (assertObj == _this || _this == null && staticRecord) {
                 assertMethod = origin;
-                return NONE;
+                return LiMock.SKIP;
             }
             return null;
         }

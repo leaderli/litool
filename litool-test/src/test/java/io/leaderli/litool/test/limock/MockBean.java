@@ -24,5 +24,8 @@ public class MockBean {
 
         return null;
     }
+    public Foo m5() {
 
+        return new Foo();
+    }
 }
