@@ -143,7 +143,7 @@ public class LiMock {
         // mock run pojo set get achieve test coverage
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             Object value = ReflectUtil.invokeMethod(propertyDescriptor.getReadMethod(), instance).get();
-            ReflectUtil.invokeMethod(propertyDescriptor.getWriteMethod(), value);
+            ReflectUtil.invokeMethod(propertyDescriptor.getWriteMethod(), instance, value);
         }
     }
 

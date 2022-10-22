@@ -75,7 +75,6 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
                 list.add(new LiTestTemplateInvocationContext(parameters, mockClasses, new HashMap<>()));
             } else {
 
-
                 for (Object[] scenario : testScenario) {
 
                     Map<Method, Object> methodValue = CollectionUtils.tuple(methods.toArray(Method.class), scenario).toMap(l -> l);

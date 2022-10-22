@@ -1,12 +1,18 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.test.CartesianContext;
+import io.leaderli.litool.core.test.ClassValues;
+import io.leaderli.litool.core.test.FactoryValues;
 import io.leaderli.litool.core.test.IntValues;
 import io.leaderli.litool.test.limock.Foo;
+import io.leaderli.litool.test.limock.GetSetBean;
 import io.leaderli.litool.test.limock.TestBean;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 class LiMockTest {
 
@@ -59,12 +65,26 @@ class LiMockTest {
     }
 
 
-    @LiTest
-    void test(Type type, Object obj) {
-        System.out.println(type + "+" + obj);
-        Assertions.assertDoesNotThrow(() -> {
+    private static class T1 implements Function<CartesianContext, Object[]> {
 
-        });
+        @Override
+        public Object[] apply(CartesianContext cartesianContext) {
+            return new Object[]{new ArrayList<>(), new GetSetBean()};
+        }
+    }
+
+    @LiTest
+    void test(@ClassValues({Object.class, List.class, GetSetBean.class}) Class<?> type, @FactoryValues(T1.class) Object obj) {
+        Assertions.assertDoesNotThrow(() -> LiMock.runGetSet(type, obj));
+
+    }
+
+    @Test
+    void runGetSet() {
+        GetSetBean getSetBean = new GetSetBean();
+        Assertions.assertSame(0, getSetBean.getAge());
+        LiMock.runGetSet(GetSetBean.class, getSetBean);
+        Assertions.assertSame(1, getSetBean.getAge());
 
     }
 }
