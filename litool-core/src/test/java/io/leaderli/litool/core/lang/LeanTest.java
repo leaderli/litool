@@ -19,6 +19,8 @@ class LeanTest {
 
     Gson gson = new Gson();
 
+
+    @SuppressWarnings("unchecked")
     @Test
     void test13() {
 
@@ -33,6 +35,21 @@ class LeanTest {
         List list = (List) map.get("beans");
         Assertions.assertTrue(list.get(0) instanceof HashMap);
 
+
+        map.clear();
+
+        map.put(1, 1);
+        map.put(true, true);
+        map.put("str", "str");
+
+
+        Map<String, String> strMap = lean.fromBean(map, new LiTypeToken<Map<String, String>>() {
+        });
+
+        System.out.println(strMap);
+        for (String s : strMap.keySet()) {
+            System.out.println(s);
+        }
     }
 
     @Test

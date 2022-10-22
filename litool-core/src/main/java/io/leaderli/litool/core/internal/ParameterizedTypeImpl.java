@@ -32,6 +32,8 @@ public class ParameterizedTypeImpl implements ParameterizedType {
         this.rawType = TypeUtil.erase(TypeUtil.canonicalize(rawType));
         this.typeArguments = typeArguments.length == 0 ? TypeUtil.EMPTY_TYPE_ARRAY : typeArguments.clone();
 
+        LiAssertUtil.assertTrue(this.typeArguments.length == this.rawType.getTypeParameters().length, "the number of typeParameters is incorrect ");
+
         for (int t = 0, length = this.typeArguments.length; t < length; t++) {
             Objects.requireNonNull(this.typeArguments[t]);
             TypeUtil.checkNotPrimitive(this.typeArguments[t]);

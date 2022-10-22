@@ -3,7 +3,6 @@ package io.leaderli.litool.core.lang.lean.adapters;
 import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.lang.lean.TypeAdapter;
 import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
-import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.ObjectConstructor;
 import io.leaderli.litool.core.type.PrimitiveEnum;
@@ -11,7 +10,6 @@ import io.leaderli.litool.core.type.ReflectUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.Map;
 
 /**
@@ -30,7 +28,7 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
         if (constructor == null) {
             return null;
         }
-        Type[] componentType = Lira.<TypeVariable>of(type.getRawType().getTypeParameters()).toArray(Type.class);
+        Type[] componentType = type.getActualTypeArguments();
         Type keyType = componentType[0];
         Type valueType = componentType[1];
         TypeAdapter keyTypeAdapter = lean.getAdapter(LiTypeToken.of(keyType));

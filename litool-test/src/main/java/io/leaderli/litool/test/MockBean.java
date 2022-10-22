@@ -50,6 +50,23 @@ public class MockBean<T> {
         return instance(token, new LinkedHashMap<>());
     }
 
+    /**
+     * return a instance of type, if the instance class is same as type  invoke pojo set get
+     *
+     * @param type the type
+     * @return a instanceof type
+     * @see MockBean#create()
+     * @see LiMock#runGetSet(Type, Object)
+     */
+    public static Object mockBean(Type type) {
+
+        Object obj = instance(type, LiMock.instanceCreators).create();
+
+        LiMock.runGetSet(type, obj);
+
+        return obj;
+    }
+
     @SuppressWarnings("unchecked")
     public T create() {
 

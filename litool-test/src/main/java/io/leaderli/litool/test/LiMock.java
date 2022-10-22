@@ -3,7 +3,10 @@ package io.leaderli.litool.test;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.type.*;
+import io.leaderli.litool.core.type.InstanceCreator;
+import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.core.type.TypeUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.asm.Advice;
@@ -125,6 +128,25 @@ public class LiMock {
         mockProgress = false;
     }
 
+    static void runGetSet(Type type, Object instance) {
+        Lira<PropertyDescriptor> propertyDescriptors = Lino.of(instance)
+                .map(Object::getClass)
+                .filter(c -> {
+                    if (c == Object.class || c.isArray()) {
+                        return false;
+                    }
+                    return c == TypeUtil.erase(type);
+                })
+                .throwable_map(cls -> Introspector.getBeanInfo(cls).getPropertyDescriptors())
+                .toLira(PropertyDescriptor.class);
+
+        // mock run pojo set get achieve test coverage
+        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+            Object value = ReflectUtil.invokeMethod(propertyDescriptor.getReadMethod(), instance).get();
+            ReflectUtil.invokeMethod(propertyDescriptor.getWriteMethod(), value);
+        }
+    }
+
     public static class MockInitAdvice {
         /**
          * used to record the mocking class method has be called, and mark method potention return values by {@link  #when(Supplier, Object[])}
@@ -146,34 +168,4 @@ public class LiMock {
         }
     }
 
-    /**
-     * return a instance of type, if the instance class is same as type
-     *
-     * @param type the type
-     * @return a instanceof type
-     * @see MockBean#create()
-     */
-    public static Object mockBean(Type type) {
-
-        Object instance = MockBean.instance(type, instanceCreators).create();
-
-        Lira<PropertyDescriptor> propertyDescriptors = Lino.of(instance)
-                .map(Object::getClass)
-                .filter(c -> {
-                    if (c == Object.class || c.isArray()) {
-                        return false;
-                    }
-                    return c == TypeUtil.erase(type);
-                })
-                .throwable_map(cls -> Introspector.getBeanInfo(cls).getPropertyDescriptors())
-                .toLira(PropertyDescriptor.class);
-
-        // mock run pojo set get achieve test coverage
-        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-            Object value = ReflectUtil.invokeMethod(propertyDescriptor.getReadMethod(), instance).get();
-            ReflectUtil.invokeMethod(propertyDescriptor.getWriteMethod(), value);
-        }
-
-        return instance;
-    }
 }

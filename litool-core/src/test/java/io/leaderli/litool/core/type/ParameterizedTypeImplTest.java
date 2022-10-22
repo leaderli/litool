@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -49,17 +50,15 @@ class ParameterizedTypeImplTest {
         Assertions.assertEquals("io.leaderli.litool.core.type.ParameterizedTypeImplTest$Out$In<T>",
                 ParameterizedTypeImpl.make(Out.In.class).toString());
 
+
+        Assertions.assertThrows(AssertException.class, () -> ParameterizedTypeImpl.make(null, Map.class, String.class));
     }
 
     @Test
     void getActualTypeArguments() {
-        Assertions.assertArrayEquals(new Type[]{Object.class, Object.class},
-                ParameterizedTypeImpl.make(Map.class).getActualClassArguments());
-        Assertions.assertSame(TypeUtil.EMPTY_TYPE_ARRAY,
-                ParameterizedTypeImpl.make(Runnable.class).getActualTypeArguments());
-        Assertions.assertSame(TypeUtil.EMPTY_TYPE_ARRAY,
-                ParameterizedTypeImpl.make(null, List.class).getActualTypeArguments());
-
+        Assertions.assertArrayEquals(new Type[]{Object.class, Object.class}, ParameterizedTypeImpl.make(Map.class).getActualClassArguments());
+        Assertions.assertSame(TypeUtil.EMPTY_TYPE_ARRAY, ParameterizedTypeImpl.make(Runnable.class).getActualTypeArguments());
+        Assertions.assertSame(TypeUtil.EMPTY_TYPE_ARRAY, ParameterizedTypeImpl.make(null, List.class).getActualTypeArguments());
     }
 
     private static class Out {

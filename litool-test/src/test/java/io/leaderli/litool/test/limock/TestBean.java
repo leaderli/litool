@@ -6,7 +6,7 @@ import java.util.List;
  * @author leaderli
  * @since 2022/10/17 11:36 AM
  */
-public class MockBean {
+public class TestBean {
     public int m2(int length) {
         return 2;
     }

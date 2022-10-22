@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 class MockBeanTest {
 
@@ -17,20 +18,22 @@ class MockBeanTest {
 
         FooBar fooBar = MockBean.instance(FooBar.class).create();
 
-
-//        System.out.println(Arrays.toString(FooBar.class.getFields()));
-//        System.out.println(Arrays.toString(FooBar.class.getDeclaredFields()));
-
-
         Assertions.assertSame(int[].class, fooBar.getArr().getClass());
         Assertions.assertSame(Integer[].class, fooBar.getWrapper().getClass());
         Assertions.assertSame(ArrayList.class, fooBar.getList().getClass());
 
-        System.out.println(gson.toJson(fooBar));
+        Assertions.assertNotNull(fooBar.getBar());
+        Assertions.assertNotNull(fooBar.getFoo());
 
-        System.out.println(fooBar.getBar());
-        System.out.println(fooBar.getFoo());
-//        fooBar.setBar(fooBar);
+    }
+
+    @Test
+    void mockBean() {
+
+        Assertions.assertNotNull(MockBean.mockBean(Consumer[].class));
+        Assertions.assertNotNull(MockBean.mockBean(List.class));
+        Assertions.assertNotNull((MockBean.mockBean(Integer.class)));
+        Assertions.assertNull(MockBean.mockBean(Consumer.class));
 
     }
 
