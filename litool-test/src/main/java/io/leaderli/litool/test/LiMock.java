@@ -128,7 +128,7 @@ public class LiMock {
         mockProgress = false;
     }
 
-    static void runGetSet(Type type, Object instance) {
+    public static void runGetSet(Type type, Object instance) {
         Lira<PropertyDescriptor> propertyDescriptors = Lino.of(instance)
                 .map(Object::getClass)
                 .filter(c -> {
@@ -137,7 +137,7 @@ public class LiMock {
                     }
                     return c == TypeUtil.erase(type);
                 })
-                .throwable_map(cls -> Introspector.getBeanInfo(cls).getPropertyDescriptors())
+                .throwable_map(cls -> Introspector.getBeanInfo(cls, Object.class).getPropertyDescriptors())
                 .toLira(PropertyDescriptor.class);
 
         // mock run pojo set get achieve test coverage
