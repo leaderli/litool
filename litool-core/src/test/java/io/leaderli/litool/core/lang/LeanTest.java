@@ -42,7 +42,6 @@ class LeanTest {
         map.put(true, true);
         map.put("str", "str");
 
-
         Map<String, String> strMap = lean.fromBean(map, new LiTypeToken<Map<String, String>>() {
         });
 
