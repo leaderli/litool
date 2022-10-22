@@ -22,6 +22,9 @@ class LinoTest {
         Assertions.assertThrows(IllegalStateException.class, () -> Lino.of(1).assertTrue(i -> i > 1));
         Assertions.assertDoesNotThrow(() -> Lino.of(1).assertTrue(i -> i < 2));
 
+
+        Assertions.assertThrows(RuntimeException.class, () -> Lino.none().assertTrue(a -> true, new RuntimeException()));
+
     }
 
     @Test

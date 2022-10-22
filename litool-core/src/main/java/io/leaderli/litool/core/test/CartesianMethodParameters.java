@@ -34,6 +34,7 @@ public class CartesianMethodParameters {
         Lira<Object[]> map = Lira.of(method.getParameters())
                 .map(parameter -> CartesianUtil.cartesian(parameter, context));
 
+
         Object[][] parametersValues = map.toArray(Object[].class);
         Object[][] cartesian = CollectionUtils.cartesian(parametersValues);
 

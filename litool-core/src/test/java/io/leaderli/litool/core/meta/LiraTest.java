@@ -23,8 +23,6 @@ import java.util.function.Function;
 class LiraTest {
 
 
-
-
     @Test
     void forEach() {
         Collection<Integer> collection = new ArrayList<>();
@@ -66,6 +64,7 @@ class LiraTest {
                 () -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertNoError().get());
         Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertTrue(i -> i > 0));
         Assertions.assertThrows(LiraRuntimeException.class, () -> Lira.of(1, 2, 9, 0).assertTrue(i -> i > 0).get());
+        Assertions.assertThrows(LiraRuntimeException.class, () -> Lira.of(1, 2, 9, 0).map(a -> Lino.of(a).assertTrue(b -> false, new LiraRuntimeException()).get()).get());
     }
 
     @Test

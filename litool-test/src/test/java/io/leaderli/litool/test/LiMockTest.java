@@ -1,9 +1,6 @@
 package io.leaderli.litool.test;
 
-import io.leaderli.litool.core.test.CartesianContext;
-import io.leaderli.litool.core.test.ClassValues;
-import io.leaderli.litool.core.test.FactoryValues;
-import io.leaderli.litool.core.test.IntValues;
+import io.leaderli.litool.core.test.*;
 import io.leaderli.litool.test.limock.Foo;
 import io.leaderli.litool.test.limock.GetSetBean;
 import io.leaderli.litool.test.limock.TestBean;
@@ -77,6 +74,34 @@ class LiMockTest {
     void test(@ClassValues({Object.class, List.class, GetSetBean.class}) Class<?> type, @FactoryValues(T1.class) Object obj) {
         Assertions.assertDoesNotThrow(() -> LiMock.runGetSet(type, obj));
 
+    }
+
+    static void init2(CartesianContext context) {
+        context.registerCustomValuable(IntValues.class, (type, annotation, annotatedElement, context1) -> new Object[]{100});
+    }
+
+    @MockContext("init2")
+    @LiTest
+    void test2(@IntValues({1, 2, 3}) int age) {
+
+        Assertions.assertEquals(100, age);
+    }
+
+    @LiTest
+    void test3(@IntValues({1, 2, 3}) int age) {
+
+        Assertions.assertTrue(age < 4);
+    }
+
+
+    static Object[] values() {
+        return new Object[]{1, 2, 3};
+    }
+
+    @LiTest
+    void test(@DynamicValues("values") Object obj) {
+
+        Assertions.assertTrue(obj instanceof Integer);
     }
 
     @Test

@@ -52,17 +52,26 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
 
         List<TestTemplateInvocationContext> list = new ArrayList<>();
 
-        Lira<Object[]> parameterCartesian = new CartesianMethodParameters(templateMethod, new CartesianContext()).cartesian();
+        CartesianContext context = new CartesianContext();
 
+        ReflectUtil.getAnnotation(templateMethod, MockContext.class)
+                .or(ReflectUtil.getAnnotation(templateMethod.getDeclaringClass(), MockContext.class))
+                .map(MockContext::value)
+                .unzip(name -> ReflectUtil.getMethod(templateMethod.getDeclaringClass(), name))
+                .ifPresent(staticInitMethod -> {
+                    LiAssertUtil.assertTrue(ModifierUtil.isStatic(staticInitMethod) && staticInitMethod.getParameterTypes().length == 1, "must be static method with CartesianContext parameter");
+                    ReflectUtil.invokeMethod(staticInitMethod, null, context);
+                });
 
         ReflectUtil.getAnnotation(templateMethod, MockInit.class)
                 .map(MockInit::value)
                 .unzip(name -> ReflectUtil.getMethod(templateMethod.getDeclaringClass(), name))
                 .ifPresent(staticInitMethod -> {
-                    LiAssertUtil.assertTrue(ModifierUtil.isStatic(staticInitMethod), "must be static method");
+                    LiAssertUtil.assertTrue(ModifierUtil.isStatic(staticInitMethod) && staticInitMethod.getParameterTypes().length == 0, "must be static method without parameter");
                     ReflectUtil.invokeMethod(staticInitMethod, null);
                 });
 
+        Lira<Object[]> parameterCartesian = new CartesianMethodParameters(templateMethod, context).cartesian();
 
         Object[] classes = ArrayUtils.toArray(LiMock.mockedClasses);
         Class<?>[] mockClasses = classes.length == 0 ? new Class[0] : (Class<?>[]) classes;

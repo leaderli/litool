@@ -2,6 +2,8 @@ package io.leaderli.litool.core.test;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
+import io.leaderli.litool.core.meta.Either;
+import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
@@ -23,23 +25,24 @@ public class CartesianUtil {
 
     private static <T> Object[] cartesian(Class<T> type, AnnotatedElement annotatedElement, CartesianContext context) {
 
-        return context.relative(annotatedElement)
-                .map(tu -> {
-                    if ((Object) tu._1 instanceof ObjectCartesian) {
-                        return new CartesianObject<>(type, field -> CartesianUtil.cartesian(field, context)).cartesian().toArray();
-                    }
+        Either<Integer, Object[]> custom = context.custom(type, annotatedElement);
+        Lino<Object[]> result;
+        if (custom.isRight()) {
 
-                    ParameterizedTypeImpl canonicalize = TypeUtil.resolve2Parameterized(tu._1.getClass(),
-                            CartesianFunction.class);
-                    if (ClassUtil.primitiveToWrapper(type) != canonicalize.getActualClassArgument(1).get()) {
-                        return null;
-                    }
-                    Annotation annotated = tu._2;
+            result = custom.getRightLino();
+        } else {
+            result = context.relative(annotatedElement)
+                    .map(tu -> {
 
-                    return tu._1.apply(annotated, context);
-                })
-                .filter()
-                .get(() -> cartesian_single_def(type));
+                        ParameterizedTypeImpl canonicalize = TypeUtil.resolve2Parameterized(tu._1.getClass(), CartesianFunction.class);
+                        if (ClassUtil.primitiveToWrapper(type) != canonicalize.getActualClassArgument(1).get()) {
+                            return null;
+                        }
+                        return tu._1.apply(tu._2, context);
+                    });
+        }
+
+        return result.filter().get(() -> cartesian_single_def(type));
     }
 
     /**

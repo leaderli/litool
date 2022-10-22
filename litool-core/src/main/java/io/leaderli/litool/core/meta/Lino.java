@@ -141,6 +141,18 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     Lino<T> assertTrue(Function<? super T, ?> filter, String msg);
 
     /**
+     * assert the result of function and parse to boolean by {@link BooleanUtil#parse(Object)} is true. otherwise
+     * throw a custom runtimeException
+     *
+     * @param filter           the filter function
+     * @param runtimeException throw it when assert false
+     * @return return  this if match the assert
+     * @throws IllegalStateException if assert false
+     * @see BooleanUtil#parse(Object)
+     */
+    Lino<T> assertTrue(Function<? super T, ?> filter, RuntimeException runtimeException);
+
+    /**
      * assert {@link  #present()}
      *
      * @return this
@@ -456,6 +468,14 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
+        public Lino<T> assertTrue(Function<? super T, ?> filter, RuntimeException runtimeException) {
+            if (filter(filter).absent()) {
+                throw runtimeException;
+            }
+            return this;
+        }
+
+        @Override
         public Lino<T> assertNotNone() {
             return this;
         }
@@ -678,6 +698,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         @Override
         public Lino<T> assertTrue(Function<? super T, ?> filter, String msg) {
             throw new IllegalStateException(msg);
+        }
+
+        @Override
+        public Lino<T> assertTrue(Function<? super T, ?> filter, RuntimeException runtimeException) {
+            throw runtimeException;
         }
 
         @Override

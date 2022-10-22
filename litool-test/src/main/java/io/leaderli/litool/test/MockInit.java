@@ -12,10 +12,9 @@ import java.lang.annotation.Target;
 @API(status = API.Status.STABLE)
 public @interface MockInit {
     /**
-     * the annotation mock method called in the {@link LiTest} annotated
-     * method. the mock is achieved by {@link  LiMock}
+     * the mock-method called before the {@link LiTest} test-method. the mock detail is achieved by {@link  LiMock}
      *
-     * @return the mock method name, default is 'init'
+     * @return the mock-method name, default is 'init'
      * @see LiMock
      */
     String value() default "init";
