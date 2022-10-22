@@ -30,14 +30,14 @@ public class ParameterizedTypeImpl implements ParameterizedType {
 
         this.ownerType = ownerType == null ? null : TypeUtil.canonicalize(ownerType);
         this.rawType = TypeUtil.erase(TypeUtil.canonicalize(rawType));
-        this.typeArguments = typeArguments.length == 0 ? TypeUtil.EMPTY_TYPE_ARRAY : typeArguments.clone();
-
-        LiAssertUtil.assertTrue(this.typeArguments.length == this.rawType.getTypeParameters().length, "the number of typeParameters is incorrect ");
-
-        for (int t = 0, length = this.typeArguments.length; t < length; t++) {
-            Objects.requireNonNull(this.typeArguments[t]);
-            TypeUtil.checkNotPrimitive(this.typeArguments[t]);
-            this.typeArguments[t] = TypeUtil.canonicalize(this.typeArguments[t]);
+        Object[] typeParameters = this.rawType.getTypeParameters();
+        this.typeArguments = typeParameters.length == 0 ? TypeUtil.EMPTY_TYPE_ARRAY : Lira.of(typeParameters).toArray(Type.class);
+        int length = Math.min(this.typeArguments.length, typeArguments.length);
+        for (int i = 0; i < length; i++) {
+            Type typeArgument = typeArguments[i];
+            Objects.requireNonNull(typeArgument);
+            TypeUtil.checkNotPrimitive(typeArgument);
+            this.typeArguments[i] = TypeUtil.canonicalize(typeArgument);
         }
     }
 
@@ -77,7 +77,7 @@ public class ParameterizedTypeImpl implements ParameterizedType {
 
     @Override
     public Type[] getActualTypeArguments() {
-        return typeArguments == TypeUtil.EMPTY_TYPE_ARRAY ? TypeUtil.EMPTY_TYPE_ARRAY : typeArguments.clone();
+        return typeArguments == TypeUtil.EMPTY_TYPE_ARRAY ? typeArguments : typeArguments.clone();
     }
 
     @Override

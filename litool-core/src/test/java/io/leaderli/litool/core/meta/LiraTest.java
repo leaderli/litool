@@ -23,10 +23,7 @@ import java.util.function.Function;
 class LiraTest {
 
 
-    @Test
-    void test() {
 
-    }
 
     @Test
     void forEach() {
@@ -214,6 +211,11 @@ class LiraTest {
 
         Assertions.assertEquals("{1=1}", Lira.of(obj).cast(String.class, String.class).first().get().toString());
         Assertions.assertSame(Lino.none(), Lira.of(obj).cast(Integer.class, String.class).first());
+
+        Assertions.assertSame(2, Lira.of(1, null, true).cast(Integer.class).nullableGet().size());
+
+
+        Assertions.assertEquals(2, Lira.of(map, null, 1).cast(String.class, String.class).nullableGet().size());
 
 
     }

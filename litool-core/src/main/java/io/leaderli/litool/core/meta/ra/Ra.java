@@ -32,7 +32,7 @@ public abstract class Ra<T> implements Lira<T> {
 
     @Override
     public <K, V> Lira<Map<K, V>> cast(Class<? extends K> keyType, Class<? extends V> valueType) {
-        return map(m -> Lino.of(m).<K, V>cast(keyType, valueType).get());
+        return new MapRaIgnoreNullResult<>(this, m -> Lino.of(m).<K, V>cast(keyType, valueType).get());
     }
 
     @Override
@@ -375,8 +375,7 @@ public abstract class Ra<T> implements Lira<T> {
 
     @Override
     public <R> Lira<R> cast(Class<? extends R> type) {
-        return map(m -> ClassUtil.cast(m, type));
-
+        return new MapRaIgnoreNullResult<>(this, m -> ClassUtil.cast(m, type));
     }
 
     @Override

@@ -35,9 +35,7 @@ class LeanTest {
         List list = (List) map.get("beans");
         Assertions.assertTrue(list.get(0) instanceof HashMap);
 
-
         map.clear();
-
         map.put(1, 1);
         map.put(true, true);
         map.put("str", "str");

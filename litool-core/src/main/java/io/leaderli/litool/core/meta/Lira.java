@@ -158,7 +158,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * filter element that can be cast to map , and  the map key, value can be cast
+     * filter element that can be cast to map , and  the map key, value can be cast.
+     * if the element is null, will keep it
      *
      * @param <K>       the generic parameter of casted map key type
      * @param <V>       the generic parameter of casted map value type
@@ -792,7 +793,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
 
     /**
-     * filter element that can be cast
+     * filter element that can be cast, if the element is null, will keep it
      *
      * @param type the class or interface represented by elements
      * @param <R>  the generic parameter of {@code type}
@@ -801,7 +802,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     <R> Lira<R> cast(Class<? extends R> type);
 
     /**
-     * filter element that can be cast
+     * filter element that can be cast, if the element is null, will keep it
      * <p>
      * the typeToken is for generic use, the real cast class is {@link LiTypeToken#getRawType()}
      *
