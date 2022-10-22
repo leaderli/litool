@@ -13,6 +13,7 @@ import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 
+import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
@@ -128,7 +129,15 @@ public class LiMock {
         mockProgress = false;
     }
 
-    public static void runGetSet(Type type, Object instance) {
+    /**
+     * if  instance class is same as type, run all get and set method of  type. will ignore
+     * Object method
+     *
+     * @param type     the cls
+     * @param instance the instance
+     * @see BeanInfo#getPropertyDescriptors()
+     */
+    public static void runGetSet(Class<?> type, Object instance) {
         Lira<PropertyDescriptor> propertyDescriptors = Lino.of(instance)
                 .map(Object::getClass)
                 .filter(c -> {

@@ -18,13 +18,13 @@ import java.util.Map;
 
 class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
     private final Object[] parameters;
-    private final Class<?>[] mockClasses;
+    private final Class<?>[] mockingClasses;
     private final Map<Method, Object> methodValue;
     private final ByteBuddy byteBuddy = new ByteBuddy();
 
-    LiTestTemplateInvocationContext(Object[] parameters, Class<?>[] mockClasses, Map<Method, Object> methodValue) {
+    LiTestTemplateInvocationContext(Object[] parameters, Class<?>[] mockingClasses, Map<Method, Object> methodValue) {
         this.parameters = parameters;
-        this.mockClasses = mockClasses;
+        this.mockingClasses = mockingClasses;
         this.methodValue = methodValue;
     }
 
@@ -49,7 +49,7 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
         //redefine mockClass mock method returnValue
         BeforeTestExecutionCallback beforeTestExecutionCallback = context -> {
 
-            for (Class<?> mockClass : mockClasses) {
+            for (Class<?> mockClass : mockingClasses) {
                 byteBuddy.redefine(mockClass)
                         .visit(Advice.to(TemplateInvocationMockMethodAdvice.class).on(target ->
                                 Lira.of(methodValue.keySet()).filter(target::represents).present()
@@ -64,7 +64,7 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
 
         // reset mockClass to origin after test executed
         AfterTestExecutionCallback afterTestExecutionCallback = context -> {
-            for (Class<?> mockClass : mockClasses) {
+            for (Class<?> mockClass : mockingClasses) {
                 byteBuddy.redefine(mockClass)
                         .make()
                         .load(mockClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());

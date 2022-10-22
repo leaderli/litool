@@ -1074,6 +1074,7 @@ public class ArrayUtils {
         return toArray(list.toArray());
     }
 
+
     /**
      * forEach elements of src arr, and find a common inheritance type, use this type
      * as new array componentType.
@@ -1081,7 +1082,7 @@ public class ArrayUtils {
      * @param src the source arr
      * @param <T> the type of arr
      * @return a new arr with componentType of T
-     * @throws ClassCastException when src length is 0
+     * @throws ClassCastException when src length is 0 or element is not sub class of T
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Object... src) {
