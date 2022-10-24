@@ -196,8 +196,10 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * filter the element beyond lira, the element will remain if  the result. the null element will be removed
-     * {@link  Function#apply(Object)} parsed  by {@link  BooleanUtil#parse(Boolean)} is {@code  true}
+     * filter the element beyond lira, the element will remain if  the result.{@link  Function#apply(Object)}
+     * parsed  by {@link  BooleanUtil#parse(Boolean)} is {@code  true}
+     * <p>
+     * on the default the null element will be removed, except the filter is instance of {@link NullableFunction}
      *
      * @param filter the filter function
      * @return a new lira
@@ -733,6 +735,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * <p>This is a terminal operation
      *
      * @return an array containing the elements of this  lira
+     * @throws ClassCastException if element is empty and T is not Object
      */
     default T[] toArray() {
         return ArrayUtils.toArray(get().toArray());
@@ -753,6 +756,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * <p>This is a nullable terminal operation
      *
      * @return an array containing the elements of this  lira
+     * @throws ClassCastException if element is empty and T is not Object
      */
     default T[] toNullableArray() {
         return ArrayUtils.toArray(nullableGet().toArray());

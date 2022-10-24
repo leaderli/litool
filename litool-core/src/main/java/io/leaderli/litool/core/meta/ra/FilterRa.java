@@ -3,6 +3,7 @@ package io.leaderli.litool.core.meta.ra;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.util.BooleanUtil;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -18,8 +19,10 @@ class FilterRa<T> extends RaWithPrevPublisher<T> {
 
     private final Function<? super T, ?> filter;
 
+
     public FilterRa(PublisherRa<T> prevPublisher, Function<? super T, ?> filter) {
         super(prevPublisher);
+        Objects.requireNonNull(filter);
         this.filter = filter;
     }
 
@@ -38,11 +41,7 @@ class FilterRa<T> extends RaWithPrevPublisher<T> {
 
         @Override
         public void next(T t) {
-            if (filter != null) {
-                if (BooleanUtil.parse(filter.apply(t))) {
-                    this.actualSubscriber.next(t);
-                }
-            } else {
+            if (BooleanUtil.parse(filter.apply(t))) {
                 this.actualSubscriber.next(t);
             }
         }
@@ -50,8 +49,10 @@ class FilterRa<T> extends RaWithPrevPublisher<T> {
         @Override
         public void next_null() {
             //  filter will avoid null element
-            if (filter == null) {
-                this.actualSubscriber.next_null();
+            if (filter instanceof NullableFunction) {
+                if (BooleanUtil.parse(filter.apply(null))) {
+                    this.actualSubscriber.next_null();
+                }
             }
         }
     }

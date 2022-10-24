@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -14,6 +15,7 @@ public class MapRaIgnoreNullResult<T, R> extends Ra<R> {
     private final PublisherRa<T> prevPublisher;
 
     public MapRaIgnoreNullResult(PublisherRa<T> prevPublisher, Function<? super T, ? extends R> mapper) {
+        Objects.requireNonNull(mapper);
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }
@@ -34,11 +36,9 @@ public class MapRaIgnoreNullResult<T, R> extends Ra<R> {
 
         @Override
         public void next(T t) {
-            if (mapper != null) {
-                R apply = mapper.apply(t);
-                if (apply != null) {
-                    this.actualSubscriber.next(apply);
-                }
+            R apply = mapper.apply(t);
+            if (apply != null) {
+                this.actualSubscriber.next(apply);
             }
         }
     }

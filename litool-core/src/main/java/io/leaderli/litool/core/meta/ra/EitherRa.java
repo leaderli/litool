@@ -2,6 +2,7 @@ package io.leaderli.litool.core.meta.ra;
 
 import io.leaderli.litool.core.meta.Either;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -14,6 +15,7 @@ public class EitherRa<L, T> extends Ra<Either<L, T>> {
     private final Supplier<? extends L> left;
 
     public EitherRa(PublisherRa<T> prevPublisher, Supplier<? extends L> left) {
+        Objects.requireNonNull(left);
         this.prevPublisher = prevPublisher;
         this.left = left;
     }
@@ -38,11 +40,7 @@ public class EitherRa<L, T> extends Ra<Either<L, T>> {
 
         @Override
         public void next_null() {
-            if (left != null) {
-                actualSubscriber.next(Either.left(left.get()));
-            } else {
-                actualSubscriber.next(Either.none());
-            }
+            actualSubscriber.next(Either.left(left.get()));
         }
 
     }

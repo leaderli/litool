@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.meta.ra;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -14,6 +15,7 @@ class FlatMap<T, R> extends Ra<R> {
     private final PublisherRa<T> prevPublisher;
 
     public FlatMap(PublisherRa<T> prevPublisher, Function<? super T, Iterator<? extends R>> mapper) {
+        Objects.requireNonNull(mapper);
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }

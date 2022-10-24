@@ -31,12 +31,12 @@ class NoneRa<T> extends RaWithPrevPublisher<T> {
 
         @Override
         public void next_null() {
-            throw new IllegalStateException("NoneSubscriber will never call onNull");
+            throw new LiraRuntimeException("NoneSubscriber will never call onNull");
         }
 
         @Override
         public void next(T t) {
-            throw new IllegalStateException("NoneSubscriber will never call next");
+            throw new LiraRuntimeException("NoneSubscriber will never call next");
         }
     }
 }

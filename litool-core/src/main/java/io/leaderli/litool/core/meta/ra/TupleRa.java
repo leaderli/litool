@@ -3,6 +3,7 @@ package io.leaderli.litool.core.meta.ra;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.LiTuple2;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -14,6 +15,7 @@ public class TupleRa<T, R> extends Ra<LiTuple2<T, R>> {
     private final PublisherRa<T> prevPublisher;
 
     public TupleRa(PublisherRa<T> prevPublisher, Function<? super T, ? extends R> mapper) {
+        Objects.requireNonNull(mapper);
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }
@@ -34,11 +36,7 @@ public class TupleRa<T, R> extends Ra<LiTuple2<T, R>> {
 
         @Override
         public void next(T t) {
-            if (mapper == null) {
-                this.actualSubscriber.next_null();
-            } else {
-                SubscriberUtil.next(this.actualSubscriber, LiTuple.of(t, mapper.apply(t)));
-            }
+            SubscriberUtil.next(this.actualSubscriber, LiTuple.of(t, mapper.apply(t)));
         }
 
     }

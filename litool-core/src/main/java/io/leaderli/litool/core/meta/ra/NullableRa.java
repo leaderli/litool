@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -11,6 +12,7 @@ class NullableRa<T> extends RaWithPrevPublisher<T> {
 
     public NullableRa(PublisherRa<T> prevPublisher, Supplier<? extends T> supplier) {
         super(prevPublisher);
+        Objects.requireNonNull(supplier);
         this.supplier = supplier;
     }
 

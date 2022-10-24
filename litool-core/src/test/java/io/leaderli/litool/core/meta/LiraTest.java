@@ -6,6 +6,7 @@ import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.InfiniteException;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.ra.LiraRuntimeException;
+import io.leaderli.litool.core.meta.ra.NullableFunction;
 import io.leaderli.litool.core.meta.ra.SubscriberRa;
 import io.leaderli.litool.core.meta.ra.SubscriptionRa;
 import io.leaderli.litool.core.text.StringUtils;
@@ -136,8 +137,8 @@ class LiraTest {
         Assertions.assertEquals(1, Lira.of(1, 2, 3).takeWhile(i -> i > 1).last().get());
         Assertions.assertEquals(2, Lira.of(1, null, 2, 3).takeWhile(i -> i > 2).last().get());
 
-        Assertions.assertEquals(3, Lira.of(1, 2, 3).takeWhile(null).last().get());
-        Assertions.assertEquals(1, Lira.of(1, null, 2, 3).takeWhile(null).last().get());
+        Lira<Integer> integers = Lira.of(1, null, 2, 3).takeWhile((NullableFunction<Integer, Object>) Objects::isNull);
+        Assertions.assertEquals(1, integers.last().get());
     }
 
     @Test
@@ -145,8 +146,8 @@ class LiraTest {
 
         Assertions.assertEquals(2, Lira.of(1, 2, 3).dropWhile(i -> i > 1).first().get());
         Assertions.assertEquals(3, Lira.of(1, null, 2, 3).dropWhile(i -> i > 2).first().get());
-        Assertions.assertEquals("[3, 4]",
-                Lira.of(1, null, 2, 3, null, 4, 5, 6).dropWhile(i -> i > 2).takeWhile(i -> i > 4).toString());
+        Assertions.assertArrayEquals(new Integer[]{null, 2}, Lira.of(1, null, 2).dropWhile(NullableFunction.isNull()).toNullableArray(Integer.class));
+        Assertions.assertArrayEquals(new Integer[]{3, null, 4}, Lira.of(1, null, 2, 3, null, 4, 5, 6).dropWhile(i -> i > 2).takeWhile(i -> i > 4).toNullableArray());
 
     }
 
@@ -176,6 +177,7 @@ class LiraTest {
         Assertions.assertEquals(2, Lira.range().limit(3).get(-1).get());
         Assertions.assertEquals(3, Lira.of(1, 2, 3).get(-1).get());
         Assertions.assertNull(Lira.of(1, 2, 3).get(-100).get());
+
 
     }
 
@@ -409,6 +411,9 @@ class LiraTest {
 
     @Test
     void toArray() {
+        Assertions.assertThrows(ClassCastException.class, () -> {
+            Number[] numbers = Lira.of((Integer) null).toArray();
+        });
         Number[] nums = Lira.of(1, 2, 3, 4.0).cast(Integer.class).toArray();
         Number[] nums2 = Lira.of(1, 2, 3).toArray();
         Number[] nums3 = Lira.of(1, 2, 3, 4.0).toArray();

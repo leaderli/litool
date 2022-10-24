@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.util.BooleanUtil;
 import io.leaderli.litool.core.util.ThreadUtil;
@@ -26,6 +27,7 @@ class SleepRa<T> extends RaWithPrevPublisher<T> {
 
     public SleepRa(PublisherRa<T> prevPublisher, int countdown, long milliseconds) {
         super(prevPublisher);
+        LiAssertUtil.assertTrue(countdown > 0 && milliseconds > 0);
         this.final_countdown = countdown;
         this.milliseconds = milliseconds;
     }

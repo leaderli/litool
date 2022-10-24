@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -13,6 +14,7 @@ public class MapRa<T, R> extends Ra<R> {
     private final PublisherRa<T> prevPublisher;
 
     public MapRa(PublisherRa<T> prevPublisher, Function<? super T, ? extends R> mapper) {
+        Objects.requireNonNull(mapper);
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
     }
@@ -33,11 +35,7 @@ public class MapRa<T, R> extends Ra<R> {
 
         @Override
         public void next(T t) {
-            if (mapper == null) {
-                this.actualSubscriber.next_null();
-            } else {
-                SubscriberUtil.next(this.actualSubscriber, mapper.apply(t));
-            }
+            SubscriberUtil.next(this.actualSubscriber, mapper.apply(t));
         }
 
     }

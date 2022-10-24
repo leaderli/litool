@@ -3,6 +3,7 @@ package io.leaderli.litool.core.meta.ra;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.util.BooleanUtil;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -20,6 +21,7 @@ class TakeWhileRa<T> extends RaWithPrevPublisher<T> {
 
     public TakeWhileRa(PublisherRa<T> prevPublisher, Function<? super T, ?> filter) {
         super(prevPublisher);
+        Objects.requireNonNull(filter);
         this.filter = filter;
     }
 
@@ -40,12 +42,10 @@ class TakeWhileRa<T> extends RaWithPrevPublisher<T> {
         @Override
         public void next(T t) {
 
-            if (filter != null) {
-                boolean present = BooleanUtil.parse(filter.apply(t));
-                if (present) {
-                    cancel();
-                    return;
-                }
+            boolean present = BooleanUtil.parse(filter.apply(t));
+            if (present) {
+                cancel();
+                return;
             }
             actualSubscriber.next(t);
 
@@ -54,11 +54,12 @@ class TakeWhileRa<T> extends RaWithPrevPublisher<T> {
         @Override
         public void next_null() {
             //  filter will avoid null element
-            if (filter == null) {
-                cancel();
-            } else {
-                super.next_null();
+            if (filter instanceof NullableFunction) {
+                if (BooleanUtil.parse(filter.apply(null))) {
+                    cancel();
+                }
             }
+            super.next_null();
         }
     }
 }

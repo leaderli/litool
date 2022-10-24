@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -13,10 +14,7 @@ class ConsumerSubscriber<T> implements SubscriberRa<T> {
 
 
     public ConsumerSubscriber(Consumer<? super T> consumer) {
-        if (consumer == null) {
-            consumer = lino -> {
-            };
-        }
+        Objects.requireNonNull(consumer);
         this.consumer = consumer;
     }
 

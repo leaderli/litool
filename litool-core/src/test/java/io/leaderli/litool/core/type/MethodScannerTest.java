@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.meta.ra.NullableFunction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +25,7 @@ class MethodScannerTest {
         Lira<Method> scan = methodScanner.scan();
         Assertions.assertTrue(scan.absent());
 
-        methodScanner = new MethodScanner(MethodScannerTest.class, true, null);
+        methodScanner = new MethodScanner(MethodScannerTest.class, true, NullableFunction.notNull());
         scan = methodScanner.scan();
         Assertions.assertEquals("test", scan.first().get().getName());
         Assertions.assertTrue(scan.first(f -> f.getName().equals("toString")).absent());
@@ -32,7 +33,7 @@ class MethodScannerTest {
         methodScanner.set_scan_lambda();
         Assertions.assertTrue(methodScanner.scan().filter(f -> f.getName().contains("$")).present());
 
-        methodScanner = new MethodScanner(MethodScannerTest.class, true, null);
+        methodScanner = new MethodScanner(MethodScannerTest.class, true, NullableFunction.notNull());
         methodScanner.set_scan_object();
         scan = methodScanner.scan();
         Assertions.assertTrue(scan.first(f -> f.getName().equals("toString")).present());

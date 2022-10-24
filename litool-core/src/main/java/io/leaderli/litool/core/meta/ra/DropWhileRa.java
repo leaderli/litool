@@ -3,6 +3,7 @@ package io.leaderli.litool.core.meta.ra;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.util.BooleanUtil;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -20,6 +21,7 @@ class DropWhileRa<T> extends RaWithPrevPublisher<T> {
 
     public DropWhileRa(PublisherRa<T> prevPublisher, Function<? super T, ?> drop_condition) {
         super(prevPublisher);
+        Objects.requireNonNull(drop_condition);
         this.drop_condition = drop_condition;
     }
 
@@ -43,7 +45,17 @@ class DropWhileRa<T> extends RaWithPrevPublisher<T> {
         @Override
         public void next_null() {
             //  filter will avoid null element
-            dropped = drop_condition == null;
+
+            if (dropped) {
+                actualSubscriber.next_null();
+                return;
+            }
+            if (drop_condition instanceof NullableFunction) {
+                dropped = BooleanUtil.parse(drop_condition.apply(null));
+            }
+            if (dropped) {
+                actualSubscriber.next_null();
+            }
         }
 
         @Override

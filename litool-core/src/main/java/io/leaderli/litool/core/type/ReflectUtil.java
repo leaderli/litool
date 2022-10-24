@@ -7,6 +7,7 @@ import io.leaderli.litool.core.internal.ReflectionAccessor;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.meta.ra.NullableFunction;
 import io.leaderli.litool.core.proxy.DynamicDelegation;
 import io.leaderli.litool.core.text.StrSubstitution;
 
@@ -367,7 +368,7 @@ public class ReflectUtil {
      * @return #findAnnotations(Class, Function)
      */
     public static Lira<Annotation> findAnnotations(AnnotatedElement cls) {
-        return findAnnotations(cls, null);
+        return findAnnotations(cls, NullableFunction.notNull());
     }
 
     /**
