@@ -3,10 +3,7 @@ package io.leaderli.litool.core.lang.lean.adapters;
 import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.lang.lean.TypeAdapter;
 import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
-import io.leaderli.litool.core.type.LiTypeToken;
-import io.leaderli.litool.core.type.ObjectConstructor;
-import io.leaderli.litool.core.type.PrimitiveEnum;
-import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.core.type.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -60,7 +57,7 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
 
                 ((Map<?, ?>) source).forEach((k, v) -> handle(lean, map, k, v));
             } else if (PrimitiveEnum.get(source) == PrimitiveEnum.OBJECT) {
-                for (Field field : ReflectUtil.getFields(source.getClass())) {
+                for (Field field : ReflectUtil.getFields(source.getClass()).filter(f -> !ModifierUtil.isStatic(f))) {
                     Object v = ReflectUtil.getFieldValue(source, field).get();
                     handle(lean, map, field.getName(), v);
                 }

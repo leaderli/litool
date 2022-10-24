@@ -19,15 +19,13 @@ package io.leaderli.litool.core.text;
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.io.StringReader;
 import io.leaderli.litool.core.lang.RegExUtils;
+import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.type.PrimitiveEnum;
-import io.leaderli.litool.core.type.ReflectUtil;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.util.*;
@@ -8713,20 +8711,7 @@ public class StringUtils implements StrPool {
      * @return the non-static field-value join with ','
      */
     public static String obj2String(Object obj) {
-
-        if (PrimitiveEnum.get(obj) != PrimitiveEnum.OBJECT) {
-            return obj.toString();
-        }
-        if (obj == null) {
-            return "null";
-        }
-        Lira<String> fields =
-                ReflectUtil.getFields(obj.getClass())
-                        .filter(field -> !Modifier.isStatic(field.getModifiers()))
-                        .map(f -> f.getName() + "=" + ReflectUtil.getFieldValue(obj, f).get());
-
-        return obj.getClass().getSimpleName() + "{" + join(", ", fields) + "}";
-
+        return String.valueOf(new Lean().fromBean(obj, Object.class));
     }
 
     /**

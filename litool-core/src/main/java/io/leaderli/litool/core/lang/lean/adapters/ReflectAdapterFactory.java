@@ -5,10 +5,7 @@ import io.leaderli.litool.core.lang.lean.*;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.text.StrSubstitution;
-import io.leaderli.litool.core.type.ClassUtil;
-import io.leaderli.litool.core.type.LiTypeToken;
-import io.leaderli.litool.core.type.ReflectUtil;
-import io.leaderli.litool.core.type.TypeUtil;
+import io.leaderli.litool.core.type.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -55,7 +52,7 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
 
         public void populate(Object source, Object target, Lean lean) {
 
-            for (Field field : ReflectUtil.getFields(target.getClass())) {
+            for (Field field : ReflectUtil.getFields(target.getClass()).filter(f -> !ModifierUtil.isStatic(f))) {
                 Type targetType = TypeUtil.resolve(typeToken.getType(), field.getGenericType());
                 performField(source, targetType, target, field, lean);
             }

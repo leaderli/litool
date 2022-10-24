@@ -184,6 +184,21 @@ class LeanTest {
         Assertions.assertArrayEquals(new Integer[]{10, 18}, copy.ages);
     }
 
+    @Test
+    void test14() {
+
+        Bean14 bean = new Bean14();
+        bean.name = 10;
+        Bean14.size = 100;
+
+        Lean lean = new Lean();
+
+        Map map = lean.fromBean(bean, Map.class);
+
+        Assertions.assertNull(map.get("size"));
+
+    }
+
     private static class Bean12<T> {
         private String[] name;
         private T[] ages;
@@ -229,6 +244,12 @@ class LeanTest {
         public List read(Object source, Lean lean) {
             return null;
         }
+    }
+
+    private static class Bean14 {
+        private int name;
+
+        private static int size;
     }
 
     private static class Bean9<T extends List> {

@@ -1,7 +1,6 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.test.CartesianContext;
-import io.leaderli.litool.core.test.DynamicValues;
 import io.leaderli.litool.core.test.IntValues;
 import org.junit.jupiter.api.Assertions;
 
@@ -13,7 +12,7 @@ public class MockContextTest {
 
 
     @LiTest
-    void test2(@IntValues({1, 2, 3}) int age, @DynamicValues("test") Object obj) {
+    void test2(@IntValues({1, 2, 3}) int age) {
 
         Assertions.assertEquals(100, age);
     }
