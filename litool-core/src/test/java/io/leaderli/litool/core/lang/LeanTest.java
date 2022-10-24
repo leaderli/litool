@@ -248,7 +248,6 @@ class LeanTest {
 
     private static class Bean14 {
         private int name;
-
         private static int size;
     }
 
