@@ -25,6 +25,7 @@ class MockBeanTest {
         Assertions.assertNotNull(fooBar.getBar());
         Assertions.assertNotNull(fooBar.getFoo());
 
+
     }
 
     @Test

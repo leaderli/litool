@@ -154,7 +154,7 @@ public class TypeUtil {
         } else if (toResolve instanceof TypeVariable) {
 
             TypeVariable<?> typeVariable = (TypeVariable<?>) toResolve;
-            Class<?> declareRaw = TypeUtil.resolveTypeVariable(context, typeVariable);
+            Type declareRaw = TypeUtil.resolveTypeVariable(context, typeVariable);
             visitedTypeVariables.put(typeVariable, declareRaw);
             return declareRaw;
         }
@@ -183,7 +183,7 @@ public class TypeUtil {
     }
 
 
-    public static Class<?> resolveTypeVariable(Type context, TypeVariable<?> typeVariable) {
+    public static Type resolveTypeVariable(Type context, TypeVariable<?> typeVariable) {
 
 
         Class<?> declaredByRaw = getDeclaringClass(typeVariable);
@@ -196,7 +196,7 @@ public class TypeUtil {
         resolve(context, declaredByRaw, visitedTypeVariables);
         Type type = visitedTypeVariables.get(typeVariable);
         if (type != null) {
-            return erase(type);
+            return type;
         }
         return erase(typeVariable);
 

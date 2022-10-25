@@ -519,9 +519,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public Lino<T> filter(Function<? super T, ?> filter) {
-            if (filter == null) {
-                return this;
-            }
+            Objects.requireNonNull(filter);
             return filter(BooleanUtil.parse(filter.apply(this.value)));
         }
 
@@ -576,6 +574,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public <R> Lino<LiTuple2<T, R>> tuple2(R t2) {
+
             LiTuple2<T, R> of = LiTuple.of(value, t2);
             return Lino.of(of);
         }

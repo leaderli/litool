@@ -29,7 +29,7 @@ class TypeUtilTest {
         Assertions.assertSame(Object.class, TypeUtil.resolveTypeVariable(T4.class, (TypeVariable<?>) type));
         Assertions.assertSame(String.class, TypeUtil.resolveTypeVariable(T5.class, (TypeVariable<?>) type));
         Assertions.assertSame(T1[].class, TypeUtil.resolveTypeVariable(T2.class, List.class.getTypeParameters()[0]));
-        Assertions.assertSame(ArrayList.class, TypeUtil.resolveTypeVariable(T2.class, T1.class.getTypeParameters()[0]));
+        Assertions.assertSame(ArrayList.class, TypeUtil.erase(TypeUtil.resolveTypeVariable(T2.class, T1.class.getTypeParameters()[0])));
     }
 
     @Test
@@ -210,7 +210,7 @@ class TypeUtilTest {
 
         Assertions.assertEquals(List.class,
                 TypeUtil.resolve2Parameterized(make1, List.class).getActualClassArgument().get());
-        Assertions.assertEquals(List.class, TypeUtil.resolve(make1, List.class.getTypeParameters()[0]));
+        Assertions.assertEquals(List.class, TypeUtil.erase(TypeUtil.resolve(make1, List.class.getTypeParameters()[0])));
 
 
     }
@@ -332,6 +332,37 @@ class TypeUtilTest {
         private class T3 {
 
             T t;
+        }
+    }
+
+
+    @Test
+    void test() {
+        Type getResponse = ReflectUtil.getMethod(ZA.class, "getResponse").get().getGenericReturnType();
+        Assertions.assertEquals(ParameterizedTypeImpl.make(ZB.class, ZB.ZB_Response.class, ZD.ZD_Body.class), ParameterizedTypeImpl.make(TypeUtil.resolve(ZD.class, getResponse)));
+
+    }
+
+    private static class ZD extends ZB<ZD.ZD_Body> {
+
+        private static class ZD_Body {
+
+        }
+    }
+
+    private static class ZB<RB> extends ZA<ZB.ZB_Response<RB>> {
+
+        private static class ZB_Response<ZBR> {
+
+            public ZBR getBody() {
+                return null;
+            }
+        }
+    }
+
+    private static class ZA<R> {
+        public R getResponse() {
+            return null;
         }
     }
 }
