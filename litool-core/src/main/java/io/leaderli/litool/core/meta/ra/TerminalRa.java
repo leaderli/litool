@@ -32,9 +32,6 @@ class TerminalRa<T> extends RaWithPrevPublisher<T> {
         private final SubscriberRa<? super T> actualSubscriber;
         private final List<T> cache = new ArrayList<>();
         SubscriptionRa prevSubscription;
-        /**
-         * not use  method reference to avoid null pointer
-         */
         private final Runnable disposable = DisposableRunnableProxy.of(() -> prevSubscription.request(0));
         private SubscriptionRa terminalSubscription;
 
