@@ -14,12 +14,20 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
+ * The type Type util.
+ *
  * @author leaderli
- * @since 2022/6/27
+ * @since 2022 /6/27
  */
 public class TypeUtil {
 
+    /**
+     * The constant EMPTY_TYPE_ARRAY.
+     */
     public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
+    /**
+     * The constant EMPTY_TYPE_VARIABLE_ARRAY.
+     */
     @SuppressWarnings("rawtypes")
     public static final TypeVariable[] EMPTY_TYPE_VARIABLE_ARRAY = new TypeVariable[0];
 
@@ -38,6 +46,8 @@ public class TypeUtil {
 
 
     /**
+     * Erase class.
+     *
      * @param type the type
      * @return the type raw class
      */
@@ -130,7 +140,7 @@ public class TypeUtil {
      *
      * @param context   the context
      * @param toResolve the toResolve toResolve that has generic typeParameter
-     * @return the  toResolve with toResolve class with context class typeParameters
+     * @return the toResolve with toResolve class with context class typeParameters
      */
     public static Type resolve(Type context, Type toResolve) {
 
@@ -172,10 +182,10 @@ public class TypeUtil {
      * at end, it will return  {@link  ParameterizedType} with the toResolve class and with
      * actual context typeParameters
      *
+     * @param <T>       the type parameter of toResolve
      * @param context   the context type
      * @param toResolve the toResolve class that has generic typeParameter
-     * @param <T>       the type parameter of toResolve
-     * @return the  LiParameterizedType with toResolve class with context class typeParameters
+     * @return the LiParameterizedType with toResolve class with context class typeParameters
      */
     public static <T> ParameterizedTypeImpl resolve2Parameterized(Type context, Class<T> toResolve) {
         Type resolve = resolve(context, toResolve);
@@ -183,6 +193,13 @@ public class TypeUtil {
     }
 
 
+    /**
+     * Resolve type variable type.
+     *
+     * @param context      the context
+     * @param typeVariable the type variable
+     * @return the type
+     */
     public static Type resolveTypeVariable(Type context, TypeVariable<?> typeVariable) {
 
 
@@ -275,10 +292,21 @@ public class TypeUtil {
 
     }
 
+    /**
+     * Type to string string.
+     *
+     * @param type the type
+     * @return the string
+     */
     public static String typeToString(Type type) {
         return type instanceof Class ? ((Class<?>) type).getName() : type.toString();
     }
 
+    /**
+     * Check not primitive.
+     *
+     * @param type the type
+     */
     public static void checkNotPrimitive(Type type) {
         LiAssertUtil.assertTrue(!(type instanceof Class<?>) || !((Class<?>) type).isPrimitive());
     }
@@ -287,6 +315,9 @@ public class TypeUtil {
      * Returns a type that is functionally equal but not necessarily equal
      * according to {@link Object#equals(Object) Object.equals()}. The returned
      * type is {@link java.io.Serializable}.
+     *
+     * @param type the type
+     * @return the type
      */
     public static Type canonicalize(Type type) {
         if (type instanceof Class) {
@@ -311,6 +342,12 @@ public class TypeUtil {
         }
     }
 
+    /**
+     * Gets declaring class.
+     *
+     * @param typeVariable the type variable
+     * @return the declaring class
+     */
     public static Class<?> getDeclaringClass(TypeVariable<?> typeVariable) {
         GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
         return genericDeclaration instanceof Class ? (Class<?>) genericDeclaration : null;
@@ -319,6 +356,10 @@ public class TypeUtil {
 
     /**
      * Returns true if {@code a} and {@code b} are equal.
+     *
+     * @param a the a
+     * @param b the b
+     * @return the boolean
      */
     public static boolean equals(Type a, Type b) {
         if (a == b) {

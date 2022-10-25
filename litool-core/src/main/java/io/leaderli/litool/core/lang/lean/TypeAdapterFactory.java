@@ -19,11 +19,19 @@ package io.leaderli.litool.core.lang.lean;
 
 import io.leaderli.litool.core.type.LiTypeToken;
 
+/**
+ * The interface Type adapter factory.
+ */
 public interface TypeAdapterFactory {
 
     /**
      * Returns a type adapter for {@code type}, or null if this factory doesn't
      * support {@code type}.
+     *
+     * @param <T>  the type parameter
+     * @param lean the lean
+     * @param type the type
+     * @return the type adapter
      */
     <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type);
 }
