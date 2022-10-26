@@ -82,6 +82,10 @@ public class ParameterizedTypeImpl implements ParameterizedType {
 
     @Override
     public Type getRawType() {
+        return getRawClass();
+    }
+
+    public Class<?> getRawClass() {
         return rawType;
     }
 
