@@ -70,12 +70,7 @@ public class ReflectUtil {
             return Lira.none();
         }
 
-        Lira<Field> union = CollectionUtils.union(Lira.of(cls.getFields()), Lira.of(cls.getDeclaredFields()));
-        if (cls.isMemberClass()) {
-
-            return union.filter(f -> !f.isSynthetic() || !f.getName().equals(LiConstant.INNER_CLASS_THIS_FIELD));
-        }
-        return union;
+        return CollectionUtils.union(Lira.of(cls.getFields()), Lira.of(cls.getDeclaredFields())).filter(f -> !f.isSynthetic());
     }
 
 
