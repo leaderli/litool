@@ -44,6 +44,7 @@ public class LiMock {
     public static Method mockMethod;
     public static boolean mockProgress;
     public static LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
+    public static final Set<Class<?>> redefineClassesInMockInit = new HashSet<>();
 
     static {
         ByteBuddyAgent.install();
@@ -65,6 +66,26 @@ public class LiMock {
         mockMethod = null;
         mockProgress = false;
         instanceCreators.clear();
+        redefineClassesInMockInit.clear();
+    }
+
+
+    public static void ignoreTypeInitError(Class<?> mockingClass) {
+
+
+        StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
+
+        LiAssertUtil.assertTrue("<clinit>".equals(caller.getMethodName()), "only support call in <clinit>");
+        byteBuddy.redefine(mockingClass)
+                .visit(Advice.to(MockInitAdvice.class).on(MethodDescription::isMethod))
+                .visit(Advice.to(MockStaticBlock.class).on(MethodDescription::isTypeInitializer))
+                .make()
+                .load(mockingClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
+        try {
+            Class.forName(mockingClass.getName());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -76,7 +97,7 @@ public class LiMock {
 
 
         LiAssertUtil.assertFalse(mockedClasses.contains(mockingClass), "duplicate mock " + mockingClass);
-
+        redefineClassesInMockInit.add(mockingClass);
         byteBuddy.redefine(mockingClass)
                 .visit(Advice.to(MockInitAdvice.class).on(MethodDescription::isMethod))
                 .make()
@@ -108,6 +129,7 @@ public class LiMock {
         mockMethod = null;
         mockProgress = false;
     }
+
 
     @SafeVarargs
     public static <T> void when(Supplier<T> supplier, T... mockValues) {
@@ -153,6 +175,15 @@ public class LiMock {
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             Object value = ReflectUtil.invokeMethod(propertyDescriptor.getReadMethod(), instance).get();
             ReflectUtil.invokeMethod(propertyDescriptor.getWriteMethod(), instance, value);
+        }
+    }
+
+
+    public static class MockStaticBlock {
+        @Advice.OnMethodExit(onThrowable = Throwable.class)
+        @SuppressWarnings("all")
+        public static void enter(@Advice.Thrown(readOnly = false) Throwable th) {
+            th = null;
         }
     }
 

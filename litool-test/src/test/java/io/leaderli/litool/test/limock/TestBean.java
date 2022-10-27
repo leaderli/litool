@@ -24,8 +24,13 @@ public class TestBean {
 
         return null;
     }
+
     public Foo m5() {
 
         return new Foo();
+    }
+
+    public int m6() {
+        return 100;
     }
 }

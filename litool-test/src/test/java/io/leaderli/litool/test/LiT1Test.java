@@ -3,11 +3,10 @@ package io.leaderli.litool.test;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.lang.reflect.Method;
-
-import static io.leaderli.litool.core.util.ConsoleUtil.print;
 
 
 //@ExtendWith(ContainerExtension.class)
@@ -20,10 +19,10 @@ public class LiT1Test {
 
     @LiTest
     void test() {
-        print("in", new Source().hello("world"));
+        Assertions.assertEquals("fuck", new Source().hello("world"));
     }
 
-    @SuppressWarnings("UnusedAssignment")
+    @SuppressWarnings("all")
     public static class MockMethodAdvice {
         @Advice.OnMethodExit
         public static void enter(

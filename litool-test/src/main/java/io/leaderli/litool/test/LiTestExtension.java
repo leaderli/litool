@@ -7,6 +7,7 @@ import io.leaderli.litool.core.test.CartesianContext;
 import io.leaderli.litool.core.test.CartesianMethodParameters;
 import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
+import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
@@ -99,6 +100,11 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
                     LiAssertUtil.assertTrue(ModifierUtil.isStatic(staticInitMethod) && staticInitMethod.getParameterTypes().length == 0, "must be static method without parameter");
                     ReflectUtil.invokeMethod(staticInitMethod, null);
                 });
+        for (Class<?> redefine : LiMock.redefineClassesInMockInit) {
+            LiMock.byteBuddy.redefine(redefine).make()
+                    .load(redefine.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
+
+        }
     }
 
     private static void setUpCartesianContext(Method templateMethod, CartesianContext cartesianContext) {

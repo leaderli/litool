@@ -48,8 +48,8 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
 
         //redefine mockClass mock method returnValue
         BeforeTestExecutionCallback beforeTestExecutionCallback = context -> {
-
             for (Class<?> mockClass : mockingClasses) {
+
                 byteBuddy.redefine(mockClass)
                         .visit(Advice.to(TemplateInvocationMockMethodAdvice.class).on(target ->
                                 Lira.of(methodValue.keySet()).filter(target::represents).present()
@@ -98,7 +98,6 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
                                    @Advice.This(optional = true) Object _this) {
 
             Object value = methodValue.get(origin);
-
             Class<?> returnType = origin.getReturnType();
             if (value == LiMock.SKIP) {
 

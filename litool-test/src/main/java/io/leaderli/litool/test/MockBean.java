@@ -56,15 +56,10 @@ public class MockBean<T> {
      * @param type the type
      * @return a instanceof type
      * @see MockBean#create()
-     * @see LiMock#runGetSet(Class, Object)
      */
     public static Object mockBean(Type type) {
 
-        Object obj = instance(type, LiMock.instanceCreators).create();
-
-        LiMock.runGetSet(TypeUtil.erase(type), obj);
-
-        return obj;
+        return instance(type, LiMock.instanceCreators).create();
     }
 
     @SuppressWarnings("unchecked")

@@ -1,8 +1,10 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.test.*;
 import io.leaderli.litool.test.limock.Foo;
 import io.leaderli.litool.test.limock.GetSetBean;
+import io.leaderli.litool.test.limock.StaticBlock;
 import io.leaderli.litool.test.limock.TestBean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,9 @@ import java.util.function.Function;
 
 class LiMockTest {
 
+    static {
+        LiMock.ignoreTypeInitError(StaticBlock.class);
+    }
 
     static void init() {
         LiMock.mock(TestBean.class);
@@ -42,9 +47,11 @@ class LiMockTest {
         testBean.m1();
         testBean.m2(1);
         Foo foo1 = testBean.m3();
+
         Assertions.assertEquals(ArrayList.class, testBean.m4().getClass());
 
         Assertions.assertNull(testBean.m5());
+        Assertions.assertEquals(100, testBean.m6());
         foo1.init(length, length);
 
         Foo instance = Foo.instance();
@@ -74,6 +81,12 @@ class LiMockTest {
     void test(@ClassValues({Object.class, List.class, GetSetBean.class}) Class<?> type, @FactoryValues(T1.class) Object obj) {
         Assertions.assertDoesNotThrow(() -> LiMock.runGetSet(type, obj));
 
+    }
+
+    @Test
+    void test() {
+
+        Assertions.assertThrows(AssertException.class, () -> LiMock.ignoreTypeInitError(LiMockTest.class));
     }
 
     static void init2(CartesianContext context) {
@@ -112,5 +125,32 @@ class LiMockTest {
         Assertions.assertSame(1, getSetBean.getAge());
 
     }
+
+    @MockInit("init3")
+    @LiTest
+    void staticBlock3() {
+        Assertions.assertEquals(StaticBlock.size(), StaticBlock.size);
+    }
+
+    @SuppressWarnings("all")
+    static void init3() {
+        LiMock.mock(StaticBlock.class);
+
+    }
+
+    @MockInit("init4")
+    @LiTest
+    void staticBlock4() {
+        Assertions.assertEquals(100, StaticBlock.size);
+
+    }
+
+    static void init4() {
+        LiMock.mock(StaticBlock.class);
+        LiMock.when(StaticBlock::size, 300);
+
+    }
+
+
 }
 
