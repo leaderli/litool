@@ -30,8 +30,6 @@ class MethodScannerTest {
         Assertions.assertEquals("test", scan.first().get().getName());
         Assertions.assertTrue(scan.first(f -> f.getName().equals("toString")).absent());
 
-        methodScanner.set_scan_lambda();
-        Assertions.assertTrue(methodScanner.scan().filter(f -> f.getName().contains("$")).present());
 
         methodScanner = new MethodScanner(MethodScannerTest.class, true, NullableFunction.notNull());
         methodScanner.set_scan_object();

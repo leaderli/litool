@@ -3,10 +3,7 @@ package io.leaderli.litool.test;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.type.InstanceCreator;
-import io.leaderli.litool.core.type.PrimitiveEnum;
-import io.leaderli.litool.core.type.ReflectUtil;
-import io.leaderli.litool.core.type.TypeUtil;
+import io.leaderli.litool.core.type.*;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.asm.Advice;
@@ -17,6 +14,7 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Function;
@@ -79,6 +77,7 @@ public class LiMock {
         byteBuddy.redefine(mockingClass)
                 .visit(Advice.to(MockInitAdvice.class).on(MethodDescription::isMethod))
                 .visit(Advice.to(MockStaticBlock.class).on(MethodDescription::isTypeInitializer))
+                .visit(Advice.to(ConstructorAdvice.class).on(MethodDescription::isConstructor))
                 .make()
                 .load(mockingClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
         try {
@@ -98,8 +97,11 @@ public class LiMock {
 
         LiAssertUtil.assertFalse(mockedClasses.contains(mockingClass), "duplicate mock " + mockingClass);
         redefineClassesInMockInit.add(mockingClass);
+
+
         byteBuddy.redefine(mockingClass)
                 .visit(Advice.to(MockInitAdvice.class).on(MethodDescription::isMethod))
+                .visit(Advice.to(ConstructorAdvice.class).on(MethodDescription::isConstructor))
                 .make()
                 .load(mockingClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
 
@@ -178,6 +180,40 @@ public class LiMock {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> T mockInterface(Type context, Class<T> type) {
+
+        return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, (proxy, origin, args) -> {
+            if (MethodUtil.notObjectMethod(origin)) {
+
+                if (mockProgress) {
+                    mockMethod = origin;
+                    return null;
+                }
+                Object value = LiTestTemplateInvocationContext.TemplateInvocationMockMethodAdvice.methodValue.get(origin);
+                Class<?> returnType = origin.getReturnType();
+                if (value == LiMock.SKIP) {
+
+                    if (returnType == void.class) {
+                        return null;
+                    } else {
+                        Type type1 = TypeUtil.resolve(context, origin.getGenericReturnType());
+                        value = MockBean.mockBean(type1);
+                    }
+                } else {
+
+                    PrimitiveEnum primitiveEnum = PrimitiveEnum.get(returnType);
+                    if (value == null && primitiveEnum != PrimitiveEnum.OBJECT) {
+                        value = primitiveEnum.zero_value;
+                    }
+                }
+
+                return value;
+            }
+            return origin.invoke(NONE, args);
+        });
+    }
+
 
     public static class MockStaticBlock {
         @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -186,6 +222,9 @@ public class LiMock {
             th = null;
         }
     }
+
+    public static final Object NONE = new Object();
+
 
     public static class MockInitAdvice {
         /**

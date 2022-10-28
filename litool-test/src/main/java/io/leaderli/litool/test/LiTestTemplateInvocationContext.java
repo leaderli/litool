@@ -6,6 +6,7 @@ import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.TypeUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.Advice;
+import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import org.junit.jupiter.api.extension.*;
@@ -51,8 +52,14 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
             for (Class<?> mockClass : mockingClasses) {
 
                 byteBuddy.redefine(mockClass)
+                        .visit(Advice.to(ConstructorAdvice.class).on(MethodDescription::isConstructor))
                         .visit(Advice.to(TemplateInvocationMockMethodAdvice.class).on(target ->
-                                Lira.of(methodValue.keySet()).filter(target::represents).present()
+                                {
+
+                                    boolean present = Lira.of(methodValue.keySet()).filter(target::represents).present();
+                                    System.out.println(target + " --- " + methodValue.keySet() + " " + present);
+                                    return present;
+                                }
                         ))
 
                         .make()
@@ -98,6 +105,7 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
                                    @Advice.This(optional = true) Object _this) {
 
             Object value = methodValue.get(origin);
+            System.out.println("hhhhh " + origin);
             Class<?> returnType = origin.getReturnType();
             if (value == LiMock.SKIP) {
 

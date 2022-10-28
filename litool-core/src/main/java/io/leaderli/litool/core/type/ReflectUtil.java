@@ -480,7 +480,7 @@ public class ReflectUtil {
         if (cls == null) {
             return Lira.none();
         }
-        return CollectionUtils.union(cls.getMethods(), cls.getDeclaredMethods());
+        return CollectionUtils.union(cls.getMethods(), cls.getDeclaredMethods()).filter(m -> !m.isSynthetic());
     }
 
     /**

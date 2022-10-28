@@ -22,6 +22,7 @@ class LiTestExtensionTest {
         Assertions.assertTrue(testA.age >= 1);
     }
 
+
     @LiTest
     void test(@IntValues({1, 2}) int age) {
 

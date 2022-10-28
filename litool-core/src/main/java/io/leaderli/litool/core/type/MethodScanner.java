@@ -36,14 +36,6 @@ public class MethodScanner {
      * exclude object method
      */
     private boolean not_scan_object = true;
-    /**
-     * exclude lambda method, it may exist at method body, construct body, parameter assignment
-     * such as
-     * <pre>
-     *  private final String name = Lira.of().filter(f -> f).get().toString();
-     * </pre>
-     */
-    private boolean not_scan_lambda = true;
 
     public MethodScanner(Class<?> cls, boolean scan_private, Function<Method, ?> filter) {
         this.cls = cls;
@@ -57,10 +49,6 @@ public class MethodScanner {
 
     public void set_scan_object() {
         this.not_scan_object = false;
-    }
-
-    public void set_scan_lambda() {
-        this.not_scan_lambda = false;
     }
 
     /**
@@ -83,10 +71,8 @@ public class MethodScanner {
                 methods = methods.filter(MethodUtil::notObjectMethod);
             }
 
-            if (not_scan_lambda) {
-                methods = methods.filter(m -> !m.getName().startsWith(MethodSignature.LAMBDA_METHOD_PREFIX));
-            }
-            return methods.filter(filter);
+
+            return methods.filter(m -> !m.isSynthetic()).filter(filter);
 
         }
         return Lira.none();

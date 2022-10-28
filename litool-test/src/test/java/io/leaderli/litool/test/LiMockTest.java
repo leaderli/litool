@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 class LiMockTest {
 
@@ -151,6 +152,38 @@ class LiMockTest {
 
     }
 
+
+    static class Inter {
+        int age;
+        Supplier<Inter> supplier;
+
+
+        public boolean getAge() {
+
+            return false;
+        }
+    }
+
+
+    public static void inter() {
+//        byteBuddy.redefine(Inter.class)
+//                .visit(Advice.to(LiMock.FieldAdvice.class).on(MethodDescription::isConstructor))
+//                .make()
+//                .load(Inter.class.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
+
+        LiMock.mock(Inter.class);
+        LiMock.light(() -> new Inter().supplier.get());
+        LiMock.light(() -> new Inter().getAge());
+
+    }
+
+    @MockInit("inter")
+    @LiTest
+    void testInter() {
+        Inter inter = new Inter();
+        System.out.println(inter.getAge());
+        System.out.println(inter.supplier.get());
+    }
 
 }
 
