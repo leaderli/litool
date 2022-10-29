@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
  * @since 2022/6/26 7:00 AM
  */
 public class MethodUtil {
+    public static final String CLINIT_METHOD_NAME = "<clinit>";
 
     /**
      * Return the method of lookup obj which have same signature with reference method

@@ -14,7 +14,6 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Function;
@@ -73,7 +72,7 @@ public class LiMock {
 
         StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
 
-        LiAssertUtil.assertTrue("<clinit>".equals(caller.getMethodName()), "only support call in <clinit>");
+        LiAssertUtil.assertTrue(MethodUtil.CLINIT_METHOD_NAME.equals(caller.getMethodName()), "only support call in <clinit>");
         byteBuddy.redefine(mockingClass)
                 .visit(Advice.to(MockInitAdvice.class).on(MethodDescription::isMethod))
                 .visit(Advice.to(MockStaticBlock.class).on(MethodDescription::isTypeInitializer))
@@ -180,40 +179,6 @@ public class LiMock {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T mockInterface(Type context, Class<T> type) {
-
-        return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, (proxy, origin, args) -> {
-            if (MethodUtil.notObjectMethod(origin)) {
-
-                if (mockProgress) {
-                    mockMethod = origin;
-                    return null;
-                }
-                Object value = LiTestTemplateInvocationContext.TemplateInvocationMockMethodAdvice.methodValue.get(origin);
-                Class<?> returnType = origin.getReturnType();
-                if (value == LiMock.SKIP) {
-
-                    if (returnType == void.class) {
-                        return null;
-                    } else {
-                        Type type1 = TypeUtil.resolve(context, origin.getGenericReturnType());
-                        value = MockBean.mockBean(type1);
-                    }
-                } else {
-
-                    PrimitiveEnum primitiveEnum = PrimitiveEnum.get(returnType);
-                    if (value == null && primitiveEnum != PrimitiveEnum.OBJECT) {
-                        value = primitiveEnum.zero_value;
-                    }
-                }
-
-                return value;
-            }
-            return origin.invoke(NONE, args);
-        });
-    }
-
 
     public static class MockStaticBlock {
         @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -225,26 +190,5 @@ public class LiMock {
 
     public static final Object NONE = new Object();
 
-
-    public static class MockInitAdvice {
-        /**
-         * used to record the mocking class method has be called, and mark method potention return values by {@link  #when(Supplier, Object[])}
-         * or disable some void-method call by {@link  #light(Runnable)}
-         * <p>
-         * this is a delegate for all method of mockindg class, will ignore actual inovation of all methods.
-         * to prevent call actual method on the void-method, return a meaningless {@link #SKIP}.
-         *
-         * @param origin the origin method of mocking class
-         * @return return a meaningless {@link #SKIP}
-         */
-        @SuppressWarnings("all")
-        @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
-        public static Object enter(@Advice.Origin Method origin) {
-            if (mockProgress) {
-                mockMethod = origin;
-            }
-            return SKIP;
-        }
-    }
 
 }
