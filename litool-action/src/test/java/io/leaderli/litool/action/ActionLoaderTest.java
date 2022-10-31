@@ -1,6 +1,7 @@
 package io.leaderli.litool.action;
 
 import io.leaderli.litool.config.LiYamlConfig;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -13,8 +14,8 @@ class ActionLoaderTest {
     void test() {
 
 
-        System.out.println(LiYamlConfig.loadResourcesYmlFiles("action.yml"));
-        System.out.println(LiYamlConfig.loadResourcesYmlFiles("action.yml").get("ab") == null);
+        Assertions.assertNotNull(LiYamlConfig.loadResourcesYmlFiles("action.yml"));
+        Assertions.assertNull(LiYamlConfig.loadResourcesYmlFiles("action.yml").get("ab"));
 
     }
 
