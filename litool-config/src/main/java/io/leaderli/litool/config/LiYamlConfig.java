@@ -103,7 +103,6 @@ public class LiYamlConfig {
             Object value = BeanPath.parse(config, variable).get();
             return yaml.dumpAs(value, null, DumperOptions.FlowStyle.FLOW);
         });
-        System.out.println(mergeYaml);
 
         return yaml.load(mergeYaml);
     }

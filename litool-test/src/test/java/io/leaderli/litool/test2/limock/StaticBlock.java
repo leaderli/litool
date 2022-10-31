@@ -1,4 +1,4 @@
-package io.leaderli.litool.test.limock;
+package io.leaderli.litool.test2.limock;
 
 /**
  * @author leaderli

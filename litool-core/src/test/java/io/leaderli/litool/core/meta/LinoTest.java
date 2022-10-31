@@ -150,12 +150,16 @@ class LinoTest {
         Assertions.assertTrue(Lino.of(null).contain("1").absent());
     }
 
+    @SuppressWarnings({"ConstantConditions", "OptionalAssignedToNull"})
     @Test
     void of() {
         Assertions.assertTrue(Lino.of(null).absent());
         Assertions.assertFalse(Lino.of(1).absent());
         Assertions.assertTrue(Lino.of(null).absent());
         Assertions.assertFalse(Lino.of(1).absent());
+        Assertions.assertTrue(Lino.optional(null).absent());
+        Assertions.assertTrue(Lino.optional(Optional.ofNullable(null)).absent());
+        Assertions.assertTrue(Lino.optional(Optional.ofNullable(1)).present());
     }
 
     @Test

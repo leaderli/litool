@@ -2,10 +2,10 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.test.*;
-import io.leaderli.litool.test.limock.Foo;
-import io.leaderli.litool.test.limock.GetSetBean;
-import io.leaderli.litool.test.limock.StaticBlock;
-import io.leaderli.litool.test.limock.TestBean;
+import io.leaderli.litool.test2.limock.Foo;
+import io.leaderli.litool.test2.limock.GetSetBean;
+import io.leaderli.litool.test2.limock.StaticBlock;
+import io.leaderli.litool.test2.limock.TestBean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -166,11 +166,6 @@ class LiMockTest {
 
 
     public static void inter() {
-//        byteBuddy.redefine(Inter.class)
-//                .visit(Advice.to(LiMock.FieldAdvice.class).on(MethodDescription::isConstructor))
-//                .make()
-//                .load(Inter.class.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
-
         LiMock.mock(Inter.class);
         LiMock.light(() -> new Inter().supplier.get());
         LiMock.light(() -> new Inter().getAge());
@@ -181,8 +176,8 @@ class LiMockTest {
     @LiTest
     void testInter() {
         Inter inter = new Inter();
-        System.out.println(inter.getAge());
-        System.out.println(inter.supplier.get());
+        Assertions.assertFalse(inter.getAge());
+        Assertions.assertNotNull(inter.supplier.get());
     }
 
 }

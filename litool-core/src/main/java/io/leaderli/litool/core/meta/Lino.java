@@ -10,10 +10,7 @@ import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.util.BooleanUtil;
 
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -54,6 +51,21 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             return none();
         }
         return new Some<>(value);
+    }
+
+    /**
+     * if {@code optional == null || optional.get() == null } return {@link #none()}
+     * or return a new {@link Some}
+     *
+     * @param optional the value provider
+     * @param <T>      the type of lino
+     * @return a lino
+     */
+    static <T> Lino<T> optional(Optional<T> optional) {
+        if (optional == null || !optional.isPresent()) {
+            return none();
+        }
+        return new Some<>(optional.get());
     }
 
     /**

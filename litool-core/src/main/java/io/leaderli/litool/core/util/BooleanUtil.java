@@ -1,7 +1,9 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.meta.LiValue;
 
+import java.lang.reflect.Array;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,6 +31,7 @@ public class BooleanUtil {
      *  <li> if obj is {@link  Number}, return it's not 0 </li>
      *  <li> if obj is boolean，return it self </li>
      *  <li> if obj is {@link LiValue}, return {@link LiValue#present()}</li>
+     *  <li> if obj is {@link Array}, return {@code  arr.length > 0}</li>
      *  <li> other  return {@code obj != null} </li>
      * </ul>
      *
@@ -57,6 +60,9 @@ public class BooleanUtil {
         }
         if (obj instanceof Map) {
             return parse((Map<?, ?>) obj);
+        }
+        if (ArrayUtils.isArray(obj)) {
+            return ArrayUtils.getLength(obj) > 0;
         }
 
         if (obj instanceof Number) {
