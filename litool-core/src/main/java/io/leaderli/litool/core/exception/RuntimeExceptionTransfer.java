@@ -5,11 +5,32 @@ import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableRunner;
 import io.leaderli.litool.core.function.ThrowableSupplier;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 /**
  * @author leaderli
  * @since 2022/6/16
  */
 public class RuntimeExceptionTransfer {
+
+    public static Runnable of(ThrowableRunner runnable) {
+
+        return () -> run(runnable);
+    }
+
+    public static <T> Consumer<T> of(ThrowableConsumer<T> consumer) {
+        return t -> accept(consumer, t);
+    }
+
+    public static <T, R> Function<T, R> of(ThrowableFunction<T, R> function) {
+        return t -> apply(function, t);
+    }
+
+    public static <T> Supplier<T> of(ThrowableSupplier<T> supplier) {
+        return () -> get(supplier);
+    }
 
     public static void run(ThrowableRunner runnable) {
         try {
