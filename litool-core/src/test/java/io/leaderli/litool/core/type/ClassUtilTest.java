@@ -8,6 +8,7 @@ import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.JUnitException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -29,6 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @SuppressWarnings("ConstantConditions")
 class ClassUtilTest {
 
+
+    @Test
+    void getJarFile() {
+
+        Assertions.assertNotNull(ClassUtil.getJarFile(JUnitException.class).get());
+        Assertions.assertNull(ClassUtil.getJarFile(ClassUtil.class).get());
+    }
 
     @Test
     void getRecentlyInheritance() {

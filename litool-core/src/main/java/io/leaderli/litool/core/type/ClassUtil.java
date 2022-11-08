@@ -3,6 +3,7 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.io.FileNameUtil;
+import io.leaderli.litool.core.io.FileUtil;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
@@ -11,6 +12,9 @@ import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.io.File;
 import java.lang.reflect.*;
+import java.net.URISyntaxException;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -539,5 +543,26 @@ public class ClassUtil {
             return null;
         }
         return method.getReturnType();
+    }
+
+    /**
+     * @param cls the class
+     * @return return the class jar file
+     */
+    public static Lino<File> getJarFile(Class<?> cls) {
+
+        return Lino.of(cls)
+                .map(Class::getProtectionDomain)
+                .map(ProtectionDomain::getCodeSource)
+                .map(CodeSource::getLocation)
+                .filter(l -> FileUtil.FILE_PROTOCOL.equals(l.getProtocol()) && l.toString().endsWith(FileNameUtil.EXT_JAR))
+                .map(l -> {
+
+                    try {
+                        return new File(l.toURI());
+                    } catch (URISyntaxException e) {
+                        return new File(l.getPath());
+                    }
+                });
     }
 }
