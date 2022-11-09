@@ -75,7 +75,7 @@ class CollectionUtilsTest {
         Lira<Integer> b = Lira.of(Arrays.asList(3, 4, 5));
         Assertions.assertEquals(1, CollectionUtils.intersection(a, b).size());
         Assertions.assertEquals(0, CollectionUtils.intersection(a, Lira.none()).size());
-        Assertions.assertEquals(0, CollectionUtils.intersection(null, null).size());
+        Assertions.assertEquals(0, CollectionUtils.intersection((Object[]) null, null).size());
         Assertions.assertEquals(0, CollectionUtils.intersection(Collections.singletonList(1), null).size());
         Assertions.assertEquals(0, CollectionUtils.intersection(null, Collections.singletonList(1)).size());
     }

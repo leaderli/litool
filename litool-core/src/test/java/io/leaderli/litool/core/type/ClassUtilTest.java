@@ -14,10 +14,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +36,21 @@ class ClassUtilTest {
     }
 
     @Test
+    void getSuperTypeAndInterfacesRecursively() {
+
+        Assertions.assertArrayEquals(new Class[]{Object.class}, ClassUtil.getSuperTypeAndInterfacesRecursively(int[].class));
+        Assertions.assertArrayEquals(new Class[]{Object.class}, ClassUtil.getSuperTypeAndInterfacesRecursively(int.class));
+        Assertions.assertArrayEquals(new Class[0], ClassUtil.getSuperTypeAndInterfacesRecursively(Object.class));
+        Assertions.assertEquals(Number.class, ClassUtil.getSuperTypeAndInterfacesRecursively(Integer.class)[0]);
+    }
+
+    @Test
     void getRecentlyInheritance() {
+        // interface
+        Assertions.assertSame(Object.class, ClassUtil.getRecentlyInheritance(String.class, List.class));
+        Assertions.assertSame(AbstractList.class, ClassUtil.getRecentlyInheritance(LinkedList.class, ArrayList.class));
+        Assertions.assertSame(Collection.class, ClassUtil.getRecentlyInheritance(Queue.class, ArrayList.class));
+        Assertions.assertSame(Collection[].class, ClassUtil.getRecentlyInheritance(Queue[].class, ArrayList[].class));
 
         // a b
         Assertions.assertSame(int.class, ClassUtil.getRecentlyInheritance(int.class, int.class));
@@ -51,7 +62,7 @@ class ClassUtilTest {
         Assertions.assertSame(Object.class, ClassUtil.getRecentlyInheritance(Integer.class, Double[].class));
         Assertions.assertSame(Number[].class, ClassUtil.getRecentlyInheritance(Integer[].class, Double[].class));
         Assertions.assertSame(Number[][].class, ClassUtil.getRecentlyInheritance(Integer[][].class, Double[][].class));
-        Assertions.assertSame(Object[][].class, ClassUtil.getRecentlyInheritance(Integer[][].class, String[][].class));
+        Assertions.assertSame(Comparable[][].class, ClassUtil.getRecentlyInheritance(Integer[][].class, String[][].class));
 
         // arr
         Assertions.assertSame(Object.class, ClassUtil.getRecentlyInheritance(ArrayUtils.of()));

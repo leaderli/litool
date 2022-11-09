@@ -78,9 +78,9 @@ class LiraTest {
     @Test
     void terminal() {
 
-        Lira<Integer> lira = Lira.of(1, 2, 3).terminal(null);
-        Assertions.assertEquals(3, lira.size());
+        Assertions.assertThrows(NullPointerException.class, () -> Lira.of(1, 2, 3).terminal((Function<List<Integer>, Iterable<Integer>>) null));
 
+        Lira<Integer> lira = Lira.of(1, 2, 3).terminal(l -> l);
         Iterator<Integer> iterator = lira.iterator();
         Assertions.assertEquals(1, iterator.next());
         Assertions.assertEquals(2, iterator.next());

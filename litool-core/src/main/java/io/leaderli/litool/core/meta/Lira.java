@@ -398,6 +398,20 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Lira<T> terminal(Function<List<T>, Iterable<T>> deliverAction);
 
     /**
+     * a terminal action, trigger the perform a action prev elements
+     *
+     * @param deliverAction the consumer perform on the cache list
+     * @return a new lira
+     * @see #terminal(Function)
+     */
+    default Lira<T> terminal(Consumer<List<T>> deliverAction) {
+        return terminal(list -> {
+            deliverAction.accept(list);
+            return list;
+        });
+    }
+
+    /**
      * consumer the elements until filter is satisfied
      *
      * @param filter cancel signal push

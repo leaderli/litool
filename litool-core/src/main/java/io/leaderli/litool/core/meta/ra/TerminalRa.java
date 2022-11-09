@@ -4,6 +4,7 @@ import io.leaderli.litool.core.lang.DisposableRunnableProxy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -17,6 +18,7 @@ class TerminalRa<T> extends RaWithPrevPublisher<T> {
 
     public TerminalRa(PublisherRa<T> prevPublisher, Function<List<T>, Iterable<T>> deliverAction) {
         super(prevPublisher);
+        Objects.requireNonNull(deliverAction);
         this.deliverAction = deliverAction;
     }
 

@@ -218,9 +218,9 @@ public class CollectionUtils {
      * Return the union of two array
      *
      * @param <T> the type of array
-     * @param a   a array
-     * @param b   another array
-     * @return the union of two array
+     * @param a   a  itr
+     * @param b   another itr
+     * @return the union of two  itr
      * @see #union(Iterable, Iterable)
      */
     public static <T> Lira<T> union(Iterable<T> a, Iterable<T> b) {
@@ -260,12 +260,25 @@ public class CollectionUtils {
     }
 
     /**
-     * Return intersection of two lira
+     * Return intersection of two arr
      *
-     * @param <T> the type of lira
-     * @param a   a lira
-     * @param b   another lira
-     * @return intersection of two lira
+     * @param <T> the type of  array
+     * @param a   a arr
+     * @param b   another arr
+     * @return intersection of two arr
+     */
+    public static <T> Lira<T> intersection(T[] a, T[] b) {
+
+        return intersection(Lira.of(a), Lira.of(b));
+    }
+
+    /**
+     * Return intersection of two itr
+     *
+     * @param <T> the type of itr
+     * @param a   a itr
+     * @param b   another itr
+     * @return intersection of two itr
      */
     public static <T> Lira<T> intersection(Iterable<T> a, Iterable<T> b) {
 

@@ -11,14 +11,12 @@ import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.io.File;
+import java.io.Serializable;
 import java.lang.reflect.*;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -144,6 +142,61 @@ public class ClassUtil {
         return obj.getClass().getComponentType();
     }
 
+
+    /**
+     * bfs order
+     * <p>
+     * exclude {@link  Serializable}, {@link Cloneable}.
+     * <p>
+     * the primitive or array just return {@code  new Class[]{Object.class}}
+     *
+     * @param cls the class
+     * @return the superClass and interface recursive
+     */
+    public static Class<?>[] getSuperTypeAndInterfacesRecursively(Class<?> cls) {
+
+        Objects.requireNonNull(cls);
+        Set<ObjectPriority<Class<?>>> visit = new HashSet<>();
+        findSuperType(cls, visit, 0);
+        if (cls.isPrimitive() || cls.isArray()) {
+            return new Class[]{Object.class};
+        }
+        return Lira.of(visit)
+                .sorted(Comparator.comparingInt(ObjectPriority::getPriority))
+                .map(ObjectPriority::getObject)
+                .terminal(list -> {
+                    list.remove(cls);
+                    list.remove(Serializable.class);
+                    list.remove(Cloneable.class);
+                })
+                .toArray(Class.class);
+    }
+
+    private static void findSuperType(Class<?> cls, Set<ObjectPriority<Class<?>>> visit, int level) {
+
+
+        ObjectPriority<Class<?>> add = new ObjectPriority<>(cls, level * 10 + (cls.isInterface() ? 1 : 0));
+        if (visit.contains(add)) {
+            return;
+        }
+        level++;
+        visit.add(add);
+        if (cls == Object.class) {
+            return;
+        }
+
+        // bfs order
+        Class<?> superclass = cls.getSuperclass();
+        if (superclass != null) {
+            findSuperType(superclass, visit, level);
+        }
+
+        for (Class<?> anInterface : cls.getInterfaces()) {
+            findSuperType(anInterface, visit, level);
+        }
+
+    }
+
     /**
      * @param a class a
      * @param b class b
@@ -163,31 +216,25 @@ public class ClassUtil {
         if (a == Object.class || b == Object.class) {
             return Object.class;
         }
-
+        if (a == b) {
+            return a;
+        }
+        if (a.isPrimitive() || b.isPrimitive()) {
+            return Object.class;
+        }
         if (a.isArray()) {
             if (b.isArray()) {
                 return getArrayClass(getRecentlyInheritance(a.getComponentType(), b.getComponentType()));
             }
             return Object.class;
         }
-
-        if (a == b) {
-            return a;
-        }
-        if (a.isPrimitive()) {
+        if (b.isArray()) {
             return Object.class;
         }
-        List<Class<?>> aList = new ArrayList<>();
-        List<Class<?>> bList = new ArrayList<>();
 
-        while (a != Object.class) {
-            aList.add(a);
-            a = a.getSuperclass();
-        }
-        while (b != Object.class) {
-            bList.add(b);
-            b = b.getSuperclass();
-        }
+        Class<?>[] aList = getSuperTypeAndInterfacesRecursively(a);
+        Class<?>[] bList = getSuperTypeAndInterfacesRecursively(b);
+
 
         return Lira.of(CollectionUtils.intersection(aList, bList)).first().get(Object.class);
     }
