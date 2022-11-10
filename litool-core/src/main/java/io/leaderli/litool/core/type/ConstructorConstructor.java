@@ -4,7 +4,10 @@ import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * a collection that store a constructor-like value by the {@link  LiTypeToken} at {@link #instanceCreators}.
@@ -17,19 +20,34 @@ import java.util.*;
  */
 public final class ConstructorConstructor {
 
-    private final Map<Type, InstanceCreator<?>> instanceCreators = instanceCreators();
+    private final LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
 
     public ConstructorConstructor() {
+        this(new LinkedHashMap<>());
     }
 
-    public ConstructorConstructor(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators) {
+    public ConstructorConstructor(LinkedHashMap<Type, InstanceCreator<?>> tail) {
+        this(new LinkedHashMap<>(), tail);
+    }
+
+    public ConstructorConstructor(LinkedHashMap<Type, InstanceCreator<?>> head, LinkedHashMap<Type, InstanceCreator<?>> tail) {
+
+        LinkedHashMap<Type, InstanceCreator<?>> temp = head;
+        instanceCreators.putAll(temp);
+
+        temp = generateDefaultInstanceCreators();
+        //  remove the default if exist in head
+        instanceCreators.keySet().forEach(temp::remove);
+        instanceCreators.putAll(temp);
+
+        temp = tail;
         // put the same key don't refresh the order, so remove it to avoid the order is not correctly
-        this.instanceCreators.keySet().removeIf(instanceCreators::containsKey);
-        this.instanceCreators.putAll(instanceCreators);
+        instanceCreators.keySet().removeIf(temp::containsKey);
+        instanceCreators.putAll(temp);
     }
 
-    static Map<Type, InstanceCreator<?>> instanceCreators() {
-        Map<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
+    private static LinkedHashMap<Type, InstanceCreator<?>> generateDefaultInstanceCreators() {
+        LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
         instanceCreators.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
         instanceCreators.put(HashMap.class, (InstanceCreator<HashMap<Object, Object>>) type -> new HashMap<>());
         instanceCreators.put(LinkedHashMap.class, (InstanceCreator<HashMap<Object, Object>>) type -> new LinkedHashMap<>());

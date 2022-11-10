@@ -93,6 +93,8 @@ public class LiMock {
      */
     public static void mock(Class<?> mockingClass) {
 
+        LiAssertUtil.assertFalse(mockingClass.isArray() || mockingClass.isInterface(), "not support interface or arr");
+        LiAssertUtil.assertFalse(mockingClass == HashMap.class || mockingClass == ArrayList.class, "not support HashMap or ArrayList, you can use MockMap or MockList");
 
         LiAssertUtil.assertFalse(mockedClasses.contains(mockingClass), "duplicate mock " + mockingClass);
         redefineClassesInMockInit.add(mockingClass);
@@ -104,6 +106,15 @@ public class LiMock {
                 .make()
                 .load(mockingClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
 
+    }
+
+    /**
+     * @param supplier the method call
+     * @see #light(Runnable)
+     */
+    public static void light(Supplier<?> supplier) {
+
+        light((Runnable) supplier::get);
     }
 
     /**
@@ -132,6 +143,11 @@ public class LiMock {
     }
 
 
+    /**
+     * @param supplier   the method call
+     * @param mockValues the method potential return values
+     * @param <T>        the  method return type
+     */
     @SafeVarargs
     public static <T> void when(Supplier<T> supplier, T... mockValues) {
         whenArgs(supplier, params -> mockValues);

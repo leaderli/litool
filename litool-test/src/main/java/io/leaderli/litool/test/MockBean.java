@@ -7,8 +7,25 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+/**
+ * mock a bean, and will recursive set bean field with a default value.
+ * <p>
+ * if {@link #cache}  contains the {@link LiTypeToken}, just simple return the cache value
+ * <p>
+ * <ul>
+ *     <li>if field is primitive, will set a {@link  PrimitiveEnum#zero_value}</li>
+ *     <li>if field is {@link String} , set {@code ""}</li>
+ *     <li>if field is array , set a zero length array</li>
+ *     <li>if field is {@link  List}, set a empty {@link MockList}</li>
+ *     <li>if field is {@link  Map}, set a empty {@link MockMap}</li>
+ *     <li>otherwise will try to use {@link  MockBean} to mock a bean</li>
+ *  </ul>
+ *
+ * @param <T> the type of mock bean
+ */
 public class MockBean<T> {
 
     private final LiTypeToken<T> typeToken;
@@ -35,11 +52,19 @@ public class MockBean<T> {
         return instance(token, instanceCreators);
     }
 
-    public static <T> MockBean<T> instance(LiTypeToken<T> token, LinkedHashMap<Type, InstanceCreator<?>> instanceCreators) {
+    public static <T> MockBean<T> instance(LiTypeToken<T> token, LinkedHashMap<Type, InstanceCreator<?>> head, LinkedHashMap<Type, InstanceCreator<?>> tail) {
 
-        instanceCreators.put(String.class, t -> "");
-        ConstructorConstructor constructorConstructor = new ConstructorConstructor(instanceCreators);
+        tail.put(String.class, t -> "");
+        ConstructorConstructor constructorConstructor = new ConstructorConstructor(head, tail);
         return new MockBean<>(token, constructorConstructor, new HashMap<>());
+    }
+
+    public static <T> MockBean<T> instance(LiTypeToken<T> token, LinkedHashMap<Type, InstanceCreator<?>> tail) {
+
+        LinkedHashMap<Type, InstanceCreator<?>> head = new LinkedHashMap<>();
+        head.put(MockMap.class, t -> new MockMap<>());
+        head.put(MockList.class, t -> new MockList<>());
+        return instance(token, head, tail);
     }
 
     public static <T> MockBean<T> instance(Type type) {
@@ -79,10 +104,15 @@ public class MockBean<T> {
         }
 
 
-        T instance = (T) ReflectUtil.newInstance(rawType).get();
+        T instance = null;
+        if (!rawType.isInterface()) {
+            instance = (T) ReflectUtil.newInstance(rawType).get();
+        }
         if (instance == null) {
+            // try to use a ache value that inherit from rawType
             for (Object value : cache.values()) {
                 if (value != null && ClassUtil.isAssignableFromOrIsWrapper(rawType, value.getClass())) {
+                    cache.put(typeToken, value);
                     return (T) value;
                 }
             }

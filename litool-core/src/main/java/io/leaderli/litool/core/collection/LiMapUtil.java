@@ -4,6 +4,7 @@ package io.leaderli.litool.core.collection;
 import io.leaderli.litool.core.meta.Lino;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -220,4 +221,15 @@ public class LiMapUtil {
     }
 
 
+    public static <K, V> HashMap<K, V> newHashMap(K k, V v) {
+        HashMap<K, V> map = new HashMap<>();
+        map.put(k, v);
+        return map;
+    }
+
+    public static <K, V> LinkedHashMap<K, V> newLinkedHashMap(K k, V v) {
+        LinkedHashMap<K, V> map = new LinkedHashMap<>();
+        map.put(k, v);
+        return map;
+    }
 }

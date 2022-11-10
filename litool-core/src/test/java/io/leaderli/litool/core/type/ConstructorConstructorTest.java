@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.collection.LiMapUtil;
 import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,11 +15,27 @@ import java.util.*;
 class ConstructorConstructorTest {
 
     @Test
+    void test() {
+        LinkedHashMap<Type, InstanceCreator<?>> head = LiMapUtil.newLinkedHashMap(LinkedHashMap.class, (InstanceCreator<LinkedHashMap<?, ?>>) type -> new LinkedHashMap<>());
+        ConstructorConstructor constructorConstructor = new ConstructorConstructor(head, new LinkedHashMap<>());
+        Assertions.assertSame(LinkedHashMap.class, constructorConstructor.get(LiTypeToken.of(Map.class)).get().getClass());
+
+        LinkedHashMap<Type, InstanceCreator<?>> tail = LiMapUtil.newLinkedHashMap(HashMap.class, (InstanceCreator<HashMap<?, ?>>) type -> new HashMap<>());
+        constructorConstructor = new ConstructorConstructor(tail);
+        Assertions.assertSame(LinkedHashMap.class, constructorConstructor.get(LiTypeToken.of(Map.class)).get().getClass());
+
+        constructorConstructor = new ConstructorConstructor();
+        Assertions.assertSame(HashMap.class, constructorConstructor.get(LiTypeToken.of(Map.class)).get().getClass());
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Test
     void rank() {
 
-        Assertions.assertEquals(Lira.of(Collection.class, List.class, AbstractList.class, ArrayList.class)
-                , Lira.of(List.class, ArrayList.class, Collection.class, AbstractList.class)
-                        .sorted(ClassUtil::rank0));
+        Lira<Class<? extends Collection>> a = Lira.of(Collection.class, List.class, AbstractList.class, ArrayList.class);
+        Lira<Class<? extends Collection>> b = Lira.of(List.class, ArrayList.class, Collection.class, AbstractList.class)
+                .sorted(ClassUtil::rank0);
+        Assertions.assertEquals(a, b);
     }
 
     @Test
@@ -32,14 +49,12 @@ class ConstructorConstructorTest {
         factories.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
         ConstructorConstructor constructorConstructor = new ConstructorConstructor(factories);
 
-        ObjectConstructor<ArrayList<String>> arrayListSupplier =
-                constructorConstructor.get(LiTypeToken.of(ArrayList.class));
+        ObjectConstructor<ArrayList<String>> arrayListSupplier = constructorConstructor.get(LiTypeToken.of(ArrayList.class));
         List<String> actual = arrayListSupplier.get();
         Assertions.assertTrue(actual.isEmpty());
 
-        ObjectConstructor<List<String>> objectObjectConstructor =
-                constructorConstructor.get(new LiTypeToken<List<String>>() {
-                });
+        ObjectConstructor<List<String>> objectObjectConstructor = constructorConstructor.get(new LiTypeToken<List<String>>() {
+        });
 
         List<String> list = objectObjectConstructor.get();
         Assertions.assertTrue(list.iterator().hasNext());

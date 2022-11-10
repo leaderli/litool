@@ -5,8 +5,8 @@ import com.google.gson.GsonBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 class MockBeanTest {
@@ -20,10 +20,14 @@ class MockBeanTest {
 
         Assertions.assertSame(int[].class, fooBar.getArr().getClass());
         Assertions.assertSame(Integer[].class, fooBar.getWrapper().getClass());
-        Assertions.assertSame(ArrayList.class, fooBar.getList().getClass());
+        Assertions.assertSame(MockList.class, fooBar.getList().getClass());
 
         Assertions.assertNotNull(fooBar.getBar());
         Assertions.assertNotNull(fooBar.getFoo());
+
+        Map<Integer, List<Integer>> map = fooBar.getMap();
+
+        Assertions.assertEquals(MockMap.class, map.getClass());
 
 
     }
@@ -36,12 +40,15 @@ class MockBeanTest {
         Assertions.assertNotNull((MockBean.mockBean(Integer.class)));
         Assertions.assertNull(MockBean.mockBean(Consumer.class));
 
+
+        Assertions.assertEquals(MockMap.class, MockBean.mockBean(Map.class).getClass());
     }
 
     static abstract class Foo<T, R> {
 
         private T t;
         private R r;
+        private Map<T, R> map;
 
         public T getT() {
             return t;
@@ -57,6 +64,14 @@ class MockBeanTest {
 
         public void setR(R r) {
             this.r = r;
+        }
+
+        public Map<T, R> getMap() {
+            return map;
+        }
+
+        public void setMap(Map<T, R> map) {
+            this.map = map;
         }
     }
 

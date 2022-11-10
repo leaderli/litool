@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -49,7 +50,7 @@ class LiMockTest {
         testBean.m2(1);
         Foo foo1 = testBean.m3();
 
-        Assertions.assertEquals(ArrayList.class, testBean.m4().getClass());
+        Assertions.assertEquals(MockList.class, testBean.m4().getClass());
 
         Assertions.assertNull(testBean.m5());
         Assertions.assertEquals(100, testBean.m6());
@@ -180,5 +181,39 @@ class LiMockTest {
         Assertions.assertNotNull(inter.supplier.get());
     }
 
+
+    static void mockMap() {
+        LiMock.mock(Bar.class);
+        LiMock.light(() -> new Bar().getMap());
+        LiMock.mock(MockMap.class);
+
+        Map<String, Integer> map = new MockMap<>();
+
+        LiMock.when(() -> map.get(""), 1, 2);
+
+    }
+
+    @MockInit("mockMap")
+    @LiTest
+    void testMockMap() {
+
+        Bar bar = new Bar();
+        Assertions.assertTrue(bar.getMap().get("abc") > 0);
+
+
+    }
+
+    static class Bar {
+
+        private Map<String, Integer> map;
+
+        public Map<String, Integer> getMap() {
+            return map;
+        }
+
+        public void setMap(Map<String, Integer> map) {
+            this.map = map;
+        }
+    }
 }
 
