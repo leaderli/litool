@@ -357,6 +357,7 @@ class ClassUtilTest {
     }
 
 
+    @SuppressWarnings("rawtypes")
     @Test
     void rank() {
 
@@ -368,6 +369,12 @@ class ClassUtilTest {
 
         Assertions.assertEquals(2, ClassUtil.rank(C.class, A.class));
         Assertions.assertEquals(2, ClassUtil.rank(C.class, Object.class));
+
+
+        Lira<Class<? extends Collection>> a = Lira.of(Collection.class, List.class, AbstractList.class, ArrayList.class);
+        Lira<Class<? extends Collection>> b = Lira.of(List.class, ArrayList.class, Collection.class, AbstractList.class)
+                .sorted(ClassUtil::rank0);
+        Assertions.assertEquals(a, b);
 
     }
 

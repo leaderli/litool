@@ -36,7 +36,7 @@ public final class ConstructorConstructor {
         instanceCreators.putAll(temp);
 
         temp = generateDefaultInstanceCreators();
-        //  remove the default if exist in head
+        // avoid default instanceCreators to reset the key-value in head, so remove it from default instanceCreators
         instanceCreators.keySet().forEach(temp::remove);
         instanceCreators.putAll(temp);
 

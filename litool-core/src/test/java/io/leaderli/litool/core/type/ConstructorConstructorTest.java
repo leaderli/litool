@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.LiMapUtil;
-import io.leaderli.litool.core.meta.Lira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,16 +25,10 @@ class ConstructorConstructorTest {
 
         constructorConstructor = new ConstructorConstructor();
         Assertions.assertSame(HashMap.class, constructorConstructor.get(LiTypeToken.of(Map.class)).get().getClass());
-    }
 
-    @SuppressWarnings("rawtypes")
-    @Test
-    void rank() {
-
-        Lira<Class<? extends Collection>> a = Lira.of(Collection.class, List.class, AbstractList.class, ArrayList.class);
-        Lira<Class<? extends Collection>> b = Lira.of(List.class, ArrayList.class, Collection.class, AbstractList.class)
-                .sorted(ClassUtil::rank0);
-        Assertions.assertEquals(a, b);
+        tail = LiMapUtil.newLinkedHashMap(LiTypeToken.getParameterized(Map.class, String.class, String.class), (InstanceCreator<MyMap>) type -> new MyMap());
+        constructorConstructor = new ConstructorConstructor(tail);
+        Assertions.assertSame(MyMap.class, constructorConstructor.get(LiTypeToken.getParameterized(Map.class, String.class, String.class)).get().getClass());
     }
 
     @Test
@@ -65,6 +58,10 @@ class ConstructorConstructorTest {
     }
 
     private static class A {
+    }
+
+    private static class MyMap extends HashMap<String, String> {
+
     }
 
 }
