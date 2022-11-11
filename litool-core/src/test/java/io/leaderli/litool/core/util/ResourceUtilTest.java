@@ -32,13 +32,12 @@ class ResourceUtilTest {
     void getResourceURLs() {
 
 
-        Lira<URL> resourcesLira = ResourceUtil.getResourceURLs("io/leaderli");
+        Lira<URL> resourcesLira = ResourceUtil.getResourceURLs("io/leaderli/litool/core");
 
         Assertions.assertEquals(2, resourcesLira.size());
         Assertions.assertTrue(ResourceUtil.getResourceURLs(null).absent());
 
 
-//        Assertions.assertEquals(ResourceUtil.getResourceURLs(""), ResourceUtil.getResourceURLs("./"));
         Assertions.assertTrue(ResourceUtil.getResourceURLs(null).absent());
 
     }
@@ -109,7 +108,6 @@ class ResourceUtilTest {
             }
             Assertions.assertTrue(sb.toString().startsWith("cafebabe"));
         });
-//        System.out.println(StringUtils.read(resourceAsStream));
     }
 }
 

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="bfb54f0c-c824-4a18-9eb4-5b4b9d2fc1d9" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../litool-action/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../litool-action/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../litool-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../litool-core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../litool-core/src/main/java/io/leaderli/litool/core/type/ClassUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../litool-core/src/main/java/io/leaderli/litool/core/type/ClassUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../litool-core/src/test/java/io/leaderli/litool/core/type/ClassUtilTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../litool-core/src/test/java/io/leaderli/litool/core/type/ClassUtilTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../litool-core/src/test/java/io/leaderli/litool/core/util/ResourceUtilTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../litool-core/src/test/java/io/leaderli/litool/core/util/ResourceUtilTest.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="vmOptionsForImporter" value="-Xmx768m" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="MavenRunner">
+    <option name="delegateBuildToMaven" value="true" />
+    <option name="jreName" value="#JAVA_HOME" />
+  </component>
+  <component name="ProjectId" id="2HHvECMqqwdxZYCWjlwbc05Dl7j" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="flattenPackages" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="false" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
+  }
+}]]></component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="clean install" />
+      <command value="mvn clean install" />
+    </option>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
