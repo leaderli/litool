@@ -46,6 +46,15 @@ class LiEventBusTest {
         Assertions.assertEquals(1, listener.count);
         liEventBus.push(new TestLiEventObject("123"));
         Assertions.assertEquals(1, listener.count);
+
+
+        TestLiEventListener4 listener4 = new TestLiEventListener4();
+        liEventBus.registerListener(listener4);
+
+        Assertions.assertEquals(0, listener4.value);
+
+        liEventBus.push(new LiEventTuple<>("fuck", 100));
+        Assertions.assertEquals(100, listener4.value);
     }
 
     @Test
@@ -150,6 +159,16 @@ class LiEventBusTest {
         @Override
         public Class<TestLiEventObject> componentType() {
             return TestLiEventObject.class;
+        }
+    }
+
+    private static class TestLiEventListener4 implements ILiEventListener<LiEventTuple<String, Integer>> {
+
+        public int value;
+
+        @Override
+        public void listen(LiEventTuple<String, Integer> event) {
+            this.value = event._2();
         }
     }
 

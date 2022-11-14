@@ -30,7 +30,7 @@ public class LiEventObject<T> {
     @Override
     public final String toString() {
 
-        return getClass().getName() + "[source=" + source + "]";
+        return getClass().getSimpleName() + "[source=" + source + "]";
     }
 
 }
