@@ -14,13 +14,6 @@
 
     <artifactId>litool-core</artifactId>
     <name>${project.artifactId}</name>
-    <dependencies>
-        <dependency>
-            <groupId>io.leaderli.litool</groupId>
-            <artifactId>litool-agent</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+   
 
 </project>

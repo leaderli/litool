@@ -1,6 +1,7 @@
 package io.leaderli.litool.dom;
 
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.resource.ResourceUtil;
 import org.dom4j.DocumentException;
@@ -139,6 +140,22 @@ public class LiDomUtil {
             e.printStackTrace();
         }
 
+    }
+
+    public static DOMElement createElement(String... names) {
+
+        LiAssertUtil.assertTrue(names.length > 0);
+        DOMElement parent = null;
+        DOMElement child = null;
+
+        for (String name : names) {
+            child = new DOMElement(name);
+            if (parent != null) {
+                parent.appendChild(child);
+            }
+            parent = child;
+        }
+        return child;
     }
 
 }

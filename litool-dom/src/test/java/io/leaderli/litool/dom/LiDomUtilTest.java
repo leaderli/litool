@@ -12,6 +12,15 @@ class LiDomUtilTest {
 
 
     @Test
+    void createElement() {
+
+        Assertions.assertEquals("<hello/>", LiDomUtil.createElement("hello").asXML());
+        Assertions.assertEquals("<hello><fuck/></hello>", LiDomUtil.createElement("hello", "fuck").getParent().asXML());
+
+
+    }
+
+    @Test
     void write() throws DocumentException {
         String xml = "<test>\n" +
                 "    <t1>1</t1>\n" +
