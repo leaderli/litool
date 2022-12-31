@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * 尾结点消费者
+ * tail node consumer
  *
  * @author leaderli
  * @since 2022/6/27
