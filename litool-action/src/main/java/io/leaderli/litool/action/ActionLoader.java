@@ -9,6 +9,9 @@ import org.yaml.snakeyaml.Yaml;
 
 public class ActionLoader {
 
+    private ActionLoader() {
+    }
+
     static {
         LiYamlConfig.checkYamlFormat();
     }
