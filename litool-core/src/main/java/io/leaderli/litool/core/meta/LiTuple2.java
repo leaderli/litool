@@ -74,6 +74,10 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
         };
     }
 
+    public static <K, V> LiTuple2<K, V> of(Map.Entry<K, V> entry) {
+        return LiTuple.of(entry.getKey(), entry.getValue());
+    }
+
     @Override
     public int arity() {
         return 2;
@@ -153,15 +157,6 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     public Map.Entry<T1, T2> toEntry() {
         return new AbstractMap.SimpleEntry<>(_1, _2);
     }
-
-    @Override
-    public T1 getLeft() {
-        if (isRight()) {
-            throw new NoSuchElementException();
-        }
-        return _1;
-    }
-
     /**
      * Maps the components of this tuple using a mapper function.
      *
@@ -177,8 +172,11 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     }
 
     @Override
-    public boolean isLeft() {
-        return _2 == null && _1 != null;
+    public T1 getLeft() {
+        if (isRight()) {
+            throw new NoSuchElementException();
+        }
+        return _1;
     }
 
     /**
@@ -197,14 +195,6 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
         return LiTuple.of(f1.apply(_1), f2.apply(_2));
     }
 
-    @Override
-    public T2 getRight() {
-        if (isLeft()) {
-            throw new NoSuchElementException();
-        }
-        return _2;
-    }
-
     /**
      * Maps the 1st component of this tuple to a new value.
      *
@@ -216,11 +206,6 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
         Objects.requireNonNull(mapper, "mapper is null");
         final U u = mapper.apply(_1);
         return LiTuple.of(u, _2);
-    }
-
-    @Override
-    public boolean isRight() {
-        return _2 != null || _1 == null;
     }
 
     /**
@@ -236,15 +221,9 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
         return LiTuple.of(_1, u);
     }
 
-    /**
-     * Swaps the elements of this {@code Tuple}.
-     *
-     * @return A new Tuple where the first element is the second element of this Tuple
-     * and the second element is the first element of this Tuple.
-     */
     @Override
-    public LiTuple2<T2, T1> swap() {
-        return LiTuple.of(_2, _1);
+    public boolean isLeft() {
+        return _2 == null && _1 != null;
     }
 
     /**
@@ -264,7 +243,6 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     public int hashCode() {
         return LiTuple.hash(_1, _2);
     }
-
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -279,6 +257,14 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     }
 
     @Override
+    public T2 getRight() {
+        if (isLeft()) {
+            throw new NoSuchElementException();
+        }
+        return _2;
+    }
+
+    @Override
     public String toString() {
         return "(" + _1 + ", " + _2 + ")";
     }
@@ -288,10 +274,25 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
         return "tuple2";
     }
 
+    @Override
+    public boolean isRight() {
+        return _2 != null || _1 == null;
+    }
+
+
+    /**
+     * Swaps the elements of this {@code Tuple}.
+     *
+     * @return A new Tuple where the first element is the second element of this Tuple
+     * and the second element is the first element of this Tuple.
+     */
+    @Override
+    public LiTuple2<T2, T1> swap() {
+        return LiTuple.of(_2, _1);
+    }
+
+
 // -- Object
 
-    public static <K, V> LiTuple2<K, V> of(Map.Entry<K, V> entry) {
-        return LiTuple.of(entry.getKey(), entry.getValue());
-    }
 
 }

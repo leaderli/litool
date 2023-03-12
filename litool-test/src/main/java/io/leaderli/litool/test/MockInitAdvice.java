@@ -19,7 +19,7 @@ public class MockInitAdvice {
     @SuppressWarnings("all")
     @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
     public static Object enter(@Advice.Origin Method origin) {
-        if (LiMock.mockProgress) {
+        if (LiMock.onMockProgress) {
             LiMock.mockMethod = origin;
         }
         return LiMock.SKIP;

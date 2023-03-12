@@ -91,6 +91,16 @@ public class LiDomUtil {
     /**
      * @param element a {@code DOMElement}
      * @param xpath   -
+     * @return the child node query by xpath from element
+     */
+    public static List<DOMElement> selectObjects(DOMElement element, String xpath) {
+
+        return Lira.of(element.selectNodes(xpath)).cast(DOMElement.class).get();
+    }
+
+    /**
+     * @param element a {@code DOMElement}
+     * @param xpath   -
      * @return the first child node query by xpath from element
      */
     public static DOMElement selectSingleNode(DOMElement element, String xpath) {

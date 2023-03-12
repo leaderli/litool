@@ -12,6 +12,8 @@ import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 
 /**
+ * delegate class constructor, the field that is interface and the value is null will be set a proxy by {@link  Proxy#newProxyInstance(ClassLoader, Class[], InvocationHandler)}
+ *
  * @author leaderli
  * @since 2022/10/28 5:17 PM
  */
@@ -47,7 +49,7 @@ public class ConstructorAdvice {
             if (MethodUtil.notObjectMethod(origin)) {
 
 
-                if (LiMock.mockProgress) {
+                if (LiMock.onMockProgress) {
                     // use for record mocking method call
                     LiMock.mockMethod = origin;
                     return null;

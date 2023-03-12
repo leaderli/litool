@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 public class LiMock {
 
     /**
-     * it's used for mark method return void or the to be mocked bean
+     * it's used for mark method return void or the bean that had be mocked or mocking
      */
     public static final Object SKIP = new Object() {
         @Override
@@ -35,11 +35,11 @@ public class LiMock {
     };
 
 
-    public static final Map<Method, Function<Object[], Object[]>> methodValues = new HashMap<>();
+    public static final Map<Method, Function<Object[], Object[]>> methodValuesDependsOnParametersOfTestMethod = new HashMap<>();
     public static final Set<Class<?>> mockedClasses = new HashSet<>();
     public static final ByteBuddy byteBuddy = new ByteBuddy();
     public static Method mockMethod;
-    public static boolean mockProgress;
+    public static boolean onMockProgress;
     public static LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
     public static final Set<Class<?>> redefineClassesInMockInit = new HashSet<>();
 
@@ -59,9 +59,9 @@ public class LiMock {
             }
         }
         mockedClasses.clear();
-        methodValues.clear();
+        methodValuesDependsOnParametersOfTestMethod.clear();
         mockMethod = null;
-        mockProgress = false;
+        onMockProgress = false;
         instanceCreators.clear();
         redefineClassesInMockInit.clear();
     }
@@ -90,6 +90,8 @@ public class LiMock {
      * delegate the class method to {@link  MockInitAdvice}
      *
      * @param mockingClass the class will be redefined by byteBuddy
+     * @see MockInitAdvice
+     * @see ConstructorAdvice
      */
     public static void mock(Class<?> mockingClass) {
 
@@ -127,7 +129,7 @@ public class LiMock {
     public static void light(Runnable runnable) {
 
         mockMethod = null;
-        mockProgress = true;
+        onMockProgress = true;
         runnable.run();
 
         Objects.requireNonNull(mockMethod);
@@ -135,37 +137,42 @@ public class LiMock {
         PrimitiveEnum primitiveEnum = PrimitiveEnum.get(returnType);
 
         Object zero_value = primitiveEnum == PrimitiveEnum.VOID || primitiveEnum == PrimitiveEnum.OBJECT ? SKIP : primitiveEnum.zero_value;
-        methodValues.put(mockMethod, params -> new Object[]{zero_value});
+        methodValuesDependsOnParametersOfTestMethod.put(mockMethod, params -> new Object[]{zero_value});
         mockedClasses.add(mockMethod.getDeclaringClass());
 
         mockMethod = null;
-        mockProgress = false;
+        onMockProgress = false;
     }
 
 
     /**
-     * @param supplier   the method call
-     * @param mockValues the method potential return values
-     * @param <T>        the  method return type
+     * @param supplier   the mock method call progress
+     * @param mockValues the mock method potential return values
+     * @param <T>        the  mock method return type
      */
     @SafeVarargs
     public static <T> void when(Supplier<T> supplier, T... mockValues) {
         whenArgs(supplier, params -> mockValues);
     }
 
+    /**
+     * @param supplier                  the mock method call progress
+     * @param mockValuesProvideByParams the mock method potential return values on specific test parameters
+     * @param <T>                       the  mock method return type
+     */
     public static <T> void whenArgs(Supplier<T> supplier, Function<Object[], Object[]> mockValuesProvideByParams) {
 
 
         mockMethod = null;
-        mockProgress = true;
+        onMockProgress = true;
         supplier.get();
 
         Objects.requireNonNull(mockMethod);
-        methodValues.put(mockMethod, mockValuesProvideByParams);
+        methodValuesDependsOnParametersOfTestMethod.put(mockMethod, mockValuesProvideByParams);
         mockedClasses.add(mockMethod.getDeclaringClass());
 
         mockMethod = null;
-        mockProgress = false;
+        onMockProgress = false;
     }
 
     /**

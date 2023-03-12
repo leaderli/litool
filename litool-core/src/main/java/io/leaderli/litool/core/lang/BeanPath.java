@@ -44,12 +44,6 @@ public class BeanPath {
 
     }
 
-    public static Lino<Object> parse(Object obj, String expression) {
-
-        BeanPath beanPath = new BeanPath();
-        beanPath.build(expression);
-        return beanPath.parse(obj);
-    }
 
     /**
      * an valid expression can be as follow
@@ -192,21 +186,21 @@ public class BeanPath {
     }
 
     /**
-     * @param obj 数据源
-     * @return 根据 {@link #path} 找到的数据
+     * @param source the source
+     * @return the value find by {@link #path}
      */
-    public Lino<Object> parse(Object obj) {
+    public Lino<Object> parse(Object source) {
 
         for (Function<Object, Object> function : Lira.of(path)) {
 
-            if (obj == null) {
+            if (source == null) {
                 return Lino.none();
             }
-            obj = function.apply(obj);
+            source = function.apply(source);
 
         }
 
-        return Lino.of(obj);
+        return Lino.of(source);
     }
 
     private void setKeyFunction(String key) {
@@ -241,6 +235,13 @@ public class BeanPath {
     public static Lino<Object> simple(Object obj, String key) {
         BeanPath beanPath = new BeanPath();
         beanPath.setKeyFunction(key);
+        return beanPath.parse(obj);
+    }
+
+    public static Lino<Object> parse(Object obj, String expression) {
+
+        BeanPath beanPath = new BeanPath();
+        beanPath.build(expression);
         return beanPath.parse(obj);
     }
 
