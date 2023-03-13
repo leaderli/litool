@@ -430,6 +430,16 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      */
     <R> Lira<R> toLira(Class<? extends R> type);
 
+    /**
+     * support convert to lira type is: {@link Iterable}, {@link Iterator}, {@link Enumeration} and the array.
+     * otherwise will return {@link  Lira#none()}
+     *
+     * @param <R>  the type parameter of lira
+     * @param type the type of lira
+     * @return convert to lira according to the type of value, and will perform an action of {@link Lira#cast(LiTypeToken)}
+     */
+    <R> Lira<R> toLira(LiTypeToken<? extends R> type);
+
 
     final class Some<T> implements Lino<T> {
 
@@ -681,6 +691,10 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             return toLira().cast(type);
         }
 
+        @Override
+        public <R> Lira<R> toLira(LiTypeToken<? extends R> type) {
+            return toLira().cast(type);
+        }
     }
 
 
@@ -884,6 +898,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public <R> Lira<R> toLira(Class<? extends R> type) {
+            return Lira.none();
+        }
+
+        @Override
+        public <R> Lira<R> toLira(LiTypeToken<? extends R> type) {
             return Lira.none();
         }
     }

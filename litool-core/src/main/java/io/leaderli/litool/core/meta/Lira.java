@@ -831,7 +831,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
 
     @SuppressWarnings("unchecked")
-    default <R> Lira<R> cast(LiTypeToken<R> typeToken) {
+    default <R> Lira<R> cast(LiTypeToken<? extends R> typeToken) {
         return (Lira<R>) cast(typeToken.getRawType());
     }
 
