@@ -113,6 +113,32 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     }
 
     /**
+     * when {@code supplier == null} or {@link  ThrowableSupplier#get()} throw a error
+     * return {@link #none()}, or return {@link #of(Object)} by the {@link  ThrowableSupplier#get()}
+     *
+     * @param supplier          the supplier provide value
+     * @param <T>               the type of lino
+     * @param throwableConsumer the consumer when error occur
+     * @return a lino
+     * @see #of(Object)
+     */
+    static <T> Lino<T> throwable_of(ThrowableSupplier<? extends T> supplier, Consumer<Throwable> throwableConsumer) {
+        if (supplier == null) {
+            return none();
+        }
+        try {
+            T value = supplier.get();
+            if (value == null) {
+                return Lino.none();
+            }
+            return new Some<>(value);
+        } catch (Throwable e) {
+            throwableConsumer.accept(e);
+            return none();
+        }
+    }
+
+    /**
      * narrow the generic type of lino, {@code <? extends T> } convert {@code  <T> }.
      * it should be noted that all operation on lino is readable but writeable, the value
      * under lino cannot be updated, so the narrow operation of extend is allowed. that also
@@ -233,8 +259,8 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
     /**
      * @param filter the filter function
-     * @return return this if   the result of function and parse to boolean by {@link BooleanUtil#parse(Object)} is
-     * true otherwise return {@link  #none()}
+     * @return return this if   the result of function and parse to boolean by {@link BooleanUtil#parse(Object)} is true
+     * otherwise return {@link  #none()}
      * @see #filter(boolean)
      * @see BooleanUtil#parse(Object)
      */

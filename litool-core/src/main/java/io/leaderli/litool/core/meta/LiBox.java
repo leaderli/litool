@@ -2,6 +2,7 @@ package io.leaderli.litool.core.meta;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 
 /**
  * wraps an instance for easy updating of values in lambda expressions
@@ -109,7 +110,7 @@ public class LiBox<T> implements LiValue {
      * @param right    the second parameter of  function, the first parameter is {@link #value}
      * @see java.util.function.BiFunction
      */
-    public void apply(BiFunction<T, T, T> function, T right) {
+    public void apply(BinaryOperator<T> function, T right) {
 
         if (function != null && value != null && right != null) {
             this.value = function.apply(value, right);
