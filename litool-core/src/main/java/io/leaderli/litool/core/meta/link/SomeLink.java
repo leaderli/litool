@@ -46,8 +46,8 @@ abstract class SomeLink<P, T> implements LiLink<T> {
     }
 
     @Override
-    public LiLink<T> then(Supplier<?> supplier) {
-        return new FilterLink<>(this, t -> supplier.get());
+    public LiLink<T> then(Supplier<?> filter) {
+        return new FilterLink<>(this, t -> filter.get());
     }
 
 
@@ -83,10 +83,10 @@ abstract class SomeLink<P, T> implements LiLink<T> {
     }
 
     @Override
-    public LiLink<T> throwable_then(ThrowableSupplier<?> supplier) {
+    public LiLink<T> throwable_then(ThrowableSupplier<?> filter) {
         return new FilterLink<>(this, t -> {
             try {
-                return supplier.get();
+                return filter.get();
             } catch (Throwable e) {
                 LiConstant.accept(e);
                 return false;

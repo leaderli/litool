@@ -15,10 +15,11 @@ import java.util.function.Supplier;
 /**
  * @param <T> 泛型
  *            <p>
- *            链式执行，每个节点执行成功后才会执行下一个节点，若某一个节点执行结果为失败，
+ *            链式执行，每个节点执行成功后才会执行下一个节点，若某一个节点执行结果为失败或者执行结果为false，
  *            则调用最靠近的一组  error 节点
  *            执行动作是响应式的， 需要显式的调用 {@link #present()} 才会触发
  * @author leaderli
+ * @see BooleanUtil#parse(Object)
  * @since 2022/7/16
  */
 public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
@@ -64,7 +65,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     }
 
     /**
-     * when the filter throw a exception or it result is null, interrupt the execution chain
+     * when the filter result is null, interrupt the execution chain
      *
      * @param mapper the mapper function
      * @param <R>    the type of mapper result
@@ -74,7 +75,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
 
 
     /**
-     * when the filter throw a exception or it result is false, interrupt the execution chain
+     * when the filter  result is false, interrupt the execution chain
      *
      * @param filter the filter
      * @return new link
@@ -83,24 +84,21 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     LiLink<T> then(Function<? super T, ?> filter);
 
     /**
-     * when the supplier throw a exception, interrupt the execution chain
+     * when the filter result is false, interrupt the execution chain
      *
-     * @param supplier the supplier
+     * @param filter the filter
      * @return new link
+     * @see BooleanUtil#parse(Object)
      */
-    LiLink<T> then(Supplier<?> supplier);
+    LiLink<T> then(Supplier<?> filter);
 
     /**
-     * when the runnable throw a exception, interrupt the execution chain
-     *
      * @param consumer the consumer
      * @return new link
      */
     LiLink<T> then(Consumer<? super T> consumer);
 
     /**
-     * when the runnable throw a exception, interrupt the execution chain
-     *
      * @param runnable the runnable
      * @return new link
      */
@@ -117,12 +115,12 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     LiLink<T> throwable_then(ThrowableFunction<? super T, ?> filter);
 
     /**
-     * when the supplier throw a exception, interrupt the execution chain
+     * when the filter throw a exception or it result is false, interrupt the execution chain
      *
-     * @param supplier the supplier
+     * @param filter the filter
      * @return new link
      */
-    LiLink<T> throwable_then(ThrowableSupplier<?> supplier);
+    LiLink<T> throwable_then(ThrowableSupplier<?> filter);
 
     /**
      * when the consumer throw a exception, interrupt the execution chain
