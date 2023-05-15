@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 class DateUtilTest {
@@ -24,12 +26,12 @@ class DateUtilTest {
 
     @Test
     void parser() {
-        System.out.println(DateUtil.parser2LocalDate("yyyyMMdd HH", "19910101 11"));
-        System.out.println(DateUtil.parser2LocalDate("yyyyMMdd HHmmss", "19910102 112235"));
-        System.out.println(DateUtil.parser2LocalDateTime("yyyyMMdd HHmmss", "19910103 112233"));
-        System.out.println(DateUtil.parser2LocalDateTime("HHmmss", "112236"));
-        System.out.println(DateUtil.parser2LocalDateTime("yyyyMMdd", "19910104"));
-        System.out.println(DateUtil.parser2Date("yyyyMMdd", "19910103"));
-        System.out.println(DateUtil.parser2Date("yyyyMMdd HHmmss", "19910103 112235"));
+        Assertions.assertNotNull(DateUtil.parser2LocalDate("yyyyMMdd HH", "19910101 11"));
+        Assertions.assertNotNull(DateUtil.parser2LocalDate("yyyyMMdd HH", "19910101 11"));
+        Assertions.assertNotNull(DateUtil.parser2LocalDate("yyyyMMdd HHmmss", "19910102 112235"));
+        Assertions.assertNotNull(DateUtil.parser2LocalDateTime("yyyyMMdd HHmmss", "19910103 112233"));
+        Assertions.assertNotNull(LocalTime.parse("112233", DateTimeFormatter.ofPattern("HHmmss")));
+        Assertions.assertNotNull(DateUtil.parser2Date("yyyyMMdd", "19910103"));
+        Assertions.assertNotNull(DateUtil.parser2Date("yyyyMMdd HHmmss", "19910103 112235"));
     }
 }

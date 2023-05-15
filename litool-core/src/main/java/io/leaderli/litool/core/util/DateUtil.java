@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.util;
 
-import java.time.Instant;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -79,9 +80,11 @@ public class DateUtil {
      */
     public static Date parser2Date(String format, String dateStr) {
 
-        LocalDateTime from = LocalDateTime.from(DateTimeFormatter.ofPattern(format).parse(dateStr));
-
-        return Date.from(Instant.from(from));
+        try {
+            return new SimpleDateFormat(format).parse(dateStr);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
 
     }
