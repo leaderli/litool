@@ -9,6 +9,10 @@ import java.text.DecimalFormat;
 public class HumanSizeUtil {
     private static final DecimalFormat DEC_FORMAT = new DecimalFormat("#.##");
 
+    /**
+     * @param size memory or storage capacity
+     * @return he most suitable size conversion for reading, displayed in KB, MB, GB, TB, PB, EB according to the actual capacity size.
+     */
     public static String toHumanReadable(long size) {
         if (size < 0) {
             throw new IllegalArgumentException("Invalid file size: " + size);
