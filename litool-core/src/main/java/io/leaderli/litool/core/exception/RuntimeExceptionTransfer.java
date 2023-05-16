@@ -10,6 +10,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
+ * wrapper the {@link  Throwable} to {@link RuntimeException}
+ *
  * @author leaderli
  * @since 2022/6/16
  */
