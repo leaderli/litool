@@ -1,8 +1,8 @@
 package io.leaderli.litool.core.util;
 
-import java.text.ParseException;
+import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
+
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -12,29 +12,16 @@ public class DateUtil {
 
 
     /**
-     * @param format -
-     * @return formatted date  of now()
      * @see DateTimeFormatter
-     * @see LocalDate#now()
+     * @see LocalDateTime#now()
      */
-    public static String format(String format) {
+    public static String now(String format) {
         return DateTimeFormatter.ofPattern(format).format(LocalDateTime.now());
     }
 
-    /**
-     * @param format    -
-     * @param localDate -
-     * @return formatted localDate
-     */
-
-    public static String format(String format, LocalDate localDate) {
-        return DateTimeFormatter.ofPattern(format).format(localDate);
-    }
 
     /**
-     * @param format        -
-     * @param localDateTime -
-     * @return formatted localDateTime
+     * @see DateTimeFormatter
      */
 
     public static String format(String format, LocalDateTime localDateTime) {
@@ -42,50 +29,39 @@ public class DateUtil {
     }
 
     /**
-     * @param format -
-     * @param date   -
-     * @return formatted date
+     * @see DateTimeFormatter
+     * @see LocalDateTime
      */
 
     public static String format(String format, Date date) {
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDateTime localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         return DateTimeFormatter.ofPattern(format).format(localDate);
     }
 
 
     /**
-     * @param format  -
      * @param dateStr -
-     * @return a localDate parse from string
-     */
-    public static LocalDate parser2LocalDate(String format, String dateStr) {
-        return LocalDate.from(DateTimeFormatter.ofPattern(format).parse(dateStr));
-    }
-
-
-    /**
      * @param format  -
-     * @param dateStr -
-     * @return a localDateTime parse from string
-     */
-    public static LocalDateTime parser2LocalDateTime(String format, String dateStr) {
-        return LocalDateTime.from(DateTimeFormatter.ofPattern(format).parse(dateStr));
-    }
-
-
-    /**
-     * @param format  -
-     * @param dateStr -
      * @return a date parse from string
      */
-    public static Date parser2Date(String format, String dateStr) {
-
-        try {
-            return new SimpleDateFormat(format).parse(dateStr);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
+    public static Date parse(String dateStr, String format) {
+        return RuntimeExceptionTransfer.apply(new SimpleDateFormat(format)::parse, dateStr);
 
     }
+
+    /**
+     * @param date         -
+     * @param beforeFormat -
+     * @param afterFormat  -
+     * @return -
+     */
+    public static String parse(String date, String beforeFormat, String afterFormat) {
+
+        SimpleDateFormat before = new SimpleDateFormat(beforeFormat);
+        SimpleDateFormat after = new SimpleDateFormat(afterFormat);
+
+        return after.format(RuntimeExceptionTransfer.apply(before::parse, date));
+
+    }
+
 }
