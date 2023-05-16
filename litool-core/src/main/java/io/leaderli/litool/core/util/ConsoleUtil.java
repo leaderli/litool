@@ -6,39 +6,56 @@ import io.leaderli.litool.core.text.StringUtils;
 
 import java.io.PrintStream;
 import java.text.MessageFormat;
+import java.util.Iterator;
 
 /**
- * @author leaderli
- * @since 2022/6/25
+ * 控制台输出工具类
  */
 public class ConsoleUtil {
 
-
+    /**
+     * 换行符
+     */
     public static final String LINE_SEPARATOR = System.lineSeparator();
 
     /**
-     * the default print behavior, could be replace appropriate time
+     * 默认的输出流，可以在适当的时候替换
      */
     @SuppressWarnings("all")
     public static PrintStream CONSOLE = System.out;
 
-
     /**
-     * Quickly print multiple parameter values, separated by spaces
+     * 打印多个参数值，用空格分隔
      *
-     * @param args the args
+     * @param args 参数值列表
      */
     public static void print(Object... args) {
-
         print0(null, args);
-
     }
 
     /**
-     * Quickly print multiple parameter values, separated by  delimiter
+     * 打印多个参数值，用空格分隔
      *
-     * @param delimiter the separated string
-     * @param args      the args
+     * @param args 参数值列表
+     */
+    public static void print(Iterable<?> args) {
+        print0(null, args);
+    }
+
+    /**
+     * 打印多个参数值，用空格分隔
+     *
+     * @param args 参数值列表
+     */
+    public static void print(Iterator<?> args) {
+        print0(null, args);
+    }
+
+    /**
+     * 打印多个参数值，用指定的分隔符分隔
+     *
+     * @param delimiter 分隔符
+     * @param args      参数值列表
      */
     public static void print0(String delimiter, Object... args) {
         if (StringUtils.isEmpty(delimiter)) {
@@ -48,19 +65,12 @@ public class ConsoleUtil {
     }
 
     /**
-     * Quickly print multiple parameter values, separated by spaces
+     * 打印多个参数值，用指定的分隔符分隔
      *
-     * @param args the args
+     * @param delimiter 分隔符
+     * @param args      参数值列表
      */
-    public static void print(Iterable<?> args) {
-
-
-        print0(null, args);
-
-    }
-
-    private static void print0(String delimiter, Iterable<?> args) {
-
+    public static void print0(String delimiter, Iterator<?> args) {
         if (StringUtils.isEmpty(delimiter)) {
             delimiter = StrPool.SPACE;
         }
@@ -68,66 +78,77 @@ public class ConsoleUtil {
     }
 
     /**
-     * Quickly println multiple parameter values, separated by  {@link  #LINE_SEPARATOR}
+     * 打印多个参数值，用指定的分隔符分隔
      *
-     * @param args the args
+     * @param delimiter 分隔符
+     * @param args      参数值列表
      */
-    public static void println(Iterable<?> args) {
-
-
-        print0(LINE_SEPARATOR, args);
-
+    public static void print0(String delimiter, Iterable<?> args) {
+        if (StringUtils.isEmpty(delimiter)) {
+            delimiter = StrPool.SPACE;
+        }
+        CONSOLE.println(StringUtils.join(delimiter, args));
     }
 
     /**
-     * Quickly println multiple parameter values, separated by  {@link  #LINE_SEPARATOR}
+     * 打印多个参数值，用换行符分隔
      *
-     * @param args the args
+     * @param args 参数值列表
      */
     public static void println(Object... args) {
-
         print0(LINE_SEPARATOR, args);
     }
 
     /**
-     * simple print a line
+     * 打印多个参数值，用换行符分隔
+     *
+     * @param args 参数值列表
+     */
+    public static void println(Iterable<?> args) {
+        print0(LINE_SEPARATOR, args);
+    }
+
+    /**
+     * 打印多个参数值，用换行符分隔
+     *
+     * @param args 参数值列表
+     */
+    public static void println(Iterator<?> args) {
+        print0(LINE_SEPARATOR, args);
+    }
+
+    /**
+     * 打印一行横线
      */
     public static void line() {
-
         CONSOLE.println(StringUtils.just("", 80, '-'));
-
     }
 
-
     /**
-     * simple print a line
+     * 打印一行横线
      *
-     * @param logo the badge
+     * @param logo 徽标
      */
     public static void line(Object logo) {
-
         CONSOLE.println(StringUtils.just(logo.toString(), 80, '-'));
-
     }
 
     /**
-     * print formatted message, format rule is {@link  MessageFormat#format(String, Object...)}
+     * 格式化打印消息，格式规则参考 {@link MessageFormat#format(String, Object...)}
      *
-     * @param pattern   the message format
-     * @param arguments the placeholder variables
-     * @see MessageFormat#format(String, Object...)
+     * @param pattern   消息格式
+     * @param arguments 占位符变量
      */
     public static void print_format(String pattern, Object... arguments) {
         CONSOLE.println(MessageFormat.format(pattern, arguments));
     }
 
     /**
-     * println the array
+     * 打印数组
      *
-     * @param arr the array
+     * @param arr 数组
      */
     public static void printArray(Object arr) {
         CONSOLE.println(ArrayUtils.toString(arr));
     }
-
 }

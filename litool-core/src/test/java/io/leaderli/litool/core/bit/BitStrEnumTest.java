@@ -2,6 +2,7 @@ package io.leaderli.litool.core.bit;
 
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
+import io.leaderli.litool.core.util.ConsoleUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -50,5 +51,7 @@ class BitPositionEnumTest {
     void convertStatusToEnum() {
 
         Assertions.assertSame(BitPositionEnum.B1, BitPositionEnum.of(1).next());
+
+        ConsoleUtil.print(BitPositionEnum.of(2));
     }
 }

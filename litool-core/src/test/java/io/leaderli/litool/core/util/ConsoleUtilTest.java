@@ -63,6 +63,9 @@ class ConsoleUtilTest {
         ConsoleUtil.print(Arrays.asList(1, 2, 3));
         Assertions.assertEquals("1 2 3" + LINE_SEPARATOR, out.toString());
 
+        out.reset();
+        ConsoleUtil.print(Arrays.asList(1, 2, 3).iterator());
+        Assertions.assertEquals("1 2 3" + LINE_SEPARATOR, out.toString());
 
     }
 
@@ -74,6 +77,14 @@ class ConsoleUtilTest {
         Assertions.assertEquals("123" + LINE_SEPARATOR, out.toString());
         out.reset();
         ConsoleUtil.println(1, 2, 3);
+        Assertions.assertEquals("1" + LINE_SEPARATOR + "2" + LINE_SEPARATOR + "3" + LINE_SEPARATOR, out.toString());
+
+        out.reset();
+        ConsoleUtil.println(Arrays.asList(1, 2, 3));
+        Assertions.assertEquals("1" + LINE_SEPARATOR + "2" + LINE_SEPARATOR + "3" + LINE_SEPARATOR, out.toString());
+
+        out.reset();
+        ConsoleUtil.println(Arrays.asList(1, 2, 3).iterator());
         Assertions.assertEquals("1" + LINE_SEPARATOR + "2" + LINE_SEPARATOR + "3" + LINE_SEPARATOR, out.toString());
     }
 
