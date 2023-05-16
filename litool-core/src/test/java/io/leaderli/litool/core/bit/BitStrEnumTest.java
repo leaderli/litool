@@ -2,11 +2,11 @@ package io.leaderli.litool.core.bit;
 
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
-import io.leaderli.litool.core.util.ConsoleUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,9 +49,23 @@ class BitPositionEnumTest {
 
     @Test
     void convertStatusToEnum() {
+//        for (BitPositionEnum value : BitPositionEnum.values()) {
+//
+//            System.out.println(value+" "+ value.value);
+//        }
 
         Assertions.assertSame(BitPositionEnum.B1, BitPositionEnum.of(1).next());
+        Iterator<BitPositionEnum> of = BitPositionEnum.of(3);
+        Assertions.assertSame(BitPositionEnum.B2, of.next());
+        Assertions.assertSame(BitPositionEnum.B1, of.next());
 
-        ConsoleUtil.print(BitPositionEnum.of(2));
+    }
+
+    @Test
+    void test() {
+
+        for (BitPositionEnum value : BitPositionEnum.values()) {
+            System.out.println(value + " " + value.value);
+        }
     }
 }
