@@ -37,10 +37,20 @@ class RandomUtilTest {
 
     @Test
     void randomRun() {
-        LiBox<Object> none = LiBox.none();
+        LiBox<Object> run = LiBox.none();
         for (int i = 0; i < 50; i++) {
-            RandomUtil.randomRun(2, () -> none.value(1));
+            RandomUtil.randomRun(2, () -> run.value(1));
         }
-        Assertions.assertTrue(none.present());
+        Assertions.assertTrue(run.present());
+    }
+
+    @Test
+    void randomGet() {
+        LiBox<Object> run = LiBox.none();
+        for (int i = 0; i < 50; i++) {
+            RandomUtil.randomGet(2, () -> 1).ifPresent(a -> run.value(true));
+
+        }
+        Assertions.assertTrue(run.present());
     }
 }

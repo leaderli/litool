@@ -1,10 +1,12 @@
 package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.text.StrPool;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.util.Random;
+import java.util.function.Supplier;
 
 /**
  * @author leaderli
@@ -113,4 +115,18 @@ public class RandomUtil {
         }
     }
 
+    /**
+     * 随机概率运行一次
+     *
+     * @param randomInterval 随机值
+     * @param supplier       提供者函数
+     * @return 返回提供者
+     */
+    public static <T> Lino<T> randomGet(int randomInterval, Supplier<T> supplier) {
+
+        if (nextInt(randomInterval) == 0) {
+            return Lino.supplier(supplier);
+        }
+        return Lino.none();
+    }
 }
