@@ -186,12 +186,12 @@ public enum BitPositionEnum {
 
 
     /**
-     * 用于表示状态的整数值，每个枚举值对应二进制中的一位
+     * Most Significant Bit，即最高位的比特位。 一个 int 类型的值是表示它的二进制形式是首位为1，其他为0
      */
-    final int value;
+    final int mask_msb;
 
-    BitPositionEnum(int value) {
-        this.value = value;
+    BitPositionEnum(int mask_msb) {
+        this.mask_msb = mask_msb;
     }
 
     /**
@@ -200,7 +200,7 @@ public enum BitPositionEnum {
      * @return 二进制状态和枚举值的映射关系
      */
     public static Map<Integer, BitPositionEnum> getBitStatusMap() {
-        return Arrays.stream(values()).collect(Collectors.toMap(bit -> bit.value, bit -> bit));
+        return Arrays.stream(values()).collect(Collectors.toMap(bit -> bit.mask_msb, bit -> bit));
     }
 
     /**
@@ -210,23 +210,23 @@ public enum BitPositionEnum {
      * @return 存在于状态中的枚举值的 {@link  Iterator}
      */
     public static Iterator<BitPositionEnum> of(int status) {
-        BitPositionEnum[] values = values();
-        ArrayUtils.reverse(values);
 
-        return Arrays.stream(values).filter(b -> (b.value & status) == b.value).iterator();
+        BitPositionEnum[] bitPositionEnums = values();
+        ArrayUtils.reverse(bitPositionEnums);
+        return Arrays.stream(bitPositionEnums).filter(b -> (b.mask_msb & status) == b.mask_msb).iterator();
     }
 
     /**
-     * 将枚举值对应的二进制位数转换成二进制字符串，并以每 4 位分割
+     * 将枚举值对应的二进制位数转换成二进制字符串，并以每4位填充空格
      * <p>
      * eg:
-     * 000 1000 0000 0000 0000 0000 0000 0000 B28
+     * 0000 1000 0000 0000 0000 0000 0000 0000 B28
      *
      * @return 以 4 位分割的二进制字符串
      */
     @Override
     public String toString() {
-        return StringUtils.chunk(StringUtils.ljust(Integer.toBinaryString(value), 32, '0'), 4);
+        return StringUtils.chunk(StringUtils.ljust(Integer.toBinaryString(mask_msb), 32, '0'), 4);
     }
 
 }

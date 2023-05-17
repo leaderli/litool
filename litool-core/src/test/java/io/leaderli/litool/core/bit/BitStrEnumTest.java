@@ -18,11 +18,11 @@ class BitPositionEnumTest {
     @Test
     void match() {
 
-        assert BitPositionEnum.valueOf("B1").value == 1;
-        assert BitPositionEnum.valueOf("B32").value == Integer.MIN_VALUE;
+        assert BitPositionEnum.valueOf("B1").mask_msb == 1;
+        assert BitPositionEnum.valueOf("B32").mask_msb == Integer.MIN_VALUE;
 
-        Assertions.assertEquals("0001", StringUtils.ljust(Integer.toBinaryString(BitPositionEnum.B1.value), 4, '0'));
-        Assertions.assertEquals("00010000", StringUtils.ljust(Integer.toBinaryString(BitPositionEnum.B5.value), 8, '0'
+        Assertions.assertEquals("0001", StringUtils.ljust(Integer.toBinaryString(BitPositionEnum.B1.mask_msb), 4, '0'));
+        Assertions.assertEquals("00010000", StringUtils.ljust(Integer.toBinaryString(BitPositionEnum.B5.mask_msb), 8, '0'
         ));
 
 
