@@ -29,7 +29,7 @@ class LiraBit extends BitState {
     }
 
     public static boolean isTerminal(int state) {
-        return of(state).miss(ITR);
+        return of(state).lacks(ITR);
     }
 
     public static LiraBit of(int states) {

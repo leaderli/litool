@@ -14,17 +14,17 @@ class BitStateTest {
     BitState bit = new BitState() {
         @Override
         public String toString() {
-            return "Modifier:" + BitStr.of(Modifier.class).beauty(get());
+            return "Modifier:" + BitStr.of(Modifier.class).beauty(getCurrentState());
         }
     };
 
     @Test
     void set() {
-        bit.set(123);
+        bit.setState(123);
         Assertions.assertEquals("Modifier:VOLATILE|SYNCHRONIZED|FINAL|STATIC|PRIVATE|PUBLIC", bit.toString());
-        bit.set(0);
+        bit.setState(0);
         Assertions.assertEquals("Modifier:", bit.toString());
-        Assertions.assertThrows(AssertException.class, () -> bit.set(-1));
+        Assertions.assertThrows(AssertException.class, () -> bit.setState(-1));
 
     }
 
@@ -43,26 +43,26 @@ class BitStateTest {
     }
 
     @Test
-    void have() {
-        bit.set(123);
-        Assertions.assertTrue(bit.have(Modifier.PUBLIC));
+    void has() {
+        bit.setState(123);
+        Assertions.assertTrue(bit.has(Modifier.PUBLIC));
 
         bit.disable(Modifier.FINAL);
-        Assertions.assertFalse(bit.have(Modifier.FINAL));
+        Assertions.assertFalse(bit.has(Modifier.FINAL));
 
     }
 
     @Test
-    void miss() {
-        Assertions.assertTrue(bit.miss(Modifier.FINAL));
-        bit.set(Modifier.FINAL | Modifier.PUBLIC);
-        Assertions.assertFalse(bit.miss(Modifier.FINAL));
+    void lacks() {
+        Assertions.assertTrue(bit.lacks(Modifier.FINAL));
+        bit.setState(Modifier.FINAL | Modifier.PUBLIC);
+        Assertions.assertFalse(bit.lacks(Modifier.FINAL));
     }
 
     @Test
     void only() {
         Assertions.assertFalse(bit.only(Modifier.FINAL));
-        bit.set(Modifier.FINAL | Modifier.PUBLIC);
+        bit.setState(Modifier.FINAL | Modifier.PUBLIC);
         Assertions.assertFalse(bit.only(Modifier.FINAL));
         bit.disable(Modifier.PUBLIC);
         Assertions.assertTrue(bit.only(Modifier.FINAL));
@@ -72,14 +72,14 @@ class BitStateTest {
     @Test
     void none() {
         Assertions.assertTrue(bit.none());
-        bit.set(1);
+        bit.setState(1);
         Assertions.assertFalse(bit.none());
     }
 
     @Test
     void any() {
         Assertions.assertFalse(bit.any());
-        bit.set(1);
+        bit.setState(1);
         Assertions.assertTrue(bit.any());
 
     }

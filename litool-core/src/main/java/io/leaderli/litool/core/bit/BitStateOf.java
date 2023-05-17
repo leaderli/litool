@@ -21,7 +21,7 @@ public class BitStateOf extends BitState {
 
     @Override
     public String toString() {
-        return BitStr.of(stateClass).beauty(states);
+        return BitStr.of(stateClass).beauty(stateFlags);
     }
 
 }

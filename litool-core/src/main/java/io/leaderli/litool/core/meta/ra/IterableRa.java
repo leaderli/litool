@@ -44,7 +44,7 @@ public class IterableRa<T> extends Ra<T> {
 
             // not active response onComplete signal, only response on when the next request
             if (infinite) {
-                if (LiraBit.isTerminal(state) && bit.miss(LiraBit.LIMIT)) {
+                if (LiraBit.isTerminal(state) && bit.lacks(LiraBit.LIMIT)) {
                     throw new InfiniteException("generator loop \r\n\tat " + iterator);
                 }
             }

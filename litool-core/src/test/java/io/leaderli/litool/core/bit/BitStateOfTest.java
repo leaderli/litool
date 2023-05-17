@@ -16,7 +16,7 @@ class BitStateOfTest {
 
         BitStateOf of = BitStateOf.the(Modifier.class);
         int modifiers = BitStateOf.class.getDeclaredField("stateClass").getModifiers();
-        of.set(modifiers);
+        of.setState(modifiers);
         Assertions.assertEquals("FINAL|PRIVATE", of.toString());
     }
 

@@ -3,122 +3,132 @@ package io.leaderli.litool.core.bit;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 
 /**
- * Use non-negative binary to express permissions, use bitwise operations to modify permissions
- *
- * @author leaderli
- * @since 2022/8/16
+ * 使用非负二进制表示权限，并使用位运算修改权限。
  */
 public abstract class BitState {
 
     /**
-     * A non-negative int to hold the permission token, save permission with binary position. 1 means permission, 0
-     * means
-     * no permission
+     * 一个非负整数，用于保存权限标记，使用二进制位表示权限。1表示有权限，0表示无权限。
      */
-    protected int states;
+    protected int stateFlags;
 
     protected BitState() {
-
     }
 
-    protected BitState(int states) {
-        this.states = states;
-    }
-
-    /**
-     * Set the permissions
-     *
-     * @param permissions {@link #states}
-     */
-    public void set(int permissions) {
-        non_negative(permissions);
-        this.states = permissions;
-    }
-
-    private void non_negative(int permissions) {
-        LiAssertUtil.assertTrue(permissions > -1);
+    protected BitState(int stateFlags) {
+        this.stateFlags = stateFlags;
     }
 
     /**
-     * Add one or more permission
+     * 设置权限。
      *
-     * @param permissions {@link #states}
+     * @param newStateFlags 要设置的新状态。
      */
-    public void enable(int permissions) {
-        non_negative(permissions);
-        this.states |= permissions;
+    public void setState(int newStateFlags) {
+        assertNonNegative(newStateFlags);
+        this.stateFlags = newStateFlags;
     }
 
     /**
-     * Remove one or more permission
+     * 检查指定整数是否为非负数。
      *
-     * @param permissions {@link #states}
+     * @param value 要检查的整数。
+     * @throws IllegalArgumentException 如果指定整数为负数。
      */
-    public void disable(int permissions) {
-        non_negative(permissions);
-        this.states &= ~permissions;
+    private void assertNonNegative(int value) {
+        LiAssertUtil.assertTrue(value > -1);
     }
 
     /**
-     * Have the permissions
+     * 添加一个或多个权限。
      *
-     * @param permissions {@link #states}
-     * @return have the permissions
+     * @param flags 要启用的权限。
      */
-    public boolean have(int permissions) {
-        if (permissions < 0) {
+    public void enable(int flags) {
+        assertNonNegative(flags);
+        this.stateFlags |= flags;
+    }
+
+    /**
+     * 移除一个或多个权限。
+     *
+     * @param flags 要禁用的权限。
+     */
+    public void disable(int flags) {
+        assertNonNegative(flags);
+        this.stateFlags &= ~flags;
+    }
+
+    /**
+     * 检查指定的权限是否存在。
+     *
+     * @param flags 要检查的权限。
+     * @return 如果所有指定的权限都存在，则返回true，否则返回false。
+     */
+    public boolean has(int flags) {
+        if (flags < 0) {
             return false;
         }
-        return (this.states & permissions) == permissions;
+        return (this.stateFlags & flags) == flags;
     }
 
     /**
-     * Don't have the permissions
+     * 检查指定的权限是否不存在。
      *
-     * @param permissions {@link #states}
-     * @return don't have the permissions
+     * @param flags 要检查的权限。
+     * @return 如果所有指定的权限都不存在，则返回true，否则返回false。
      */
-    public boolean miss(int permissions) {
-        if (permissions < 0) {
+    public boolean lacks(int flags) {
+        if (flags < 0) {
             return true;
         }
-        return (this.states & permissions) == 0;
+        return (this.stateFlags & flags) == 0;
     }
 
     /**
-     * only have the permissions
+     * 检查指定的权限是否是唯一存在的权限。
      *
-     * @param permissions {@link #states}
-     * @return {@code this.permissions == permissions}
+     * @param flags 要检查的权限。
+     * @return 如果指定的权限是唯一存在的权限，则返回true，否则返回false。
      */
-    public boolean only(int permissions) {
-        return this.states == permissions;
+    public boolean only(int flags) {
+        return this.stateFlags == flags;
     }
 
-
     /**
-     * Don't have any permission
+     * 检查是否不存在任何权限。
      *
-     * @return {@code permissions == 0 }
+     * @return 如果不存在任何权限，则返回true，否则返回false。
      */
     public boolean none() {
-        return states == 0;
+        return stateFlags == 0;
     }
 
     /**
-     * @return {@code permissions > 0 }
+     * 检查是否存在任何权限。
+     *
+     * @return 如果存在任何权限，则返回true，否则返回false。
      */
     public boolean any() {
-        return states > 0;
+        return stateFlags > 0;
     }
 
+    /**
+     * 返回此BitState对象的字符串表示形式。
+     *
+     * @return 此BitState对象的字符串表示形式。
+     */
     @Override
     public String toString() {
-        return BitStr.of(this.getClass()).beauty(states);
+        return BitStr.of(this.getClass()).beauty(stateFlags);
     }
 
-    public int get() {
-        return states;
+    /**
+     * 返回此BitState对象的当前状态。
+     *
+     * @return 此BitState对象的当前状态，作为一个整数。
+     */
+    public int getCurrentState() {
+        return stateFlags;
     }
 }
-
