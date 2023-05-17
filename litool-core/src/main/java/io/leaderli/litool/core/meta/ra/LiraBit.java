@@ -1,13 +1,13 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.bit.BitState;
+import io.leaderli.litool.core.bit.BitPermission;
 import io.leaderli.litool.core.meta.Lira;
 
 /**
  * @author leaderli
  * @since 2022/8/31 11:05 AM
  */
-class LiraBit extends BitState {
+class LiraBit extends BitPermission {
 
 
     /**

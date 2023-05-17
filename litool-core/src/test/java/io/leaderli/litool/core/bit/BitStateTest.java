@@ -11,7 +11,7 @@ import java.lang.reflect.Modifier;
  * @since 2022/8/16
  */
 class BitStateTest {
-    BitState bit = new BitState() {
+    BitPermission bit = new BitPermission() {
         @Override
         public String toString() {
             return "Modifier:" + BitStr.of(Modifier.class).beauty(getCurrentState());

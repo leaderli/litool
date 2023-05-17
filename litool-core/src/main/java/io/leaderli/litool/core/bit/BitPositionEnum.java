@@ -199,7 +199,7 @@ public enum BitPositionEnum {
      *
      * @return 二进制状态和枚举值的映射关系
      */
-    public static Map<Integer, BitPositionEnum> getBitStatusMap() {
+    public static Map<Integer, BitPositionEnum> newStatusBitPositionEnumMap() {
         return Arrays.stream(values()).collect(Collectors.toMap(bit -> bit.mask_msb, bit -> bit));
     }
 

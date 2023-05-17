@@ -30,7 +30,7 @@ class BitPositionEnumTest {
 
     @Test
     void getBitStatusMap() {
-        Set<Integer> integers = BitPositionEnum.getBitStatusMap().keySet();
+        Set<Integer> integers = BitPositionEnum.newStatusBitPositionEnumMap().keySet();
         assert integers.size() == 32;
 
         Assertions.assertSame(32, Lira.of(integers).filter(BitUtil::onlyOneBit).size());

@@ -32,6 +32,12 @@ class BitStrTest {
 
         Assertions.assertEquals("FINAL", BitStr.of(Modifier.class).beauty(Modifier.FINAL));
 
+        int bitStatus = Modifier.classModifiers();
+        System.out.println(BitUtil.beauty(bitStatus));
+        String beauty = BitStr.of(Modifier.class).beauty(bitStatus);
+        System.out.println(beauty);
+
+
     }
 
     @Test

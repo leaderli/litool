@@ -5,16 +5,22 @@ import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author leaderli
  * @since 2022/6/15 10:37 AM
  * <p>
- * Use constant names to represent binary
+ * 根据类中的值等于{@link  BitPositionEnum#mask_msb}的静态常量名来代表一个int值的二进制形式。
+ * <p>
+ * 例如：
+ * <p>
+ * <code>
+ * <p>
+ * 0000 0000 0000 0000 0000 1100 0001 1111
+ * STRICT|ABSTRACT|FINAL|STATIC|PROTECTED|PRIVATE|PUBLIC
+ * </code>
  */
 public class BitStr {
 
@@ -24,61 +30,70 @@ public class BitStr {
     }
 
     /**
-     * @param statusConstant the class  who contain constants with represent status
-     * @return a new BitStatus
+     * 根据包含状态常量的类，创建一个新的 BitStatus 实例。
+     *
+     * @param statusConstant 包含状态常量的类
+     * @return 新的 BitStatus 实例
      */
     public static BitStr of(Class<?> statusConstant) {
-        Map<Integer, BitPositionEnum> bitStatusMap = BitPositionEnum.getBitStatusMap();
-        BitStr bit = new BitStr();
 
-        Stream<Field> fieldStream = Arrays.stream(statusConstant.getFields())
+        Map<Integer, BitPositionEnum> statusBitPositionEnumMap = BitPositionEnum.newStatusBitPositionEnumMap();
+        BitStr bitStr = new BitStr();
+
+        Arrays.stream(statusConstant.getFields())
                 .filter(field -> ObjectsUtil.sameAny(field.getType(), int.class, Integer.class)
                         && ModifierUtil.isPublic(field)
                         && ModifierUtil.isFinal(field)
-                        && ModifierUtil.isStatic(field)
+                        && ModifierUtil.isStatic(field))
+                .forEach(
+                        field -> {
+                            try {
+                                ReflectUtil.setAccessible(field);
+                                int statues = (int) field.get(null);
+                                BitPositionEnum bitPositionEnum = statusBitPositionEnumMap.get(statues);
+                                if (bitPositionEnum != null) {
+                                    bitStr.bit_name.putIfAbsent(bitPositionEnum, field.getName());
+                                }
+                            } catch (IllegalAccessException ignore) {
+
+                            }
+                        }
+
                 );
-        fieldStream.forEach(
 
-                field -> ReflectUtil.getFieldValue(null, field)
-                        .cast(Integer.class)
-                        .map(bitStatusMap::get)
-                        .ifPresent(statusEnum ->
-                                bit.bit_name.putIfAbsent(statusEnum, field.getName())
-                        ));
-
-        return bit;
+        return bitStr;
 
 
     }
 
+
     /**
-     * According to the state value, output the attribute name of each state.
-     * The state attribute name is output from right to left according to its
-     * position, and is separated by a vertical line.
+     * 根据状态值输出每个状态的属性名称。状态属性名称从右到左输出，并用竖线分隔。
      * <p>
-     * eg:
+     * 示例：
      * <pre>
      *     PUBLIC|STATIC|INTERFACE|ABSTRACT
      * </pre>
      *
-     * @param bit_status the status represented by binary
-     * @return The value corresponding to the key in the  {@link #bit_name}
+     * @param bitStatus 用二进制表示的状态值
+     * @return 与 {@link #bit_name} 中的键对应的值
      */
-    public String beauty(int bit_status) {
-
-
-        List<BitPositionEnum> bits = new ArrayList<>();
-        BitPositionEnum.of(bit_status).forEachRemaining(bits::add);
-        Iterator<String> names = bits.stream().map(this.bit_name::get).filter(Objects::nonNull).iterator();
+    public String beauty(int bitStatus) {
+        // 将状态值的每个位解析为 BitPositionEnum 枚举，并放入列表中
+        List<BitPositionEnum> bitPositionEnums = new ArrayList<>();
+        BitPositionEnum.of(bitStatus).forEachRemaining(bitPositionEnums::add);
+        // 获取每个位对应的属性名称，并过滤掉空值
+        Iterator<String> names = bitPositionEnums.stream().map(this.bit_name::get).filter(Objects::nonNull).iterator();
+        // 将属性名称用竖线连接起来作为结果返回
         return StringUtils.join("|", names);
-
-
     }
 
     /**
-     * eg:
-     * {@link java.lang.reflect.Modifier}
+     * 当前常量类的对照
+     * 示例:
      * <pre>
+     * {@link java.lang.reflect.Modifier}
+     *
      * 0000 0000 0000 0000 0000 0000 0000 0001 PUBLIC
      * 0000 0000 0000 0000 0000 0000 0000 0010 PRIVATE
      * 0000 0000 0000 0000 0000 0000 0000 0100 PROTECTED
@@ -93,7 +108,7 @@ public class BitStr {
      * 0000 0000 0000 0000 0000 1000 0000 0000 STRICT
      * </pre>
      *
-     * @return Comparison table for all states
+     * @return 当前常量类各个MSB状态位的对照表
      */
     @Override
     public String toString() {
