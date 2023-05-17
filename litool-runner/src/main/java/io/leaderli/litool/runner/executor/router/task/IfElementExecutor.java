@@ -31,13 +31,13 @@ public class IfElementExecutor extends BaseElementExecutor<IfElement> {
         boolean expressionValue = (Boolean) context.getExpressionValue(cond);
 
         if (!expressionValue) {
-            context.interrupt.set(Interrupt.BREAK_LOOP);
+            context.interrupt.setState(Interrupt.BREAK_LOOP);
         }
     }
 
     @Override
     public boolean notify(Context context) {
-        if (context.interrupt.have(Interrupt.BREAK_LOOP)) {
+        if (context.interrupt.has(Interrupt.BREAK_LOOP)) {
             context.interrupt.disable(Interrupt.BREAK_LOOP);
         }
         return false;

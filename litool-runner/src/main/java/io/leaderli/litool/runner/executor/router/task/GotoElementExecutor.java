@@ -12,7 +12,7 @@ public class GotoElementExecutor extends BaseElementExecutor<GotoElement> {
 
     @Override
     public void execute(Context context) {
-        context.interrupt.set(Interrupt.GOTO);
+        context.interrupt.setState(Interrupt.GOTO);
         context.interruptObj = element.getNext().next;
     }
 }
