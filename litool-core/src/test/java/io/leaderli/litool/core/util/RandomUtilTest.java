@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.meta.LiBox;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,5 +33,14 @@ class RandomUtilTest {
         Assertions.assertTrue(RandomUtil.nextInt() >= 0);
         Assertions.assertSame(1, RandomUtil.nextInt(1, 1));
         Assertions.assertSame(1, RandomUtil.nextInt(1, 2));
+    }
+
+    @Test
+    void randomRun() {
+        LiBox<Object> none = LiBox.none();
+        for (int i = 0; i < 50; i++) {
+            RandomUtil.randomRun(2, () -> none.value(1));
+        }
+        Assertions.assertTrue(none.present());
     }
 }

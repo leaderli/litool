@@ -7,9 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author leaderli
@@ -102,6 +100,22 @@ class BeanPathTest {
         private final String name = RandomUtil.randomString(4);
         private int age;
 
+
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Test
+    void test() {
+
+        Assertions.assertEquals("", BeanPath.parse(null, "[0].a").get(""));
+
+        Map map = new HashMap();
+        map.put("a", "123");
+
+        List list = new ArrayList();
+
+        list.add(map);
+        Assertions.assertEquals("123", BeanPath.parse(list, "[0].a").get(() -> "123"));
 
     }
 }

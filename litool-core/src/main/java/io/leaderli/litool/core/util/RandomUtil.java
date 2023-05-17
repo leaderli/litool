@@ -100,4 +100,17 @@ public class RandomUtil {
         return nextInt(hit) == 0;
     }
 
+    /**
+     * 随机概率运行一次
+     *
+     * @param randomInterval 随机值
+     * @param runnable       函数
+     */
+    public static void randomRun(int randomInterval, Runnable runnable) {
+
+        if (nextInt(randomInterval) == 0) {
+            runnable.run();
+        }
+    }
+
 }
