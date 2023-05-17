@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.exception;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class LiAssertUtil {
@@ -15,6 +16,18 @@ public class LiAssertUtil {
     public static void assertTrue(boolean assertTrue) {
 
         assertTrue(assertTrue, "");
+    }
+
+    public static void assertTrue(boolean assertTrue, RuntimeException throwable) {
+        if (!assertTrue) {
+            throw throwable;
+        }
+    }
+
+    public static void assertTrue(boolean assertTrue, Function<String, RuntimeException> throwable, String msg) {
+        if (!assertTrue) {
+            throw throwable.apply(msg);
+        }
     }
 
     public static void assertTrue(boolean assertTrue, String msg) {

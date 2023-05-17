@@ -36,7 +36,7 @@ public abstract class BitPermission {
      * @throws IllegalArgumentException 如果指定整数为负数。
      */
     private void assertNonNegative(int value) {
-        LiAssertUtil.assertTrue(value > -1);
+        LiAssertUtil.assertTrue(value > -1, IllegalArgumentException::new, String.valueOf(value));
     }
 
     /**

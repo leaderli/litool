@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.bit;
 
-import io.leaderli.litool.core.exception.AssertException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +23,7 @@ class BitStateTest {
         Assertions.assertEquals("Modifier:VOLATILE|SYNCHRONIZED|FINAL|STATIC|PRIVATE|PUBLIC", bit.toString());
         bit.setState(0);
         Assertions.assertEquals("Modifier:", bit.toString());
-        Assertions.assertThrows(AssertException.class, () -> bit.setState(-1));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> bit.setState(-1));
 
     }
 
@@ -32,14 +31,14 @@ class BitStateTest {
     void enable() {
         bit.enable(Modifier.FINAL);
         Assertions.assertTrue(bit.only(Modifier.FINAL));
-        Assertions.assertThrows(AssertException.class, () -> bit.enable(-1));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> bit.enable(-1));
     }
 
     @Test
     void disable() {
         bit.disable(Modifier.FINAL);
         Assertions.assertTrue(bit.none());
-        Assertions.assertThrows(AssertException.class, () -> bit.disable(-1));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> bit.disable(-1));
     }
 
     @Test

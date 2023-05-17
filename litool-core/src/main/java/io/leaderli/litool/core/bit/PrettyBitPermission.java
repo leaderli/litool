@@ -17,9 +17,20 @@ public class PrettyBitPermission extends BitPermission {
         this.statusClass = statusClass;
     }
 
+    private PrettyBitPermission(Class<?> statusClass, int stateFlags) {
+        super(stateFlags);
+        Objects.requireNonNull(statusClass);
+        this.statusClass = statusClass;
+    }
+
     public static PrettyBitPermission of(Class<?> stateClass) {
         return new PrettyBitPermission(stateClass);
     }
+
+    public static PrettyBitPermission of(Class<?> stateClass, int stateFlags) {
+        return new PrettyBitPermission(stateClass, stateFlags);
+    }
+
 
     @Override
     public String toString() {
