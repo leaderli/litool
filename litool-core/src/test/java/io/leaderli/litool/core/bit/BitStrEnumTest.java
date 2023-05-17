@@ -49,10 +49,7 @@ class BitPositionEnumTest {
 
     @Test
     void convertStatusToEnum() {
-//        for (BitPositionEnum value : BitPositionEnum.values()) {
-//
-//            System.out.println(value+" "+ value.value);
-//        }
+
 
         Assertions.assertSame(BitPositionEnum.B1, BitPositionEnum.of(1).next());
         Iterator<BitPositionEnum> of = BitPositionEnum.of(3);
@@ -61,11 +58,5 @@ class BitPositionEnumTest {
 
     }
 
-    @Test
-    void test() {
 
-        for (BitPositionEnum value : BitPositionEnum.values()) {
-            System.out.println(value + " " + value.value);
-        }
-    }
 }
