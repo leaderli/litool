@@ -30,18 +30,8 @@ public class CollectionUtils {
 
     public static <T> Lira<T> getDuplicateElements(Iterable<? extends T> iterable) {
 
-
         Set<T> unique = new HashSet<>();
         return Lira.<T>of(iterable).filter(e -> !unique.add(e)).unique();
-
-//
-//        for (T t : iterable) {
-//            if (!unique.add(t)) {
-//                duplicate.add(t);
-//            }
-//        }
-//
-//        return Lira.of(duplicate);
     }
 
     /**

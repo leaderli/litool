@@ -798,115 +798,108 @@ public class ArrayUtils {
     }
 
     /**
-     * Return whether a object is array
+     * 判断一个对象是否为数组
      *
-     * @param arr a object
-     * @return whether a object is array
+     * @param obj 待判断的对象
+     * @return 如果对象是数组则返回true，否则返回false
      */
-    public static boolean isArray(Object arr) {
+    public static boolean isArray(Object obj) {
 
-        if (arr == null) {
+        if (obj == null) {
             return false;
         }
-        return arr.getClass().isArray();
+        return obj.getClass().isArray();
 
     }
 
     /**
-     * @param origin an array
-     * @param <T>    the type of array
-     * @return clone a new array
-     * @throws IllegalArgumentException if the object argument is not arr
-     * @throws NullPointerException     if the object argument is null
+     * 复制一个新的数组
+     *
+     * @param array 原始数组
+     * @param <T>   数组类型
+     * @return 返回一个新的数组
+     * @throws IllegalArgumentException 如果传入的参数不是数组
+     * @throws NullPointerException     如果传入的参数为null
      */
 
     @SuppressWarnings("unchecked")
-    public static <T> T arraycopy(T origin) {
+    public static <T> T arraycopy(T array) {
 
-        int length = Array.getLength(origin);
-        T target = (T) Array.newInstance(origin.getClass().getComponentType(), length);
-        System.arraycopy(origin, 0, target, 0, length);
+
+        LiAssertUtil.assertTrue(isArray(array), IllegalArgumentException::new, "it's not a array");
+        int length = getLength(array);
+        T target = (T) Array.newInstance(array.getClass().getComponentType(), length);
+        System.arraycopy(array, 0, target, 0, length);
         return target;
     }
 
     /**
-     * Returns a array that is a sub of  origin array. The sub begins at the
-     * specified {@code  beginIndex} and extends to the element at index {@code endIndex - 1}.
-     * Thus the length of the sub is {@code  endIndex - beginIndex}.
+     * 返回一个原始数组的子数组。子数组从指定的beginIndex开始，一直延伸到index为endIndex-1的元素。
+     * 子数组的长度为endIndex-beginIndex。
      *
-     * @param origin     an array
-     * @param beginIndex the beginning index, Negative numbers are supported, indicating
-     *                   the position calculated from the back
-     *                   Negative numbers are supported, indicating the position calculated from the back
-     * @param endIndex   the ending index, Negative number are supported, indicating
-     *                   the position calculated from the back. zero number are supported,
-     *                   indicating {@code endIndex = origin.length}
-     * @param <T>        the type of array class
-     * @return new sub array
+     * @param origin     原始数组
+     * @param beginIndex 开始索引，支持负数，表示从末尾计算的位置
+     * @param endIndex   结束索引，支持负数，表示从末尾计算的位置；支持0，表示endIndex=origin.length
+     * @param <T>        数组类型
+     * @return 新的子数组
      */
     @SuppressWarnings("unchecked")
     public static <T> T subArray(T origin, int beginIndex, int endIndex) {
-
         Class<?> componentType = ClassUtil.getComponentType(origin);
-
         if (componentType == null) {
             return null;
         }
-
         int length = Array.getLength(origin);
-        beginIndex = correctBeginIndex(beginIndex, length);
-        endIndex = correctEndIndex(endIndex, length);
-
+        beginIndex = calculateBeginIndex(beginIndex, length);
+        endIndex = calculateEndIndex(endIndex, length);
         T sub;
         if (beginIndex < 0 || beginIndex >= length || endIndex <= beginIndex) {
             sub = (T) Array.newInstance(componentType, 0);
         } else {
             sub = (T) Array.newInstance(componentType, endIndex - beginIndex);
-
             System.arraycopy(origin, beginIndex, sub, 0, endIndex - beginIndex);
         }
         return sub;
-
-
     }
 
+
     /**
-     * Return a non-negative end index. If index exceeds bounds, use bounds value
+     * 返回一个非负的起始索引。如果索引超出边界，则使用边界值
      *
-     * @param beginIndex the begin index may be negative
-     * @param arr_length the length of arr
-     * @return a non-negative begin index
+     * @param startIndex 起始索引，可能是负数
+     * @param arrLength  数组的长度
+     * @return 非负的起始索引
      */
-    private static int correctBeginIndex(int beginIndex, int arr_length) {
-        if (arr_length < 1) {
+    public static int calculateBeginIndex(int startIndex, int arrLength) {
+        if (arrLength < 1) {
             return 0;
         }
-        if (beginIndex < 0) {
-            beginIndex += arr_length;
+        if (startIndex < 0) {
+            startIndex += arrLength;
 
-            if (beginIndex < 0) {
+            if (startIndex < 0) {
                 return 0;
             }
         }
-        return beginIndex;
+        return startIndex;
     }
 
     /**
-     * Return a non-negative end index. If index exceeds bounds, use bounds value
+     * 返回一个非负的结束索引。如果索引超出边界，则使用边界值
      *
-     * @param endIndex   the end index may be negative
-     * @param arr_length the length of arr
-     * @return a non-negative end index
+     * @param endIndex  结束索引，可能是负数
+     * @param arrLength 数组的长度
+     * @return 非负的结束索引
      */
-    private static int correctEndIndex(int endIndex, int arr_length) {
-        if (arr_length <= 0) {
+    private static int calculateEndIndex(int endIndex, int arrLength) {
+        if (arrLength <= 0) {
             return 0;
         }
-        if (endIndex > arr_length) {
-            return arr_length;
+        if (endIndex > arrLength) {
+            return arrLength;
         }
         if (endIndex < 1) {
-            endIndex += arr_length;
+            endIndex += arrLength;
 
             if (endIndex < 0) {
                 return 0;
@@ -915,46 +908,41 @@ public class ArrayUtils {
         return endIndex;
     }
 
+
     /**
-     * Returns a array that is a removed of  origin array. The remove begins at the
-     * specified {@code  beginIndex} and extends to the element at index {@code endIndex - 1}.
-     * Thus the length of the sub is {@code  origin.length - (endIndex - beginIndex)}.
+     * 从原始数组中移除一个子集，返回一个新的数组。移除的子集从指定的 {@code startIndex} 开始，
+     * <p>
+     * 并扩展到索引 {@code endIndex - 1} 的元素。因此，新的子集的长度为 {@code array.length - (endIndex - startIndex)}。
      *
-     * @param origin     an array
-     * @param beginIndex the beginning index, Negative numbers are supported, indicating
-     *                   the position calculated from the back
-     *                   Negative numbers are supported, indicating the position calculated from the back
-     * @param endIndex   the ending index, Negative number are supported, indicating
-     *                   the position calculated from the back. zero number are supported,
-     *                   indicating {@code endIndex = origin.length}
-     * @param <T>        the type of array class
-     * @return new removed array
+     * @param array      原始数组
+     * @param startIndex 移除子集的开始索引。支持负数，表示从后面计算的位置
+     * @param endIndex   移除子集的结束索引。支持负数，表示从后面计算的位置。支持零，表示 {@code endIndex = array.length}
+     * @param <T>        数组类的类型
+     * @return 移除子集后的新数组
      */
     @SuppressWarnings("unchecked")
-    public static <T> T remove(T origin, int beginIndex, int endIndex) {
+    public static <T> T removeSub(T array, int startIndex, int endIndex) {
 
-        Class<?> componentType = ClassUtil.getComponentType(origin);
+        Class<?> componentType = ClassUtil.getComponentType(array);
+        LiAssertUtil.assertNotNull(componentType, IllegalArgumentException::new, "it's not array or it's null");
 
-        if (componentType == null) {
-            return null;
-        }
+        int length = getLength(array);
 
-        int length = Array.getLength(origin);
-        endIndex = correctEndIndex(endIndex, length);
-        beginIndex = correctBeginIndex(beginIndex, length);
+        endIndex = calculateEndIndex(endIndex, length);
+        startIndex = calculateBeginIndex(startIndex, length);
 
-        T removed;
-        if (beginIndex < 0 || endIndex <= beginIndex) {
-            removed = origin;
-        } else if (beginIndex >= length) {
-            removed = (T) Array.newInstance(componentType, 0);
+        T newArray;
+        if (startIndex < 0 || endIndex <= startIndex) {
+            newArray = array;
+        } else if (startIndex >= length) {
+            newArray = (T) Array.newInstance(componentType, 0);
         } else {
-            removed = (T) Array.newInstance(componentType, length - (endIndex - beginIndex));
+            newArray = (T) Array.newInstance(componentType, length - (endIndex - startIndex));
 
-            System.arraycopy(origin, 0, removed, 0, beginIndex);
-            System.arraycopy(origin, endIndex, removed, beginIndex, length - endIndex);
+            System.arraycopy(array, 0, newArray, 0, startIndex);
+            System.arraycopy(array, endIndex, newArray, startIndex, length - endIndex);
         }
-        return removed;
+        return newArray;
     }
 
     /**
@@ -996,7 +984,7 @@ public class ArrayUtils {
         int length = origin.length;
         T[] arr = (T[]) ClassUtil.newWrapperArray(componentType, length + insert.length);
 
-        beginIndex = correctBeginIndex(beginIndex, length);
+        beginIndex = calculateBeginIndex(beginIndex, length);
         if (beginIndex >= length) {
             System.arraycopy(origin, 0, arr, 0, length);
             System.arraycopy(insert, 0, arr, length, insert.length);

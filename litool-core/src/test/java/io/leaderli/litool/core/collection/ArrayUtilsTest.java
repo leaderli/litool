@@ -1,14 +1,12 @@
 package io.leaderli.litool.core.collection;
 
 import io.leaderli.litool.core.type.ClassUtil;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author leaderli
@@ -21,15 +19,24 @@ class ArrayUtilsTest {
     @Test
     void arraycopy() {
 
-        long[] a = new long[]{1};
 
-        long[] c = ArrayUtils.arraycopy(a);
-
-        assertArrayEquals(a, c);
-
-        assertThrows(NullPointerException.class, () -> ArrayUtils.arraycopy(null));
         assertThrows(IllegalArgumentException.class, () -> ArrayUtils.arraycopy("1"));
+        assertThrows(IllegalArgumentException.class, () -> ArrayUtils.arraycopy(null));
+        assertThrows(IllegalArgumentException.class, () -> ArrayUtils.arraycopy(new Object()));
+        assertDoesNotThrow(() -> ArrayUtils.arraycopy(new Object[0]));
 
+        int[] intArray = new int[]{1, 2, 3};
+        int[] intArrayCopy = ArrayUtils.arraycopy(intArray);
+        assertArrayEquals(intArray, intArrayCopy);
+        assertNotSame(intArray, intArrayCopy);
+
+        String[] strArray = new String[]{"a", "b", "c"};
+        String[] strArrayCopy = ArrayUtils.arraycopy(strArray);
+        assertArrayEquals(strArray, strArrayCopy);
+
+        Object[] objArray = new Object[]{1, "a", true};
+        Object[] objArrayCopy = ArrayUtils.arraycopy(objArray);
+        assertArrayEquals(objArray, objArrayCopy);
 
     }
 
@@ -116,38 +123,44 @@ class ArrayUtilsTest {
 
         Object[] add = ClassUtil.newWrapperArray(Object.class, 0);
         Object[] append = ArrayUtils.add(null, add);
-        Assertions.assertNotSame(add, append);
-        Assertions.assertArrayEquals(add, append);
+        assertNotSame(add, append);
+        assertArrayEquals(add, append);
 
         Object[] newAppend = ArrayUtils.add(append, (Object[]) null);
-        Assertions.assertNotSame(newAppend, append);
-        Assertions.assertArrayEquals(newAppend, append);
+        assertNotSame(newAppend, append);
+        assertArrayEquals(newAppend, append);
     }
 
     @Test
     void isArray() {
+        assertFalse(ArrayUtils.isArray(null));
+        assertFalse(ArrayUtils.isArray(1));
+        assertFalse(ArrayUtils.isArray("string"));
 
-        Assertions.assertFalse(ArrayUtils.isArray(null));
-        Assertions.assertFalse(ArrayUtils.isArray(1));
-        Assertions.assertTrue(ArrayUtils.isArray(new int[]{}));
-        Assertions.assertTrue(ArrayUtils.isArray(new Integer[]{}));
-        Assertions.assertTrue(ArrayUtils.isArray(new Integer[][]{}));
+        assertTrue(ArrayUtils.isArray(new int[]{}));
+        assertTrue(ArrayUtils.isArray(new Integer[]{}));
+        assertTrue(ArrayUtils.isArray(new Integer[][]{}));
+
+
+        assertTrue(ArrayUtils.isArray(new int[]{1, 2, 3}));
+        assertTrue(ArrayUtils.isArray(new String[]{"a", "b", "c"}));
+        assertTrue(ArrayUtils.isArray(new Object[]{1, "a", true}));
     }
 
     @Test
     void insert() {
 
-        Assertions.assertEquals("[1]", Arrays.toString(ArrayUtils.add(null, 1)));
-        Assertions.assertEquals("[1]", Arrays.toString(ArrayUtils.insert(null, 1, 1)));
-        Assertions.assertEquals("[1]", Arrays.toString(ArrayUtils.insert(new Integer[]{1}, 1)));
-        Assertions.assertEquals(0, ArrayUtils.insert(null, 1).length);
-        Assertions.assertEquals("[1, 2, 3, 4]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, 4, 4)));
-        Assertions.assertEquals("[1, 2, 3, 4]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, 3, 4)));
-        Assertions.assertEquals("[1, 2, 4, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, 2, 4)));
-        Assertions.assertEquals("[4, 1, 2, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, 0, 4)));
-        Assertions.assertEquals("[1, 2, 4, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, -1, 4)));
-        Assertions.assertEquals("[4, 1, 2, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, -3, 4)));
-        Assertions.assertEquals("[4, 1, 2, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, -4, 4)));
+        assertEquals("[1]", Arrays.toString(ArrayUtils.add(null, 1)));
+        assertEquals("[1]", Arrays.toString(ArrayUtils.insert(null, 1, 1)));
+        assertEquals("[1]", Arrays.toString(ArrayUtils.insert(new Integer[]{1}, 1)));
+        assertEquals(0, ArrayUtils.insert(null, 1).length);
+        assertEquals("[1, 2, 3, 4]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, 4, 4)));
+        assertEquals("[1, 2, 3, 4]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, 3, 4)));
+        assertEquals("[1, 2, 4, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, 2, 4)));
+        assertEquals("[4, 1, 2, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, 0, 4)));
+        assertEquals("[1, 2, 4, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, -1, 4)));
+        assertEquals("[4, 1, 2, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, -3, 4)));
+        assertEquals("[4, 1, 2, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, -4, 4)));
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -156,89 +169,135 @@ class ArrayUtilsTest {
 
         Object[] original = null;
 
-        Assertions.assertNull(ArrayUtils.subArray(original, 1, 2));
+        assertNull(ArrayUtils.subArray(original, 1, 2));
         original = new String[]{};
-        Assertions.assertEquals(0, ArrayUtils.subArray(original, 1, 2).length);
+        assertEquals(0, ArrayUtils.subArray(original, 1, 2).length);
         original = new String[]{"1", "2", "3"};
 
-        Assertions.assertEquals(0, ArrayUtils.subArray(original, 2, 2).length);
-        Assertions.assertEquals(0, ArrayUtils.subArray(original, 2, 1).length);
-        Assertions.assertEquals(0, ArrayUtils.subArray(original, 0, -4).length);
-        Assertions.assertEquals(3, ArrayUtils.subArray(original, -5, 0).length);
-        Assertions.assertEquals(0, ArrayUtils.subArray(original, 5, 0).length);
-        Assertions.assertEquals(3, ArrayUtils.subArray(original, 0, 10).length);
+        assertEquals(0, ArrayUtils.subArray(original, 2, 2).length);
+        assertEquals(0, ArrayUtils.subArray(original, 2, 1).length);
+        assertEquals(0, ArrayUtils.subArray(original, 0, -4).length);
+        assertEquals(3, ArrayUtils.subArray(original, -5, 0).length);
+        assertEquals(0, ArrayUtils.subArray(original, 5, 0).length);
+        assertEquals(3, ArrayUtils.subArray(original, 0, 10).length);
 
-        Assertions.assertEquals("3", ArrayUtils.subArray(original, 2, 3)[0]);
-        Assertions.assertEquals("3", ArrayUtils.subArray(original, 2, 0)[0]);
-        Assertions.assertEquals("2", ArrayUtils.subArray(original, 1, -1)[0]);
-        Assertions.assertEquals("3", ArrayUtils.subArray(original, -1, 0)[0]);
-        Assertions.assertEquals("2", ArrayUtils.subArray(original, -2, 0)[0]);
+        assertEquals("3", ArrayUtils.subArray(original, 2, 3)[0]);
+        assertEquals("3", ArrayUtils.subArray(original, 2, 0)[0]);
+        assertEquals("2", ArrayUtils.subArray(original, 1, -1)[0]);
+        assertEquals("3", ArrayUtils.subArray(original, -1, 0)[0]);
+        assertEquals("2", ArrayUtils.subArray(original, -2, 0)[0]);
 
-        Assertions.assertEquals(2, ArrayUtils.subArray(new int[]{1, 2, 3}, -2, 0)[0]);
+        assertEquals(2, ArrayUtils.subArray(new int[]{1, 2, 3}, -2, 0)[0]);
 
+
+        Integer[] intArray = {1, 2, 3, 4, 5};
+        Integer[] sub1 = ArrayUtils.subArray(intArray, 0, 3);
+        Integer[] sub2 = ArrayUtils.subArray(intArray, 1, 4);
+        Integer[] sub3 = ArrayUtils.subArray(intArray, -2, -1);
+        Integer[] sub4 = ArrayUtils.subArray(intArray, 0, 0);
+        Integer[] sub5 = ArrayUtils.subArray(intArray, 5, 7);
+        Integer[] sub6 = ArrayUtils.subArray(intArray, -3, 2);
+        assertArrayEquals(intArray, ArrayUtils.subArray(intArray, 0, 5));
+        assertArrayEquals(new Integer[]{1, 2, 3}, sub1);
+        assertArrayEquals(new Integer[]{2, 3, 4}, sub2);
+        assertArrayEquals(new Integer[]{4}, sub3);
+        assertArrayEquals(new Integer[]{1, 2, 3, 4, 5}, sub4);
+        assertArrayEquals(new Integer[]{}, sub5);
+        assertArrayEquals(new Integer[]{}, sub6);
 
     }
 
     @SuppressWarnings("ConstantConditions")
     @Test
-    void remove() {
+    void removeSub() {
 
-        Object[] original = null;
+        Object[] original;
 
-        Assertions.assertNull(ArrayUtils.remove(original, 1, 2));
+        assertThrows(IllegalArgumentException.class, () -> ArrayUtils.removeSub(null, 1, 2));
         original = new String[]{};
-        Assertions.assertEquals(0, ArrayUtils.remove(original, 1, 2).length);
+        assertEquals(0, ArrayUtils.removeSub(original, 1, 2).length);
         original = new String[]{"1", "2", "3"};
 
-        Assertions.assertEquals(3, ArrayUtils.remove(original, 2, 2).length);
-        Assertions.assertEquals(3, ArrayUtils.remove(original, 2, 1).length);
-        Assertions.assertEquals(3, ArrayUtils.remove(original, 0, -4).length);
-        Assertions.assertEquals(0, ArrayUtils.remove(original, -5, 0).length);
-        Assertions.assertEquals(3, ArrayUtils.remove(original, 5, 0).length);
-        Assertions.assertEquals(0, ArrayUtils.remove(original, 0, 10).length);
+        assertEquals(3, ArrayUtils.removeSub(original, 2, 2).length);
+        assertEquals(3, ArrayUtils.removeSub(original, 2, 1).length);
+        assertEquals(3, ArrayUtils.removeSub(original, 0, -4).length);
+        assertEquals(0, ArrayUtils.removeSub(original, -5, 0).length);
+        assertEquals(3, ArrayUtils.removeSub(original, 5, 0).length);
+        assertEquals(0, ArrayUtils.removeSub(original, 0, 10).length);
 
-        Assertions.assertEquals("1", ArrayUtils.remove(original, 2, 3)[0]);
-        Assertions.assertEquals("1", ArrayUtils.remove(original, 2, 0)[0]);
-        Assertions.assertEquals("1", ArrayUtils.remove(original, 1, -1)[0]);
-        Assertions.assertEquals("1", ArrayUtils.remove(original, -1, 0)[0]);
-        Assertions.assertEquals("2", ArrayUtils.remove(original, -1, 0)[1]);
-        Assertions.assertEquals("1", ArrayUtils.remove(original, -2, 0)[0]);
-        Assertions.assertEquals(3, ArrayUtils.remove(original, 4, 0).length);
+        assertEquals("1", ArrayUtils.removeSub(original, 2, 3)[0]);
+        assertEquals("1", ArrayUtils.removeSub(original, 2, 0)[0]);
+        assertEquals("1", ArrayUtils.removeSub(original, 1, -1)[0]);
+        assertEquals("1", ArrayUtils.removeSub(original, -1, 0)[0]);
+        assertEquals("2", ArrayUtils.removeSub(original, -1, 0)[1]);
+        assertEquals("1", ArrayUtils.removeSub(original, -2, 0)[0]);
+        assertEquals(3, ArrayUtils.removeSub(original, 4, 0).length);
 
-        Assertions.assertEquals(1, ArrayUtils.remove(new int[]{1, 2, 3}, -2, 0)[0]);
-        Assertions.assertArrayEquals(new int[]{2, 3}, ArrayUtils.remove(new int[]{1, 2, 3}, 0, 1));
-        Assertions.assertArrayEquals(new int[]{}, ArrayUtils.remove(new int[]{}, 0, 1));
+        assertEquals(1, ArrayUtils.removeSub(new int[]{1, 2, 3}, -2, 0)[0]);
+        assertArrayEquals(new int[]{2, 3}, ArrayUtils.removeSub(new int[]{1, 2, 3}, 0, 1));
+        assertArrayEquals(new int[]{}, ArrayUtils.removeSub(new int[]{}, 0, 1));
 
+        // Test removing empty subset
+        Integer[] arr1 = {1, 2, 3, 4, 5};
+        assertArrayEquals(new Integer[]{}, ArrayUtils.removeSub(arr1, 0, 0));
+
+        // Test removing subset from beginning
+        Integer[] arr2 = {1, 2, 3, 4, 5};
+        assertArrayEquals(new Integer[]{1}, ArrayUtils.removeSub(arr2, 1, 5));
+
+        // Test removing subset from end
+        Integer[] arr3 = {1, 2, 3, 4, 5};
+        assertArrayEquals(new Integer[]{5}, ArrayUtils.removeSub(arr3, 0, 4));
+
+        // Test removing subset that covers the entire array
+        Integer[] arr4 = {1, 2, 3, 4, 5};
+        assertArrayEquals(new Integer[0], ArrayUtils.removeSub(arr4, 0, 5));
+
+        // Test removing subset with negative endIndex
+        Integer[] arr6 = {1, 2, 3, 4, 5};
+        assertArrayEquals(new Integer[]{5}, ArrayUtils.removeSub(arr6, 0, -1));
+
+        // Test removing subset with negative beginIndex and endIndex
+        Integer[] arr7 = {1, 2, 3, 4, 5};
+        assertArrayEquals(new Integer[]{5}, ArrayUtils.removeSub(arr7, -5, -1));
+
+        // Test removing from empty array
+        Integer[] arr8 = {};
+        assertArrayEquals(new Integer[0], ArrayUtils.removeSub(arr8, 0, 0));
+
+        // Test removing from null array
+        Integer[] arr9 = null;
+        assertThrows(IllegalArgumentException.class, () -> ArrayUtils.removeSub(null, 1, 2));
 
     }
 
     @Test
     void testToString() {
 
-        Assertions.assertEquals("null", ArrayUtils.toString(null));
-        Assertions.assertEquals("[]", ArrayUtils.toString(new Object[]{}));
-        Assertions.assertEquals("[1, 2]", ArrayUtils.toString(new int[]{1, 2}));
-        Assertions.assertEquals("[[1, 2]]", ArrayUtils.toString(new int[][]{{1, 2}}));
+        assertEquals("null", ArrayUtils.toString(null));
+        assertEquals("[]", ArrayUtils.toString(new Object[]{}));
+        assertEquals("[1, 2]", ArrayUtils.toString(new int[]{1, 2}));
+        assertEquals("[[1, 2]]", ArrayUtils.toString(new int[][]{{1, 2}}));
 
     }
 
     @Test
     void toArray() {
 
-        Assertions.assertArrayEquals(new Object[]{null, null}, ArrayUtils.toArray(null, null));
+        assertArrayEquals(new Object[]{null, null}, ArrayUtils.toArray(null, null));
         Number[] objects = ArrayUtils.toArray(1, 1.0);
 
         Integer[] actual = ArrayUtils.toArray(Arrays.asList(1, 2).iterator());
-        Assertions.assertArrayEquals(new Integer[]{1, 2}, actual);
+        assertArrayEquals(new Integer[]{1, 2}, actual);
 
         actual = ArrayUtils.toArray(Stream.of(1, 2));
-        Assertions.assertArrayEquals(new Integer[]{1, 2}, actual);
+        assertArrayEquals(new Integer[]{1, 2}, actual);
 
         actual = ArrayUtils.toArray(Arrays.asList(1, 2));
-        Assertions.assertArrayEquals(new Integer[]{1, 2}, actual);
+        assertArrayEquals(new Integer[]{1, 2}, actual);
 
         Integer[][] lists = ArrayUtils.toArray(new Integer[]{1, 2}, new Integer[]{3, 4});
-        Assertions.assertArrayEquals(new Integer[][]{new Integer[]{1, 2}, new Integer[]{3, 4}}, lists);
+        assertArrayEquals(new Integer[][]{new Integer[]{1, 2}, new Integer[]{3, 4}}, lists);
 
 
     }

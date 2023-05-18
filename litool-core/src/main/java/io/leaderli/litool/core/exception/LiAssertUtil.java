@@ -30,6 +30,12 @@ public class LiAssertUtil {
         }
     }
 
+    public static void assertNotNull(Object obj, Function<String, RuntimeException> throwable, String msg) {
+        if (obj == null) {
+            throw throwable.apply(msg);
+        }
+    }
+
     public static void assertTrue(boolean assertTrue, String msg) {
 
         if (!assertTrue) {
