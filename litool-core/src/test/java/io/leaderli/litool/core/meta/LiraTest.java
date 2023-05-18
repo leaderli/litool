@@ -268,6 +268,28 @@ class LiraTest {
         Assertions.assertEquals(4, loop.limit(5).last().get());
 
 
+        Enumeration<Integer> enumeration = new IteratorEnumeration(Arrays.asList(1, 2, 3).iterator());
+        Assertions.assertEquals("[1, 2, 3]", Lira.of(enumeration).toString());
+
+    }
+
+    private static class IteratorEnumeration implements Enumeration<Integer> {
+
+        final Iterator<Integer> iterator;
+
+        private IteratorEnumeration(Iterator<Integer> iterator) {
+            this.iterator = iterator;
+        }
+
+        @Override
+        public boolean hasMoreElements() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public Integer nextElement() {
+            return iterator.next();
+        }
     }
 
     @Test

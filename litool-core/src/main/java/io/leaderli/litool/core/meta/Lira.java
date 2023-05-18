@@ -67,6 +67,19 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
+     * Returns an lira that consisting elements provided by given enumeration
+     *
+     * @param enumeration the enumeration that provide  elements
+     * @param <T>         the type of elements returned by this enumeration
+     * @return the new lira
+     */
+    static <T> Lira<T> of(Enumeration<? extends T> enumeration) {
+
+        return of(IterableItr.of(enumeration));
+
+    }
+
+    /**
      * Returns an lira that consisting elements provided by given stream
      *
      * @param stream the stream that provide  elements
