@@ -1,12 +1,14 @@
 package io.leaderli.litool.core.collection;
 
-import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.type.ClassUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author leaderli
@@ -23,37 +25,91 @@ class ArrayUtilsTest {
 
         long[] c = ArrayUtils.arraycopy(a);
 
-        Assertions.assertArrayEquals(a, c);
+        assertArrayEquals(a, c);
 
-        Assertions.assertThrows(NullPointerException.class, () -> ArrayUtils.arraycopy(null));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> ArrayUtils.arraycopy("1"));
+        assertThrows(NullPointerException.class, () -> ArrayUtils.arraycopy(null));
+        assertThrows(IllegalArgumentException.class, () -> ArrayUtils.arraycopy("1"));
 
 
     }
 
     @Test
-    void combination() {
+    void combineArrays() {
+        // 测试组合两个非空 int 数组
+        int[] a1 = {1, 2, 3};
+        int[] b1 = {4, 5, 6};
+        int[] expected1 = {1, 2, 3, 4, 5, 6};
+        assertArrayEquals(expected1, ArrayUtils.combineArrays(a1, b1));
 
-        int[] a = new int[]{1};
-        int[] b = new int[]{2};
+        // 测试组合一个非空 Integer 数组和一个空 int 数组
+        Integer[] a3 = {1, 2, 3};
+        Integer[] b3 = {};
+        Integer[] expected3 = {1, 2, 3};
+        assertArrayEquals(expected3, ArrayUtils.combineArrays(a3, b3));
 
-        Assertions.assertEquals("[1, 2]", Arrays.toString(ArrayUtils.combination(a, b)));
-        Assertions.assertArrayEquals(new int[]{1, 2}, ArrayUtils.combination(a, b));
+        // 测试组合两个 null 数组
+        int[] a4 = null;
+        Integer[] b4 = null;
+        assertThrows(IllegalArgumentException.class, () -> ArrayUtils.combineArrays(a4, b4));
 
-        a = null;
-        Assertions.assertNotSame(b, ArrayUtils.combination(a, b));
-        Assertions.assertArrayEquals(b, ArrayUtils.combination(a, b));
+        // 测试组合一个 null int 数组和一个非 null Integer 数组
+        int[] a5 = null;
+        Integer[] b5 = {4, 5, 6};
+        Integer[] expected5 = {4, 5, 6};
+        assertArrayEquals(expected5, (Integer[]) ArrayUtils.combineArrays(a5, b5));
 
+        // 测试组合一个非 null Integer 数组和一个 null int 数组
+        Integer[] a6 = {1, 2, 3};
+        int[] b6 = null;
+        Integer[] expected6 = {1, 2, 3};
+        assertArrayEquals(expected6, (Integer[]) ArrayUtils.combineArrays(a6, b6));
 
-        a = new int[]{1};
-        b = null;
-        Assertions.assertNotSame(a, ArrayUtils.combination(a, b));
-        Assertions.assertArrayEquals(a, ArrayUtils.combination(a, b));
+        // 测试组合一个非数组和一个数组
+        Integer a7 = 1;
+        Integer[] b7 = {4, 5, 6};
+        assertThrows(IllegalArgumentException.class, () -> ArrayUtils.combineArrays(a7, b7));
 
-        Assertions.assertThrows(AssertException.class, () -> ArrayUtils.combination(null, null));
+        // 测试组合一个数组和一个非数组
+        int[] a8 = {1, 2, 3};
+        Integer b8 = 4;
+        assertThrows(IllegalArgumentException.class, () -> ArrayUtils.combineArrays(a8, b8));
 
+        // 测试组合两个不同类型的数组
+        Integer[] a9 = {1, 2, 3};
+        String[] b9 = {"hello", "world"};
+        assertThrows(IllegalArgumentException.class, () -> ArrayUtils.combineArrays(a9, b9));
 
+        // 测试组合两个不同维数的数组
+        int[][] a10 = {{1, 2}, {3, 4}};
+        int[] b10 = {5, 6};
+        Object[] expected10 = {new int[]{1, 2}, new int[]{3, 4}, new int[]{5, 6}};
+        assertThrows(IllegalArgumentException.class, () -> ArrayUtils.combineArrays(a10, b10));
+
+        // 测试组合 null int 数组和非 null int 数组
+        int[] a11 = null;
+        int[] b11 = {1, 2};
+        int[] expected11 = {1, 2};
+        assertArrayEquals(expected11, ArrayUtils.combineArrays(a11, b11));
+
+        // 测试组合非 null int 数组和 null int 数组
+        int[] a12 = {1, 2};
+        int[] b12 = null;
+        int[] expected12 = {1, 2};
+        assertArrayEquals(expected12, ArrayUtils.combineArrays(a12, b12));
+
+        // 测试组合两个空 int 数组
+        int[] a13 = {};
+        int[] b13 = {};
+        int[] expected13 = {};
+        assertArrayEquals(expected13, ArrayUtils.combineArrays(a13, b13));
+
+        // 测试组合两个非空 Integer 数组
+        Integer[] a14 = {1, 2, 3};
+        Integer[] b14 = {4, 5, 6};
+        Integer[] expected14 = {1, 2, 3, 4, 5, 6};
+        assertArrayEquals(expected14, ArrayUtils.combineArrays(a14, b14));
     }
+
 
     @Test
     void add() {

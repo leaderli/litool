@@ -320,6 +320,14 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
+    public Lira<T> unique() {
+        return terminal(l -> {
+            return new HashSet<>(l);
+        });
+    }
+
+
+    @Override
     public void forThrowableEach(ThrowableConsumer<? super T> action) {
         forThrowableEach(action, LiConstant.WHEN_THROW);
     }

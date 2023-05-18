@@ -119,7 +119,7 @@ public class FuncElement extends SaxBean {
                             for (int i = 0; i < flat.length; i++) {
                                 flat[i] = lastParameterType.getComponentType();
                             }
-                            methodParameterTypes = ArrayUtils.combination(ArrayUtils.subArray(methodParameterTypes, 0,
+                            methodParameterTypes = ArrayUtils.combineArrays(ArrayUtils.subArray(methodParameterTypes, 0,
                                     -1), flat);
                         }
                     }

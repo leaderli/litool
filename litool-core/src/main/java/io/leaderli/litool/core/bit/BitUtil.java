@@ -16,13 +16,10 @@ public class BitUtil {
      *
      * @param num 一个整数值
      * @return 如果整数的二进制表示仅包含一个'1'，则返回true，否则返回false
+     * @see Integer#bitCount(int)
      */
     public static boolean onlyOneBit(int num) {
-
-        if (num < 1 && num > Integer.MIN_VALUE) {
-            return false;
-        }
-        return (num & (num - 1)) == 0;
+        return Integer.bitCount(num) == 1;
     }
 
 

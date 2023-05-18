@@ -680,6 +680,15 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
+     * remove the duplicate element
+     *
+     * @return the new lira
+     * @see #terminal(Function)
+     */
+    Lira<T> unique();
+
+
+    /**
      * Returns a lira consisting of the elements of this lira ,sorted  according to  the provided {@code Comparator}
      * <p>
      * it's a middle terminal action

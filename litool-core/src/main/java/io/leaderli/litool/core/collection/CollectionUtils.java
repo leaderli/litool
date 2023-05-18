@@ -12,36 +12,36 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * <p> Operations on collection
+ * <p>  操作集合的工具类
  *
  * @author leaderli
  * @since 2022 /7/20
  */
 public class CollectionUtils {
+
+
     /**
-     * Return the element that appears multiple times
+     * 返回迭代对象中出现多次的元素
      *
-     * @param <T>      the type of elements returned by this iterable
-     * @param iterable provide elements by {@link  Iterable#iterator()}
-     * @return a lira consists the element that appears multiple times
+     * @param <T>      迭代对象中元素的类型
+     * @param iterable 通过{@link Iterable#iterator()}提供的元素
+     * @return 包含在迭代对象中出现多次的元素的 {@link  Lira}
      */
+
     public static <T> Lira<T> getDuplicateElements(Iterable<? extends T> iterable) {
 
-        if (isEmpty(iterable)) {
-            return Lira.none();
-        }
-
-        Set<T> duplicate = new HashSet<>();
 
         Set<T> unique = new HashSet<>();
+        return Lira.<T>of(iterable).filter(e -> !unique.add(e)).unique();
 
-        for (T t : iterable) {
-            if (!unique.add(t)) {
-                duplicate.add(t);
-            }
-        }
-
-        return Lira.of(duplicate);
+//
+//        for (T t : iterable) {
+//            if (!unique.add(t)) {
+//                duplicate.add(t);
+//            }
+//        }
+//
+//        return Lira.of(duplicate);
     }
 
     /**

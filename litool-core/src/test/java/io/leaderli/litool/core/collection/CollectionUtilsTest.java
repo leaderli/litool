@@ -122,8 +122,10 @@ class CollectionUtilsTest {
 
     @Test
     void getDuplicateElements() {
-        List<String> items = Arrays.asList("apple", "apple", "banana", "apple", "orange", "banana", "papaya");
-        Assertions.assertEquals(2, CollectionUtils.getDuplicateElements(items).size());
+        Assertions.assertEquals(0, CollectionUtils.getDuplicateElements(null).size());
+        Assertions.assertEquals(0, CollectionUtils.getDuplicateElements(Collections.EMPTY_LIST).size());
+        Assertions.assertEquals(0, CollectionUtils.getDuplicateElements(Arrays.asList(1, 2, 3, 4, 5)).size());
+        Assertions.assertEquals(2, CollectionUtils.getDuplicateElements(Arrays.asList(1, 2, 2, 3, 3, 3)).size());
     }
 
     @Test

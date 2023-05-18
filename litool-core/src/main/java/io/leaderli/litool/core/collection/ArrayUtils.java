@@ -1,7 +1,6 @@
 
 package io.leaderli.litool.core.collection;
 
-import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.type.ClassUtil;
 
@@ -758,37 +757,44 @@ public class ArrayUtils {
 // ------------------------------------------------leaderli---------------------------------------
 // -----------------------------------------------------------------------------------------------
 
+
     /**
-     * Returns  the combination of  two array.
-     * <p>
+     * 合并两个数组，并返回合并后的新数组。
      *
-     * @param a   an array
-     * @param b   an array
-     * @param <T> the type of  array
-     * @return an new combined array
-     * @throws AssertException when param is not array or both param is null
+     * @param firstArray  第一个数组
+     * @param secondArray 第二个数组
+     * @param <T>         数组元素的类型
+     * @return 合并后的新数组
+     * @throws IllegalArgumentException 如果参数不是数组，或者两个参数都为null
      */
     @SuppressWarnings({"unchecked", "java:S2259"})
-    public static <T> T combination(T a, T b) {
+    public static <T> T combineArrays(T firstArray, T secondArray) {
 
-        LiAssertUtil.assertTrue(isArray(a) || isArray(b), "there is no array");
-
-        int a_len;
-        int b_len;
-
-
-        if (a == null || (a_len = Array.getLength(a)) == 0) {
-            return arraycopy(b);
-        }
-        if (b == null || (b_len = Array.getLength(b)) == 0) {
-            return arraycopy(a);
+        if (firstArray == null) {
+            LiAssertUtil.assertTrue(isArray(secondArray), IllegalArgumentException::new, "there is no array");
+            return arraycopy(secondArray);
         }
 
-        T union = (T) Array.newInstance(ClassUtil.getComponentType(a), a_len + b_len);
-        System.arraycopy(a, 0, union, 0, a_len);
-        System.arraycopy(b, 0, union, a_len, b_len);
+        if (secondArray == null) {
+            LiAssertUtil.assertTrue(isArray(firstArray), IllegalArgumentException::new, "there is no array");
+            return arraycopy(firstArray);
 
-        return union;
+        }
+        Class<?> firstArrayComponentType = firstArray.getClass().getComponentType();
+        Class<?> secondArrayComponentType = secondArray.getClass().getComponentType();
+
+        LiAssertUtil.assertTrue(isArray(firstArray) && isArray(secondArray), IllegalArgumentException::new, "there is no array");
+        LiAssertUtil.assertTrue(secondArrayComponentType == firstArrayComponentType, IllegalArgumentException::new, "two array don't have same componentType");
+
+
+        int firstArrayLength = getLength(firstArray);
+        int secondArrayLength = getLength(secondArray);
+
+        T combinedArray = (T) Array.newInstance(ClassUtil.getComponentType(firstArray), firstArrayLength + secondArrayLength);
+        System.arraycopy(firstArray, 0, combinedArray, 0, firstArrayLength);
+        System.arraycopy(secondArray, 0, combinedArray, firstArrayLength, secondArrayLength);
+
+        return combinedArray;
     }
 
     /**

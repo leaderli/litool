@@ -389,6 +389,16 @@ class LiraTest {
     }
 
     @Test
+    void unique() {
+
+
+        Assertions.assertEquals(0, Lira.of().unique().size());
+        Assertions.assertEquals(2, Lira.of(2, 1).unique().size());
+        Assertions.assertEquals(2, Lira.of(2, 1, 2).unique().size());
+        Assertions.assertEquals(2, Lira.of(2, 1, 2, 2).unique().size());
+    }
+
+    @Test
     void limit() {
 
         Assertions.assertEquals("[1]", Lira.of(1).limit(1).toString());
