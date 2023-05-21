@@ -33,7 +33,7 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
      * @param <T> the type of elements {@link  IterableItr} provide
      * @return a {@link  IterableItr}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     static <T> IterableItr<T> of(Object obj) {
         if (obj == null) {
             return NoneItr.of();
@@ -42,28 +42,29 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
             return (IterableItr<T>) obj;
         }
         if (obj instanceof IterableItr) {
-            return ofs(ArrayUtils.toArray(((IterableItr<T>) obj).iterator()));
+            return ofs(ArrayUtils.toArray(Object.class, ((IterableItr) obj).iterator()));
         }
         if (obj instanceof Iterator) {
-            return ofs(ArrayUtils.toArray((Iterator<T>) obj));
+            return ofs(ArrayUtils.toArray(Object.class, (Iterator) obj));
         }
         if (obj instanceof Iterable) {
             Iterator<?> iterator = ((Iterable<?>) obj).iterator();
             if (iterator instanceof Generator) {
                 return (Generator<T>) iterator;
             }
-            return ofs(ArrayUtils.toArray((Iterator<T>) iterator));
+            return ofs(ArrayUtils.toArray(Object.class, (Iterator) iterator));
         }
         if (obj instanceof Enumeration) {
-            return ofs(ArrayUtils.toArray((Enumeration<T>) obj));
+            return ofs(ArrayUtils.toArray(Object.class, (Enumeration) obj));
         }
         if (obj instanceof Stream) {
-            return ofs(ArrayUtils.toArray((Stream<T>) obj));
+            return ofs(ArrayUtils.toArray(Object.class, (Stream) obj));
         }
 
         if (obj instanceof Map) {
 
-            return ofs((T[]) ArrayUtils.toArray(((Map<?, ?>) obj).entrySet()));
+            Iterable entries = ((Map<?, ?>) obj).entrySet();
+            return ofs((T[]) ArrayUtils.toArray(Object.class, entries));
         }
 
         if (obj.getClass().isArray()) {

@@ -101,13 +101,13 @@ public class CartesianUtil {
             Class<?> type = field.getType();
             Object[] result = null;
             if (val instanceof Iterable) {
-                Object[] objects = Lira.of((Iterable<?>) val).map(item -> convertByType(item, type)).toArray();
+                Object[] objects = Lira.of((Iterable<?>) val).map(item -> convertByType(item, type)).toArray(Object.class);
                 if (objects.length > 0) {
                     result = objects;
                 }
             } else if (val.getClass().isArray()) {
                 Object[] objects =
-                        Lira.of(CollectionUtils.toArray(val)).map(item -> convertByType(item, type)).toArray();
+                        Lira.of(CollectionUtils.toArray(val)).map(item -> convertByType(item, type)).toArray(Object.class);
                 if (objects.length > 0) {
                     result = objects;
                 }

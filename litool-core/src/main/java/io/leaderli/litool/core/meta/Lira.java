@@ -1,6 +1,9 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.collection.*;
+import io.leaderli.litool.core.collection.Generator;
+import io.leaderli.litool.core.collection.Generators;
+import io.leaderli.litool.core.collection.IterableItr;
+import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
@@ -744,7 +747,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     default <R> R[] toArray(Class<R> type) {
 
-        Object[] original = cast(type).toArray();
+        Object[] original = cast(type).get().toArray();
 
         R[] copy = ClassUtil.newWrapperArray(type, original.length);
         System.arraycopy(original, 0, copy, 0, original.length);
@@ -765,17 +768,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
         return get();
     }
 
-    /**
-     * Returns an array containing the elements of this stream.
-     *
-     * <p>This is a terminal operation
-     *
-     * @return an array containing the elements of this  lira
-     * @throws ClassCastException if element is empty and T is not Object
-     */
-    default T[] toArray() {
-        return ArrayUtils.toArray(get().toArray());
-    }
 
     /**
      * return an {@code List} consisting of the elements exclude null element
@@ -786,17 +778,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     List<T> get();
 
-    /**
-     * Returns an array containing the elements of this stream.
-     *
-     * <p>This is a nullable terminal operation
-     *
-     * @return an array containing the elements of this  lira
-     * @throws ClassCastException if element is empty and T is not Object
-     */
-    default T[] toNullableArray() {
-        return ArrayUtils.toArray(nullableGet().toArray());
-    }
 
     /**
      * return an {@code List} consisting of the elements include null element
@@ -823,7 +804,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     default <R> R[] toNullableArray(Class<R> type) {
 
-        Object[] original = cast(type).toNullableArray();
+        Object[] original = cast(type).nullableGet().toArray();
         R[] copy = ClassUtil.newWrapperArray(type, original.length);
         System.arraycopy(original, 0, copy, 0, original.length);
         return copy;

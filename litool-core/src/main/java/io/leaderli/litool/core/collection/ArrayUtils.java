@@ -946,74 +946,81 @@ public class ArrayUtils {
     }
 
     /**
-     * Returns a array that append a array after origin array.
+     * 将一个数组添加到另一个数组的末尾并返回新的数组。
      *
-     * @param origin an array
-     * @param add    the added arr
-     * @param <T>    the type of elements
-     * @return new appended array
+     * @param original 原数组
+     * @param toAdd    要添加的数组
+     * @param <T>      元素类型
+     * @return 添加后的新数组
      */
     @SafeVarargs
-    public static <T> T[] add(T[] origin, T... add) {
-        return insert(origin, Integer.MAX_VALUE, add);
+    public static <T> T[] append(T[] original, T... toAdd) {
+        return insert(original, Integer.MAX_VALUE, toAdd);
     }
 
     /**
-     * Returns a array that insert a array into origin array.
-     * The insert begins at the specified {@code  beginIndex}
+     * 在指定位置插入数组元素并返回新的数组。
      *
-     * @param origin     an array
-     * @param beginIndex the beginning index, Negative numbers are supported, indicating
-     *                   the position calculated from the back
-     * @param insert     the insert array
-     * @param <T>        the type of elements
-     * @return new insert array
+     * @param original   原数组
+     * @param beginIndex 插入起始位置 支持负数，表示从后面计算的位置
+     * @param inserts    要插入的元素 支持负数，表示从后面计算的位置。支持零，表示 {@code endIndex = array.length}
+     * @param <T>        元素类型
+     * @return 插入后的新数组
+     * @see #calculateBeginIndex(int, int)
+     * @see #calculateEndIndex(int, int)
      */
-
     @SuppressWarnings("unchecked")
     @SafeVarargs
-    public static <T> T[] insert(T[] origin, int beginIndex, T... insert) {
+    public static <T> T[] insert(T[] original, int beginIndex, T... inserts) {
 
-        Class<?> componentType = ClassUtil.getComponentType(origin);
+        Class<?> componentType = ClassUtil.getComponentType(original);
         if (componentType == null) {
-            return arraycopy(insert);
+            return arraycopy(inserts);
         }
-        if (insert == null || insert.length == 0) {
-            return arraycopy(origin);
+        if (inserts == null || inserts.length == 0) {
+            return arraycopy(original);
         }
-        int length = origin.length;
-        T[] arr = (T[]) ClassUtil.newWrapperArray(componentType, length + insert.length);
+        int length = original.length;
+        T[] arr = (T[]) ClassUtil.newWrapperArray(componentType, length + inserts.length);
 
         beginIndex = calculateBeginIndex(beginIndex, length);
         if (beginIndex >= length) {
-            System.arraycopy(origin, 0, arr, 0, length);
-            System.arraycopy(insert, 0, arr, length, insert.length);
+            System.arraycopy(original, 0, arr, 0, length);
+            System.arraycopy(inserts, 0, arr, length, inserts.length);
         } else {
-            System.arraycopy(origin, 0, arr, 0, beginIndex);
-            System.arraycopy(insert, 0, arr, beginIndex, insert.length);
-            System.arraycopy(origin, beginIndex, arr, beginIndex + insert.length, length - beginIndex);
+            System.arraycopy(original, 0, arr, 0, beginIndex);
+            System.arraycopy(inserts, 0, arr, beginIndex, inserts.length);
+            System.arraycopy(original, beginIndex, arr, beginIndex + inserts.length, length - beginIndex);
         }
 
 
         return arr;
     }
 
+
+    /**
+     * 将可变类型参数转换为数组
+     *
+     * @param elements 可变参数
+     * @param <T>      数组的类型
+     * @return 一个新的数组，如果参数是基本类型则返回其包装类型的数组
+     */
     @SuppressWarnings("unchecked")
     @SafeVarargs
-    public static <T> T[] of(T... arr) {
-        Class<?> componentType = arr.getClass().getComponentType();
+    public static <T> T[] of(T... elements) {
+        Class<?> componentType = elements.getClass().getComponentType();
         if (componentType.isPrimitive()) {
-            T[] ts = (T[]) ClassUtil.newWrapperArray(componentType, arr.length);
-            System.arraycopy(arr, 0, ts, 0, ts.length);
+            T[] ts = (T[]) ClassUtil.newWrapperArray(componentType, elements.length);
+            System.arraycopy(elements, 0, ts, 0, ts.length);
         }
-        return arr;
+        return elements;
     }
 
     /**
-     * Return string value of elements
+     * 将给定对象转换为字符串表示形式。
      *
-     * @param obj a object
-     * @return string value of elements
+     * @param obj 要转换的对象
+     * @return 对象的字符串表示形式
      */
     public static String toString(Object obj) {
 
@@ -1040,36 +1047,59 @@ public class ArrayUtils {
 
     }
 
+
     /**
-     * Returns an array over the elements that iterable provide of type {@code T}.
+     * 将可迭代对象提供的元素转换为类型为{@code T}的数组。
      *
-     * @param iterable an iterable
-     * @param <T>      the type of elements that iterable provide
-     * @return Returns an array over the elements that iterable provide of type {@code T}.
+     * @param <T>           可迭代对象提供的元素类型
+     * @param componentType 数组的类型
+     * @param iterable      可迭代对象
+     * @return 类型为{@code T}的数组，其中包含可迭代对象提供的元素
      */
-    public static <T> T[] toArray(Iterable<T> iterable) {
+    @SuppressWarnings("unchecked")
+    public static <T> T[] toArray(Class<? extends T> componentType, Iterable<T> iterable) {
         List<T> list = new ArrayList<>();
         iterable.forEach(list::add);
-        return toArray(list.toArray());
+        T[] array = (T[]) Array.newInstance(componentType, list.size());
+        for (int i = 0; i < list.size(); i++) {
+            array[i] = list.get(i);
+        }
+
+        return array;
     }
 
 
     /**
-     * forEach elements of src arr, and find a common inheritance type, use this type
-     * as new array componentType.
+     * 遍历源数组的所有元素，找到它们的公共超类，并将其作为新数组的类型。
      *
-     * @param src the source arr
-     * @param <T> the type of arr
-     * @return a new arr with componentType of T
-     * @throws ClassCastException when src length is 0 or element is not sub class of T
+     * @param src 源数组
+     * @param <T> 数组的元素类型
+     * @return 新数组，其组件类型为T
+     * @throws ClassCastException 如果源数组的长度为0或元素不是T的子类
+     * @see ClassUtil#getRecentlyInheritance(Object[])
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] toArray(Object... src) {
+    public static <T> T[] toArrayWithCommonSuperType(T... src) {
         Class<?> commonSuperType = ClassUtil.getRecentlyInheritance(src);
 
         T[] des = (T[]) ClassUtil.newWrapperArray(commonSuperType, src.length);
         System.arraycopy(src, 0, des, 0, src.length);
         return des;
+    }
+
+    /**
+     * 将可变参数转换为数组
+     *
+     * @param elements 源数组
+     * @param <T>      数组的类型
+     * @return 新数组，其类型为T
+     */
+    @SafeVarargs
+    public static <T> T[] toArray(Class<? extends T> commonSuperType, T... elements) {
+
+        T[] arr = ClassUtil.newWrapperArray(commonSuperType, elements.length);
+        System.arraycopy(elements, 0, arr, 0, elements.length);
+        return arr;
     }
 
     /**
@@ -1079,8 +1109,9 @@ public class ArrayUtils {
      * @param <T>    the type of elements that stream provide
      * @return Returns an array over the elements that stream provide of type {@code T}.
      */
-    public static <T> T[] toArray(Stream<T> stream) {
-        return toArray(stream.toArray());
+    @SuppressWarnings("unchecked")
+    public static <T> T[] toArray(Class<? extends T> componentType, Stream<T> stream) {
+        return (T[]) toArray(componentType, stream.toArray());
 
     }
 
@@ -1091,10 +1122,11 @@ public class ArrayUtils {
      * @param <T>      the type of elements that iterator provide
      * @return Returns an array over the elements that iterator provide of type {@code T}.
      */
-    public static <T> T[] toArray(Iterator<T> iterator) {
+    @SuppressWarnings("unchecked")
+    public static <T> T[] toArray(Class<? extends T> componentType, Iterator<T> iterator) {
         List<T> list = new ArrayList<>();
         iterator.forEachRemaining(list::add);
-        return toArray(list.toArray());
+        return (T[]) toArray(componentType, list.toArray());
     }
 
     /**
@@ -1105,13 +1137,14 @@ public class ArrayUtils {
      * @return Returns an array over the elements that enumeration provide of type {@code T}.
      */
 
-    public static <T> T[] toArray(Enumeration<T> enumeration) {
+    @SuppressWarnings("unchecked")
+    public static <T> T[] toArray(Class<? extends T> componentType, Enumeration<T> enumeration) {
         List<T> list = new ArrayList<>();
 
         while (enumeration.hasMoreElements()) {
             list.add(enumeration.nextElement());
         }
 
-        return toArray(list.toArray());
+        return (T[]) toArray(componentType, list.toArray());
     }
 }

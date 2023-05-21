@@ -145,14 +145,14 @@ public class CollectionUtils {
             if (result.length == 0) {
                 return new Object[0][];
             }
-            Object[] right = Lira.of(elements[0]).distinct().toNullableArray();
+            Object[] right = Lira.of(elements[0]).distinct().toNullableArray(Object.class);
             Object[][] temps = new Object[result.length * right.length][];
 
             int i = 0;
             for (Object[] left : result) {
 
                 for (Object r : right) {
-                    temps[i++] = ArrayUtils.add(left, r);
+                    temps[i++] = ArrayUtils.append(left, r);
                 }
             }
             result = temps;

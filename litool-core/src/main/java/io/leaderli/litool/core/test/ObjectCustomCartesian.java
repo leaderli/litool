@@ -10,6 +10,8 @@ public class ObjectCustomCartesian implements CustomValuable<ObjectValues> {
 
     @Override
     public Object[] cartesian(Class<?> type, ObjectValues annotation, AnnotatedElement annotatedElement, CartesianContext context) {
-        return new CartesianObject<>(type, field -> CartesianUtil.cartesian(field, context)).cartesian().toArray();
+        return new CartesianObject<>(type, field -> CartesianUtil.cartesian(field, context))
+                .cartesian()
+                .toArray(Object.class);
     }
 }

@@ -147,7 +147,7 @@ class LiraTest {
         Assertions.assertEquals(2, Lira.of(1, 2, 3).dropWhile(i -> i > 1).first().get());
         Assertions.assertEquals(3, Lira.of(1, null, 2, 3).dropWhile(i -> i > 2).first().get());
         Assertions.assertArrayEquals(new Integer[]{null, 2}, Lira.of(1, null, 2).dropWhile(NullableFunction.isNull()).toNullableArray(Integer.class));
-        Assertions.assertArrayEquals(new Integer[]{3, null, 4}, Lira.of(1, null, 2, 3, null, 4, 5, 6).dropWhile(i -> i > 2).takeWhile(i -> i > 4).toNullableArray());
+        Assertions.assertArrayEquals(new Integer[]{3, null, 4}, Lira.of(1, null, 2, 3, null, 4, 5, 6).dropWhile(i -> i > 2).takeWhile(i -> i > 4).toNullableArray(Object.class));
 
     }
 
@@ -155,7 +155,7 @@ class LiraTest {
     @Test
     void nullable() {
 
-        Assertions.assertArrayEquals(new Integer[]{100, 1}, Lira.of(null, 1).nullable(() -> 100).toArray());
+        Assertions.assertArrayEquals(new Integer[]{100, 1}, Lira.of(null, 1).nullable(() -> 100).toArray(Object.class));
         Assertions.assertEquals(1, Lira.of(1, null).size());
 
     }
@@ -300,7 +300,7 @@ class LiraTest {
 
     @Test
     void filter() {
-        Assertions.assertArrayEquals(new Integer[]{1}, Lira.of(null, 1).filter_null().nullable(() -> 100).toArray());
+        Assertions.assertArrayEquals(new Integer[]{1}, Lira.of(null, 1).filter_null().nullable(() -> 100).toArray(Object.class));
 
         Assertions.assertTrue(Lira.of(1, 2, 3).filter(i -> i > 4).absent());
         Assertions.assertSame(2, Lira.of(1, 2, 3).filter(i -> i > 1).size());
@@ -443,22 +443,21 @@ class LiraTest {
 
     @Test
     void toArray() {
-        Assertions.assertThrows(ClassCastException.class, () -> {
-            Number[] numbers = Lira.of((Integer) null).toArray();
-        });
-        Number[] nums = Lira.of(1, 2, 3, 4.0).cast(Integer.class).toArray();
-        Number[] nums2 = Lira.of(1, 2, 3).toArray();
-        Number[] nums3 = Lira.of(1, 2, 3, 4.0).toArray();
+
+
+        Number[] nums = Lira.of(1, 2, 3, 4.0).cast(Integer.class).toArray(Number.class);
+        Number[] nums2 = Lira.of(1, 2, 3).toArray(Number.class);
+        Number[] nums3 = Lira.of(1, 2, 3, 4.0).toArray(Number.class);
         Assertions.assertDoesNotThrow(() -> {
 
             Number[] nums4 = Lira.of(1, 2, 3, 4.0).cast(Integer.class).toArray(Integer.class);
             Number[] nums5 = Lira.of(1, 2, 3).toArray(int.class);
-            Number[] nums6 = Lira.of(1, 2, 3, 4.0).toArray();
+            Number[] nums6 = Lira.of(1, 2, 3, 4.0).toArray(Number.class);
         });
 
         Integer[] nums7 = Lira.of(1, 2, 3).toArray(Integer.class);
         Assertions.assertSame(Integer[].class, nums7.getClass());
-        Assertions.assertEquals(4, Lira.of(1, 2, 3, null).toNullableArray().length);
+        Assertions.assertEquals(4, Lira.of(1, 2, 3, null).toNullableArray(Integer.class).length);
         Integer[] integers = Lira.of(1, 2, 3, null).toNullableArray(int.class);
         Assertions.assertEquals(4, integers.length);
         Assertions.assertEquals(integers.getClass(), Integer[].class);
@@ -488,12 +487,12 @@ class LiraTest {
 
         Assertions.assertNull(Lira.of(null, 2, 1, 2).distinct().nullableIterator().next());
         Assertions.assertArrayEquals(new Integer[]{100, 1, 2},
-                Lira.of(null, null, 1, 2).distinct().nullable(() -> 100).toArray());
-        Assertions.assertArrayEquals(new Integer[]{1, 2}, Lira.of(1, 2, 1, 2).distinct().toArray());
+                Lira.of(null, null, 1, 2).distinct().nullable(() -> 100).toArray(Integer.class));
+        Assertions.assertArrayEquals(new Integer[]{1, 2}, Lira.of(1, 2, 1, 2).distinct().toArray(Integer.class));
 
 
         Assertions.assertArrayEquals(new Integer[]{0, 1, 2},
-                Lira.of(1, 2, 3, 4, 1).distinct().map(i -> i / 2).distinct().toArray());
+                Lira.of(1, 2, 3, 4, 1).distinct().map(i -> i / 2).distinct().toArray(Integer.class));
 
         Assertions.assertEquals(1, Lira.of(1, 2, 3, 4, 1).distinct((left, right) -> left - right < 2).first().get());
     }

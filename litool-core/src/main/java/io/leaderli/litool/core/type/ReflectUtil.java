@@ -546,7 +546,7 @@ public class ReflectUtil {
 
         LiAssertUtil.assertTrue(_interface.isInterface() && _interface.getInterfaces().length == 0, "only support interface and without super class");
         final Map<Method, Method> delegateMethods = new HashMap<>();
-        Method[] methods = ReflectUtil.getMethods(_interface).toArray();
+        Method[] methods = ReflectUtil.getMethods(_interface).toArray(Method.class);
         LiAssertUtil.assertTrue(methods.length == 1, "only support one method interface");
 
         Method origin = methods[0];

@@ -33,6 +33,9 @@ class IterableItrTest {
         obj = Arrays.asList(1, 1);
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
+        obj = Collections.emptyList();
+        Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
+
         obj = Stream.of(1, 1);
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
         obj = enumeration();

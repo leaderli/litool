@@ -4,6 +4,8 @@ import io.leaderli.litool.core.type.ClassUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -122,13 +124,37 @@ class ArrayUtilsTest {
     void add() {
 
         Object[] add = ClassUtil.newWrapperArray(Object.class, 0);
-        Object[] append = ArrayUtils.add(null, add);
+        Object[] append = ArrayUtils.append(null, add);
         assertNotSame(add, append);
         assertArrayEquals(add, append);
 
-        Object[] newAppend = ArrayUtils.add(append, (Object[]) null);
+        Object[] newAppend = ArrayUtils.append(append, (Object[]) null);
         assertNotSame(newAppend, append);
         assertArrayEquals(newAppend, append);
+
+        Integer[] array1 = {1, 2, 3};
+        Integer[] array2 = {4, 5, 6};
+        Integer[] expected = {1, 2, 3, 4, 5, 6};
+        assertArrayEquals(expected, ArrayUtils.append(array1, array2));
+
+        Integer[] array3 = {};
+        Integer[] array4 = {1, 2, 3};
+        Integer[] expected2 = {1, 2, 3};
+        assertArrayEquals(expected2, ArrayUtils.append(array3, array4));
+
+        Integer[] array5 = {1};
+        Integer[] array6 = {};
+        Integer[] expected3 = {1};
+        assertArrayEquals(expected3, ArrayUtils.append(array5, array6));
+
+        String[] array7 = {"a", "b", "c"};
+        String[] array8 = {"d", "e", "f"};
+        String[] expected4 = {"a", "b", "c", "d", "e", "f"};
+        assertArrayEquals(expected4, ArrayUtils.append(array7, array8));
+
+        List<?>[] lists = new List[0];
+        assertEquals(2, ArrayUtils.append(lists, Arrays.asList(1, 2), Arrays.asList("a", "b")).length);
+
     }
 
     @Test
@@ -150,7 +176,7 @@ class ArrayUtilsTest {
     @Test
     void insert() {
 
-        assertEquals("[1]", Arrays.toString(ArrayUtils.add(null, 1)));
+        assertEquals("[1]", Arrays.toString(ArrayUtils.append(null, 1)));
         assertEquals("[1]", Arrays.toString(ArrayUtils.insert(null, 1, 1)));
         assertEquals("[1]", Arrays.toString(ArrayUtils.insert(new Integer[]{1}, 1)));
         assertEquals(0, ArrayUtils.insert(null, 1).length);
@@ -161,6 +187,35 @@ class ArrayUtilsTest {
         assertEquals("[1, 2, 4, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, -1, 4)));
         assertEquals("[4, 1, 2, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, -3, 4)));
         assertEquals("[4, 1, 2, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, -4, 4)));
+
+
+        Integer[] array1 = {1, 3, 4};
+        Integer[] expected1 = {1, 2, 3, 4};
+        assertArrayEquals(expected1, ArrayUtils.insert(array1, 1, 2));
+
+        Integer[] array2 = {1, 2, 3};
+        Integer[] expected2 = {1, 2, 3, 4};
+        assertArrayEquals(expected2, ArrayUtils.insert(array2, 3, 4));
+
+        Integer[] array3 = {1, 2, 3};
+        Integer[] expected3 = {1, 2, 4, 3};
+        assertArrayEquals(expected3, ArrayUtils.insert(array3, -1, 4));
+
+        Integer[] array4 = {};
+        Integer[] expected4 = {1, 2, 3};
+        assertArrayEquals(expected4, ArrayUtils.insert(array4, 0, 1, 2, 3));
+
+        Integer[] array5 = {1, 2, 3};
+        Integer[] expected5 = {1, 2, 3};
+        assertArrayEquals(expected5, ArrayUtils.insert(array5, 3));
+
+        Integer[] array6 = {1, 2, 3};
+        Integer[] expected6 = {1, 2, 3};
+        assertArrayEquals(expected6, ArrayUtils.insert(array6, 0));
+
+        Integer[] array7 = null;
+        Integer[] expected7 = {1, 2, 3};
+        assertArrayEquals(expected7, ArrayUtils.insert(array7, 0, 1, 2, 3));
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -204,6 +259,31 @@ class ArrayUtilsTest {
         assertArrayEquals(new Integer[]{1, 2, 3, 4, 5}, sub4);
         assertArrayEquals(new Integer[]{}, sub5);
         assertArrayEquals(new Integer[]{}, sub6);
+
+    }
+
+    @Test
+    void of() {
+        Integer[] integers = {1, 2, 3};
+        Integer[] expectedIntegers = {1, 2, 3};
+        assertArrayEquals(expectedIntegers, ArrayUtils.of(integers));
+
+        String[] strings = {"a", "b", "c"};
+        String[] expectedStrings = {"a", "b", "c"};
+        assertArrayEquals(expectedStrings, ArrayUtils.of(strings));
+
+        Integer[] emptyIntegers = {};
+        Integer[] expectedEmptyIntegers = {};
+        assertArrayEquals(expectedEmptyIntegers, ArrayUtils.of(emptyIntegers));
+
+        String[] emptyStrings = {};
+        String[] expectedEmptyStrings = {};
+        assertArrayEquals(expectedEmptyStrings, ArrayUtils.of(emptyStrings));
+
+        int[] primitiveInts = {1, 2, 3};
+        Integer[] expectedWrapperIntegers = {1, 2, 3};
+        assertArrayEquals(expectedWrapperIntegers, ArrayUtils.of(1, 2, 3));
+
 
     }
 
@@ -275,30 +355,41 @@ class ArrayUtilsTest {
     void testToString() {
 
         assertEquals("null", ArrayUtils.toString(null));
+        assertEquals("1", ArrayUtils.toString(1));
         assertEquals("[]", ArrayUtils.toString(new Object[]{}));
         assertEquals("[1, 2]", ArrayUtils.toString(new int[]{1, 2}));
         assertEquals("[[1, 2]]", ArrayUtils.toString(new int[][]{{1, 2}}));
+        assertEquals("[[1, 2], 3]", ArrayUtils.toString(new Object[]{new Object[]{1, 2}, 3}));
+
+    }
+
+    @Test
+    void toArrayWithCommonSuperType() {
+
+        assertArrayEquals(new Object[]{null, null}, ArrayUtils.toArrayWithCommonSuperType(null, null));
+        assertSame(ArrayUtils.toArrayWithCommonSuperType(1, 1.0).getClass(), Number[].class);
+
+        Integer[][] lists = ArrayUtils.toArrayWithCommonSuperType(new Integer[]{1, 2}, new Integer[]{3, 4});
+        assertArrayEquals(new Integer[][]{new Integer[]{1, 2}, new Integer[]{3, 4}}, lists);
+        assertArrayEquals(new Object[]{}, ArrayUtils.toArrayWithCommonSuperType());
+
 
     }
 
     @Test
     void toArray() {
 
-        assertArrayEquals(new Object[]{null, null}, ArrayUtils.toArray(null, null));
-        Number[] objects = ArrayUtils.toArray(1, 1.0);
-
-        Integer[] actual = ArrayUtils.toArray(Arrays.asList(1, 2).iterator());
+        Integer[] actual = ArrayUtils.toArray(Integer.class, Arrays.asList(1, 2).iterator());
         assertArrayEquals(new Integer[]{1, 2}, actual);
 
-        actual = ArrayUtils.toArray(Stream.of(1, 2));
+        actual = ArrayUtils.toArray(Integer.class, Stream.of(1, 2));
         assertArrayEquals(new Integer[]{1, 2}, actual);
 
-        actual = ArrayUtils.toArray(Arrays.asList(1, 2));
+        actual = ArrayUtils.toArray(Integer.class, Arrays.asList(1, 2));
         assertArrayEquals(new Integer[]{1, 2}, actual);
 
-        Integer[][] lists = ArrayUtils.toArray(new Integer[]{1, 2}, new Integer[]{3, 4});
-        assertArrayEquals(new Integer[][]{new Integer[]{1, 2}, new Integer[]{3, 4}}, lists);
-
-
+        List<Integer> iterable = Collections.emptyList();
+        actual = ArrayUtils.toArray(Integer.class, iterable);
+        assertArrayEquals(new Integer[]{}, actual);
     }
 }
