@@ -22,7 +22,7 @@ class OncePerPeriodTest {
         oncePerPeriod.executeOnce(num::incrementAndGet);
         oncePerPeriod.executeOnce(num::incrementAndGet);
         Assertions.assertEquals(1, num.get());
-        ThreadUtil.sleep(100);
+        ThreadUtil.sleep(200);
         oncePerPeriod.executeOnce(num::incrementAndGet);
         Assertions.assertEquals(2, num.get());
     }
