@@ -20,4 +20,6 @@ public class IntGenerator implements Generator<Integer> {
     public String name() {
         return "IntGenerator";
     }
+
+
 }

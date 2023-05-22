@@ -36,27 +36,27 @@ public class CollectionUtils {
 
 
     /**
-     * Return a new empty ArrayList
+     * 返回一个新的空 {@link ArrayList}
      *
-     * @param <T> the type of elements in this list
-     * @return a new empty ArrayList
+     * @param <T> 列表中元素的类型
+     * @return 一个新的空 {@link ArrayList}
      */
-    public static <T> List<T> emptyList() {
+    public static <T> ArrayList<T> emptyList() {
 
         return new ArrayList<>();
     }
 
     /**
-     * Of list.
+     * 将指定元素转换为 {@link ArrayList}
      *
-     * @param <T>      the type parameter
-     * @param elements the elements
-     * @return the list
+     * @param <T>      列表中元素的类型
+     * @param elements 待转换的元素
+     * @return 转换后的 {@link ArrayList}
      */
     @SafeVarargs
-    public static <T> List<T> ofs(T... elements) {
+    public static <T> ArrayList<T> ofs(T... elements) {
 
-        List<T> arrayList = new ArrayList<>();
+        ArrayList<T> arrayList = new ArrayList<>();
         Collections.addAll(arrayList, elements);
         return arrayList;
     }
@@ -74,10 +74,6 @@ public class CollectionUtils {
         return list;
     }
 
-    public static <T> void forEach(Iterator<T> iterator, Consumer<T> consumer) {
-        iterator.forEachRemaining(consumer);
-    }
-
     /**
      * Of list.
      *
@@ -89,6 +85,11 @@ public class CollectionUtils {
         List<T> list = new ArrayList<>();
         forEach(iterable, list::add);
         return list;
+    }
+
+
+    public static <T> void forEach(Iterator<T> iterator, Consumer<T> consumer) {
+        iterator.forEachRemaining(consumer);
     }
 
     public static <T> void forEach(Iterable<T> iterable, Consumer<T> consumer) {

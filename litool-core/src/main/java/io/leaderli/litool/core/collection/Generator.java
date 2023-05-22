@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.collection;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -22,5 +23,10 @@ public interface Generator<T> extends IterableItr<T> {
     @Override
     default String name() {
         return "Generator";
+    }
+
+    @Override
+    default ArrayList<T> toList() {
+        throw new UnsupportedOperationException("generator is infinity");
     }
 }

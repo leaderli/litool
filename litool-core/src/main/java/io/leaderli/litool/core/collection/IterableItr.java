@@ -207,6 +207,8 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
         return IterableItr.fromIterator(iterator());
     }
 
+    ArrayList<T> toList();
+
     /**
      * ArrayItr 是一个将数组转化为 IterableItr 的实现类。
      *
@@ -261,6 +263,13 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
         @Override
         public String name() {
             return "ArrayItr";
+        }
+
+        @Override
+        public ArrayList<T> toList() {
+            ArrayList<T> list = new ArrayList<>();
+            Collections.addAll(list, arr);
+            return list;
         }
     }
 
@@ -323,6 +332,11 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
         @Override
         public String name() {
             return "NoneItr";
+        }
+
+        @Override
+        public ArrayList<T> toList() {
+            return new ArrayList<>();
         }
     }
 

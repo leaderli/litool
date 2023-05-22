@@ -199,4 +199,12 @@ class IterableItrTest {
         Assertions.assertTrue(IterableItr.of(Collections.emptyList()).absent());
         Assertions.assertTrue(IterableItr.of(Collections.singletonList(1)).present());
     }
+
+    @Test
+    void toList() {
+
+        Assertions.assertTrue(IterableItr.of(null).toList().isEmpty());
+        Assertions.assertFalse(IterableItr.fromArray(1, 2).toList().isEmpty());
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> IterableItr.fromGenerator(new IntGenerator()).toList());
+    }
 }
