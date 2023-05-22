@@ -128,10 +128,6 @@ class CollectionUtilsTest {
         List<Integer> of = CollectionUtils.ofs(1);
         Assertions.assertSame(1, of.size());
 
-        Assertions.assertNotSame(of, CollectionUtils.of(of));
-        Assertions.assertNotSame(of, CollectionUtils.of(of.iterator()));
-        Assertions.assertEquals(of, CollectionUtils.of(of));
-        Assertions.assertEquals(of, CollectionUtils.of(of.iterator()));
 
     }
 

@@ -9,7 +9,6 @@ import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Consumer;
 
 /**
  * <p>  操作集合的工具类
@@ -61,46 +60,6 @@ public class CollectionUtils {
         return arrayList;
     }
 
-    /**
-     * Of list.
-     *
-     * @param <T>      the type parameter
-     * @param iterator the iterator
-     * @return the list
-     */
-    public static <T> List<T> of(Iterator<T> iterator) {
-        List<T> list = new ArrayList<>();
-        forEach(iterator, list::add);
-        return list;
-    }
-
-    /**
-     * Of list.
-     *
-     * @param <T>      the type parameter
-     * @param iterable the iterable
-     * @return the list
-     */
-    public static <T> List<T> of(Iterable<T> iterable) {
-        List<T> list = new ArrayList<>();
-        forEach(iterable, list::add);
-        return list;
-    }
-
-
-    public static <T> void forEach(Iterator<T> iterator, Consumer<T> consumer) {
-        iterator.forEachRemaining(consumer);
-    }
-
-    public static <T> void forEach(Iterable<T> iterable, Consumer<T> consumer) {
-        iterable.forEach(consumer);
-    }
-
-    public static <T> void forEach(Enumeration<T> enumeration, Consumer<T> consumer) {
-        while (enumeration.hasMoreElements()) {
-            consumer.accept(enumeration.nextElement());
-        }
-    }
 
     /**
      * Return Cartesian Product, return {new Object[0][]} if

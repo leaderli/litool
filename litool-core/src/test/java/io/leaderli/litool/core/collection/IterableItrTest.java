@@ -206,5 +206,13 @@ class IterableItrTest {
         Assertions.assertTrue(IterableItr.of(null).toList().isEmpty());
         Assertions.assertFalse(IterableItr.fromArray(1, 2).toList().isEmpty());
         Assertions.assertThrows(UnsupportedOperationException.class, () -> IterableItr.fromGenerator(new IntGenerator()).toList());
+
+        List<Integer> of = CollectionUtils.ofs(1);
+
+        Assertions.assertNotSame(of, IterableItr.of(of).toList());
+        Assertions.assertNotSame(of, IterableItr.of(of.iterator()).toList());
+        Assertions.assertEquals(of, IterableItr.of(of).toList());
+        Assertions.assertEquals(of, IterableItr.of(of.iterator()).toList());
+
     }
 }
