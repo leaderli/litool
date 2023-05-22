@@ -46,7 +46,7 @@ class InputStreamCompletableFutureTest {
         while (!fu.isDone()) {
 
             fu.get(10, TimeUnit.MILLISECONDS);
-            if (RandomUtil.shunt(5)) {
+            if (RandomUtil.probability(5)) {
                 fu.cancel(true);
             }
         }

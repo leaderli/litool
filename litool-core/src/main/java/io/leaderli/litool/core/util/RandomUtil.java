@@ -95,11 +95,11 @@ public class RandomUtil {
     }
 
     /**
-     * @param hit probability hit
-     * @return 1/hit probability hit
+     * @param trialCount probability trialCount
+     * @return 1/trialCount probability hit
      */
-    public static boolean shunt(int hit) {
-        return nextInt(hit) == 0;
+    public static boolean probability(int trialCount) {
+        return nextInt(trialCount) == 0;
     }
 
     /**
@@ -110,7 +110,8 @@ public class RandomUtil {
      */
     public static void randomRun(int randomInterval, Runnable runnable) {
 
-        if (nextInt(randomInterval) == 0) {
+        if (probability(randomInterval)) {
+
             runnable.run();
         }
     }
@@ -124,7 +125,7 @@ public class RandomUtil {
      */
     public static <T> Lino<T> randomGet(int randomInterval, Supplier<T> supplier) {
 
-        if (nextInt(randomInterval) == 0) {
+        if (probability(randomInterval)) {
             return Lino.supplier(supplier);
         }
         return Lino.none();
