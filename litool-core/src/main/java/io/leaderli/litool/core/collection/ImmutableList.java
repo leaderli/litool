@@ -128,13 +128,13 @@ public class ImmutableList<T> implements Iterable<T> {
 
     /**
      * Return the  {@link IterableItr.ArrayItr} if not {@link  #isEmpty()}
-     * otherwise return {@link  NoneItr}
+     * otherwise return {@link  IterableItr.NoneItr}
      *
      * @return a  iterator
      */
     @Override
     public Iterator<T> iterator() {
-        return IterableItr.ofs(elements);
+        return IterableItr.fromArray(elements);
     }
 
     /**

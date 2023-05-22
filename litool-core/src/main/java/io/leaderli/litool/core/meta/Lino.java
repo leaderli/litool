@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.IterableItr;
-import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
@@ -704,11 +703,8 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         public Lira<Object> toLira() {
 
             IterableItr<Object> iterable = IterableItr.of(this.value);
-            if (!NoneItr.same(iterable)) {
                 return Lira.of(iterable);
-            }
 
-            return Lira.of(this.value);
         }
 
 

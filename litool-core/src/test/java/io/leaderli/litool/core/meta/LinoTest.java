@@ -255,12 +255,15 @@ class LinoTest {
 
 
         String[] value = {"1", "2"};
+
+        Assertions.assertTrue(Lino.of(1).toLira().absent());
+        Assertions.assertEquals("1", Lino.of(value).toLira().first().get());
         Assertions.assertEquals("1", Lino.of(value).toLira(CharSequence.class).get().get(0));
 
 
         Assertions.assertSame(Lino.of(null).toLira(Object.class), Lira.none());
 
-        Assertions.assertEquals(Lira.of(1).get(), Lino.of(1).toLira(Integer.class).get());
+        Assertions.assertEquals(Lira.of().get(), Lino.of(1).toLira(Integer.class).get());
 
 
 //
@@ -273,7 +276,6 @@ class LinoTest {
 
 
         Assertions.assertEquals(1, Lino.of(new int[]{1, 2}).toLira(Object.class).get().get(0));
-        Assertions.assertEquals(1, Lino.of(1).toLira(Object.class).get().get(0));
 
 
     }

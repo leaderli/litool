@@ -1047,46 +1047,6 @@ public class ArrayUtils {
 
     }
 
-
-    /**
-     * 将可迭代对象提供的元素转换为类型为{@code T}的数组。
-     *
-     * @param <T>           可迭代对象提供的元素类型
-     * @param componentType 数组的类型
-     * @param iterable      可迭代对象
-     * @return 类型为{@code T}的数组，其中包含可迭代对象提供的元素
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T[] toArray(Class<? extends T> componentType, Iterable<T> iterable) {
-        List<T> list = new ArrayList<>();
-        iterable.forEach(list::add);
-        T[] array = (T[]) Array.newInstance(componentType, list.size());
-        for (int i = 0; i < list.size(); i++) {
-            array[i] = list.get(i);
-        }
-
-        return array;
-    }
-
-
-//    /**
-//     * 遍历源数组的所有元素，找到它们的公共超类，并将其作为新数组的类型。
-//     *
-//     * @param src 源数组
-//     * @param <T> 数组的元素类型
-//     * @return 新数组，其组件类型为T
-//     * @throws ClassCastException 如果源数组的长度为0或元素不是T的子类
-//     * @see ClassUtil#getRecentlyInheritance(Object[])
-//     */
-//    @SuppressWarnings("unchecked")
-//    public static <T> T[] toArrayWithCommonSuperType(T... src) {
-//        Class<?> commonSuperType = ClassUtil.getRecentlyInheritance(src);
-//
-//        T[] des = (T[]) ClassUtil.newWrapperArray(commonSuperType, src.length);
-//        System.arraycopy(src, 0, des, 0, src.length);
-//        return des;
-//    }
-
     /**
      * 将可变参数转换为数组
      *
@@ -1103,11 +1063,33 @@ public class ArrayUtils {
     }
 
     /**
-     * Returns an array over the elements that stream provide of type {@code T}.
+     * 将 {@link  Iterable} 可提供的元素转换为类型为{@code T}的数组。
      *
-     * @param stream an stream
-     * @param <T>    the type of elements that stream provide
-     * @return Returns an array over the elements that stream provide of type {@code T}.
+     * @param <T>           可迭代对象提供的元素类型
+     * @param componentType 数组的类型
+     * @param iterable      迭代对象
+     * @return 类型为{@code T}的数组，其中包含{@link  Iterator} 提供的元素
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] toArray(Class<? extends T> componentType, Iterable<T> iterable) {
+        List<T> list = new ArrayList<>();
+        iterable.forEach(list::add);
+        T[] array = (T[]) Array.newInstance(componentType, list.size());
+        for (int i = 0; i < list.size(); i++) {
+            array[i] = list.get(i);
+        }
+
+        return array;
+    }
+
+
+    /**
+     * 将 {@link  Stream} 可提供的元素转换为类型为{@code T}的数组。
+     *
+     * @param <T>           可迭代对象提供的元素类型
+     * @param componentType 数组的类型
+     * @param stream        流对象
+     * @return 类型为{@code T}的数组，其中包含{@link  Stream} 提供的元素
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Class<? extends T> componentType, Stream<T> stream) {
@@ -1116,11 +1098,12 @@ public class ArrayUtils {
     }
 
     /**
-     * Returns an array over the elements that iterator provide of type {@code T}.
+     * 将 {@link  Iterator} 可提供的元素转换为类型为{@code T}的数组。
      *
-     * @param iterator an iterator
-     * @param <T>      the type of elements that iterator provide
-     * @return Returns an array over the elements that iterator provide of type {@code T}.
+     * @param <T>           可迭代对象提供的元素类型
+     * @param componentType 数组的类型
+     * @param iterator      迭代
+     * @return 类型为{@code T}的数组，其中包含{@link  Iterator} 提供的元素
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Class<? extends T> componentType, Iterator<T> iterator) {
@@ -1130,11 +1113,12 @@ public class ArrayUtils {
     }
 
     /**
-     * Returns an array over the elements that enumeration provide of type {@code T}.
+     * 将 {@link  Enumeration} 可提供的元素转换为类型为{@code T}的数组。
      *
-     * @param enumeration an enumeration
-     * @param <T>         the type of elements that enumeration provide
-     * @return Returns an array over the elements that enumeration provide of type {@code T}.
+     * @param <T>           可迭代对象提供的元素类型
+     * @param componentType 数组的类型
+     * @param enumeration   迭代
+     * @return 类型为{@code T}的数组，其中包含{@link  Enumeration} 提供的元素
      */
 
     @SuppressWarnings("unchecked")

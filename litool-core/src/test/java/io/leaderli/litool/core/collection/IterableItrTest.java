@@ -20,21 +20,22 @@ class IterableItrTest {
 
         // obj
 
-        Object obj = null;
-        Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
+        Object obj;
+        Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.of(null).getClass());
 
-        obj = NoneItr.of();
-        Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
+        obj = IterableItr.NoneItr.of();
+        Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.of(obj).getClass());
 
-        obj = IterableItr.ofs(1, 2);
+        obj = Collections.emptyList();
+        Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.of(obj).getClass());
+
+        obj = IterableItr.fromArray(1, 2);
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
 
         obj = Arrays.asList(1, 1);
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
-        obj = Collections.emptyList();
-        Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
 
         obj = Stream.of(1, 1);
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
@@ -45,13 +46,13 @@ class IterableItrTest {
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
         obj = 1;
-        Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.of(obj).getClass());
 
         IterableItr<String> of = IterableItr.of(1);
 
 
         obj = new HashMap<>();
-        Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.of(obj).getClass());
         ((HashMap<String, String>) obj).put("1", "1");
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
@@ -59,8 +60,6 @@ class IterableItrTest {
         obj = Generators.range();
         Assertions.assertSame(IntGenerator.class, IterableItr.of(obj).getClass());
 
-        obj = (Iterable<Integer>) () -> (Generator<Integer>) () -> 0;
-        Assertions.assertInstanceOf(Generator.class, IterableItr.of(obj));
 
         Object temp = obj;
         Assertions.assertThrows(ClassCastException.class, () -> {
@@ -69,39 +68,42 @@ class IterableItrTest {
         });
 
 
-        // EnumerationItr
-        Assertions.assertSame(IterableItr.of(null), NoneItr.of());
-        Assertions.assertTrue(IterableItr.of(enumeration()).hasNext());
+        // enumeration
+        Assertions.assertSame(IterableItr.of(null), IterableItr.NoneItr.of());
+        Assertions.assertTrue(IterableItr.fromEnumeration(enumeration()).hasNext());
+
+
+        Enumeration<Integer> enumeration = IterableItr.fromArray(1, 2, 3);
+        Assertions.assertNotNull(enumeration.nextElement());
+        Assertions.assertNotNull(enumeration.nextElement());
+        Assertions.assertNotNull(enumeration.nextElement());
+        Assertions.assertFalse(enumeration.hasMoreElements());
 
         // ArrayItr
 
-        IterableItr<?> arrItr = IterableItr.ofs((Object[]) null);
-        Assertions.assertSame(NoneItr.of(), arrItr);
-        arrItr = IterableItr.ofs();
-        Assertions.assertSame(NoneItr.of(), arrItr);
+        IterableItr<?> arrItr = IterableItr.fromArray((Object[]) null);
+        Assertions.assertSame(IterableItr.NoneItr.of(), arrItr);
+        arrItr = IterableItr.fromArray();
+        Assertions.assertSame(IterableItr.NoneItr.of(), arrItr);
 
-        arrItr = IterableItr.ofs((Object) null);
+        arrItr = IterableItr.fromArray((Object) null);
         Assertions.assertNull(arrItr.next());
         Assertions.assertSame(ArrayItr.class, arrItr.getClass());
 
         Object[] elements = {};
-        Assertions.assertSame(IterableItr.ofs(elements), NoneItr.of());
+        Assertions.assertSame(IterableItr.fromArray(elements), IterableItr.NoneItr.of());
 
-        Assertions.assertTrue(IterableItr.of(new IteratorEnumeration(Arrays.asList(1, 2, 3).iterator())).hasNext());
+        // Stream
+
+        Assertions.assertEquals(1, IterableItr.fromStream(Stream.of(1, 2)).next());
 
     }
 
-    Enumeration<Integer> enumeration() {
-
-        Vector<Integer> vector = new Vector<>(1);
-        vector.add(1);
-        return vector.elements();
-    }
 
     @Test
     void hasNext() {
         // ArrayItr
-        IterableItr<Integer> arrItr = IterableItr.ofs(1, 2);
+        IterableItr<Integer> arrItr = IterableItr.fromArray(1, 2);
         Assertions.assertTrue(arrItr.hasNext());
         arrItr.forEachRemaining(s -> {
 
@@ -109,10 +111,10 @@ class IterableItrTest {
         Assertions.assertFalse(arrItr.hasNext());
 
         // NoneItr
-        Assertions.assertFalse(NoneItr.of().hasNext());
+        Assertions.assertFalse(IterableItr.NoneItr.of().hasNext());
 
         // EnumerationItr
-        IterableItr<Integer> enumerationItr = IterableItr.of(enumeration());
+        IterableItr<Integer> enumerationItr = IterableItr.fromEnumeration(enumeration());
         Assertions.assertTrue(enumerationItr.hasNext());
         enumerationItr.next();
         Assertions.assertFalse(enumerationItr.hasNext());
@@ -122,7 +124,7 @@ class IterableItrTest {
     void next() {
 
         // arrItr
-        IterableItr<?> arrItr = IterableItr.ofs(1, 2, 3);
+        IterableItr<?> arrItr = IterableItr.fromArray(1, 2, 3);
 
         Assertions.assertEquals(1, arrItr.next());
         Assertions.assertEquals(2, arrItr.next());
@@ -133,7 +135,7 @@ class IterableItrTest {
 
 
         // EnumerationItr
-        IterableItr<Integer> enumerationItr = IterableItr.of(enumeration());
+        IterableItr<Integer> enumerationItr = IterableItr.fromEnumeration(enumeration());
         enumerationItr.next();
         Assertions.assertThrows(NoSuchElementException.class, enumerationItr::next);
 
@@ -141,67 +143,52 @@ class IterableItrTest {
 
     @Test
     void remove() {
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> IterableItr.ofs(1).remove());
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> IterableItr.fromArray(1).remove());
     }
 
     @Test
     void iterator() {
 
-        Assertions.assertSame(NoneItr.of(), NoneItr.of().iterator());
 
-        IterableItr<Integer> ofs = IterableItr.ofs(1);
+        IterableItr<Integer> ofs = IterableItr.fromArray(1);
+
+
+        Assertions.assertEquals(ofs, ofs.iterator());
+        Assertions.assertEquals(ofs, ofs.iterable());
+        Assertions.assertEquals(ofs, ofs.enumeration());
+
+        Assertions.assertNotSame(ofs, ofs.iterator());
+        Assertions.assertNotSame(ofs, ofs.iterable());
+        Assertions.assertNotSame(ofs, ofs.enumeration());
+
+        Assertions.assertSame(IterableItr.NoneItr.of(), IterableItr.NoneItr.of().iterator());
+
         Iterator<Integer> iterator = ofs.iterator();
         iterator.next();
-
         iterator = ofs.iterator();
         Assertions.assertTrue(iterator.hasNext());
 
-
-        ofs = IterableItr.of(ofs);
-        iterator.next();
-        iterator = ofs.iterator();
-        Assertions.assertTrue(iterator.hasNext());
-        iterator.next();
-        Assertions.assertFalse(iterator.hasNext());
 
     }
 
     @Test
     void hasMoreElements() {
-        Assertions.assertFalse(NoneItr.of().hasMoreElements());
+        Assertions.assertFalse(IterableItr.NoneItr.of().hasMoreElements());
+        Assertions.assertTrue(IterableItr.fromArray(1).hasMoreElements());
     }
 
     @Test
     void nextElement() {
-        Assertions.assertThrows(NoSuchElementException.class, () -> NoneItr.of().nextElement());
+        Assertions.assertThrows(NoSuchElementException.class, () -> IterableItr.NoneItr.of().nextElement());
+        Assertions.assertEquals(1, IterableItr.fromArray(1).nextElement());
     }
 
-    private static class IteratorEnumeration implements Iterator<Integer>, Enumeration<Integer> {
+    private Enumeration<Integer> enumeration() {
 
-        final Iterator<Integer> iterator;
-
-        private IteratorEnumeration(Iterator<Integer> iterator) {
-            this.iterator = iterator;
-        }
-
-        @Override
-        public boolean hasMoreElements() {
-            return hasNext();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
-
-        @Override
-        public Integer next() {
-            return iterator.next();
-        }
-
-        @Override
-        public Integer nextElement() {
-            return next();
-        }
+        Vector<Integer> vector = new Vector<>(1);
+        vector.add(1);
+        return vector.elements();
     }
+
+
 }

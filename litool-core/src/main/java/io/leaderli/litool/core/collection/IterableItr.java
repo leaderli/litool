@@ -4,33 +4,34 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * Provides a synthetic interface with both {@link Iterable} and {@link Iterator}
+ * IterableItr 是一个综合了 {@link Iterable}、{@link Iterator} 以及 {@link Enumeration} 接口的综合型接口。
  *
- * @param <T> the type of elements returned by the iterator
+ * @param <T> 迭代器中元素的类型
  */
-public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
+public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T> {
 
 
     /**
      * make obj behave like {@link  IterableItr}, only support :
+     * 将一个对象转换为 IterableItr。支持以下对象的转换，按照列出的顺序依次判断
      * <ul>
+     *     <li>{@code null}</li>
+     *     <li>{@link  Generator}</li>
      *     <li>{@link  IterableItr} </li>
      *     <li>{@link  Iterator}</li>
      *     <li>{@link  Iterable}</li>
      *     <li>{@link  Enumeration}</li>
-     *     <li>{@link  Map}</li>
      *     <li>{@link  Stream}</li>
-     *     <li>{@link  Generator}</li>
-     *     <li>Array</li>
+     *     <li>{@link  Map}</li>
+     *     <li>{@code Array}</li>
      * </ul>
      * <p>
-     * otherwise will return {@link  NoneItr}
+     * 如果无法转换为 IterableItr，则返回 {@link NoneItr} 。
      * <p>
-     * Most obj will convert to an new {@link  ArrayItr}, except {@link  Generator},
-     * because generator is infinite, it only return it self.
+     * 大多数对象将会被转换为 {@link ArrayItr} 对象，除了 {@link Generator} 对象，因为它是无穷的，只能返回它本身。
      *
      * @param obj a obj
-     * @param <T> the type of elements {@link  IterableItr} provide
+     * @param <T> IterableItr 迭续器中元素的类型
      * @return a {@link  IterableItr}
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -38,38 +39,41 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
         if (obj == null) {
             return NoneItr.of();
         }
+
         if (obj instanceof Generator) {
-            return (IterableItr<T>) obj;
+            return fromGenerator((Generator<T>) obj);
         }
-        if (obj instanceof IterableItr) {
-            return ofs(ArrayUtils.toArray(Object.class, ((IterableItr) obj).iterator()));
+        if (obj instanceof NoneItr) {
+            return NoneItr.of();
+        }
+        if (obj instanceof ArrayItr) {
+            return new ArrayItr<>((T[]) ((ArrayItr) obj).arr);
         }
         if (obj instanceof Iterator) {
-            return ofs(ArrayUtils.toArray(Object.class, (Iterator) obj));
+            return fromIterator((Iterator<T>) obj);
+
         }
         if (obj instanceof Iterable) {
-            Iterator<?> iterator = ((Iterable<?>) obj).iterator();
-            if (iterator instanceof Generator) {
-                return (Generator<T>) iterator;
-            }
-            return ofs(ArrayUtils.toArray(Object.class, (Iterator) iterator));
+
+            return fromIterable((Iterable<T>) obj);
+
         }
         if (obj instanceof Enumeration) {
-            return ofs(ArrayUtils.toArray(Object.class, (Enumeration) obj));
+            return fromEnumeration((Enumeration) obj);
         }
         if (obj instanceof Stream) {
-            return ofs(ArrayUtils.toArray(Object.class, (Stream) obj));
+            return fromStream((Stream) obj);
         }
 
         if (obj instanceof Map) {
 
             Iterable entries = ((Map<?, ?>) obj).entrySet();
-            return ofs((T[]) ArrayUtils.toArray(Object.class, entries));
+            return fromArray((T[]) ArrayUtils.toArray(Object.class, entries));
         }
 
         if (obj.getClass().isArray()) {
 
-            return ofs(CollectionUtils.toArray(obj));
+            return fromArray(CollectionUtils.toArray(obj));
         }
 
         return NoneItr.of();
@@ -77,29 +81,96 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
     }
 
     /**
-     * Returns an {@link  ArrayItr} over elements of type {@code T}.
-     * null or empty array will always return {@link  NoneItr#of()}
+     * 将 {@link ArrayItr} 对象转换为 {@link IterableItr} 对象。
      *
-     * @param elements an elements
-     * @param <T>      the type of elements
-     * @return Returns an iterator over elements of type {@code T}.
+     * @param iterator 待转换的 {@link ArrayItr} 对象
+     * @param <T>      迭代器中元素的类型
+     * @return 转换后的 {@link IterableItr} 对象
+     */
+    static <T> IterableItr<T> fromArrayItr(ArrayItr<T> iterator) {
+        return new ArrayItr<>(iterator.arr);
+    }
+
+    /**
+     * 将 {@link Generator} 对象转换为 {@link IterableItr} 对象。
+     *
+     * @param generator 待转换的 {@link Generator} 对象
+     * @param <T>       迭代器中元素的类型
+     * @return 转换后的 {@link IterableItr} 对象
+     */
+    static <T> IterableItr<T> fromGenerator(Generator<T> generator) {
+        return generator;
+    }
+
+    /**
+     * 将 {@link Iterator} 对象转换为 {@link IterableItr} 对象。
+     * * @param iterator 待转换的 {@link Iterator} 对象
+     *
+     * @param <T> 迭代器中元素的类型
+     * @return 转换后的 {@link IterableItr} 对象
+     */
+    @SuppressWarnings("unchecked")
+    static <T> IterableItr<T> fromIterator(Iterator<T> iterator) {
+        return fromArray(ArrayUtils.toArray((Class<T>) Object.class, iterator));
+    }
+
+    /**
+     * 将 {@link Iterable} 对象转换为 {@link IterableItr} 对象。
+     *
+     * @param iterable 待转换的 {@link Iterable} 对象
+     * @param <T>      迭代器中元素的类型
+     * @return 转换后的 {@link IterableItr} 对象
+     */
+    @SuppressWarnings("unchecked")
+    static <T> IterableItr<T> fromIterable(Iterable<T> iterable) {
+        return fromArray(ArrayUtils.toArray((Class<T>) Object.class, iterable));
+    }
+
+    /**
+     * 将 {@link Enumeration} 对象转换为 {@link IterableItr} 对象。
+     *
+     * @param enumeration 待转换的 {@link Enumeration} 对象
+     * @param <T>         迭代器中元素的类型
+     * @return 转换后的 {@link IterableItr} 对象
+     */
+    @SuppressWarnings("unchecked")
+    static <T> IterableItr<T> fromEnumeration(Enumeration<T> enumeration) {
+        return fromArray(ArrayUtils.toArray((Class<T>) Object.class, enumeration));
+    }
+
+    /**
+     * 将 {@link Stream} 对象转换为 {@link IterableItr} 对象。
+     *
+     * @param stream 待转换的 {@link Stream} 对象
+     * @param <T>    迭代器中元素的类型
+     * @return 转换后的 {@link IterableItr} 对象
+     */
+    @SuppressWarnings("unchecked")
+    static <T> IterableItr<T> fromStream(Stream<T> stream) {
+        return fromArray(ArrayUtils.toArray((Class<T>) Object.class, stream));
+    }
+
+    /**
+     * 以指定元素构造一个 {@link ArrayItr} 对象。
+     * 如果元素为 null 或长度为 0，则返回 {@link NoneItr#of()}。
+     *
+     * @param elements 待构造的元素
+     * @param <T>      元素的类型
+     * @return 一个包含指定元素的 {@link ArrayItr} 对象
      */
     @SafeVarargs
-    static <T> IterableItr<T> ofs(T... elements) {
+    static <T> IterableItr<T> fromArray(T... elements) {
         if (elements == null || elements.length == 0) {
             return NoneItr.of();
         }
         return new ArrayItr<>(elements);
     }
 
-
     /**
-     * Returns {@code true} if the enumerationItr has more elements.
-     * (In other words, returns {@code true} if {@link #next} would
-     * return an element rather than throwing an exception.)
+     * 判断迭代器中是否还有下一个元素。
      *
-     * @return {@code true} if the enumerationItr has more elements
-     * @see #hasNext()
+     * @return 如果还有下一个元素，则返回 true；否则返回 false。
+     * @see #hasMoreElements()
      */
     default boolean hasMoreElements() {
         return hasNext();
@@ -117,9 +188,23 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
     }
 
     /**
-     * Make arrays behave like  {@link IterableItr}.
+     * @return 一个 {@link Iterable} 对象
+     */
+    default Iterable<T> iterable() {
+        return IterableItr.fromIterator(iterator());
+    }
+
+    /**
+     * @return 一个 {@link Enumeration} 对象
+     */
+    default Enumeration<T> enumeration() {
+        return IterableItr.fromIterator(iterator());
+    }
+
+    /**
+     * ArrayItr 是一个将数组转化为 IterableItr 的实现类。
      *
-     * @param <T> the type of elements returned by the ArrayItr
+     * @param <T> ArrayItr 迭代器中元素的类型
      * @author leaderli
      * @since 2022/7/17
      */
@@ -159,5 +244,72 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T> {
             throw new NoSuchElementException();
         }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof ArrayItr) {
+                return Arrays.equals(arr, ((ArrayItr<?>) obj).arr);
+            }
+            return false;
+        }
     }
+
+    /**
+     * NoneItr 是一个没有元素的 IterableItr 的实现类。
+     *
+     * @param <T> IterableItr 迭代器中元素的类型
+     * @author leaderli
+     * @since 2022/7/18
+     */
+    class NoneItr<T> implements IterableItr<T> {
+        /**
+         * 所有 NoneItr 对象共享同一个实例
+         */
+        private static final NoneItr<?> NONE = new NoneItr<>();
+
+        private NoneItr() {
+
+        }
+
+
+        /**
+         * 判断是否还有下一个元素。
+         *
+         * @return false
+         */
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        /**
+         * 获取下一个元素。
+         *
+         * @return 不返回任何元素，总是抛出 NoSuchElementException 异常
+         * @throws NoSuchElementException always throw
+         */
+        @Override
+        public T next() {
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return this;
+        }
+
+        /**
+         * 返回 {@link  #NONE}
+         *
+         * @param <T> IterableItr 迭代器中元素的类型
+         * @return {@link #NONE}
+         */
+        @SuppressWarnings("unchecked")
+        public static <T> NoneItr<T> of() {
+            return (NoneItr<T>) NONE;
+        }
+
+
+    }
+
+
 }

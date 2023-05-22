@@ -54,7 +54,7 @@ class ImmutableListTest {
 
     @Test
     void iterator() {
-        Assertions.assertSame(NoneItr.of(), ImmutableList.none().iterator());
+        Assertions.assertSame(IterableItr.NoneItr.of(), ImmutableList.none().iterator());
         Assertions.assertSame(IterableItr.ArrayItr.class, ImmutableList.of(1).iterator().getClass());
     }
 
