@@ -103,29 +103,29 @@ public class RandomUtil {
     }
 
     /**
-     * 随机概率运行一次
+     * 随机运行一次
      *
-     * @param randomInterval 随机值
-     * @param runnable       函数
+     * @param hit      随机值
+     * @param runnable 函数
      */
-    public static void randomRun(int randomInterval, Runnable runnable) {
+    public static void randomRun(int hit, Runnable runnable) {
 
-        if (probability(randomInterval)) {
+        if (probability(hit)) {
 
             runnable.run();
         }
     }
 
     /**
-     * 随机概率运行一次
+     * 随机运行一次
      *
-     * @param randomInterval 随机值
-     * @param supplier       提供者函数
+     * @param hit      随机值
+     * @param supplier 提供者函数
      * @return 返回提供者
      */
-    public static <T> Lino<T> randomGet(int randomInterval, Supplier<T> supplier) {
+    public static <T> Lino<T> randomGet(int hit, Supplier<T> supplier) {
 
-        if (probability(randomInterval)) {
+        if (probability(hit)) {
             return Lino.supplier(supplier);
         }
         return Lino.none();

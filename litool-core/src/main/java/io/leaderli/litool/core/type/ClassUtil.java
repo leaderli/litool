@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.type;
 
-import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.io.FileUtil;
@@ -197,82 +196,6 @@ public class ClassUtil {
 
     }
 
-    /**
-     * @param a class a
-     * @param b class b
-     * @return get two class most recent inheritance, if any one is null, return the other
-     */
-    public static Class<?> getRecentlyInheritance(Class<?> a, Class<?> b) {
-
-        if (a == null) {
-            if (b == null) {
-                return Object.class;
-            }
-            return b;
-        }
-        if (b == null) {
-            return a;
-        }
-        if (a == Object.class || b == Object.class) {
-            return Object.class;
-        }
-        if (a == b) {
-            return a;
-        }
-        if (a.isPrimitive() || b.isPrimitive()) {
-            return Object.class;
-        }
-        if (a.isArray()) {
-            if (b.isArray()) {
-                return getArrayClass(getRecentlyInheritance(a.getComponentType(), b.getComponentType()));
-            }
-            return Object.class;
-        }
-        if (b.isArray()) {
-            return Object.class;
-        }
-
-        Class<?>[] aList = getSuperTypeAndInterfacesRecursively(a);
-        Class<?>[] bList = getSuperTypeAndInterfacesRecursively(b);
-
-
-        return Lira.of(CollectionUtils.intersection(aList, bList)).first().get(Object.class);
-    }
-
-    /**
-     * if all element is null, return Object.class
-     *
-     * @param arr the arr
-     * @return get array elements most recent inheritance, if element is null, just ignore it
-     */
-    public static Class<?> getRecentlyInheritance(Object[] arr) {
-        if (arr == null || arr.length == 0) {
-            return Object.class;
-        }
-        Class<?> result = null;
-
-        for (Object o : arr) {
-            if (o != null) {
-                Class<?> elementType = o.getClass();
-
-                if (elementType == null) {
-                    continue;
-                }
-                result = getRecentlyInheritance(result, elementType);
-
-                if (result == Object.class) {
-                    break;
-                }
-
-            }
-        }
-
-        if (result == null) {
-            result = Object.class;
-        }
-        return result;
-
-    }
 
     /**
      * Return a specified length array, if the componentType is primitive, will

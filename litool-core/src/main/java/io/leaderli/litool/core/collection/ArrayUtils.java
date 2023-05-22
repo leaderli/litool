@@ -1069,23 +1069,23 @@ public class ArrayUtils {
     }
 
 
-    /**
-     * 遍历源数组的所有元素，找到它们的公共超类，并将其作为新数组的类型。
-     *
-     * @param src 源数组
-     * @param <T> 数组的元素类型
-     * @return 新数组，其组件类型为T
-     * @throws ClassCastException 如果源数组的长度为0或元素不是T的子类
-     * @see ClassUtil#getRecentlyInheritance(Object[])
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T[] toArrayWithCommonSuperType(T... src) {
-        Class<?> commonSuperType = ClassUtil.getRecentlyInheritance(src);
-
-        T[] des = (T[]) ClassUtil.newWrapperArray(commonSuperType, src.length);
-        System.arraycopy(src, 0, des, 0, src.length);
-        return des;
-    }
+//    /**
+//     * 遍历源数组的所有元素，找到它们的公共超类，并将其作为新数组的类型。
+//     *
+//     * @param src 源数组
+//     * @param <T> 数组的元素类型
+//     * @return 新数组，其组件类型为T
+//     * @throws ClassCastException 如果源数组的长度为0或元素不是T的子类
+//     * @see ClassUtil#getRecentlyInheritance(Object[])
+//     */
+//    @SuppressWarnings("unchecked")
+//    public static <T> T[] toArrayWithCommonSuperType(T... src) {
+//        Class<?> commonSuperType = ClassUtil.getRecentlyInheritance(src);
+//
+//        T[] des = (T[]) ClassUtil.newWrapperArray(commonSuperType, src.length);
+//        System.arraycopy(src, 0, des, 0, src.length);
+//        return des;
+//    }
 
     /**
      * 将可变参数转换为数组

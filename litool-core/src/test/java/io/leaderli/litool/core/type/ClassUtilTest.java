@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.type;
 
-import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.meta.LiValue;
@@ -43,38 +42,7 @@ class ClassUtilTest {
         Assertions.assertEquals(Number.class, ClassUtil.getSuperTypeAndInterfacesRecursively(Integer.class)[0]);
     }
 
-    @Test
-    void getRecentlyInheritance() {
-        // interface
-        Assertions.assertSame(Object.class, ClassUtil.getRecentlyInheritance(String.class, List.class));
-        Assertions.assertSame(AbstractList.class, ClassUtil.getRecentlyInheritance(LinkedList.class, ArrayList.class));
-        Assertions.assertSame(Collection.class, ClassUtil.getRecentlyInheritance(Queue.class, ArrayList.class));
-        Assertions.assertSame(Collection[].class, ClassUtil.getRecentlyInheritance(Queue[].class, ArrayList[].class));
-
-        // a b
-        Assertions.assertSame(int.class, ClassUtil.getRecentlyInheritance(int.class, int.class));
-        Assertions.assertSame(Object.class, ClassUtil.getRecentlyInheritance(int.class, double.class));
-        Assertions.assertSame(int[].class, ClassUtil.getRecentlyInheritance(int[].class, int[].class));
-        Assertions.assertSame(Object[].class, ClassUtil.getRecentlyInheritance(int[].class, double[].class));
-        Assertions.assertSame(Object.class, ClassUtil.getRecentlyInheritance(null, null));
-        Assertions.assertSame(Number.class, ClassUtil.getRecentlyInheritance(Integer.class, Double.class));
-        Assertions.assertSame(Object.class, ClassUtil.getRecentlyInheritance(Integer.class, Double[].class));
-        Assertions.assertSame(Number[].class, ClassUtil.getRecentlyInheritance(Integer[].class, Double[].class));
-        Assertions.assertSame(Number[][].class, ClassUtil.getRecentlyInheritance(Integer[][].class, Double[][].class));
-        Assertions.assertSame(Comparable[][].class, ClassUtil.getRecentlyInheritance(Integer[][].class, String[][].class));
-
-        // arr
-        Assertions.assertSame(Object.class, ClassUtil.getRecentlyInheritance(ArrayUtils.of()));
-        Assertions.assertSame(Integer.class, ClassUtil.getRecentlyInheritance(ArrayUtils.of(1, 2, null)));
-        Assertions.assertSame(Number.class, ClassUtil.getRecentlyInheritance(ArrayUtils.of(1, 2, 1.0, null)));
-        Assertions.assertSame(Object.class, ClassUtil.getRecentlyInheritance(ArrayUtils.of(1, 2, 1.0, true)));
-        Assertions.assertSame(Integer[].class, ClassUtil.getRecentlyInheritance(ArrayUtils.of(ArrayUtils.of(1, 2), ArrayUtils.of(3, 4))));
-        Integer[] of1 = ArrayUtils.of(1, 2);
-        Double[] of2 = ArrayUtils.of(3.0, 4.0);
-        Number[][] of = ArrayUtils.of(of1, of2);
-        Assertions.assertSame(Number[].class, ClassUtil.getRecentlyInheritance(of));
-        Assertions.assertSame(Object.class, ClassUtil.getRecentlyInheritance(new Object[]{null, null, null}));
-    }
+//
 
     @Test
     void castDouble() {

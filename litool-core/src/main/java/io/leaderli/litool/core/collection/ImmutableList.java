@@ -70,7 +70,7 @@ public class ImmutableList<T> implements Iterable<T> {
         }
 
 
-        return new ImmutableList<>(ArrayUtils.toArrayWithCommonSuperType(array));
+        return new ImmutableList<>(array);
 
     }
 

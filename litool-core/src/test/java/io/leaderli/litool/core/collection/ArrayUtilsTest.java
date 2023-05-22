@@ -363,18 +363,6 @@ class ArrayUtilsTest {
 
     }
 
-    @Test
-    void toArrayWithCommonSuperType() {
-
-        assertArrayEquals(new Object[]{null, null}, ArrayUtils.toArrayWithCommonSuperType(null, null));
-        assertSame(ArrayUtils.toArrayWithCommonSuperType(1, 1.0).getClass(), Number[].class);
-
-        Integer[][] lists = ArrayUtils.toArrayWithCommonSuperType(new Integer[]{1, 2}, new Integer[]{3, 4});
-        assertArrayEquals(new Integer[][]{new Integer[]{1, 2}, new Integer[]{3, 4}}, lists);
-        assertArrayEquals(new Object[]{}, ArrayUtils.toArrayWithCommonSuperType());
-
-
-    }
 
     @Test
     void toArray() {
