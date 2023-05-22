@@ -43,7 +43,7 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
         }
 
         if (obj instanceof Generator) {
-            return fromGenerator((Generator<T>) obj);
+            return of((Generator<T>) obj);
         }
         if (obj instanceof NoneItr) {
             return NoneItr.of();
@@ -52,34 +52,43 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
             return new ArrayItr<>((T[]) ((ArrayItr) obj).arr);
         }
         if (obj instanceof Iterator) {
-            return fromIterator((Iterator<T>) obj);
+            return of((Iterator<T>) obj);
 
         }
         if (obj instanceof Iterable) {
 
-            return fromIterable((Iterable<T>) obj);
+            return of((Iterable<T>) obj);
 
         }
         if (obj instanceof Enumeration) {
-            return fromEnumeration((Enumeration) obj);
+            return of((Enumeration) obj);
         }
         if (obj instanceof Stream) {
-            return fromStream((Stream) obj);
+            return of((Stream) obj);
         }
 
         if (obj instanceof Map) {
 
             Iterable entries = ((Map<?, ?>) obj).entrySet();
-            return fromArray((T[]) ArrayUtils.toArray(Object.class, entries));
+            return ofs((T[]) ArrayUtils.toArray(Object.class, entries));
         }
 
         if (obj.getClass().isArray()) {
 
-            return fromArray(CollectionUtils.toArray(obj));
+            return ofs(CollectionUtils.toArray(obj));
         }
 
         return NoneItr.of();
 
+    }
+
+    /**
+     * @param noneItr -
+     * @param <T>     泛型
+     * @return noneItr
+     */
+    static <T> NoneItr<T> of(NoneItr<T> noneItr) {
+        return noneItr;
     }
 
     /**
@@ -89,7 +98,7 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
      * @param <T>      迭代器中元素的类型
      * @return 转换后的 {@link IterableItr} 对象
      */
-    static <T> IterableItr<T> fromArrayItr(ArrayItr<T> iterator) {
+    static <T> IterableItr<T> of(ArrayItr<T> iterator) {
         return new ArrayItr<>(iterator.arr);
     }
 
@@ -100,8 +109,17 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
      * @param <T>       迭代器中元素的类型
      * @return 转换后的 {@link IterableItr} 对象
      */
-    static <T> IterableItr<T> fromGenerator(Generator<T> generator) {
+    static <T> IterableItr<T> of(Generator<T> generator) {
         return generator;
+    }
+
+    /**
+     * @param itr 待转换的 {@link IterableItr} 对象
+     * @param <T> 迭代器中元素的类型
+     * @return {@link  #iterator()}
+     */
+    static <T> IterableItr<T> of(IterableItr<T> itr) {
+        return (IterableItr<T>) itr.iterator();
     }
 
     /**
@@ -112,8 +130,8 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
      * @return 转换后的 {@link IterableItr} 对象
      */
     @SuppressWarnings("unchecked")
-    static <T> IterableItr<T> fromIterator(Iterator<T> iterator) {
-        return fromArray(ArrayUtils.toArray((Class<T>) Object.class, iterator));
+    static <T> IterableItr<T> of(Iterator<T> iterator) {
+        return ofs(ArrayUtils.toArray((Class<T>) Object.class, iterator));
     }
 
     /**
@@ -124,8 +142,8 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
      * @return 转换后的 {@link IterableItr} 对象
      */
     @SuppressWarnings("unchecked")
-    static <T> IterableItr<T> fromIterable(Iterable<T> iterable) {
-        return fromArray(ArrayUtils.toArray((Class<T>) Object.class, iterable));
+    static <T> IterableItr<T> of(Iterable<T> iterable) {
+        return ofs(ArrayUtils.toArray((Class<T>) Object.class, iterable));
     }
 
     /**
@@ -136,8 +154,8 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
      * @return 转换后的 {@link IterableItr} 对象
      */
     @SuppressWarnings("unchecked")
-    static <T> IterableItr<T> fromEnumeration(Enumeration<T> enumeration) {
-        return fromArray(ArrayUtils.toArray((Class<T>) Object.class, enumeration));
+    static <T> IterableItr<T> of(Enumeration<T> enumeration) {
+        return ofs(ArrayUtils.toArray((Class<T>) Object.class, enumeration));
     }
 
     /**
@@ -148,8 +166,8 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
      * @return 转换后的 {@link IterableItr} 对象
      */
     @SuppressWarnings("unchecked")
-    static <T> IterableItr<T> fromStream(Stream<T> stream) {
-        return fromArray(ArrayUtils.toArray((Class<T>) Object.class, stream));
+    static <T> IterableItr<T> of(Stream<T> stream) {
+        return ofs(ArrayUtils.toArray((Class<T>) Object.class, stream));
     }
 
     /**
@@ -161,7 +179,7 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
      * @return 一个包含指定元素的 {@link ArrayItr} 对象
      */
     @SafeVarargs
-    static <T> IterableItr<T> fromArray(T... elements) {
+    static <T> IterableItr<T> ofs(T... elements) {
         if (elements == null || elements.length == 0) {
             return NoneItr.of();
         }
@@ -197,14 +215,14 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
      * @return 一个 {@link Iterable} 对象
      */
     default Iterable<T> iterable() {
-        return IterableItr.fromIterator(iterator());
+        return IterableItr.of(iterator());
     }
 
     /**
      * @return 一个 {@link Enumeration} 对象
      */
     default Enumeration<T> enumeration() {
-        return IterableItr.fromIterator(iterator());
+        return IterableItr.of(iterator());
     }
 
     ArrayList<T> toList();

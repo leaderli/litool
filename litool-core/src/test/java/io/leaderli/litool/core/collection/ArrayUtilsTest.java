@@ -379,7 +379,7 @@ class ArrayUtilsTest {
         actual = ArrayUtils.toArray(Integer.class, Stream.of(1, 2));
         assertArrayEquals(new Integer[]{1, 2}, actual);
 
-        actual = ArrayUtils.toArray(Integer.class, IterableItr.fromArray(1, 2).enumeration());
+        actual = ArrayUtils.toArray(Integer.class, IterableItr.ofs(1, 2).enumeration());
         assertArrayEquals(new Integer[]{1, 2}, actual);
 
         List<Integer> iterable = Collections.emptyList();

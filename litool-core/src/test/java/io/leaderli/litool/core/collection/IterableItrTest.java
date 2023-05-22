@@ -21,7 +21,7 @@ class IterableItrTest {
         // obj
 
         Object obj;
-        Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.of(null).getClass());
+        Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.ofs((Object[]) null).getClass());
 
         obj = IterableItr.NoneItr.of();
         Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.of(obj).getClass());
@@ -29,7 +29,7 @@ class IterableItrTest {
         obj = Collections.emptyList();
         Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.of(obj).getClass());
 
-        obj = IterableItr.fromArray(1, 2);
+        obj = IterableItr.ofs(1, 2);
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
 
@@ -69,11 +69,11 @@ class IterableItrTest {
 
 
         // enumeration
-        Assertions.assertSame(IterableItr.of(null), IterableItr.NoneItr.of());
-        Assertions.assertTrue(IterableItr.fromEnumeration(enumeration()).hasNext());
+        Assertions.assertSame(IterableItr.ofs((Object[]) null), IterableItr.NoneItr.of());
+        Assertions.assertTrue(IterableItr.of(enumeration()).hasNext());
 
 
-        Enumeration<Integer> enumeration = IterableItr.fromArray(1, 2, 3);
+        Enumeration<Integer> enumeration = IterableItr.ofs(1, 2, 3);
         Assertions.assertNotNull(enumeration.nextElement());
         Assertions.assertNotNull(enumeration.nextElement());
         Assertions.assertNotNull(enumeration.nextElement());
@@ -81,21 +81,27 @@ class IterableItrTest {
 
         // ArrayItr
 
-        IterableItr<?> arrItr = IterableItr.fromArray((Object[]) null);
+        IterableItr<?> arrItr = IterableItr.ofs((Object[]) null);
         Assertions.assertSame(IterableItr.NoneItr.of(), arrItr);
-        arrItr = IterableItr.fromArray();
+        arrItr = IterableItr.ofs();
         Assertions.assertSame(IterableItr.NoneItr.of(), arrItr);
 
-        arrItr = IterableItr.fromArray((Object) null);
+        arrItr = IterableItr.ofs((Object) null);
         Assertions.assertNull(arrItr.next());
         Assertions.assertSame(ArrayItr.class, arrItr.getClass());
 
         Object[] elements = {};
-        Assertions.assertSame(IterableItr.fromArray(elements), IterableItr.NoneItr.of());
+        Assertions.assertSame(IterableItr.ofs(elements), IterableItr.NoneItr.of());
 
         // Stream
 
-        Assertions.assertEquals(1, IterableItr.fromStream(Stream.of(1, 2)).next());
+        Assertions.assertEquals(1, IterableItr.of(Stream.of(1, 2)).next());
+
+        //IterableItr
+        Assertions.assertSame(IterableItr.of(IterableItr.NoneItr.of()), IterableItr.NoneItr.of());
+        IterableItr<Integer> ofs = IterableItr.ofs(1);
+        Assertions.assertNotSame(IterableItr.of(ofs), ofs);
+        Assertions.assertEquals(IterableItr.of(ofs), ofs);
 
     }
 
@@ -103,7 +109,7 @@ class IterableItrTest {
     @Test
     void hasNext() {
         // ArrayItr
-        IterableItr<Integer> arrItr = IterableItr.fromArray(1, 2);
+        IterableItr<Integer> arrItr = IterableItr.ofs(1, 2);
         Assertions.assertTrue(arrItr.hasNext());
         arrItr.forEachRemaining(s -> {
 
@@ -114,7 +120,7 @@ class IterableItrTest {
         Assertions.assertFalse(IterableItr.NoneItr.of().hasNext());
 
         // EnumerationItr
-        IterableItr<Integer> enumerationItr = IterableItr.fromEnumeration(enumeration());
+        IterableItr<Integer> enumerationItr = IterableItr.of(enumeration());
         Assertions.assertTrue(enumerationItr.hasNext());
         enumerationItr.next();
         Assertions.assertFalse(enumerationItr.hasNext());
@@ -124,7 +130,7 @@ class IterableItrTest {
     void next() {
 
         // arrItr
-        IterableItr<?> arrItr = IterableItr.fromArray(1, 2, 3);
+        IterableItr<?> arrItr = IterableItr.ofs(1, 2, 3);
 
         Assertions.assertEquals(1, arrItr.next());
         Assertions.assertEquals(2, arrItr.next());
@@ -135,7 +141,7 @@ class IterableItrTest {
 
 
         // EnumerationItr
-        IterableItr<Integer> enumerationItr = IterableItr.fromEnumeration(enumeration());
+        IterableItr<Integer> enumerationItr = IterableItr.of(enumeration());
         enumerationItr.next();
         Assertions.assertThrows(NoSuchElementException.class, enumerationItr::next);
 
@@ -143,14 +149,14 @@ class IterableItrTest {
 
     @Test
     void remove() {
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> IterableItr.fromArray(1).remove());
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> IterableItr.of(1).remove());
     }
 
     @Test
     void iterator() {
 
 
-        IterableItr<Integer> ofs = IterableItr.fromArray(1);
+        IterableItr<Integer> ofs = IterableItr.ofs(1);
 
 
         Assertions.assertEquals(ofs, ofs.iterator());
@@ -174,13 +180,13 @@ class IterableItrTest {
     @Test
     void hasMoreElements() {
         Assertions.assertFalse(IterableItr.NoneItr.of().hasMoreElements());
-        Assertions.assertTrue(IterableItr.fromArray(1).hasMoreElements());
+        Assertions.assertTrue(IterableItr.ofs(1).hasMoreElements());
     }
 
     @Test
     void nextElement() {
         Assertions.assertThrows(NoSuchElementException.class, () -> IterableItr.NoneItr.of().nextElement());
-        Assertions.assertEquals(1, IterableItr.fromArray(1).nextElement());
+        Assertions.assertEquals(1, IterableItr.ofs(1).nextElement());
     }
 
     private Enumeration<Integer> enumeration() {
@@ -195,7 +201,7 @@ class IterableItrTest {
     void absent() {
 
 
-        Assertions.assertTrue(IterableItr.of(null).absent());
+        Assertions.assertTrue(IterableItr.ofs((Object[]) null).absent());
         Assertions.assertTrue(IterableItr.of(Collections.emptyList()).absent());
         Assertions.assertTrue(IterableItr.of(Collections.singletonList(1)).present());
     }
@@ -203,9 +209,9 @@ class IterableItrTest {
     @Test
     void toList() {
 
-        Assertions.assertTrue(IterableItr.of(null).toList().isEmpty());
-        Assertions.assertFalse(IterableItr.fromArray(1, 2).toList().isEmpty());
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> IterableItr.fromGenerator(new IntGenerator()).toList());
+        Assertions.assertTrue(IterableItr.ofs((Object[]) null).toList().isEmpty());
+        Assertions.assertFalse(IterableItr.ofs(1, 2).toList().isEmpty());
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> IterableItr.of(new IntGenerator()).toList());
 
         List<Integer> of = CollectionUtils.ofs(1);
 

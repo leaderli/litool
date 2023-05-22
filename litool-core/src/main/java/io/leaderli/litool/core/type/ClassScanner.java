@@ -292,7 +292,7 @@ public class ClassScanner {
      */
     private void scanJar(JarFile jar) {
         String name;
-        Iterable<JarEntry> jarEntryEnumerationItr = IterableItr.fromEnumeration(jar.entries());
+        Iterable<JarEntry> jarEntryEnumerationItr = IterableItr.of(jar.entries());
         for (JarEntry entry : jarEntryEnumerationItr) {
             name = StringUtils.removeStart(entry.getName(), StrPool.SLASH);
             if ((StringUtils.isEmpty(packagePath) || name.startsWith(this.packagePath)) && name.endsWith(FileNameUtil.EXT_CLASS) && !entry.isDirectory()) {

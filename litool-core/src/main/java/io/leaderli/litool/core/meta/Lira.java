@@ -64,7 +64,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     @SafeVarargs
     static <T> Lira<T> of(T... elements) {
 
-        return of(IterableItr.fromArray(elements));
+        return of(IterableItr.ofs(elements));
 
     }
 
@@ -77,7 +77,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     static <T> Lira<T> of(Enumeration<? extends T> enumeration) {
 
-        return of(IterableItr.fromEnumeration(enumeration));
+        return of(IterableItr.of(enumeration));
 
     }
 
@@ -90,7 +90,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     static <T> Lira<T> of(Stream<? extends T> stream) {
 
-        return of(IterableItr.fromStream(stream));
+        return of(IterableItr.of(stream));
 
     }
 
@@ -153,7 +153,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     static <T> Lira<T> of(Iterator<? extends T> iterator) {
 
-        return of(IterableItr.fromIterator(iterator));
+        return of(IterableItr.of(iterator));
 
     }
 

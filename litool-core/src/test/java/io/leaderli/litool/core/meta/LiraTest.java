@@ -517,7 +517,7 @@ class LiraTest {
         Assertions.assertEquals(20, iterator.next());
         Assertions.assertThrows(NoSuchElementException.class, iterator::next);
 
-        List<String> linos = Lira.of("1 2 3").map(s -> s.split(" ")).flatMap(IterableItr::fromArray).get();
+        List<String> linos = Lira.of("1 2 3").map(s -> s.split(" ")).flatMap(IterableItr::ofs).get();
 
 
         Assertions.assertEquals(3, linos.size());

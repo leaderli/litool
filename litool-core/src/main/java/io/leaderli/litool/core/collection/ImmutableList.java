@@ -134,7 +134,7 @@ public class ImmutableList<T> implements Iterable<T> {
      */
     @Override
     public Iterator<T> iterator() {
-        return IterableItr.fromArray(elements);
+        return IterableItr.ofs(elements);
     }
 
     /**
