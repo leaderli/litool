@@ -191,4 +191,12 @@ class IterableItrTest {
     }
 
 
+    @Test
+    void absent() {
+
+
+        Assertions.assertTrue(IterableItr.of(null).absent());
+        Assertions.assertTrue(IterableItr.of(Collections.emptyList()).absent());
+        Assertions.assertTrue(IterableItr.of(Collections.singletonList(1)).present());
+    }
 }

@@ -15,4 +15,9 @@ public class IntGenerator implements Generator<Integer> {
     public Integer next() {
         return i++;
     }
+
+    @Override
+    public String name() {
+        return "IntGenerator";
+    }
 }

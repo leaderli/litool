@@ -1123,6 +1123,7 @@ public class ArrayUtils {
 
     @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Class<? extends T> componentType, Enumeration<T> enumeration) {
+
         List<T> list = new ArrayList<>();
 
         while (enumeration.hasMoreElements()) {

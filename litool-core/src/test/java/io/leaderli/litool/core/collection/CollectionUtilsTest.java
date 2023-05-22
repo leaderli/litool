@@ -112,13 +112,6 @@ class CollectionUtilsTest {
 
     }
 
-    @Test
-    void isEmpty() {
-
-        Assertions.assertTrue(CollectionUtils.isEmpty(null));
-        Assertions.assertTrue(CollectionUtils.isEmpty(Collections.emptyList()));
-        Assertions.assertFalse(CollectionUtils.isEmpty(Collections.singletonList(1)));
-    }
 
     @Test
     void getDuplicateElements() {

@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.collection;
 
+import io.leaderli.litool.core.meta.LiValue;
+
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -8,7 +10,7 @@ import java.util.stream.Stream;
  *
  * @param <T> 迭代器中元素的类型
  */
-public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T> {
+public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>, LiValue {
 
 
     /**
@@ -176,6 +178,10 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
         return hasNext();
     }
 
+    default boolean present() {
+        return hasNext();
+    }
+
     /**
      * Returns the next element of this enumeration if this enumeration
      *
@@ -251,6 +257,11 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
             }
             return false;
         }
+
+        @Override
+        public String name() {
+            return "ArrayItr";
+        }
     }
 
     /**
@@ -309,6 +320,10 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
         }
 
 
+        @Override
+        public String name() {
+            return "NoneItr";
+        }
     }
 
 

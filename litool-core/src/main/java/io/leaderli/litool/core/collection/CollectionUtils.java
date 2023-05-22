@@ -34,19 +34,6 @@ public class CollectionUtils {
         return Lira.<T>of(iterable).filter(e -> !unique.add(e)).unique();
     }
 
-    /**
-     * Return an iterable has element
-     *
-     * @param iterable an iterable
-     * @return an iterable has element
-     */
-    public static boolean isEmpty(Iterable<?> iterable) {
-        if (iterable == null) {
-            return true;
-        }
-        Iterator<?> iterator = iterable.iterator();
-        return !iterator.hasNext();
-    }
 
     /**
      * Return a new empty ArrayList
