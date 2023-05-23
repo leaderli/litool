@@ -124,8 +124,8 @@ class CollectionUtilsTest {
     @Test
     void of() {
 
-        Assertions.assertTrue(CollectionUtils.ofs().isEmpty());
-        List<Integer> of = CollectionUtils.ofs(1);
+        Assertions.assertTrue(CollectionUtils.toList().isEmpty());
+        List<Integer> of = CollectionUtils.toList(1);
         Assertions.assertSame(1, of.size());
 
 

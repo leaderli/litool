@@ -10,7 +10,7 @@ import java.util.stream.Stream;
  *
  * @param <T> 迭代器中元素的类型
  */
-public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>, LiValue {
+public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>, LiValue, ToList<T, ArrayList<T>>, ToArray<T> {
 
 
     /**
@@ -226,138 +226,13 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
         return IterableItr.of(iterator());
     }
 
-    ArrayList<T> toList();
 
     /**
-     * ArrayItr 是一个将数组转化为 IterableItr 的实现类。
-     *
-     * @param <T> ArrayItr 迭代器中元素的类型
-     * @author leaderli
-     * @since 2022/7/17
+     * @return 返回一个包含所有元素的新的数组
      */
-    class ArrayItr<T> implements IterableItr<T> {
+    Object[] toArray();
 
 
-        private final T[] arr;
-        /**
-         * The index of current {@code ArrayItr}
-         */
-        private int index = 0;
-
-        ArrayItr(T[] arr) {
-            this.arr = arr;
-        }
-
-        @SuppressWarnings("unchecked")
-        ArrayItr(List<T> list) {
-            this.arr = (T[]) list.toArray();
-        }
-
-        @Override
-        public Iterator<T> iterator() {
-            return new ArrayItr<>(arr);
-        }
-
-        @Override
-        public boolean hasNext() {
-            return index < arr.length;
-        }
-
-        @Override
-        public T next() {
-            if (hasNext()) {
-                return arr[index++];
-            }
-            throw new NoSuchElementException();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof ArrayItr) {
-                return Arrays.equals(arr, ((ArrayItr<?>) obj).arr);
-            }
-            return false;
-        }
-
-        @Override
-        public String name() {
-            return "ArrayItr";
-        }
-
-        @Override
-        public ArrayList<T> toList() {
-            ArrayList<T> list = new ArrayList<>();
-            Collections.addAll(list, arr);
-            return list;
-        }
-    }
-
-    /**
-     * NoneItr 是一个没有元素的 IterableItr 的实现类。
-     *
-     * @param <T> IterableItr 迭代器中元素的类型
-     * @author leaderli
-     * @since 2022/7/18
-     */
-    class NoneItr<T> implements IterableItr<T> {
-        /**
-         * 所有 NoneItr 对象共享同一个实例
-         */
-        private static final NoneItr<?> NONE = new NoneItr<>();
-
-        private NoneItr() {
-
-        }
-
-
-        /**
-         * 判断是否还有下一个元素。
-         *
-         * @return false
-         */
-        @Override
-        public boolean hasNext() {
-            return false;
-        }
-
-        /**
-         * 获取下一个元素。
-         *
-         * @return 不返回任何元素，总是抛出 NoSuchElementException 异常
-         * @throws NoSuchElementException always throw
-         */
-        @Override
-        public T next() {
-            throw new NoSuchElementException();
-        }
-
-        @Override
-        public Iterator<T> iterator() {
-            return this;
-        }
-
-        /**
-         * 返回 {@link  #NONE}
-         *
-         * @param <T> IterableItr 迭代器中元素的类型
-         * @return {@link #NONE}
-         */
-        @SuppressWarnings("unchecked")
-        public static <T> NoneItr<T> of() {
-            return (NoneItr<T>) NONE;
-        }
-
-
-        @Override
-        public String name() {
-            return "NoneItr";
-        }
-
-        @Override
-        public ArrayList<T> toList() {
-            return new ArrayList<>();
-        }
-    }
 
 
 }

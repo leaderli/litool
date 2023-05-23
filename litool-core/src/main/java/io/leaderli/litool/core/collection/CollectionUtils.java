@@ -53,7 +53,7 @@ public class CollectionUtils {
      * @return 转换后的 {@link ArrayList}
      */
     @SafeVarargs
-    public static <T> ArrayList<T> ofs(T... elements) {
+    public static <T> ArrayList<T> toList(T... elements) {
 
         ArrayList<T> arrayList = new ArrayList<>();
         Collections.addAll(arrayList, elements);

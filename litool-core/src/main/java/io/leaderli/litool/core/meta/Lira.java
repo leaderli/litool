@@ -3,6 +3,7 @@ package io.leaderli.litool.core.meta;
 import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.Generators;
 import io.leaderli.litool.core.collection.IterableItr;
+import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
@@ -38,7 +39,7 @@ import java.util.stream.Stream;
 public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
 
 
-    Lira<?> NONE_INSTANCE = new IterableRa<>(IterableItr.NoneItr.of());
+    Lira<?> NONE_INSTANCE = new IterableRa<>(NoneItr.of());
 
     /**
      * Returns the narrow type lira, convert {@code <? extends T>} to {@code  <T>}, same as {@link  Lino#narrow(Lino)}

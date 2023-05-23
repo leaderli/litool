@@ -1,53 +1,54 @@
 package io.leaderli.litool.core.collection;
 
+import java.util.ArrayList;
+
 /**
- * a fixed-length  list, which excluding null or duplicate element。
- * when add  element that match the rules, it will add to the head of {@link #elements}
- * after all {@link #elements} move one right
+ * 一个固定长度的列表，不包含 null 或重复元素。
+ * <p>
+ * 当添加符合条件的元素时，元素会添加到 {@link #elements} 的头部，并且所有元素向右移动一位。
  *
- * @param <T> the type of {@link  #elements}
+ * @param <T> {@link #elements} 的类型
  */
-public class LiLimitArray<T> {
+public class LiLimitArray<T> implements ToList<T, ArrayList<T>>, ToArray<T> {
 
     public final int size;
-    private final Object[] elements;
+    private final T[] elements;
 
+    @SuppressWarnings("unchecked")
     public LiLimitArray(int size) {
         this.size = size;
-        elements = new Object[size];
+        elements = (T[]) new Object[size];
     }
 
 
     /**
-     * 当元素不为 null ， 且不包含该元素时，新增一个元素，原所有元素会右移一位，最后一位元素会直接被覆盖
-     * when the element is not null and not {@link  #contains(Object)}, the
-     * element will add to {@link  #elements} header after move all elements  one right
+     * 当元素不为 null，且不包含在列表中时，将新元素添加到列表中。
+     * 添加成功后，所有元素向右移动一位，最后一位元素将被覆盖。
      *
-     * @param t the element
+     * @param element 待添加元素
      * @see #contains(Object)
      */
-    public void add(T t) {
-        if (t == null || contains(t) || size == 0) {
+    public void add(T element) {
+        if (element == null || contains(element) || size == 0) {
             return;
         }
         System.arraycopy(elements, 0, elements, 1, size - 1);
-        elements[0] = t;
+        elements[0] = element;
     }
 
     /**
-     * Return {@code true} if {@link  #elements} contains element
+     * 判断列表中是否包含指定元素。
      *
-     * @param t the element
-     * @return {@code true} if {@link  #elements} contains element
-     * <p>
-     * 当  {@code t == null} 时 返回 false
+     * @param element 待查找元素
+     * @return 如果找到元素返回 true，否则返回 false。
+     * 当 {@code element == null} 时，返回 false。
      */
-    public boolean contains(T t) {
-        if (t == null) {
+    public boolean contains(T element) {
+        if (element == null) {
             return false;
         }
         for (int i = 0; i < size; i++) {
-            if (t.equals(elements[i])) {
+            if (element.equals(elements[i])) {
                 return true;
             }
         }
@@ -55,20 +56,18 @@ public class LiLimitArray<T> {
     }
 
     /**
-     * remove found element
-     * <p>
-     * Return {@code true} if  remove element
+     * 移除已找到的元素。
      *
-     * @param t the element
-     * @return {@code true} if  remove element
+     * @param element 待移除元素
+     * @return 如果成功移除元素返回 true，否则返回 false。
      */
-    public boolean remove(T t) {
-        if (t == null) {
+    public boolean remove(T element) {
+        if (element == null) {
             return false;
         }
         for (int i = 0; i < size; i++) {
 
-            if (t.equals(elements[i])) {
+            if (element.equals(elements[i])) {
                 fastRemove(i);
                 return true;
             }
@@ -85,4 +84,13 @@ public class LiLimitArray<T> {
     }
 
 
+    @Override
+    public T[] toArray(Class<T> type) {
+        return ArrayUtils.toArray(type, elements);
+    }
+
+    @Override
+    public ArrayList<T> toList() {
+        return CollectionUtils.toList(elements);
+    }
 }

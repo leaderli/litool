@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.collection;
 
-import io.leaderli.litool.core.collection.IterableItr.ArrayItr;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,13 +20,13 @@ class IterableItrTest {
         // obj
 
         Object obj;
-        Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.ofs((Object[]) null).getClass());
+        Assertions.assertSame(NoneItr.class, IterableItr.ofs((Object[]) null).getClass());
 
-        obj = IterableItr.NoneItr.of();
-        Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.of(obj).getClass());
+        obj = NoneItr.of();
+        Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
 
         obj = Collections.emptyList();
-        Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
 
         obj = IterableItr.ofs(1, 2);
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
@@ -46,13 +45,13 @@ class IterableItrTest {
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
         obj = 1;
-        Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
 
         IterableItr<String> of = IterableItr.of(1);
 
 
         obj = new HashMap<>();
-        Assertions.assertSame(IterableItr.NoneItr.class, IterableItr.of(obj).getClass());
+        Assertions.assertSame(NoneItr.class, IterableItr.of(obj).getClass());
         ((HashMap<String, String>) obj).put("1", "1");
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
@@ -69,7 +68,7 @@ class IterableItrTest {
 
 
         // enumeration
-        Assertions.assertSame(IterableItr.ofs((Object[]) null), IterableItr.NoneItr.of());
+        Assertions.assertSame(IterableItr.ofs((Object[]) null), NoneItr.of());
         Assertions.assertTrue(IterableItr.of(enumeration()).hasNext());
 
 
@@ -82,23 +81,23 @@ class IterableItrTest {
         // ArrayItr
 
         IterableItr<?> arrItr = IterableItr.ofs((Object[]) null);
-        Assertions.assertSame(IterableItr.NoneItr.of(), arrItr);
+        Assertions.assertSame(NoneItr.of(), arrItr);
         arrItr = IterableItr.ofs();
-        Assertions.assertSame(IterableItr.NoneItr.of(), arrItr);
+        Assertions.assertSame(NoneItr.of(), arrItr);
 
         arrItr = IterableItr.ofs((Object) null);
         Assertions.assertNull(arrItr.next());
         Assertions.assertSame(ArrayItr.class, arrItr.getClass());
 
         Object[] elements = {};
-        Assertions.assertSame(IterableItr.ofs(elements), IterableItr.NoneItr.of());
+        Assertions.assertSame(IterableItr.ofs(elements), NoneItr.of());
 
         // Stream
 
         Assertions.assertEquals(1, IterableItr.of(Stream.of(1, 2)).next());
 
         //IterableItr
-        Assertions.assertSame(IterableItr.of(IterableItr.NoneItr.of()), IterableItr.NoneItr.of());
+        Assertions.assertSame(IterableItr.of(NoneItr.of()), NoneItr.of());
         IterableItr<Integer> ofs = IterableItr.ofs(1);
         Assertions.assertNotSame(IterableItr.of(ofs), ofs);
         Assertions.assertEquals(IterableItr.of(ofs), ofs);
@@ -117,7 +116,7 @@ class IterableItrTest {
         Assertions.assertFalse(arrItr.hasNext());
 
         // NoneItr
-        Assertions.assertFalse(IterableItr.NoneItr.of().hasNext());
+        Assertions.assertFalse(NoneItr.of().hasNext());
 
         // EnumerationItr
         IterableItr<Integer> enumerationItr = IterableItr.of(enumeration());
@@ -167,7 +166,7 @@ class IterableItrTest {
         Assertions.assertNotSame(ofs, ofs.iterable());
         Assertions.assertNotSame(ofs, ofs.enumeration());
 
-        Assertions.assertSame(IterableItr.NoneItr.of(), IterableItr.NoneItr.of().iterator());
+        Assertions.assertSame(NoneItr.of(), NoneItr.of().iterator());
 
         Iterator<Integer> iterator = ofs.iterator();
         iterator.next();
@@ -179,13 +178,13 @@ class IterableItrTest {
 
     @Test
     void hasMoreElements() {
-        Assertions.assertFalse(IterableItr.NoneItr.of().hasMoreElements());
+        Assertions.assertFalse(NoneItr.of().hasMoreElements());
         Assertions.assertTrue(IterableItr.ofs(1).hasMoreElements());
     }
 
     @Test
     void nextElement() {
-        Assertions.assertThrows(NoSuchElementException.class, () -> IterableItr.NoneItr.of().nextElement());
+        Assertions.assertThrows(NoSuchElementException.class, () -> NoneItr.of().nextElement());
         Assertions.assertEquals(1, IterableItr.ofs(1).nextElement());
     }
 
@@ -213,12 +212,28 @@ class IterableItrTest {
         Assertions.assertFalse(IterableItr.ofs(1, 2).toList().isEmpty());
         Assertions.assertThrows(UnsupportedOperationException.class, () -> IterableItr.of(new IntGenerator()).toList());
 
-        List<Integer> of = CollectionUtils.ofs(1);
+        List<Integer> of = CollectionUtils.toList(1);
 
         Assertions.assertNotSame(of, IterableItr.of(of).toList());
         Assertions.assertNotSame(of, IterableItr.of(of.iterator()).toList());
         Assertions.assertEquals(of, IterableItr.of(of).toList());
         Assertions.assertEquals(of, IterableItr.of(of.iterator()).toList());
+
+    }
+
+    @Test
+    void toArray() {
+
+        Assertions.assertEquals(0, IterableItr.ofs().toArray(Object.class).length);
+        Assertions.assertEquals(1, IterableItr.ofs(1).toArray().length);
+        IterableItr<Integer> ofs = IterableItr.ofs(1, 2);
+        Assertions.assertNotSame(ofs.toArray(), ofs.toArray());
+        Assertions.assertArrayEquals(ofs.toArray(), ofs.toArray());
+
+        Assertions.assertSame(Integer[].class, ofs.toArray().getClass());
+        ofs = IterableItr.ofs();
+        Assertions.assertSame(Object[].class, ofs.toArray().getClass());
+
 
     }
 }

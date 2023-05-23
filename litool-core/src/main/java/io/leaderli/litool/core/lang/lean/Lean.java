@@ -56,7 +56,7 @@ public class Lean {
     private static List<LeanFieldKey> defaultLeanKeyHandlers() {
         LeanFieldKey leanKey = field -> ReflectUtil.getAnnotation(field, LeanKey.class).map(LeanKey::value).get();
         LeanFieldKey fieldName = Field::getName;
-        return CollectionUtils.ofs(leanKey, fieldName);
+        return CollectionUtils.toList(leanKey, fieldName);
     }
 
     /**
@@ -75,6 +75,7 @@ public class Lean {
 
         TypeAdapter<T> adapter = getAdapter(target.getClass());
         LiAssertUtil.assertTrue(adapter instanceof ReflectAdapterFactory.ReflectAdapter, "only support copy to pojo bean");
+        //noinspection unchecked
         ((ReflectAdapterFactory.ReflectAdapter<Object>) adapter).populate(source, target, this);
     }
 
