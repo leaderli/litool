@@ -10,18 +10,20 @@ public class HumanSizeUtil {
     private static final DecimalFormat DEC_FORMAT = new DecimalFormat("#.##");
 
     /**
-     * @param size memory or storage capacity
-     * @return he most suitable size conversion for reading, displayed in KB, MB, GB, TB, PB, EB according to the actual capacity size.
+     * 将内存或者存储容量转换为最适合阅读的大小，以KB、MB、GB、TB、PB、EB的形式显示，根据实际容量大小进行转换
+     *
+     * @param capacity 内存或者存储容量
+     * @return 以KB、MB、GB、TB、PB、EB的形式显示的最适合阅读的大小转换结果
      */
-    public static String toHumanReadable(long size) {
-        if (size < 0) {
-            throw new IllegalArgumentException("Invalid file size: " + size);
+    public static String convertToHumanReadableSize(long capacity) {
+        if (capacity < 0) {
+            throw new IllegalArgumentException("Invalid file capacity: " + capacity);
         }
-        if (size < 1024) {
-            return size + " Bytes";
+        if (capacity < 1024) {
+            return capacity + " Bytes";
         }
-        int unitIdx = (63 - Long.numberOfLeadingZeros(size)) / 10;
-        return formatSize(size, 1L << (unitIdx * 10), " KMGTPE".charAt(unitIdx) + "B");
+        int unitIdx = (63 - Long.numberOfLeadingZeros(capacity)) / 10;
+        return formatSize(capacity, 1L << (unitIdx * 10), " KMGTPE".charAt(unitIdx) + "B");
     }
 
     private static String formatSize(long size, long divider, String unitName) {

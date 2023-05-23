@@ -12,6 +12,8 @@ public class DateUtil {
 
 
     /**
+     * @param format 日期的格式
+     * @return 格式化后的日期字符串
      * @see DateTimeFormatter
      * @see LocalDateTime#now()
      */
@@ -21,6 +23,9 @@ public class DateUtil {
 
 
     /**
+     * @param format        日期的格式
+     * @param localDateTime 日期
+     * @return 格式化后的日期字符串
      * @see DateTimeFormatter
      */
 
@@ -29,6 +34,9 @@ public class DateUtil {
     }
 
     /**
+     * @param format 日期的格式
+     * @param date   日期
+     * @return 格式化后的日期字符串
      * @see DateTimeFormatter
      * @see LocalDateTime
      */
@@ -40,9 +48,9 @@ public class DateUtil {
 
 
     /**
-     * @param dateStr -
-     * @param format  -
-     * @return a date parse from string
+     * @param dateStr 字符串格式的日期
+     * @param format  日期的格式
+     * @return 日期
      */
     public static Date parse(String dateStr, String format) {
         return RuntimeExceptionTransfer.apply(new SimpleDateFormat(format)::parse, dateStr);
@@ -50,10 +58,10 @@ public class DateUtil {
     }
 
     /**
-     * @param date         -
-     * @param beforeFormat -
-     * @param afterFormat  -
-     * @return -
+     * @param date         字符串格式的日期
+     * @param beforeFormat 原始日期的格式
+     * @param afterFormat  转换后日期的格式
+     * @return 转换后的日期字符串
      */
     public static String parse(String date, String beforeFormat, String afterFormat) {
 

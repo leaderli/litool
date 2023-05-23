@@ -14,7 +14,6 @@ import java.util.Map;
  * mock a bean, and will recursive set bean field with a default value.
  * <p>
  * if {@link #cache}  contains the {@link LiTypeToken}, just simple return the cache value
- * <p>
  * <ul>
  *     <li>if field is primitive, will set a {@link  PrimitiveEnum#zero_value}</li>
  *     <li>if field is {@link String} , set {@code ""}</li>

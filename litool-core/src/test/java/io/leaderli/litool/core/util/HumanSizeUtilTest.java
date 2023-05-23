@@ -24,7 +24,7 @@ class HumanSizeUtilTest {
             put(1_777_777_777_777_777_777L, "1.54 EB");
         }};
 
-        test.forEach((in, expected) -> Assertions.assertEquals(expected, HumanSizeUtil.toHumanReadable(in)));
+        test.forEach((in, expected) -> Assertions.assertEquals(expected, HumanSizeUtil.convertToHumanReadableSize(in)));
 
     }
 

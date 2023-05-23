@@ -1050,14 +1050,15 @@ public class ArrayUtils {
     /**
      * 将可变参数转换为数组
      *
-     * @param elements 源数组
-     * @param <T>      数组的类型
+     * @param componentType 数组的类型
+     * @param elements      源数组
+     * @param <T>           数组的类型
      * @return 新数组，其类型为T
      */
     @SafeVarargs
-    public static <T> T[] toArray(Class<? extends T> commonSuperType, T... elements) {
+    public static <T> T[] toArray(Class<? extends T> componentType, T... elements) {
 
-        T[] arr = ClassUtil.newWrapperArray(commonSuperType, elements.length);
+        T[] arr = ClassUtil.newWrapperArray(componentType, elements.length);
         System.arraycopy(elements, 0, arr, 0, elements.length);
         return arr;
     }

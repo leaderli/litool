@@ -121,6 +121,7 @@ public class RandomUtil {
      *
      * @param hit      随机值
      * @param supplier 提供者函数
+     * @param <T>      提供者泛型
      * @return 返回提供者
      */
     public static <T> Lino<T> randomGet(int hit, Supplier<T> supplier) {

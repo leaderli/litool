@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
  * 例如：
  * <p>
  * <code>
- * <p>
  * 0000 0000 0000 0000 0000 1100 0001 1111
  * STRICT|ABSTRACT|FINAL|STATIC|PROTECTED|PRIVATE|PUBLIC
  * </code>

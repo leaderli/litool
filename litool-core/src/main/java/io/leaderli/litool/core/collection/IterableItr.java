@@ -126,7 +126,8 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
      * 将 {@link Iterator} 对象转换为 {@link IterableItr} 对象。
      * * @param iterator 待转换的 {@link Iterator} 对象
      *
-     * @param <T> 迭代器中元素的类型
+     * @param iterator -
+     * @param <T>      迭代器中元素的类型
      * @return 转换后的 {@link IterableItr} 对象
      */
     @SuppressWarnings("unchecked")
