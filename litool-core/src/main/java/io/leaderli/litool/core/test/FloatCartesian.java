@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.test;
 
-import io.leaderli.litool.core.collection.CollectionUtils;
+import io.leaderli.litool.core.collection.ArrayUtils;
 
 /**
  * @author leaderli
@@ -12,7 +12,7 @@ public class FloatCartesian implements CartesianFunction<FloatValues, Float> {
 
         float[] value = annotatedByValuable.value();
         if (value.length > 0) {
-            return CollectionUtils.toArray(value);
+            return ArrayUtils.toArray(value);
         }
         return CartesianUtil.cartesian_single_def(Float.class);
     }

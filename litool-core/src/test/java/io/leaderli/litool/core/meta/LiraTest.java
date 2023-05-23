@@ -388,15 +388,6 @@ class LiraTest {
         Assertions.assertEquals("[1, 2, 3]", Lira.of(2, 1, 3).sorted(Comparator.comparingInt(o -> o)).toString());
     }
 
-    @Test
-    void unique() {
-
-
-        Assertions.assertEquals(0, Lira.of().unique().size());
-        Assertions.assertEquals(2, Lira.of(2, 1).unique().size());
-        Assertions.assertEquals(2, Lira.of(2, 1, 2).unique().size());
-        Assertions.assertEquals(2, Lira.of(2, 1, 2, 2).unique().size());
-    }
 
     @Test
     void limit() {
@@ -495,6 +486,12 @@ class LiraTest {
                 Lira.of(1, 2, 3, 4, 1).distinct().map(i -> i / 2).distinct().toArray(Integer.class));
 
         Assertions.assertEquals(1, Lira.of(1, 2, 3, 4, 1).distinct((left, right) -> left - right < 2).first().get());
+
+
+        Assertions.assertEquals(0, Lira.of().distinct().size());
+        Assertions.assertEquals(2, Lira.of(2, 1).distinct().size());
+        Assertions.assertEquals(2, Lira.of(2, 1, 2).distinct().size());
+        Assertions.assertEquals(2, Lira.of(2, 1, 2, 2).distinct().size());
     }
 
     @Test

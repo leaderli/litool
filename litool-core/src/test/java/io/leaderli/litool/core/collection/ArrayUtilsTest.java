@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.collection;
 
 import io.leaderli.litool.core.type.ClassUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -386,4 +387,31 @@ class ArrayUtilsTest {
         actual = ArrayUtils.toArray(Integer.class, iterable);
         assertArrayEquals(new Integer[]{}, actual);
     }
+
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    void toWrapperArray() {
+        Assertions.assertNull(ArrayUtils.toArray(null));
+        Assertions.assertNull(ArrayUtils.toArray(1));
+        Assertions.assertNull(ArrayUtils.toArray(""));
+        Assertions.assertArrayEquals(new Integer[]{1, null}, ArrayUtils.toArray(new Integer[]{1, null}));
+        Assertions.assertArrayEquals(new Integer[]{1}, ArrayUtils.toArray(new int[]{1}));
+
+        String[] ss = {"1"};
+        Assertions.assertNotSame(ss, ArrayUtils.toArray(ss));
+        Assertions.assertEquals(Arrays.toString(ss), Arrays.toString(ArrayUtils.toArray(ss)));
+        Assertions.assertSame(Boolean.class, ArrayUtils.toArray(new boolean[]{}).getClass().getComponentType());
+        Assertions.assertSame(Byte.class, ArrayUtils.toArray(new byte[]{}).getClass().getComponentType());
+        Assertions.assertSame(Character.class, ArrayUtils.toArray(new char[]{}).getClass().getComponentType());
+        Assertions.assertSame(Double.class, ArrayUtils.toArray(new double[]{}).getClass().getComponentType());
+        Assertions.assertSame(Float.class, ArrayUtils.toArray(new float[]{}).getClass().getComponentType());
+        Assertions.assertSame(Integer.class, ArrayUtils.toArray(new int[]{}).getClass().getComponentType());
+        Assertions.assertSame(Long.class, ArrayUtils.toArray(new long[]{}).getClass().getComponentType());
+        Assertions.assertSame(Short.class, ArrayUtils.toArray(new short[]{}).getClass().getComponentType());
+        Assertions.assertSame(Object.class, ArrayUtils.toArray(new Object[]{}).getClass().getComponentType());
+        Assertions.assertSame(String.class, ArrayUtils.toArray(new String[]{}).getClass().getComponentType());
+
+        Assertions.assertSame(2, ArrayUtils.toArray(new int[]{1, 2}).length);
+    }
+
 }

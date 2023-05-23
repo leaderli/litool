@@ -658,7 +658,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @see EqualComparator
      */
     default Lira<T> distinct() {
-        return distinct(Objects::equals);
+        return terminal(prev -> {
+            return new HashSet<>(prev);
+        });
     }
 
     /**
@@ -681,14 +683,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     default Lira<T> sorted() {
         return sorted(null);
     }
-
-    /**
-     * remove the duplicate element
-     *
-     * @return the new lira
-     * @see #terminal(Function)
-     */
-    Lira<T> unique();
 
 
     /**

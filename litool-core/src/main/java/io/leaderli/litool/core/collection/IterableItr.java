@@ -75,7 +75,7 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
 
         if (obj.getClass().isArray()) {
 
-            return ofs(CollectionUtils.toArray(obj));
+            return ofs(ArrayUtils.toArray(obj));
         }
 
         return NoneItr.of();

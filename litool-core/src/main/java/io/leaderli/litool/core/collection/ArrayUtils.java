@@ -1026,7 +1026,7 @@ public class ArrayUtils {
 
         if (isArray(obj)) {
 
-            Object[] arr = CollectionUtils.toArray(obj);
+            Object[] arr = toArray(obj);
 
 
             StringBuilder sb = new StringBuilder("[");
@@ -1132,5 +1132,33 @@ public class ArrayUtils {
         }
 
         return (T[]) toArray(componentType, list.toArray());
+    }
+
+    /**
+     * 将 Object 对象转换为数组，如果 obj 不是数组则返回 {@code null}
+     *
+     * <p>
+     * 如果数组的元素类型为基本数据类型，则将其转换为对应的包装类型数组
+     *
+     * @param <T> 数组的类型
+     * @param obj 声明为 Object 类型的数组对象
+     * @return 转换后的数组对象
+     */
+
+    @SuppressWarnings({"unchecked", "java:S1168"})
+    public static <T> T[] toArray(Object obj) {
+
+        Class<?> elementType = ClassUtil.getComponentType(obj);
+        if (elementType == null) {
+            return null;
+        }
+        int length = Array.getLength(obj);
+        T[] arr = (T[]) ClassUtil.newWrapperArray(elementType, length);
+
+        for (int i = 0; i < length; i++) {
+            arr[i] = (T) Array.get(obj, i);
+        }
+
+        return arr;
     }
 }

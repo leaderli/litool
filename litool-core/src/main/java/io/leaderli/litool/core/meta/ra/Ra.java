@@ -282,10 +282,10 @@ public abstract class Ra<T> implements Lira<T> {
     @Override
     public Lira<T> distinct(EqualComparator<? super T> comparator) {
 
-        return terminal(list -> {
+        return terminal(prev -> {
 
             List<T> distinct = new ArrayList<>();
-            for (T t : list) {
+            for (T t : prev) {
 
                 if (t == null) {
                     if (!distinct.contains(null)) {
@@ -316,13 +316,6 @@ public abstract class Ra<T> implements Lira<T> {
 
             l.sort(comparator);
             return l;
-        });
-    }
-
-    @Override
-    public Lira<T> unique() {
-        return terminal(l -> {
-            return new HashSet<>(l);
         });
     }
 

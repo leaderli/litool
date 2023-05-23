@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.test;
 
-import io.leaderli.litool.core.collection.CollectionUtils;
+import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.Lino;
@@ -107,7 +107,7 @@ public class CartesianUtil {
                 }
             } else if (val.getClass().isArray()) {
                 Object[] objects =
-                        Lira.of(CollectionUtils.toArray(val)).map(item -> convertByType(item, type)).toArray(Object.class);
+                        Lira.of(ArrayUtils.toArray(val)).map(item -> convertByType(item, type)).toArray(Object.class);
                 if (objects.length > 0) {
                     result = objects;
                 }

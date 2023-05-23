@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.io;
 
-import io.leaderli.litool.core.collection.CollectionUtils;
+import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.util.RandomUtil;
 import io.leaderli.litool.core.util.ThreadUtil;
@@ -33,7 +33,7 @@ class InputStreamCompletableFutureTest {
                 Integer next = range.next();
                 String str = next + ",";
                 byte[] bytes1 = str.getBytes();
-                for (byte b : Lira.of(CollectionUtils.toArray(bytes1)).cast(Byte.class)) {
+                for (byte b : Lira.of(ArrayUtils.toArray(bytes1)).cast(Byte.class)) {
                     bytes.add(b);
                 }
             }

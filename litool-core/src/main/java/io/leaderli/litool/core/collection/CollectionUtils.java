@@ -4,10 +4,8 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -30,7 +28,7 @@ public class CollectionUtils {
     public static <T> Lira<T> getDuplicateElements(Iterable<? extends T> iterable) {
 
         Set<T> unique = new HashSet<>();
-        return Lira.<T>of(iterable).filter(e -> !unique.add(e)).unique();
+        return Lira.<T>of(iterable).filter(e -> !unique.add(e)).distinct();
     }
 
 
@@ -62,11 +60,10 @@ public class CollectionUtils {
 
 
     /**
-     * Return Cartesian Product, return {new Object[0][]} if
-     * any element is null or empty array
+     * 返回元素的笛卡尔积，如果任何元素为null或空数组，则返回{new Object[0][]}
      *
-     * @param elements the elements of cartesian
-     * @return return cartesian of elements
+     * @param elements 笛卡尔积的元素
+     * @return 返回元素的笛卡尔积
      */
     @SuppressWarnings("ConstantConditions")
     public static Object[][] cartesian(Object[]... elements) {
@@ -110,66 +107,38 @@ public class CollectionUtils {
 
 
     /**
-     * return {@code  null} if obj is not array otherwise cast to array
-     * <p>
-     * if array's element is primitive, will convert to  wrapper array
-     *
-     * @param <T> the type of array
-     * @param obj the array that declare as Object
-     * @return casted array
+     * @param <T>    元素类型
+     * @param first  -
+     * @param second -
+     * @return 两个 {@link  Iterable}的异或合集
      */
+    public static <T> Lira<T> xor(Iterable<T> first, Iterable<T> second) {
 
-    @SuppressWarnings({"unchecked", "java:S1168"})
-    public static <T> T[] toArray(Object obj) {
-
-        Class<?> componentType = ClassUtil.getComponentType(obj);
-        if (componentType == null) {
-            return null;
-        }
-        int length = Array.getLength(obj);
-        T[] objects = (T[]) ClassUtil.newWrapperArray(componentType, length);
-
-        for (int i = 0; i < length; i++) {
-            objects[i] = (T) Array.get(obj, i);
-        }
-
-        return objects;
-    }
-
-    /**
-     * Return the xor of two lira
-     *
-     * @param <T> the  type of lira element
-     * @param a   a lira
-     * @param b   another lira
-     * @return xor of two lira
-     */
-    public static <T> Lira<T> xor(Iterable<T> a, Iterable<T> b) {
-
-        Lira<T> union = union(a, b);
-        List<T> intersection = intersection(a, b).get();
+        Lira<T> union = union(first, second);
+        List<T> intersection = intersection(first, second).get();
         return union.filter(e -> !intersection.contains(e));
     }
 
+
     /**
-     * Return the union of two array
-     *
-     * @param <T> the type of array
-     * @param a   a  itr
-     * @param b   another itr
-     * @return the union of two  itr
-     * @see #union(Iterable, Iterable)
+     * @param <T>    元素类型
+     * @param first  -
+     * @param second -
+     * @return 两个 {@link  Iterable}的合集
      */
-    public static <T> Lira<T> union(Iterable<T> a, Iterable<T> b) {
+    public static <T> Lira<T> union(Iterable<T> first, Iterable<T> second) {
 
 
-        Lira<T> left = Lira.of(a).distinct();
-        if (b == null) {
+        Lira<T> left = Lira.of(first).distinct();
+        if (second == null) {
             return left;
         }
+        left.terminal(old -> {
+
+        });
         List<T> raw = left.get();
 
-        b.forEach(raw::add);
+        second.forEach(raw::add);
 
         return Lira.of(raw).distinct();
 

@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.test;
 
-import io.leaderli.litool.core.collection.CollectionUtils;
+import io.leaderli.litool.core.collection.ArrayUtils;
 
 /**
  * @author leaderli
@@ -11,7 +11,7 @@ class CharCartesian implements CartesianFunction<CharValues, Character> {
     public Character[] apply(CharValues annotatedByValuable, CartesianContext context) {
         char[] value = annotatedByValuable.value();
         if (value.length > 0) {
-            return CollectionUtils.toArray(value);
+            return ArrayUtils.toArray(value);
         }
         return CartesianUtil.cartesian_single_def(Character.class);
     }
