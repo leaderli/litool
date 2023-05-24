@@ -486,6 +486,7 @@ class LiraTest {
                 Lira.of(1, 2, 3, 4, 1).distinct().map(i -> i / 2).distinct().toArray(Integer.class));
 
         Assertions.assertEquals(1, Lira.of(1, 2, 3, 4, 1).distinct((left, right) -> left - right < 2).first().get());
+        Assertions.assertEquals(1, Lira.of(1, 2, 3, 4, 1, null).distinct((left, right) -> left - right < 2).first().get());
 
 
         Assertions.assertEquals(0, Lira.of().distinct().size());

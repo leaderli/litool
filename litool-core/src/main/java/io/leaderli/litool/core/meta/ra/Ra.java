@@ -3,6 +3,7 @@ package io.leaderli.litool.core.meta.ra;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.lang.CompareDecorator;
 import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.*;
 import io.leaderli.litool.core.type.ClassUtil;
@@ -281,34 +282,9 @@ public abstract class Ra<T> implements Lira<T> {
 
     @Override
     public Lira<T> distinct(EqualComparator<? super T> comparator) {
-
-        return terminal(prev -> {
-
-            List<T> distinct = new ArrayList<>();
-            for (T t : prev) {
-
-                if (t == null) {
-                    if (!distinct.contains(null)) {
-                        distinct.add(null);
-                    }
-                    continue;
-                }
-
-                addIfAbsent(comparator, distinct, t);
-            }
-            return distinct;
-        });
+        return map(m -> new CompareDecorator<T>(m, comparator)).distinct().map(m -> m.value);
     }
 
-    private void addIfAbsent(EqualComparator<? super T> comparator, List<T> distinct, T t) {
-        for (T di : distinct) {
-
-            if (di != null && comparator.apply(t, di)) {
-                return;
-            }
-        }
-        distinct.add(t);
-    }
 
     @Override
     public Lira<T> sorted(Comparator<? super T> comparator) {

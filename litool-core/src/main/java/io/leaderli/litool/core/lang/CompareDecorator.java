@@ -2,20 +2,18 @@ package io.leaderli.litool.core.lang;
 
 import io.leaderli.litool.core.type.ClassUtil;
 
-import java.util.Comparator;
-
 /**
  * a decorator provide a custom compare function, commonly used to {@link  java.util.Set}
  *
  * @author leaderli
  * @since 2022/9/2
  */
-public class CompareDecorator<T> implements Comparator<T> {
+public class CompareDecorator<T> {
 
     public final T value;
-    public final EqualComparator<T> equalComparator;
+    public final EqualComparator<? super T> equalComparator;
 
-    public CompareDecorator(T value, EqualComparator<T> equalComparator) {
+    public CompareDecorator(T value, EqualComparator<? super T> equalComparator) {
         this.value = value;
         this.equalComparator = equalComparator;
     }
@@ -44,8 +42,4 @@ public class CompareDecorator<T> implements Comparator<T> {
     }
 
 
-    @Override
-    public int compare(T o1, T o2) {
-        return 0;
-    }
 }
