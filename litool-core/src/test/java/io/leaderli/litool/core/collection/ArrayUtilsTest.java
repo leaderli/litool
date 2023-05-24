@@ -20,6 +20,14 @@ class ArrayUtilsTest {
 
 
     @Test
+    void convertToTargetArray() {
+
+        Assertions.assertThrows(ArrayStoreException.class, () -> ArrayUtils.convertToTargetArray(Integer.class, 1, 2, true));
+
+        Assertions.assertEquals(1, ArrayUtils.convertToTargetArray(Integer.class, (Object) null).length);
+    }
+
+    @Test
     void arraycopy() {
 
 

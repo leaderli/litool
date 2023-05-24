@@ -493,6 +493,7 @@ class LiraTest {
         Assertions.assertEquals(2, Lira.of(2, 1).distinct().size());
         Assertions.assertEquals(2, Lira.of(2, 1, 2).distinct().size());
         Assertions.assertEquals(2, Lira.of(2, 1, 2, 2).distinct().size());
+        Assertions.assertArrayEquals(new Integer[]{2, 1, 3}, Lira.of(2, 1, 3, 3, 2, 1).distinct().toArray(Integer.class));
     }
 
     @Test

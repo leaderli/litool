@@ -50,7 +50,7 @@ public class Lean {
     }
 
     private static Lira<LeanFieldKey> initLeanKeyHandlers(List<LeanFieldKey> reflect_name_handlers) {
-        return CollectionUtils.union(reflect_name_handlers, defaultLeanKeyHandlers());
+        return CollectionUtils.union(LeanFieldKey.class, reflect_name_handlers, defaultLeanKeyHandlers());
     }
 
     private static List<LeanFieldKey> defaultLeanKeyHandlers() {

@@ -68,7 +68,7 @@ public class ArrayItr<T> implements IterableItr<T> {
 
     @Override
     public T[] toArray(Class<T> type) {
-        return ArrayUtils.toArray(type, arr);
+        return ArrayUtils.convertToTargetArray(type, (Object[]) arr);
     }
 
     @Override

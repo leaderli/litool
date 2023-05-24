@@ -191,9 +191,8 @@ public class ImmutableList<T> implements Iterable<T>, ToList<T, ArrayList<T>>, T
     /**
      * @return 返回一个包含所有元素的数组
      */
-    @SuppressWarnings("unchecked")
     public T[] toArray(Class<T> type) {
-        return ArrayUtils.toArray(type, (T[]) elements);
+        return ArrayUtils.convertToTargetArray(type, elements);
     }
 
 

@@ -86,7 +86,7 @@ public class LiLimitArray<T> implements ToList<T, ArrayList<T>>, ToArray<T> {
 
     @Override
     public T[] toArray(Class<T> type) {
-        return ArrayUtils.toArray(type, elements);
+        return ArrayUtils.convertToTargetArray(type, (Object[]) elements);
     }
 
     @Override

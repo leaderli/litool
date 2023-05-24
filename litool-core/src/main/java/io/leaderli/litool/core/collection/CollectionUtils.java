@@ -112,10 +112,10 @@ public class CollectionUtils {
      * @param second -
      * @return 两个 {@link  Iterable}的异或合集
      */
-    public static <T> Lira<T> xor(Iterable<T> first, Iterable<T> second) {
+    public static <T> Lira<T> xor(Class<T> type, Iterable<T> first, Iterable<T> second) {
 
-        Lira<T> union = union(first, second);
-        List<T> intersection = intersection(first, second).get();
+        Lira<T> union = union(type, first, second);
+        List<T> intersection = intersection(type, first, second).get();
         return union.filter(e -> !intersection.contains(e));
     }
 
@@ -124,24 +124,32 @@ public class CollectionUtils {
      * @param <T>    元素类型
      * @param first  -
      * @param second -
-     * @return 两个 {@link  Iterable}的合集
+     * @return 两个 {@link  Iterable}的合集，union 需要保证顺序
      */
-    public static <T> Lira<T> union(Iterable<T> first, Iterable<T> second) {
+    public static <T> Lira<T> union(Class<T> type, Iterable<T> first, Iterable<T> second) {
+
+        return union(type, ArrayUtils.toArray(type, first), ArrayUtils.toArray(type, second));
+
+    }
+
+    /**
+     * Return the union of two array
+     *
+     * @param <T>    the type of array
+     * @param first  first array
+     * @param second another array
+     * @return the union of two array
+     * @see #union(Class, Iterable, Iterable) #union(Iterable, Iterable)
+     */
+    public static <T> Lira<T> union(Class<T> type, T[] first, T[] second) {
 
 
-        Lira<T> left = Lira.of(first).distinct();
-        if (second == null) {
-            return left;
-        }
-        left.terminal(old -> {
-
-        });
-        List<T> raw = left.get();
-
-        second.forEach(raw::add);
-
-        return Lira.of(raw).distinct();
-
+        return Lira.of(first)
+                .terminal(prev -> {
+                    LinkedHashSet<T> orderSet = new LinkedHashSet<>(prev);
+                    Lira.of(second).forEach(orderSet::add);
+                    return orderSet;
+                });
     }
 
     /**
@@ -168,60 +176,50 @@ public class CollectionUtils {
     /**
      * Return intersection of two arr
      *
-     * @param <T> the type of  array
-     * @param a   a arr
-     * @param b   another arr
+     * @param <T>    the type of  array
+     * @param first  first arr
+     * @param second another arr
      * @return intersection of two arr
      */
-    public static <T> Lira<T> intersection(T[] a, T[] b) {
+    public static <T> Lira<T> intersection(Class<T> type, T[] first, T[] second) {
 
-        return intersection(Lira.of(a), Lira.of(b));
+
+        if (first == null || first.length == 0 || second == null || second.length == 0) {
+            return Lira.none();
+        }
+
+
+        List<T> result = new ArrayList<>();
+
+        for (T f : first) {
+
+            for (T s : second) {
+
+                if (Objects.equals(f, s)) {
+                    result.add(f);
+                    break;
+                }
+            }
+        }
+
+        return Lira.of(result).distinct();
+
     }
 
     /**
      * Return intersection of two itr
      *
-     * @param <T> the type of itr
-     * @param a   a itr
-     * @param b   another itr
+     * @param <T>    the type of itr
+     * @param first  first itr
+     * @param second another itr
      * @return intersection of two itr
      */
-    public static <T> Lira<T> intersection(Iterable<T> a, Iterable<T> b) {
+    public static <T> Lira<T> intersection(Class<T> type, Iterable<T> first, Iterable<T> second) {
 
 
-        List<T> result = new ArrayList<>();
+        return intersection(type, ArrayUtils.toArray(type, first), ArrayUtils.toArray(type, second));
 
 
-        List<T> raw = Lira.of(b).get();
-
-
-        if (a == null) {
-            return Lira.none();
-        }
-        a.forEach(t -> {
-
-            if (raw.contains(t)) {
-                result.add(t);
-            }
-        });
-
-        return Lira.of(result).distinct();
-
-
-    }
-
-    /**
-     * Return the union of two array
-     *
-     * @param <T> the type of array
-     * @param a   a array
-     * @param b   another array
-     * @return the union of two array
-     * @see #union(Iterable, Iterable) #union(Iterable, Iterable)
-     */
-    public static <T> Lira<T> union(T[] a, T[] b) {
-
-        return union(Lira.of(a), Lira.of(b));
     }
 
 

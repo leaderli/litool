@@ -70,7 +70,7 @@ public class ReflectUtil {
             return Lira.none();
         }
 
-        return CollectionUtils.union(Lira.of(cls.getFields()), Lira.of(cls.getDeclaredFields())).filter(f -> !f.isSynthetic());
+        return CollectionUtils.union(Field.class, cls.getFields(), cls.getDeclaredFields()).filter(f -> !f.isSynthetic());
     }
 
 
@@ -286,7 +286,7 @@ public class ReflectUtil {
     public static <T> Lira<Constructor<T>> getConstructors(Class<T> cls) {
 
         Objects.requireNonNull(cls);
-        Object union = CollectionUtils.union(cls.getConstructors(), cls.getDeclaredConstructors());
+        Object union = CollectionUtils.union(Constructor.class, cls.getConstructors(), cls.getDeclaredConstructors());
         return (Lira<Constructor<T>>) union;
 
     }
@@ -480,7 +480,7 @@ public class ReflectUtil {
         if (cls == null) {
             return Lira.none();
         }
-        return CollectionUtils.union(cls.getMethods(), cls.getDeclaredMethods()).filter(m -> !m.isSynthetic());
+        return CollectionUtils.union(Method.class, cls.getMethods(), cls.getDeclaredMethods()).filter(m -> !m.isSynthetic());
     }
 
     /**

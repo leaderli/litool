@@ -65,7 +65,7 @@ public class MethodScanner {
             Lira<Method> methods = Lira.of(cls.getMethods());
 
             if (scan_private) {
-                methods = CollectionUtils.union(methods, Lira.of(cls.getDeclaredMethods()));
+                methods = CollectionUtils.union(Method.class, methods, Lira.of(cls.getDeclaredMethods()));
             }
             if (not_scan_object) {
                 methods = methods.filter(MethodUtil::notObjectMethod);

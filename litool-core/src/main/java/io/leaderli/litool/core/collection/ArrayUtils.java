@@ -1048,15 +1048,15 @@ public class ArrayUtils {
     }
 
     /**
-     * 将可变参数转换为数组
+     * 将可变参数转换为指定类型的数组
      *
      * @param componentType 数组的类型
      * @param elements      源数组
      * @param <T>           数组的类型
      * @return 新数组，其类型为T
+     * @throws ArrayStoreException 如果数组中包含其他类型的成员
      */
-    @SafeVarargs
-    public static <T> T[] toArray(Class<? extends T> componentType, T... elements) {
+    public static <T> T[] convertToTargetArray(Class<? extends T> componentType, Object... elements) {
 
         T[] arr = ClassUtil.newWrapperArray(componentType, elements.length);
         System.arraycopy(elements, 0, arr, 0, elements.length);
@@ -1073,14 +1073,18 @@ public class ArrayUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Class<? extends T> componentType, Iterable<T> iterable) {
-        List<T> list = new ArrayList<>();
-        iterable.forEach(list::add);
-        T[] array = (T[]) Array.newInstance(componentType, list.size());
-        for (int i = 0; i < list.size(); i++) {
-            array[i] = list.get(i);
-        }
+        if (iterable != null) {
 
-        return array;
+            List<T> list = new ArrayList<>();
+            iterable.forEach(list::add);
+            T[] array = (T[]) Array.newInstance(componentType, list.size());
+            for (int i = 0; i < list.size(); i++) {
+                array[i] = list.get(i);
+            }
+
+            return array;
+        }
+        return toArray(componentType);
     }
 
 
@@ -1092,9 +1096,11 @@ public class ArrayUtils {
      * @param stream        流对象
      * @return 类型为{@code T}的数组，其中包含{@link  Stream} 提供的元素
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Class<? extends T> componentType, Stream<T> stream) {
-        return (T[]) toArray(componentType, stream.toArray());
+        if (stream != null) {
+            return convertToTargetArray(componentType, stream.toArray());
+        }
+        return toArray(componentType);
 
     }
 
@@ -1106,11 +1112,13 @@ public class ArrayUtils {
      * @param iterator      迭代
      * @return 类型为{@code T}的数组，其中包含{@link  Iterator} 提供的元素
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Class<? extends T> componentType, Iterator<T> iterator) {
+        if (iterator == null) {
+            return toArray(componentType);
+        }
         List<T> list = new ArrayList<>();
         iterator.forEachRemaining(list::add);
-        return (T[]) toArray(componentType, list.toArray());
+        return convertToTargetArray(componentType, list.toArray());
     }
 
     /**
@@ -1122,16 +1130,18 @@ public class ArrayUtils {
      * @return 类型为{@code T}的数组，其中包含{@link  Enumeration} 提供的元素
      */
 
-    @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Class<? extends T> componentType, Enumeration<T> enumeration) {
 
+        if (enumeration == null) {
+            return toArray(componentType);
+        }
         List<T> list = new ArrayList<>();
 
         while (enumeration.hasMoreElements()) {
             list.add(enumeration.nextElement());
         }
 
-        return (T[]) toArray(componentType, list.toArray());
+        return convertToTargetArray(componentType, list.toArray());
     }
 
     /**

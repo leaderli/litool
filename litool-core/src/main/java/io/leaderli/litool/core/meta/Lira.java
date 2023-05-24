@@ -659,7 +659,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     default Lira<T> distinct() {
         return terminal(prev -> {
-            return new HashSet<>(prev);
+            return new LinkedHashSet<>(prev);
         });
     }
 

@@ -45,11 +45,14 @@ class CollectionUtilsTest {
 
         Lira<Integer> a = Lira.of(Arrays.asList(1, 2, 3));
         Lira<Integer> b = Lira.of(Arrays.asList(3, 4, 5));
-        Assertions.assertEquals(1, CollectionUtils.intersection(a, b).size());
-        Assertions.assertEquals(0, CollectionUtils.intersection(a, Lira.none()).size());
-        Assertions.assertEquals(0, CollectionUtils.intersection((Object[]) null, null).size());
-        Assertions.assertEquals(0, CollectionUtils.intersection(Collections.singletonList(1), null).size());
-        Assertions.assertEquals(0, CollectionUtils.intersection(null, Collections.singletonList(1)).size());
+        Assertions.assertEquals(1, CollectionUtils.intersection(Integer.class, a, b).size());
+        Assertions.assertEquals(0, CollectionUtils.intersection(Integer.class, a, Lira.none()).size());
+        Assertions.assertEquals(0, CollectionUtils.intersection(Object.class, (Object[]) null, null).size());
+        Assertions.assertEquals(0, CollectionUtils.intersection(Integer.class, Collections.singletonList(1), null).size());
+        Assertions.assertEquals(0, CollectionUtils.intersection(Integer.class, null, Collections.singletonList(1)).size());
+
+        Assertions.assertArrayEquals(new Integer[]{1, 3, 2}, CollectionUtils.intersection(Integer.class, new Integer[]{1, 3, 2}, new Integer[]{3, 1, 2}).toArray(Integer.class));
+        Assertions.assertArrayEquals(new Integer[]{1, 2}, CollectionUtils.intersection(Integer.class, new Integer[]{1, 3, 5, 2}, new Integer[]{2, 4, 1}).toArray(Integer.class));
     }
 
     @Test
@@ -59,12 +62,16 @@ class CollectionUtilsTest {
         Lira<Integer> a = Lira.of(Arrays.asList(1, 2, 3));
         Lira<Integer> b = Lira.of(Arrays.asList(3, 4, 5));
 
-        Assertions.assertEquals(5, CollectionUtils.union(a, b).size());
-        Assertions.assertEquals(3, CollectionUtils.union(a, Lira.none()).size());
-        Assertions.assertEquals(5, CollectionUtils.union(new Integer[]{1, 2, 3}, new Integer[]{3, 4, 5}).size());
-        Assertions.assertEquals(3, CollectionUtils.union(null, new Integer[]{3, 4, 5}).size());
-        Assertions.assertEquals(2, CollectionUtils.union(null, Arrays.asList(1, 2)).size());
-        Assertions.assertEquals(0, CollectionUtils.union((Iterable<Object>) null, null).size());
+        Assertions.assertEquals(5, CollectionUtils.union(Integer.class, a, b).size());
+
+        Assertions.assertEquals(3, CollectionUtils.union(Integer.class, a, Lira.none()).size());
+        Assertions.assertEquals(5, CollectionUtils.union(Integer.class, new Integer[]{1, 2, 3}, new Integer[]{3, 4, 5}).size());
+        Assertions.assertEquals(3, CollectionUtils.union(Integer.class, null, new Integer[]{3, 4, 5}).size());
+        Assertions.assertEquals(2, CollectionUtils.union(Integer.class, null, Arrays.asList(1, 2)).size());
+        Assertions.assertEquals(0, CollectionUtils.union(Object.class, (Iterable<Object>) null, null).size());
+
+        Assertions.assertArrayEquals(new Integer[]{1, 2, 3, 4, 5}, CollectionUtils.union(Integer.class, new Integer[]{1, 2, 3}, new Integer[]{3, 4, 5}).toArray(Integer.class));
+        Assertions.assertArrayEquals(new Integer[]{1, 3, 5, 2, 4}, CollectionUtils.union(Integer.class, new Integer[]{1, 3, 5}, new Integer[]{2, 4, 1}).toArray(Integer.class));
     }
 
 
@@ -74,12 +81,12 @@ class CollectionUtilsTest {
 
         Lira<Integer> a = Lira.of(Arrays.asList(1, 2, 3));
         Lira<Integer> b = Lira.of(Arrays.asList(3, 4, 5));
-        Assertions.assertEquals(4, CollectionUtils.xor(a, b).size());
-        Assertions.assertEquals(3, CollectionUtils.xor(a, Lira.none()).size());
+        Assertions.assertEquals(4, CollectionUtils.xor(Integer.class, a, b).size());
+        Assertions.assertEquals(3, CollectionUtils.xor(Integer.class, a, Lira.none()).size());
         b = Lira.of(Arrays.asList(4, 4, 4));
-        Assertions.assertEquals(4, CollectionUtils.xor(a, b).size());
-        Assertions.assertEquals(3, CollectionUtils.xor(a, null).size());
-        Assertions.assertEquals(0, CollectionUtils.xor(null, null).size());
+        Assertions.assertEquals(4, CollectionUtils.xor(Integer.class, a, b).size());
+        Assertions.assertEquals(3, CollectionUtils.xor(Integer.class, a, null).size());
+        Assertions.assertEquals(0, CollectionUtils.xor(Integer.class, null, null).size());
 
 
     }
@@ -100,6 +107,13 @@ class CollectionUtilsTest {
         List<Integer> of = CollectionUtils.toList(1);
         Assertions.assertSame(1, of.size());
 
+
+    }
+
+    @Test
+    void test() {
+
+        CollectionUtils.cartesian(ArrayUtils.of(2, 1, 3), ArrayUtils.of("-", "*"), ArrayUtils.of("a", "b"));
 
     }
 
