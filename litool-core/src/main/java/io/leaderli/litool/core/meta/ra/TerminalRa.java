@@ -75,12 +75,7 @@ class TerminalRa<T> extends RaWithPrevPublisher<T> {
         }
 
         void completeTerminal() {
-
-            if (deliverAction != null) {
-                terminalSubscription = new IterableRa<>(deliverAction.apply(cache)).newGenerator(actualSubscriber);
-            } else {
-                terminalSubscription = new IterableRa<>(cache).newGenerator(actualSubscriber);
-            }
+            terminalSubscription = new IterableRa<>(deliverAction.apply(cache)).newGenerator(actualSubscriber);
         }
 
         @Override
