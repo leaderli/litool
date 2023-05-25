@@ -11,13 +11,18 @@ import io.leaderli.litool.core.type.ClassUtil;
 public class CompareDecorator<T> {
 
     public final T value;
+    public final boolean allowNull;
     public final EqualComparator<? super T> equalComparator;
 
     public CompareDecorator(T value, EqualComparator<? super T> equalComparator) {
+        this(true, value, equalComparator);
+    }
+
+    public CompareDecorator(boolean allowNull, T value, EqualComparator<? super T> equalComparator) {
+        this.allowNull = allowNull;
         this.value = value;
         this.equalComparator = equalComparator;
     }
-
 
     @Override
     public int hashCode() {
@@ -28,14 +33,15 @@ public class CompareDecorator<T> {
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
+
 
         if (obj instanceof CompareDecorator) {
-            obj = ((CompareDecorator<?>) obj).value;
-            if (ClassUtil._instanceof(obj, this.value.getClass())) {
-                return equalComparator.apply((T) obj, this.value);
+            Object objValue = ((CompareDecorator<?>) obj).value;
+            if (this.value == null) {
+                return allowNull && objValue == null;
+            }
+            if (ClassUtil._instanceof(objValue, this.value.getClass())) {
+                return equalComparator.apply((T) objValue, this.value);
             }
         }
         return false;

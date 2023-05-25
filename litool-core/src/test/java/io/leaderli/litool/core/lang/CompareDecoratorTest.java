@@ -14,6 +14,7 @@ import java.util.function.Function;
 class CompareDecoratorTest {
 
 
+    @SuppressWarnings("EqualsWithItself")
     @Test
     void set() {
 
@@ -24,9 +25,7 @@ class CompareDecoratorTest {
 
         EqualComparator<Integer> integerEqualComparator = (a, b) -> (a / 2) - (b / 2) == 0;
 
-        Function<Integer, CompareDecorator<Integer>> compareDecorator = i -> {
-            return new CompareDecorator<>(i, integerEqualComparator);
-        };
+        Function<Integer, CompareDecorator<Integer>> compareDecorator = i -> new CompareDecorator<>(i, integerEqualComparator);
         Assertions.assertEquals(50, (int) list.stream().map(compareDecorator)
                 .distinct()
                 .map(m -> m.value).count());
@@ -35,6 +34,14 @@ class CompareDecoratorTest {
 
         Assertions.assertEquals(50, Lira.range().limit(100).distinct(integerEqualComparator).size());
 
+        CompareDecorator<Integer> a = new CompareDecorator<>(1, integerEqualComparator);
+
+        Assertions.assertEquals(a, a);
+        Assertions.assertNotEquals(a, null);
+        a = new CompareDecorator<>(null, integerEqualComparator);
+        Assertions.assertNotEquals(a, null);
+        Assertions.assertEquals(a, new CompareDecorator<>(null, integerEqualComparator));
+        Assertions.assertNotEquals(new CompareDecorator<>(false, null, integerEqualComparator), new CompareDecorator<>(null, integerEqualComparator));
 
     }
 
