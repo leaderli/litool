@@ -143,7 +143,7 @@ public class CollectionUtils {
 
 
         return Lira.of(first)
-                .terminal(prev -> {
+                .terminalMap(prev -> {
                     LinkedHashSet<T> orderSet = new LinkedHashSet<>(prev);
                     Lira.of(second).forEach(orderSet::add);
                     return orderSet;

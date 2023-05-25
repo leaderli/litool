@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 /**
@@ -78,14 +79,29 @@ class LiraTest {
     @Test
     void terminal() {
 
-        Assertions.assertThrows(NullPointerException.class, () -> Lira.of(1, 2, 3).terminal((Function<List<Integer>, Iterable<Integer>>) null));
+        Assertions.assertThrows(NullPointerException.class, () -> Lira.of(1, 2, 3).terminalMap(null));
 
-        Lira<Integer> lira = Lira.of(1, 2, 3).terminal(l -> l);
+        Lira<Integer> lira = Lira.of(1, 2, 3).terminalMap(l -> l);
         Iterator<Integer> iterator = lira.iterator();
         Assertions.assertEquals(1, iterator.next());
         Assertions.assertEquals(2, iterator.next());
         Assertions.assertEquals(3, iterator.next());
         Assertions.assertThrows(NoSuchElementException.class, iterator::next);
+
+        AtomicInteger count = new AtomicInteger();
+        Lira.range().limit(10)
+                .debug(d -> count.incrementAndGet())
+                .limit(1)
+                .get();
+        Assertions.assertEquals(2, count.get());
+        count.set(0);
+        Lira.range().limit(10)
+                .debug(d -> count.incrementAndGet())
+                .terminalMap(l -> l)
+                .limit(1)
+                .get();
+
+        Assertions.assertEquals(10, count.get());
 
     }
 
@@ -494,7 +510,13 @@ class LiraTest {
         Assertions.assertEquals(2, Lira.of(2, 1, 2).distinct().size());
         Assertions.assertEquals(2, Lira.of(2, 1, 2, 2).distinct().size());
         Assertions.assertArrayEquals(new Integer[]{2, 1, 3}, Lira.of(2, 1, 3, 3, 2, 1).distinct().toArray(Integer.class));
+        Lira<String> lira = Lira.of("1", "10", "30", "3", "2", "20");
+        Assertions.assertEquals(lira, lira.distinct());
+
+
+        Assertions.assertEquals(18, Lira.range().distinct((a, b) -> (a - b) / 2 == 0).limit(10).last().get());
     }
+
 
     @Test
     void equals() {

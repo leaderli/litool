@@ -100,5 +100,9 @@ class ImmutableMapTest {
     @Test
     void toMap() {
         Assertions.assertTrue(ImmutableMap.of(null).toMap().isEmpty());
+        Map<String, String> src = new HashMap<>();
+        src.put("1", "1");
+        ImmutableMap<String, String> immutable = ImmutableMap.of(src);
+        Assertions.assertNotSame(immutable.toMap(), immutable.toMap());
     }
 }

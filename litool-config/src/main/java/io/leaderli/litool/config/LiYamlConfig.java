@@ -77,19 +77,23 @@ public class LiYamlConfig {
      * @see LiMapUtil#merge(Map, Map)
      * @see StrSubstitution#$format(String, Function)
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static Map<String, Object> loadResourcesYmlFiles(String... names) {
 
         List<String> nameList = Arrays.asList(names);
 
-        LiBox<Map<String, Object>> box = LiBox.of(new HashMap<>());
+        LiBox<Map> box = LiBox.of(new HashMap<>());
         Yaml yaml = new Yaml();
 
         ResourceUtil.getResourceFiles(f -> nameList.contains(f.getName()))
                 .sorted(Comparator.comparingInt(f -> nameList.indexOf(f.getName())))
                 .throwable_map(f -> (Map<?, ?>) yaml.load(Files.newInputStream(f.toPath())))
-                .forThrowableEach(f -> box.value(LiMapUtil.merge(box.value(), f)));
+                .forThrowableEach(f -> {
+                    Map<?, ?> merge = LiMapUtil.merge(box.value(), f);
+                    box.value(merge);
+                });
 
-        Map<String, Object> config = box.value();
+        Map<Object, Object> config = box.value();
 
         String mergeYaml = yaml.dumpAsMap(config);
 

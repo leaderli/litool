@@ -412,17 +412,17 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param deliverAction the consumer perform on the cache list
      * @return a new lira
      */
-    Lira<T> terminal(Function<List<T>, Iterable<T>> deliverAction);
+    Lira<T> terminalMap(Function<List<T>, Iterable<T>> deliverAction);
 
     /**
      * a terminal action, trigger the perform a action prev elements
      *
      * @param deliverAction the consumer perform on the cache list
      * @return a new lira
-     * @see #terminal(Function)
+     * @see #terminalMap(Function)
      */
     default Lira<T> terminal(Consumer<List<T>> deliverAction) {
-        return terminal(list -> {
+        return terminalMap(list -> {
             deliverAction.accept(list);
             return list;
         });
@@ -656,11 +656,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return a new lira
      * @see Objects#equals(Object, Object)
      */
-    default Lira<T> distinct() {
-        return terminal(prev -> {
-            return new LinkedHashSet<>(prev);
-        });
-    }
+    Lira<T> distinct();
+
 
     /**
      * 有序
@@ -670,7 +667,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @param comparator a {@code EqualComparator}  to be used to compare lira elements is equals
      * @return a new lira
-     * @see #terminal(Function)
+     * @see #terminalMap(Function)
      * @see CompareDecorator
      * @see #distinct()
      */
@@ -680,7 +677,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * use default {@link  Comparator}, {@code  {sorted(null)}}
      *
      * @return the new lira
-     * @see #terminal(Function)
+     * @see #terminalMap(Function)
      */
     default Lira<T> sorted() {
         return sorted(null);
@@ -694,7 +691,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @param comparator the provided {@link Comparator}
      * @return the new lira
-     * @see #terminal(Function)
+     * @see #terminalMap(Function)
      */
     Lira<T> sorted(Comparator<? super T> comparator);
 

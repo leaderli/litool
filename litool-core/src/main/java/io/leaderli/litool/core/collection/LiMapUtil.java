@@ -9,21 +9,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * a handy tool of map
+ * Map工具类，提供了一些方便的方法，用于合并、覆盖、过滤Map等操作。
  */
 public class LiMapUtil {
 
     /**
-     * Merge two map, which keys is union of two map , the values will chose a non-null value get by key,
-     * if both map have the value and value is not map, will use high priority one. if both value are map,
-     * will recursive call merge method
+     * 合并两个Map，将两个Map中的键合并成一个新Map，并根据一定规则选择非null的值作为新Map中的值。
+     * <p>
+     * 如果两个Map中的值都不为null，并且值不是Map类型，将优先选择high中的值。
+     * <p>
+     * 如果两个Map中的值都是Map类型，则递归调用merge方法合并Map。
      *
-     * @param low  low priority map
-     * @param high high priority map
-     * @return a new merged map
+     * @param low  低优先级Map
+     * @param high 高优先级Map
+     * @return 合并后的新Map
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static Map<String, Object> merge(Map low, Map high) {
+    public static <K, V> Map<K, V> merge(Map<K, V> low, Map<K, V> high) {
 
 
         if (low == null) {
@@ -53,9 +55,10 @@ public class LiMapUtil {
             }
         });
 
-        Map<String, Object> stringObjectMap = new HashMap<>();
-        result.forEach((k, v) -> stringObjectMap.put(String.valueOf(k), v));
-        return stringObjectMap;
+        return result;
+//        Map<String, Object> stringObjectMap = new HashMap<>();
+//        result.forEach((k, v) -> stringObjectMap.put(String.valueOf(k), v));
+//        return stringObjectMap;
     }
 
 

@@ -47,5 +47,8 @@ public class CompareDecorator<T> {
         return false;
     }
 
-
+    @Override
+    public String toString() {
+        return "compare(" + value + ")";
+    }
 }

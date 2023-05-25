@@ -73,7 +73,7 @@ class LiMapUtilTest {
         map2.put("3", "3");
 
         assertEquals("{1=1, 2=1, l=[l1, l2]}", map1.toString());
-        Map<String, Object> override = LiMapUtil.merge(map1, map2);
+        Map override = LiMapUtil.merge(map1, map2);
         assertEquals("{1=10, 2=1, 3=3, l=[l1, l2]}", override.toString());
 
         Assertions.assertNotEquals(map1, override);
