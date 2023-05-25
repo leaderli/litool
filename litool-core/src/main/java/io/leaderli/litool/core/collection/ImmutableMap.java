@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+
 /**
- * A ImmutableMap which contains a map, all method are delegated throw {@link  #delegate}
+ * 不可变的Map，封装了一个Map对象，所有方法通过委托给{@link #delegate}实现
  *
- * @param <K> the type of key
- * @param <V> the type of value
- * @author leaderli
+ * @param <K> 键的类型
+ * @param <V> 值的类型
  * @since 2022/7/24
  */
 public class ImmutableMap<K, V> {
@@ -25,12 +25,12 @@ public class ImmutableMap<K, V> {
     }
 
     /**
-     * Provide ImmutableMap instance which contains a copy of {@code  map}
+     * 返回一个包含map副本的ImmutableMap实例
      *
-     * @param map a map
-     * @param <K> the type of key
-     * @param <V> the type of value
-     * @return a ImmutableMap
+     * @param map 一个Map对象
+     * @param <K> 键的类型
+     * @param <V> 值的类型
+     * @return 一个ImmutableMap对象
      */
     public static <K, V> ImmutableMap<K, V> of(Map<K, V> map) {
         return new ImmutableMap<>(map);
@@ -69,9 +69,9 @@ public class ImmutableMap<K, V> {
     }
 
     /**
-     * Return a clone of {@link  #delegate}
+     * 返回一个包含{@link #delegate}副本的Map对象
      *
-     * @return a clone of {@link  #delegate}
+     * @return {@link #delegate}的副本
      */
     public Map<K, V> toMap() {
 

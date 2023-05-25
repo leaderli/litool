@@ -663,6 +663,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
+     * 有序
      * Return this that consisting of the distinct elements according to {@code EqualComparator}
      * <p>
      * it's a middle terminal action

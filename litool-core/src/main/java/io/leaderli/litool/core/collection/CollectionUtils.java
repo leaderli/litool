@@ -125,6 +125,7 @@ public class CollectionUtils {
      * @param first  -
      * @param second -
      * @return 两个 {@link  Iterable}的合集，union 需要保证顺序
+     * @see #union(Class, Object[], Object[])
      */
     public static <T> Lira<T> union(Class<T> type, Iterable<T> first, Iterable<T> second) {
 
@@ -133,13 +134,10 @@ public class CollectionUtils {
     }
 
     /**
-     * Return the union of two array
-     *
-     * @param <T>    the type of array
-     * @param first  first array
-     * @param second another array
-     * @return the union of two array
-     * @see #union(Class, Iterable, Iterable) #union(Iterable, Iterable)
+     * @param <T>    元素类型
+     * @param first  -
+     * @param second -
+     * @return 两个 {@link  Iterable}的合集，union 需要保证顺序
      */
     public static <T> Lira<T> union(Class<T> type, T[] first, T[] second) {
 
@@ -153,33 +151,37 @@ public class CollectionUtils {
     }
 
     /**
-     * @param t1   arr 1
-     * @param t2   arr 2
-     * @param <T1> the type of t1
-     * @param <T2> the type of t2
-     * @return combine two same length arr  as a lira of {@link LiTuple2}
+     * 将两个长度相同的数组合并成一个由{@link LiTuple2}组成的列表
+     *
+     * @param arr1 第一个数组
+     * @param arr2 第二个数组
+     * @param <T1> arr1的元素类型
+     * @param <T2> arr2的元素类型
+     * @return 合并后的列表，其中每个元素都是一个由t1和t2组成的{@link LiTuple2}
+     * @throws IllegalArgumentException 当arr1和arr2的长度不一致时抛出
      */
-    public static <T1, T2> Lira<LiTuple2<T1, T2>> tuple(T1[] t1, T2[] t2) {
+    public static <T1, T2> Lira<LiTuple2<T1, T2>> tuple(T1[] arr1, T2[] arr2) {
 
-        ObjectsUtil.requireNotNull(t1, t2);
-        LiAssertUtil.assertTrue(t1.length == t2.length);
+        ObjectsUtil.requireNotNull(arr1, arr2);
+        LiAssertUtil.assertTrue(arr1.length == arr2.length, IllegalArgumentException::new, "arr length not same");
 
         List<LiTuple2<T1, T2>> list = new ArrayList<>();
-        for (int i = 0; i < t1.length; i++) {
+        for (int i = 0; i < arr1.length; i++) {
 
-            list.add(LiTuple.of(t1[i], t2[i]));
+            list.add(LiTuple.of(arr1[i], arr2[i]));
         }
         return Lira.of(list);
 
     }
 
     /**
-     * Return intersection of two arr
+     * 返回两个数组的交集
      *
-     * @param <T>    the type of  array
-     * @param first  first arr
-     * @param second another arr
-     * @return intersection of two arr
+     * @param <T>    数组的元素类型
+     * @param type   数组的元素类型的Class对象
+     * @param first  第一个数组
+     * @param second 第二个数组
+     * @return 两个数组的交集
      */
     public static <T> Lira<T> intersection(Class<T> type, T[] first, T[] second) {
 
@@ -207,15 +209,15 @@ public class CollectionUtils {
     }
 
     /**
-     * Return intersection of two itr
+     * 返回两个迭代器的交集
      *
-     * @param <T>    the type of itr
-     * @param first  first itr
-     * @param second another itr
-     * @return intersection of two itr
+     * @param <T>    数组的元素类型
+     * @param type   数组的元素类型的Class对象
+     * @param first  第一个迭代器
+     * @param second 第二个迭代器
+     * @return {@link #intersection(Class, Object[], Object[])}
      */
     public static <T> Lira<T> intersection(Class<T> type, Iterable<T> first, Iterable<T> second) {
-
 
         return intersection(type, ArrayUtils.toArray(type, first), ArrayUtils.toArray(type, second));
 

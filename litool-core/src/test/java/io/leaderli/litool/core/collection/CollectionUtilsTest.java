@@ -23,6 +23,9 @@ class CollectionUtilsTest {
         Integer[] s2 = new Integer[]{1, 2};
 
         Assertions.assertEquals(Lira.of(LiTuple.of("a", 1), LiTuple.of("b", 2)), CollectionUtils.tuple(s1, s2));
+        Assertions.assertThrows(NullPointerException.class, () -> CollectionUtils.tuple(s1, null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> CollectionUtils.tuple(s1, new Object[]{}));
+        Assertions.assertTrue(CollectionUtils.tuple(new Object[]{}, new Object[]{}).absent());
     }
 
 
