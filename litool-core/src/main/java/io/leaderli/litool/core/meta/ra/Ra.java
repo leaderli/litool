@@ -282,7 +282,7 @@ public abstract class Ra<T> implements Lira<T> {
 
     @Override
     public Lira<T> distinct(EqualComparator<? super T> comparator) {
-        return map(m -> new CompareDecorator<T>(m, comparator)).distinct().map(m -> m.value);
+        return map(m -> new CompareDecorator<>(m, comparator)).distinct().map(m -> m.value);
     }
 
 

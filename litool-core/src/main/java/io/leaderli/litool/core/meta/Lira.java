@@ -6,6 +6,7 @@ import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.lang.CompareDecorator;
 import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.ra.*;
 import io.leaderli.litool.core.type.ClassUtil;
@@ -650,12 +651,10 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Lira<T> sleep(int countdown, long milliseconds);
 
     /**
-     * use {@link  Objects#equals(Object, Object)} as {@link  EqualComparator}
+     * use {@link  Objects#equals(Object, Object)}
      *
      * @return a new lira
-     * @see #distinct(EqualComparator)
      * @see Objects#equals(Object, Object)
-     * @see EqualComparator
      */
     default Lira<T> distinct() {
         return terminal(prev -> {
@@ -671,6 +670,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param comparator a {@code EqualComparator}  to be used to compare lira elements is equals
      * @return a new lira
      * @see #terminal(Function)
+     * @see CompareDecorator
+     * @see #distinct()
      */
     Lira<T> distinct(EqualComparator<? super T> comparator);
 
