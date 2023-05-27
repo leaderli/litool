@@ -11,7 +11,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@SuppressWarnings({"rawtypes", "unchecked"})
 class LiMapUtilTest {
 
     @Test
@@ -73,7 +72,7 @@ class LiMapUtilTest {
         map2.put("3", "3");
 
         assertEquals("{1=1, 2=1, l=[l1, l2]}", map1.toString());
-        Map override = LiMapUtil.merge(map1, map2);
+        Map<String, Object> override = LiMapUtil.merge(map1, map2);
         assertEquals("{1=10, 2=1, 3=3, l=[l1, l2]}", override.toString());
 
         Assertions.assertNotEquals(map1, override);
@@ -98,11 +97,12 @@ class LiMapUtilTest {
 
         map1 = new HashMap<>();
 
-        Map map311 = new HashMap();
+        Map<Object, Object> map311 = new HashMap<>();
         map311.put(1, 1);
         map1.put("map", map311);
         map2 = new HashMap<>();
-        Map map321 = new HashMap();
+        Map<Object, Object> map321 = new HashMap<>();
+
         map321.put(1, 4);
         map2.put("map", map321);
 
@@ -154,29 +154,6 @@ class LiMapUtilTest {
         assertFalse(LiMapUtil.getTypeObject(map, "k1").present());
         assertFalse(LiMapUtil.getTypeObject(map, "k1", String.class).present());
         assertFalse(LiMapUtil.getTypeObject(map, "k1", Integer.class).present());
-    }
-
-
-    @Test
-    void getTypeMap() {
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> k2 = new HashMap<>();
-        k2.put("1", "1");
-        k2.put("2", 2);
-        map.put("k2", k2);
-        assertTrue(LiMapUtil.getTypeMap(map, "k1").isEmpty());
-        assertEquals(1, LiMapUtil.getTypeMap(map, "k2").size());
-        assertEquals(1, LiMapUtil.getTypeMap(map, "k2", String.class).size());
-        assertEquals(1, LiMapUtil.getTypeMap(map, "k2", Integer.class).size());
-        assertEquals(2, LiMapUtil.getTypeMap(map, "k2", Object.class).size());
-        assertEquals(2, LiMapUtil.getTypeMap(map, "k2", String.class, Object.class).size());
-        assertEquals(2, LiMapUtil.getTypeMap(map, "k2", Object.class, Object.class).size());
-        assertEquals(2, LiMapUtil.getTypeMap(map, "k2", CharSequence.class, Object.class).size());
-
-        assertEquals(0, LiMapUtil.getTypeMap(map, "k2", null).size());
-        assertEquals(0, LiMapUtil.getTypeMap(map, "k2", null, null).size());
-        assertEquals(0, LiMapUtil.getTypeMap(map, "k2", null, Object.class).size());
-        assertEquals(0, LiMapUtil.getTypeMap(null, "k2").size());
     }
 
 

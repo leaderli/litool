@@ -22,6 +22,8 @@ public class LiMapUtil {
      *
      * @param low  低优先级Map
      * @param high 高优先级Map
+     * @param <K>  map 的 key 类型
+     * @param <V>  map 的 value 类型
      * @return 合并后的新Map
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -56,44 +58,47 @@ public class LiMapUtil {
         });
 
         return result;
-//        Map<String, Object> stringObjectMap = new HashMap<>();
-//        result.forEach((k, v) -> stringObjectMap.put(String.valueOf(k), v));
-//        return stringObjectMap;
+
     }
 
-
     /**
-     * Return a new map which is to use replace map override origin map.
-     * the new map keys is same as origin map , the values will chose a non-null value get by key,
-     * if both map have the value and value is not map, will use replace . if both value are map,
-     * will recursive call override method
+     * 用replace Map覆盖origin Map，返回一个新的Map。
+     * <p>
+     * 新Map中的键与origin Map相同，值则根据一定规则选择非null的值作为新Map中的值。
+     * <p>
+     * 如果两个Map中的值都不为null，并且值不是Map类型，将选择replace中的值。
+     * <p>
+     * 如果两个Map中的值都是Map类型，则递归调用override方法覆盖Map。
      *
-     * @param origin  the origin map
-     * @param replace the replace map
-     * @return a new replace map
+     * @param origin  原始Map
+     * @param replace 覆盖Map
+     * @param <K>     map 的 key 类型
+     * @param <V>     map 的 value 类型
+     * @return 覆盖后的新Map
      */
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
 
-    public static Map<String, Object> override(Map origin, Map replace) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <K, V> Map<K, V> override(Map<K, V> origin, Map<K, V> replace) {
 
 
         if (origin == null) {
-            origin = new HashMap();
+            origin = new HashMap<>();
         }
-        Map result = new HashMap<>(origin);
+        Map<K, V> result = new HashMap<>(origin);
         if (replace == null) {
             return result;
         }
         origin.forEach((key, value) -> {
 
-            Object over = replace.get(key);
+            V over = replace.get(key);
 
             if (over != null) {
 
                 if (over instanceof Map && value instanceof Map) {
 
-                    result.put(key, override((Map) value, (Map) over));
+                    Map<Object, Object> override = override((Map) value, (Map) over);
+                    result.put(key, (V) override);
                     return;
 
                 }
@@ -102,39 +107,38 @@ public class LiMapUtil {
             }
         });
 
-        Map<String, Object> stringObjectMap = new HashMap<>();
-        result.forEach((k, v) -> stringObjectMap.put(String.valueOf(k), v));
-        return stringObjectMap;
-
+        return result;
 
     }
 
     /**
-     * Return  {@code  List<String} if the found value is List  filter elements of String
-     * otherwise return a empty List
+     * 从Map中获取键为key的值，如果值为List，则过滤其中的String元素并返回。
+     * 如果值不是List，则返回一个空List。
      *
-     * @param map the searched map
-     * @param key the key of map
-     * @return {@code  List<String} if the found value is List  filter elements of String otherwise Return a
-     * empty List
-     * @see #getTypeList(Map, String, Class)
+     * @param map 搜索的Map
+     * @param key Map中的键
+     * @param <K> map 的 key 类型
+     * @param <V> map 的 value 类型
+     * @return 如果值为List，则过滤其中的String元素并返回，否则返回一个空List
+     * @see #getTypeList(Map, Object, Class)
      */
-    public static List<String> getTypeList(Map<String, ?> map, String key) {
+    public static <K, V> List<String> getTypeList(Map<K, V> map, K key) {
         return getTypeList(map, key, String.class);
     }
 
     /**
-     * Return {@code  List<T} if the found value is List  filter elements of type T
-     * otherwise return a empty List
+     * 从Map中获取键为key的值，如果值为List，则过滤其中的指定类型的元素并返回。
+     * 如果值不是List，则返回一个空List。
      *
-     * @param map          the searched map
-     * @param key          the key of map
-     * @param listItemType the class of Returned List element
-     * @param <T>          the generic type of Returned List element
-     * @return {@code  List<T} if the found value is List  filter elements of type T otherwise Return a
-     * empty List
+     * @param map          搜索的Map
+     * @param key          Map中的键
+     * @param listItemType 返回的List元素类型
+     * @param <T>          List元素类型的泛型
+     * @param <K>          map 的 key 类型
+     * @param <V>          map 的 value 类型
+     * @return 如果值为List，则过滤其中的指定类型的元素并返回，否则返回一个空List
      */
-    public static <T> List<T> getTypeList(Map<String, ?> map, String key, Class<? extends T> listItemType) {
+    public static <K, V, T> List<T> getTypeList(Map<K, V> map, K key, Class<? extends T> listItemType) {
 
         return getTypeObject(map, key, List.class)
                 .toLira()
@@ -142,84 +146,38 @@ public class LiMapUtil {
     }
 
     /**
-     * Return {@code  T} if the found value is instanceof T otherwise
-     * return  {@link  Lino#none()}
+     * 从Map中获取键为key的值，并将其转换为指定类型，如果类型不匹配则返回Lino.none()。
      *
-     * @param map      the searched map
-     * @param key      the key of searched map
-     * @param itemType the class of found value
-     * @param <T>      the generic type of found value
-     * @return {@code  T} if the found value is instanceof T otherwise return {@link  Lino#none()}
+     * @param map      搜索的Map
+     * @param key      Map中的键
+     * @param itemType 返回的值的类型
+     * @param <T>      返回值类型的泛型
+     * @param <K>      map 的 key 类型
+     * @param <V>      map 的 value 类型
+     * @return 如果值类型匹配则返回值，否则返回Lino.none()
      */
 
-    public static <T> Lino<T> getTypeObject(Map<String, ?> map, String key, Class<? extends T> itemType) {
+    public static <K, V, T> Lino<T> getTypeObject(Map<K, V> map, K key, Class<? extends T> itemType) {
         if (map == null) {
             return Lino.none();
         }
         return Lino.of(map.get(key)).cast(itemType);
     }
 
-    /**
-     * Return {@code  Map<String,V} if the found value is Map and filter elements of type String,V
-     * otherwise Return a empty  map
-     *
-     * @param map       the searched map
-     * @param key       the key of searched map
-     * @param valueType class of the found map value
-     * @param <V>       type of the found map value
-     * @return {@code  Map<String,V} if the found value is Map and filter elements of type String,V otherwise Return a
-     * empty  map
-     * @see #getTypeMap(Map, String, Class, Class)
-     */
-    public static <V> Map<String, V> getTypeMap(Map<String, ?> map, String key, Class<? extends V> valueType) {
-        return getTypeMap(map, key, String.class, valueType);
-    }
 
     /**
-     * Return {@code  Map<K,V} if the found value is Map and filter elements of type K,V otherwise
-     * Return a empty  map
+     * 根据给定的Map和Key获取对应的值，如果值为String类型，则返回该值；
+     * 如果值不为String类型，则返回{@link Lino#none()}。
      *
-     * @param map       the searched map
-     * @param key       the key of searched map
-     * @param keyType   class of the found map key
-     * @param valueType class of the found map value
-     * @param <K>       type of the found map key
-     * @param <V>       type of the found map value
-     * @return {@code  Map<K,V} if the found value is Map and filter elements of type K,V otherwise Return a
-     * empty  map
-     * @see #getTypeObject(Map, String)
+     * @param map 给定的Map对象
+     * @param key Map中对应的Key值
+     * @param <K> map 的 key 类型
+     * @param <V> map 的 value 类型
+     * @return 根据给定的Map和Key获取对应的值，如果值为String类型，则返回该值；
+     * 如果值不为String类型，则返回{@link Lino#none()}。
+     * @see #getTypeObject(Map, Object, Class)
      */
-    public static <K, V> Map<K, V> getTypeMap(Map<String, ?> map, String key, Class<? extends K> keyType, Class<?
-            extends V> valueType) {
-
-        return getTypeObject(map, key, Map.class).<K, V>cast(keyType, valueType).get(new HashMap<>());
-    }
-
-    /**
-     * Return {@code  Map<String,String} if the found value is Map and filter elements of type String,String
-     * otherwise return a empty  map
-     *
-     * @param map the searched map
-     * @param key the key of searched map
-     * @return {@code  Map<String,String} if the found value is Map and filter elements of type String,String otherwise
-     * Return a
-     * empty  map
-     * @see #getTypeMap(Map, String, Class, Class)
-     */
-    public static Map<String, String> getTypeMap(Map<String, ?> map, String key) {
-        return getTypeMap(map, key, String.class, String.class);
-    }
-
-    /**
-     * Return {@code  String} if the found value is instanceof String otherwise
-     * return  {@link  Lino#none()}
-     *
-     * @param map the searched map
-     * @param key the key of searched map
-     * @return {@code  String} if the found value is instanceof String otherwise return {@link  Lino#none()}
-     * @see #getTypeObject(Map, String, Class)
-     */
-    public static Lino<String> getTypeObject(Map<String, ?> map, String key) {
+    public static <K, V> Lino<String> getTypeObject(Map<K, V> map, K key) {
         return getTypeObject(map, key, String.class);
     }
 
