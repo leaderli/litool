@@ -84,11 +84,18 @@ public class LiLimitArray<T> implements ToList<T, ArrayList<T>>, ToArray<T> {
     }
 
 
+    /**
+     * @param type 转换为指定类型的数组
+     * @return 新数组
+     */
     @Override
     public T[] toArray(Class<T> type) {
         return ArrayUtils.convertToTargetArray(type, (Object[]) elements);
     }
 
+    /**
+     * @return 转换成 ArrayList
+     */
     @Override
     public ArrayList<T> toList() {
         return CollectionUtils.toList(elements);

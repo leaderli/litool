@@ -9,12 +9,12 @@ import java.util.concurrent.TimeUnit;
  * @author leaderli
  * @since 2022/9/24
  */
-class CompletedCatchFutureTest {
+class CompletedErrorHandledFutureTest {
 
     @Test
     void test() {
 
-        CatchFuture<Integer> future = CompletedCatchFuture.withResult(1, null);
+        ErrorHandledFuture<Integer> future = CompletedErrorHandledFuture.withResult(1, null);
 
         Assertions.assertTrue(future.isDone());
         Assertions.assertFalse(future.isCancelled());
@@ -22,7 +22,7 @@ class CompletedCatchFutureTest {
         Assertions.assertEquals(1, future.get());
         Assertions.assertEquals(1, future.get(1, TimeUnit.MILLISECONDS));
 
-        future = new CompletedCatchFuture<>(1, new NullPointerException());
+        future = new CompletedErrorHandledFuture<>(1, new NullPointerException());
         Assertions.assertThrows(RuntimeException.class, future::get);
 
     }

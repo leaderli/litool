@@ -1,6 +1,6 @@
 package io.leaderli.litool.config;
 
-import io.leaderli.litool.core.concurrent.CatchFuture;
+import io.leaderli.litool.core.concurrent.ErrorHandledFuture;
 import io.leaderli.litool.core.env.OSInfo;
 import io.leaderli.litool.core.lang.Shell;
 import io.leaderli.litool.core.resource.ResourceUtil;
@@ -62,7 +62,7 @@ class LiYamlConfigTest {
 
             bash = "\"D:\\ProgramFiles\\Git\\bin\\bash.exe\"";
         }
-        CatchFuture<String> command = new Shell(new File("/")).command(bash, "-c", task);
+        ErrorHandledFuture<String> command = new Shell(new File("/")).command(bash, "-c", task);
 
         String x = command.get(100, TimeUnit.MILLISECONDS);
         Assertions.assertNotNull(x);

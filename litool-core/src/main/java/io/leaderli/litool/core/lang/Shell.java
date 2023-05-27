@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.lang;
 
-import io.leaderli.litool.core.concurrent.CatchFuture;
-import io.leaderli.litool.core.concurrent.CompletedCatchFuture;
+import io.leaderli.litool.core.concurrent.CompletedErrorHandledFuture;
+import io.leaderli.litool.core.concurrent.ErrorHandledFuture;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.io.InputStreamCompletableFuture;
 import io.leaderli.litool.core.meta.LiConstant;
@@ -38,17 +38,17 @@ public class Shell {
      * @param command the bash script content
      * @return call {@link #command(String...)}  as {@code  command("sh", "-c", command)}
      */
-    public CatchFuture<String> bash(String command) {
+    public ErrorHandledFuture<String> bash(String command) {
         return command(LiConstant.BASH, "-c", command);
     }
 
     /**
      * @param commands the script, the first parameter should be the program,
      *                 such as {@code  "/bin/bash"}, {@code  "/usr/local/python3"}
-     * @return a {@link  InputStreamCompletableFuture} , or {@link  CompletedCatchFuture} if the {@link  Process}
+     * @return a {@link  InputStreamCompletableFuture} , or {@link  CompletedErrorHandledFuture} if the {@link  Process}
      * build error
      */
-    public CatchFuture<String> command(String... commands) {
+    public ErrorHandledFuture<String> command(String... commands) {
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory(this.workDir);
@@ -66,7 +66,7 @@ public class Shell {
             return new InputStreamCompletableFuture(process.getInputStream(), charset);
 
         } catch (Throwable e) {
-            return new CompletedCatchFuture<>("", e);
+            return new CompletedErrorHandledFuture<>("", e);
         }
 
     }

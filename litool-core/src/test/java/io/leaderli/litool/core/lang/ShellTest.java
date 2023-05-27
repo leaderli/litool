@@ -23,11 +23,12 @@ class ShellTest {
         Assertions.assertTrue(command.get().contains("not found"));
 
 
-        command = new Shell().bash("echo 123 && sleep 1 && echo 456 && sleep 1");
+        command = new Shell().bash("echo 123 && sleep 1 && echo 4 && sleep 1");
 
         Assertions.assertEquals("123", command.get(50, TimeUnit.MILLISECONDS));
         Assertions.assertEquals("", command.get(100, TimeUnit.MILLISECONDS));
-        Assertions.assertEquals("456", command.get(1, TimeUnit.SECONDS));
+        Assertions.assertEquals("4", command.get(1, TimeUnit.SECONDS));
+        Assertions.assertEquals("", command.get(1, TimeUnit.SECONDS));
         command.cancel(true);
 
     }
