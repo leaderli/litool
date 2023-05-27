@@ -18,6 +18,7 @@ class StringReaderTest {
         InputStream stream = new ByteArrayInputStream("hello".getBytes());
         StringReader stringReader = new StringReader(stream);
         Assertions.assertEquals("hello", stringReader.get());
+        Assertions.assertEquals("hello", stringReader.get());
     }
 
 }

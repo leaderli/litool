@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.function;
 
 /**
- * Represents an action which may throw a  error
+ * 一个声明异常标识的 {@link  Runnable}
  *
  * @author leaderli
  * @since 2022/6/16

@@ -1,32 +1,21 @@
-/*
- * Copyright (C) 2017 The Gson authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.leaderli.litool.core.internal;
 
 import java.lang.reflect.AccessibleObject;
 
 /**
- * A basic implementation of {@link ReflectionAccessor} which is suitable for Java 8 and below.
+ * PreJava9ReflectionAccessor 类是 ReflectionAccessor 接口的一个基础实现，在 Java 8 及以下版本中使用。
  * <p>
- * This implementation just calls {@link AccessibleObject#setAccessible(boolean) setAccessible(true)}, which worked
- * fine before Java 9.
+ * 此实现仅调用 AccessibleObject.setAccessible（true），在 Java 9 之前可以正常工作。
  */
 final class PreJava9ReflectionAccessor extends ReflectionAccessor {
 
+    /**
+     * 将给定的可访问对象设置为可访问状态。
+     *
+     * @param accessibleObject 可访问对象
+     */
     @Override
-    public void makeAccessible(AccessibleObject ao) {
-        ao.setAccessible(true);
+    public void makeAccessible(AccessibleObject accessibleObject) {
+        accessibleObject.setAccessible(true);
     }
 }

@@ -1,19 +1,20 @@
 package io.leaderli.litool.core.function;
 
+import io.leaderli.litool.core.event.ILiEventListener;
+
 /**
- * Represents an operation that accepts a single input Throwable
+ * 表示接受一个 Throwable 输入并执行操作的函数式接口
  *
- * @author leaderli
- * @see io.leaderli.litool.core.event.ILiEventListener
- * @since 2022/8/28
+ * @see ILiEventListener
  */
 @FunctionalInterface
 public interface OnError {
 
+
     /**
-     * Perform this operation on the given throwable
+     * 当异常时执行该方法
      *
-     * @param throwable the input throwable
+     * @param throwable 抛出的异常
      */
     void onError(Throwable throwable);
 

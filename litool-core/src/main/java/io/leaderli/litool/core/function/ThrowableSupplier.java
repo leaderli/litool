@@ -1,12 +1,15 @@
 package io.leaderli.litool.core.function;
 
+import java.util.function.Supplier;
+
 /**
- * Represents  a supplier of results which may throw error
+ * 一个声明异常标识的 {@link  Supplier}
  *
- * @param <T> the type of results supplied by this supplier
+ * @param <T> 提供者的类型
  * @author leaderli
  * @since 2022/6/16
  */
+
 
 @FunctionalInterface
 public interface ThrowableSupplier<T> {

@@ -1,56 +1,34 @@
-/*
- * Copyright (C) 2017 The Gson authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.leaderli.litool.core.internal;
 
 import java.lang.reflect.AccessibleObject;
 
 /**
- * Provides a replacement for {@link AccessibleObject#setAccessible(boolean)}, which may be used to
- * avoid reflective access issues appeared in Java 9
- * thrown or warnings like
- * <pre>
- *   WARNING: An illegal reflective access operation has occurred
- *   WARNING: Illegal reflective access by ...
- * </pre>
- * Works both for Java 9 and earlier Java versions.
+ * ReflectionAccessor 类提供了一个替代 AccessibleObject.setAccessible（boolean）的方式，可用于避免在 Java 9 中出现的反射访问问题。
+ * <p>
+ * 适用于 Java 9 及更早版本。
  */
 public abstract class ReflectionAccessor {
 
-    // the singleton instance, use getInstance() to obtain
-
+    // 单例实例，使用 getInstance() 获取
     @SuppressWarnings("StaticInitializerReferencesSubClass")
-    private static final ReflectionAccessor instance = JavaVersion.getMajorJavaVersion() < 9 ?
+    private static final ReflectionAccessor INSTANCE = JavaVersion.getMajorJavaVersion() < 9 ?
             new PreJava9ReflectionAccessor() : new UnsafeReflectionAccessor();
 
     /**
-     * Obtains a {@link ReflectionAccessor} instance suitable for the current Java version.
+     * 获取适用于当前 Java 版本的 ReflectionAccessor 实例。
      * <p>
-     * In such a case, use {@link ReflectionAccessor#makeAccessible(AccessibleObject)} on a field, method or constructor
-     * (instead of basic {@link AccessibleObject#setAccessible(boolean)}).
+     * 在这种情况下，应该在字段、方法或构造函数上使用 ReflectionAccessor.makeAccessible（AccessibleObject）（而不是基本的 AccessibleObject.setAccessible（boolean））。
      *
-     * @return reflect accessor
+     * @return ReflectionAccessor 实例
      */
     public static ReflectionAccessor getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     /**
-     * Does the same as {@code ao.setAccessible(true)}
+     * 使给定的可访问对象可被访问。
      *
-     * @param ao accessible obj
+     * @param ao 可访问对象
      */
     public abstract void makeAccessible(AccessibleObject ao);
 }

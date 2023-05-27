@@ -10,10 +10,10 @@ public class ExceptionUtil {
 
 
     /**
-     * Return the origin of throwable
+     * 获取异常的最底层原因
      *
-     * @param throwable a throwable
-     * @return the origin of throwable
+     * @param throwable 异常对象
+     * @return 最底层的异常对象
      */
     public static Throwable getCause(Throwable throwable) {
 
@@ -30,11 +30,11 @@ public class ExceptionUtil {
 
 
     /**
-     * Return the throwable at specific class throw out
+     * 获取在指定类中抛出的异常
      *
-     * @param throwable a throwable
-     * @param throwout  the class where throwable throw out
-     * @return the throwable at specific class throw out
+     * @param throwable 异常对象
+     * @param throwout  抛出异常的类
+     * @return 在指定类中抛出的异常对象
      */
     public static Throwable getCause(Throwable throwable, Class<?> throwout) {
         if (throwout == null) {

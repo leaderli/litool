@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.exception;
 
 /**
- * A RuntimeException use for {@link  RuntimeExceptionTransfer}
+ * 用于 {@link  RuntimeExceptionTransfer} 的异常类
  *
  * @see RuntimeExceptionTransfer
  */

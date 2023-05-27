@@ -6,9 +6,11 @@ import java.io.Serializable;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 
+
 /**
- * @author leaderli
- * @since 2022/9/25
+ * 表示泛型数组类型的实现类。
+ *
+ * @see java.lang.reflect.GenericArrayType
  */
 public final class GenericArrayTypeImpl implements GenericArrayType, Serializable {
     private static final long serialVersionUID = 0;

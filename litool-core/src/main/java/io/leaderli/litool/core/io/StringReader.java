@@ -8,7 +8,8 @@ import java.nio.charset.Charset;
 import java.util.function.Supplier;
 
 /**
- * @author leaderli
+ * 从输入流中读取字符串的工具类
+ *
  * @since 2022/9/22 3:52 PM
  */
 public class StringReader implements Supplier<String> {
@@ -32,7 +33,7 @@ public class StringReader implements Supplier<String> {
         return sb.toString();
     }
 
-    public void read() {
+    private void read() {
         try (InputStreamReader reader = new InputStreamReader(this.inputStream, charset)) {
             int read;
             while ((read = inputStream.read()) != -1) {

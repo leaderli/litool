@@ -2,8 +2,9 @@ package io.leaderli.litool.core.event;
 
 
 /**
- * A event with source , used to trigger specific
- * behavior on the particular type
+ * 事件对象，包含源对象，用于触发特定类型的行为
+ *
+ * @param <S> 事件源对象类型
  */
 public abstract class LiEventObject<S> {
 
@@ -15,10 +16,12 @@ public abstract class LiEventObject<S> {
     }
 
     /**
-     * used to avoid null pointer because some source may be null
-     * suggest use {@link  ILiEventListener} to listen the event pushed by {@link LiEventBus#push(LiEventObject)}
+     * 获取事件源对象
+     * 建议使用 {@link ILiEventListener} 监听 {@link LiEventBus#push(LiEventObject)} 推送的事件
      *
-     * @return a lino wrapper
+     * @return 事件源对象
+     * @see ILiEventListener#listen(Object)
+     * @see ILiEventListener#onNull()
      */
     public final S getSource() {
         return source;

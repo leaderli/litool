@@ -9,74 +9,70 @@ import java.io.File;
 import java.util.regex.Pattern;
 
 /**
- * Some utilities about file name
+ * 文件名工具类，提供一些有关文件名的操作
  *
  * @since 2022/8/28
  */
 public class FileNameUtil {
 
     /**
-     * the file extension of java source
+     * java源文件的扩展名
      */
     public static final String EXT_JAVA = ".java";
     /**
-     * the file extension of java class
+     * java类文件的扩展名
      */
     public static final String EXT_CLASS = ".class";
     /**
-     * the file extension of jar file
+     * jar包文件的扩展名
      */
     public static final String EXT_JAR = ".jar";
 
     /**
-     * {@code  .jar!}
-     * the url extension form of jar file in uri
+     * jar包在URI中的URL扩展名
      */
     public static final String JAR_PATH_EXT = ".jar!";
 
 
     /**
-     * separator {@code '/'} on unix
+     * Unix上的路径分隔符 '/'
      */
     public static final char UNIX_SEPARATOR = CharPool.SLASH;
     /**
-     * separator {@code '\\'} on window
+     * Windows上的路径分隔符 '\'
      */
     public static final char WINDOWS_SEPARATOR = CharPool.BACKSLASH;
 
     /**
-     * invalid file name {@link  Pattern} on window
+     * Windows系统下的非法文件名的正则表达式
      */
     public static final Pattern FILE_NAME_INVALID_PATTERN_WIN = Pattern.compile("[\\\\/:*?\"<>|]");
 
     /**
-     * special file suffix
+     * 特殊的文件后缀名
      */
     private static final CharSequence[] SPECIAL_SUFFIX = {"tar.bz2", "tar.Z", "tar.gz", "tar.xz"};
 
 
-// -------------------------------------------------------------------------------------------- name start
-
     /**
-     * Return file name
+     * 获取文件名
      *
-     * @param file file
-     * @return file name
+     * @param file 文件
+     * @return 文件名
      */
     public static String getName(File file) {
         return (null != file) ? file.getName() : null;
     }
 
     /**
-     * Return file name
+     * 获取文件名
      * <pre>
      * "d:/test/aaa" return "aaa"
      * "/test/aaa.jpg" return "aaa.jpg"
      * </pre>
      *
-     * @param filePath file path
-     * @return file name
-     * @since 1.2.0
+     * @param filePath 文件路径
+     * @return 文件名
      */
     public static String getName(String filePath) {
         if (null == filePath) {
@@ -106,10 +102,10 @@ public class FileNameUtil {
     }
 
     /**
-     * Return the name of file extension without dot, directory always return null
+     * 获取文件扩展名（不含点号），对于目录返回null
      *
-     * @param file file
-     * @return the name of file extension without dot
+     * @param file 文件
+     * @return 文件扩展名（不含点号）
      */
     public static String extName(File file) {
         if (null == file) {
@@ -122,10 +118,10 @@ public class FileNameUtil {
     }
 
     /**
-     * Return the name of file extension without dot, return null if file end with {@link  File#separator}
+     * 获取文件扩展名（不含点号），对于以路径分隔符结尾的文件返回null
      *
-     * @param fileName fileName
-     * @return the name of file extension without dot
+     * @param fileName 文件名
+     * @return 文件扩展名（不含点号）
      */
     public static String extName(String fileName) {
         if (fileName == null || fileName.endsWith(File.separator)) {
@@ -135,7 +131,6 @@ public class FileNameUtil {
         if (index == -1) {
             return StrPool.EMPTY;
         } else {
-            // issue#I4W5FS@Gitee
             int secondToLastIndex = fileName.substring(0, index).lastIndexOf(StrPool.DOT);
             String substr = fileName.substring(secondToLastIndex == -1 ? index : secondToLastIndex + 1);
             if (StringUtils.containsAny(substr, SPECIAL_SUFFIX)) {
@@ -150,16 +145,14 @@ public class FileNameUtil {
 
 
     /**
-     * Check file type against filename, ignoring case
+     * 检查文件是否是指定的类型，忽略大小写
      *
-     * @param fileName file name
-     * @param extNames Array of extensions to be checked, the same file type may have multiple extensions, the extension
-     *                 name without dot
-     * @return it is the specific file type
+     * @param fileName 文件名
+     * @param extNames 要检查的扩展名数组，同一种文件类型可能有多个扩展名，扩展名不含点号
+     * @return 是否是指定的文件类型
      */
     public static boolean isType(String fileName, String... extNames) {
         return StringUtils.equalsAnyIgnoreCase(extName(fileName), extNames);
     }
 
-    // -------------------------------------------------------------------------------------------- name end
 }

@@ -1,39 +1,34 @@
-/*
- * Copyright (C) 2017 The Gson authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package io.leaderli.litool.core.internal;
 
 /**
- * Utility to check the major Java version of the current JVM.
+ * 检查当前 JVM 主要 Java 版本的实用工具类。
  */
 public final class JavaVersion {
-    // Oracle defines naming conventions at http://www.oracle.com/technetwork/java/javase/versioning-naming-139433.html
-    // However, many alternate implementations differ. For example, Debian used 9-debian as the version string
 
     private static final int majorJavaVersion = determineMajorJavaVersion();
 
     private JavaVersion() {
     }
 
+    /**
+     * 确定当前 JVM 的主要 Java 版本。
+     *
+     * @return 主要 Java 版本
+     */
     private static int determineMajorJavaVersion() {
         String javaVersion = System.getProperty("java.version");
         return getMajorJavaVersion(javaVersion);
     }
 
-    // Visible for testing only
+
+    /**
+     * 解析 Java 版本号中的主要版本号。
+     *
+     * @param javaVersion Java 版本号
+     * @return 主要 Java 版本号
+     */
     static int getMajorJavaVersion(String javaVersion) {
         int version = parseDotted(javaVersion);
         if (version == -1) {
@@ -45,7 +40,12 @@ public final class JavaVersion {
         return version;
     }
 
-    // Parses both legacy 1.8 style and newer 9.0.4 style
+    /**
+     * 解析格式为 X.Y.Z 或 X_Y_Z 的版本号中的主要版本号。
+     *
+     * @param javaVersion 版本号
+     * @return 主要版本号
+     */
     private static int parseDotted(String javaVersion) {
         try {
             String[] parts = javaVersion.split("[._]");
@@ -60,6 +60,12 @@ public final class JavaVersion {
         }
     }
 
+    /**
+     * 从版本号的开头提取主要版本号。
+     *
+     * @param javaVersion 版本号
+     * @return 主要版本号
+     */
     private static int extractBeginningInt(String javaVersion) {
         try {
             StringBuilder num = new StringBuilder();
@@ -78,14 +84,19 @@ public final class JavaVersion {
     }
 
     /**
-     * @return the major Java version, i.e. '8' for Java 1.8, '9' for Java 9 etc.
+     * 获取当前 JVM 的主要 Java 版本。
+     * i.e. '8' for Java 1.8, '9' for Java 9 etc.*
+     *
+     * @return 主要 Java 版本号
      */
     public static int getMajorJavaVersion() {
         return majorJavaVersion;
     }
 
     /**
-     * @return {@code true} if the application is running on Java 9 or later; and {@code false} otherwise.
+     * 判断当前应用程序是否运行在 Java 9 或更高版本上。
+     *
+     * @return 如果是，则返回 true；否则，返回 false。
      */
     public static boolean isJava9OrLater() {
         return majorJavaVersion >= 9;

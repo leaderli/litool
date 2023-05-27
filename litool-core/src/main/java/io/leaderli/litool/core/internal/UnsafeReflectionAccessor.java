@@ -1,18 +1,4 @@
-/*
- * Copyright (C) 2017 The Gson authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 package io.leaderli.litool.core.internal;
 
 
@@ -21,10 +7,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * An implementation of {@link ReflectionAccessor} based on {@link sun.misc.Unsafe}.
+ * UnsafeReflectionAccessor 类是 ReflectionAccessor 接口的一个基础实现，基于 sun.misc.Unsafe 实现。
  * <p>
- * NOTE: This implementation is designed for Java 9. Although it should work with earlier Java releases, it is better to
- * use {@link PreJava9ReflectionAccessor} for them.
+ * 注意：此实现是为 Java 9 设计的。尽管它应该可以与早期的 Java 版本一起使用，但最好为它们使用 PreJava9ReflectionAccessor。
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 final class UnsafeReflectionAccessor extends ReflectionAccessor {
@@ -52,6 +37,13 @@ final class UnsafeReflectionAccessor extends ReflectionAccessor {
         }
     }
 
+    /**
+     * 使给定的可访问对象可被访问。
+     * <p>
+     * 首先使用 sun.misc.Unsafe 实现，如果无法找到则使用基本的 AccessibleObject.setAccessible（boolean）。
+     *
+     * @param ao 可访问对象
+     */
     @Override
     public void makeAccessible(AccessibleObject ao) {
         boolean success = makeAccessibleWithUnsafe(ao);
@@ -61,7 +53,14 @@ final class UnsafeReflectionAccessor extends ReflectionAccessor {
         }
     }
 
-    // Visible for testing only
+    /**
+     * 使用 sun.misc.Unsafe 实现使给定的可访问对象可被访问。
+     * <p>
+     * 仅用于测试。
+     *
+     * @param ao 可访问对象
+     * @return 是否成功
+     */
     boolean makeAccessibleWithUnsafe(AccessibleObject ao) {
         if (theUnsafe != null && overrideField != null) {
             try {
