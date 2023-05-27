@@ -34,7 +34,7 @@ class UnitElementTest {
         request.put("bfzType", "1");
 
         Context context = new Context(request);
-        ILiEventListener<UnitErrorEvent> listener = new UnitErrorEventILiEventListener();
+        ILiEventListener<UnitErrorEvent, LiTuple2<String, Throwable>> listener = new UnitErrorEventILiEventListener();
         context.registerListener(listener);
         mainElement.executor().visit(context);
         CharSequence skill = context.getResponse("skill");
@@ -79,39 +79,41 @@ class UnitElementTest {
 
     }
 
-    private static class UnitErrorEventILiEventListener implements ILiEventListener<UnitErrorEvent> {
+    private static class UnitErrorEventILiEventListener implements ILiEventListener<UnitErrorEvent, LiTuple2<String, Throwable>> {
+
 
         @Override
-        public void listen(UnitErrorEvent event) {
-
-            LiTuple2<String, Throwable> tuple = event.getSource().get();
+        public void listen(LiTuple2<String, Throwable> source) {
         }
     }
 
-    private static class BeginEventILiEventListener implements ILiEventListener<BeginEvent> {
+    private static class BeginEventILiEventListener implements ILiEventListener<BeginEvent, Void> {
         private final ContextInfo info;
 
         public BeginEventILiEventListener(ContextInfo contextInfo) {
             this.info = contextInfo;
         }
 
-        @Override
-        public void listen(BeginEvent event) {
 
+        @Override
+        public void listen(Void source) {
             info.setElapse(System.currentTimeMillis());
+
         }
     }
 
-    private static class EndEventILiEventListener implements ILiEventListener<EndEvent> {
+    private static class EndEventILiEventListener implements ILiEventListener<EndEvent, Void> {
         private final ContextInfo info;
 
         public EndEventILiEventListener(ContextInfo contextInfo) {
             this.info = contextInfo;
         }
 
+
         @Override
-        public void listen(EndEvent event) {
+        public void listen(Void source) {
             info.setElapse(System.currentTimeMillis() - info.getElapse());
+
         }
     }
 }

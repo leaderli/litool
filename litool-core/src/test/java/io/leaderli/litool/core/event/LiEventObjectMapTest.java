@@ -5,8 +5,8 @@ import io.leaderli.litool.core.type.ReflectUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 class LiEventObjectMapTest {
 
@@ -19,20 +19,20 @@ class LiEventObjectMapTest {
         Temp listener1 = new Temp();
         Temp listener2 = new Temp();
 
-        liEventMap.put(TempEventObject.class, listener1);
-        liEventMap.put(TempEventObject.class, listener1);
-        Map<Class<?>, List<ILiEventListener<?>>> eventListenerMap =
-                (Map<Class<?>, List<ILiEventListener<?>>>) ReflectUtil.getFieldValue(liEventMap, "eventListenerMap").get();
-        Assertions.assertEquals(1, eventListenerMap.get(TempEventObject.class).size());
+        liEventMap.put(TempStringEventObject.class, listener1);
+        liEventMap.put(TempStringEventObject.class, listener1);
+        Map<Class<?>, Set<ILiEventListener<?, ?>>> eventListenerMap =
+                (Map<Class<?>, Set<ILiEventListener<?, ?>>>) ReflectUtil.getFieldValue(liEventMap, "eventListenerMap").get();
+        Assertions.assertEquals(1, eventListenerMap.get(TempStringEventObject.class).size());
 
-        liEventMap.put(TempEventObject.class, listener2);
-        Assertions.assertEquals(2, eventListenerMap.get(TempEventObject.class).size());
+        liEventMap.put(TempStringEventObject.class, listener2);
+        Assertions.assertEquals(2, eventListenerMap.get(TempStringEventObject.class).size());
 
         liEventMap.remove(listener2);
-        Assertions.assertEquals(1, eventListenerMap.get(TempEventObject.class).size());
+        Assertions.assertEquals(1, eventListenerMap.get(TempStringEventObject.class).size());
 
 
-        Assertions.assertNotNull(eventListenerMap.get(TempEventObject.class));
+        Assertions.assertNotNull(eventListenerMap.get(TempStringEventObject.class));
 
     }
 
@@ -41,15 +41,15 @@ class LiEventObjectMapTest {
         LiEventMap liEventMap = new LiEventMap();
 
         LiBox<Integer> num = LiBox.of(0);
-        liEventMap.put(String.class, new StringEventListener());
+        liEventMap.put(TempStringEventObject.class, new StringEventListener());
 
-        liEventMap.compute(String.class, li -> num.value(num.value() + 1));
+        liEventMap.compute(TempStringEventObject.class, li -> num.value(num.value() + 1));
         Assertions.assertSame(1, num.value());
-        liEventMap.put(String.class, new StringEventListener());
-        liEventMap.compute(String.class, li -> num.value(num.value() + 1));
+        liEventMap.put(TempStringEventObject.class, new StringEventListener());
+        liEventMap.compute(TempStringEventObject.class, li -> num.value(num.value() + 1));
         Assertions.assertSame(3, num.value());
 
-        liEventMap.compute(String.class, null);
+        liEventMap.compute(TempStringEventObject.class, null);
         Assertions.assertSame(3, num.value());
 
     }
@@ -58,48 +58,48 @@ class LiEventObjectMapTest {
     @Test
     void remove() {
         LiEventMap liEventMap = new LiEventMap();
-        Map<Class<?>, List<ILiEventListener<?>>> eventListenerMap =
-                (Map<Class<?>, List<ILiEventListener<?>>>) ReflectUtil.getFieldValue(liEventMap, "eventListenerMap").get();
+        Map<Class<?>, Set<ILiEventListener<?, ?>>> eventListenerMap =
+                (Map<Class<?>, Set<ILiEventListener<?, ?>>>) ReflectUtil.getFieldValue(liEventMap, "eventListenerMap").get();
         eventListenerMap.clear();
         Temp listener1 = new Temp();
         Temp listener2 = new Temp();
 
-        liEventMap.put(TempEventObject.class, listener1);
-        liEventMap.put(TempEventObject.class, listener2);
-        Assertions.assertEquals(2, eventListenerMap.get(TempEventObject.class).size());
+        liEventMap.put(TempStringEventObject.class, listener1);
+        liEventMap.put(TempStringEventObject.class, listener2);
+        Assertions.assertEquals(2, eventListenerMap.get(TempStringEventObject.class).size());
 
         liEventMap.remove(listener2);
-        Assertions.assertEquals(1, eventListenerMap.get(TempEventObject.class).size());
+        Assertions.assertEquals(1, eventListenerMap.get(TempStringEventObject.class).size());
         liEventMap.remove(listener1);
-        Assertions.assertNull(eventListenerMap.get(TempEventObject.class));
+        Assertions.assertNull(eventListenerMap.get(TempStringEventObject.class));
 
 
     }
 
-    private static class StringEventListener implements ILiEventListener<String> {
+    private static class StringEventListener implements ILiEventListener<TempStringEventObject, String> {
 
         @Override
         public void listen(String event) {
         }
     }
 
-    private static class TempEventObject extends LiEventObject<String> {
+    private static class TempStringEventObject extends LiEventObject<String> {
 
-        public TempEventObject(String source) {
+        public TempStringEventObject(String source) {
             super(source);
         }
     }
 
-    private static class Temp implements ILiEventListener<TempEventObject> {
+    private static class Temp implements ILiEventListener<TempStringEventObject, String> {
 
         @Override
-        public void listen(TempEventObject event) {
+        public void listen(String event) {
 
         }
 
         @Override
-        public Class<TempEventObject> componentType() {
-            return TempEventObject.class;
+        public Class<TempStringEventObject> componentType() {
+            return TempStringEventObject.class;
         }
     }
 

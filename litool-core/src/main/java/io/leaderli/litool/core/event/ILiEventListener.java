@@ -6,88 +6,101 @@ import io.leaderli.litool.core.type.ComponentType;
 import io.leaderli.litool.core.type.TypeUtil;
 
 /**
- * Listener to listen the specific event, When {@link  LiEventBus#push(Object)} pushed event,
- * the listener which can listen this event
- * <ul>
- *    <li>1. invoke {@link  #before(Object)} check whether {@link  #listen(Object)} should be called</li>
- *    <li>2. call {@link  #listen(Object)}</li>
- *    <li>3. call {@link  #onError(Throwable)} when {@link  #listen(Object)} throw a Throwable </li>
- *    <li>4. call {@link  #after(LiEventBusBehavior)} after {@link  #listen(Object)} has success executed.
- *    you can unregister self by {@link LiEventBus#unRegisterListener(ILiEventListener)}</li>
+ * 事件监听器，用于监听特定的事件。当 {@link LiEventBus#push(LiEventObject)} 推送事件时，
+ * 可以监听该事件的监听器会接收到该事件。
  *
+ * <ul>
+ *     <li>1. 调用 {@link #before(Object)} 方法检查是否应该调用 {@link #listen(Object)}</li>
+ *     <li>2. 调用 {@link #listen(Object)}</li>
+ *     <li>3. 当 {@link #listen(Object)} 抛出 Throwable 时，调用 {@link #onError(Throwable)}</li>
+ *     <li>4. {@link #listen(Object)} 执行成功后调用 {@link #after(LiEventBusBehavior)}。可以使用 {@link LiEventBus#unRegisterListener(ILiEventListener)} 方法注销自己。</li>
  * </ul>
  *
- * @param <T> the type of  listened event
+ * @param <E> 监听的事件类型
  * @see LiEventBus
  */
 @FunctionalInterface
-public interface ILiEventListener<T> extends ComponentType<T>, OnError {
+public interface ILiEventListener<E extends LiEventObject<S>, S> extends ComponentType<E>, OnError {
 
     /**
-     * When {@link  LiEventBus#push(Object)} pushed event, the listener which can
-     * listen this event will invoke {@link  #before(Object)} check whether this method should be called
+     * 监听事件。当 {@link LiEventBus#push(LiEventObject)} 推送事件时，可以监听该事件的监听器会接收到该事件。
      *
-     * @param event the listened event
-     * @see LiEventBus#push(Object)
+     * @param source 监听的事件的数据
+     * @see LiEventBus#push(LiEventObject)
      */
-    void listen(T event);
+    void listen(S source);
+
 
     /**
-     * Return whether  the {@link  #listen(Object)} method should be called
+     * 返回是否应该调用 {@link #listen(Object)} 方法。
      *
-     * @param event the listened event
-     * @return whether  the {@link  #listen(Object)} method should be called
+     * @param source 监听的事件的数据
+     * @return 是否应该调用 {@link #listen(Object)} 方法
      */
-    default boolean before(T event) {
+    default boolean before(S source) {
         return true;
     }
 
+
     /**
-     * only invoked after {@link  #listen(Object)},
+     * 在 {@link #listen(Object)} 方法执行成功后调用。
      *
-     * @param eventBusBehavior Provide some limited  method for listeners to use
+     * @param eventBusBehavior 提供一些限制方法供监听器使用
      * @see #before(Object)
      * @see #listen(Object)
      */
     @SuppressWarnings("java:S1874")
-    default void after(LiEventBusBehavior<T> eventBusBehavior) {
+    default void after(LiEventBusBehavior eventBusBehavior) {
 
-        if (removeIf()) {
+        if (shouldRemove()) {
             eventBusBehavior.unRegisterListener(this);
         }
     }
 
+
     /**
-     * Whether to uninstall the listener after listening
+     * 是否在监听后卸载监听器。
      *
-     * @return Whether to uninstall the listener after listening
+     * @return 是否在监听后卸载监听器
      * @see LiEventBus#unRegisterListener(ILiEventListener)
-     * @see LiEventBus#push(Object)
+     * @see LiEventBus#push(LiEventObject)
      * @deprecated
      */
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
-    default boolean removeIf() {
+    default boolean shouldRemove() {
         return false;
     }
 
-    /**
-     * perform action on error occur at  {@link #listen(Object)}
-     *
-     * @param throwable the error thrown by {@link  #listen(Object)}
-     * @see LiEventBus#push(Object)
-     */
 
+    /**
+     * 当 {@link #listen(Object)} 发生错误时执行的操作。
+     *
+     * @param throwable {@link #listen(Object)} 抛出的异常
+     * @see LiEventBus#push(LiEventObject)
+     */
     @Override
     default void onError(Throwable throwable) {
 
         throwable.printStackTrace();
     }
 
+    /**
+     * 当监听的时间的数据为null调用
+     */
+    default void onNull() {
+
+    }
+
+    /**
+     * 获取监听的事件类型。
+     *
+     * @return 监听的事件类型
+     */
     @SuppressWarnings("unchecked")
     @Override
-    default Class<T> componentType() {
-        return (Class<T>) TypeUtil.resolve2Parameterized(getClass(), ILiEventListener.class).getActualClassArgument().get();
+    default Class<E> componentType() {
+        return (Class<E>) TypeUtil.resolve2Parameterized(getClass(), ILiEventListener.class).getActualClassArgument().get();
     }
 
 

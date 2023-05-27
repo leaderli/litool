@@ -94,7 +94,7 @@ public class Context {
         return expression.apply(this);
     }
 
-    public <T> void registerListener(ILiEventListener<T> listener) {
+    public <E extends LiEventObject<S>, S> void registerListener(ILiEventListener<E, S> listener) {
         this.bus.registerListener(listener);
     }
 

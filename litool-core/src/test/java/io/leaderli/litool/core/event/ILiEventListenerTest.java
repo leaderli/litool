@@ -11,11 +11,11 @@ class ILiEventListenerTest {
 
     @Test
     void componentType() {
-        ILiEventListener<String> listener = new StringILiEventListener();
-        Assertions.assertSame(String.class, listener.componentType());
+        ILiEventListener<LiEventObject<String>, String> listener = new StringLiEventListener();
+        Assertions.assertSame(LiEventObject.class, listener.componentType());
     }
 
-    private static class StringILiEventListener implements ILiEventListener<String> {
+    private static class StringLiEventListener implements ILiEventListener<LiEventObject<String>, String> {
         @Override
         public void listen(String event) {
 

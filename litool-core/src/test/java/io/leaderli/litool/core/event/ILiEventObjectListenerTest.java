@@ -26,7 +26,7 @@ class ILiEventObjectListenerTest {
 
     @Test
     void componentType() {
-        ILiEventListener<StringLiEventObject> listener = new StringILiEventListener();
+        ILiEventListener<StringLiEventObject, String> listener = new StringILiEventListener();
         Assertions.assertSame(StringLiEventObject.class, listener.componentType());
     }
 
@@ -51,13 +51,13 @@ class ILiEventObjectListenerTest {
         }
     }
 
-    private static class StringILiEventListener extends ILiEventObjectListener<StringLiEventObject, String> {
+    private static class StringILiEventListener implements ILiEventListener<StringLiEventObject, String> {
         private final LiBox<Integer> box = LiBox.none();
 
         @Override
-        void receive(String source) {
-
+        public void listen(String source) {
             box.value(source.length());
+
         }
     }
 }

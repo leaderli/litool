@@ -1,18 +1,19 @@
 package io.leaderli.litool.core.event;
 
+
 /**
- * Provide some limited  method for listeners to use
+ * 提供一些有限的方法供监听器使用。
  *
- * @param <T> the type provided by {@link  ILiEventListener#componentType()}
- * @author leaderli
  * @since 2022/8/28
  */
 @FunctionalInterface
-public interface LiEventBusBehavior<T> {
+public interface LiEventBusBehavior {
 
     /**
-     * @param listener the listener to be removed
+     * 注销监听器。
+     *
+     * @param listener 要注销的监听器
      * @see LiEventBus#unRegisterListener(ILiEventListener)
      */
-    void unRegisterListener(ILiEventListener<T> listener);
+    <E extends LiEventObject<S>, S> void unRegisterListener(ILiEventListener<E, S> listener);
 }

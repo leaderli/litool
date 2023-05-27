@@ -15,14 +15,14 @@ class OncePerPeriodTest {
     @Test
     void executeOnce() {
 
-        OncePerPeriod oncePerPeriod = new OncePerPeriod(100);
+        OncePerPeriod oncePerPeriod = new OncePerPeriod(10);
 
         AtomicInteger num = new AtomicInteger(0);
         oncePerPeriod.executeOnce(num::incrementAndGet);
         oncePerPeriod.executeOnce(num::incrementAndGet);
         oncePerPeriod.executeOnce(num::incrementAndGet);
         Assertions.assertEquals(1, num.get());
-        ThreadUtil.sleep(200);
+        ThreadUtil.sleep(20);
         oncePerPeriod.executeOnce(num::incrementAndGet);
         Assertions.assertEquals(2, num.get());
     }

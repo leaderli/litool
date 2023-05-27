@@ -26,10 +26,11 @@ class EchoElementTest {
         context.setResponse("Code", "114514");
         context.setTemp("coordinate", "你好");
         LiBox<LiTuple2<Integer, String>> echos = LiBox.none();
-        context.registerListener(new ILiEventListener<EchoEvent>() {
+        context.registerListener(new ILiEventListener<EchoEvent, LiTuple2<Integer, String>>() {
             @Override
-            public void listen(EchoEvent event) {
-                echos.value(event.getSource().get());
+            public void listen(LiTuple2<Integer, String> source) {
+                echos.value(source);
+
             }
 
             @Override

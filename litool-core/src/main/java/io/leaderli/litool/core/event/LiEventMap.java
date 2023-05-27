@@ -3,76 +3,72 @@ package io.leaderli.litool.core.event;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ComponentType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * A Map container used to store the class type of the listener event and the listener.
- * the generic type of the listener and the event is same.
+ * 事件监听器的类型与监听器本身的映射容器。
+ * 在该容器中，事件监听器的泛型类型与对应的事件类型相同。
  * <p>
- * This container is not thread-safe
+ * 注意：该容器不是线程安全的。
  */
 
 class LiEventMap {
 
-    private final Map<Class<?>, List<ILiEventListener<?>>> eventListenerMap = new HashMap<>();
+    private final Map<Class<?>, Set<ILiEventListener<?, LiEventObject<?>>>> eventListenerMap = new HashMap<>();
 
     /**
-     * Putting the event type and corresponding listener
+     * 向容器中添加事件类型与对应的监听器。
      *
-     * @param eventType the type of event
-     * @param listener  the corresponding listener that listen for the event
-     * @param <T>       the type of event and the corresponding listener componentType
+     * @param eventType 事件类型
+     * @param listener  监听器
+     * @param <S>       事件的数据类型
+     * @param <E>       事件类型与监听器的泛型类型
      */
-    public <T> void put(Class<T> eventType, ILiEventListener<T> listener) {
+    @SuppressWarnings("unchecked")
+    public <E extends LiEventObject<S>, S> void put(Class<E> eventType, ILiEventListener<E, S> listener) {
 
-        List<ILiEventListener<?>> listeners = this.eventListenerMap.computeIfAbsent(eventType, c -> new ArrayList<>());
-
-        if (!listeners.contains(listener)) {
-            listeners.add(listener);
-        }
+        this.eventListenerMap.computeIfAbsent(eventType, c -> new LinkedHashSet<>()).add((ILiEventListener<?, LiEventObject<?>>) listener);
     }
 
+
     /**
-     * Perform action on the corresponding listeners
+     * 对与指定事件类型对应的监听器执行指定的操作。
      *
-     * @param eventType the type of event
-     * @param consumer  the action that perform on the corresponding listeners
-     * @param <T>       the type of event and the corresponding listener componentType
+     * @param eventType 事件类型
+     * @param consumer  对监听器执行的操作
+     * @param <S>       事件的数据类型
+     * @param <E>       事件类型与监听器的泛型类型
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public <T> void compute(Class<T> eventType, Consumer<ILiEventListener<T>> consumer) {
+    public <E extends LiEventObject<S>, S> void compute(Class<E> eventType, Consumer<ILiEventListener<E, S>> consumer) {
 
         if (consumer == null || eventType == null) {
             return;
         }
 
-        //  because listener may be remove themself in consumer, so it should not directly forEach List
-        List<ILiEventListener> lira = Lira.of(this.eventListenerMap.get(eventType))
+        // 由于监听器可能在consumer中自行移除，因此不能直接对List执行forEach操作。
+        List<ILiEventListener> listeners = Lira.of(this.eventListenerMap.get(eventType))
                 .cast(ILiEventListener.class).get();
 
-        for (ILiEventListener<T> listener : lira) {
+        for (ILiEventListener<E, S> listener : listeners) {
             consumer.accept(listener);
-
         }
     }
 
 
     /**
-     * Remove the listener that store on {@link  #eventListenerMap}, then if the eventType
-     * corresponding listeners have all be removed, remove the empty list from the Map
+     * 从{@link #eventListenerMap}中移除指定的监听器，如果指定的事件类型对应的监听器列表为空时，从Map中移除该事件类型。
      *
-     * @param listener the listener will be removed
-     * @param <T>      the type of listener corresponding event
+     * @param listener 要移除的监听器
+     * @param <S>      事件的数据类型
+     * @param <E>      事件类型与监听器的泛型类型
      */
-    public <T> void remove(ILiEventListener<T> listener) {
+    public <E extends LiEventObject<S>, S> void remove(ILiEventListener<E, S> listener) {
 
-        Class<T> eventType = ComponentType.componentType(listener);
+        Class<E> eventType = ComponentType.componentType(listener);
 
-        List<ILiEventListener<?>> listeners = this.eventListenerMap.get(eventType);
+        Set<ILiEventListener<?, LiEventObject<?>>> listeners = this.eventListenerMap.get(eventType);
 
         if (listeners == null) {
             return;

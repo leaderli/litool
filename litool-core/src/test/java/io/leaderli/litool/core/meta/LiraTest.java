@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
+import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.InfiniteException;
@@ -30,6 +31,10 @@ class LiraTest {
         Collection<Integer> collection = new ArrayList<>();
         Lira.of(null, 1, 2).forNullableEach(collection::add);
         Assertions.assertSame(3, collection.size());
+
+
+        List<Integer> list = CollectionUtils.toList(1, 2, 3, 4, 5);
+        Assertions.assertThrows(ConcurrentModificationException.class, () -> Lira.of(list).forEach(list::remove));
 
     }
 
