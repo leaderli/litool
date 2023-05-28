@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 主要针对泛型类的{@link  LiTypeToken}
+ *
  * @author leaderli
  * @since 2022/10/21 12:02 PM
  */

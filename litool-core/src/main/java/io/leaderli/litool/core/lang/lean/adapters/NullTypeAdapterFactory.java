@@ -8,18 +8,21 @@ import io.leaderli.litool.core.type.LiTypeToken;
 /**
  * @author leaderli
  * @since 2022/10/21 12:02 PM
+ * 非严格模式下的默认兜底适配器工厂类，总是转换为null
  */
 public class NullTypeAdapterFactory implements TypeAdapterFactory {
+
+    private static final TypeAdapter<Object> SHARE = new NullTypeAdapter();
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
-        return (TypeAdapter<T>) new NullTypeAdapter();
+        return (TypeAdapter<T>) SHARE;
     }
 
-    static class NullTypeAdapter implements TypeAdapter<String> {
+    private static class NullTypeAdapter implements TypeAdapter<Object> {
         @Override
-        public String read(Object source, Lean lean) {
+        public Object read(Object source, Lean lean) {
             return null;
         }
     }
