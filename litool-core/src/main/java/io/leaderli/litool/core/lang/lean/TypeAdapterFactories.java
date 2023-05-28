@@ -19,5 +19,7 @@ public class TypeAdapterFactories {
     public static final TypeAdapterFactory OBJECT_FACTORY = new ObjectTypeAdapterFactory();
     public static final TypeAdapterFactory REFLECT_FACTORY = new ReflectTypeAdapterFactory();
 
+    public static final TypeAdapterFactory NULL_FACTORY = new NullTypeAdapterFactory();
+
 
 }

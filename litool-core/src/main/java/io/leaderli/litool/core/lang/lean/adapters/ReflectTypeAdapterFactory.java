@@ -4,6 +4,7 @@ import io.leaderli.litool.core.lang.BeanPath;
 import io.leaderli.litool.core.lang.lean.*;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.type.*;
 
@@ -25,12 +26,21 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
         if (adapter != null) {
             return adapter;
         }
-        if (ReflectUtil.newInstance(type.getRawType()).absent()) {
+        if (newInstance(type, lean).absent()) {
             return null;
         }
         return new ReflectAdapter<>(lean, type);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> Lino<T> newInstance(LiTypeToken<T> typeToken, Lean lean) {
+
+        ObjectConstructor<T> constructor = lean.getConstructor(typeToken);
+        if (constructor != null) {
+            return Lino.supplier(constructor);
+        }
+        return (Lino<T>) ReflectUtil.newInstance(typeToken.getRawType());
+    }
 
     public static class ReflectAdapter<T> implements TypeAdapter<T> {
 
@@ -40,13 +50,12 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
             this.typeToken = typeToken;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public T read(Object source, Lean lean) {
             TypeAdapter<T> adapter = lean.getTypeAdapter(typeToken.getRawType());
 
             if (adapter instanceof ReflectAdapter) {
-                return (T) ReflectUtil.newInstance(typeToken.getRawType())
+                return newInstance(typeToken, lean)
                         .ifPresent(bean -> populate(source, bean, lean))
                         .get();
             }

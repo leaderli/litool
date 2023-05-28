@@ -55,9 +55,13 @@ public final class ConstructorConstructor {
      */
     public ConstructorConstructor(LinkedHashMap<Type, InstanceCreator<?>> head, LinkedHashMap<Type, InstanceCreator<?>> tail) {
 
-        head.forEach(instanceCreators::putIfAbsent);
+        if (head != null) {
+            head.forEach(instanceCreators::putIfAbsent);
+        }
         generateDefaultInstanceCreators().forEach(instanceCreators::putIfAbsent);
-        tail.forEach(instanceCreators::putIfAbsent);
+        if (tail != null) {
+            tail.forEach(instanceCreators::putIfAbsent);
+        }
 
     }
 

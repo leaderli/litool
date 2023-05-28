@@ -27,7 +27,13 @@ public class Lean {
     public final CustomTypeAdapterFactory customTypeAdapterFactory = new CustomTypeAdapterFactory();
 
 
-    private static List<TypeAdapterFactory> initTypeAdapterFactories(TypeAdapterFactory customTypeAdapterFactory) {
+    /**
+     * @param customTypeAdapterFactory 自定义的类型适配器工厂
+     * @param strict                   当处于严格模式，当类无{@link  TypeAdapter}时，会抛出 {@link  IllegalArgumentException}
+     * @return 一个按照顺序加载的类型适配器工厂
+     * @see #getTypeAdapter(LiTypeToken)
+     */
+    private static List<TypeAdapterFactory> initTypeAdapterFactories(TypeAdapterFactory customTypeAdapterFactory, boolean strict) {
         List<TypeAdapterFactory> typeAdapterFactories = new ArrayList<>();
         typeAdapterFactories.add(TypeAdapterFactories.PRIMITIVE_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.STRING_FACTORY);
@@ -40,6 +46,10 @@ public class Lean {
 
         typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.REFLECT_FACTORY);
+
+        if (!strict) {
+            typeAdapterFactories.add(TypeAdapterFactories.NULL_FACTORY);
+        }
         return typeAdapterFactories;
     }
 
@@ -59,9 +69,14 @@ public class Lean {
 
     public Lean(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators, List<LeanKeyHandler> leanKeyHandlers) {
 
+        this(instanceCreators, leanKeyHandlers, false);
+    }
+
+
+    public Lean(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators, List<LeanKeyHandler> leanKeyHandlers, boolean strict) {
 
         this.constructorConstructor = new ConstructorConstructor(instanceCreators);
-        this.typeAdapterFactories = initTypeAdapterFactories(customTypeAdapterFactory);
+        this.typeAdapterFactories = initTypeAdapterFactories(customTypeAdapterFactory, strict);
         this.leanKeyHandlers = initLeanKeyHandlers(leanKeyHandlers);
     }
 
