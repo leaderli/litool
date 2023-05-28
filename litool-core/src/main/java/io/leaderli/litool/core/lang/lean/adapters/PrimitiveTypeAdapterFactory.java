@@ -10,7 +10,7 @@ import io.leaderli.litool.core.type.PrimitiveEnum;
  * @author leaderli
  * @since 2022/9/25
  */
-public class PrimitiveTypeAdapter implements TypeAdapterFactory {
+public class PrimitiveTypeAdapterFactory implements TypeAdapterFactory {
 
     @Override
     public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
@@ -19,8 +19,7 @@ public class PrimitiveTypeAdapter implements TypeAdapterFactory {
         if (primitiveEnum == PrimitiveEnum.OBJECT) {
             return null;
         }
-        return (source, l) -> primitiveEnum.read(source);
-
+        return (source, le) -> primitiveEnum.read(source);
     }
 
 }

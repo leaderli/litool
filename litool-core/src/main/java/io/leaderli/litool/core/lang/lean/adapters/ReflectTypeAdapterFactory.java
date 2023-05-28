@@ -15,13 +15,13 @@ import java.lang.reflect.Type;
  * @author leaderli
  * @since 2022/9/25
  */
-public class ReflectAdapterFactory implements TypeAdapterFactory {
+public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
 
 
     @Override
     public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
         // use the cache, to avoid stackoverflow should not use getAdapter
-        TypeAdapter<T> adapter = lean.getCacheAdapter(type);
+        TypeAdapter<T> adapter = lean.getCacheTypeAdapter(type);
         if (adapter != null) {
             return adapter;
         }
@@ -40,7 +40,7 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
         @SuppressWarnings("unchecked")
         @Override
         public T read(Object source, Lean lean) {
-            TypeAdapter<T> adapter = lean.getAdapter(typeToken.getRawType());
+            TypeAdapter<T> adapter = lean.getTypeAdapter(typeToken.getRawType());
 
             if (adapter instanceof ReflectAdapter) {
                 return (T) ReflectUtil.newInstance(typeToken.getRawType())
@@ -61,12 +61,12 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
 
         private void performField(Object source, Type targetType, Object target, Field field, Lean lean) {
 
-            String key = lean.reflect_name_handlers.map(fu -> fu.apply(field)).first().get();
+            String key = lean.leanKeyHandlers.map(fu -> fu.apply(field)).first().get();
 
 
-            TypeAdapter<T> typeAdapter = ReflectUtil.getAnnotation(field, LeanFieldAdapter.class)
+            TypeAdapter<T> typeAdapter = ReflectUtil.getAnnotation(field, LeanValue.class)
                     .map(lf -> getLeanFieldTypeAdapter(targetType, lf, lean))
-                    .get(() -> lean.getAdapter(targetType));
+                    .get(() -> lean.getTypeAdapter(targetType));
 
             BeanPath.simple(source, key)
                     .map(fv -> typeAdapter.read(fv, lean))
@@ -82,7 +82,7 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
 
 
         @SuppressWarnings("unchecked")
-        private TypeAdapter<T> getLeanFieldTypeAdapter(Type targetType, LeanFieldAdapter annotation, Lean lean) {
+        private TypeAdapter<T> getLeanFieldTypeAdapter(Type targetType, LeanValue annotation, Lean lean) {
 
             Class<? extends TypeAdapter<?>> cls = annotation.value();
 
@@ -101,7 +101,7 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
         @SuppressWarnings("unchecked")
         private LiTuple2<TypeAdapter<?>, Type> computeIfAbsentHandler(Class<? extends TypeAdapter<?>> cls, Lean lean) {
 
-            LiTuple2<TypeAdapter<?>, Type> find = lean.reflect_value_handlers.get(cls);
+            LiTuple2<TypeAdapter<?>, Type> find = lean.leanValueHandlers.get(cls);
             if (find != null) {
                 return find;
             }
@@ -111,8 +111,8 @@ public class ReflectAdapterFactory implements TypeAdapterFactory {
                     .assertNotNone(() -> StrSubstitution.format("the {adapter} is cannot " + "create instance}", cls))
                     .cast(LiTuple2.class)
                     .get();
-            synchronized (lean.reflect_value_handlers) {
-                lean.reflect_value_handlers.put(cls, find);
+            synchronized (lean.leanValueHandlers) {
+                lean.leanValueHandlers.put(cls, find);
             }
             return find;
         }

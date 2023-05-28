@@ -16,6 +16,7 @@ class PrimitiveEnumTest {
         Assertions.assertEquals(1, (int) PrimitiveEnum.INT.read(1));
         Assertions.assertEquals(1, (int) PrimitiveEnum.INT.read(1.0));
         Assertions.assertEquals(true, PrimitiveEnum.BOOLEAN.read(1.0));
+        Assertions.assertEquals(true, PrimitiveEnum.BOOLEAN.read("true"));
     }
 
     @Test

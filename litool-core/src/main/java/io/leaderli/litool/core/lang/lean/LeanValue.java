@@ -6,12 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author leaderli
- * @since 2022/9/27 11:53 AM
+ * 字段类型适配器注解，用于标注一个字段需要进行类型转换时所使用的类型适配器
  */
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-public @interface LeanFieldAdapter {
+public @interface LeanValue {
     Class<? extends TypeAdapter<?>> value();
 }

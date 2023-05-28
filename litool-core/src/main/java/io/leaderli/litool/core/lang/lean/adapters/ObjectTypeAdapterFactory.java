@@ -26,8 +26,8 @@ public class ObjectTypeAdapterFactory implements TypeAdapterFactory {
         public Object read(Object source, Lean lean) {
             if (source != null) {
 
-                TypeAdapter<Object> adapter = lean.getAdapter(source.getClass());
-                if (adapter instanceof MapTypeAdapterFactory.MapAdapter || adapter instanceof ReflectAdapterFactory.ReflectAdapter) {
+                TypeAdapter<Object> adapter = lean.getTypeAdapter(source.getClass());
+                if (adapter instanceof MapTypeAdapterFactory.MapAdapter || adapter instanceof ReflectTypeAdapterFactory.ReflectAdapter) {
                     return lean.fromBean(source, Map.class);
                 } else if (adapter instanceof CollectionTypeAdapterFactory.CollectionAdapter || adapter instanceof ArrayTypeAdapterFactory.ArrayAdapter) {
                     return lean.fromBean(source, List.class);

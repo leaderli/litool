@@ -25,7 +25,7 @@ public class ArrayTypeAdapterFactory implements TypeAdapterFactory {
         }
         type = ((GenericArrayType) type).getGenericComponentType();
 
-        return new ArrayAdapter(TypeUtil.erase(type), lean.getAdapter(type));
+        return new ArrayAdapter(TypeUtil.erase(type), lean.getTypeAdapter(type));
 
     }
 

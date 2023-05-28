@@ -19,19 +19,19 @@ package io.leaderli.litool.core.lang.lean;
 
 import io.leaderli.litool.core.type.LiTypeToken;
 
+
 /**
- * The interface Type adapter factory.
+ * TypeAdapterFactory 接口表示一个类型适配器工厂，用于生成类型适配器。
  */
 public interface TypeAdapterFactory {
 
     /**
-     * Returns a type adapter for {@code type}, or null if this factory doesn't
-     * support {@code type}.
+     * 根据给定类型和lean对象，返回对应的类型适配器实例。
      *
-     * @param <T>  the type parameter
-     * @param lean the lean
-     * @param type the type
-     * @return the type adapter
+     * @param <T>  参数T表示类型参数
+     * @param lean lean对象
+     * @param type 类型
+     * @return 返回类型适配器
      */
     <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type);
 }

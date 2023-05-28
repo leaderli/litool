@@ -4,6 +4,7 @@ import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.lang.lean.TypeAdapter;
 import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
 import io.leaderli.litool.core.type.LiTypeToken;
+import io.leaderli.litool.core.util.ObjectsUtil;
 
 /**
  * @author leaderli
@@ -15,7 +16,7 @@ public class StringTypeAdapterFactory implements TypeAdapterFactory {
     @SuppressWarnings("unchecked")
     @Override
     public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
-        return type.getRawType() == String.class ? (TypeAdapter<T>) typeAdapter : null;
+        return ObjectsUtil.sameAny(type.getRawType(), String.class, CharSequence.class) ? (TypeAdapter<T>) typeAdapter : null;
     }
 
     static class StringTypeAdapter implements TypeAdapter<String> {

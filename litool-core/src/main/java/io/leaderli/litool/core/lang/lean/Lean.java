@@ -2,7 +2,7 @@ package io.leaderli.litool.core.lang.lean;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.lang.lean.adapters.ReflectAdapterFactory;
+import io.leaderli.litool.core.lang.lean.adapters.ReflectTypeAdapterFactory;
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.*;
@@ -13,159 +13,176 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author leaderli
+ * 用于对象转换的工具类
+ *
  * @since 2022/9/24 9:39 AM
  */
 public class Lean {
-    public final Lira<LeanFieldKey> reflect_name_handlers;
-    public final Map<Class<? extends TypeAdapter<?>>, LiTuple2<TypeAdapter<?>, Type>> reflect_value_handlers =
-            new HashMap<>();
-    private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenCache = new ConcurrentHashMap<>();
+    public final Lira<LeanKeyHandler> leanKeyHandlers;
+    public final Map<Class<? extends TypeAdapter<?>>, LiTuple2<TypeAdapter<?>, Type>> leanValueHandlers = new HashMap<>();
+    private final List<TypeAdapterFactory> typeAdapterFactories;
+    private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenAdapterCache = new ConcurrentHashMap<>();
     private final ConstructorConstructor constructorConstructor;
-    private final List<TypeAdapterFactory> factories;
 
 
     public Lean() {
         this(new LinkedHashMap<>(), null);
     }
 
-    public Lean(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators, List<LeanFieldKey> reflect_name_handlers) {
+    public Lean(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators, List<LeanKeyHandler> leanKeyHandlers) {
+
 
         this.constructorConstructor = new ConstructorConstructor(instanceCreators);
-        this.factories = initFactories();
-        this.reflect_name_handlers = initLeanKeyHandlers(reflect_name_handlers);
-
+        this.typeAdapterFactories = initTypeAdapterFactories();
+        this.leanKeyHandlers = initLeanKeyHandlers(leanKeyHandlers);
     }
 
-    private static List<TypeAdapterFactory> initFactories() {
-        List<TypeAdapterFactory> factories = new ArrayList<>();
-        factories.add(TypeAdapters.PRIMITIVE_FACTORY);
-        factories.add(TypeAdapters.STRING_FACTORY);
-        factories.add(TypeAdapters.ARRAY_FACTORY);
-        factories.add(TypeAdapters.ITERABLE_FACTORY);
-        factories.add(TypeAdapters.MAP_FACTORY);
-        factories.add(TypeAdapters.OBJECT_FACTORY);
-        factories.add(TypeAdapters.REFLECT_FACTORY);
-        return factories;
+
+    private static List<TypeAdapterFactory> initTypeAdapterFactories() {
+        List<TypeAdapterFactory> typeAdapterFactories = new ArrayList<>();
+        typeAdapterFactories.add(TypeAdapterFactories.PRIMITIVE_FACTORY);
+        typeAdapterFactories.add(TypeAdapterFactories.STRING_FACTORY);
+
+        typeAdapterFactories.add(TypeAdapterFactories.ARRAY_FACTORY);
+        typeAdapterFactories.add(TypeAdapterFactories.ITERABLE_FACTORY);
+        typeAdapterFactories.add(TypeAdapterFactories.MAP_FACTORY);
+
+        typeAdapterFactories.add(TypeAdapterFactories.CUSTOM_FACTORY);
+
+        typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
+        typeAdapterFactories.add(TypeAdapterFactories.REFLECT_FACTORY);
+        return typeAdapterFactories;
     }
 
-    private static Lira<LeanFieldKey> initLeanKeyHandlers(List<LeanFieldKey> reflect_name_handlers) {
-        return CollectionUtils.union(LeanFieldKey.class, reflect_name_handlers, defaultLeanKeyHandlers());
+    private static Lira<LeanKeyHandler> initLeanKeyHandlers(List<LeanKeyHandler> reflect_name_handlers) {
+        return CollectionUtils.union(LeanKeyHandler.class, reflect_name_handlers, defaultLeanKeyHandlers());
     }
 
-    private static List<LeanFieldKey> defaultLeanKeyHandlers() {
-        LeanFieldKey leanKey = field -> ReflectUtil.getAnnotation(field, LeanKey.class).map(LeanKey::value).get();
-        LeanFieldKey fieldName = Field::getName;
-        return CollectionUtils.toList(leanKey, fieldName);
+    private static List<LeanKeyHandler> defaultLeanKeyHandlers() {
+        LeanKeyHandler leanKeyHandler = field -> ReflectUtil.getAnnotation(field, LeanKey.class).map(LeanKey::value).get();
+        LeanKeyHandler fieldNameAdapter = Field::getName;
+        return CollectionUtils.toList(leanKeyHandler, fieldNameAdapter);
+    }
+
+
+    /**
+     * 从源对象中创建目标对象
+     *
+     * @param source     源对象
+     * @param targetType 目标对象的类型
+     * @param <T>        目标对象的类型
+     * @return 一个目标类型的实例，属性值与源对象相同
+     * @see #getTypeAdapter(Type)
+     */
+    @SuppressWarnings({"unchecked"})
+    public <T> T fromBean(Object source, Class<T> targetType) {
+        return (T) getTypeAdapter(targetType).read(source, this);
+    }
+
+
+    /**
+     * 从源对象中创建目标对象
+     *
+     * @param source     源对象
+     * @param targetType 目标对象的类型
+     * @param <T>        目标对象的类型
+     * @return 一个目标类型的实例，属性值与源对象相同
+     * @see #getTypeAdapter(Type)
+     */
+    @SuppressWarnings({"unchecked"})
+    public <T> T fromBean(Object source, Type targetType) {
+        return (T) getTypeAdapter(targetType).read(source, this);
     }
 
     /**
-     * @param source          the source bean
-     * @param targetTypeToken the target bean typeToken
-     * @param <T>             the parameter of {@link  LiTypeToken}
-     * @return a new instance with type {@link LiTypeToken#getType()} which created by copy the properties of source
-     * deeply
-     * @see #getAdapter(LiTypeToken)
+     * 从源对象中创建目标对象
+     *
+     * @param source          源对象
+     * @param targetTypeToken 目标对象的 TypeToken
+     * @param <T>             目标对象的类型
+     * @return 一个新的实例，类型为 targetTypeToken 的类型，属性值与源对象相同
+     * @see #getTypeAdapter(LiTypeToken)
      */
     public <T> T fromBean(Object source, LiTypeToken<T> targetTypeToken) {
-        return getAdapter(targetTypeToken).read(source, this);
-    }
-
-    public <T> void copyBean(Object source, T target) {
-
-        TypeAdapter<T> adapter = getAdapter(target.getClass());
-        LiAssertUtil.assertTrue(adapter instanceof ReflectAdapterFactory.ReflectAdapter, "only support copy to pojo bean");
-        //noinspection unchecked
-        ((ReflectAdapterFactory.ReflectAdapter<Object>) adapter).populate(source, target, this);
+        return getTypeAdapter(targetTypeToken).read(source, this);
     }
 
     /**
-     * @param type the key
-     * @param <T>  the parameter of {@link  LiTypeToken}
-     * @return try to get the value cached by {@link  #typeTokenCache}, if not cached
-     * foreach {@link #factories} to find the a {@link  TypeAdapter} and cache
-     * LiTypeToken-TypeAdapter to reuse
+     * 从源对象中复制属性到目标对象
+     *
+     * @param source 源对象
+     * @param target 目标对象
+     * @param <T>    目标对象的类型
      */
-    public <T> TypeAdapter<T> getAdapter(LiTypeToken<T> type) {
-        Objects.requireNonNull(type);
-        TypeAdapter<T> cached = getCacheAdapter(type);
-        if (cached != null) {
-            return cached;
+    public <T> void copyBean(Object source, T target) {
+
+        TypeAdapter<T> adapter = getTypeAdapter(target.getClass());
+        LiAssertUtil.assertTrue(adapter instanceof ReflectTypeAdapterFactory.ReflectAdapter, "only support copy to pojo bean");
+        //noinspection unchecked
+        ((ReflectTypeAdapterFactory.ReflectAdapter<Object>) adapter).populate(source, target, this);
+    }
+
+
+    /**
+     * Lean对象的类型适配器方法，用于获取指定类型的适配器
+     *
+     * @param type 要获取适配器的类型
+     * @param <T>  类型参数
+     * @return 指定类型的适配器
+     * @see #getTypeAdapter(LiTypeToken)
+     */
+    public <T> TypeAdapter<T> getTypeAdapter(Type type) {
+
+        return getTypeAdapter(LiTypeToken.of(type));
+    }
+
+    /**
+     * Lean对象的类型适配器方法，用于获取指定类型的适配器
+     *
+     * @param typeToken 类型令牌，用于获取适配器
+     * @param <T>       类型参数
+     * @return 指定类型的适配器
+     * @throws IllegalArgumentException 如果无法获取指定类型的适配器，则抛出此异常
+     */
+    public <T> TypeAdapter<T> getTypeAdapter(LiTypeToken<T> typeToken) {
+        Objects.requireNonNull(typeToken);
+        TypeAdapter<T> cachedAdapter = getCacheTypeAdapter(typeToken);
+        if (cachedAdapter != null) {
+            return cachedAdapter;
         }
 
 
-        for (TypeAdapterFactory factory : this.factories) {
-            TypeAdapter<T> candidate = factory.create(this, type);
+        for (TypeAdapterFactory typeAdapterFactory : this.typeAdapterFactories) {
+            TypeAdapter<T> candidate = typeAdapterFactory.create(this, typeToken);
             if (candidate != null) {
-                synchronized (typeTokenCache) {
-                    cached = getCacheAdapter(type);
-                    if (cached != null) {
-                        return cached;
+                synchronized (typeTokenAdapterCache) {
+                    cachedAdapter = getCacheTypeAdapter(typeToken);
+                    if (cachedAdapter != null) {
+                        return cachedAdapter;
                     }
-                    typeTokenCache.put(type, candidate);
+                    typeTokenAdapterCache.put(typeToken, candidate);
                     return candidate;
                 }
             }
         }
 
-        throw new IllegalArgumentException("Lean cannot handle " + type);
+        throw new IllegalArgumentException("Lean cannot handle " + typeToken);
 
 
     }
 
-    /**
-     * @param type the key
-     * @param <T>  the parameter of {@link  LiTypeToken}
-     * @return get the value from {@link #typeTokenCache} by the key
-     */
     @SuppressWarnings("unchecked")
-    public <T> TypeAdapter<T> getCacheAdapter(LiTypeToken<T> type) {
-        return (TypeAdapter<T>) typeTokenCache.get(type);
+    public <T> TypeAdapter<T> getCacheTypeAdapter(LiTypeToken<T> type) {
+        return (TypeAdapter<T>) typeTokenAdapterCache.get(type);
     }
 
-    /**
-     * @param source     the source bean
-     * @param targetType the target bean class
-     * @param <T>        the parameter of {@link  LiTypeToken}
-     * @return a new instance created by copy the properties of source deeply
-     * @see #getAdapter(Type)
-     */
-    @SuppressWarnings({"unchecked"})
-    public <T> T fromBean(Object source, Class<T> targetType) {
-        return (T) getAdapter(targetType).read(source, this);
-    }
 
     /**
-     * {@code return getAdapter(LiTypeToken.of(type))}
+     * 获取用于创建指定类型对象的构造函数
      *
-     * @param type the key
-     * @param <T>  the parameter of {@link  LiTypeToken}
-     * @return {@link  #getAdapter(LiTypeToken)}
-     * @see #getAdapter(LiTypeToken)
-     */
-    public <T> TypeAdapter<T> getAdapter(Type type) {
-
-        return getAdapter(LiTypeToken.of(type));
-    }
-
-    /**
-     * @param source     the source bean
-     * @param targetType the target bean type
-     * @param <T>        the parameter of {@link  LiTypeToken}
-     * @return a new instance created by copy the properties of source deeply
-     * @see #getAdapter(Type)
-     */
-    @SuppressWarnings({"unchecked"})
-    public <T> T fromBean(Object source, Type targetType) {
-        return (T) getAdapter(targetType).read(source, this);
-    }
-
-    /**
-     * {@code   constructorConstructor.get(typeToken)}
-     *
-     * @param typeToken the type token
-     * @param <T>       the parameter of {@link  LiTypeToken}
-     * @return a constructor like function provide a instance that match the {@link  LiTypeToken}
+     * @param typeToken 类型令牌，用于获取构造函数
+     * @param <T>       类型参数
+     * @return 构造函数，用于创建指定类型的对象
      * @see #constructorConstructor
      */
     public <T> ObjectConstructor<T> getConstructor(LiTypeToken<T> typeToken) {

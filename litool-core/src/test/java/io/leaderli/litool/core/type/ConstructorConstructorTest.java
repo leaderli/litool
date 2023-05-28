@@ -15,16 +15,20 @@ class ConstructorConstructorTest {
 
     @Test
     void test() {
-        LinkedHashMap<Type, InstanceCreator<?>> head = LiMapUtil.newLinkedHashMap(LinkedHashMap.class, (InstanceCreator<LinkedHashMap<?, ?>>) type -> new LinkedHashMap<>());
-        ConstructorConstructor constructorConstructor = new ConstructorConstructor(head, new LinkedHashMap<>());
+        ConstructorConstructor constructorConstructor;
+        LinkedHashMap<Type, InstanceCreator<?>> head;
+
+        constructorConstructor = new ConstructorConstructor();
+        Assertions.assertSame(HashMap.class, constructorConstructor.get(LiTypeToken.of(Map.class)).get().getClass());
+
+        head = LiMapUtil.newLinkedHashMap(LinkedHashMap.class, (InstanceCreator<LinkedHashMap<?, ?>>) type -> new LinkedHashMap<>());
+        constructorConstructor = new ConstructorConstructor(head, new LinkedHashMap<>());
         Assertions.assertSame(LinkedHashMap.class, constructorConstructor.get(LiTypeToken.of(Map.class)).get().getClass());
 
         LinkedHashMap<Type, InstanceCreator<?>> tail = LiMapUtil.newLinkedHashMap(HashMap.class, (InstanceCreator<HashMap<?, ?>>) type -> new HashMap<>());
         constructorConstructor = new ConstructorConstructor(tail);
-        Assertions.assertSame(LinkedHashMap.class, constructorConstructor.get(LiTypeToken.of(Map.class)).get().getClass());
-
-        constructorConstructor = new ConstructorConstructor();
         Assertions.assertSame(HashMap.class, constructorConstructor.get(LiTypeToken.of(Map.class)).get().getClass());
+
 
         tail = LiMapUtil.newLinkedHashMap(LiTypeToken.getParameterized(Map.class, String.class, String.class), (InstanceCreator<MyMap>) type -> new MyMap());
         constructorConstructor = new ConstructorConstructor(tail);
@@ -33,14 +37,14 @@ class ConstructorConstructorTest {
 
     @Test
     void get() {
-        LinkedHashMap<Type, InstanceCreator<?>> factories = new LinkedHashMap<>();
-        factories.put(AbstractList.class, (InstanceCreator<List<Object>>) type -> {
+        LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
+        instanceCreators.put(AbstractList.class, (InstanceCreator<List<Object>>) type -> {
             List<Object> list = new ArrayList<>();
             list.add("");
             return list;
         });
-        factories.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
-        ConstructorConstructor constructorConstructor = new ConstructorConstructor(factories);
+        instanceCreators.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
+        ConstructorConstructor constructorConstructor = new ConstructorConstructor(instanceCreators, new LinkedHashMap<>());
 
         ObjectConstructor<ArrayList<String>> arrayListSupplier = constructorConstructor.get(LiTypeToken.of(ArrayList.class));
         List<String> actual = arrayListSupplier.get();

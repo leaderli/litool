@@ -4,16 +4,13 @@ import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
+
 
 /**
- * a collection that store a constructor-like value by the {@link  LiTypeToken} at {@link #instanceCreators}.
- * if the instanceCreators don't have {@link LiTypeToken}, it will foreach the keys to find first the value
- * which key is sub-class of {@link LiTypeToken#getRawType()}. so the {@link  #instanceCreators} is
- * {@link  LinkedHashMap}
+ * 构造函数生成器，用于存储与{@link LiTypeToken}匹配的构造函数对象。如果构造函数生成器中不存在
+ * 匹配的{@link LiTypeToken}，则会遍历所有的键，寻找第一个键的类型是{@link LiTypeToken#getRawType()}的超类。
+ * 因此，构造函数生成器使用{@link LinkedHashMap}存储键值对以确保可以顺序。
  *
  * @author leaderli
  * @since 2022/9/25
@@ -26,34 +23,83 @@ public final class ConstructorConstructor {
         this(new LinkedHashMap<>());
     }
 
+    /**
+     * 构造函数生成器的带参构造函数。
+     * 通过调用 {@link #ConstructorConstructor(LinkedHashMap, LinkedHashMap)} 构造函数初始化内部字段。
+     *
+     * @param tail 存储在构造函数生成器中的尾部的键值对
+     */
     public ConstructorConstructor(LinkedHashMap<Type, InstanceCreator<?>> tail) {
         this(new LinkedHashMap<>(), tail);
     }
 
+    /**
+     * 构造函数生成器的带参构造函数。
+     * 按照顺序加载
+     * <ol>
+     *     <li>
+     *         head
+     *   </li>
+     *     <li>
+     *        {@link #generateDefaultInstanceCreators()}
+     *     </li>
+     *     <li>
+     *        tail
+     *     </li>
+     * </ol>
+     * 后续的key不会覆盖前面已经加载的key
+     *
+     * @param head 存储在构造函数生成器中的头部的键值对
+     * @param tail 存储在构造函数生成器中的尾部的键值对
+     * @see Map#putIfAbsent(Object, Object)
+     */
     public ConstructorConstructor(LinkedHashMap<Type, InstanceCreator<?>> head, LinkedHashMap<Type, InstanceCreator<?>> tail) {
 
-        LinkedHashMap<Type, InstanceCreator<?>> temp = head;
-        instanceCreators.putAll(temp);
+        head.forEach(instanceCreators::putIfAbsent);
+        generateDefaultInstanceCreators().forEach(instanceCreators::putIfAbsent);
+        tail.forEach(instanceCreators::putIfAbsent);
 
-        temp = generateDefaultInstanceCreators();
-        // avoid default instanceCreators to reset the key-value in head, so remove it from default instanceCreators
-        instanceCreators.keySet().forEach(temp::remove);
-        instanceCreators.putAll(temp);
-
-        temp = tail;
-        // put the same key don't refresh the order, so remove it to avoid the order is not correctly
-        instanceCreators.keySet().removeIf(temp::containsKey);
-        instanceCreators.putAll(temp);
     }
 
+    /**
+     * 生成默认的键值对，包括
+     * <ol>
+     *     <li>
+     * {@link ArrayList}
+     *     </li>
+     *     <li>
+     * {@link HashSet}
+     *     </li>
+     *     <li>
+     * {@link LinkedHashSet}
+     *     </li>
+     *     <li>
+     * {@link HashMap}
+     *     </li>
+     *     <li>
+     *          {@link LinkedHashMap}
+     *     </li>
+     * </ol>
+     *
+     * @return 默认的键值对
+     */
     private static LinkedHashMap<Type, InstanceCreator<?>> generateDefaultInstanceCreators() {
         LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
         instanceCreators.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
+        instanceCreators.put(HashSet.class, (InstanceCreator<HashSet<Object>>) type -> new HashSet<>());
+        instanceCreators.put(LinkedHashSet.class, (InstanceCreator<LinkedHashSet<Object>>) type -> new LinkedHashSet<>());
         instanceCreators.put(HashMap.class, (InstanceCreator<HashMap<Object, Object>>) type -> new HashMap<>());
         instanceCreators.put(LinkedHashMap.class, (InstanceCreator<HashMap<Object, Object>>) type -> new LinkedHashMap<>());
         return instanceCreators;
     }
 
+    /**
+     * 获取与给定 {@link LiTypeToken} 匹配的构造函数对象。
+     *
+     * @param <T>       构造函数对象的类型
+     * @param typeToken 用于匹配构造函数对象的 {@link LiTypeToken}
+     * @return 匹配的构造函数对象
+     */
     @SuppressWarnings("unchecked")
     public <T> ObjectConstructor<T> get(LiTypeToken<T> typeToken) {
         final Type type = typeToken.getType();

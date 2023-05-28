@@ -206,8 +206,7 @@ public class LiTypeToken<T> implements ParameterizedType {
         return false;
     }
 
-    private static AssertionError buildUnexpectedTypeError(
-            Type token, Class<?>... expected) {
+    private static AssertionError buildUnexpectedTypeError(Type token, Class<?>... expected) {
 
         // Build exception message
         StringBuilder exceptionMessage =
@@ -261,6 +260,7 @@ public class LiTypeToken<T> implements ParameterizedType {
     public static <T> LiTypeToken<T> of(Type type) {
         return new LiTypeToken<>(type);
     }
+
 
     /**
      * Gets type literal for the array type whose elements are all instances of {@code componentType}.

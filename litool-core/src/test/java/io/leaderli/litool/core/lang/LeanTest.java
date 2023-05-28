@@ -93,7 +93,7 @@ class LeanTest {
         Lean lean = new Lean();
         Bean5 parser = lean.fromBean(map, Bean5.class);
 
-        Assertions.assertSame(lean.getAdapter(Bean1.class), lean.getAdapter(Bean1.class));
+        Assertions.assertSame(lean.getTypeAdapter(Bean1.class), lean.getTypeAdapter(Bean1.class));
 
     }
 
@@ -220,21 +220,21 @@ class LeanTest {
             if (source instanceof List) {
                 return (String) ((List<?>) source).get(0);
             }
-            return source + "";
+            return String.valueOf(source);
         }
     }
 
     private static class DoubleTypeAdapter implements NullableTypeAdapters<Double> {
 
         @Override
-        public Double read(Lean lean, Object source, Type targetType) {
+        public Double read(Lean lean, Object ownerSource, Type targetType) {
             return (double) 10086;
         }
 
 
         @Override
         public Double read(Object source, Lean lean) {
-            return (Double) lean.getAdapter(Double.class).read(source, lean);
+            return (Double) lean.getTypeAdapter(Double.class).read(source, lean);
         }
     }
 
@@ -252,16 +252,16 @@ class LeanTest {
     }
 
     private static class Bean9<T extends List> {
-        @LeanFieldAdapter(StringTypeAdapter.class)
+        @LeanValue(StringTypeAdapter.class)
         private String name;
-        @LeanFieldAdapter(ObjectTypeAdapter.class)
+        @LeanValue(ObjectTypeAdapter.class)
         private T age;
     }
 
     private static class Bean8 {
-        @LeanFieldAdapter(StringTypeAdapter.class)
+        @LeanValue(StringTypeAdapter.class)
         private String name;
-        @LeanFieldAdapter(StringTypeAdapter.class)
+        @LeanValue(StringTypeAdapter.class)
         private int age;
     }
 
@@ -272,10 +272,10 @@ class LeanTest {
         private double fake2;
         private double custom;
 
-        @LeanFieldAdapter(DoubleTypeAdapter.class)
+        @LeanValue(DoubleTypeAdapter.class)
         private double custom2;
 
-        @LeanFieldAdapter(DoubleTypeAdapter.class)
+        @LeanValue(DoubleTypeAdapter.class)
         private double age4;
     }
 
