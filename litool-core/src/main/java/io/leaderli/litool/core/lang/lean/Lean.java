@@ -2,6 +2,7 @@ package io.leaderli.litool.core.lang.lean;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.lang.lean.adapters.CustomTypeAdapterFactory;
 import io.leaderli.litool.core.lang.lean.adapters.ReflectTypeAdapterFactory;
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lira;
@@ -23,22 +24,10 @@ public class Lean {
     private final List<TypeAdapterFactory> typeAdapterFactories;
     private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenAdapterCache = new ConcurrentHashMap<>();
     private final ConstructorConstructor constructorConstructor;
+    public final CustomTypeAdapterFactory customTypeAdapterFactory = new CustomTypeAdapterFactory();
 
 
-    public Lean() {
-        this(new LinkedHashMap<>(), null);
-    }
-
-    public Lean(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators, List<LeanKeyHandler> leanKeyHandlers) {
-
-
-        this.constructorConstructor = new ConstructorConstructor(instanceCreators);
-        this.typeAdapterFactories = initTypeAdapterFactories();
-        this.leanKeyHandlers = initLeanKeyHandlers(leanKeyHandlers);
-    }
-
-
-    private static List<TypeAdapterFactory> initTypeAdapterFactories() {
+    private static List<TypeAdapterFactory> initTypeAdapterFactories(TypeAdapterFactory customTypeAdapterFactory) {
         List<TypeAdapterFactory> typeAdapterFactories = new ArrayList<>();
         typeAdapterFactories.add(TypeAdapterFactories.PRIMITIVE_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.STRING_FACTORY);
@@ -47,7 +36,7 @@ public class Lean {
         typeAdapterFactories.add(TypeAdapterFactories.ITERABLE_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.MAP_FACTORY);
 
-        typeAdapterFactories.add(TypeAdapterFactories.CUSTOM_FACTORY);
+        typeAdapterFactories.add(customTypeAdapterFactory);
 
         typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.REFLECT_FACTORY);
@@ -64,6 +53,21 @@ public class Lean {
         return CollectionUtils.toList(leanKeyHandler, fieldNameAdapter);
     }
 
+    public Lean() {
+        this(new LinkedHashMap<>(), null);
+    }
+
+    public Lean(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators, List<LeanKeyHandler> leanKeyHandlers) {
+
+
+        this.constructorConstructor = new ConstructorConstructor(instanceCreators);
+        this.typeAdapterFactories = initTypeAdapterFactories(customTypeAdapterFactory);
+        this.leanKeyHandlers = initLeanKeyHandlers(leanKeyHandlers);
+    }
+
+    public CustomTypeAdapterFactory getCustomTypeAdapterFactory() {
+        return customTypeAdapterFactory;
+    }
 
     /**
      * 从源对象中创建目标对象

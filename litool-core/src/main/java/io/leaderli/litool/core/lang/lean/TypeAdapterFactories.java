@@ -15,7 +15,6 @@ public class TypeAdapterFactories {
     public static final TypeAdapterFactory ITERABLE_FACTORY = new CollectionTypeAdapterFactory();
     public static final TypeAdapterFactory MAP_FACTORY = new MapTypeAdapterFactory();
 
-    public static final TypeAdapterFactory CUSTOM_FACTORY = new CustomTypeAdapterFactory();
 
     public static final TypeAdapterFactory OBJECT_FACTORY = new ObjectTypeAdapterFactory();
     public static final TypeAdapterFactory REFLECT_FACTORY = new ReflectTypeAdapterFactory();

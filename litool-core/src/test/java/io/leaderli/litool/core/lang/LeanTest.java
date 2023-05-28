@@ -199,6 +199,17 @@ class LeanTest {
 
     }
 
+    @Test
+    void getCustomTypeAdapterFactory() {
+
+        Lean lean = new Lean();
+
+        lean.getCustomTypeAdapterFactory().put(LiTypeToken.of(Dictionary.class), (TypeAdapter<Dictionary>) (source, lean1) -> new Hashtable());
+
+        Assertions.assertEquals(Hashtable.class, lean.fromBean(123, Dictionary.class).getClass());
+
+    }
+
     private static class Bean12<T> {
         private String[] name;
         private T[] ages;

@@ -25,6 +25,9 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
         if (adapter != null) {
             return adapter;
         }
+        if (ReflectUtil.newInstance(type.getRawType()).absent()) {
+            return null;
+        }
         return new ReflectAdapter<>(lean, type);
     }
 
