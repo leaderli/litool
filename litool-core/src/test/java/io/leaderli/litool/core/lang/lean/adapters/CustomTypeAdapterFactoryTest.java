@@ -4,6 +4,8 @@ import io.leaderli.litool.core.lang.lean.Lean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Date;
+
 class CustomTypeAdapterFactoryTest {
 
     @Test
@@ -19,6 +21,7 @@ class CustomTypeAdapterFactoryTest {
         stick.addCustomTypeAdapter((source, lean1) -> null, None.class);
         Assertions.assertDoesNotThrow(() -> stick.fromBean(123, None.class));
 
+        Assertions.assertNotNull(stick.fromBean(System.currentTimeMillis(), Date.class));
     }
 
     private interface None {

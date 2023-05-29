@@ -69,6 +69,16 @@ public class Lean {
 
         typeAdapterFactories.add(customTypeAdapterFactory);
 
+        addCustomTypeAdapter((source, lean) -> {
+            if (source instanceof Date) {
+                return (Date) source;
+            }
+            if (source instanceof Long) {
+                return new Date((Long) source);
+            }
+            return null;
+        }, Date.class);
+
         typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.REFLECT_FACTORY);

@@ -12,6 +12,7 @@ public class CustomTypeAdapterFactory implements TypeAdapterFactory {
 
     private final Map<LiTypeToken<?>, TypeAdapter<?>> map = new LinkedHashMap<>();
 
+
     @SuppressWarnings("unchecked")
     @Override
     public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
