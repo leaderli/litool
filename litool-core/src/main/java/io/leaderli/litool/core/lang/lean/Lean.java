@@ -24,39 +24,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Lean {
     public final Lira<LeanKeyHandler> leanKeyHandlers;
     public final Map<Class<? extends TypeAdapter<?>>, LiTuple2<TypeAdapter<?>, Type>> leanValueHandlers = new HashMap<>();
-    private final List<TypeAdapterFactory> typeAdapterFactories;
+    private final List<TypeAdapterFactory> typeAdapterFactories = new ArrayList<>();
     private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenAdapterCache = new ConcurrentHashMap<>();
     private final ConstructorConstructor constructorConstructor;
     public final CustomTypeAdapterFactory customTypeAdapterFactory = new CustomTypeAdapterFactory();
 
-
-    /**
-     * @param customTypeAdapterFactory 自定义的类型适配器工厂
-     * @param strict                   当处于严格模式，当类无{@link  TypeAdapter}时，会抛出 {@link  IllegalArgumentException}
-     * @return 一个按照顺序加载的类型适配器工厂
-     * @see #getTypeAdapter(LiTypeToken)
-     */
-    private static List<TypeAdapterFactory> initTypeAdapterFactories(TypeAdapterFactory customTypeAdapterFactory, boolean strict) {
-        List<TypeAdapterFactory> typeAdapterFactories = new ArrayList<>();
-        typeAdapterFactories.add(TypeAdapterFactories.PRIMITIVE_FACTORY);
-        typeAdapterFactories.add(TypeAdapterFactories.STRING_FACTORY);
-        typeAdapterFactories.add(TypeAdapterFactories.ENUM_FACTORY);
-
-        typeAdapterFactories.add(TypeAdapterFactories.ARRAY_FACTORY);
-        typeAdapterFactories.add(TypeAdapterFactories.ITERABLE_FACTORY);
-        typeAdapterFactories.add(TypeAdapterFactories.MAP_FACTORY);
-
-        typeAdapterFactories.add(customTypeAdapterFactory);
-
-        typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
-        typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
-        typeAdapterFactories.add(TypeAdapterFactories.REFLECT_FACTORY);
-
-        if (!strict) {
-            typeAdapterFactories.add(TypeAdapterFactories.NULL_FACTORY);
-        }
-        return typeAdapterFactories;
-    }
 
     private static Lira<LeanKeyHandler> initLeanKeyHandlers(List<LeanKeyHandler> reflect_name_handlers) {
         return CollectionUtils.union(LeanKeyHandler.class, reflect_name_handlers, defaultLeanKeyHandlers());
@@ -77,17 +49,46 @@ public class Lean {
         this(instanceCreators, leanKeyHandlers, false);
     }
 
-
+    /**
+     * @param instanceCreators 自定义的构造器
+     * @param leanKeyHandlers  key的解析函数
+     * @param strict           当处于严格模式，当类无{@link  TypeAdapter}时，会抛出 {@link  IllegalArgumentException}
+     * @see #getTypeAdapter(LiTypeToken)
+     */
     public Lean(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators, List<LeanKeyHandler> leanKeyHandlers, boolean strict) {
 
         this.constructorConstructor = new ConstructorConstructor(instanceCreators);
-        this.typeAdapterFactories = initTypeAdapterFactories(customTypeAdapterFactory, strict);
+
+        typeAdapterFactories.add(TypeAdapterFactories.PRIMITIVE_FACTORY);
+        typeAdapterFactories.add(TypeAdapterFactories.STRING_FACTORY);
+        typeAdapterFactories.add(TypeAdapterFactories.ENUM_FACTORY);
+
+        typeAdapterFactories.add(TypeAdapterFactories.ARRAY_FACTORY);
+        typeAdapterFactories.add(TypeAdapterFactories.ITERABLE_FACTORY);
+        typeAdapterFactories.add(TypeAdapterFactories.MAP_FACTORY);
+
+        typeAdapterFactories.add(customTypeAdapterFactory);
+
+        typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
+        typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
+        typeAdapterFactories.add(TypeAdapterFactories.REFLECT_FACTORY);
+
+        if (!strict) {
+            typeAdapterFactories.add(TypeAdapterFactories.NULL_FACTORY);
+        }
+
         this.leanKeyHandlers = initLeanKeyHandlers(leanKeyHandlers);
     }
 
-    public CustomTypeAdapterFactory getCustomTypeAdapterFactory() {
-        return customTypeAdapterFactory;
+
+    @SafeVarargs
+    public final <T> void addCustomTypeAdapter(TypeAdapter<T> typeAdapter, Class<? super T>... classes) {
+        for (Class<? super T> cls : classes) {
+            customTypeAdapterFactory.put(LiTypeToken.of(cls), typeAdapter);
+        }
+
     }
+
 
     /**
      * 从源对象中创建目标对象

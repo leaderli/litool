@@ -52,8 +52,6 @@ class LeanTest {
     void test2() {
 
 
-
-
     }
 
     @Test
@@ -203,9 +201,10 @@ class LeanTest {
 
         Lean lean = new Lean();
 
-        lean.getCustomTypeAdapterFactory().put(LiTypeToken.of(Dictionary.class), (TypeAdapter<Dictionary>) (source, lean1) -> new Hashtable());
+        lean.addCustomTypeAdapter((source, lean1) -> new Hashtable(), Dictionary.class, Hashtable.class);
 
         Assertions.assertEquals(Hashtable.class, lean.fromBean(123, Dictionary.class).getClass());
+        Assertions.assertEquals(Hashtable.class, lean.fromBean(123, Hashtable.class).getClass());
 
     }
 
