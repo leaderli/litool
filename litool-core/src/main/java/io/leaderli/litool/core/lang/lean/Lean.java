@@ -69,15 +69,7 @@ public class Lean {
 
         typeAdapterFactories.add(customTypeAdapterFactory);
 
-        addCustomTypeAdapter((source, lean) -> {
-            if (source instanceof Date) {
-                return (Date) source;
-            }
-            if (source instanceof Long) {
-                return new Date((Long) source);
-            }
-            return null;
-        }, Date.class);
+
 
         typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
@@ -93,10 +85,7 @@ public class Lean {
 
     @SafeVarargs
     public final <T> void addCustomTypeAdapter(TypeAdapter<T> typeAdapter, Class<? super T>... classes) {
-        for (Class<? super T> cls : classes) {
-            customTypeAdapterFactory.put(LiTypeToken.of(cls), typeAdapter);
-        }
-
+        customTypeAdapterFactory.puts(typeAdapter, classes);
     }
 
 

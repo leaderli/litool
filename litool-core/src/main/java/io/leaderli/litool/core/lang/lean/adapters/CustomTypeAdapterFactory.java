@@ -5,6 +5,7 @@ import io.leaderli.litool.core.lang.lean.TypeAdapter;
 import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
 import io.leaderli.litool.core.type.LiTypeToken;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -12,6 +13,9 @@ public class CustomTypeAdapterFactory implements TypeAdapterFactory {
 
     private final Map<LiTypeToken<?>, TypeAdapter<?>> map = new LinkedHashMap<>();
 
+    public CustomTypeAdapterFactory() {
+        puts(new DateTypeAdapter(), Date.class);
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -25,4 +29,10 @@ public class CustomTypeAdapterFactory implements TypeAdapterFactory {
         return (TypeAdapter<T>) map.put(token, typeAdapter);
     }
 
+    @SafeVarargs
+    public final <T> void puts(TypeAdapter<T> typeAdapter, Class<? super T>... classes) {
+        for (Class<? super T> cls : classes) {
+            put(LiTypeToken.of(cls), typeAdapter);
+        }
+    }
 }
