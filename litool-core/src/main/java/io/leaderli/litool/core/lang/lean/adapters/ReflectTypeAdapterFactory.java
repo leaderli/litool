@@ -21,11 +21,12 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
 
     @Override
     public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
-        // use the cache, to avoid stackoverflow should not use getAdapter
-        TypeAdapter<T> adapter = lean.getCacheTypeAdapter(type);
-        if (adapter != null) {
-            return adapter;
+
+        Class<? super T> raw = type.getRawType();
+        if (ModifierUtil.isAbstract(raw) || raw.isEnum() || raw.isArray() || ClassUtil.isPrimitiveOrWrapper(raw)) {
+            return null; //抽象类，接口，枚举，数组，原始类型
         }
+
         if (newInstance(type, lean).absent()) {
             return null;
         }
@@ -56,6 +57,7 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
 
             if (adapter instanceof ReflectAdapter) {
                 return newInstance(typeToken, lean)
+
                         .ifPresent(bean -> populate(source, bean, lean))
                         .get();
             }

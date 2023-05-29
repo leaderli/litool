@@ -14,6 +14,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * liTODO
+ * 枚举支持
+ * 添加执行的细节
  * 用于对象转换的工具类
  *
  * @since 2022/9/24 9:39 AM
@@ -133,9 +136,9 @@ public class Lean {
      * @param target 目标对象
      * @param <T>    目标对象的类型
      */
-    public <T> void copyBean(Object source, T target) {
+    public <T> void copyBean(Object source, T target, LiTypeToken<T> typeToken) {
 
-        TypeAdapter<T> adapter = getTypeAdapter(target.getClass());
+        TypeAdapter<T> adapter = getTypeAdapter(typeToken);
         LiAssertUtil.assertTrue(adapter instanceof ReflectTypeAdapterFactory.ReflectAdapter, "only support copy to pojo bean");
         //noinspection unchecked
         ((ReflectTypeAdapterFactory.ReflectAdapter<Object>) adapter).populate(source, target, this);

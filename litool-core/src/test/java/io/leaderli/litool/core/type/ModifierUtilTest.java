@@ -3,6 +3,9 @@ package io.leaderli.litool.core.type;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.AbstractList;
+import java.util.List;
+
 /**
  * @author leaderli
  * @since 2022/8/9
@@ -14,6 +17,15 @@ class ModifierUtilTest {
     }
 
     private static void m2() {
+
+    }
+
+    @Test
+    void isAbstact() {
+
+        Assertions.assertTrue(ModifierUtil.isAbstract(AbstractList.class));
+        Assertions.assertTrue(ModifierUtil.isAbstract(List.class));
+        Assertions.assertFalse(ModifierUtil.isAbstract(Integer.class));
 
     }
 

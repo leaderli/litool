@@ -8,12 +8,14 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author leaderli
  * @since 2022/1/22
  */
 class CollectionUtilsTest {
+
 
 
     @Test
@@ -104,14 +106,23 @@ class CollectionUtilsTest {
     }
 
     @Test
-    void of() {
+    void toList() {
 
         Assertions.assertTrue(CollectionUtils.toList().isEmpty());
         List<Integer> of = CollectionUtils.toList(1);
         Assertions.assertSame(1, of.size());
-
-
     }
+
+    @Test
+    void toSet() {
+
+        Assertions.assertTrue(CollectionUtils.toSet().isEmpty());
+        Set<Integer> of = CollectionUtils.toSet(1);
+        Assertions.assertSame(1, of.size());
+        of = CollectionUtils.toSet(1, 1);
+        Assertions.assertSame(1, of.size());
+    }
+
 
     @Test
     void test() {

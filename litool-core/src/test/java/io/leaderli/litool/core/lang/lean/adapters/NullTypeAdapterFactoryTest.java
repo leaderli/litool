@@ -10,11 +10,11 @@ class NullTypeAdapterFactoryTest {
     @Test
     void test() {
 
-        TypeAdapter<Object> nullTypeAdapterFactory = new NullTypeAdapterFactory().create(null, null);
-        Assertions.assertSame(new NullTypeAdapterFactory().create(null, null), nullTypeAdapterFactory);
+        TypeAdapter<Object> typeAdapter = new NullTypeAdapterFactory().create(null, null);
+        Assertions.assertSame(new NullTypeAdapterFactory().create(null, null), typeAdapter);
 
-        Assertions.assertNull(nullTypeAdapterFactory.read(null, null));
-        Assertions.assertNull(nullTypeAdapterFactory.read(123, new Lean()));
+        Assertions.assertNull(typeAdapter.read(null, null));
+        Assertions.assertNull(typeAdapter.read(123, new Lean()));
 
     }
 

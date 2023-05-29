@@ -19,6 +19,8 @@ class ArrayTypeAdapterFactoryTest {
         Assertions.assertArrayEquals(new String[]{"1", "2", "3"}, typeAdapter.read(CollectionUtils.toList("1", "2", "3"), lean));
         Assertions.assertArrayEquals(new String[]{}, typeAdapter.read(null, lean));
 
+        Assertions.assertArrayEquals(new String[]{"1", "2", "3"}, lean.fromBean(CollectionUtils.toList("1", "2", "3"), String[].class));
+        Assertions.assertArrayEquals(new String[]{}, lean.fromBean(null, String[].class));
     }
 
 }

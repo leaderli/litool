@@ -90,6 +90,7 @@ public final class ConstructorConstructor {
     private static LinkedHashMap<Type, InstanceCreator<?>> generateDefaultInstanceCreators() {
         LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
         instanceCreators.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
+        instanceCreators.put(LinkedList.class, (InstanceCreator<List<Object>>) type -> new LinkedList<>());
         instanceCreators.put(HashSet.class, (InstanceCreator<HashSet<Object>>) type -> new HashSet<>());
         instanceCreators.put(LinkedHashSet.class, (InstanceCreator<LinkedHashSet<Object>>) type -> new LinkedHashSet<>());
         instanceCreators.put(HashMap.class, (InstanceCreator<HashMap<Object, Object>>) type -> new HashMap<>());

@@ -17,7 +17,6 @@ import java.util.*;
 class LeanTest {
 
 
-
     Gson gson = new Gson();
 
 
@@ -44,21 +43,10 @@ class LeanTest {
         Map<String, String> strMap = lean.fromBean(map, new LiTypeToken<Map<String, String>>() {
         });
 
-        System.out.println(strMap);
-        for (String s : strMap.keySet()) {
-            System.out.println(s);
-        }
-    }
-
-    @Test
-    void test1() {
-        Lean lean = new Lean();
-        Assertions.assertEquals(1, lean.fromBean(1, Integer.class));
-        Assertions.assertEquals("1", lean.fromBean("1", String.class));
-        Assertions.assertNull(lean.fromBean(null, String.class));
-        Assertions.assertEquals(0, lean.fromBean(null, Integer.class));
+        Assertions.assertEquals("{str=str, 1=1, true=true}", strMap.toString());
 
     }
+
 
     @Test
     void test2() {
@@ -172,6 +160,21 @@ class LeanTest {
 
 
     @Test
+    void copyBean() {
+        String json = "{\"name\": [\"123\"],\"ages\": [10,18]}";
+
+        Lean lean = new Lean();
+        Bean12<Integer> bean = lean.fromBean(gson.fromJson(json, Map.class), LiTypeToken.getParameterized(Bean12.class, Integer.class));
+        Assertions.assertEquals(10, bean.ages[0]);
+        Assertions.assertThrows(ClassCastException.class, () -> {
+                    Bean12<Integer> bean12 = lean.fromBean(gson.fromJson(json, Map.class), LiTypeToken.of(Bean12.class));
+                    Integer age = bean12.ages[0];
+                }
+        );
+
+    }
+
+    @Test
     void test12() {
         String json = "{\"name\": [\"123\"],\"ages\": [10,18]}";
         Map map = gson.fromJson(json, Map.class);
@@ -179,10 +182,11 @@ class LeanTest {
         Bean11<Integer> bean = lean.fromBean(map, LiTypeToken.getParameterized(Bean11.class, Integer.class));
 
         Bean12<Integer> copy = new Bean12<>();
-        lean.copyBean(bean, copy);
+        lean.copyBean(bean, copy, LiTypeToken.getParameterized(Bean12.class, Integer.class));
 
         Assertions.assertArrayEquals(new String[]{"123"}, copy.name);
         Assertions.assertArrayEquals(new Integer[]{10, 18}, copy.ages);
+        System.out.println(copy.ages.getClass());
     }
 
     @Test

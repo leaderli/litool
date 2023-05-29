@@ -58,6 +58,20 @@ public class CollectionUtils {
         return arrayList;
     }
 
+    /**
+     * 将指定元素转换为 {@link HashSet}
+     *
+     * @param <T>      列表中元素的类型
+     * @param elements 待转换的元素
+     * @return 转换后的 {@link HashSet}
+     */
+    @SafeVarargs
+    public static <T> HashSet<T> toSet(T... elements) {
+
+        HashSet<T> arrayList = new HashSet<>();
+        Collections.addAll(arrayList, elements);
+        return arrayList;
+    }
 
     /**
      * 返回元素的笛卡尔积，如果任何元素为null或空数组，则返回{new Object[0][]}
