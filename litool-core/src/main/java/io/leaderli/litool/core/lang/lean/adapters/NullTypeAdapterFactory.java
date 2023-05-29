@@ -12,12 +12,12 @@ import io.leaderli.litool.core.type.LiTypeToken;
  */
 public class NullTypeAdapterFactory implements TypeAdapterFactory {
 
-    private static final TypeAdapter<Object> SHARE = new NullTypeAdapter();
+    public static final TypeAdapter<Object> SHARE_NULL_TYPE_ADAPTER = new NullTypeAdapter();
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
-        return (TypeAdapter<T>) SHARE;
+    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
+        return (TypeAdapter<T>) SHARE_NULL_TYPE_ADAPTER;
     }
 
     private static class NullTypeAdapter implements TypeAdapter<Object> {

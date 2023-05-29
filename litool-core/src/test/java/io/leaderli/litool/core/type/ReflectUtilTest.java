@@ -175,6 +175,8 @@ class ReflectUtilTest {
     void newInstance() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         assertTrue(ReflectUtil.newInstance(Integer.class).absent());
+        assertTrue(ReflectUtil.newInstance(PrimitiveEnum.class).absent());
+        assertTrue(ReflectUtil.newInstance(Integer[].class).absent());
         assertTrue(ReflectUtil.newInstance(ConstructorBean.class).present());
         assertTrue(ReflectUtil.newInstance(Bean.class).present());
 
@@ -183,6 +185,7 @@ class ReflectUtilTest {
         assertTrue(ReflectUtil.newInstance(Integer.class, (String) null).absent());
         assertTrue(ReflectUtil.newInstance(Integer.class, (Integer) null).absent());
         assertTrue(ReflectUtil.newInstance(Integer.class, 1).present());
+        assertTrue(ReflectUtil.newInstance(int.class).present());
 
         assertTrue(ReflectUtil.newInstance(TestBean.class, (String) null).present());
         assertTrue(ReflectUtil.newInstance(TestBean2.class, (String) null).present());
@@ -198,6 +201,7 @@ class ReflectUtilTest {
 
         assertFalse(ReflectUtil.newInstance(Number.class, null).present());
         assertFalse(ReflectUtil.newInstance(Consumer.class, null).present());
+        assertFalse(ReflectUtil.newInstance(PrimitiveEnum.class, PrimitiveEnum.INT.toString()).present());
 
         assertFalse(ReflectUtil.newInstance(Number.class.getConstructors()[0]).present());
 

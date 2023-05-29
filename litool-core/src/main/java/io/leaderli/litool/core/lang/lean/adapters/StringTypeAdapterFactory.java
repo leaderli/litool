@@ -15,8 +15,8 @@ public class StringTypeAdapterFactory implements TypeAdapterFactory {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
-        return ObjectsUtil.sameAny(type.getRawType(), String.class, CharSequence.class) ? (TypeAdapter<T>) typeAdapter : null;
+    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
+        return ObjectsUtil.sameAny(typeToken.getRawType(), String.class, CharSequence.class) ? (TypeAdapter<T>) typeAdapter : null;
     }
 
     static class StringTypeAdapter implements TypeAdapter<String> {

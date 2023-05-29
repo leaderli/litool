@@ -218,10 +218,14 @@ public class ReflectUtil {
      * @throws NullPointerException if {@code  cls == null}
      * @throws AssertException      if  cls is interface or abstract class
      */
+    @SuppressWarnings("unchecked")
     public static <T> Lino<T> newInstance(Class<T> cls) {
 
 
-        if (cls.isInterface() || ModifierUtil.isAbstract(cls)) {
+        if (cls.isPrimitive()) {
+            return (Lino<T>) Lino.of(PrimitiveEnum.get(cls).zero_value);
+        }
+        if (cls.isInterface() || ModifierUtil.isAbstract(cls) || cls.isEnum()) {
             return Lino.none();
         }
         Lino<T> instance = getConstructor(cls).unzip(ReflectUtil::newInstance);

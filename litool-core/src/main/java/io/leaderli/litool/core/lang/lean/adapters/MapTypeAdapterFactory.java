@@ -16,16 +16,16 @@ import java.util.Map;
 public class MapTypeAdapterFactory implements TypeAdapterFactory {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
-        if (!Map.class.isAssignableFrom(type.getRawType())) {
+    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
+        if (!Map.class.isAssignableFrom(typeToken.getRawType())) {
             return null;
         }
         // check objectConstructor exist
-        ObjectConstructor<T> constructor = lean.getConstructor(type);
+        ObjectConstructor<T> constructor = lean.getConstructor(typeToken);
         if (constructor == null) {
             return null;
         }
-        Type[] componentType = type.getActualTypeArguments();
+        Type[] componentType = typeToken.getActualTypeArguments();
         Type keyType = componentType[0];
         Type valueType = componentType[1];
         TypeAdapter keyTypeAdapter = lean.getTypeAdapter(LiTypeToken.of(keyType));

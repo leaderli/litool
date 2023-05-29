@@ -17,17 +17,17 @@ import java.util.Collection;
 public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
-        if (!Collection.class.isAssignableFrom(type.getRawType())) {
+    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
+        if (!Collection.class.isAssignableFrom(typeToken.getRawType())) {
             return null;
         }
 
-        ObjectConstructor<T> constructor = lean.getConstructor(type);
+        ObjectConstructor<T> constructor = lean.getConstructor(typeToken);
         if (constructor == null) {
             return null;
         }
 
-        Type componentType = Lira.of(type.getActualTypeArguments()).first().get(Object.class);
+        Type componentType = Lira.of(typeToken.getActualTypeArguments()).first().get(Object.class);
         return new CollectionAdapter(lean.getTypeAdapter(componentType), constructor);
 
     }

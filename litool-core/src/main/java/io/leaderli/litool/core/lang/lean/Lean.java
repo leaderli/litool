@@ -40,6 +40,7 @@ public class Lean {
         List<TypeAdapterFactory> typeAdapterFactories = new ArrayList<>();
         typeAdapterFactories.add(TypeAdapterFactories.PRIMITIVE_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.STRING_FACTORY);
+        typeAdapterFactories.add(TypeAdapterFactories.ENUM_FACTORY);
 
         typeAdapterFactories.add(TypeAdapterFactories.ARRAY_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.ITERABLE_FACTORY);
@@ -47,6 +48,7 @@ public class Lean {
 
         typeAdapterFactories.add(customTypeAdapterFactory);
 
+        typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.REFLECT_FACTORY);
 

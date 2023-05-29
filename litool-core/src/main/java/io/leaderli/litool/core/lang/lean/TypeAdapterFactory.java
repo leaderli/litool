@@ -28,10 +28,10 @@ public interface TypeAdapterFactory {
     /**
      * 根据给定类型和lean对象，返回对应的类型适配器实例。
      *
-     * @param <T>  参数T表示类型参数
-     * @param lean lean对象
-     * @param type 类型
+     * @param <T>       参数T表示类型参数
+     * @param lean      lean对象
+     * @param typeToken 类型
      * @return 返回类型适配器
      */
-    <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type);
+    <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken);
 }

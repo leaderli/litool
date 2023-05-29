@@ -10,6 +10,7 @@ public class TypeAdapterFactories {
 
     public static final TypeAdapterFactory PRIMITIVE_FACTORY = new PrimitiveTypeAdapterFactory();
     public static final TypeAdapterFactory STRING_FACTORY = new StringTypeAdapterFactory();
+    public static final TypeAdapterFactory ENUM_FACTORY = new EnumTypeAdapterFactory();
 
     public static final TypeAdapterFactory ARRAY_FACTORY = new ArrayTypeAdapterFactory();
     public static final TypeAdapterFactory ITERABLE_FACTORY = new CollectionTypeAdapterFactory();

@@ -28,8 +28,8 @@ public class ObjectTypeAdapterFactory implements TypeAdapterFactory {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
-        return type.getRawType() == Object.class ? (TypeAdapter<T>) typeAdapter : null;
+    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
+        return typeToken.getRawType() == Object.class ? (TypeAdapter<T>) typeAdapter : null;
     }
 
     static class ObjectTypeAdapter implements TypeAdapter<Object> {

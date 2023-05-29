@@ -4,7 +4,6 @@ import io.leaderli.litool.core.lang.BeanPath;
 import io.leaderli.litool.core.lang.lean.*;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiTuple2;
-import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.type.*;
 
@@ -19,49 +18,33 @@ import java.lang.reflect.Type;
 public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
 
 
+
     @Override
-    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> type) {
+    public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
 
-        Class<? super T> raw = type.getRawType();
-        if (ModifierUtil.isAbstract(raw) || raw.isEnum() || raw.isArray() || ClassUtil.isPrimitiveOrWrapper(raw)) {
-            return null; //抽象类，接口，枚举，数组，原始类型
-        }
-
-        if (newInstance(type, lean).absent()) {
+        Class<? super T> raw = typeToken.getRawType();
+        if (ModifierUtil.isAbstract(raw) || ReflectUtil.newInstance(typeToken.getRawType()).absent()) {
             return null;
         }
-        return new ReflectAdapter<>(lean, type);
+
+        return new ReflectAdapter<>(lean, typeToken);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> Lino<T> newInstance(LiTypeToken<T> typeToken, Lean lean) {
-
-        ObjectConstructor<T> constructor = lean.getConstructor(typeToken);
-        if (constructor != null) {
-            return Lino.supplier(constructor);
-        }
-        return (Lino<T>) ReflectUtil.newInstance(typeToken.getRawType());
-    }
 
     public static class ReflectAdapter<T> implements TypeAdapter<T> {
-
         private final LiTypeToken<T> typeToken;
 
         public ReflectAdapter(Lean lean, LiTypeToken<T> typeToken) {
             this.typeToken = typeToken;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public T read(Object source, Lean lean) {
             TypeAdapter<T> adapter = lean.getTypeAdapter(typeToken.getRawType());
-
-            if (adapter instanceof ReflectAdapter) {
-                return newInstance(typeToken, lean)
-
-                        .ifPresent(bean -> populate(source, bean, lean))
-                        .get();
-            }
-            return adapter.read(source, lean);
+            T bean = (T) ReflectUtil.newInstance(typeToken.getRawType()).get();
+            populate(source, bean, lean);
+            return bean;
         }
 
         public void populate(Object source, Object target, Lean lean) {
