@@ -2,11 +2,11 @@ package io.leaderli.litool.core.lang;
 
 import java.util.function.Supplier;
 
+
 /**
- * * a supplier proxy that provide a one-time execution of  the actual supplier
+ * 仅执行一次实际函数的函数代理，其执行结果会缓存起来，其返回结果都是同一个
  *
- * @author leaderli
- * @since 2022/9/2 8:38 AM
+ * @param <T> 输出类型
  */
 public class DisposableSupplierProxy<T> implements Supplier<T> {
 

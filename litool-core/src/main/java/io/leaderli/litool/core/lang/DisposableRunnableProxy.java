@@ -1,10 +1,8 @@
 package io.leaderli.litool.core.lang;
 
+
 /**
- * a runnable proxy that provide a one-time execution of  the actual task
- *
- * @author leaderli
- * @since 2022/9/2 8:38 AM
+ * 仅执行一次实际函数的函数代理
  */
 public class DisposableRunnableProxy implements Runnable {
     private final Runnable actual;

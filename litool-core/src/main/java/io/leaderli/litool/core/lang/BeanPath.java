@@ -11,9 +11,8 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * An xpath-like tool for easy retrieval of bean properties
+ * 一个类似于xpath的工具，用于方便地检索bean属性
  *
- * @author leaderli
  * @since 2022/7/11
  */
 public class BeanPath {
@@ -33,9 +32,8 @@ public class BeanPath {
     private final List<Function<Object, Object>> path = new ArrayList<>();
     private final Deque<Function<Lino<Object>, Object>> filters_stack = new ArrayDeque<>();
 
-
     /**
-     * @param filters the filter use to filter iterable obj before parse'[index]'
+     * @param filters 用于在解析'[index]'之前过滤可迭代对象的过滤器
      */
     @SafeVarargs
     public BeanPath(Function<Lino<Object>, Object>... filters) {
@@ -46,7 +44,8 @@ public class BeanPath {
 
 
     /**
-     * an valid expression can be as follow
+     * 该方法用于解析类似于xpath的表达式，将表达式解析为对应的key和数组下标
+     * 表达式的合法格式如下：
      * <ul>
      *     <li>key1</li>
      *     <li>key1.key2</li>
@@ -57,7 +56,8 @@ public class BeanPath {
      *     <li>[0]</li>
      *     <li>[0].key</li>
      * </ul>
-     * illegal expression can be as follow
+     * 表达式的非法格式如下：
+     *
      * <ul>
      *     <li>{@code  }</li>
      *     <li>.</li>
@@ -72,7 +72,12 @@ public class BeanPath {
      *     <li>a[a]</li>
      * </ul>
      *
-     * @param expression the xpath-like expression
+     * @param expression 待解析的xpath-like表达式
+     * @throws BeginIllegalStateException       表达式以变量分隔符或数组结束符开始时抛出
+     * @throws KeyEndIllegalStateException      表达式中key的结束符后跟着变量分隔符或数组开始、结束符时抛出
+     * @throws ArrayEndIllegalStateException    表达式中数组结束符后跟着非变量分隔符或数组开始、结束符时抛出
+     * @throws NotCompleteIllegalStateException 表达式未解析完时抛出
+     * @throws IllegalStateException            表达式中包含非法字符时抛出
      */
     private void build(String expression) {
 
@@ -186,21 +191,23 @@ public class BeanPath {
     }
 
     /**
-     * @param source the source
-     * @return the value find by {@link #path}
+     * 解析器，根据指定的路径{@link #path}来解析对象bean并返回解析后的结果
+     *
+     * @param bean 要解析的对象bean
+     * @return 经过解析后的结果
      */
-    public Lino<Object> parse(Object source) {
+    public Lino<Object> parse(Object bean) {
 
         for (Function<Object, Object> function : Lira.of(path)) {
 
-            if (source == null) {
+            if (bean == null) {
                 return Lino.none();
             }
-            source = function.apply(source);
+            bean = function.apply(bean);
 
         }
 
-        return Lino.of(source);
+        return Lino.of(bean);
     }
 
     private void setKeyFunction(String key) {
@@ -228,29 +235,50 @@ public class BeanPath {
     }
 
     /**
-     * @param obj the find obj
-     * @param key the key of map or the field name of obj
-     * @return the map value or field value
+     * @param bean 要查找的对象
+     * @param key  map的key或者对象的属性名
+     * @return map的值或者对象的属性值
      */
-    public static Lino<Object> simple(Object obj, String key) {
+    public static Lino<Object> simple(Object bean, String key) {
         BeanPath beanPath = new BeanPath();
         beanPath.setKeyFunction(key);
-        return beanPath.parse(obj);
+        return beanPath.parse(bean);
     }
 
-    public static Lino<Object> parse(Object obj, String expression) {
+
+    /**
+     * 解析器，根据指定的路径{@link #path}来解析对象bean并返回解析后的结果
+     *
+     * @param bean       要解析的对象bean
+     * @param expression 表达式
+     * @return 经过解析后的结果
+     * @see #build(String)
+     * @see #parse(Object)
+     */
+    public static Lino<Object> parse(Object bean, String expression) {
 
         BeanPath beanPath = new BeanPath();
         beanPath.build(expression);
-        return beanPath.parse(obj);
+        return beanPath.parse(bean);
     }
 
+    /**
+     * 解析器，根据指定的路径{@link #path}来解析对象bean并返回解析后的结果
+     *
+     * @param bean       要解析的对象bean
+     * @param expression 表达式
+     * @param filters    表达式中的 List 类型的过滤器
+     * @return 经过解析后的结果
+     * @see #build(String)
+     * @see #parse(Object)
+     * @see #setArrFunction(int)
+     */
     @SafeVarargs
-    public static Lino<Object> parse(Object obj, String expression, Function<Lino<Object>, Object>... filters) {
+    public static Lino<Object> parse(Object bean, String expression, Function<Lino<Object>, Object>... filters) {
 
         BeanPath beanPath = new BeanPath(filters);
         beanPath.build(expression);
-        return beanPath.parse(obj);
+        return beanPath.parse(bean);
     }
 
 

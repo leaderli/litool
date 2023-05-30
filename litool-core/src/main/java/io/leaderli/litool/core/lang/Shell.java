@@ -11,8 +11,11 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 /**
- * @author leaderli
- * @since 2022/9/22 8:46 AM
+ * Shell类用于执行shell命令。
+ * 可以设置工作目录和字符集，提供了两个方法，分别用于执行bash脚本和命令。
+ * bash方法用于执行bash脚本，命令内容通过参数传入，底层调用command方法执行。
+ * command方法用于执行命令，参数为命令和命令参数。
+ * 返回值为ErrorHandledFuture类对象，可以处理异步执行的结果和异常。
  */
 public class Shell {
 
@@ -43,10 +46,10 @@ public class Shell {
     }
 
     /**
-     * @param commands the script, the first parameter should be the program,
-     *                 such as {@code  "/bin/bash"}, {@code  "/usr/local/python3"}
-     * @return a {@link  InputStreamCompletableFuture} , or {@link  CompletedErrorHandledFuture} if the {@link  Process}
-     * build error
+     * 执行脚本,第一个参数应该是程序,如{@code  "/bin/bash"},{@code  "/usr/local/python3"}
+     *
+     * @param commands 命令行参数
+     * @return {@link  InputStreamCompletableFuture}。 如果{@link Process}构建错误，{@link  CompletedErrorHandledFuture}
      */
     public ErrorHandledFuture<String> command(String... commands) {
 
