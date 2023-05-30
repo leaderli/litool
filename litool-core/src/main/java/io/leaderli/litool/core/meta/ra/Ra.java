@@ -41,7 +41,7 @@ public abstract class Ra<T> implements Lira<T> {
         LiBox<Integer> exits = LiBox.none();
 
         CancelConsumerSubscriber<T> actualSubscriber = new CancelConsumerSubscriber<>((v, s) -> {
-            if (t == v) {
+            if (Objects.equals(t, v)) {
                 exits.value(0);
                 s.cancel();
             }

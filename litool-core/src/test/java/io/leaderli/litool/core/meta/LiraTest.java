@@ -249,6 +249,7 @@ class LiraTest {
         Assertions.assertFalse(Lira.of(1, 2).contains(null));
         Assertions.assertTrue(Lira.of(1, 2).contains(1));
         Assertions.assertTrue(Lira.of(1, 2).contains(2));
+        Assertions.assertTrue(Lira.of("1", "2").contains("1"));
 
 
     }

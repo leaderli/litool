@@ -48,10 +48,16 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
 
             Lira.iterableItr(source)
                     .map(e -> elementTypeAdapter.read(e, lean))
+                    .nullable(() -> elementTypeAdapter.read(lean))
                     .forNullableEach(collection::add);
 
             return collection;
 
+        }
+
+        public Iterable<E> read(Lean lean) {
+
+            return constructor.get();
         }
     }
 }

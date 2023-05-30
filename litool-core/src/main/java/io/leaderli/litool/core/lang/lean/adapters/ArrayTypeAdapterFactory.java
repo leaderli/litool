@@ -4,6 +4,7 @@ import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.lang.lean.TypeAdapter;
 import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.TypeUtil;
 
@@ -41,7 +42,18 @@ public class ArrayTypeAdapterFactory implements TypeAdapterFactory {
         @Override
         public E[] read(Object source, Lean lean) {
 
-            return Lira.iterableItr(source).map(e -> elementTypeAdapter.read(e, lean)).toNullableArray(componentType);
+            return Lira.iterableItr(source)
+                    .map(e -> elementTypeAdapter.read(e, lean))
+                    .debug()
+                    .nullable(() -> elementTypeAdapter.read(lean))
+                    .debug()
+                    .toNullableArray(componentType);
+        }
+
+        @Override
+        public E[] read(Lean lean) {
+
+            return ClassUtil.newWrapperArray(componentType, 0);
         }
     }
 

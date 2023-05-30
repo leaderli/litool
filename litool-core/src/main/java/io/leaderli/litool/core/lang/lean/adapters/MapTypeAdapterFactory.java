@@ -68,8 +68,8 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         public void handle(Lean lean, Map<K, V> map, Object k, Object v) {
-            K rk = keyTypeAdapter.read(k, lean);
-            V rv = valueTypeAdapter.read(v, lean);
+            K rk = k != null ? keyTypeAdapter.read(k, lean) : keyTypeAdapter.read(lean);
+            V rv = v != null ? valueTypeAdapter.read(v, lean) : valueTypeAdapter.read(lean);
             if (rk != null) {
                 map.put(rk, rv);
             }

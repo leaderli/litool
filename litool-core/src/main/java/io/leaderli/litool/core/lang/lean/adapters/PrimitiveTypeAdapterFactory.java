@@ -19,7 +19,29 @@ public class PrimitiveTypeAdapterFactory implements TypeAdapterFactory {
         if (primitiveEnum == PrimitiveEnum.OBJECT) {
             return null;
         }
-        return (source, le) -> primitiveEnum.read(source);
+        return new PrimitiveTypeAdapter<>(primitiveEnum);
+    }
+
+    static class PrimitiveTypeAdapter<T> implements TypeAdapter<T> {
+        private final PrimitiveEnum primitiveEnum;
+
+        PrimitiveTypeAdapter(PrimitiveEnum primitiveEnum) {
+            this.primitiveEnum = primitiveEnum;
+        }
+
+        @Override
+        public T read(Object source, Lean lean) {
+            return primitiveEnum.read(source);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public T read(Lean lean) {
+            return (T) primitiveEnum.zero_value;
+
+        }
+
+
     }
 
 }

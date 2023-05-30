@@ -22,7 +22,7 @@ public class StringTypeAdapterFactory implements TypeAdapterFactory {
     static class StringTypeAdapter implements TypeAdapter<String> {
         @Override
         public String read(Object source, Lean lean) {
-            return source != null ? String.valueOf(source) : null;
+            return String.valueOf(source);
         }
     }
 }

@@ -94,11 +94,10 @@ public class Lean {
      * @param targetType 目标对象的类型
      * @param <T>        目标对象的类型
      * @return 一个目标类型的实例，属性值与源对象相同
-     * @see #getTypeAdapter(Type)
+     * @see #fromBean(Object, LiTypeToken)
      */
-    @SuppressWarnings({"unchecked"})
     public <T> T fromBean(Object source, Class<T> targetType) {
-        return (T) getTypeAdapter(targetType).read(source, this);
+        return fromBean(source, LiTypeToken.of(targetType));
     }
 
 
@@ -109,11 +108,10 @@ public class Lean {
      * @param targetType 目标对象的类型
      * @param <T>        目标对象的类型
      * @return 一个目标类型的实例，属性值与源对象相同
-     * @see #getTypeAdapter(Type)
+     * @see #fromBean(Object, LiTypeToken)
      */
-    @SuppressWarnings({"unchecked"})
     public <T> T fromBean(Object source, Type targetType) {
-        return (T) getTypeAdapter(targetType).read(source, this);
+        return fromBean(source, LiTypeToken.of(targetType));
     }
 
     /**
@@ -126,7 +124,11 @@ public class Lean {
      * @see #getTypeAdapter(LiTypeToken)
      */
     public <T> T fromBean(Object source, LiTypeToken<T> targetTypeToken) {
-        return getTypeAdapter(targetTypeToken).read(source, this);
+
+        if (source != null) {
+            return getTypeAdapter(targetTypeToken).read(source, this);
+        }
+        return getTypeAdapter(targetTypeToken).read(this);
     }
 
     /**
