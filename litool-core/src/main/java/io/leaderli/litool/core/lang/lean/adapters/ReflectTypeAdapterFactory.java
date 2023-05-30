@@ -1,8 +1,10 @@
 package io.leaderli.litool.core.lang.lean.adapters;
 
 import io.leaderli.litool.core.lang.BeanPath;
-import io.leaderli.litool.core.lang.lean.*;
-import io.leaderli.litool.core.meta.Either;
+import io.leaderli.litool.core.lang.lean.Lean;
+import io.leaderli.litool.core.lang.lean.LeanValue;
+import io.leaderli.litool.core.lang.lean.TypeAdapter;
+import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
 import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.type.*;
@@ -16,7 +18,6 @@ import java.lang.reflect.Type;
  * @since 2022/9/25
  */
 public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
-
 
 
     @Override
@@ -67,13 +68,7 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
 
             BeanPath.simple(source, key)
                     .map(fv -> typeAdapter.read(fv, lean))
-                    .eitherSupplier(() -> {
-                        if (typeAdapter instanceof NullableTypeAdapters) {
-                            return ((NullableTypeAdapters<T>) typeAdapter).read(lean, source, targetType);
-                        }
-                        return null;
-                    })
-                    .map(Either::fold)
+                    .or(() -> typeAdapter.read(lean))
                     .ifPresent(v -> ReflectUtil.setFieldValue(target, field, v));
         }
 

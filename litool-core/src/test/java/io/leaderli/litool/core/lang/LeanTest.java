@@ -1,12 +1,14 @@
 package io.leaderli.litool.core.lang;
 
 import com.google.gson.Gson;
-import io.leaderli.litool.core.lang.lean.*;
+import io.leaderli.litool.core.lang.lean.Lean;
+import io.leaderli.litool.core.lang.lean.LeanKey;
+import io.leaderli.litool.core.lang.lean.LeanValue;
+import io.leaderli.litool.core.lang.lean.TypeAdapter;
 import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -47,12 +49,6 @@ class LeanTest {
 
     }
 
-
-    @Test
-    void test2() {
-
-
-    }
 
     @Test
     void test3() {
@@ -102,13 +98,13 @@ class LeanTest {
             }
             return null;
         }));
-        Bean7 parser = lean.fromBean(map, Bean7.class);
+        Bean7 bean7 = lean.fromBean(map, Bean7.class);
 
-        Assertions.assertEquals(1.0, parser.fake);
-        Assertions.assertEquals(2.0, parser.fake2);
-        Assertions.assertEquals(1.0, parser.custom);
-        Assertions.assertEquals(10086.0, parser.custom2);
-        Assertions.assertEquals(4.0, parser.age4);
+        Assertions.assertEquals(1.0, bean7.fake);
+        Assertions.assertEquals(2.0, bean7.fake2);
+        Assertions.assertEquals(1.0, bean7.custom);
+        Assertions.assertEquals(10086.0, bean7.custom2);
+        Assertions.assertEquals(4.0, bean7.age4);
 
     }
 
@@ -182,6 +178,20 @@ class LeanTest {
     }
 
     @Test
+    void test133() {
+        Bean13 bean13 = new Bean13();
+        bean13.size = 13;
+        bean13.name = "_13";
+
+        Lean lean = new Lean();
+        Bean13 bean131 = new Bean13();
+        lean.copyBean(bean13, bean131, Bean13.class);
+
+        System.out.println(bean131.name);
+
+    }
+
+    @Test
     void test14() {
 
         Bean14 bean = new Bean14();
@@ -196,31 +206,8 @@ class LeanTest {
 
     }
 
-    @Test
-    void getCustomTypeAdapterFactory() {
 
-        Lean lean = new Lean();
 
-        lean.addCustomTypeAdapter((source, lean1) -> new Hashtable(), Dictionary.class, Hashtable.class);
-
-        Assertions.assertEquals(Hashtable.class, lean.fromBean(123, Dictionary.class).getClass());
-        Assertions.assertEquals(Hashtable.class, lean.fromBean(123, Hashtable.class).getClass());
-
-    }
-
-    private static class Bean12<T> {
-        private String[] name;
-        private T[] ages;
-    }
-
-    private static class Bean11<T> {
-        private String[] name;
-        private T[] ages;
-    }
-
-    private static class Bean10 {
-        private String name;
-    }
 
     private static class StringTypeAdapter implements TypeAdapter<String> {
 
@@ -233,10 +220,10 @@ class LeanTest {
         }
     }
 
-    private static class DoubleTypeAdapter implements NullableTypeAdapters<Double> {
+    private static class DoubleTypeAdapter implements TypeAdapter<Double> {
 
         @Override
-        public Double read(Lean lean, Object ownerSource, Type targetType) {
+        public Double read(Lean lean) {
             return (double) 10086;
         }
 
@@ -256,8 +243,27 @@ class LeanTest {
     }
 
     private static class Bean14 {
-        private int name;
         private static int size;
+        private int name;
+    }
+
+    private static class Bean13 {
+        private int size;
+        private String name = "13";
+    }
+
+    private static class Bean12<T> {
+        private String[] name;
+        private T[] ages;
+    }
+
+    private static class Bean11<T> {
+        private String[] name;
+        private T[] ages;
+    }
+
+    private static class Bean10 {
+        private String name;
     }
 
     private static class Bean9<T extends List> {
@@ -305,11 +311,9 @@ class LeanTest {
         private List<T> beans;
     }
 
-    @SuppressWarnings("all")
-    private static class Bean1<T> {
+    private static class Bean3 {
         private String name;
-        private Bean1 bean;
-        private List<T> beans;
+        private Bean2 bean2;
     }
 
     private static class Bean2 {
@@ -318,8 +322,13 @@ class LeanTest {
 
     }
 
-    private static class Bean3 {
+    @SuppressWarnings("all")
+    private static class Bean1<T> {
         private String name;
-        private Bean2 bean2;
+        private Bean1 bean;
+        private List<T> beans;
     }
+
+
 }
+

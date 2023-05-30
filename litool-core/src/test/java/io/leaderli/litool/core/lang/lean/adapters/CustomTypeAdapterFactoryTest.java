@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 class CustomTypeAdapterFactoryTest {
 
@@ -22,6 +24,12 @@ class CustomTypeAdapterFactoryTest {
         Assertions.assertDoesNotThrow(() -> stick.fromBean(123, None.class));
 
         Assertions.assertNotNull(stick.fromBean(System.currentTimeMillis(), Date.class));
+
+
+        lean.addCustomTypeAdapter((source, lean1) -> new Hashtable<>(), Dictionary.class, Hashtable.class);
+
+        Assertions.assertEquals(Hashtable.class, lean.fromBean(123, Dictionary.class).getClass());
+        Assertions.assertEquals(Hashtable.class, lean.fromBean(123, Hashtable.class).getClass());
     }
 
     private interface None {

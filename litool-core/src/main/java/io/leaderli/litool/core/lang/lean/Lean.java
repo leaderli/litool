@@ -24,21 +24,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Lean {
     public final Lira<LeanKeyHandler> leanKeyHandlers;
     public final Map<Class<? extends TypeAdapter<?>>, LiTuple2<TypeAdapter<?>, Type>> leanValueHandlers = new HashMap<>();
+    public final CustomTypeAdapterFactory customTypeAdapterFactory = new CustomTypeAdapterFactory();
     private final List<TypeAdapterFactory> typeAdapterFactories = new ArrayList<>();
     private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenAdapterCache = new ConcurrentHashMap<>();
     private final ConstructorConstructor constructorConstructor;
-    public final CustomTypeAdapterFactory customTypeAdapterFactory = new CustomTypeAdapterFactory();
 
-
-    private static Lira<LeanKeyHandler> initLeanKeyHandlers(List<LeanKeyHandler> reflect_name_handlers) {
-        return CollectionUtils.union(LeanKeyHandler.class, reflect_name_handlers, defaultLeanKeyHandlers());
-    }
-
-    private static List<LeanKeyHandler> defaultLeanKeyHandlers() {
-        LeanKeyHandler leanKeyHandler = field -> ReflectUtil.getAnnotation(field, LeanKey.class).map(LeanKey::value).get();
-        LeanKeyHandler fieldNameAdapter = Field::getName;
-        return CollectionUtils.toList(leanKeyHandler, fieldNameAdapter);
-    }
 
     public Lean() {
         this(new LinkedHashMap<>(), null);
@@ -70,7 +60,6 @@ public class Lean {
         typeAdapterFactories.add(customTypeAdapterFactory);
 
 
-
         typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
         typeAdapterFactories.add(TypeAdapterFactories.REFLECT_FACTORY);
@@ -82,6 +71,15 @@ public class Lean {
         this.leanKeyHandlers = initLeanKeyHandlers(leanKeyHandlers);
     }
 
+    private static Lira<LeanKeyHandler> initLeanKeyHandlers(List<LeanKeyHandler> reflect_name_handlers) {
+        return CollectionUtils.union(LeanKeyHandler.class, reflect_name_handlers, defaultLeanKeyHandlers());
+    }
+
+    private static List<LeanKeyHandler> defaultLeanKeyHandlers() {
+        LeanKeyHandler leanKeyHandler = field -> ReflectUtil.getAnnotation(field, LeanKey.class).map(LeanKey::value).get();
+        LeanKeyHandler fieldNameAdapter = Field::getName;
+        return CollectionUtils.toList(leanKeyHandler, fieldNameAdapter);
+    }
 
     @SafeVarargs
     public final <T> void addCustomTypeAdapter(TypeAdapter<T> typeAdapter, Class<? super T>... classes) {
@@ -129,6 +127,21 @@ public class Lean {
      */
     public <T> T fromBean(Object source, LiTypeToken<T> targetTypeToken) {
         return getTypeAdapter(targetTypeToken).read(source, this);
+    }
+
+    /**
+     * 从源对象中复制属性到目标对象
+     *
+     * @param source 源对象
+     * @param target 目标对象
+     * @param <T>    目标对象的类型
+     */
+    public <T> void copyBean(Object source, T target, Class<T> typeToken) {
+
+        TypeAdapter<T> adapter = getTypeAdapter(typeToken);
+        LiAssertUtil.assertTrue(adapter instanceof ReflectTypeAdapterFactory.ReflectAdapter, "only support copy to pojo bean");
+        //noinspection unchecked
+        ((ReflectTypeAdapterFactory.ReflectAdapter<Object>) adapter).populate(source, target, this);
     }
 
     /**
