@@ -11,6 +11,9 @@ class ThreadUtilTest {
 
     @Test
     void printStack() {
-        Assertions.assertDoesNotThrow(() -> ThreadUtil.printStack(1));
+        Assertions.assertDoesNotThrow(() -> ThreadUtil.printStack(0));
+        Assertions.assertDoesNotThrow(() -> ThreadUtil.printStack(-100));
+        Assertions.assertTrue(ThreadUtil.stackTrace(1).startsWith("io.leaderli.litool.core.util.ThreadUtilTest.printStack(ThreadUtilTest.java:16)"));
+        Assertions.assertDoesNotThrow(() -> ThreadUtil.stackTrace(-100));
     }
 }

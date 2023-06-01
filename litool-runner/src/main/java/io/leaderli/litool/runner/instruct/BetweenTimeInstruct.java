@@ -4,6 +4,7 @@ import io.leaderli.litool.runner.constant.OperatorEnum;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 
 public class BetweenTimeInstruct implements Instruct {
 
@@ -20,12 +21,12 @@ public class BetweenTimeInstruct implements Instruct {
         LocalTime rightTime = LocalTime.parse(right, HHmm);
         LocalTime nowTime = LocalTime.parse(now, HHmm);
 
-        if (leftTime.compareTo(rightTime) < 0) {
-            return OperatorEnum.GREATER_THAN.apply(nowTime, leftTime) && OperatorEnum.LESS_THAN.apply(nowTime,
-                    rightTime);
+        if (leftTime.isBefore(rightTime)) {
+            return OperatorEnum.GREATER_THAN.apply(nowTime, leftTime, Comparator.naturalOrder()) && OperatorEnum.LESS_THAN.apply(nowTime,
+                    rightTime, Comparator.naturalOrder());
         } else {
-            return OperatorEnum.GREATER_THAN.apply(nowTime, leftTime) || OperatorEnum.LESS_THAN.apply(nowTime,
-                    rightTime);
+            return OperatorEnum.GREATER_THAN.apply(nowTime, leftTime, Comparator.naturalOrder()) || OperatorEnum.LESS_THAN.apply(nowTime,
+                    rightTime, Comparator.naturalOrder());
         }
 
     }

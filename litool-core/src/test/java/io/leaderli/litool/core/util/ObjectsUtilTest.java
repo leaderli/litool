@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.util;
 
-import io.leaderli.litool.core.exception.UnsupportedTypeException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,8 +9,9 @@ import org.junit.jupiter.api.Test;
  */
 class ObjectsUtilTest {
 
+    @SuppressWarnings("ConstantValue")
     @Test
-    void test() {
+    void notEquals() {
 
         Assertions.assertFalse(ObjectsUtil.notEquals(null, null));
         Assertions.assertTrue(ObjectsUtil.notEquals(1, null));
@@ -39,33 +39,4 @@ class ObjectsUtilTest {
     }
 
 
-    @Test
-    void compare() {
-
-        Assertions.assertEquals(0, ObjectsUtil.compare(null, null));
-        Assertions.assertThrows(NullPointerException.class, () -> ObjectsUtil.compare(1, null));
-        Assertions.assertThrows(NullPointerException.class, () -> ObjectsUtil.compare(null, 1));
-
-        Assertions.assertEquals(0, ObjectsUtil.compare(1.0, 1));
-        Assertions.assertEquals(-1, ObjectsUtil.compare(1.0, 1.1));
-        Assertions.assertEquals(1, ObjectsUtil.compare(1.2, 1.1));
-
-        Assertions.assertEquals(0, ObjectsUtil.compare("1", "1"));
-        Assertions.assertEquals(-1, ObjectsUtil.compare("11", "12"));
-        Assertions.assertEquals(1, ObjectsUtil.compare("1.2", "1.1"));
-
-        Assertions.assertEquals(0, ObjectsUtil.compare(true, true));
-        Assertions.assertEquals(-1, ObjectsUtil.compare(false, true));
-        Assertions.assertEquals(1, ObjectsUtil.compare(true, false));
-
-        Assertions.assertEquals(0, ObjectsUtil.compare(new int[]{}, new int[]{}));
-        Assertions.assertEquals(-1, ObjectsUtil.compare(new int[]{}, new int[]{1}));
-        Assertions.assertEquals(1, ObjectsUtil.compare(new int[]{1}, new int[]{}));
-
-        Object a = new Object();
-        Object b = new Object();
-        Assertions.assertThrows(UnsupportedTypeException.class, () -> ObjectsUtil.compare(a, b));
-
-
-    }
 }

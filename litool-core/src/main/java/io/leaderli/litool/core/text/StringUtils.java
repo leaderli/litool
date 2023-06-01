@@ -18,7 +18,7 @@ package io.leaderli.litool.core.text;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.io.StringReader;
-import io.leaderli.litool.core.lang.RegExUtils;
+import io.leaderli.litool.core.lang.RegexUtils;
 import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
@@ -927,10 +927,10 @@ public class StringUtils implements StrPool {
 
     private static void convertRemainingAccentCharacters(final StringBuilder decomposed) {
         for (int i = 0; i < decomposed.length(); i++) {
-            if (decomposed.charAt(i) == '\u0141') {
+            if (decomposed.charAt(i) == 'Ł') {
                 decomposed.deleteCharAt(i);
                 decomposed.insert(i, 'L');
-            } else if (decomposed.charAt(i) == '\u0142') {
+            } else if (decomposed.charAt(i) == 'ł') {
                 decomposed.deleteCharAt(i);
                 decomposed.insert(i, 'l');
             }
@@ -4212,7 +4212,7 @@ public class StringUtils implements StrPool {
      */
     @Deprecated
     public static String removeAll(final String text, final String regex) {
-        return RegExUtils.removeAll(text, regex);
+        return RegexUtils.removeAll(text, regex);
     }
 
     /**
@@ -4306,7 +4306,7 @@ public class StringUtils implements StrPool {
      */
     @Deprecated
     public static String replaceFirst(final String text, final String regex, final String replacement) {
-        return RegExUtils.replaceFirst(text, regex, replacement);
+        return RegexUtils.replaceFirst(text, regex, replacement);
     }
 
     /**
@@ -4404,7 +4404,7 @@ public class StringUtils implements StrPool {
      */
     @Deprecated
     public static String replacePattern(final String source, final String regex, final String replacement) {
-        return RegExUtils.replacePattern(source, regex, replacement);
+        return RegexUtils.replacePattern(source, regex, replacement);
     }
 
     /**
@@ -4438,7 +4438,7 @@ public class StringUtils implements StrPool {
      */
     @Deprecated
     public static String removePattern(final String source, final String regex) {
-        return RegExUtils.removePattern(source, regex);
+        return RegexUtils.removePattern(source, regex);
     }
 
     /**
@@ -4489,7 +4489,7 @@ public class StringUtils implements StrPool {
      */
     @Deprecated
     public static String replaceAll(final String text, final String regex, final String replacement) {
-        return RegExUtils.replaceAll(text, regex, replacement);
+        return RegexUtils.replaceAll(text, regex, replacement);
     }
 
     /**
@@ -6059,11 +6059,11 @@ public class StringUtils implements StrPool {
      * StringUtils.isAsciiPrintable("Ceki")   = true
      * StringUtils.isAsciiPrintable("ab2c")   = true
      * StringUtils.isAsciiPrintable("!ab-c~") = true
-     * StringUtils.isAsciiPrintable("\u0020") = true
-     * StringUtils.isAsciiPrintable("\u0021") = true
-     * StringUtils.isAsciiPrintable("\u007e") = true
+     * StringUtils.isAsciiPrintable(" ") = true
+     * StringUtils.isAsciiPrintable("!") = true
+     * StringUtils.isAsciiPrintable("~") = true
      * StringUtils.isAsciiPrintable("\u007f") = false
-     * StringUtils.isAsciiPrintable("Ceki G\u00fclc\u00fc") = false
+     * StringUtils.isAsciiPrintable("Ceki Gülcü") = false
      * </pre>
      *
      * @param cs the CharSequence to check, may be null
@@ -6102,7 +6102,7 @@ public class StringUtils implements StrPool {
      * StringUtils.isNumeric("")     = false
      * StringUtils.isNumeric("  ")   = false
      * StringUtils.isNumeric("123")  = true
-     * StringUtils.isNumeric("\u0967\u0968\u0969")  = true
+     * StringUtils.isNumeric("१२३")  = true
      * StringUtils.isNumeric("12 3") = false
      * StringUtils.isNumeric("ab2c") = false
      * StringUtils.isNumeric("12-3") = false
@@ -6143,8 +6143,8 @@ public class StringUtils implements StrPool {
      * StringUtils.isNumericSpace("  ")   = true
      * StringUtils.isNumericSpace("123")  = true
      * StringUtils.isNumericSpace("12 3") = true
-     * StringUtils.isNumeric("\u0967\u0968\u0969")  = true
-     * StringUtils.isNumeric("\u0967\u0968 \u0969")  = true
+     * StringUtils.isNumeric("१२३")  = true
+     * StringUtils.isNumeric("१२ ३")  = true
      * StringUtils.isNumericSpace("ab2c") = false
      * StringUtils.isNumericSpace("12-3") = false
      * StringUtils.isNumericSpace("12.3") = false
@@ -6181,7 +6181,7 @@ public class StringUtils implements StrPool {
      * StringUtils.getDigits("1000$") = "1000"
      * StringUtils.getDigits("1123~45") = "112345"
      * StringUtils.getDigits("(541) 754-3010") = "5417543010"
-     * StringUtils.getDigits("\u0967\u0968\u0969") = "\u0967\u0968\u0969"
+     * StringUtils.getDigits("१२३") = "१२३"
      * </pre>
      *
      * @param str the String to extract digits from, may be null
@@ -7943,7 +7943,7 @@ public class StringUtils implements StrPool {
         if (str == null || isEmpty(suffix) || endsWith(str, suffix, ignoreCase)) {
             return str;
         }
-        if (suffixes != null && suffixes.length > 0) {
+        if (suffixes != null) {
             for (final CharSequence s : suffixes) {
                 if (endsWith(str, s, ignoreCase)) {
                     return str;
@@ -8041,7 +8041,7 @@ public class StringUtils implements StrPool {
         if (str == null || isEmpty(prefix) || startsWith(str, prefix, ignoreCase)) {
             return str;
         }
-        if (prefixes != null && prefixes.length > 0) {
+        if (prefixes != null) {
             for (final CharSequence p : prefixes) {
                 if (startsWith(str, p, ignoreCase)) {
                     return str;

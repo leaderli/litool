@@ -20,10 +20,11 @@ public class RandomUtil {
     private static final Random RANDOM = new Random();
 
     /**
-     * a random string, possible char is {@link  #POSSIBLE_CHAR_NUMBER}
+     * 生成随机字符串，字符集为{@link #POSSIBLE_CHAR_NUMBER}
+     * Generate a random string consisting of {@link #POSSIBLE_CHAR_NUMBER}
      *
-     * @param length the length of random string
-     * @return a random string
+     * @param length 随机字符串的长度 / The length of the random string
+     * @return 返回一个随机字符串 / A random string
      * @see #POSSIBLE_CHAR_NUMBER
      * @see #randomString(String, int)
      */
@@ -32,11 +33,14 @@ public class RandomUtil {
     }
 
     /**
-     * Return a random string consist of baseString
+     * 生成随机字符串，字符集为给定的baseString
+     * <p>
+     * Generate a random string consisting of the given baseString
      *
-     * @param baseString A sample of random characters
-     * @param length     the length of random string
-     * @return a random string
+     * @param baseString 随机字符集 / A sample of random characters
+     * @param length     随机字符串的长度 / The length of the random string
+     * @return 返回一个随机字符串 / A random string
+     * @see #nextInt(int)
      */
     public static String randomString(String baseString, int length) {
         if (StringUtils.isEmpty(baseString)) {
@@ -56,17 +60,19 @@ public class RandomUtil {
     }
 
     /**
-     * Return random number of 0 to max, include 0 exclude max
+     * 生成0到max之间的随机整数（包括0，不包括max）
      *
-     * @param max upper boundary
-     * @return random number of 0 to max, include 0 exclude max
+     * @param max 上限
+     * @return 随机整数
      */
     public static int nextInt(final int max) {
         return RANDOM.nextInt(max);
     }
 
     /**
-     * @return random natural number
+     * 生成自然数的随机整数
+     *
+     * @return 随机自然数
      * @see #nextInt(int)
      */
     public static int nextInt() {
@@ -76,11 +82,11 @@ public class RandomUtil {
 
 
     /**
-     * Return random number of min to max, include min exclude max
+     * 生成min到max之间的随机整数（包括min，不包括max）
      *
-     * @param max upper boundary
-     * @param min lower boundary
-     * @return random number of 0 to max, include 0 exclude max
+     * @param max 上限
+     * @param min 下限
+     * @return 随机整数
      */
     public static int nextInt(int min, int max) {
 
@@ -94,19 +100,21 @@ public class RandomUtil {
         return min + nextInt(max - min);
     }
 
-    /**
-     * @param trialCount probability trialCount
-     * @return 1/trialCount probability hit
-     */
-    public static boolean probability(int trialCount) {
-        return nextInt(trialCount) == 0;
-    }
 
     /**
-     * 随机运行一次
+     * @param hit 概率试验次数
+     * @return 返回 true 的概率为 1/hit
+     */
+    public static boolean probability(int hit) {
+        return nextInt(hit) == 0;
+    }
+
+
+    /**
+     * 运行一次的概率为 1/hit
      *
-     * @param hit      随机值
-     * @param runnable 函数
+     * @param hit      随机次数
+     * @param runnable 概率被执行的函数
      */
     public static void randomRun(int hit, Runnable runnable) {
 
@@ -117,12 +125,12 @@ public class RandomUtil {
     }
 
     /**
-     * 随机运行一次
+     * 返回一个非空值的概率为 1/hit
      *
-     * @param hit      随机值
+     * @param hit      随机次数
      * @param supplier 提供者函数
      * @param <T>      提供者泛型
-     * @return 返回提供者
+     * @return 1/hit 概率返回有值，其他情况返回空
      */
     public static <T> Lino<T> randomGet(int hit, Supplier<T> supplier) {
 

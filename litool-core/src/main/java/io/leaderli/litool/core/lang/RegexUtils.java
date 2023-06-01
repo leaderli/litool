@@ -5,7 +5,7 @@ import io.leaderli.litool.core.text.StrPool;
 
 import java.util.regex.Pattern;
 
-public class RegExUtils {
+public class RegexUtils {
     /**
      * @see #replaceAll(String, Pattern, String) 替换位空字符串
      */

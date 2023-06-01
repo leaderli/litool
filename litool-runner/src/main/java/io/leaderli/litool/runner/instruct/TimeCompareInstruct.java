@@ -4,6 +4,7 @@ import io.leaderli.litool.runner.constant.OperatorEnum;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 
 public class TimeCompareInstruct implements Instruct {
 
@@ -22,7 +23,7 @@ public class TimeCompareInstruct implements Instruct {
         LocalTime leftTime = LocalTime.parse(left, HHmm);
         LocalTime rightTime = LocalTime.parse(right, HHmm);
 
-        return op.apply(leftTime, rightTime);
+        return op.apply(leftTime, rightTime, Comparator.naturalOrder());
     }
 
     @Override

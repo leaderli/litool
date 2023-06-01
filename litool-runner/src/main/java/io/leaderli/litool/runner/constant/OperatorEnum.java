@@ -1,6 +1,7 @@
 package io.leaderli.litool.runner.constant;
 
-import io.leaderli.litool.core.util.ObjectsUtil;
+import java.util.Comparator;
+import java.util.Objects;
 
 public enum OperatorEnum {
 
@@ -54,12 +55,10 @@ public enum OperatorEnum {
         throw new UnsupportedOperationException(String.format("OperatorEnum unsupported [%s]", op));
     }
 
-    public final <T> boolean apply(T left, T right) {
+    public final <T> boolean apply(T a, T b, Comparator<? super T> c) {
 
-        int compare = ObjectsUtil.compare(left, right);
-
+        int compare = Objects.compare(a, b, c);
         return apply(compare);
-
     }
 
     public abstract boolean apply(int compare);

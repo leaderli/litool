@@ -4,6 +4,7 @@ import io.leaderli.litool.runner.constant.OperatorEnum;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 
 public class AgeCompareInstruct implements Instruct {
     @Override
@@ -28,7 +29,7 @@ public class AgeCompareInstruct implements Instruct {
         LocalDate date = LocalDate.parse(birthday, yyyyMMdd);
         LocalDate now = LocalDate.now();
 
-        return !op.apply(date, now.minusYears(year_int));
+        return !op.apply(date, now.minusYears(year_int), Comparator.naturalOrder());
     }
 
     @Override

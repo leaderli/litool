@@ -12,7 +12,7 @@ class RandomUtilTest {
 
 
     @Test
-    void shunt() {
+    void probability() {
 
         Assertions.assertTrue(RandomUtil.probability(1));
 

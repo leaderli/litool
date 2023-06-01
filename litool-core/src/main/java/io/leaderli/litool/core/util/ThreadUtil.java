@@ -1,31 +1,29 @@
 package io.leaderli.litool.core.util;
 
-import io.leaderli.litool.core.text.StringUtils;
-
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**
- * @author leaderli
- * @since 2022/8/30
+ * ThreadUtil类提供了一些线程相关的工具方法。
+ * 包括线程休眠、延时获取返回值、打印线程堆栈等功能。
  */
 public class ThreadUtil {
 
 
     /**
-     * sleep some millis
+     * 休眠一定时间，单位为毫秒。
      *
-     * @param millis millis of {@link  TimeUnit#SECONDS}
+     * @param millis 休眠的毫秒数
      */
     public static void sleep(long millis) {
         sleep(TimeUnit.MILLISECONDS, millis);
     }
 
     /**
-     * sleep a while
+     * 休眠一定时间
      *
-     * @param timeUnit a timeUnit
-     * @param timeout  time timeout
+     * @param timeUnit 时间单位
+     * @param timeout  休眠的时间
      */
     @SuppressWarnings("java:S2142")
     public static void sleep(TimeUnit timeUnit, long timeout) {
@@ -36,27 +34,25 @@ public class ThreadUtil {
         }
     }
 
-    public static void sleep1s(Object... msgs) {
-        sleep(1, () -> System.out.println(StringUtils.join(" ", msgs)));
-    }
 
     /**
-     * sleep some millis
+     * 休眠一定时间，并在休眠结束后执行runnable。
      *
-     * @param millis   millis of {@link  TimeUnit#SECONDS}
-     * @param runnable execute after sleep
+     * @param millis   休眠的毫秒数
+     * @param runnable 休眠结束后执行的操作
      */
     public static void sleep(long millis, Runnable runnable) {
         sleep(TimeUnit.MILLISECONDS, millis);
         runnable.run();
     }
 
+
     /**
-     * sleep a while
+     * 休眠一定时间，并在休眠结束后执行runnable。
      *
-     * @param timeUnit a timeUnit
-     * @param timeout  time timeout
-     * @param runnable execute after sleep
+     * @param timeUnit 时间单位
+     * @param timeout  休眠的时间
+     * @param runnable 休眠结束后执行的操作
      */
     @SuppressWarnings("java:S2142")
     public static void sleep(TimeUnit timeUnit, long timeout, Runnable runnable) {
@@ -69,11 +65,13 @@ public class ThreadUtil {
     }
 
     /**
-     * @param timeUnit a timeUnit
-     * @param timeout  time timeout
-     * @param <T>      the type of supplier
-     * @param supplier provide a value after sleep
-     * @return sleep a while and return a value
+     * 延时一定时间，并返回结果。
+     *
+     * @param timeUnit 时间单位
+     * @param timeout  休眠的时间
+     * @param supplier 提供返回值的方法
+     * @param <T>      返回值类型
+     * @return 休眠一定时间后的返回值
      */
     public static <T> T delay(TimeUnit timeUnit, long timeout, Supplier<T> supplier) {
 
@@ -82,29 +80,38 @@ public class ThreadUtil {
     }
 
     /**
-     * print  current thread stack, start with 3rd stack
+     * 打印当前线程的堆栈信息。
      *
-     * @param width the print stack with
+     * @param start 堆栈信息的起始位置
      */
-    public static void printStack(int width) {
+    public static void printStack(int start) {
 
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        for (int i = 2; i < width + 2; i++) {
+        for (int i = 2; i < start + 2 && i < stackTrace.length; i++) {
             System.out.println(stackTrace[i]);
         }
     }
 
-
-    public static String stackTrace(int width) {
+    /**
+     * 返回当前线程的堆栈信息。
+     *
+     * @param start 堆栈信息的起始位置
+     */
+    public static String stackTrace(int start) {
 
         StringBuilder sb = new StringBuilder();
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        for (int i = 2; i < width + 2; i++) {
+        for (int i = 2; i < start + 2 && i < stackTrace.length; i++) {
             sb.append(stackTrace[i]).append(System.lineSeparator());
         }
         return sb.toString();
     }
 
+    /**
+     * 等待当前线程结束。
+     *
+     * @throws RuntimeException 如果当前线程被中断，抛出RuntimeException。
+     */
     @SuppressWarnings("java:S2142")
     public static void join() {
         try {

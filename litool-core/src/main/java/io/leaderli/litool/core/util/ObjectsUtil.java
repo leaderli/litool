@@ -1,10 +1,5 @@
 package io.leaderli.litool.core.util;
 
-import io.leaderli.litool.core.exception.UnsupportedTypeException;
-
-import java.lang.reflect.Array;
-import java.time.LocalTime;
-import java.time.chrono.ChronoLocalDate;
 import java.util.Objects;
 
 /**
@@ -12,7 +7,12 @@ import java.util.Objects;
  * @since 2022/6/16 1:02 PM
  */
 public class ObjectsUtil {
-
+    /**
+     * 检查对象是否为null
+     *
+     * @param objects 需要检查的对象
+     * @throws NullPointerException 如果其中任意一个对象为null，则抛出空指针异常
+     */
     public static void requireNotNull(Object... objects) {
         for (Object object : objects) {
             if (object == null) {
@@ -21,6 +21,13 @@ public class ObjectsUtil {
         }
     }
 
+    /**
+     * 检查对象是否为null
+     *
+     * @param msg     {@link  NullPointerException(String)}
+     * @param objects 需要检查的对象
+     * @throws NullPointerException 如果其中任意一个对象为null，则抛出空指针异常
+     */
     public static void requireNotNull(String msg, Object... objects) {
         for (Object object : objects) {
             if (object == null) {
@@ -30,9 +37,9 @@ public class ObjectsUtil {
     }
 
     /**
-     * @param comparing the comparing obj
-     * @param compares  the compared array
-     * @return compares elements have any element same as comparing
+     * @param comparing 需要比较的对象
+     * @param compares  用于比较的对象数组
+     * @return 如果compares数组中有任何一个对象与comparing相同，则返回true，否则返回false
      */
     public static boolean sameAny(Object comparing, Object... compares) {
 
@@ -46,78 +53,23 @@ public class ObjectsUtil {
 
     }
 
+
     /**
-     * <ul>
-     * <li>{@link  Number}, return {@code  a - b }</li>
-     * <li>Array, return {@code  a.length - b.length }</li>
-     * <li>{@link  String#compareTo(String)} </li>
-     * <li>{@link  Boolean#compareTo(Boolean)} </li>
-     * <li>{@link  ChronoLocalDate#compareTo(ChronoLocalDate)} </li>
-     * <li>{@link  LocalTime#compareTo(LocalTime)} </li>
-     * </ul>
+     * 计算对象的哈希值
      *
-     * @param left  left object
-     * @param right right object
-     * @param <T>   the type of two parameter
-     * @return the union compare  of several class
+     * @param obj 需要计算哈希值的对象
+     * @return 对象的哈希值，如果对象为null，则返回-1
      */
-    public static <T> int compare(T left, T right) {
-
-        if (left == null && right == null) {
-
-            return 0;
-        }
-        Objects.requireNonNull(left);
-        Objects.requireNonNull(right);
-
-        if (left instanceof Number) {
-            return compareNumber((Number) left, (Number) right);
-        }
-
-        if (left instanceof String) {
-            return ((String) left).compareTo((String) right);
-        }
-
-        if (left instanceof Boolean) {
-            return ((Boolean) left).compareTo((Boolean) right);
-        }
-        if (left.getClass().isArray()) {
-            return compareNumber(Array.getLength(left), Array.getLength(right));
-        }
-        if (left instanceof ChronoLocalDate) {
-            return ((ChronoLocalDate) left).compareTo((ChronoLocalDate) right);
-        }
-
-        if (left instanceof LocalTime) {
-            return ((LocalTime) left).compareTo((LocalTime) right);
-        }
-
-
-        throw new UnsupportedTypeException(left.getClass());
-
-    }
-
-    private static int compareNumber(Number a, Number b) {
-
-        Double aa = a.doubleValue();
-        Double bb = b.doubleValue();
-
-        return aa.compareTo(bb);
-    }
-
-
-    public static int hashCodeOrZero(Object o) {
-        return o != null ? o.hashCode() : 0;
+    public static int hashCodeOrZero(Object obj) {
+        return obj != null ? obj.hashCode() : -1;
     }
 
     /**
-     * @param a an object
-     * @param b an object to be compared with {@code a} for equality
-     * @return {@code true} if the arguments are not equal to each other
-     * and {@code false} otherwise
+     * @param a 需要比较的对象
+     * @param b 用于比较的对象
+     * @return 如果a与b不相等，则返回true，否则返回false
      */
-    @SuppressWarnings("all")
     public static boolean notEquals(Object a, Object b) {
-        return a != b && (a == null || !a.equals(b));
+        return !Objects.equals(a, b);
     }
 }
