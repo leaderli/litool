@@ -61,7 +61,6 @@ class ReflectUtilTest {
 
         @RuntimeType
         public Object apply(Object arg) {
-            System.out.println(origin.getReturnType());
             return arg;
         }
     }

@@ -21,12 +21,17 @@ class DateUtilTest {
         Assertions.assertNotNull(DateUtil.now("yyyyMMdd"));
         Assertions.assertNotNull(DateUtil.now("HHMMss"));
         Assertions.assertNotNull(DateUtil.now("yyyyMMddHHMMss"));
+        Assertions.assertNotNull(DateUtil.now("yyyyMMddHHMMssSSS"));
+
         Assertions.assertNotNull(DateUtil.format("hhMMss", new Date()));
         Assertions.assertNotNull(DateUtil.format("yyyyMMdd", new Date()));
         Assertions.assertNotNull(DateUtil.format("yyyyMMddHHmmss", new Date()));
+        Assertions.assertNotNull(DateUtil.format("yyyyMMddHHmmssSSS", new Date()));
+
         Assertions.assertNotNull(DateUtil.format("hhMMss", LocalDateTime.now()));
         Assertions.assertNotNull(DateUtil.format("yyyyMMdd", LocalDateTime.now()));
         Assertions.assertNotNull(DateUtil.format("yyyyMMddHHmmss", LocalDateTime.now()));
+        Assertions.assertNotNull(DateUtil.format("yyyyMMddHHmmssSSS", LocalDateTime.now()));
     }
 
     @Test

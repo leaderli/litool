@@ -14,6 +14,7 @@ class AutoCloseableUtilTest {
     @Test
     void closeableConsumer() {
 
+        Assertions.assertThrows(RuntimeException.class, () -> AutoCloseableUtil.closeableConsumer(null, null));
         LiBox<Integer> of = LiBox.of(0);
         ThrowableSupplier<AutoCloseable> supplier = () -> () -> of.value(1);
 

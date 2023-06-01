@@ -93,6 +93,7 @@ class ConsoleUtilTest {
         out.reset();
         ConsoleUtil.line();
         Assertions.assertTrue(out.toString().contains("-"));
+
     }
 
 

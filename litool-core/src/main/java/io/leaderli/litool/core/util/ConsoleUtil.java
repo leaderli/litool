@@ -54,7 +54,7 @@ public class ConsoleUtil {
     /**
      * 打印多个参数值，用指定的分隔符分隔
      *
-     * @param delimiter 分隔符
+     * @param delimiter 分隔符，默认使用 {@link StrPool#SPACE}
      * @param args      参数值列表
      */
     public static void print0(String delimiter, Object... args) {
@@ -117,20 +117,22 @@ public class ConsoleUtil {
         print0(LINE_SEPARATOR, args);
     }
 
+    private static int LINE_COUNT;
+
     /**
      * 打印一行横线
      */
     public static void line() {
-        CONSOLE.println(StringUtils.just("", 80, '-'));
+        CONSOLE.println(StringUtils.just(" " + ++LINE_COUNT + " ", 80, '-'));
     }
 
     /**
-     * 打印一行横线
+     * 打印一行横线，正中间为logo
      *
-     * @param logo 徽标
+     * @param logo -
      */
     public static void line(Object logo) {
-        CONSOLE.println(StringUtils.just(logo.toString(), 80, '-'));
+        CONSOLE.println(StringUtils.just(" " + logo + " ", 80, '-'));
     }
 
     /**
