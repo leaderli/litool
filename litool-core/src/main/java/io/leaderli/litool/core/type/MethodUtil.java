@@ -4,8 +4,10 @@ import io.leaderli.litool.core.meta.Lino;
 
 import java.lang.annotation.Repeatable;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author leaderli
@@ -14,24 +16,33 @@ import java.util.stream.Collectors;
 public class MethodUtil {
     public static final String CLINIT_METHOD_NAME = "<clinit>";
 
+    public static Method getSameSignatureMethod(LiTypeToken<?> lookup, MethodSignature referenceMethodSignature) {
+        for (Method m : ReflectUtil.getMethods(lookup.getRawType())) {
+
+            if (m.isBridge()) {
+                continue;
+            }
+            Type returnType = TypeUtil.resolve(lookup, m.getGenericReturnType());
+            Type[] parameterTypes = Stream.of(m.getGenericParameterTypes())
+                    .map(t -> TypeUtil.resolve(lookup, t))
+                    .toArray(Type[]::new);
+            MethodSignature x = new MethodSignature(m.getName(), returnType, parameterTypes);
+            if (referenceMethodSignature.equals(x)) {
+                return m;
+            }
+        }
+        return null;
+    }
 
     /**
-     * Return the method of lookup class which have same signature with reference method
+     * Return the method of lookup class which have same signature with referenceMethod method
      *
-     * @param lookup    the look up  class
-     * @param reference the method  will use to be compare
-     * @return the method of lookup class which have same signature with reference method
+     * @param lookup          the look up  class
+     * @param referenceMethod the method  will use to be compare
+     * @return the method of lookup class which have same signature with referenceMethod method
      */
-    public static Lino<Method> getSameSignatureMethod(LiTypeToken<?> lookup, Method reference) {
-
-
-        if (lookup == null || reference == null) {
-            return Lino.none();
-        }
-        MethodSignature compare = MethodSignature.non_strict(reference);
-        return ReflectUtil.getMethods(lookup.getRawType())
-                .filter(compare::equals)
-                .first();
+    public static Method getSameSignatureMethod(LiTypeToken<?> lookup, Method referenceMethod) {
+        return getSameSignatureMethod(lookup, MethodSignature.non_strict(referenceMethod));
     }
 
 

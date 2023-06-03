@@ -1,17 +1,16 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.io.FileUtil;
+import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.io.File;
 import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
@@ -451,6 +450,38 @@ public class ClassUtil {
 
     }
 
+    /**
+     * 生成接口的一个实例，接口的所有方法都被代理类中相关签名的方法去执行
+     * <p>
+     * 当_interface是泛型时，将执行泛型擦除后的相同签名的方法
+     *
+     * @param interfaceTypeToken 要添加的接口
+     * @param proxyClass    实际执行方法的类
+     * @param proxyObj      实际执行方法的对象
+     * @param <T>           接口类型
+     * @return 声明为接口类型的实例
+     * @throws io.leaderli.litool.core.exception.AssertException 如果_interface不是接口
+     * @see MethodUtil#getSameSignatureMethod(LiTypeToken, Method)
+     */
+
+    @SuppressWarnings("unchecked")
+    public static <T, P> T instanceOfInterface(LiTypeToken<T> interfaceTypeToken, LiTypeToken<P> proxyClass, P proxyObj) {
+
+        Class<?> interfaceType = interfaceTypeToken.getRawType();
+        LiAssertUtil.assertTrue(interfaceType.isInterface(), IllegalArgumentException::new, "only support interface");
+
+        Map<Method, Method> proxyMethodMap = Lira.of(interfaceType.getMethods())
+                .tuple(m -> {
+                    MethodSignature referenceMethodSignature = MethodSignature.non_strict(m, interfaceTypeToken);
+                    return MethodUtil.getSameSignatureMethod(proxyClass, referenceMethodSignature);
+                })
+                .assertTrue(LiTuple2::hasRight, m -> "can not proxy method " + m)
+                .toMap(m -> m);
+
+
+        InvocationHandler invocationHandler = (proxy, method, params) -> proxyMethodMap.get(method).invoke(proxyObj, params);
+        return (T) Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{interfaceType}, invocationHandler);
+    }
 
     /**
      * @param constructor the constructor

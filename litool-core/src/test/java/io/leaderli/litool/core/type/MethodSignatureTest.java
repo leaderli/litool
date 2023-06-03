@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -22,5 +23,17 @@ class MethodSignatureTest {
         Assertions.assertFalse(strict_signature.equals(notify_method));
 
         Assertions.assertFalse(no_strict_signature.equals(Object.class.getMethod("notifyAll")));
+
+        Method method = MyFunction.class.getMethod("apply", String.class);
+
+        Assertions.assertEquals(new MethodSignature("apply", Integer.class, new Class[]{String.class}), MethodSignature.non_strict(method));
+    }
+
+    static class MyFunction implements Function<String, Integer> {
+
+        @Override
+        public Integer apply(String s) {
+            return null;
+        }
     }
 }

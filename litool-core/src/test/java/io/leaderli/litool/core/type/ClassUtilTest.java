@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
+import io.leaderli.litool.core.lang.DisposableRunnableProxy;
 import io.leaderli.litool.core.meta.LiValue;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
@@ -320,6 +321,28 @@ class ClassUtilTest {
         });
     }
 
+    @Test
+    void addInterface() {
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ClassUtil.instanceOfInterface(LiTypeToken.of(Proxy.class), LiTypeToken.of(Proxy.class), new Proxy()));
+
+
+        Assertions.assertDoesNotThrow(() -> ClassUtil.instanceOfInterface(LiTypeToken.of(Runnable.class), LiTypeToken.of(DisposableRunnableProxy.class), DisposableRunnableProxy.of(() -> System.out.println(123))));
+
+        MyFunction<String, Integer> function = ClassUtil.instanceOfInterface(LiTypeToken.getParameterized(MyFunction.class, String.class, Integer.class), LiTypeToken.of(Proxy.class), new Proxy());
+
+        Assertions.assertSame(123, function.apply("123"));
+        function = ClassUtil.instanceOfInterface(LiTypeToken.getParameterized(MyFunction.class), LiTypeToken.of(Proxy.class), new Proxy());
+
+        Assertions.assertEquals(456, function.apply("123"));
+    }
+
+    public static void main(String[] args) {
+
+        MyFunction<String, Integer> function = ClassUtil.instanceOfInterface(LiTypeToken.getParameterized(MyFunction.class, String.class, Integer.class), LiTypeToken.of(Proxy.class), new Proxy());
+
+        Assertions.assertSame(123, function.apply("123"));
+    }
 
     @SuppressWarnings("rawtypes")
     @Test

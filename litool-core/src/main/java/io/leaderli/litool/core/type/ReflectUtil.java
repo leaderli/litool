@@ -518,7 +518,7 @@ public class ReflectUtil {
      * Function func = ReflectUtil.newInterfaceImpl(Function.class, delegate);
      * }</pre>
      *
-     * @param typeToken the interface
+     * @param typeToken  the interface
      * @param delegation the delegation bean
      * @param <T>        the type of interface
      * @return a dynamic implement of interface
@@ -538,10 +538,10 @@ public class ReflectUtil {
 
         Method origin = methods[0];
         delegation.setOrigin(origin);
-        Method find = MethodUtil.getSameSignatureMethod(LiTypeToken.of(delegation.getClass()), origin).or(() ->
-
-                        ReflectUtil.getMethods(delegation.getClass())
-                                .filter(m -> ReflectUtil.getAnnotation(m, RuntimeType.class))
+        Lira<Method> runtimeTypeMethod = ReflectUtil.getMethods(delegation.getClass())
+                .filter(m -> ReflectUtil.getAnnotation(m, RuntimeType.class));
+        Method find = Lino.of(MethodUtil.getSameSignatureMethod(LiTypeToken.of(delegation.getClass()), origin)).or(() ->
+                        runtimeTypeMethod
                                 .filter(m -> ClassUtil.isAssignableFromOrIsWrapper(m.getReturnType(), origin.getReturnType()))
                                 .filter(m -> {
                                     if (m.getParameterTypes().length != origin.getParameterTypes().length) {

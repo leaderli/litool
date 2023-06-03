@@ -1,8 +1,12 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.text.StringUtils;
+
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * the signature of method, include method name, method returnType, method parameterTypes
@@ -20,11 +24,11 @@ public class MethodSignature {
     /**
      * @see Method#getReturnType()
      */
-    public final Class<?> returnType;
+    public final Type returnType;
     /**
      * @see Method#getParameterTypes()
      */
-    public final Class<?>[] parameterTypes;
+    public final Type[] parameterTypes;
     /**
      * if {@code modifiers < 0}, it means the modifiers will not be compared at {@link  #equals(Method)}
      *
@@ -36,15 +40,15 @@ public class MethodSignature {
         this(name, void.class);
     }
 
-    public MethodSignature(String name, Class<?> returnType) {
+    public MethodSignature(String name, Type returnType) {
         this(name, returnType, new Class[]{});
     }
 
-    public MethodSignature(String name, Class<?> returnType, Class<?>[] parameterTypes) {
-        this(name, returnType, new Class[]{}, -1);
+    public MethodSignature(String name, Type returnType, Type[] parameterTypes) {
+        this(name, returnType, parameterTypes, -1);
     }
 
-    public MethodSignature(String name, Class<?> returnType, Class<?>[] parameterTypes, int modifiers) {
+    public MethodSignature(String name, Type returnType, Type[] parameterTypes, int modifiers) {
         if (returnType == null) {
             returnType = void.class;
         }
@@ -64,8 +68,53 @@ public class MethodSignature {
      * @return strict signature of method
      */
     public static MethodSignature strict(Method method) {
-        return new MethodSignature(method.getName(), method.getReturnType(), method.getParameterTypes(),
+        Class<?> declaringClass = method.getDeclaringClass();
+        return strict(method, declaringClass);
+    }
+
+    /**
+     * Return no-strict signature of method, it mean {@code modifiers=-1}
+     *
+     * @param method the method
+     * @return no-strict signature of method
+     */
+    public static MethodSignature non_strict(Method method) {
+
+        Class<?> declaringClass = method.getDeclaringClass();
+        return non_strict(method, declaringClass);
+    }
+
+    /**
+     * Return strict signature of method, it's will compare method modifiers
+     *
+     * @param method the method
+     * @return strict signature of method
+     */
+    public static MethodSignature strict(Method method, Type context) {
+        Type returnType = TypeUtil.resolve(context, method.getGenericReturnType());
+        Type[] parameterTypes = Stream.of(method.getGenericParameterTypes())
+                .map(t -> TypeUtil.resolve(context, t))
+                .toArray(Type[]::new);
+
+        return new MethodSignature(method.getName(), returnType, parameterTypes,
                 method.getModifiers());
+    }
+
+    /**
+     * Return no-strict signature of method, it mean {@code modifiers=-1}
+     *
+     * @param method the method
+     * @return no-strict signature of method
+     */
+    public static MethodSignature non_strict(Method method, Type context) {
+
+        Type returnType = TypeUtil.resolve(context, method.getGenericReturnType());
+        Type[] parameterTypes = Stream.of(method.getGenericParameterTypes())
+                .map(t -> TypeUtil.resolve(context, t))
+                .toArray(Type[]::new);
+
+        return new MethodSignature(method.getName(), returnType, parameterTypes, -1);
+
     }
 
     /**
@@ -81,16 +130,6 @@ public class MethodSignature {
         return this.equals(non_strict(method));
     }
 
-    /**
-     * Return no-strict signature of method, it mean {@code modifiers=-1}
-     *
-     * @param method the method
-     * @return no-strict signature of method
-     */
-    public static MethodSignature non_strict(Method method) {
-        return new MethodSignature(method.getName(), method.getReturnType(), method.getParameterTypes(),
-                -1);
-    }
 
     @Override
     public int hashCode() {
@@ -112,5 +151,18 @@ public class MethodSignature {
                 && Objects.equals(returnType, that.returnType)
                 && (modifiers < 0 || Objects.equals(modifiers, that.modifiers))
                 && Arrays.equals(parameterTypes, that.parameterTypes);
+    }
+
+    @Override
+    public String toString() {
+
+
+        return TypeUtil.typeToString(returnType) +
+                " " +
+                name +
+                '(' +
+                StringUtils.join0(",", parameterTypes) +
+                ')';
+
     }
 }

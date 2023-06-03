@@ -1,10 +1,10 @@
 package io.leaderli.litool.core.type;
 
-import io.leaderli.litool.core.meta.Lino;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -15,18 +15,40 @@ class MethodUtilTest {
     @Test
     void getSameSignatureMethod() throws NoSuchMethodException {
         Method method = Object.class.getMethod("toString");
-        Lino<Method> same = MethodUtil.getSameSignatureMethod(LiTypeToken.of(MethodUtilTest.class), method);
-        Assertions.assertEquals("123", same.throwable_map(m -> m.invoke(this)).get());
+        Method same = MethodUtil.getSameSignatureMethod(LiTypeToken.of(MethodUtilTest.class), method);
+
+        Assertions.assertEquals("123", ReflectUtil.invokeMethod(same, this).get());
 
         method = Runnable.class.getMethod("run");
         same = MethodUtil.getSameSignatureMethod(LiTypeToken.of(MethodUtilTest.class), method);
-        Assertions.assertTrue(same.present());
+        Assertions.assertNotNull(same);
 
 
         method = this.getClass().getDeclaredMethod("run");
         same = MethodUtil.getSameSignatureMethod(LiTypeToken.of(Runnable.class), method);
-        Assertions.assertTrue(same.present());
+        Assertions.assertNotNull(same);
+        method = this.getClass().getMethod("apply", String.class);
 
+        same = MethodUtil.getSameSignatureMethod(LiTypeToken.getParameterized(Function.class, String.class, Integer.class), method);
+        Assertions.assertNotNull(same);
+    }
+
+    @SuppressWarnings("Convert2Lambda")
+    @Test
+    void test() throws NoSuchMethodException {
+
+        Method method = this.getClass().getMethod("apply", String.class);
+        Function<String, Integer> function = new Function<String, Integer>() {
+            @Override
+            public Integer apply(String s) {
+                return null;
+            }
+        };
+        System.out.println(MethodUtil.getSameSignatureMethod(LiTypeToken.getParameterized(Function.class, String.class, Integer.class), method));
+    }
+
+    public Integer apply(String msg) {
+        return 123;
     }
 
     @Override
