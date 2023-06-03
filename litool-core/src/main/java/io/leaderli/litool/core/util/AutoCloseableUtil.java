@@ -1,8 +1,9 @@
 package io.leaderli.litool.core.util;
 
-import io.leaderli.litool.core.function.ThrowableConsumer;
-import io.leaderli.litool.core.function.ThrowableFunction;
-import io.leaderli.litool.core.function.ThrowableSupplier;
+import io.leaderli.litool.core.exception.AutoCloseRuntimeException;
+import io.leaderli.litool.core.function.Consumer;
+import io.leaderli.litool.core.function.Function;
+import io.leaderli.litool.core.function.Supplier;
 
 /**
  * 提供一个规范关闭可关闭资源的工具类
@@ -24,12 +25,12 @@ public class AutoCloseableUtil {
      * @param supplier 提供 {@link AutoCloseable} 实例的 supplier
      * @param consumer 消费 {@link AutoCloseable} 实例的 consumer
      */
-    public static <T extends AutoCloseable> void closeableConsumer(ThrowableSupplier<T> supplier, ThrowableConsumer<T> consumer) {
+    public static <T extends AutoCloseable> void autoCloseConsumer(Supplier<T> supplier, Consumer<T> consumer) {
 
         try (T closeable = supplier.get()) {
             consumer.accept(closeable);
         } catch (Throwable e) {
-            throw new RuntimeException(e);
+            throw new AutoCloseRuntimeException(e);
         }
     }
 
@@ -46,13 +47,12 @@ public class AutoCloseableUtil {
      * @param function 函数
      * @return 函数的结果
      */
-    public static <T extends AutoCloseable, R> R closeableFunction(ThrowableSupplier<T> supplier,
-                                                                   ThrowableFunction<T, R> function) {
+    public static <T extends AutoCloseable, R> R autoCloseFunction(Supplier<T> supplier, Function<T, R> function) {
 
         try (T closeable = supplier.get()) {
             return function.apply(closeable);
         } catch (Throwable e) {
-            throw new RuntimeException(e);
+            throw new AutoCloseRuntimeException(e);
         }
     }
 }

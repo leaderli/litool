@@ -1,16 +1,12 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.function.ThrowableConsumer;
-import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.function.Consumer;
+import io.leaderli.litool.core.function.Function;
+import io.leaderli.litool.core.function.Supplier;
 import io.leaderli.litool.core.function.ThrowableRunner;
-import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.link.PublisherLink;
 import io.leaderli.litool.core.meta.link.ValueLink;
 import io.leaderli.litool.core.util.BooleanUtil;
-
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * @param <T> 泛型
@@ -56,7 +52,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @param <T>      the type of value
      * @return a liLink
      */
-    static <T> LiLink<T> supplier(Supplier<T> supplier) {
+    static <T> LiLink<T> supplier(java.util.function.Supplier<T> supplier) {
 
         if (supplier == null) {
             return new ValueLink<>(null);
@@ -71,7 +67,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @param <R>    the type of mapper result
      * @return new link
      */
-    <R> LiLink<R> map(Function<? super T, ? extends R> mapper);
+    <R> LiLink<R> map(java.util.function.Function<? super T, ? extends R> mapper);
 
 
     /**
@@ -81,7 +77,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return new link
      * @see BooleanUtil#parse(Object)
      */
-    LiLink<T> then(Function<? super T, ?> filter);
+    LiLink<T> then(java.util.function.Function<? super T, ?> filter);
 
     /**
      * when the filter result is false, interrupt the execution chain
@@ -90,13 +86,13 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return new link
      * @see BooleanUtil#parse(Object)
      */
-    LiLink<T> then(Supplier<?> filter);
+    LiLink<T> then(java.util.function.Supplier<?> filter);
 
     /**
      * @param consumer the consumer
      * @return new link
      */
-    LiLink<T> then(Consumer<? super T> consumer);
+    LiLink<T> then(java.util.function.Consumer<? super T> consumer);
 
     /**
      * @param runnable the runnable
@@ -112,7 +108,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return new link
      * @see BooleanUtil#parse(Object)
      */
-    LiLink<T> throwable_then(ThrowableFunction<? super T, ?> filter);
+    LiLink<T> throwable_then(Function<? super T, ?> filter);
 
     /**
      * when the filter throw a exception or it result is false, interrupt the execution chain
@@ -120,7 +116,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @param filter the filter
      * @return new link
      */
-    LiLink<T> throwable_then(ThrowableSupplier<?> filter);
+    LiLink<T> throwable_then(Supplier<?> filter);
 
     /**
      * when the consumer throw a exception, interrupt the execution chain
@@ -128,7 +124,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @param consumer the consumer
      * @return new link
      */
-    LiLink<T> throwable_then(ThrowableConsumer<? super T> consumer);
+    LiLink<T> throwable_then(Consumer<? super T> consumer);
 
     /**
      * when the runnable throw a exception, interrupt the execution chain
@@ -155,7 +151,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return new link
      * @see LiConstant#WHEN_THROW
      */
-    LiLink<T> onInterrupt(Consumer<? super T> consumer);
+    LiLink<T> onInterrupt(java.util.function.Consumer<? super T> consumer);
 
     /**
      * runnable only run when the execution chain has interrupt
@@ -173,7 +169,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return new link
      * @see LiConstant#WHEN_THROW
      */
-    LiLink<T> onThrowableInterrupt(ThrowableConsumer<? super T> consumer);
+    LiLink<T> onThrowableInterrupt(Consumer<? super T> consumer);
 
     /**
      * the terminal action
@@ -193,7 +189,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @param onFinally the last consumer, will always called
      * @see #present()
      */
-    void onFinally(Consumer<Boolean> onFinally);
+    void onFinally(java.util.function.Consumer<Boolean> onFinally);
 
     /**
      * the terminal action,  behavior like {@link  Runnable}

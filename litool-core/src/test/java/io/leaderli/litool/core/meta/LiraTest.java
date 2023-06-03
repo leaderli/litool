@@ -79,6 +79,7 @@ class LiraTest {
 
         Assertions.assertTrue(Lira.of(1).remove(1).absent());
         Assertions.assertFalse(Lira.of(1, null).remove(1).remove(null).iterator().hasNext());
+        Assertions.assertTrue(Lira.of(1, null).remove(1).remove(null).nullableGet().isEmpty());
     }
 
     @Test

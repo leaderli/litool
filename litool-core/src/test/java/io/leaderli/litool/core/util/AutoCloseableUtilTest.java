@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.util;
 
-import io.leaderli.litool.core.function.ThrowableSupplier;
+import io.leaderli.litool.core.function.Supplier;
 import io.leaderli.litool.core.meta.LiBox;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,11 +14,11 @@ class AutoCloseableUtilTest {
     @Test
     void closeableConsumer() {
 
-        Assertions.assertThrows(RuntimeException.class, () -> AutoCloseableUtil.closeableConsumer(null, null));
+        Assertions.assertThrows(RuntimeException.class, () -> AutoCloseableUtil.autoCloseConsumer(null, null));
         LiBox<Integer> of = LiBox.of(0);
-        ThrowableSupplier<AutoCloseable> supplier = () -> () -> of.value(1);
+        Supplier<AutoCloseable> supplier = () -> () -> of.value(1);
 
-        AutoCloseableUtil.closeableConsumer(supplier, at -> {
+        AutoCloseableUtil.autoCloseConsumer(supplier, at -> {
         });
         Assertions.assertEquals(1, of.value());
     }
@@ -28,9 +28,9 @@ class AutoCloseableUtilTest {
 
 
         LiBox<Integer> of = LiBox.of(0);
-        ThrowableSupplier<AutoCloseable> supplier = () -> () -> of.value(1);
+        Supplier<AutoCloseable> supplier = () -> () -> of.value(1);
 
-        AutoCloseableUtil.closeableFunction(supplier, at -> null);
+        AutoCloseableUtil.autoCloseFunction(supplier, at -> null);
         Assertions.assertEquals(1, of.value());
     }
 }

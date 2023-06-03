@@ -1,16 +1,12 @@
 package io.leaderli.litool.core.meta.link;
 
-import io.leaderli.litool.core.function.ThrowableConsumer;
-import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.function.Consumer;
+import io.leaderli.litool.core.function.Function;
+import io.leaderli.litool.core.function.Supplier;
 import io.leaderli.litool.core.function.ThrowableRunner;
-import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.LiLink;
-
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 
 abstract class SomeLink<P, T> implements LiLink<T> {
@@ -35,24 +31,24 @@ abstract class SomeLink<P, T> implements LiLink<T> {
 
 
     @Override
-    public <R> LiLink<R> map(Function<? super T, ? extends R> mapper) {
+    public <R> LiLink<R> map(java.util.function.Function<? super T, ? extends R> mapper) {
         return new MapLink<>(this, mapper);
     }
 
 
     @Override
-    public LiLink<T> then(Function<? super T, ?> filter) {
+    public LiLink<T> then(java.util.function.Function<? super T, ?> filter) {
         return new FilterLink<>(this, filter);
     }
 
     @Override
-    public LiLink<T> then(Supplier<?> filter) {
+    public LiLink<T> then(java.util.function.Supplier<?> filter) {
         return new FilterLink<>(this, t -> filter.get());
     }
 
 
     @Override
-    public LiLink<T> then(Consumer<? super T> consumer) {
+    public LiLink<T> then(java.util.function.Consumer<? super T> consumer) {
         return new FilterLink<>(this, t -> {
             consumer.accept(t);
             return true;
@@ -69,7 +65,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
 
 
     @Override
-    public LiLink<T> throwable_then(ThrowableFunction<? super T, ?> filter) {
+    public LiLink<T> throwable_then(Function<? super T, ?> filter) {
 
         return new FilterLink<>(this, t -> {
             try {
@@ -83,7 +79,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
     }
 
     @Override
-    public LiLink<T> throwable_then(ThrowableSupplier<?> filter) {
+    public LiLink<T> throwable_then(Supplier<?> filter) {
         return new FilterLink<>(this, t -> {
             try {
                 return filter.get();
@@ -96,7 +92,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
 
 
     @Override
-    public LiLink<T> throwable_then(ThrowableConsumer<? super T> consumer) {
+    public LiLink<T> throwable_then(Consumer<? super T> consumer) {
         return new FilterLink<>(this, t -> {
             try {
                 consumer.accept(t);
@@ -130,7 +126,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
     }
 
     @Override
-    public LiLink<T> onInterrupt(Consumer<? super T> consumer) {
+    public LiLink<T> onInterrupt(java.util.function.Consumer<? super T> consumer) {
         return new OnInterruptConsumerLink<>(this, consumer);
     }
 
@@ -149,7 +145,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
 
 
     @Override
-    public LiLink<T> onThrowableInterrupt(ThrowableConsumer<? super T> consumer) {
+    public LiLink<T> onThrowableInterrupt(Consumer<? super T> consumer) {
         return new OnInterruptConsumerLink<>(this, v -> {
             try {
                 consumer.accept(v);
@@ -187,7 +183,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
 
 
     @Override
-    public void onFinally(Consumer<Boolean> onFinally) {
+    public void onFinally(java.util.function.Consumer<Boolean> onFinally) {
         onFinally.accept(present());
     }
 

@@ -1,15 +1,13 @@
 package io.leaderli.litool.core.function;
 
 
-import java.util.function.Consumer;
-
 /**
- * 一个声明异常标识的 {@link  Consumer}
+ * 一个声明异常标识的 {@link  java.util.function.Consumer}
  *
  * @param <T> 消费类型
  */
 @FunctionalInterface
-public interface ThrowableConsumer<T> {
+public interface Consumer<T> {
 
 
     void accept(T t) throws Throwable;

@@ -42,6 +42,7 @@ class ResourceUtilTest {
 
     }
 
+    @SuppressWarnings("resource")
     @Test
     void createContentStream() throws IOException {
 
@@ -93,7 +94,7 @@ class ResourceUtilTest {
     @Test
     void getResourceAsStream() {
 
-        AutoCloseableUtil.closeableConsumer(() -> ResourceUtil.getResourceAsStream("io/leaderli/litool/core/bit" +
+        AutoCloseableUtil.autoCloseConsumer(() -> ResourceUtil.getResourceAsStream("io/leaderli/litool/core/bit" +
                 "/BitStr" +
                 ".class"), ins -> {
 

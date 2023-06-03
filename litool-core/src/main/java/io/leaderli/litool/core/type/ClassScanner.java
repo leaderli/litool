@@ -112,30 +112,47 @@ public class ClassScanner {
         this.charset = charset;
     }
 
+
+    /**
+     * 获取指定包下所有继承自指定父类的子类。
+     *
+     * @param packageName 包目录
+     * @param superClass  父类
+     * @param <T>         父类的泛型
+     * @return 返回packageName目录下所有继承自superClass的子类
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T> Lira<Class<T>> getSubTypesOf(String packageName, Class<T> cls) {
+    public static <T> Lira<Class<T>> getSubTypesOf(String packageName, Class<T> superClass) {
 
 
-        ClassScanner classScanner = new ClassScanner(packageName, find -> ClassUtil.isAssignableFromOrIsWrapper(cls,
-                find) && cls != find);
+        ClassScanner classScanner = new ClassScanner(packageName, find -> ClassUtil.isAssignableFromOrIsWrapper(superClass,
+                find) && superClass != find);
         classScanner.scan();
 
         return (Lira) Lira.of(classScanner.classes);
 
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T> Lira<Class<T>> getSubTypesOf(Class<?> packageClass, Class<T> cls) {
+    /**
+     * 获取指定类所在包下所有继承自指定父类的子类。
+     *
+     * @param packageClass 查找类所在包位置
+     * @param superClass   父类
+     * @param <T>          父类的泛型
+     * @return 返回packageClass所在目录下所有继承自superClass的子类
+     */
+    public static <T> Lira<Class<T>> getSubTypesOf(Class<?> packageClass, Class<T> superClass) {
 
-
-        ClassScanner classScanner = new ClassScanner(packageClass.getPackage().getName(),
-                find -> ClassUtil.isAssignableFromOrIsWrapper(cls, find) && cls != find);
-        classScanner.scan();
-
-        return (Lira) Lira.of(classScanner.classes);
-
+        return getSubTypesOf(packageClass.getPackage().getName(), superClass);
     }
 
+    /**
+     * 获取指定类所在包下所有被指定注解标记的类。
+     *
+     * @param packageClass   查找类所在包位置
+     * @param annotationType 注解类
+     * @return 返回packageClass所在目录下所有有被annotationType注解标记的类
+     */
     public static Lira<Class<?>> getClassOfAnnotated(Class<?> packageClass,
                                                      Class<? extends Annotation> annotationType) {
         ClassScanner classScanner = new ClassScanner(packageClass.getPackage().getName(),
@@ -150,7 +167,6 @@ public class ClassScanner {
      * 扫描包路径下满足class过滤器条件的所有class文件
      *
      * @return 类集合
-     * @since 5.7.5
      */
     public Set<Class<?>> scan() {
         for (URL url : ResourceUtil.getResourceURLs(this.packagePath).get()) {
@@ -161,7 +177,7 @@ public class ClassScanner {
             }
         }
 
-        // classpath下未找到，则扫描其他jar包下的类
+        // 包目录下未找到，查找classpath下其他jar包目录的类
         if (forceScanJavaClassPaths) {
             scanJavaClassPaths();
         }
@@ -263,7 +279,7 @@ public class ClassScanner {
         }
         int classLen = className.length();
         int packageLen = this.packageName.length();
-        //检查类名是否以指定包名为前缀，包名后加.（避免类似于cn.hutool.A和cn.hutool.ATest这类类名引起的歧义）
+        //检查类名是否以指定包名为前缀，包名后加.
         if (classLen == packageLen) {
             //类名和包名长度一致，用户可能传入的包名是类名
             if (className.equals(this.packageName)) {

@@ -27,6 +27,13 @@ class ClassUtilTest {
 
 
     @Test
+    void test() {
+
+        System.out.println(List.class.getSuperclass());
+
+    }
+
+    @Test
     void getJarFile() {
 
         Assertions.assertNotNull(ClassUtil.getJarFile(Assertions.class).get());
@@ -36,10 +43,13 @@ class ClassUtilTest {
     @Test
     void getSuperTypeAndInterfacesRecursively() {
 
-        Assertions.assertArrayEquals(new Class[]{Object.class}, ClassUtil.getSuperTypeAndInterfacesRecursively(int[].class));
-        Assertions.assertArrayEquals(new Class[]{Object.class}, ClassUtil.getSuperTypeAndInterfacesRecursively(int.class));
+        Assertions.assertArrayEquals(new Class[]{}, ClassUtil.getSuperTypeAndInterfacesRecursively(int[].class));
+        Assertions.assertArrayEquals(new Class[]{}, ClassUtil.getSuperTypeAndInterfacesRecursively(int.class));
         Assertions.assertArrayEquals(new Class[0], ClassUtil.getSuperTypeAndInterfacesRecursively(Object.class));
         Assertions.assertEquals(Number.class, ClassUtil.getSuperTypeAndInterfacesRecursively(Integer.class)[0]);
+
+        Assertions.assertArrayEquals(new Class[]{AbstractList.class, List.class, RandomAccess.class, AbstractCollection.class, Collection.class, Iterable.class}, ClassUtil.getSuperTypeAndInterfacesRecursively(ArrayList.class));
+
     }
 
 //
@@ -64,6 +74,7 @@ class ClassUtilTest {
     void getComponentType() {
 
         Assertions.assertNull(ClassUtil.getComponentType(null));
+        Assertions.assertEquals(int.class, ClassUtil.getComponentType(new int[]{}));
         Assertions.assertEquals(Integer.class, ClassUtil.getComponentType(new Integer[]{}));
         Object[] objects = new Integer[]{};
         Assertions.assertEquals(Integer.class, ClassUtil.getComponentType(objects));
@@ -212,10 +223,10 @@ class ClassUtilTest {
         Assertions.assertTrue("file:/".matches("^[^/]++/$"));
         Assertions.assertTrue("jar:file:/".matches("^[^/]++/$"));
         Assertions.assertFalse("/jar/".matches("^[^/]++/$"));
-        Assertions.assertTrue(ClassUtil.getAppJars().size() > 0);
+        Assertions.assertTrue(ClassUtil.getAllJarFilePaths().size() > 0);
 
         Lira<String> a = ClassUtil.getJavaClassPaths();
-        Lira<String> b = Lira.of(ClassUtil.getAppJars());
+        Lira<String> b = Lira.of(ClassUtil.getAllJarFilePaths());
 
 
     }

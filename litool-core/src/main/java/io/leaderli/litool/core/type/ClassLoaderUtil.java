@@ -1,20 +1,21 @@
 package io.leaderli.litool.core.type;
 
 /**
- * @author leaderli
+ * ClassLoaderUtil 提供了一些获取类加载器的方法
+ * 注意：如果当前线程上下文类加载器为null，则使用系统类加载器
+ *
  * @since 2022/7/17
  */
 public class ClassLoaderUtil {
+
     /**
-     * return the found {@link ClassLoader}<br>
-     * <p>
-     * find  in order:
+     * 获取类加载器，按照以下顺序查找：
      * <pre>
-     * 1、get context classLoader {@link  #getContextClassLoader()}
-     * 2、get system classloader {@link ClassLoader#getSystemClassLoader()}）
+     * 1、获取上下文类加载器 {@link #getContextClassLoader()}
+     * 2、获取系统类加载器 {@link ClassLoader#getSystemClassLoader()}）
      * </pre>
      *
-     * @return the classLoader
+     * @return 返回找到的类加载器
      */
     public static ClassLoader getClassLoader() {
         ClassLoader classLoader = getContextClassLoader();
@@ -25,12 +26,9 @@ public class ClassLoaderUtil {
     }
 
     /**
-     * Return:
-     * <pre>
-     *     Thread.currentThread().getContextClassLoader()
-     * </pre>
+     * 获取当前线程上下文类加载器
      *
-     * @return the CurrentThread  ClassLoader
+     * @return 返回当前线程上下文类加载器
      * @see Thread#getContextClassLoader()
      */
     public static ClassLoader getContextClassLoader() {
@@ -39,12 +37,9 @@ public class ClassLoaderUtil {
 
 
     /**
-     * Return:
-     * <pre>
-     * ClassLoader.getSystemClassLoader();
-     * </pre>
+     * 获取系统类加载器
      *
-     * @return systemClassLoader
+     * @return 返回系统类加载器
      * @see ClassLoader#getSystemClassLoader()
      * @since 5.7.0
      */

@@ -1,13 +1,9 @@
 package io.leaderli.litool.core.exception;
 
-import io.leaderli.litool.core.function.ThrowableConsumer;
-import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.function.Consumer;
+import io.leaderli.litool.core.function.Function;
+import io.leaderli.litool.core.function.Supplier;
 import io.leaderli.litool.core.function.ThrowableRunner;
-import io.leaderli.litool.core.function.ThrowableSupplier;
-
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * wrapper the {@link  Throwable} to {@link RuntimeException}
@@ -28,32 +24,32 @@ public class RuntimeExceptionTransfer {
     }
 
     /**
-     * 将 {@link ThrowableConsumer} 包装为 {@link Consumer}
+     * 将 {@link Consumer} 包装为 {@link java.util.function.Consumer}
      *
      * @param consumer 可能会抛出异常的 Consumer
      * @return 包装后的 Consumer
      */
-    public static <T> Consumer<T> of(ThrowableConsumer<T> consumer) {
+    public static <T> java.util.function.Consumer<T> of(Consumer<T> consumer) {
         return t -> accept(consumer, t);
     }
 
     /**
-     * 将 {@link ThrowableFunction} 包装为 {@link Function}
+     * 将 {@link Function} 包装为 {@link java.util.function.Function}
      *
      * @param function 可能会抛出异常的 Function
      * @return 包装后的 Function
      */
-    public static <T, R> Function<T, R> of(ThrowableFunction<T, R> function) {
+    public static <T, R> java.util.function.Function<T, R> of(Function<T, R> function) {
         return t -> apply(function, t);
     }
 
     /**
-     * 将 {@link ThrowableSupplier} 包装为 {@link Supplier}
+     * 将 {@link Supplier} 包装为 {@link java.util.function.Supplier}
      *
      * @param supplier 可能会抛出异常的 Supplier
      * @return 包装后的 Supplier
      */
-    public static <T> Supplier<T> of(ThrowableSupplier<T> supplier) {
+    public static <T> java.util.function.Supplier<T> of(Supplier<T> supplier) {
         return () -> get(supplier);
     }
 
@@ -76,7 +72,7 @@ public class RuntimeExceptionTransfer {
      * @param consumer 可能会抛出异常的 Consumer
      * @param t        Consumer 的参数
      */
-    public static <T> void accept(ThrowableConsumer<T> consumer, T t) {
+    public static <T> void accept(Consumer<T> consumer, T t) {
         try {
             consumer.accept(t);
         } catch (Throwable throwable) {
@@ -91,7 +87,7 @@ public class RuntimeExceptionTransfer {
      * @param t        Function 的参数
      * @return Function 的执行结果
      */
-    public static <T, R> R apply(ThrowableFunction<T, R> function, T t) {
+    public static <T, R> R apply(Function<T, R> function, T t) {
         try {
             return function.apply(t);
         } catch (Throwable throwable) {
@@ -105,7 +101,7 @@ public class RuntimeExceptionTransfer {
      * @param supplier 可能会抛出异常的 Supplier
      * @return Supplier 的执行结果
      */
-    public static <T> T get(ThrowableSupplier<T> supplier) {
+    public static <T> T get(Supplier<T> supplier) {
         try {
             return supplier.get();
         } catch (Throwable throwable) {

@@ -1,9 +1,7 @@
 package io.leaderli.litool.core.function;
 
-import java.util.function.Supplier;
-
 /**
- * 一个声明异常标识的 {@link  Supplier}
+ * 一个声明异常标识的 {@link  java.util.function.Supplier}
  *
  * @param <T> 提供者的类型
  * @author leaderli
@@ -12,7 +10,7 @@ import java.util.function.Supplier;
 
 
 @FunctionalInterface
-public interface ThrowableSupplier<T> {
+public interface Supplier<T> {
     /**
      * Gets a result.
      *

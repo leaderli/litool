@@ -26,112 +26,134 @@ public class ClassUtil {
 
 
     /**
-     * Return the assumed class of instance , null-safe.
+     * 获取实例的声明类(可能是其超类，不能作为实际类使用)，支持空安全。
      * <p>
-     * the assumed class may not the real class of instance,  it
-     * may only the super class of instance, and it can not be used
-     * as  assumed class.
-     * eg:
+     * 声明类可能不是实例的实际类型，可能是其父类，不能作为实际类使用。
+     * 例如：
      * <pre>
      * {@code
      *
-     *  Class<CharSequence> type = ClassUtil.getClass("");
-     *  type == CharSequence // false
+     * Class<CharSequence> type = ClassUtil.getDeclaringClass("");
+     * type == CharSequence // false
      * }
      * </pre>
-     * type cannot be used as CharSequence
      *
-     * @param def the instance
-     * @param <T> the type of instance class
-     * @return the assumed class of instance
+     * @param instance 实例
+     * @param <T>      实例的类类型
+     * @return 实例的声明类
      */
     @SuppressWarnings("unchecked")
-    public static <T> Class<T> getDeclaringClass(T def) {
-        if (def == null) {
+    public static <T> Class<T> getDeclaringClass(T instance) {
+        if (instance == null) {
             return null;
         }
-        return (Class<T>) def.getClass();
+        return (Class<T>) instance.getClass();
     }
 
 
     /**
-     * narrow wild generic type to  specifier generic type
+     * 将通配符泛型类型缩小为指定泛型类型
      *
-     * @param cls the class
-     * @param <T> the type parameter of class or it's superclass
-     * @return {@code Class<T>}
+     * @param clazz 通配符泛型类型
+     * @param <T>   类型参数，表示类或其父类的类型
+     * @return {@code Class<T>} 指定泛型类型
      */
     @SuppressWarnings("unchecked")
-    public static <T> Class<T> narrow(final Class<? extends T> cls) {
+    public static <T> Class<T> narrow(final Class<? extends T> clazz) {
 
-        return (Class<T>) cls;
+        return (Class<T>) clazz;
     }
 
     /**
-     * Return primitive class  when class is wrapper class and is not
-     * array class, otherwise  return it self.
+     * 将包装类转换为对应的基本数据类型，如果传入的是基本数据类型或者数组类型，则直接返回。
      *
-     * <p>
-     * it's null-safe
-     *
-     * @param cls the class to be convert
-     * @return the converted class
+     * @param wrapperClass 要转换的包装类
+     * @return 转换后的基本数据类型
      */
-    public static Class<?> wrapperToPrimitive(final Class<?> cls) {
+    public static Class<?> wrapperToPrimitive(final Class<?> wrapperClass) {
 
-        if (cls != null && !cls.isArray()) {
-            Class<?> convertedClass = PrimitiveEnum.WRAPPER_PRIMITIVE_MAP.get(cls);
+        if (wrapperClass != null && !wrapperClass.isArray()) {
+            Class<?> convertedClass = PrimitiveEnum.WRAPPER_PRIMITIVE_MAP.get(wrapperClass);
             if (convertedClass != null) {
                 return convertedClass;
             }
         }
-        return cls;
+        return wrapperClass;
     }
 
     /**
-     * The type of an array consisting of the elements of instance of the class
+     * 将基本数据类型转化为对应的包装类，如果传入的类不是基本数据类型，或者是数组类型，则返回原类。
+     * <p>
+     * 参数可以为空
      *
-     * @param type a class
-     * @return type of an array consisting of the elements of
+     * @param primitiveClass 要转换的类
+     * @return 转换后的类
      */
-    public static Class<?> getArrayClass(Class<?> type) {
+    public static Class<?> primitiveToWrapper(final Class<?> primitiveClass) {
 
+        if (primitiveClass != null && !primitiveClass.isArray()) {
+            Class<?> convertedClass = PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.get(primitiveClass);
+            if (convertedClass != null) {
+                return convertedClass;
+            }
+        }
+        return primitiveClass;
 
-        return Array.newInstance(type, 0).getClass();
     }
 
     /**
-     * @return get all jar file path under classPath
+     * 判断一个类是否为基本类型或者基本类型的包装类
+     *
+     * @param clazz 要判断的类
+     * @return 如果是基本类型或者基本类型的包装类，返回true；否则返回false
      */
-    public static List<String> getAppJars() {
+    public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
 
-        return getJavaClassPaths().filter(f -> f.endsWith(FileNameUtil.EXT_JAR)).get();
-
+        return PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.containsKey(clazz) || PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.containsValue(clazz);
     }
 
     /**
-     * @return get all classPath except jre
+     * 返回一个由类实例元素组成的数组类型
+     * <pre>
+     *     int.class -> int[].class
+     *     String.class -> String[].class
+     * </pre>
+     *
+     * @param clazz 类型的 Class 对象
+     * @return 由类实例元素组成的数组类型的 Class 对象
+     * @throws NullPointerException 当clazz为null
+     */
+    public static Class<?> getArrayClass(Class<?> clazz) {
+
+
+        return Array.newInstance(clazz, 0).getClass();
+    }
+
+
+    /**
+     * 获取 classpath 下所有 jar 文件的路径
+     *
+     * @return classpath 下所有 jar 文件的路径列表
+     */
+    public static List<String> getAllJarFilePaths() {
+        return getJavaClassPaths().filter(path -> path.endsWith(FileNameUtil.EXT_JAR)).get();
+    }
+
+    /**
+     * 获取所有的 Java 类路径，不包括 JRE 相关的路径。
+     *
+     * @return 所有 Java 类路径的列表
      */
     public static Lira<String> getJavaClassPaths() {
         return Lira.of(System.getProperty("java.class.path").split(System.getProperty("path.separator"))).map(path -> path.replace(File.separatorChar, '/'));
     }
 
-    /**
-     * Return whether class is primitive or wrapper
-     *
-     * @param cls the class
-     * @return whether class is primitive or wrapper
-     */
-    public static boolean isPrimitiveOrWrapper(Class<?> cls) {
-
-        return PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.containsKey(cls) || PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.containsValue(cls);
-    }
 
     /**
-     * Return the componentType of obj class, it's null-safe
+     * 获取对象 obj 的组件类型，支持空对象
      *
-     * @param obj the obj
-     * @return the componentType of obj class
+     * @param obj 要获取组件类型的对象
+     * @return obj 对象的组件类型，如果 obj 为空则返回 null
      */
     public static Class<?> getComponentType(Object obj) {
 
@@ -143,55 +165,55 @@ public class ClassUtil {
 
 
     /**
-     * bfs order
+     * 获取类的所有父类和接口，不包括 {@link  Serializable},{@link  Cloneable},{@link  Object}
      * <p>
-     * exclude {@link  Serializable}, {@link Cloneable}.
+     * 如果类为原始类型或者数组，则返回{@code new Class[]{}}
      * <p>
-     * the primitive or array just return {@code  new Class[]{Object.class}}
+     * 如果类实现了Serializable或Cloneable接口，将会被排除
      *
-     * @param cls the class
-     * @return the superClass and interface recursive
+     * @param clazz 要获取父类和接口的类
+     * @return 父类和接口的递归
      */
-    public static Class<?>[] getSuperTypeAndInterfacesRecursively(Class<?> cls) {
+    public static Class<?>[] getSuperTypeAndInterfacesRecursively(Class<?> clazz) {
 
-        Objects.requireNonNull(cls);
-        Set<ObjectPriority<Class<?>>> visit = new HashSet<>();
-        findSuperType(cls, visit, 0);
-        if (cls.isPrimitive() || cls.isArray()) {
-            return new Class[]{Object.class};
+        Objects.requireNonNull(clazz);
+        Set<Class<?>> visit = new LinkedHashSet<>();
+        findSuperType(clazz, visit);
+        if (clazz.isPrimitive() || clazz.isArray()) {
+            return new Class[]{};
         }
-        return Lira.of(visit)
-                .sorted(Comparator.comparingInt(ObjectPriority::getPriority))
-                .map(ObjectPriority::getObject)
-                .terminal(list -> {
-                    list.remove(cls);
-                    list.remove(Serializable.class);
-                    list.remove(Cloneable.class);
-                })
-                .toArray(Class.class);
+        Arrays.asList(Serializable.class, Cloneable.class, Object.class).forEach(visit::remove);
+        return visit.toArray(new Class[0]);
     }
 
-    private static void findSuperType(Class<?> cls, Set<ObjectPriority<Class<?>>> visit, int level) {
+    /**
+     * 查找一个类的所有超类和接口, 按照其访问顺序排序
+     *
+     * @param clazz   待查找的类
+     * @param visited 已经访问过的类和顺序
+     */
+    private static void findSuperType(Class<?> clazz, Set<Class<?>> visited) {
 
-
-        ObjectPriority<Class<?>> add = new ObjectPriority<>(cls, level * 10 + (cls.isInterface() ? 1 : 0));
-        if (visit.contains(add)) {
+        if (clazz == Object.class) {
             return;
         }
-        level++;
-        visit.add(add);
-        if (cls == Object.class) {
-            return;
+
+
+        // 按照广度优先搜索的顺序查找超类和接口
+        Class<?> superclass = clazz.getSuperclass();
+
+        if (superclass != null && superclass != Object.class) {
+            visited.add(superclass);
         }
 
-        // bfs order
-        Class<?> superclass = cls.getSuperclass();
-        if (superclass != null) {
-            findSuperType(superclass, visit, level);
-        }
+        Collections.addAll(visited, clazz.getInterfaces());
 
-        for (Class<?> anInterface : cls.getInterfaces()) {
-            findSuperType(anInterface, visit, level);
+        if (superclass != null && superclass != Object.class) {
+            findSuperType(superclass, visited);
+        }
+        //查找其所有接口
+        for (Class<?> anInterface : clazz.getInterfaces()) {
+            findSuperType(anInterface, visited);
         }
 
     }
@@ -211,27 +233,6 @@ public class ClassUtil {
         return (T[]) Array.newInstance(primitiveToWrapper(componentType), length);
     }
 
-    /**
-     * Return wrapper class  when class is primitive class and is not
-     * array class, otherwise  return it self.
-     *
-     * <p>
-     * it's null-safe
-     *
-     * @param cls the class to be convert
-     * @return the converted class
-     */
-    public static Class<?> primitiveToWrapper(final Class<?> cls) {
-
-        if (cls != null && !cls.isArray()) {
-            Class<?> convertedClass = PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.get(cls);
-            if (convertedClass != null) {
-                return convertedClass;
-            }
-        }
-        return cls;
-
-    }
 
     /**
      * Return return the box value
