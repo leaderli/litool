@@ -456,9 +456,9 @@ public class ClassUtil {
      * 当_interface是泛型时，将执行泛型擦除后的相同签名的方法
      *
      * @param interfaceTypeToken 要添加的接口
-     * @param proxyClass    实际执行方法的类
-     * @param proxyObj      实际执行方法的对象
-     * @param <T>           接口类型
+     * @param proxyClass         实际执行方法的类
+     * @param proxyObj           实际执行方法的对象
+     * @param <T>                接口类型
      * @return 声明为接口类型的实例
      * @throws io.leaderli.litool.core.exception.AssertException 如果_interface不是接口
      * @see MethodUtil#getSameSignatureMethod(LiTypeToken, Method)
