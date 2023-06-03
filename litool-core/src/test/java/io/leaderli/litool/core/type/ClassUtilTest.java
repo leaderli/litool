@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
-import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.meta.LiValue;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
@@ -57,16 +56,19 @@ class ClassUtilTest {
     @Test
     void castDouble() {
 
-        Assertions.assertEquals(Byte.class, ClassUtil.castDouble(1d, PrimitiveEnum.BYTE).getClass());
-        Assertions.assertEquals(Float.class, ClassUtil.castDouble(1d, PrimitiveEnum.FLOAT).getClass());
-        Assertions.assertEquals(Boolean.class, ClassUtil.castDouble(1d, PrimitiveEnum.BOOLEAN).getClass());
-        Assertions.assertEquals(true, ClassUtil.castDouble(1d, PrimitiveEnum.BOOLEAN));
-        Assertions.assertEquals(false, ClassUtil.castDouble(0d, PrimitiveEnum.BOOLEAN));
-        Assertions.assertEquals(Character.class, ClassUtil.castDouble(1d, PrimitiveEnum.CHAR).getClass());
-        Assertions.assertEquals(Double.class, ClassUtil.castDouble(1d, PrimitiveEnum.DOUBLE).getClass());
-        Assertions.assertEquals(Long.class, ClassUtil.castDouble(1d, PrimitiveEnum.LONG).getClass());
-        Assertions.assertEquals(Integer.class, ClassUtil.castDouble(1d, PrimitiveEnum.INT).getClass());
-        Assertions.assertEquals(Short.class, ClassUtil.castDouble(1d, PrimitiveEnum.SHORT).getClass());
+        for (PrimitiveEnum value : PrimitiveEnum.values()) {
+            Assertions.assertDoesNotThrow(() -> ClassUtil.convertDoubleToPrimitive(1.0, value));
+        }
+        Assertions.assertEquals(Byte.class, ClassUtil.convertDoubleToPrimitive(1d, PrimitiveEnum.BYTE).getClass());
+        Assertions.assertEquals(Float.class, ClassUtil.convertDoubleToPrimitive(1d, PrimitiveEnum.FLOAT).getClass());
+        Assertions.assertEquals(Boolean.class, ClassUtil.convertDoubleToPrimitive(1d, PrimitiveEnum.BOOLEAN).getClass());
+        Assertions.assertEquals(true, ClassUtil.convertDoubleToPrimitive(1d, PrimitiveEnum.BOOLEAN));
+        Assertions.assertEquals(false, ClassUtil.convertDoubleToPrimitive(0d, PrimitiveEnum.BOOLEAN));
+        Assertions.assertEquals(Character.class, ClassUtil.convertDoubleToPrimitive(1d, PrimitiveEnum.CHAR).getClass());
+        Assertions.assertEquals(Double.class, ClassUtil.convertDoubleToPrimitive(1d, PrimitiveEnum.DOUBLE).getClass());
+        Assertions.assertEquals(Long.class, ClassUtil.convertDoubleToPrimitive(1d, PrimitiveEnum.LONG).getClass());
+        Assertions.assertEquals(Integer.class, ClassUtil.convertDoubleToPrimitive(1d, PrimitiveEnum.INT).getClass());
+        Assertions.assertEquals(Short.class, ClassUtil.convertDoubleToPrimitive(1d, PrimitiveEnum.SHORT).getClass());
 
     }
 
@@ -190,20 +192,20 @@ class ClassUtilTest {
     @Test
     void _instanceof() {
 
-        Assertions.assertFalse(ClassUtil._instanceof(null, null));
-        Assertions.assertFalse(ClassUtil._instanceof(null, Integer.class));
-        Assertions.assertFalse(ClassUtil._instanceof(1, null));
+        Assertions.assertFalse(ClassUtil.isInstanceof(null, null));
+        Assertions.assertFalse(ClassUtil.isInstanceof(null, Integer.class));
+        Assertions.assertFalse(ClassUtil.isInstanceof(1, null));
 
-        Assertions.assertTrue(ClassUtil._instanceof(1, Integer.class));
-        Assertions.assertTrue(ClassUtil._instanceof(1, int.class));
-        Assertions.assertTrue(ClassUtil._instanceof(1, Number.class));
+        Assertions.assertTrue(ClassUtil.isInstanceof(1, Integer.class));
+        Assertions.assertTrue(ClassUtil.isInstanceof(1, int.class));
+        Assertions.assertTrue(ClassUtil.isInstanceof(1, Number.class));
 
-        Assertions.assertFalse(ClassUtil._instanceof(1, String.class));
+        Assertions.assertFalse(ClassUtil.isInstanceof(1, String.class));
 
-        Assertions.assertTrue(ClassUtil._instanceof(new int[]{1}, int[].class));
-        Assertions.assertFalse(ClassUtil._instanceof(new Integer[]{1}, int[].class));
-        Assertions.assertFalse(ClassUtil._instanceof(new int[]{1}, Integer[].class));
-        Assertions.assertTrue(ClassUtil._instanceof(new String[]{"1"}, CharSequence[].class));
+        Assertions.assertTrue(ClassUtil.isInstanceof(new int[]{1}, int[].class));
+        Assertions.assertFalse(ClassUtil.isInstanceof(new Integer[]{1}, int[].class));
+        Assertions.assertFalse(ClassUtil.isInstanceof(new int[]{1}, Integer[].class));
+        Assertions.assertTrue(ClassUtil.isInstanceof(new String[]{"1"}, CharSequence[].class));
 
     }
 
@@ -318,40 +320,27 @@ class ClassUtilTest {
         });
     }
 
-    @Test
-    void addInterface() {
-
-        Assertions.assertThrows(AssertException.class, () -> ClassUtil.addInterface(Proxy.class, new Proxy()));
-
-
-        ClassUtil.addInterface(Runnable.class, 1);
-
-        MyFunction function = ClassUtil.addInterface(MyFunction.class, new Proxy());
-
-        Assertions.assertSame(123, function.apply("123"));
-        Function<String, Integer> function2 = ClassUtil.addInterface(MyFunction.class, new Proxy());
-        Assertions.assertSame(123, function2.apply("123"));
-
-    }
-
 
     @SuppressWarnings("rawtypes")
     @Test
     void rank() {
 
-        Assertions.assertThrows(NullPointerException.class, () -> ClassUtil.rank(null, null));
-        Assertions.assertEquals(1, ClassUtil.rank(Lino.class, LiValue.class));
-        Assertions.assertEquals(1, ClassUtil.rank(ArrayList.class, List.class));
-        Assertions.assertEquals(3, ClassUtil.rank(ArrayList.class, Iterable.class));
-        Assertions.assertEquals(3, ClassUtil.rank(ArrayList.class, Object.class));
+        Assertions.assertEquals(0, ClassUtil.getClassHierarchyDistance(null, null));
+        Assertions.assertEquals(0, ClassUtil.getClassHierarchyDistance(Object.class, Object.class));
+        Assertions.assertEquals(0, ClassUtil.getClassHierarchyDistance(int.class, Object.class));
+        Assertions.assertEquals(2, ClassUtil.getClassHierarchyDistance(Integer.class, Object.class));
+        Assertions.assertEquals(1, ClassUtil.getClassHierarchyDistance(Lino.class, LiValue.class));
+        Assertions.assertEquals(1, ClassUtil.getClassHierarchyDistance(ArrayList.class, List.class));
+        Assertions.assertEquals(3, ClassUtil.getClassHierarchyDistance(ArrayList.class, Iterable.class));
+        Assertions.assertEquals(3, ClassUtil.getClassHierarchyDistance(ArrayList.class, Object.class));
 
-        Assertions.assertEquals(2, ClassUtil.rank(C.class, A.class));
-        Assertions.assertEquals(2, ClassUtil.rank(C.class, Object.class));
+        Assertions.assertEquals(2, ClassUtil.getClassHierarchyDistance(C.class, A.class));
+        Assertions.assertEquals(2, ClassUtil.getClassHierarchyDistance(C.class, Object.class));
 
 
         Lira<Class<? extends Collection>> a = Lira.of(Collection.class, List.class, AbstractList.class, ArrayList.class);
         Lira<Class<? extends Collection>> b = Lira.of(List.class, ArrayList.class, Collection.class, AbstractList.class)
-                .sorted(ClassUtil::rank0);
+                .sorted(ClassUtil::getClassHierarchyDistance);
         Assertions.assertEquals(a, b);
 
     }
@@ -374,10 +363,9 @@ class ClassUtilTest {
 
     }
 
-    interface MyFunction extends Function<String, Integer> {
+    interface MyFunction<T, R> {
 
-        @Override
-        default Integer apply(String s) {
+        default R apply(T s) {
             return null;
         }
     }
@@ -391,7 +379,7 @@ class ClassUtilTest {
     public static class Proxy {
 
         public Object apply(Object s) {
-            return apply((String) s);
+            return 456;
         }
 
         public Integer apply(String s) {

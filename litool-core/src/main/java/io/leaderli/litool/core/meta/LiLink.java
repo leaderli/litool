@@ -1,9 +1,9 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.function.Consumer;
-import io.leaderli.litool.core.function.Function;
-import io.leaderli.litool.core.function.Supplier;
+import io.leaderli.litool.core.function.ThrowableConsumer;
+import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableRunner;
+import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.link.PublisherLink;
 import io.leaderli.litool.core.meta.link.ValueLink;
 import io.leaderli.litool.core.util.BooleanUtil;
@@ -108,7 +108,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return new link
      * @see BooleanUtil#parse(Object)
      */
-    LiLink<T> throwable_then(Function<? super T, ?> filter);
+    LiLink<T> throwable_then(ThrowableFunction<? super T, ?> filter);
 
     /**
      * when the filter throw a exception or it result is false, interrupt the execution chain
@@ -116,7 +116,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @param filter the filter
      * @return new link
      */
-    LiLink<T> throwable_then(Supplier<?> filter);
+    LiLink<T> throwable_then(ThrowableSupplier<?> filter);
 
     /**
      * when the consumer throw a exception, interrupt the execution chain
@@ -124,7 +124,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @param consumer the consumer
      * @return new link
      */
-    LiLink<T> throwable_then(Consumer<? super T> consumer);
+    LiLink<T> throwable_then(ThrowableConsumer<? super T> consumer);
 
     /**
      * when the runnable throw a exception, interrupt the execution chain
@@ -169,7 +169,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @return new link
      * @see LiConstant#WHEN_THROW
      */
-    LiLink<T> onThrowableInterrupt(Consumer<? super T> consumer);
+    LiLink<T> onThrowableInterrupt(ThrowableConsumer<? super T> consumer);
 
     /**
      * the terminal action

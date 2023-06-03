@@ -7,6 +7,18 @@ import java.util.Objects;
  * @since 2022/6/16 1:02 PM
  */
 public class ObjectsUtil {
+
+    public static boolean anyNull(Object... objects) {
+
+        for (Object object : objects) {
+            if (object == null) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
     /**
      * 检查对象是否为null
      *

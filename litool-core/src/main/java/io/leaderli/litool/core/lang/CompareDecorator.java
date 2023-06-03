@@ -63,7 +63,7 @@ public class CompareDecorator<T> {
             if (this.value == null) {
                 return allowNull && objValue == null;
             }
-            if (ClassUtil._instanceof(objValue, this.value.getClass())) {
+            if (ClassUtil.isInstanceof(objValue, this.value.getClass())) {
                 return equalComparator.apply((T) objValue, this.value);
             }
         }

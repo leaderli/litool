@@ -1,9 +1,9 @@
 package io.leaderli.litool.core.meta.link;
 
-import io.leaderli.litool.core.function.Consumer;
-import io.leaderli.litool.core.function.Function;
-import io.leaderli.litool.core.function.Supplier;
+import io.leaderli.litool.core.function.ThrowableConsumer;
+import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableRunner;
+import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.LiLink;
@@ -65,7 +65,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
 
 
     @Override
-    public LiLink<T> throwable_then(Function<? super T, ?> filter) {
+    public LiLink<T> throwable_then(ThrowableFunction<? super T, ?> filter) {
 
         return new FilterLink<>(this, t -> {
             try {
@@ -79,7 +79,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
     }
 
     @Override
-    public LiLink<T> throwable_then(Supplier<?> filter) {
+    public LiLink<T> throwable_then(ThrowableSupplier<?> filter) {
         return new FilterLink<>(this, t -> {
             try {
                 return filter.get();
@@ -92,7 +92,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
 
 
     @Override
-    public LiLink<T> throwable_then(Consumer<? super T> consumer) {
+    public LiLink<T> throwable_then(ThrowableConsumer<? super T> consumer) {
         return new FilterLink<>(this, t -> {
             try {
                 consumer.accept(t);
@@ -145,7 +145,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
 
 
     @Override
-    public LiLink<T> onThrowableInterrupt(Consumer<? super T> consumer) {
+    public LiLink<T> onThrowableInterrupt(ThrowableConsumer<? super T> consumer) {
         return new OnInterruptConsumerLink<>(this, v -> {
             try {
                 consumer.accept(v);

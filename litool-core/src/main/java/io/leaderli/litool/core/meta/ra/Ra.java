@@ -1,14 +1,15 @@
 package io.leaderli.litool.core.meta.ra;
 
 import io.leaderli.litool.core.collection.IterableItr;
-import io.leaderli.litool.core.function.Consumer;
-import io.leaderli.litool.core.function.Function;
+import io.leaderli.litool.core.function.ThrowableConsumer;
+import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.*;
 import io.leaderli.litool.core.type.ClassUtil;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -144,14 +145,14 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
-    public <R> Lira<R> throwable_map(Function<? super T, ? extends R> mapper) {
+    public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
         return new ThrowableMapRa<>(this, mapper);
 
 
     }
 
     @Override
-    public <R> Lira<R> throwable_map(Function<? super T, ? extends R> mapper, java.util.function.Consumer<Throwable> whenThrow) {
+    public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, java.util.function.Consumer<Throwable> whenThrow) {
         return new ThrowableMapRa<>(this, mapper);
 
     }
@@ -297,14 +298,14 @@ public abstract class Ra<T> implements Lira<T> {
 
 
     @Override
-    public void forThrowableEach(Consumer<? super T> action) {
+    public void forThrowableEach(ThrowableConsumer<? super T> action) {
         forThrowableEach(action, LiConstant.WHEN_THROW);
     }
 
     @Override
-    public void forThrowableEach(Consumer<? super T> action, java.util.function.Consumer<Throwable> whenThrow) {
+    public void forThrowableEach(ThrowableConsumer<? super T> action, java.util.function.Consumer<Throwable> whenThrow) {
 
-        Consumer<? super T> finalConsumer = action == null ? t -> {
+        ThrowableConsumer<? super T> finalConsumer = action == null ? t -> {
         } : action;
         subscribe((new SubscriberRa<T>() {
 
@@ -360,11 +361,11 @@ public abstract class Ra<T> implements Lira<T> {
                                   java.util.function.Function<? super T, ? extends V> valueMapper) {
 
         Map<K, V> result = new HashMap<>();
-
-        subscribe((new ConsumerSubscriber<>(e -> Lino.of(e).map(keyMapper).ifPresent(key -> {
+        Consumer<T> consumer = e -> Lino.of(e).map(keyMapper).ifPresent(key -> {
             V value = Lino.of(e).map(valueMapper).get();
             result.put(key, value);
-        }))));
+        });
+        subscribe(new ConsumerSubscriber<>(consumer));
 
         return result;
     }

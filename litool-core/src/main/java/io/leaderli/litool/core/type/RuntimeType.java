@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * the method with this annotation and  returnType, parameterTypes can casted from origin method
  * will used to delegate origin method
  *
- * @see ReflectUtil#newInterfaceImpl(LiTypeToken, DynamicDelegation)
+ * @see ReflectUtil#newInterfaceInstance(LiTypeToken, DynamicDelegation)
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})

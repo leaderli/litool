@@ -453,6 +453,7 @@ class LiraTest {
 
         Assertions.assertEquals("[(1, 4), (2, 2)]", Lira.of(1, 2, 0).tuple(i -> 4 / i).toString());
         Assertions.assertTrue(Lira.of(1).tuple(i -> null).first().get().isLeft());
+        Assertions.assertFalse(Lira.of(1).tuple(i -> null).toMap(t -> t).isEmpty());
     }
 
     @Test

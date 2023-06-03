@@ -310,12 +310,12 @@ public class ReflectUtil {
                     return false;
                 }
 
-                if (!ClassUtil._instanceof(arg, parameterType)) {
+                if (!ClassUtil.isInstanceof(arg, parameterType)) {
                     return false;
                 }
 
             }
-            if (arg != null && !ClassUtil._instanceof(args[i], parameterType)) {
+            if (arg != null && !ClassUtil.isInstanceof(args[i], parameterType)) {
                 return false;
             }
         }
@@ -505,25 +505,6 @@ public class ReflectUtil {
     }
 
     /**
-     * use {@link LiTypeToken} is for generic purpose
-     * <p>
-     * eg:
-     * <pre>{@code
-     * LiTypeToken token = new LiTypeToken<Supplier<String>>() {};
-     * Function<String, String> func = ReflectUtil.newInterfaceImpl(token, delegate);
-     * }</pre>
-     *
-     * @param type     the typeToken of interface
-     * @param delegate the delegate bean
-     * @param <T>      the type of interface
-     * @return {@link #newInterfaceImpl(Class, DynamicDelegation)}
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T newInterfaceImpl(LiTypeToken<T> type, DynamicDelegation delegate) {
-        return (T) newInterfaceImpl(type.getRawType(), delegate);
-    }
-
-    /**
      * use {@link  Proxy#newProxyInstance(ClassLoader, Class[], InvocationHandler)} to dynamic create a implement
      * of the interface. the origin method in interface will delegate to delegation bean with same {@link MethodSignature}
      * or delegate the method which annotated by {@link RuntimeType} and type compatible.
@@ -537,7 +518,7 @@ public class ReflectUtil {
      * Function func = ReflectUtil.newInterfaceImpl(Function.class, delegate);
      * }</pre>
      *
-     * @param _interface the interface
+     * @param typeToken the interface
      * @param delegation the delegation bean
      * @param <T>        the type of interface
      * @return a dynamic implement of interface
@@ -546,8 +527,10 @@ public class ReflectUtil {
      * @see DynamicDelegation
      */
     @SuppressWarnings("unchecked")
-    public static <T> T newInterfaceImpl(Class<T> _interface, DynamicDelegation delegation) {
+    public static <T> T newInterfaceInstance(LiTypeToken<T> typeToken, DynamicDelegation delegation) {
 
+
+        Class<T> _interface = (Class<T>) typeToken.getRawType();
         LiAssertUtil.assertTrue(_interface.isInterface() && _interface.getInterfaces().length == 0, "only support interface and without super class");
         final Map<Method, Method> delegateMethods = new HashMap<>();
         Method[] methods = ReflectUtil.getMethods(_interface).toArray(Method.class);
@@ -555,7 +538,7 @@ public class ReflectUtil {
 
         Method origin = methods[0];
         delegation.setOrigin(origin);
-        Method find = MethodUtil.getSameSignatureMethod(delegation, origin).or(() ->
+        Method find = MethodUtil.getSameSignatureMethod(LiTypeToken.of(delegation.getClass()), origin).or(() ->
 
                         ReflectUtil.getMethods(delegation.getClass())
                                 .filter(m -> ReflectUtil.getAnnotation(m, RuntimeType.class))

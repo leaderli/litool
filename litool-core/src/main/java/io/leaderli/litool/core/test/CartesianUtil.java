@@ -127,7 +127,7 @@ public class CartesianUtil {
     /**
      * Return casted obj, if instance's class type is equals, or sub
      * of the type, just {@code  cast}. if instance is Double, return
-     * {@link  ClassUtil#castDouble(Double, PrimitiveEnum)}. otherwise
+     * {@link  ClassUtil#convertDoubleToPrimitive(Double, PrimitiveEnum)}. otherwise
      * return null
      *
      * @param instance the obj to be cast
@@ -136,14 +136,14 @@ public class CartesianUtil {
      */
     private static Object convertByType(Object instance, Class<?> type) {
 
-        if (ClassUtil._instanceof(instance, type)) {
+        if (ClassUtil.isInstanceof(instance, type)) {
             return instance;
         }
         if (instance instanceof Double) {// it's specific used to json number type
 
             PrimitiveEnum primitiveEnum = PrimitiveEnum.get(type);
             if (PrimitiveEnum.isNumber(primitiveEnum)) {
-                return ClassUtil.castDouble((Double) instance, primitiveEnum);
+                return ClassUtil.convertDoubleToPrimitive((Double) instance, primitiveEnum);
             }
         }
         return null;

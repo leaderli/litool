@@ -10,7 +10,7 @@ package io.leaderli.litool.core.function;
 
 
 @FunctionalInterface
-public interface Supplier<T> {
+public interface ThrowableSupplier<T> {
     /**
      * Gets a result.
      *

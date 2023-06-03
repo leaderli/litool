@@ -4,8 +4,8 @@ import io.leaderli.litool.core.collection.Generator;
 import io.leaderli.litool.core.collection.Generators;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.NoneItr;
-import io.leaderli.litool.core.function.Consumer;
-import io.leaderli.litool.core.function.Function;
+import io.leaderli.litool.core.function.ThrowableConsumer;
+import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.CompareDecorator;
 import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.ra.*;
@@ -15,6 +15,8 @@ import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -27,7 +29,7 @@ import java.util.stream.Stream;
  * lira chain will catch all exception to perform an {@link  Exceptionable#onError(Throwable, CancelSubscription)}
  * action, you can listen exception on {@link #onError(Exceptionable)}, and rethrow the exception
  * to interrupt the chain with a runtimeException, or just cancel the chain by  {@link  CancelSubscription#cancel()}.
- * to be convenient, you can use {@link  #assertNoError()} or {@link  #assertTrue(java.util.function.Function)} to interrupt the chain
+ * to be convenient, you can use {@link  #assertNoError()} or {@link  #assertTrue(Function)} to interrupt the chain
  * manually with runtimeException. or throw a specific {@link LiraRuntimeException}
  * <p>
  * most terminal action will remove null element
@@ -199,7 +201,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @param t the removed element
      * @return a new lira
-     * @see #filter(java.util.function.Function)
+     * @see #filter(Function)
      * @see #filter_null()
      */
     default Lira<T> remove(T t) {
@@ -211,7 +213,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * filter the element beyond lira, the element will remain if  the result.{@link  java.util.function.Function#apply(Object)}
+     * filter the element beyond lira, the element will remain if  the result.{@link  Function#apply(Object)}
      * parsed  by {@link  BooleanUtil#parse(Boolean)} is {@code  true}
      * <p>
      * on the default the null element will be removed, except the filter is instance of {@link NullableFunction}
@@ -220,13 +222,13 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return a new lira
      * @see BooleanUtil#parse(Object)
      */
-    Lira<T> filter(java.util.function.Function<? super T, ?> filter);
+    Lira<T> filter(Function<? super T, ?> filter);
 
     /**
      * remove null element
      *
      * @return a new lira
-     * @see #filter(java.util.function.Function)
+     * @see #filter(Function)
      */
     Lira<T> filter_null();
 
@@ -252,7 +254,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param filter the filter function
      * @return the first element  under lira
      */
-    default Lino<T> first(java.util.function.Function<? super T, ?> filter) {
+    default Lino<T> first(Function<? super T, ?> filter) {
         return filter(filter).first();
     }
 
@@ -268,7 +270,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param filter the filter function
      * @return the last element  under lira
      */
-    default Lino<T> last(java.util.function.Function<? super T, ?> filter) {
+    default Lino<T> last(Function<? super T, ?> filter) {
         return filter(filter).last();
     }
 
@@ -307,14 +309,14 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param consumer The action to be performed for each element
      */
     @Override
-    void forEach(java.util.function.Consumer<? super T> consumer);
+    void forEach(Consumer<? super T> consumer);
 
     /**
      * a terminal action
      *
      * @param consumer The action to be performed for each element that may contain element of {@code null}
      */
-    void forNullableEach(java.util.function.Consumer<? super T> consumer);
+    void forNullableEach(Consumer<? super T> consumer);
 
     /**
      * a terminal action
@@ -348,7 +350,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @param <R> the type of the flatted lira
      * @return a new lira
-     * @see #flatMap(java.util.function.Function)
+     * @see #flatMap(Function)
      */
     <R> Lira<R> flatMap();
 
@@ -356,9 +358,9 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param mapper the function that accept element and provide iterator
      * @param <R>    the type of the flatted lira
      * @return a new lira
-     * @see #flatMap(java.util.function.Function)
+     * @see #flatMap(Function)
      */
-    <R> Lira<R> flatMap(java.util.function.Function<? super T, Iterator<? extends R>> mapper);
+    <R> Lira<R> flatMap(Function<? super T, Iterator<? extends R>> mapper);
 
     /**
      * <pre>
@@ -369,7 +371,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <R>    the type of after unzip
      * @return a new lira of type R
      */
-    default <R> Lira<R> unzip(java.util.function.Function<? super T, Supplier<? extends R>> mapper) {
+    default <R> Lira<R> unzip(Function<? super T, Supplier<? extends R>> mapper) {
         return map(mapper).map(Supplier::get);
     }
 
@@ -378,7 +380,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <R>    the type of after mapper
      * @return a new lira of type R
      */
-    <R> Lira<R> map(java.util.function.Function<? super T, ? extends R> mapper);
+    <R> Lira<R> map(Function<? super T, ? extends R> mapper);
 
     /**
      * when the error occurs will  perform {@link  SubscriberRa#next_null()} and
@@ -387,10 +389,10 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param mapper the  mapper
      * @param <R>    the type of after mapper
      * @return a new lira of type R
-     * @see #throwable_map(Function, java.util.function.Consumer)
+     * @see #throwable_map(ThrowableFunction, Consumer)
      * @see LiConstant#WHEN_THROW
      */
-    <R> Lira<R> throwable_map(Function<? super T, ? extends R> mapper);
+    <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
 
     /**
      * when the error occurs will  perform {@link  SubscriberRa#next_null()} and
@@ -398,10 +400,10 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @param mapper    the  mapper
      * @param <R>       the type of after mapper
-     * @param whenThrow the consumer when {@link  Function#apply(Object)} throw
+     * @param whenThrow the consumer when {@link  ThrowableFunction#apply(Object)} throw
      * @return a new lira of type R
      */
-    <R> Lira<R> throwable_map(Function<? super T, ? extends R> mapper, java.util.function.Consumer<Throwable> whenThrow);
+    <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
 
     /**
      * a terminal action, trigger the lira to execute and store the element
@@ -410,16 +412,16 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param deliverAction the consumer perform on the cache list
      * @return a new lira
      */
-    Lira<T> terminalMap(java.util.function.Function<List<T>, Iterable<T>> deliverAction);
+    Lira<T> terminalMap(Function<List<T>, Iterable<T>> deliverAction);
 
     /**
      * a terminal action, trigger the perform a action prev elements
      *
      * @param deliverAction the consumer perform on the cache list
      * @return a new lira
-     * @see #terminalMap(java.util.function.Function)
+     * @see #terminalMap(Function)
      */
-    default Lira<T> terminal(java.util.function.Consumer<List<T>> deliverAction) {
+    default Lira<T> terminal(Consumer<List<T>> deliverAction) {
         return terminalMap(list -> {
             deliverAction.accept(list);
             return list;
@@ -434,14 +436,14 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @see BooleanUtil#parse(Object)
      */
 
-    Lira<T> takeWhile(java.util.function.Function<? super T, ?> filter);
+    Lira<T> takeWhile(Function<? super T, ?> filter);
 
     /**
      * @param filter drop element util filter is satisfied
      * @return a new lira
      * @see BooleanUtil#parse(Object)
      */
-    Lira<T> dropWhile(java.util.function.Function<? super T, ?> filter);
+    Lira<T> dropWhile(Function<? super T, ?> filter);
 
     default Lira<T> nullable(T supplier) {
         return nullable(() -> supplier);
@@ -464,21 +466,25 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     Lira<T> skip(int min);
 
-    default Lira<T> assertTrue(java.util.function.Function<? super T, ?> filter) {
+    default Lira<T> assertTrue(Function<? super T, ?> filter) {
         return assertTrue(filter, "");
     }
 
-    default Lira<T> assertTrue(java.util.function.Function<? super T, ?> filter, String err) {
+    default Lira<T> assertTrue(Function<? super T, ?> filter, String err) {
         return assertTrue(filter, () -> err);
     }
 
-    default Lira<T> assertTrue(java.util.function.Function<? super T, ?> filter, Supplier<String> errMsg) {
+    default Lira<T> assertTrue(Function<? super T, ?> filter, Supplier<String> errMsg) {
+        return assertTrue(filter, t -> errMsg.get());
+    }
+
+    default Lira<T> assertTrue(Function<? super T, ?> filter, Function<? super T, String> errMsg) {
         return debug(new DebugConsumer<T>() {
 
             @Override
             public void accept(T e) {
                 if (!BooleanUtil.parse(filter.apply(e))) {
-                    throw new LiraRuntimeException("assert fail of " + filter + " : " + errMsg.get());
+                    throw new LiraRuntimeException("assert fail of " + filter + " : " + errMsg.apply(e));
                 }
             }
 
@@ -665,7 +671,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @param comparator a {@code EqualComparator}  to be used to compare lira elements is equals
      * @return a new lira
-     * @see #terminalMap(java.util.function.Function)
+     * @see #terminalMap(Function)
      * @see CompareDecorator
      * @see #distinct()
      */
@@ -675,7 +681,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * use default {@link  Comparator}, {@code  {sorted(null)}}
      *
      * @return the new lira
-     * @see #terminalMap(java.util.function.Function)
+     * @see #terminalMap(Function)
      */
     default Lira<T> sorted() {
         return sorted(null);
@@ -689,7 +695,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @param comparator the provided {@link Comparator}
      * @return the new lira
-     * @see #terminalMap(java.util.function.Function)
+     * @see #terminalMap(Function)
      */
     Lira<T> sorted(Comparator<? super T> comparator);
 
@@ -702,7 +708,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @param action a  catchable action to perform on the elements
      */
-    void forThrowableEach(Consumer<? super T> action);
+    void forThrowableEach(ThrowableConsumer<? super T> action);
 
     /**
      * <p>This is a terminal operation
@@ -710,7 +716,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param action    a  catchable action to perform on the elements
      * @param whenThrow use to perform on {@code action} throw an Throwable
      */
-    void forThrowableEach(Consumer<? super T> action, java.util.function.Consumer<Throwable> whenThrow);
+    void forThrowableEach(ThrowableConsumer<? super T> action, Consumer<Throwable> whenThrow);
 
     /**
      * it's a terminal action
@@ -801,7 +807,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
         return copy;
     }
 
-    <R> Lira<LiTuple2<T, R>> tuple(java.util.function.Function<? super T, ? extends R> mapper);
+    <R> Lira<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper);
 
 
     /**
@@ -844,7 +850,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return the new map
      */
 
-    <K, V> Map<K, V> toMap(java.util.function.Function<? super T, ? extends K> keyMapper, java.util.function.Function<? super T, ? extends V> valueMapper);
+    <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper);
 
     /**
      * Returns a map  consisting of the results of applying the given function to the elements of this stream
@@ -859,7 +865,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <V>    the type of  {@code Map} value
      * @return the new map
      */
-    <K, V> Map<K, V> toMap(java.util.function.Function<? super T, LiTuple2<? extends K, ? extends V>> mapper);
+    <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> mapper);
 
 
 }

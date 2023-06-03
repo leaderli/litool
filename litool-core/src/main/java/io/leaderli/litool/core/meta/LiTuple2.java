@@ -157,6 +157,7 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     public Map.Entry<T1, T2> toEntry() {
         return new AbstractMap.SimpleEntry<>(_1, _2);
     }
+
     /**
      * Maps the components of this tuple using a mapper function.
      *
@@ -243,6 +244,7 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     public int hashCode() {
         return LiTuple.hash(_1, _2);
     }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -272,6 +274,14 @@ public final class LiTuple2<T1, T2> implements LiTuple, Comparable<LiTuple2<T1, 
     @Override
     public String name() {
         return "tuple2";
+    }
+
+    public boolean hasLeft() {
+        return _1 != null;
+    }
+
+    public boolean hasRight() {
+        return _2 != null;
     }
 
     @Override

@@ -2,9 +2,9 @@ package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
-import io.leaderli.litool.core.function.Consumer;
-import io.leaderli.litool.core.function.Function;
-import io.leaderli.litool.core.function.Supplier;
+import io.leaderli.litool.core.function.ThrowableConsumer;
+import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.util.BooleanUtil;
@@ -84,15 +84,15 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
     }
 
     /**
-     * when {@code supplier == null} or {@link  Supplier#get()} throw a error
-     * return {@link #none()}, or return {@link #of(Object)} by the {@link  Supplier#get()}
+     * when {@code supplier == null} or {@link  ThrowableSupplier#get()} throw a error
+     * return {@link #none()}, or return {@link #of(Object)} by the {@link  ThrowableSupplier#get()}
      *
      * @param supplier the supplier provide value
      * @param <T>      the type of lino
      * @return a lino
      * @see #of(Object)
      */
-    static <T> Lino<T> throwable_of(Supplier<? extends T> supplier) {
+    static <T> Lino<T> throwable_of(ThrowableSupplier<? extends T> supplier) {
         if (supplier == null) {
             return none();
         }
@@ -109,8 +109,8 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
     }
 
     /**
-     * when {@code supplier == null} or {@link  Supplier#get()} throw a error
-     * return {@link #none()}, or return {@link #of(Object)} by the {@link  Supplier#get()}
+     * when {@code supplier == null} or {@link  ThrowableSupplier#get()} throw a error
+     * return {@link #none()}, or return {@link #of(Object)} by the {@link  ThrowableSupplier#get()}
      *
      * @param supplier the supplier provide value
      * @param <T>      the type of lino
@@ -118,7 +118,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @return a lino
      * @see #of(Object)
      */
-    static <T> Lino<T> throwable_of(Supplier<? extends T> supplier, java.util.function.Consumer<Throwable> consumer) {
+    static <T> Lino<T> throwable_of(ThrowableSupplier<? extends T> supplier, java.util.function.Consumer<Throwable> consumer) {
         if (supplier == null) {
             return none();
         }
@@ -297,7 +297,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @return this
      * @see RuntimeExceptionTransfer
      */
-    Lino<T> ifThrowablePresent(Consumer<? super T> consumer);
+    Lino<T> ifThrowablePresent(ThrowableConsumer<? super T> consumer);
 
 
     /**
@@ -411,10 +411,10 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param mapper the  mapper
      * @param <R>    the type of after mapper
      * @return a new lino of type R
-     * @see #throwable_map(Function, java.util.function.Consumer)
+     * @see #throwable_map(ThrowableFunction, java.util.function.Consumer)
      * @see LiConstant#WHEN_THROW
      */
-    <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapper);
+    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
 
 
     /**
@@ -422,10 +422,10 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      *
      * @param mapper    the  mapper
      * @param <R>       the type of after mapper
-     * @param whenThrow the consumer when {@link  Function#apply(Object)} throw
+     * @param whenThrow the consumer when {@link  ThrowableFunction#apply(Object)} throw
      * @return a new lino of type R
      */
-    <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapper, java.util.function.Consumer<Throwable> whenThrow);
+    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, java.util.function.Consumer<Throwable> whenThrow);
 
     /**
      * @param <R> the type of lira result
@@ -589,7 +589,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> ifThrowablePresent(Consumer<? super T> consumer) {
+        public Lino<T> ifThrowablePresent(ThrowableConsumer<? super T> consumer) {
             RuntimeExceptionTransfer.accept(consumer, this.value);
             return this;
         }
@@ -672,13 +672,13 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
 
 
         @Override
-        public <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapper) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
             return throwable_map(mapper, LiConstant.WHEN_THROW);
         }
 
 
         @Override
-        public <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapper,
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper,
                                          java.util.function.Consumer<Throwable> whenThrow) {
             try {
 
@@ -816,7 +816,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> ifThrowablePresent(Consumer<? super T> consumer) {
+        public Lino<T> ifThrowablePresent(ThrowableConsumer<? super T> consumer) {
             return this;
         }
 
@@ -894,13 +894,13 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
 
 
         @Override
-        public <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapper) {
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
             return none();
         }
 
 
         @Override
-        public <R> Lino<R> throwable_map(Function<? super T, ? extends R> mapper,
+        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper,
                                          java.util.function.Consumer<Throwable> whenThrow) {
             return none();
         }

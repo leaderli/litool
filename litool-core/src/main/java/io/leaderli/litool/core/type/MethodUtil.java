@@ -14,21 +14,6 @@ import java.util.stream.Collectors;
 public class MethodUtil {
     public static final String CLINIT_METHOD_NAME = "<clinit>";
 
-    /**
-     * Return the method of lookup obj which have same signature with reference method
-     *
-     * @param lookup    the look up obj
-     * @param reference the method  will use to be compare
-     * @return the method of lookup obj which have same signature with reference method
-     * @see #getSameSignatureMethod(Class, Method)
-     */
-    public static Lino<Method> getSameSignatureMethod(Object lookup, Method reference) {
-
-        if (lookup == null) {
-            return Lino.none();
-        }
-        return getSameSignatureMethod(lookup.getClass(), reference);
-    }
 
     /**
      * Return the method of lookup class which have same signature with reference method
@@ -36,16 +21,15 @@ public class MethodUtil {
      * @param lookup    the look up  class
      * @param reference the method  will use to be compare
      * @return the method of lookup class which have same signature with reference method
-     * @see #getSameSignatureMethod(Class, Method)
      */
-    public static Lino<Method> getSameSignatureMethod(Class<?> lookup, Method reference) {
+    public static Lino<Method> getSameSignatureMethod(LiTypeToken<?> lookup, Method reference) {
 
 
         if (lookup == null || reference == null) {
             return Lino.none();
         }
         MethodSignature compare = MethodSignature.non_strict(reference);
-        return ReflectUtil.getMethods(lookup)
+        return ReflectUtil.getMethods(lookup.getRawType())
                 .filter(compare::equals)
                 .first();
     }

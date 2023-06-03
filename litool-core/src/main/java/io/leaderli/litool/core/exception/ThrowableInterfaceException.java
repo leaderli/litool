@@ -1,11 +1,11 @@
 package io.leaderli.litool.core.exception;
 
-import io.leaderli.litool.core.function.Function;
+import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.meta.Lira;
 
 /**
  * A RuntimeException use for
- * {@link  Lira#throwable_map(Function)}
+ * {@link  Lira#throwable_map(ThrowableFunction)}
  */
 public class ThrowableInterfaceException extends RuntimeException {
 

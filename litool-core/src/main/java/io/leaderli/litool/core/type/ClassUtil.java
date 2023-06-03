@@ -1,22 +1,21 @@
 package io.leaderli.litool.core.type;
 
-import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.io.FileUtil;
-import io.leaderli.litool.core.meta.LiTuple;
-import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.io.File;
 import java.io.Serializable;
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author leaderli
@@ -177,11 +176,11 @@ public class ClassUtil {
     public static Class<?>[] getSuperTypeAndInterfacesRecursively(Class<?> clazz) {
 
         Objects.requireNonNull(clazz);
-        Set<Class<?>> visit = new LinkedHashSet<>();
-        findSuperType(clazz, visit);
         if (clazz.isPrimitive() || clazz.isArray()) {
             return new Class[]{};
         }
+        Set<Class<?>> visit = new LinkedHashSet<>();
+        visitSuperTypes(clazz, visit);
         Arrays.asList(Serializable.class, Cloneable.class, Object.class).forEach(visit::remove);
         return visit.toArray(new Class[0]);
     }
@@ -192,7 +191,7 @@ public class ClassUtil {
      * @param clazz   待查找的类
      * @param visited 已经访问过的类和顺序
      */
-    private static void findSuperType(Class<?> clazz, Set<Class<?>> visited) {
+    private static void visitSuperTypes(Class<?> clazz, Set<Class<?>> visited) {
 
         if (clazz == Object.class) {
             return;
@@ -209,24 +208,23 @@ public class ClassUtil {
         Collections.addAll(visited, clazz.getInterfaces());
 
         if (superclass != null && superclass != Object.class) {
-            findSuperType(superclass, visited);
+            visitSuperTypes(superclass, visited);
         }
         //查找其所有接口
         for (Class<?> anInterface : clazz.getInterfaces()) {
-            findSuperType(anInterface, visited);
+            visitSuperTypes(anInterface, visited);
         }
 
     }
 
 
     /**
-     * Return a specified length array, if the componentType is primitive, will
-     * convert to it's wrapper
+     * 创建一个指定长度的数组，如果元素类型是基本类型，将转换为其包装类型
      *
-     * @param componentType the class of  new array elements
-     * @param length        the length of new array
-     * @param <T>           the type of new array elements
-     * @return a specified length array
+     * @param componentType 新数组元素的类
+     * @param length        新数组的长度
+     * @param <T>           新数组元素的类型
+     * @return 指定长度的新数组
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] newWrapperArray(Class<? extends T> componentType, int length) {
@@ -235,47 +233,54 @@ public class ClassUtil {
 
 
     /**
-     * Return return the box value
+     * 将参数对象进行装箱操作
      *
-     * @param origin obj
-     * @return return the box value
+     * @param obj 需要进行装箱操作的对象
+     * @return 装箱后的对象
      */
-    public static Object box(Object origin) {
-        return origin;
+    public static Object box(Object obj) {
+        return obj;
     }
 
     /**
-     * Return the map  cast key and value type and filter the element can not cast
+     * 将给定的map对象中的键和值的类型转换为指定的类型，并过滤不能转换的元素，可为null的不会被保留
      *
-     * @param map       An map object
-     * @param keyType   the type of map key can cast to
-     * @param valueType the type of map value can cast to
-     * @param <K>       the type parameter of  keyType
-     * @param <V>       the type parameter of valueType
-     * @return the map  cast key and value type and filter the element can not cast
+     * @param map       需要转换的map对象
+     * @param keyType   map键的类型，可以转换为的类型
+     * @param valueType map值的类型，可以转换为的类型
+     * @param <K>       keyType的类型参数
+     * @param <V>       valueType的类型参数
+     * @return 转换后的map对象，键和值的类型均已转换，并过滤了不能转换的元素
      */
     public static <K, V> Map<K, V> filterCanCast(Map<?, ?> map, Class<? extends K> keyType,
                                                  Class<? extends V> valueType) {
 
+        HashMap<K, V> kvHashMap = new HashMap<>();
         if (map == null || keyType == null || valueType == null) {
-            return new HashMap<>();
+            return kvHashMap;
         }
-        return map.entrySet().stream().map(entry -> {
+
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
 
             K k = cast(entry.getKey(), keyType);
             V v = cast(entry.getValue(), valueType);
-            return LiTuple.of(k, v);
-        }).filter(LiTuple2::notIncludeNull).collect(Collectors.toMap(tu -> tu._1, tu -> tu._2));
+
+            if (k != null && v != null) {
+
+                kvHashMap.put(k, v);
+            }
+
+        }
+        return kvHashMap;
     }
 
     /**
-     * Return casted instance, if obj can not cast will return {@code null}
-     * return wrapper  if obj is primitive and not array
+     * 将对象转换为指定类型，如果无法转换则返回null，如果是原始类型并且不是数组，则返回包装器
      *
-     * @param obj      obj
-     * @param castType the class that obj can cast
-     * @param <T>      the type parameter of  castType
-     * @return casted instance
+     * @param obj      需要转换的对象
+     * @param castType 可以转换为的目标类型
+     * @param <T>      目标类型的泛型参数
+     * @return 转换后的实例
      */
     @SuppressWarnings("unchecked")
     public static <T> T cast(Object obj, Class<T> castType) {
@@ -292,14 +297,15 @@ public class ClassUtil {
         return null;
     }
 
+
     /**
-     * Return {@code  son} is instanceof or wrapper of {@code  father}. if {@code  son} , {@code  father}
-     * is array class, because wrapper array cannot cast to primitive ,so judge  {@code son} componentType
-     * is instanceof {@code father} componentType
+     * 判断一个类是否是另一个类的子类或者包装类。如果两个类都是数组类型，因为包装类数组不能强制转换为原始类型数组，
+     * <p>
+     * 所以需要判断 son 的元素类型是否是 father 的元素类型的子类或者包装类。
      *
-     * @param father the super class  or wrapper class
-     * @param son    the sub class or primitive class
-     * @return {@code  son} is instanceof or wrapper of {@code  father}
+     * @param father 父类或包装类
+     * @param son    子类或原始类型类
+     * @return {@code son} 是否是 {@code father} 的子类或包装类
      */
     public static boolean isAssignableFromOrIsWrapper(Class<?> father, Class<?> son) {
 
@@ -314,7 +320,7 @@ public class ClassUtil {
 
                 father = father.getComponentType();
                 son = son.getComponentType();
-                // the primitive array cannot cast to wrapper array
+                // 原始类型数组不能强制转换为包装类数组
                 if (father.isPrimitive() || son.isPrimitive()) {
                     return father == son;
                 }
@@ -331,15 +337,14 @@ public class ClassUtil {
     }
 
     /**
-     * Return {@code  son} is instanceof or wrapper of {@code  father}. if {@code  son} , {@code  father}
-     * is array class, because wrapper array cannot cast to primitive ,so judge  {@code son} componentType
-     * is instanceof {@code father} componentType
+     * 判断一个对象是否是某个类或其包装类的实例，如果son和father都是数组类型，因为包装数组不能强制转换为基本类型，所以需要判断son的component type是否是father的component type的实例。
      *
-     * @param son    the sub instance
-     * @param father the super class  or wrapper class
-     * @return {@code  son} is instanceof or wrapper of {@code  father}
+     * @param son    子类实例
+     * @param father 父类或包装类
+     * @return {@code son} 是否是 {@code father} 或其包装类的实例
+     * @see #isAssignableFromOrIsWrapper(Class, Class)
      */
-    public static boolean _instanceof(Object son, Class<?> father) {
+    public static boolean isInstanceof(Object son, Class<?> father) {
 
         if (father == null || son == null) {
             return false;
@@ -350,114 +355,102 @@ public class ClassUtil {
     }
 
     /**
-     * Return the primitive value converted  by double value
+     * 将double类型的值转换为其他基本数据类型
      * <p>
-     * support byte,boolean,char,float,double,long,int,short
+     * 支持byte、boolean、char、float、double、long、int、short
      *
-     * @param d             a double value
-     * @param primitiveEnum a primitive enum
-     * @return convert double value to other primitive value
+     * @param doubleValue   double类型的值
+     * @param primitiveEnum 基本数据类型枚举
+     * @return 转换后的其他基本数据类型值
      */
-    public static Object castDouble(Double d, PrimitiveEnum primitiveEnum) {
+    public static Object convertDoubleToPrimitive(Double doubleValue, PrimitiveEnum primitiveEnum) {
         switch (primitiveEnum) {
             case BYTE:
-                return d.byteValue();
+                return doubleValue.byteValue();
             case BOOLEAN:
-                return d != 0;
+                return doubleValue != 0;
             case CHAR:
-                return (char) (double) d;
+                return (char) (double) doubleValue;
             case FLOAT:
-                return d.floatValue();
+                return doubleValue.floatValue();
             case DOUBLE:
             case OBJECT:
-                return d;
+                return doubleValue;
             case LONG:
-                return d.longValue();
+                return doubleValue.longValue();
             case INT:
-                return d.intValue();
+                return doubleValue.intValue();
             case SHORT:
-                return d.shortValue();
+                return doubleValue.shortValue();
+            case VOID:
+                return null;
             default:
                 throw new IllegalStateException();
         }
     }
 
-    private static int rank(Class<?> sub, Class<?> sup, int rank) {
+    /**
+     * @param subclass 子类
+     * @param supclass 父类
+     * @return 回从 subclass 到 supclass 的类层次结构中的距离，如果 subclass 不是 supclass 的子类，则返回 -1。
+     * 如果两个类相同，则返回0
+     */
+    private static int getClassHierarchyDistance0(Class<?> subclass, Class<?> supclass) {
 
-        if (sub == sup) {
-            return rank;
+        if (subclass == supclass) {
+            return 0;
         }
-        if (sub == null || sup == null || !sup.isAssignableFrom(sub)) {
+        if (subclass == null || supclass == null || !supclass.isAssignableFrom(subclass)) {
             return -1;
         }
-        if (sup.isInterface()) {
+        int distance;
+        if (supclass.isInterface()) {
 
-            Lino<Class<?>> first = Lira.of(sub.getInterfaces()).filter(sup::isAssignableFrom).first();
-            if (first.present()) {
-                return rank(first.get(), sup, rank + 1);
+            for (Class<?> anInterface : subclass.getInterfaces()) {
+
+                if (supclass.isAssignableFrom(anInterface)) {
+                    distance = getClassHierarchyDistance0(anInterface, supclass);
+                    if (distance > -1) {
+                        distance++;
+                    }
+                    return distance;
+                }
             }
         }
-        return rank(sub.getSuperclass(), sup, rank + 1);
-    }
-
-    /**
-     * @param sub the sub class
-     * @param sup the sup class
-     * @param <T> the type of sup class
-     * @return the rank of sub to sup, return 0 if sub == sup
-     */
-    public static <T> int rank(Class<? extends T> sub, Class<T> sup) {
-
-
-        ObjectsUtil.requireNotNull(sub, sup);
-
-        return rank(sub, sup, 0);
-    }
-
-    /**
-     * @param sub the sub class
-     * @param sup the sup class
-     * @return the rank of sub to sup, return 0 if sub == sup or sub,sup is no inheritance relationship
-     */
-    public static int rank0(Class<?> sub, Class<?> sup) {
-
-        ObjectsUtil.requireNotNull(sub, sup);
-
-        if (sup.isAssignableFrom(sub)) {
-            return rank(sub, sup, 0);
+        distance = getClassHierarchyDistance(subclass.getSuperclass(), supclass);
+        if (distance > -1) {
+            distance++;
         }
-        if (sub.isAssignableFrom(sup)) {
-            return -rank(sup, sub, 0);
+        return distance;
+    }
+
+
+    /**
+     * @param a 类
+     * @param b 类
+     * @return 两个类的继承层级，如果两个类不具备继承关系则返回0
+     */
+    public static int getClassHierarchyDistance(Class<?> a, Class<?> b) {
+
+        if (ObjectsUtil.anyNull(a, b)) {
+            return 0;
+        }
+
+        if (b.isAssignableFrom(a)) {
+            int distance = getClassHierarchyDistance0(a, b);
+            return Math.max(distance, 0);
+        }
+        if (a.isAssignableFrom(b)) {
+            int distance = getClassHierarchyDistance0(b, a);
+            if (distance < 0) {
+                return 0;
+            }
+            return -distance;
         }
         return 0;
 
     }
 
-    /**
-     * Return  a proxy that add the interface to obj, the interface method will invoke the obj
-     * same signature method.
-     * <p>
-     * when the interface is generic, will invoke generic-erasure  method
-     *
-     * @param _interface a interface
-     * @param obj        the real instance that actually execute method
-     * @param <T>        the type of interface
-     * @return a instance  declare as interface
-     * @throws io.leaderli.litool.core.exception.AssertException if _interface  is not interface
-     * @see MethodUtil#getSameSignatureMethod(Object, Method)
-     */
-    public static <T> T addInterface(Class<T> _interface, Object obj) {
-
-        LiAssertUtil.assertTrue(_interface.isInterface(), "only support interface");
-
-        InvocationHandler invocationHandler = (proxy, method, params) ->
-                MethodUtil.getSameSignatureMethod(obj, method)
-                        .throwable_map(m -> m.invoke(obj, params), Throwable::printStackTrace)
-                        .get();
-        Object proxy = Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{_interface},
-                invocationHandler);
-        return _interface.cast(proxy);
-    }
 
     /**
      * @param constructor the constructor

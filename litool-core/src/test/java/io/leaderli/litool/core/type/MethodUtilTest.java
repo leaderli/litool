@@ -15,16 +15,16 @@ class MethodUtilTest {
     @Test
     void getSameSignatureMethod() throws NoSuchMethodException {
         Method method = Object.class.getMethod("toString");
-        Lino<Method> same = MethodUtil.getSameSignatureMethod(this, method);
+        Lino<Method> same = MethodUtil.getSameSignatureMethod(LiTypeToken.of(MethodUtilTest.class), method);
         Assertions.assertEquals("123", same.throwable_map(m -> m.invoke(this)).get());
 
         method = Runnable.class.getMethod("run");
-        same = MethodUtil.getSameSignatureMethod(this, method);
+        same = MethodUtil.getSameSignatureMethod(LiTypeToken.of(MethodUtilTest.class), method);
         Assertions.assertTrue(same.present());
 
 
         method = this.getClass().getDeclaredMethod("run");
-        same = MethodUtil.getSameSignatureMethod(Runnable.class, method);
+        same = MethodUtil.getSameSignatureMethod(LiTypeToken.of(Runnable.class), method);
         Assertions.assertTrue(same.present());
 
     }

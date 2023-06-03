@@ -32,13 +32,13 @@ class ReflectUtilTest {
         DynamicDelegation1 delegate = new DynamicDelegation1();
 
 
-        Service service = ReflectUtil.newInterfaceImpl(Service.class, delegate);
+        Service service = ReflectUtil.newInterfaceInstance(LiTypeToken.of(Service.class), delegate);
         Assertions.assertEquals("request", service.service(new Request("request")).name);
 
         Assertions.assertEquals(delegate.toString(), service.toString());
         Assertions.assertEquals(delegate.hashCode(), service.hashCode());
 
-        assertThrows(AssertException.class, () -> ReflectUtil.newInterfaceImpl(Function.class, null));
+        assertThrows(AssertException.class, () -> ReflectUtil.newInterfaceInstance(LiTypeToken.of(Function.class), null));
     }
 
     interface Service {

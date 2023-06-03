@@ -12,7 +12,7 @@ package io.leaderli.litool.core.function;
 
 @FunctionalInterface
 
-public interface Function<T, R> {
+public interface ThrowableFunction<T, R> {
 
     R apply(T t) throws Throwable;
 

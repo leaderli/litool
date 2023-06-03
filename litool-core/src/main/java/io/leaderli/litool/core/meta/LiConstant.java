@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.function.Function;
+import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.Shell;
 import io.leaderli.litool.core.text.StringUtils;
 
@@ -42,8 +42,8 @@ public class LiConstant {
     /**
      * The default consumer when exception occurs, it suitable for
      *
-     * @see Lino#throwable_map(Function)
-     * @see Lira#throwable_map(Function)
+     * @see Lino#throwable_map(ThrowableFunction)
+     * @see Lira#throwable_map(ThrowableFunction)
      */
     @SuppressWarnings("all")
     public static Consumer<Throwable> WHEN_THROW = Throwable::printStackTrace;

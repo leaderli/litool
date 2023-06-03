@@ -7,7 +7,7 @@ package io.leaderli.litool.core.function;
  * @param <T> 消费类型
  */
 @FunctionalInterface
-public interface Consumer<T> {
+public interface ThrowableConsumer<T> {
 
 
     void accept(T t) throws Throwable;

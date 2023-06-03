@@ -135,7 +135,7 @@ class TypeUtilTest {
     }
 
     @Test
-    void resolve2() throws NoSuchFieldException {
+    void resolve2() throws NoSuchFieldException, NoSuchMethodException {
         Type declare = new Li<String>() {
         }.getClass();
 
@@ -143,9 +143,11 @@ class TypeUtilTest {
         Type ts = Li.class.getField("ts").getGenericType();
         Type tss = Li.class.getField("tss").getGenericType();
         Type lt = Li.class.getField("lt").getGenericType();
+        Type mt = Li.class.getMethod("li").getGenericReturnType();
 
 
         Assertions.assertEquals(String.class, TypeUtil.resolve(declare, t));
+        Assertions.assertEquals(String.class, TypeUtil.resolve(declare, mt));
         Assertions.assertEquals(String[].class, TypeUtil.resolve(declare, ts));
         Assertions.assertEquals(String[][].class, TypeUtil.resolve(declare, tss));
 
@@ -261,6 +263,11 @@ class TypeUtilTest {
         public T[][] tss;
         public T[] ts;
         public T t;
+
+        public T li() {
+            return t;
+        }
+
     }
 
     private static class StringConsumer implements Consumer<String> {
