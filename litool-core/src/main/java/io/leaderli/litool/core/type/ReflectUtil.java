@@ -7,9 +7,8 @@ import io.leaderli.litool.core.internal.ReflectionAccessor;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.meta.ra.LiraRuntimeException;
 import io.leaderli.litool.core.meta.ra.NullableFunction;
-import io.leaderli.litool.core.proxy.DynamicDelegation;
-import io.leaderli.litool.core.text.StrSubstitution;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -506,64 +505,87 @@ public class ReflectUtil {
 
     /**
      * use {@link  Proxy#newProxyInstance(ClassLoader, Class[], InvocationHandler)} to dynamic create a implement
-     * of the interface. the origin method in interface will delegate to delegation bean with same {@link MethodSignature}
+     * of the interface. the origin method in interface will delegate to proxyObj bean with same {@link MethodSignature}
      * or delegate the method which annotated by {@link RuntimeType} and type compatible.
      * <p>
      * the interface should only have one method, and don't have super class
      * <p>
-     * the delegation will be inject the origin method by {@link  DynamicDelegation#setOrigin(Method)}
+     * the proxyObj will be inject the origin method
      * <p>
      * eg:
      * <pre>{@code
      * Function func = ReflectUtil.newInterfaceImpl(Function.class, delegate);
      * }</pre>
      *
-     * @param typeToken  the interface
-     * @param delegation the delegation bean
-     * @param <T>        the type of interface
+     * @param typeToken the interface
+     * @param proxyObj  the proxyObj bean
+     * @param <T>       the type of interface
      * @return a dynamic implement of interface
-     * @throws AssertException if _interface is not the single-method and no super class interface or delegation don't
+     * @throws AssertException if _interface is not the single-method and no super class interface or proxyObj don't
      *                         have delegate method
-     * @see DynamicDelegation
      */
     @SuppressWarnings("unchecked")
-    public static <T> T newInterfaceInstance(LiTypeToken<T> typeToken, DynamicDelegation delegation) {
+    public static <T, P> T newInterfaceInstance(LiTypeToken<T> typeToken, LiTypeToken<P> proxyTypeToken, P proxyObj) {
 
 
-        Class<T> _interface = (Class<T>) typeToken.getRawType();
-        LiAssertUtil.assertTrue(_interface.isInterface() && _interface.getInterfaces().length == 0, "only support interface and without super class");
-        final Map<Method, Method> delegateMethods = new HashMap<>();
-        Method[] methods = ReflectUtil.getMethods(_interface).toArray(Method.class);
-        LiAssertUtil.assertTrue(methods.length == 1, "only support one method interface");
+        Class<T> interfaceType = (Class<T>) typeToken.getRawType();
+        LiAssertUtil.assertTrue(interfaceType.isInterface(), IllegalArgumentException::new, "only support interface");
 
-        Method origin = methods[0];
-        delegation.setOrigin(origin);
-        Lira<Method> runtimeTypeMethod = ReflectUtil.getMethods(delegation.getClass())
+        Method[] methods = ReflectUtil.getMethods(interfaceType).toArray(Method.class);
+        Lira<Method> runtimeTypeMethods = ReflectUtil.getMethods(proxyObj.getClass())
                 .filter(m -> ReflectUtil.getAnnotation(m, RuntimeType.class));
-        Method find = Lino.of(MethodUtil.getSameSignatureMethod(LiTypeToken.of(delegation.getClass()), origin)).or(() ->
-                        runtimeTypeMethod
-                                .filter(m -> ClassUtil.isAssignableFromOrIsWrapper(m.getReturnType(), origin.getReturnType()))
-                                .filter(m -> {
-                                    if (m.getParameterTypes().length != origin.getParameterTypes().length) {
-                                        return false;
-                                    }
-                                    for (int i = 0; i < m.getParameterTypes().length; i++) {
+        Map<Method, Method> proxyMethodMap = Lira.of(interfaceType.getMethods())
+                .tuple(m -> {
+                    //优先查找相同签名的方法
+                    MethodSignature referenceMethodSignature = MethodSignature.non_strict(m, typeToken);
+                    Method sameSignatureMethod = MethodUtil.getSameSignatureMethod(proxyTypeToken, referenceMethodSignature);
+                    if (sameSignatureMethod != null) {
+                        return sameSignatureMethod;
+                    }
 
-                                        if (!ClassUtil.isAssignableFromOrIsWrapper(m.getParameterTypes()[i], origin.getParameterTypes()[i])) {
-                                            return false;
-                                        }
-                                    }
-                                    return true;
-                                })
-                                .first().get())
-                .assertNotNone(() -> StrSubstitution.format("{delegation} cannot delegate {origin}", delegation, origin))
-                .get();
-        delegateMethods.put(origin, find);
-        for (Method om : ReflectUtil.getMethods(Object.class)) {
-            delegateMethods.put(om, om);
-        }
+                    // 查询具有相同请求参数和返回参数，且被 RuntimeType注解的方法
+                    for (Method runtimeMethod : runtimeTypeMethods) {
 
-        return (T) Proxy.newProxyInstance(_interface.getClassLoader(), new Class[]{_interface}, (proxy, method, args) -> delegateMethods.get(method).invoke(delegation, args));
+                        MethodSignature runtimeMethodSignature = MethodSignature.non_strict(runtimeMethod, proxyTypeToken);
+                        if (referenceMethodSignature.returnType == runtimeMethodSignature.returnType
+                                && Arrays.equals(referenceMethodSignature.parameterTypes, runtimeMethodSignature.parameterTypes)) {
+                            return runtimeMethod;
+                        }
+                    }
+
+                    //查找具有兼容性的请求参数和返回参数，且被RuntimeType注解的方法
+
+                    for (Method runtimeMethod : runtimeTypeMethods) {
+
+                        MethodSignature runtimeMethodSignature = MethodSignature.non_strict(runtimeMethod, proxyTypeToken);
+                        if (referenceMethodSignature.returnType == runtimeMethodSignature.returnType
+                                && Arrays.equals(referenceMethodSignature.parameterTypes, runtimeMethodSignature.parameterTypes)) {
+                            return runtimeMethod;
+                        }
+                    }
+//                    Method find = Lino.of(MethodUtil.getSameSignatureMethod(LiTypeToken.of(proxyObj.getClass()), origin)).or(() ->
+//                            runtimeTypeMethod
+//                                    .filter(m -> ClassUtil.isAssignableFromOrIsWrapper(m.getReturnType(), origin.getReturnType()))
+//                                    .filter(m -> {
+//                                        if (m.getParameterTypes().length != origin.getParameterTypes().length) {
+//                                            return false;
+//                                        }
+//                                        for (int i = 0; i < m.getParameterTypes().length; i++) {
+//
+//                                            if (!ClassUtil.isAssignableFromOrIsWrapper(m.getParameterTypes()[i], origin.getParameterTypes()[i])) {
+//                                                return false;
+//                                            }
+//                                        }
+//                                        return true;
+//                                    })
+//                                    .first().get());
+
+                    throw new LiraRuntimeException("can not proxy method " + m);
+
+                }).assertNoError()
+                .toMap(m -> m);
+        InvocationHandler invocationHandler = (proxy, method, args) -> proxyMethodMap.get(method).invoke(proxyObj, args);
+        return (T) Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class[]{interfaceType}, invocationHandler);
 
     }
 

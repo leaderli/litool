@@ -3,9 +3,11 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -18,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ParameterizedTypeImplTest {
 
+    static class Z2<T extends List<String>> {
+
+    }
 
     private Out.In<String> in;
 
@@ -51,6 +56,18 @@ class ParameterizedTypeImplTest {
 
 
         Assertions.assertArrayEquals(new Class[]{String.class, Object.class}, ParameterizedTypeImpl.make(null, Map.class, String.class).getActualClassArguments());
+
+
+        Type actualTypeArgument = ParameterizedTypeImpl.make(Z2.class).getActualTypeArguments()[0];
+        if (actualTypeArgument instanceof TypeVariableImpl) {
+            Type bound = ((TypeVariableImpl<?>) actualTypeArgument).getBounds()[0];
+            System.out.println(bound + " " + bound.getClass());
+            if (bound instanceof ParameterizedType) {
+                System.out.println(Arrays.toString(((ParameterizedType) bound).getActualTypeArguments()));
+            }
+        }
+        System.out.println(actualTypeArgument);
+        Assertions.assertEquals(List.class, TypeUtil.erase(actualTypeArgument));
     }
 
     @Test

@@ -16,6 +16,7 @@ import java.util.HashMap;
 class EchoElementTest {
 
 
+
     @Test
     void success() {
         SaxEventInterceptor<MainElement> dfs = new SaxEventInterceptor<>(MainElement.class);
@@ -31,6 +32,12 @@ class EchoElementTest {
             public void listen(LiTuple2<Integer, String> source) {
                 echos.value(source);
 
+            }
+
+            @Override
+            public void onNull() {
+                System.out.println("--------------");
+                ILiEventListener.super.onNull();
             }
 
             @Override

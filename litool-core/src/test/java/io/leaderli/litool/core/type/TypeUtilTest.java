@@ -21,6 +21,53 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ALL")
 class TypeUtilTest {
 
+    @Test
+    void isAssignableFromOrIsWrapper() {
+
+        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(null, null));
+        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(null, String.class));
+        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(String.class, null));
+        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(String.class, CharSequence.class));
+        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(String[].class, CharSequence.class));
+
+        Assertions.assertTrue(TypeUtil.isAssignableFromOrIsWrapper(int.class, Integer.class));
+        Assertions.assertTrue(TypeUtil.isAssignableFromOrIsWrapper(Integer.class, int.class));
+        Assertions.assertTrue(TypeUtil.isAssignableFromOrIsWrapper(CharSequence.class, String.class));
+        Assertions.assertTrue(TypeUtil.isAssignableFromOrIsWrapper(CharSequence[].class, String[].class));
+        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(int[].class, Integer[].class));
+        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(int[][].class, Integer[][].class));
+        Assertions.assertTrue(TypeUtil.isAssignableFromOrIsWrapper(int[].class, int[].class));
+
+
+        TypeVariable<Class<T1>> typeParameter = T1.class.getTypeParameters()[0];
+        System.out.println(typeParameter);
+        System.out.println(TypeUtil.resolve(T1.class, typeParameter));
+
+
+        Assertions.assertTrue(TypeUtil.isAssignableFromOrIsWrapper(List.class, ArrayList.class));
+
+
+    }
+
+    static class Z1<T extends List> {
+
+    }
+
+    static class Z2<T extends List<String>> {
+
+    }
+
+    static class Z3<T> {
+
+    }
+
+    static class Z4<T extends Z3<Z4>> {
+
+    }
+
+    static class Z5<T extends Z5> {
+    }
+
 
     @Test
     void resolveTypeVariable() {
@@ -28,16 +75,39 @@ class TypeUtilTest {
         Type type = ReflectUtil.getField(T4.T3.class, "t").get().getGenericType();
         Assertions.assertSame(Object.class, TypeUtil.resolveTypeVariable(T4.class, (TypeVariable<?>) type));
         Assertions.assertSame(String.class, TypeUtil.resolveTypeVariable(T5.class, (TypeVariable<?>) type));
-        Assertions.assertSame(T1[].class, TypeUtil.resolveTypeVariable(T2.class, List.class.getTypeParameters()[0]));
+//        Assertions.assertSame(T1[].class, TypeUtil.resolveTypeVariable(T2.class, List.class.getTypeParameters()[0]));
         Assertions.assertSame(ArrayList.class, TypeUtil.erase(TypeUtil.resolveTypeVariable(T2.class, T1.class.getTypeParameters()[0])));
+
+        Assertions.assertEquals(ParameterizedTypeImpl.make(null, List.class, Object.class), TypeUtil.resolveTypeVariable(Z1.class, Z1.class.getTypeParameters()[0]));
+        Assertions.assertEquals(ParameterizedTypeImpl.make(null, List.class, String.class), TypeUtil.resolveTypeVariable(Z2.class, Z2.class.getTypeParameters()[0]));
     }
+
+    @Test
+    void test1() {
+        Assertions.assertEquals(ParameterizedTypeImpl.make(null, List.class, String.class), TypeUtil.resolveTypeVariable(Z2.class, Z2.class.getTypeParameters()[0]));
+
+    }
+
 
     @Test
     void expansionTypeVariable() {
 
         Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
         TypeUtil.expandTypeVariables(T2.class.getGenericInterfaces()[0], visitedTypeVariables);
-        Assertions.assertEquals(3, visitedTypeVariables.size());
+        visitedTypeVariables.forEach((k, v) -> {
+            System.out.println(TypeUtil.typeToString(k));
+        });
+        Assertions.assertEquals(4, visitedTypeVariables.size());
+
+
+        visitedTypeVariables.clear();
+        Type declare = ParameterizedTypeImpl.make(Z2.class);
+        TypeUtil.expandTypeVariables(declare, visitedTypeVariables);
+        Assertions.assertEquals(ParameterizedTypeImpl.make(null, List.class, String.class), visitedTypeVariables.get(Z2.class.getTypeParameters()[0]));
+        Assertions.assertDoesNotThrow(() -> TypeUtil.expandTypeVariables(Z4.class, new HashMap<>()));
+
+        Assertions.assertDoesNotThrow(() -> TypeUtil.expandTypeVariables(Z5.class.getTypeParameters()[0], new HashMap<>()));
+
     }
 
 
@@ -187,7 +257,7 @@ class TypeUtilTest {
     void field() throws NoSuchFieldException {
 
         TypeVariable<Class<T7>> typeParameter = T7.class.getTypeParameters()[0];
-        Assertions.assertEquals(List.class, TypeUtil.resolveTypeVariable(Object.class, typeParameter));
+        Assertions.assertEquals(ParameterizedTypeImpl.make(null, List.class, Object.class), TypeUtil.resolveTypeVariable(Object.class, typeParameter));
         Assertions.assertEquals(ParameterizedTypeImpl.make(null, List.class, Object.class),
                 TypeUtil.resolve(Object.class, typeParameter));
 

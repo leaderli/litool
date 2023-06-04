@@ -21,7 +21,7 @@ public abstract class BaseEventElementExecutor<B extends BaseEventElement<B, ?, 
 
 
         String message = StrSubstitution.format(element.getLongExpression().getExpr()
-                , expr -> ExpressionUtil.getExpression(expr).apply(context) + "");
+                , expr -> String.valueOf(ExpressionUtil.getExpression(expr).apply(context)));
         LiEventObject<?> e = newEvent(message);
         context.publishEvent(e);
 

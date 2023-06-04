@@ -45,6 +45,37 @@ public class TypeUtil {
     }
 
 
+    public static boolean isAssignableFromOrIsWrapper(Type father, Type son) {
+        if (father == null || son == null) {
+            return false;
+        }
+
+        Class<?> ef = erase(father);
+        Class<?> es = erase(son);
+        if (!ClassUtil.isAssignableFromOrIsWrapper(ef, es)) {
+            return false;
+        }
+        if (father instanceof GenericArrayType && son instanceof GenericArrayType) {
+
+            Type componentType_father = erase(((GenericArrayType) father).getGenericComponentType());
+            Type componentType_son = erase(((GenericArrayType) son).getGenericComponentType());
+            if (PrimitiveEnum.isPrimitive(componentType_father) || PrimitiveEnum.isPrimitive(componentType_son)) {
+                return father == son;
+            }
+            return isAssignableFromOrIsWrapper(componentType_father, componentType_son);
+        }
+        if (father instanceof ParameterizedType && son instanceof ParameterizedType) {
+
+            ((ParameterizedType) father).getActualTypeArguments();
+
+            ((ParameterizedType) son).getActualTypeArguments();
+            return false;
+        }
+
+        return true;
+
+    }
+
     /**
      * Erase class.
      *
@@ -111,7 +142,7 @@ public class TypeUtil {
 
         } else if (type instanceof TypeVariable) {
 
-            return visitedTypeVariables.getOrDefault(type, erase(type));
+            return visitedTypeVariables.computeIfAbsent((TypeVariable<?>) type, k -> resolveByTypeVariables(((TypeVariable<?>) type).getBounds()[0], visitedTypeVariables));
 
         } else if (type instanceof GenericArrayType) {
 
@@ -215,7 +246,14 @@ public class TypeUtil {
         if (type != null) {
             return type;
         }
-        return erase(typeVariable);
+        Class<?> erase = erase(typeVariable);
+        if (erase.getTypeParameters().length > 0) {
+
+            expandTypeVariables(erase, visitedTypeVariables);
+            ParameterizedTypeImpl parameterizedType = resolve2Parameterized(context, erase);
+            return resolve(context, erase);
+        }
+        return erase;
 
     }
 
@@ -267,29 +305,64 @@ public class TypeUtil {
      *
      * @param declare              the type that have declare type
      * @param visitedTypeVariables the typeVariable-type map
+     *                             不查找父类
      */
     public static void expandTypeVariables(Type declare, Map<TypeVariable<?>, Type> visitedTypeVariables) {
 
         if (declare instanceof ParameterizedType) {
-
-            ParameterizedType parameterizedType = (ParameterizedType) declare;
-
-            TypeVariable<?>[] typeParameters = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
-            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-
-            for (int i = 0; i < actualTypeArguments.length; i++) {
-                Type actualTypeArgument = actualTypeArguments[i];
-
-                Type resolve = resolveByTypeVariables(actualTypeArgument, visitedTypeVariables);
-                visitedTypeVariables.put(typeParameters[i], resolve);
-                // expand child
-                expandTypeVariables(actualTypeArgument, visitedTypeVariables);
-            }
+            expandParameterizedTypeTypeVariables((ParameterizedType) declare, visitedTypeVariables);
         } else if (declare instanceof GenericArrayType) {
             expandTypeVariables(((GenericArrayType) declare).getGenericComponentType(), visitedTypeVariables);
+        } else if (declare instanceof Class) {
+            expandClassTypeVariables((Class<?>) declare, visitedTypeVariables);
+        } else if (declare instanceof TypeVariable) {
+            expandTypeVariableTypeVariables((TypeVariable<?>) declare, visitedTypeVariables);
         }
-        // ignore the  not directly
+        //仅查找在类上直接声明的
 
+    }
+
+    private static void expandTypeVariableTypeVariables(TypeVariable<?> clazz, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+        if (visitedTypeVariables.containsKey(clazz)) {
+            return;
+        }
+        resolveByTypeVariables(clazz, visitedTypeVariables);
+        Type bound = clazz.getBounds()[0];
+        if (bound instanceof ParameterizedType) {
+            expandParameterizedTypeTypeVariables((ParameterizedType) bound, visitedTypeVariables);
+        } else if (bound instanceof Class) {
+            expandClassTypeVariables((Class<?>) bound, visitedTypeVariables);
+        } else {
+            expandClassTypeVariables(erase(bound), visitedTypeVariables);
+        }
+    }
+
+    private static void expandClassTypeVariables(Class<?> clazz, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+        if (clazz != null && clazz.getTypeParameters().length > 0) {
+            expandParameterizedTypeTypeVariables(ParameterizedTypeImpl.make(clazz), visitedTypeVariables);
+        }
+
+    }
+
+    private static void expandParameterizedTypeTypeVariables(ParameterizedType parameterizedType, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+
+        TypeVariable<?>[] typeParameters = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
+        Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+
+        for (int i = 0; i < actualTypeArguments.length; i++) {
+            Type actualTypeArgument = actualTypeArguments[i];
+            // expand child
+            expandTypeVariables(actualTypeArgument, visitedTypeVariables);
+
+
+            //
+            if (actualTypeArgument instanceof TypeVariable) {
+                expandTypeVariableTypeVariables((TypeVariable<?>) actualTypeArgument, visitedTypeVariables);
+            }
+
+            Type resolve = resolveByTypeVariables(actualTypeArgument, visitedTypeVariables);
+            visitedTypeVariables.put(typeParameters[i], resolve);
+        }
     }
 
     /**
@@ -299,6 +372,12 @@ public class TypeUtil {
      * @return the string
      */
     public static String typeToString(Type type) {
+        if (type instanceof Class) {
+            return ((Class<?>) type).getName();
+        }
+        if (type instanceof TypeVariable) {
+            return ((TypeVariable<?>) type).getGenericDeclaration() + " " + ((TypeVariable<?>) type).getName();
+        }
         return type instanceof Class ? ((Class<?>) type).getName() : type.toString();
     }
 

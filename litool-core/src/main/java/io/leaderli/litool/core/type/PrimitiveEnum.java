@@ -6,6 +6,7 @@ import io.leaderli.litool.core.text.StringConvert;
 import io.leaderli.litool.core.util.BooleanUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -101,11 +102,11 @@ public enum PrimitiveEnum {
     /**
      * The Primitive wrapper map.
      */
-    static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>();
+    static final Map<Type, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>();
     /**
      * The Wrapper primitive map.
      */
-    static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>();
+    static final Map<Type, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>();
 
     static {
 
@@ -171,6 +172,10 @@ public enum PrimitiveEnum {
      */
     public static boolean isNumber(PrimitiveEnum primitiveEnum) {
         return ObjectsUtil.sameAny(primitiveEnum, BYTE, FLOAT, DOUBLE, LONG, INT, SHORT);
+    }
+
+    public static boolean isPrimitive(Type type) {
+        return PRIMITIVE_WRAPPER_MAP.get(type) != null;
     }
 
     /**

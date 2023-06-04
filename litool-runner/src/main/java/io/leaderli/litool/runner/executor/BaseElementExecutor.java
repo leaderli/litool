@@ -20,11 +20,6 @@ public abstract class BaseElementExecutor<S extends SaxBean> extends ContextVisi
     }
 
     @Override
-    protected void execute(Context context) {
-
-    }
-
-    @Override
     public void visit(Context context) {
         List<ContextVisitor> contextVisitors = visit();
 

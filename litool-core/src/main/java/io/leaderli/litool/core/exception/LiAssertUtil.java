@@ -9,7 +9,7 @@ public class LiAssertUtil {
         throw new IllegalStateException(" assert not to run");
     }
 
-    public static void assertNotRunWithMsg(String msg) {
+    public static <T> T assertNotRunWithMsg(String msg) {
         throw new IllegalStateException(msg);
     }
 
