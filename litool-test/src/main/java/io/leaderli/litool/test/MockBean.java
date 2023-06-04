@@ -47,7 +47,7 @@ public class MockBean<T> {
     }
 
     public static <T> MockBean<T> instance(Type type, LinkedHashMap<Type, InstanceCreator<?>> instanceCreators) {
-        LiTypeToken<T> token = LiTypeToken.of(type);
+        LiTypeToken<T> token = LiTypeToken.ofType(type);
         return instance(token, instanceCreators);
     }
 
@@ -146,13 +146,13 @@ public class MockBean<T> {
             if (fieldType.isArray()) {
                 fieldValue = Array.newInstance(fieldType.getComponentType(), 0);
             } else {
-                LiTypeToken<Object> fieldTypeToken = LiTypeToken.of(fieldType);
+                LiTypeToken<?> fieldTypeToken = LiTypeToken.of(fieldType);
                 fieldValue = new MockBean<>(fieldTypeToken, constructorConstructor, cache).create();
             }
             ReflectUtil.setFieldValue(instance, field, fieldValue);
         }
 
-        LiTypeToken<Object> superTypeToken = LiTypeToken.of(TypeUtil.resolve(typeToken.getType(), rawType.getGenericSuperclass()));
+        LiTypeToken<Object> superTypeToken = LiTypeToken.ofType(TypeUtil.resolve(typeToken.getType(), rawType.getGenericSuperclass()));
         populate(instance, superTypeToken);
     }
 

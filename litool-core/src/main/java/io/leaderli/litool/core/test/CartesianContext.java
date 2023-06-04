@@ -20,7 +20,9 @@ import java.util.Map;
  */
 public class CartesianContext {
 
-    private final MetaAnnotation<Valuable, CartesianFunction<Annotation, Object>> valuableMeta = new MetaAnnotation<>(Valuable.class, LiTypeToken.of(CartesianFunction.class));
+    private final MetaAnnotation<Valuable, CartesianFunction<Annotation, Object>> valuableMeta = new MetaAnnotation<>(Valuable.class,
+            new LiTypeToken<CartesianFunction<Annotation, Object>>() {
+            }.getGenericType());
 
     @SuppressWarnings("rawtypes")
     private final Map<Class<?>, CustomValuable> customValuables = new HashMap<>();

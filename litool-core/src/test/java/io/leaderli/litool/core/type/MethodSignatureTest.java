@@ -27,12 +27,27 @@ class MethodSignatureTest {
         Method method = MyFunction.class.getMethod("apply", String.class);
 
         Assertions.assertEquals(new MethodSignature("apply", Integer.class, new Class[]{String.class}), MethodSignature.non_strict(method));
+
+
+        Assertions.assertEquals(MethodSignature.non_strict(MyFunction2.class.getMethod("apply", Integer.class)), MethodSignature.non_strict(MyFunction3.class.getMethod("apply", int.class)));
     }
 
     static class MyFunction implements Function<String, Integer> {
 
         @Override
         public Integer apply(String s) {
+            return null;
+        }
+    }
+
+    static class MyFunction2 {
+        public Integer apply(Integer integer) {
+            return null;
+        }
+    }
+
+    static class MyFunction3 {
+        public Integer apply(int integer) {
             return null;
         }
     }

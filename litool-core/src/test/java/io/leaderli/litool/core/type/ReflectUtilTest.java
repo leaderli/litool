@@ -44,10 +44,10 @@ class ReflectUtilTest {
 
         Assertions.assertDoesNotThrow(() -> ReflectUtil.newInterfaceInstance(LiTypeToken.of(Runnable.class), LiTypeToken.of(DisposableRunnableProxy.class), DisposableRunnableProxy.of(() -> System.out.println(123))));
 
-        ClassUtilTest.MyFunction<String, Integer> function = ReflectUtil.newInterfaceInstance(LiTypeToken.getParameterized(ClassUtilTest.MyFunction.class, String.class, Integer.class), LiTypeToken.of(Proxy.class), new Proxy());
+        ClassUtilTest.MyFunction<String, Integer> function = ReflectUtil.newInterfaceInstance(LiTypeToken.ofParameterized(ClassUtilTest.MyFunction.class, String.class, Integer.class), LiTypeToken.of(Proxy.class), new Proxy());
 
         Assertions.assertSame(123, function.apply("123"));
-        function = ReflectUtil.newInterfaceInstance(LiTypeToken.getParameterized(ClassUtilTest.MyFunction.class), LiTypeToken.of(Proxy.class), new Proxy());
+        function = ReflectUtil.newInterfaceInstance(LiTypeToken.ofParameterized(ClassUtilTest.MyFunction.class), LiTypeToken.of(Proxy.class), new Proxy());
 
         Assertions.assertEquals(456, function.apply("123"));
     }
@@ -65,10 +65,24 @@ class ReflectUtilTest {
         Assertions.assertEquals(delegate.hashCode(), service.hashCode());
 
         assertThrows(NullPointerException.class, () -> ReflectUtil.newInterfaceInstance(LiTypeToken.of(Function.class), LiTypeToken.of(Function.class), null));
+
+
+        Service2 my = ReflectUtil.newInterfaceInstance(LiTypeToken.of(Service2.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3());
+        Assertions.assertSame(String.class, my.service(123).getClass());
+        Service3 my3 = ReflectUtil.newInterfaceInstance(LiTypeToken.of(Service3.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3());
+        Assertions.assertEquals(123, my3.service(123));
     }
 
     interface Service {
         Request service(Request request);
+    }
+
+    interface Service2 {
+        String service(Integer request);
+    }
+
+    interface Service3 {
+        int service(Integer request);
     }
 
     class Request {
@@ -103,6 +117,20 @@ class ReflectUtilTest {
         }
 
     }
+
+    class DynamicDelegation3 {
+        @RuntimeType
+        public Object apply(int arg) {
+            return arg;
+        }
+
+
+        @RuntimeType
+        public String apply2(int arg) {
+            return arg + "";
+        }
+    }
+
 
     static {
         LiConstant.WHEN_THROW = null;

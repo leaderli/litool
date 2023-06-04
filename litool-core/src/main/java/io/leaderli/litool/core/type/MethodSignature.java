@@ -58,6 +58,12 @@ public class MethodSignature {
         this.name = name;
         this.returnType = returnType;
         this.parameterTypes = parameterTypes;
+        for (int i = 0; i < this.parameterTypes.length; i++) {
+            Type parameterType = this.parameterTypes[i];
+            if (PrimitiveEnum.isPrimitive(parameterType)) {
+                this.parameterTypes[i] = PrimitiveEnum.PRIMITIVE_WRAPPER_MAP.get(parameterType);
+            }
+        }
         this.modifiers = modifiers;
     }
 

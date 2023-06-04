@@ -245,8 +245,8 @@ public class LiTypeToken<T> implements ParameterizedType {
      * @param typeArguments the type arguments
      * @return the parameterized
      */
-    public static <T> LiTypeToken<T> getParameterized(Type rawType, Type... typeArguments) {
-        return of(LiTypes.newParameterizedTypeWithOwner(null, rawType, typeArguments));
+    public static <T> LiTypeToken<T> ofParameterized(Type rawType, Type... typeArguments) {
+        return ofType(LiTypes.newParameterizedTypeWithOwner(null, rawType, typeArguments));
     }
 
 
@@ -257,10 +257,20 @@ public class LiTypeToken<T> implements ParameterizedType {
      * @param type the type
      * @return the li type token
      */
-    public static <T> LiTypeToken<T> of(Type type) {
+    public static <T> LiTypeToken<T> ofType(Type type) {
         return new LiTypeToken<>(type);
     }
 
+    /**
+     * Gets type literal for the given {@code Type} instance.
+     *
+     * @param <T>  the type parameter
+     * @param type the type
+     * @return the li type token
+     */
+    public static <T> LiTypeToken<T> of(Class<T> type) {
+        return new LiTypeToken<>(type);
+    }
 
     /**
      * Gets type literal for the array type whose elements are all instances of {@code componentType}.
@@ -313,6 +323,11 @@ public class LiTypeToken<T> implements ParameterizedType {
      */
     public final Type getType() {
         return type;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final Class<T> getGenericType() {
+        return (Class<T>) rawType;
     }
 
     /**

@@ -29,7 +29,7 @@ class MethodUtilTest {
         Assertions.assertNotNull(same);
         method = this.getClass().getMethod("apply", String.class);
 
-        same = MethodUtil.getSameSignatureMethod(LiTypeToken.getParameterized(Function.class, String.class, Integer.class), method);
+        same = MethodUtil.getSameSignatureMethod(LiTypeToken.ofParameterized(Function.class, String.class, Integer.class), method);
         Assertions.assertNotNull(same);
     }
 
@@ -44,7 +44,7 @@ class MethodUtilTest {
                 return null;
             }
         };
-        System.out.println(MethodUtil.getSameSignatureMethod(LiTypeToken.getParameterized(Function.class, String.class, Integer.class), method));
+        System.out.println(MethodUtil.getSameSignatureMethod(LiTypeToken.ofParameterized(Function.class, String.class, Integer.class), method));
     }
 
     public Integer apply(String msg) {

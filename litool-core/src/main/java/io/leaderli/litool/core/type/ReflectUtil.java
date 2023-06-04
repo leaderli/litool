@@ -568,7 +568,16 @@ public class ReflectUtil {
 
 
             // 代理方法返回类型为实际类型子类或者为Object类
-            if (isRuntimeTypeMethod(originMethod, runtimeMethod)) {
+            if (ClassUtil.isAssignableFromOrIsWrapper(runtimeMethod.getReturnType(), originMethod.getReturnType()) && parameterTypeCovariant(originMethod, runtimeMethod)) {
+                return runtimeMethod;
+            }
+
+        }
+        for (Method runtimeMethod : runtimeTypeMethods) {
+
+
+            // 代理方法返回类型为Object类
+            if (runtimeMethod.getReturnType() == Object.class && parameterTypeCovariant(originMethod, runtimeMethod)) {
                 return runtimeMethod;
             }
 
@@ -576,20 +585,18 @@ public class ReflectUtil {
         throw new LiraRuntimeException("can not proxy method " + originMethod);
     }
 
-    private static boolean isRuntimeTypeMethod(Method im, Method runtimeMethod) {
-        if (runtimeMethod.getReturnType() == Object.class || ClassUtil.isAssignableFromOrIsWrapper(runtimeMethod.getReturnType(), im.getReturnType())) {
+    private static boolean parameterTypeCovariant(Method origin, Method runtimeMethod) {
 
-            if (im.getParameterCount() == runtimeMethod.getParameterCount()) {
+        if (origin.getParameterCount() == runtimeMethod.getParameterCount()) {
 
-                for (int i = 0; i < im.getParameterTypes().length; i++) {
+            for (int i = 0; i < origin.getParameterTypes().length; i++) {
 
-                    // 代码方法的参数类型均为原方法的父类，这样就可以保证兼容性
-                    if (!ClassUtil.isAssignableFromOrIsWrapper(runtimeMethod.getParameterTypes()[i], im.getParameterTypes()[i])) {
-                        return false;
-                    }
+                // 代码方法的参数类型均为原方法的父类，这样就可以保证兼容性
+                if (!ClassUtil.isAssignableFromOrIsWrapper(runtimeMethod.getParameterTypes()[i], origin.getParameterTypes()[i])) {
+                    return false;
                 }
-                return true;
             }
+            return true;
         }
         return false;
     }

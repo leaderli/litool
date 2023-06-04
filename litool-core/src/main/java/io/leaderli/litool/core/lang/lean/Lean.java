@@ -111,7 +111,7 @@ public class Lean {
      * @see #fromBean(Object, LiTypeToken)
      */
     public <T> T fromBean(Object source, Type targetType) {
-        return fromBean(source, LiTypeToken.of(targetType));
+        return fromBean(source, LiTypeToken.ofType(targetType));
     }
 
     /**
@@ -172,7 +172,7 @@ public class Lean {
      */
     public <T> TypeAdapter<T> getTypeAdapter(Type type) {
 
-        return getTypeAdapter(LiTypeToken.of(type));
+        return getTypeAdapter(LiTypeToken.ofType(type));
     }
 
     /**

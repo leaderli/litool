@@ -30,9 +30,9 @@ class ConstructorConstructorTest {
         Assertions.assertSame(HashMap.class, constructorConstructor.get(LiTypeToken.of(Map.class)).get().getClass());
 
 
-        tail = LiMapUtil.newLinkedHashMap(LiTypeToken.getParameterized(Map.class, String.class, String.class), (InstanceCreator<MyMap>) type -> new MyMap());
+        tail = LiMapUtil.newLinkedHashMap(LiTypeToken.ofParameterized(Map.class, String.class, String.class), (InstanceCreator<MyMap>) type -> new MyMap());
         constructorConstructor = new ConstructorConstructor(tail);
-        Assertions.assertSame(MyMap.class, constructorConstructor.get(LiTypeToken.getParameterized(Map.class, String.class, String.class)).get().getClass());
+        Assertions.assertSame(MyMap.class, constructorConstructor.get(LiTypeToken.ofParameterized(Map.class, String.class, String.class)).get().getClass());
     }
 
     @Test
@@ -46,7 +46,7 @@ class ConstructorConstructorTest {
         instanceCreators.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
         ConstructorConstructor constructorConstructor = new ConstructorConstructor(instanceCreators, new LinkedHashMap<>());
 
-        ObjectConstructor<ArrayList<String>> arrayListSupplier = constructorConstructor.get(LiTypeToken.of(ArrayList.class));
+        ObjectConstructor<ArrayList<String>> arrayListSupplier = constructorConstructor.get(LiTypeToken.ofType(ArrayList.class));
         List<String> actual = arrayListSupplier.get();
         Assertions.assertTrue(actual.isEmpty());
 

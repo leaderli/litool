@@ -16,7 +16,7 @@ class StringTypeAdapterFactoryTest {
         TypeAdapter<String> typeAdapter = typeAdapterFactory.create(null, LiTypeToken.of(String.class));
 
         Assertions.assertEquals("123", typeAdapter.read("123", null));
-        typeAdapter = typeAdapterFactory.create(null, LiTypeToken.of(CharSequence.class));
+        typeAdapter = typeAdapterFactory.create(null, LiTypeToken.ofType(CharSequence.class));
         Assertions.assertEquals("123", typeAdapter.read("123", null));
 
 

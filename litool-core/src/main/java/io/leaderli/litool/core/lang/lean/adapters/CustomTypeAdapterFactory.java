@@ -32,7 +32,7 @@ public class CustomTypeAdapterFactory implements TypeAdapterFactory {
     @SafeVarargs
     public final <T> void puts(TypeAdapter<T> typeAdapter, Class<? super T>... classes) {
         for (Class<? super T> cls : classes) {
-            put(LiTypeToken.of(cls), typeAdapter);
+            put(LiTypeToken.ofType(cls), typeAdapter);
         }
     }
 }

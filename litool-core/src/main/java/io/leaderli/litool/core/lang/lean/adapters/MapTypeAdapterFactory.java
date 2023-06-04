@@ -28,8 +28,8 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
         Type[] componentType = typeToken.getActualTypeArguments();
         Type keyType = componentType[0];
         Type valueType = componentType[1];
-        TypeAdapter keyTypeAdapter = lean.getTypeAdapter(LiTypeToken.of(keyType));
-        TypeAdapter valueTypeAdapter = lean.getTypeAdapter(LiTypeToken.of(valueType));
+        TypeAdapter keyTypeAdapter = lean.getTypeAdapter(LiTypeToken.ofType(keyType));
+        TypeAdapter valueTypeAdapter = lean.getTypeAdapter(LiTypeToken.ofType(valueType));
         return new MapAdapter(keyTypeAdapter, valueTypeAdapter, constructor);
 
     }
