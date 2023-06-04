@@ -5,13 +5,13 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.internal.GenericArrayTypeImpl;
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import io.leaderli.litool.core.internal.WildcardTypeImpl;
-import io.leaderli.litool.core.meta.Lira;
 
 import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * The type Type util.
@@ -124,6 +124,7 @@ public class TypeUtil {
 
     private static Type resolveByTypeVariables(Type type, Map<TypeVariable<?>, Type> visitedTypeVariables) {
 
+
         if (type instanceof ParameterizedType) {
 
             ParameterizedType parameterizedType = (ParameterizedType) type;
@@ -133,24 +134,35 @@ public class TypeUtil {
             }
 
             Type ownerType = parameterizedType.getOwnerType();
-            Class<?> rawTp = (Class<?>) parameterizedType.getRawType();
-            Type[] argType = Lira.of(parameterizedType.getActualTypeArguments())
+            Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+            Type[] argType = Stream.of(parameterizedType.getActualTypeArguments())
                     .map(arg -> resolveByTypeVariables(arg, visitedTypeVariables))
-                    .toArray(Type.class);
+                    .toArray(Type[]::new);
 
-            return ParameterizedTypeImpl.make(ownerType, rawTp, argType);
+            return ParameterizedTypeImpl.make(ownerType, rawType, argType);
 
-        } else if (type instanceof TypeVariable) {
+        }
+        if (type instanceof TypeVariable) {
 
-            return visitedTypeVariables.computeIfAbsent((TypeVariable<?>) type, k -> resolveByTypeVariables(((TypeVariable<?>) type).getBounds()[0], visitedTypeVariables));
 
-        } else if (type instanceof GenericArrayType) {
+            Type cache = visitedTypeVariables.get(type);
+            if (cache != null) {
+                return cache;
+            }
+            visitedTypeVariables.put((TypeVariable<?>) type, TypeUtil.erase(type));
+            cache = resolveByTypeVariables(((TypeVariable<?>) type).getBounds()[0], visitedTypeVariables);
+
+            visitedTypeVariables.put((TypeVariable<?>) type, cache);
+
+        }
+        if (type instanceof GenericArrayType) {
 
             Type componentType = ((GenericArrayType) type).getGenericComponentType();
             componentType = resolveByTypeVariables(componentType, visitedTypeVariables);
             return Array.newInstance(erase(componentType), 0).getClass();
 
-        } else if (type instanceof Class) {
+        }
+        if (type instanceof Class) {
 
             Class<?> cls = (Class<?>) type;
             if (cls.getTypeParameters().length == 0) {
@@ -327,14 +339,14 @@ public class TypeUtil {
             return;
         }
         resolveByTypeVariables(clazz, visitedTypeVariables);
-        Type bound = clazz.getBounds()[0];
-        if (bound instanceof ParameterizedType) {
-            expandParameterizedTypeTypeVariables((ParameterizedType) bound, visitedTypeVariables);
-        } else if (bound instanceof Class) {
-            expandClassTypeVariables((Class<?>) bound, visitedTypeVariables);
-        } else {
-            expandClassTypeVariables(erase(bound), visitedTypeVariables);
-        }
+        //        Type bound = clazz.getBounds()[0];
+//        if (bound instanceof ParameterizedType) {
+//            expandParameterizedTypeTypeVariables((ParameterizedType) bound, visitedTypeVariables);
+//        } else if (bound instanceof Class) {
+//            expandClassTypeVariables((Class<?>) bound, visitedTypeVariables);
+//        } else {
+//            expandClassTypeVariables(erase(bound), visitedTypeVariables);
+//        }
     }
 
     private static void expandClassTypeVariables(Class<?> clazz, Map<TypeVariable<?>, Type> visitedTypeVariables) {

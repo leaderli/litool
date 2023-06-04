@@ -94,9 +94,7 @@ class TypeUtilTest {
 
         Map<TypeVariable<?>, Type> visitedTypeVariables = new HashMap<>();
         TypeUtil.expandTypeVariables(T2.class.getGenericInterfaces()[0], visitedTypeVariables);
-        visitedTypeVariables.forEach((k, v) -> {
-            System.out.println(TypeUtil.typeToString(k));
-        });
+
         Assertions.assertEquals(4, visitedTypeVariables.size());
 
 
@@ -105,8 +103,13 @@ class TypeUtilTest {
         TypeUtil.expandTypeVariables(declare, visitedTypeVariables);
         Assertions.assertEquals(ParameterizedTypeImpl.make(null, List.class, String.class), visitedTypeVariables.get(Z2.class.getTypeParameters()[0]));
         Assertions.assertDoesNotThrow(() -> TypeUtil.expandTypeVariables(Z4.class, new HashMap<>()));
-
         Assertions.assertDoesNotThrow(() -> TypeUtil.expandTypeVariables(Z5.class.getTypeParameters()[0], new HashMap<>()));
+
+    }
+
+    @Test
+    void test3() {
+        TypeUtil.expandTypeVariables(Z4.class, new HashMap<>());
 
     }
 
@@ -251,6 +254,7 @@ class TypeUtilTest {
         assertTrue(TypeUtil.equals(String.class, String.class));
         assertTrue(TypeUtil.equals(null, null));
         assertFalse(TypeUtil.equals(null, String.class));
+
     }
 
     @Test
