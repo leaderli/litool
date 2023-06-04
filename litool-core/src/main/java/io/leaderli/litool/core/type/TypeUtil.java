@@ -142,26 +142,32 @@ public class TypeUtil {
             return ParameterizedTypeImpl.make(ownerType, rawType, argType);
 
         }
-        if (type instanceof TypeVariable) {
 
-
-            Type cache = visitedTypeVariables.get(type);
-            if (cache != null) {
-                return cache;
-            }
-            visitedTypeVariables.put((TypeVariable<?>) type, TypeUtil.erase(type));
-            cache = resolveByTypeVariables(((TypeVariable<?>) type).getBounds()[0], visitedTypeVariables);
-
-            visitedTypeVariables.put((TypeVariable<?>) type, cache);
-
-        }
         if (type instanceof GenericArrayType) {
 
             Type componentType = ((GenericArrayType) type).getGenericComponentType();
             componentType = resolveByTypeVariables(componentType, visitedTypeVariables);
-            return Array.newInstance(erase(componentType), 0).getClass();
+            return new GenericArrayTypeImpl(componentType);
+//            return Array.newInstance(erase(componentType), 0).getClass();
+
 
         }
+        if (type instanceof TypeVariable) {
+
+
+            Type value = visitedTypeVariables.get(type);
+            if (value != null) {
+                return value;
+            }
+            // 防止递归调用，先填充值
+            visitedTypeVariables.put((TypeVariable<?>) type, TypeUtil.erase(type));
+            Type bound = ((TypeVariable<?>) type).getBounds()[0];
+            value = resolveByTypeVariables(bound, visitedTypeVariables);
+            // 填充更准确的值
+            visitedTypeVariables.put((TypeVariable<?>) type, value);
+
+        }
+
         if (type instanceof Class) {
 
             Class<?> cls = (Class<?>) type;
@@ -325,29 +331,31 @@ public class TypeUtil {
             expandParameterizedTypeTypeVariables((ParameterizedType) declare, visitedTypeVariables);
         } else if (declare instanceof GenericArrayType) {
             expandTypeVariables(((GenericArrayType) declare).getGenericComponentType(), visitedTypeVariables);
-        } else if (declare instanceof Class) {
-            expandClassTypeVariables((Class<?>) declare, visitedTypeVariables);
-        } else if (declare instanceof TypeVariable) {
-            expandTypeVariableTypeVariables((TypeVariable<?>) declare, visitedTypeVariables);
         }
-        //仅查找在类上直接声明的
 
-    }
 
-    private static void expandTypeVariableTypeVariables(TypeVariable<?> clazz, Map<TypeVariable<?>, Type> visitedTypeVariables) {
-        if (visitedTypeVariables.containsKey(clazz)) {
-            return;
-        }
-        resolveByTypeVariables(clazz, visitedTypeVariables);
-        //        Type bound = clazz.getBounds()[0];
-//        if (bound instanceof ParameterizedType) {
-//            expandParameterizedTypeTypeVariables((ParameterizedType) bound, visitedTypeVariables);
-//        } else if (bound instanceof Class) {
-//            expandClassTypeVariables((Class<?>) bound, visitedTypeVariables);
-//        } else {
-//            expandClassTypeVariables(erase(bound), visitedTypeVariables);
+//        else if (declare instanceof Class) {
+//            expandClassTypeVariables((Class<?>) declare, visitedTypeVariables);
+//        } else if (declare instanceof TypeVariable) {
+//            resolveByTypeVariables(declare,visitedTypeVariables);
+//
+////            expandTypeVariableTypeVariables((TypeVariable<?>) declare, visitedTypeVariables);
 //        }
+        //仅查找在类上直接声明的
+        else {
+
+            Type type = resolveByTypeVariables(declare, visitedTypeVariables);
+        }
+
     }
+
+//    private static void expandTypeVariableTypeVariables(TypeVariable<?> clazz, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+//        if (visitedTypeVariables.containsKey(clazz)) {
+//            return;
+//        }
+//        resolveByTypeVariables(clazz, visitedTypeVariables);
+//
+//    }
 
     private static void expandClassTypeVariables(Class<?> clazz, Map<TypeVariable<?>, Type> visitedTypeVariables) {
         if (clazz != null && clazz.getTypeParameters().length > 0) {
@@ -363,14 +371,15 @@ public class TypeUtil {
 
         for (int i = 0; i < actualTypeArguments.length; i++) {
             Type actualTypeArgument = actualTypeArguments[i];
-            // expand child
+            // expand  args first
             expandTypeVariables(actualTypeArgument, visitedTypeVariables);
 
 
             //
-            if (actualTypeArgument instanceof TypeVariable) {
-                expandTypeVariableTypeVariables((TypeVariable<?>) actualTypeArgument, visitedTypeVariables);
-            }
+//            if (actualTypeArgument instanceof TypeVariable) {
+//                resolveByTypeVariables(actualTypeArgument,visitedTypeVariables);
+////                expandTypeVariableTypeVariables((TypeVariable<?>) actualTypeArgument, visitedTypeVariables);
+//            }
 
             Type resolve = resolveByTypeVariables(actualTypeArgument, visitedTypeVariables);
             visitedTypeVariables.put(typeParameters[i], resolve);

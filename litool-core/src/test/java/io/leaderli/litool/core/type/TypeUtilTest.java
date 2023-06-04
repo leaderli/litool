@@ -291,7 +291,34 @@ class TypeUtilTest {
 
     }
 
+    class T1<T extends List> implements Supplier<List<? extends T>>, Consumer<T[]> {
+        public Class<?> cls;
+        public Class<? super T> cls2;
+
+
+        @Override
+        public List<T> get() {
+            return null;
+        }
+
+        @Override
+        public void accept(T[] ts) {
+
+        }
+    }
+
     private interface T2 extends Supplier<List<T1<ArrayList>[]>[]> {
+
+    }
+
+    private class T4<T> {
+        private class T3 {
+
+            T t;
+        }
+    }
+
+    private class T5<T> extends T4<String> {
 
     }
 
@@ -299,7 +326,16 @@ class TypeUtilTest {
 
     }
 
+    private class T7<T extends List> {
+
+    }
+
+
     private interface T8 extends T6<String> {
+
+    }
+
+    private static interface In1<A, B> {
 
     }
 
@@ -311,9 +347,7 @@ class TypeUtilTest {
 
     }
 
-    private static interface In1<A, B> {
 
-    }
 
     private static interface Con<A> extends In1<A, Consumer<A>> {
 
@@ -385,36 +419,7 @@ class TypeUtilTest {
 
     }
 
-    private class T7<T extends List> {
 
-    }
-
-    class T1<T extends List> implements Supplier<List<? extends T>>, Consumer<T[]> {
-        public Class<?> cls;
-        public Class<? super T> cls2;
-
-
-        @Override
-        public List<T> get() {
-            return null;
-        }
-
-        @Override
-        public void accept(T[] ts) {
-
-        }
-    }
-
-    private class T5<T> extends T4<String> {
-
-    }
-
-    private class T4<T> {
-        private class T3 {
-
-            T t;
-        }
-    }
 
 
     @Test
