@@ -236,18 +236,18 @@ public class LiTypeToken<T> implements ParameterizedType {
 
     }
 
-    /**
-     * Gets type literal for the parameterized type represented by applying {@code typeArguments} to
-     * {@code rawType}.
-     *
-     * @param <T>           the type parameter
-     * @param rawType       the raw type
-     * @param typeArguments the type arguments
-     * @return the parameterized
-     */
-    public static <T> LiTypeToken<T> ofParameterized(Type rawType, Type... typeArguments) {
-        return ofType(LiTypes.newParameterizedTypeWithOwner(null, rawType, typeArguments));
-    }
+//    /**
+//     * Gets type literal for the parameterized type represented by applying {@code typeArguments} to
+//     * {@code rawType}.
+//     *
+//     * @param <T>           the type parameter
+//     * @param rawType       the raw type
+//     * @param typeArguments the type arguments
+//     * @return the parameterized
+//     */
+//    public static <T> LiTypeToken<T> ofParameterized(Type rawType, Type... typeArguments) {
+//        return ofType(LiTypes.newParameterizedTypeWithOwner(null, rawType, typeArguments));
+//    }
 
 
     /**

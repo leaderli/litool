@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -25,7 +24,8 @@ class LiTypeTokenTest {
 
         Assertions.assertNotEquals(LiTypeToken.of(int.class), LiTypeToken.of(Integer.class));
 
-        LiTypeToken<List<String>> token = LiTypeToken.ofParameterized(ArrayList.class, String.class);
+        LiTypeToken<ArrayList<String>> token = new LiTypeToken<ArrayList<String>>() {
+        };
         Assertions.assertEquals(ParameterizedTypeImpl.make(null, ArrayList.class, String.class), token.getType());
 
 
@@ -38,13 +38,19 @@ class LiTypeTokenTest {
 
     }
 
+    @SuppressWarnings("AssertBetweenInconvertibleTypes")
     @Test
     void testEquals() {
 
-        Assertions.assertEquals(LiTypeToken.ofParameterized(Bean.class).hashCode(),
-                LiTypeToken.ofParameterized(Bean.class).hashCode());
+        Assertions.assertEquals(LiTypeToken.of(Bean.class).hashCode(), LiTypeToken.of(Bean.class).hashCode());
+        Assertions.assertEquals(new LiTypeToken<Bean>() {
+        }.hashCode(), new LiTypeToken<Bean>() {
+        }.hashCode());
 
-        Assertions.assertEquals(LiTypeToken.ofParameterized(Bean.class), LiTypeToken.ofParameterized(Bean.class));
+        Assertions.assertEquals(LiTypeToken.of(Bean.class), LiTypeToken.of(Bean.class));
+        Assertions.assertEquals(new LiTypeToken<Bean>() {
+        }, new LiTypeToken<Bean>() {
+        });
 
     }
 

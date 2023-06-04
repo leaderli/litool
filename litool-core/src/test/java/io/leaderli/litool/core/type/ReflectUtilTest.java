@@ -44,10 +44,12 @@ class ReflectUtilTest {
 
         Assertions.assertDoesNotThrow(() -> ReflectUtil.newInterfaceInstance(LiTypeToken.of(Runnable.class), LiTypeToken.of(DisposableRunnableProxy.class), DisposableRunnableProxy.of(() -> System.out.println(123))));
 
-        ClassUtilTest.MyFunction<String, Integer> function = ReflectUtil.newInterfaceInstance(LiTypeToken.ofParameterized(ClassUtilTest.MyFunction.class, String.class, Integer.class), LiTypeToken.of(Proxy.class), new Proxy());
+        ClassUtilTest.MyFunction<String, Integer> function = ReflectUtil.newInterfaceInstance(new LiTypeToken<ClassUtilTest.MyFunction<String, Integer>>() {
+        }, LiTypeToken.of(Proxy.class), new Proxy());
 
         Assertions.assertSame(123, function.apply("123"));
-        function = ReflectUtil.newInterfaceInstance(LiTypeToken.ofParameterized(ClassUtilTest.MyFunction.class), LiTypeToken.of(Proxy.class), new Proxy());
+        function = ReflectUtil.newInterfaceInstance(LiTypeToken.of(ClassUtilTest.MyFunction.class), LiTypeToken.of(Proxy.class), new Proxy());
+
 
         Assertions.assertEquals(456, function.apply("123"));
     }

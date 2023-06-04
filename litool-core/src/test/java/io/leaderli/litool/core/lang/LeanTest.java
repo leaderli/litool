@@ -54,7 +54,8 @@ class LeanTest {
     void test3() {
         String json = "{\"name\":\"1\",\"bean\": {\"name\": \"2\"},\"beans\": [{\"name\": \"3\"}]}";
         Map map = gson.fromJson(json, Map.class);
-        LiTypeToken<Bean4<Bean4>> parameterized = LiTypeToken.ofParameterized(Bean4.class, Bean4.class);
+        LiTypeToken<Bean4<Bean4>> parameterized = new LiTypeToken<Bean4<Bean4>>() {
+        };
 
         Lean lean = new Lean();
         Bean4<Bean4> parser = lean.fromBean(map, parameterized);
@@ -141,7 +142,8 @@ class LeanTest {
         String json = "{\"name\": [\"123\"],\"ages\": [10,18]}";
         Map map = gson.fromJson(json, Map.class);
         Lean lean = new Lean();
-        Bean11<Integer> bean = lean.fromBean(map, LiTypeToken.ofParameterized(Bean11.class, Integer.class));
+        Bean11<Integer> bean = lean.fromBean(map, new LiTypeToken<Bean11<Integer>>() {
+        });
         Assertions.assertArrayEquals(new String[]{"123"}, bean.name);
         Assertions.assertArrayEquals(new Integer[]{10, 18}, bean.ages);
     }
@@ -152,7 +154,8 @@ class LeanTest {
         String json = "{\"name\": [\"123\"],\"ages\": [10,18]}";
 
         Lean lean = new Lean();
-        Bean12<Integer> bean = lean.fromBean(gson.fromJson(json, Map.class), LiTypeToken.ofParameterized(Bean12.class, Integer.class));
+        Bean12<Integer> bean = lean.fromBean(gson.fromJson(json, Map.class), new LiTypeToken<Bean12<Integer>>() {
+        });
         Assertions.assertEquals(10, bean.ages[0]);
         Assertions.assertThrows(ClassCastException.class, () -> {
                     Bean12<Integer> bean12 = lean.fromBean(gson.fromJson(json, Map.class), new LiTypeToken<Bean12<Integer>>() {
@@ -169,10 +172,12 @@ class LeanTest {
         String json = "{\"name\": [\"123\"],\"ages\": [10,18]}";
         Map map = gson.fromJson(json, Map.class);
         Lean lean = new Lean();
-        Bean11<Integer> bean = lean.fromBean(map, LiTypeToken.ofParameterized(Bean11.class, Integer.class));
+        Bean11<Integer> bean = lean.fromBean(map, new LiTypeToken<Bean11<Integer>>() {
+        });
 
         Bean12<Integer> copy = new Bean12<>();
-        lean.copyBean(bean, copy, LiTypeToken.ofParameterized(Bean12.class, Integer.class));
+        lean.copyBean(bean, copy, new LiTypeToken<Bean12<Integer>>() {
+        });
 
         Assertions.assertArrayEquals(new String[]{"123"}, copy.name);
         Assertions.assertArrayEquals(new Integer[]{10, 18}, copy.ages);

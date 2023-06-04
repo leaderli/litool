@@ -16,7 +16,8 @@ class ObjectTypeAdapterFactoryTest {
         String json = "{\"name\": [\"123\"],\"ages\": [10,18]}";
 
         Lean lean = new Lean();
-        Bean<Integer> bean = lean.fromBean(gson.fromJson(json, Map.class), LiTypeToken.ofParameterized(Bean.class, Integer.class));
+        Bean<Integer> bean = lean.fromBean(gson.fromJson(json, Map.class), new LiTypeToken<Bean<Integer>>() {
+        });
 
         ObjectTypeAdapterFactory.ObjectTypeAdapter typeAdapter = new ObjectTypeAdapterFactory.ObjectTypeAdapter();
         Assertions.assertEquals(1, typeAdapter.read(1, lean));
@@ -27,7 +28,8 @@ class ObjectTypeAdapterFactoryTest {
         Assertions.assertTrue(read instanceof List);
         Assertions.assertSame(Integer[].class, bean.ages.getClass());
         Bean<Integer> copy = new Bean<>();
-        lean.copyBean(bean, copy, LiTypeToken.ofParameterized(Bean.class, Integer.class));
+        lean.copyBean(bean, copy, new LiTypeToken<Bean<Integer>>() {
+        });
         Assertions.assertArrayEquals(new String[]{"123"}, copy.name);
         Assertions.assertEquals(10, copy.ages[0]);
     }

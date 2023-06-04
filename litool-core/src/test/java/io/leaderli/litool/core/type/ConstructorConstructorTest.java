@@ -30,9 +30,11 @@ class ConstructorConstructorTest {
         Assertions.assertSame(HashMap.class, constructorConstructor.get(LiTypeToken.of(Map.class)).get().getClass());
 
 
-        tail = LiMapUtil.newLinkedHashMap(LiTypeToken.ofParameterized(Map.class, String.class, String.class), (InstanceCreator<MyMap>) type -> new MyMap());
+        tail = LiMapUtil.newLinkedHashMap(new LiTypeToken<Map<String, String>>() {
+        }, (InstanceCreator<MyMap>) type -> new MyMap());
         constructorConstructor = new ConstructorConstructor(tail);
-        Assertions.assertSame(MyMap.class, constructorConstructor.get(LiTypeToken.ofParameterized(Map.class, String.class, String.class)).get().getClass());
+        Assertions.assertSame(MyMap.class, constructorConstructor.get(new LiTypeToken<Map<String, String>>() {
+        }).get().getClass());
     }
 
     @Test
