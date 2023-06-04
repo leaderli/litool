@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,17 +55,16 @@ class ReflectUtilTest {
     @Test
     void newInterfaceImpl() {
 
-//        DynamicDelegation1 delegate = new DynamicDelegation1();
-//
-//
-//        //TODO
-//        Service service = ReflectUtil.newInterfaceInstance(LiTypeToken.of(Service.class), LiTypeToken.of(DynamicDelegation1.class), delegate);
-//        Assertions.assertEquals("request", service.service(new Request("request")).name);
-//
-//        Assertions.assertEquals(delegate.toString(), service.toString());
-//        Assertions.assertEquals(delegate.hashCode(), service.hashCode());
-//
-//        assertThrows(AssertException.class, () -> ReflectUtil.newInterfaceInstance(LiTypeToken.of(Function.class), LiTypeToken.of(Function.class), null));
+        DynamicDelegation1 delegate = new DynamicDelegation1();
+
+
+        Service service = ReflectUtil.newInterfaceInstance(LiTypeToken.of(Service.class), LiTypeToken.of(DynamicDelegation1.class), delegate);
+        Assertions.assertEquals("request", service.service(new Request("request")).name);
+
+        Assertions.assertEquals(delegate.toString(), service.toString());
+        Assertions.assertEquals(delegate.hashCode(), service.hashCode());
+
+        assertThrows(NullPointerException.class, () -> ReflectUtil.newInterfaceInstance(LiTypeToken.of(Function.class), LiTypeToken.of(Function.class), null));
     }
 
     interface Service {

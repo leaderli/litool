@@ -531,62 +531,67 @@ public class ReflectUtil {
         Class<T> interfaceType = (Class<T>) typeToken.getRawType();
         LiAssertUtil.assertTrue(interfaceType.isInterface(), IllegalArgumentException::new, "only support interface");
 
-        Method[] methods = ReflectUtil.getMethods(interfaceType).toArray(Method.class);
         Lira<Method> runtimeTypeMethods = ReflectUtil.getMethods(proxyObj.getClass())
                 .filter(m -> ReflectUtil.getAnnotation(m, RuntimeType.class));
         Map<Method, Method> proxyMethodMap = Lira.of(interfaceType.getMethods())
-                .tuple(m -> {
-                    //优先查找相同签名的方法
-                    MethodSignature referenceMethodSignature = MethodSignature.non_strict(m, typeToken);
-                    Method sameSignatureMethod = MethodUtil.getSameSignatureMethod(proxyTypeToken, referenceMethodSignature);
-                    if (sameSignatureMethod != null) {
-                        return sameSignatureMethod;
-                    }
-
-                    // 查询具有相同请求参数和返回参数，且被 RuntimeType注解的方法
-                    for (Method runtimeMethod : runtimeTypeMethods) {
-
-                        MethodSignature runtimeMethodSignature = MethodSignature.non_strict(runtimeMethod, proxyTypeToken);
-                        if (referenceMethodSignature.returnType == runtimeMethodSignature.returnType
-                                && Arrays.equals(referenceMethodSignature.parameterTypes, runtimeMethodSignature.parameterTypes)) {
-                            return runtimeMethod;
-                        }
-                    }
-
-                    //查找具有兼容性的请求参数和返回参数，且被RuntimeType注解的方法
-
-                    for (Method runtimeMethod : runtimeTypeMethods) {
-
-                        MethodSignature runtimeMethodSignature = MethodSignature.non_strict(runtimeMethod, proxyTypeToken);
-                        if (referenceMethodSignature.returnType == runtimeMethodSignature.returnType
-                                && Arrays.equals(referenceMethodSignature.parameterTypes, runtimeMethodSignature.parameterTypes)) {
-                            return runtimeMethod;
-                        }
-                    }
-//                    Method find = Lino.of(MethodUtil.getSameSignatureMethod(LiTypeToken.of(proxyObj.getClass()), origin)).or(() ->
-//                            runtimeTypeMethod
-//                                    .filter(m -> ClassUtil.isAssignableFromOrIsWrapper(m.getReturnType(), origin.getReturnType()))
-//                                    .filter(m -> {
-//                                        if (m.getParameterTypes().length != origin.getParameterTypes().length) {
-//                                            return false;
-//                                        }
-//                                        for (int i = 0; i < m.getParameterTypes().length; i++) {
-//
-//                                            if (!ClassUtil.isAssignableFromOrIsWrapper(m.getParameterTypes()[i], origin.getParameterTypes()[i])) {
-//                                                return false;
-//                                            }
-//                                        }
-//                                        return true;
-//                                    })
-//                                    .first().get());
-
-                    throw new LiraRuntimeException("can not proxy method " + m);
-
-                }).assertNoError()
+                .tuple(origin -> findProxyMethod(typeToken, proxyTypeToken, runtimeTypeMethods, origin))
                 .toMap(m -> m);
+        for (Method method : Object.class.getMethods()) {
+            proxyMethodMap.put(method, method);
+        }
         InvocationHandler invocationHandler = (proxy, method, args) -> proxyMethodMap.get(method).invoke(proxyObj, args);
         return (T) Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class[]{interfaceType}, invocationHandler);
 
+    }
+
+    private static <T, P> Method findProxyMethod(LiTypeToken<T> typeToken, LiTypeToken<P> proxyTypeToken, Lira<Method> runtimeTypeMethods, Method originMethod) {
+        //优先查找相同签名的方法
+        MethodSignature referenceMethodSignature = MethodSignature.non_strict(originMethod, typeToken);
+        Method sameSignatureMethod = MethodUtil.getSameSignatureMethod(proxyTypeToken, referenceMethodSignature);
+        if (sameSignatureMethod != null) {
+            return sameSignatureMethod;
+        }
+
+        // 查询具有相同请求参数和返回参数，且被 RuntimeType注解的方法
+        for (Method runtimeMethod : runtimeTypeMethods) {
+
+            MethodSignature runtimeMethodSignature = MethodSignature.non_strict(runtimeMethod, proxyTypeToken);
+            if (referenceMethodSignature.returnType == runtimeMethodSignature.returnType
+                    && Arrays.equals(referenceMethodSignature.parameterTypes, runtimeMethodSignature.parameterTypes)) {
+                return runtimeMethod;
+            }
+        }
+
+        //查找具有兼容性的请求参数和返回参数，且被RuntimeType注解的方法
+
+        for (Method runtimeMethod : runtimeTypeMethods) {
+
+
+            // 代理方法返回类型为实际类型子类或者为Object类
+            if (isRuntimeTypeMethod(originMethod, runtimeMethod)) {
+                return runtimeMethod;
+            }
+
+        }
+        throw new LiraRuntimeException("can not proxy method " + originMethod);
+    }
+
+    private static boolean isRuntimeTypeMethod(Method im, Method runtimeMethod) {
+        if (runtimeMethod.getReturnType() == Object.class || ClassUtil.isAssignableFromOrIsWrapper(runtimeMethod.getReturnType(), im.getReturnType())) {
+
+            if (im.getParameterCount() == runtimeMethod.getParameterCount()) {
+
+                for (int i = 0; i < im.getParameterTypes().length; i++) {
+
+                    // 代码方法的参数类型均为原方法的父类，这样就可以保证兼容性
+                    if (!ClassUtil.isAssignableFromOrIsWrapper(runtimeMethod.getParameterTypes()[i], im.getParameterTypes()[i])) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
 }
