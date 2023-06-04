@@ -45,36 +45,7 @@ public class TypeUtil {
     }
 
 
-    public static boolean isAssignableFromOrIsWrapper(Type father, Type son) {
-        if (father == null || son == null) {
-            return false;
-        }
 
-        Class<?> ef = erase(father);
-        Class<?> es = erase(son);
-        if (!ClassUtil.isAssignableFromOrIsWrapper(ef, es)) {
-            return false;
-        }
-        if (father instanceof GenericArrayType && son instanceof GenericArrayType) {
-
-            Type componentType_father = erase(((GenericArrayType) father).getGenericComponentType());
-            Type componentType_son = erase(((GenericArrayType) son).getGenericComponentType());
-            if (PrimitiveEnum.isPrimitive(componentType_father) || PrimitiveEnum.isPrimitive(componentType_son)) {
-                return father == son;
-            }
-            return isAssignableFromOrIsWrapper(componentType_father, componentType_son);
-        }
-        if (father instanceof ParameterizedType && son instanceof ParameterizedType) {
-
-            ((ParameterizedType) father).getActualTypeArguments();
-
-            ((ParameterizedType) son).getActualTypeArguments();
-            return false;
-        }
-
-        return true;
-
-    }
 
     /**
      * Erase class.

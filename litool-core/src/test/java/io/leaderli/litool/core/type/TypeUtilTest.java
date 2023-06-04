@@ -21,33 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ALL")
 class TypeUtilTest {
 
-    @Test
-    void isAssignableFromOrIsWrapper() {
-
-        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(null, null));
-        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(null, String.class));
-        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(String.class, null));
-        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(String.class, CharSequence.class));
-        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(String[].class, CharSequence.class));
-
-        Assertions.assertTrue(TypeUtil.isAssignableFromOrIsWrapper(int.class, Integer.class));
-        Assertions.assertTrue(TypeUtil.isAssignableFromOrIsWrapper(Integer.class, int.class));
-        Assertions.assertTrue(TypeUtil.isAssignableFromOrIsWrapper(CharSequence.class, String.class));
-        Assertions.assertTrue(TypeUtil.isAssignableFromOrIsWrapper(CharSequence[].class, String[].class));
-        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(int[].class, Integer[].class));
-        Assertions.assertFalse(TypeUtil.isAssignableFromOrIsWrapper(int[][].class, Integer[][].class));
-        Assertions.assertTrue(TypeUtil.isAssignableFromOrIsWrapper(int[].class, int[].class));
-
-
-        TypeVariable<Class<T1>> typeParameter = T1.class.getTypeParameters()[0];
-        System.out.println(typeParameter);
-        System.out.println(TypeUtil.resolve(T1.class, typeParameter));
-
-
-        Assertions.assertTrue(TypeUtil.isAssignableFromOrIsWrapper(List.class, ArrayList.class));
-
-
-    }
 
     static class Z1<T extends List> {
 
@@ -348,7 +321,6 @@ class TypeUtilTest {
     }
 
 
-
     private static interface Con<A> extends In1<A, Consumer<A>> {
 
     }
@@ -418,8 +390,6 @@ class TypeUtilTest {
     private static class Ge4 extends Ge3 {
 
     }
-
-
 
 
     @Test
