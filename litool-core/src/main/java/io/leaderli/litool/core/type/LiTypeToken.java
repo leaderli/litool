@@ -1,18 +1,4 @@
-/*
- * Copyright (C) 2008 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package io.leaderli.litool.core.type;
 
@@ -28,24 +14,13 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Represents a generic type {@code T}. Java doesn't yet provide a way to
- * represent generic types, so this class does. Forces clients to create a
- * subclass of this class which enables retrieval the type information even at
- * runtime.
+ * 表示一个泛型类型 {@code T}，由于 Java 不支持在运行时直接获取泛型类型，所以使用此类进行传递。
  *
- * <p>For example, to create a type literal for {@code List<String>}, you can
- * create an empty anonymous inner class:
+ * <p>例如，要创建 {@code List<String>} 的类型字面量，可以创建一个空的匿名内部类：
+ * <p>{@code LiTypeToken<List<String>> list = new LiTypeToken<List<String>>() {};}
+ * <p>无法使用此语法创建带有通配符参数的类型字面量，例如 {@code Class<?>} 或 {@code List<? extends CharSequence>}。
  *
- * <p>
- * {@code LiTypeToken<List<String>> list = new LiTypeToken<List<String>>() {};}
- *
- * <p>This syntax cannot be used to create type literals that have wildcard
- * parameters, such as {@code Class<?>} or {@code List<? extends CharSequence>}.
- *
- * @param <T> the type parameter
- * @author Bob Lee
- * @author Sven Mawson
- * @author Jesse Wilson <p> copy form gson
+ * @param <T> 泛型类型参数
  */
 public class LiTypeToken<T> implements ParameterizedType {
     private final Type type;
@@ -53,12 +28,9 @@ public class LiTypeToken<T> implements ParameterizedType {
     private final int hashCode;
 
     /**
-     * Constructs a new type literal. Derives represented class from type
-     * parameter.
-     *
-     * <p>Clients create an empty anonymous subclass. Doing so embeds the type
-     * parameter in the anonymous class's type hierarchy so we can reconstitute it
-     * at runtime despite erasure.
+     * 构造一个新的类型字面量。从类型参数派生表示的类。
+     * <p>客户端创建一个空的匿名子类。这样做将类型参数嵌入匿名类的类型层次结构中，
+     * 因此我们可以在擦除后的运行时重新构建它。
      */
     @SuppressWarnings("unchecked")
     protected LiTypeToken() {
@@ -68,23 +40,10 @@ public class LiTypeToken<T> implements ParameterizedType {
     }
 
     /**
-     * Unsafe. Constructs a type literal manually.
+     * 获取给定类的父类的泛型类型参数。
      *
-     * @param type -
-     */
-    @SuppressWarnings("unchecked")
-    LiTypeToken(Type type) {
-        this.type = TypeUtil.canonicalize(Objects.requireNonNull(type));
-        this.rawType = (Class<? super T>) TypeUtil.erase(this.type);
-        this.hashCode = this.type.hashCode();
-    }
-
-    /**
-     * Returns the type from super class's type parameter in {@link TypeUtil#canonicalize
-     * canonical form}*.
-     *
-     * @param subclass -
-     * @return -
+     * @param subclass 给定的子类。
+     * @return 规范化形式的父类泛型类型参数。
      */
     static Type getSuperclassTypeParameter(Class<?> subclass) {
         Type superclass = subclass.getGenericSuperclass();
@@ -96,12 +55,23 @@ public class LiTypeToken<T> implements ParameterizedType {
     }
 
     /**
-     * Private helper function that performs some assignability checks for
-     * the provided GenericArrayType.
+     * 构造一个新的类型字面量。手动构造，不安全。
      *
-     * @param from -
-     * @param to   -
-     * @return -
+     * @param type 泛型类型实例
+     */
+    @SuppressWarnings("unchecked")
+    LiTypeToken(Type type) {
+        this.type = TypeUtil.canonicalize(Objects.requireNonNull(type));
+        this.rawType = (Class<? super T>) TypeUtil.erase(this.type);
+        this.hashCode = this.type.hashCode();
+    }
+
+    /**
+     * 判断一个类型是否可以分配给一个泛型数组类型。
+     *
+     * @param from 要判断的类型。
+     * @param to   泛型数组类型。
+     * @return 如果类型可以分配给泛型数组类型，则返回true；否则返回false。
      */
     private static boolean isAssignableFrom(Type from, GenericArrayType to) {
         Type toGenericComponentType = to.getGenericComponentType();
@@ -125,13 +95,12 @@ public class LiTypeToken<T> implements ParameterizedType {
     }
 
     /**
-     * Private recursive helper function to actually do the type-safe checking
-     * of assignability.
+     * 递归进行类型安全的检查，判断一个类型是否可以分配给一个参数化类型。
      *
-     * @param from       -
-     * @param to         -
-     * @param typeVarMap -
-     * @return -
+     * @param from       要检查的类型。
+     * @param to         参数化类型。
+     * @param typeVarMap 类型变量映射。
+     * @return 如果类型可以分配给参数化类型，则返回true；否则返回false。
      */
     private static boolean isAssignableFrom(Type from, ParameterizedType to,
                                             Map<String, Type> typeVarMap) {
@@ -221,13 +190,12 @@ public class LiTypeToken<T> implements ParameterizedType {
     }
 
     /**
-     * Checks if two types are the same or are equivalent under a variable mapping
-     * given in the type map that was provided.
+     * 判断两个类型是否相同或等效于TypeMap中提供的变量映射。
      *
-     * @param from    -
-     * @param to      -
-     * @param typeMap -
-     * @return -
+     * @param from    - 原类型
+     * @param to      - 目标类型
+     * @param typeMap - 类型映射
+     * @return - 返回true表示两个类型相同或等效，否则返回false。
      */
     private static boolean matches(Type from, Type to, Map<String, Type> typeMap) {
         return to.equals(from)
@@ -236,52 +204,43 @@ public class LiTypeToken<T> implements ParameterizedType {
 
     }
 
-//    /**
-//     * Gets type literal for the parameterized type represented by applying {@code typeArguments} to
-//     * {@code rawType}.
-//     *
-//     * @param <T>           the type parameter
-//     * @param rawType       the raw type
-//     * @param typeArguments the type arguments
-//     * @return the parameterized
-//     */
-//    public static <T> LiTypeToken<T> ofParameterized(Type rawType, Type... typeArguments) {
-//        return ofType(LiTypes.newParameterizedTypeWithOwner(null, rawType, typeArguments));
-//    }
-
-
     /**
-     * Gets type literal for the given {@code Type} instance.
+     * 获取给定Type实例的类型文本表示。
      *
      * @param <T>  the type parameter
-     * @param type the type
-     * @return the li type token
+     * @param type - Type实例
+     * @return - 表示给定Type实例的LiTypeToken实例
      */
     public static <T> LiTypeToken<T> ofType(Type type) {
         return new LiTypeToken<>(type);
     }
 
     /**
-     * Gets type literal for the given {@code Type} instance.
+     * 获取给定Class对象的类型文本表示。
      *
      * @param <T>  the type parameter
-     * @param type the type
-     * @return the li type token
+     * @param type - Class对象
+     * @return - 表示给定Class对象的LiTypeToken实例
      */
     public static <T> LiTypeToken<T> of(Class<T> type) {
         return new LiTypeToken<>(type);
     }
 
     /**
-     * Gets type literal for the array type whose elements are all instances of {@code componentType}.
+     * 获取表示所有元素类型均为componentType的数组类型的类型文本表示。
      *
-     * @param componentType the componentType
-     * @return the array
+     * @param componentType - 表示数组元素类型的Type实例
+     * @return 表示该数组类型的LiTypeToken实例
      */
     public static LiTypeToken<?> getArray(Type componentType) {
         return new LiTypeToken<>(LiTypes.arrayOf(componentType));
     }
 
+    /**
+     * 获取该类型的实际类型参数。
+     *
+     * @return - 表示该类型实际类型参数的Type数组
+     */
     @Override
     public final Type[] getActualTypeArguments() {
 
@@ -292,22 +251,29 @@ public class LiTypeToken<T> implements ParameterizedType {
     }
 
     /**
-     * Is parameterized type boolean.
+     * 判断该类型是否是参数化类型。
      *
-     * @return {@code type instanceof ParameterizedType; }
+     * @return - 如果是参数化类型返回true，否则返回false。
      */
     public final boolean isParameterizedType() {
         return type instanceof ParameterizedType;
     }
 
     /**
-     * @return the raw (non-generic) type for this type.
+     * 获取该类型的原始类型。
+     *
+     * @return - 表示该类型的原始类型的Class实例
      */
     @Override
     public final Class<? super T> getRawType() {
         return rawType;
     }
 
+    /**
+     * 获取该类型的所有者类型。
+     *
+     * @return - 表示该类型所有者类型的Type实例
+     */
     @Override
     public Type getOwnerType() {
         if (isParameterizedType()) {
@@ -317,73 +283,24 @@ public class LiTypeToken<T> implements ParameterizedType {
     }
 
     /**
-     * Gets underlying {@code Type} instance.
+     * 获取该类型的Type实例。
      *
-     * @return the type
+     * @return - 表示该类型的Type实例。
      */
     public final Type getType() {
         return type;
     }
 
+    /**
+     * 获取该类型的泛型类型。
+     *
+     * @return - 表示该类型的泛型类型的Class实例
+     */
     @SuppressWarnings("unchecked")
     public final Class<T> getGenericType() {
         return (Class<T>) rawType;
     }
 
-    /**
-     * Check if this type is assignable from the given class object.
-     *
-     * @param cls the cls
-     * @return the boolean
-     * @deprecated this implementation may be inconsistent with javac for types with wildcards.
-     */
-    @Deprecated
-    public boolean isAssignableFrom(Class<?> cls) {
-        return isAssignableFrom((Type) cls);
-    }
-
-    /**
-     * Check if this type is assignable from the given Type.
-     *
-     * @param from the from
-     * @return the boolean
-     * @deprecated this implementation may be inconsistent with javac for types with wildcards.
-     */
-    @Deprecated
-    public boolean isAssignableFrom(Type from) {
-        if (from == null) {
-            return false;
-        }
-
-        if (type.equals(from)) {
-            return true;
-        }
-
-        if (type instanceof Class<?>) {
-            return rawType.isAssignableFrom(TypeUtil.erase(from));
-        } else if (type instanceof ParameterizedType) {
-            return isAssignableFrom(from, (ParameterizedType) type,
-                    new HashMap<>());
-        } else if (type instanceof GenericArrayType) {
-            return rawType.isAssignableFrom(TypeUtil.erase(from))
-                    && isAssignableFrom(from, (GenericArrayType) type);
-        } else {
-            throw buildUnexpectedTypeError(
-                    type, Class.class, ParameterizedType.class, GenericArrayType.class);
-        }
-    }
-
-    /**
-     * Check if this type is assignable from the given type token.
-     *
-     * @param token the token
-     * @return the boolean
-     * @deprecated this implementation may be inconsistent with javac for types with wildcards.
-     */
-    @Deprecated
-    public boolean isAssignableFrom(LiTypeToken<?> token) {
-        return isAssignableFrom(token.getType());
-    }
 
     @Override
     public final int hashCode() {

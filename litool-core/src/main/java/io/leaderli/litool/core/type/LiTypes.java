@@ -11,25 +11,20 @@ import java.lang.reflect.WildcardType;
 
 
 /**
- * Static methods for working with types.
- *
- * @author Bob Lee
- * @author Jesse Wilson copy form gson
+ * 提供静态方法，用于处理类型。
  */
 public final class LiTypes {
 
     private LiTypes() {
-        throw new UnsupportedOperationException();
     }
 
     /**
-     * Returns a new parameterized type, applying {@code typeArguments} to
-     * {@code rawType} and enclosed by {@code ownerType}.
+     * 返回一个新的参数化类型，将 {@code typeArguments} 应用于 {@code rawType} 并由 {@code ownerType} 封装。
      *
-     * @param ownerType     ownerType
-     * @param rawType       rawType
-     * @param typeArguments typeArguments
-     * @return a {@link java.io.Serializable serializable} parameterized type.
+     * @param ownerType     所有者类型
+     * @param rawType       原始类型
+     * @param typeArguments 类型参数
+     * @return 可序列化的参数化类型
      */
     public static ParameterizedType newParameterizedTypeWithOwner(
             Type ownerType, Type rawType, Type... typeArguments) {
@@ -37,24 +32,20 @@ public final class LiTypes {
     }
 
     /**
-     * Returns an array type whose elements are all instances of
-     * {@code componentType}.
+     * 返回一个元素类型都是 {@code componentType} 的数组类型。
      *
-     * @param componentType componentType
-     * @return a {@link java.io.Serializable serializable} generic array type.
+     * @param componentType 组件类型
+     * @return 可序列化的泛型数组类型
      */
     public static GenericArrayType arrayOf(Type componentType) {
         return new GenericArrayTypeImpl(componentType);
     }
 
     /**
-     * Returns a type that represents an unknown type that extends {@code bound}.
-     * For example, if {@code bound} is {@code CharSequence.class}, this returns
-     * {@code ? extends CharSequence}. If {@code bound} is {@code Object.class},
-     * this returns {@code ?}, which is shorthand for {@code ? extends Object}.
+     * 返回表示一个未知 {@code bound} 类型的类型。例如，如果 {@code bound} 是 {@code CharSequence.class}，则返回 {@code ? extends CharSequence}。如果 {@code bound} 是 {@code Object.class}，则返回 {@code ?}，它是 {@code ? extends Object} 的简写。
      *
-     * @param bound bound
-     * @return wild wildcard type
+     * @param bound 限定类型
+     * @return 通配符类型
      */
     public static WildcardType subtypeOf(Type bound) {
         Type[] upperBounds;
@@ -67,12 +58,12 @@ public final class LiTypes {
     }
 
     /**
-     * Returns a type that represents an unknown supertype of {@code bound}. For
-     * example, if {@code bound} is {@code String.class}, this returns {@code ?
-     * super String}**.
+     * 返回表示 {@code bound} 的未知超类型的类型。例如，
+     * 如果 {@code bound} 是 {@code String.class}，
+     * 则返回 {@code ? super String}。
      *
-     * @param bound bound
-     * @return wild wildcard type
+     * @param bound 限定类型
+     * @return 通配符类型
      */
     public static WildcardType supertypeOf(Type bound) {
         Type[] lowerBounds;
@@ -86,9 +77,9 @@ public final class LiTypes {
 
 
     /**
-     * Returns the generic supertype for {@code supertype}. For example, given a class {@code
-     * IntegerSet}**, the result for when supertype is {@code Set.class} is {@code Set<Integer>} and the
-     * result when the supertype is {@code Collection.class} is {@code Collection<Integer>}.
+     * 返回 {@code supertype} 的通用超类型。例如，给定一个类 {@code IntegerSet}，
+     * 当超类型为 {@code Set.class} 时，返回 {@code Set<Integer>}，当超类型为
+     * {@code Collection.class} 时，返回 {@code Collection<Integer>}。
      *
      * @param context   -
      * @param rawType   -
@@ -131,11 +122,11 @@ public final class LiTypes {
 
 
     /**
-     * Returns the component type of this array type.
+     * 返回此数组类型的组件类型。
      *
-     * @param array the array
-     * @return the array component type
-     * @throws ClassCastException if this type is not an array.
+     * @param array 数组类型
+     * @return 数组组件类型
+     * @throws ClassCastException 如果此类型不是数组。
      */
     public static Type getArrayComponentType(Type array) {
         return array instanceof GenericArrayType

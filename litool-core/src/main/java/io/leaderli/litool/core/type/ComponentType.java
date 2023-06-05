@@ -1,20 +1,20 @@
 package io.leaderli.litool.core.type;
 
 /**
- * Explicitly implement this interface indicate the generics you will use
+ * 用于明确指定使用的泛型类型
  *
- * @param <T> the type of indicate
+ * @param <T> 泛型
  */
 public interface ComponentType<T> {
 
+
     /**
-     * Provide a avoid null pointer method to get indicate type, it will return null
-     * if component is null
+     * 从组件获取指定类型，若组件为 null 则返回 null
      *
-     * @param component the componentType implement instance
-     * @param <T>       the class of componentType
-     * @param <R>       the generic type of the componentType
-     * @return the real type of componentType indicate type
+     * @param component 组件类型实例
+     * @param <T>       组件类型
+     * @param <R>       组件泛型类型
+     * @return 组件指定类型的实际类型
      */
     static <T extends ComponentType<R>, R> Class<R> componentType(T component) {
 
@@ -25,7 +25,9 @@ public interface ComponentType<T> {
     }
 
     /**
-     * @return the class of you indicate oine
+     * 获取组件指定类型的实际类型，一般情况下接口需要显式的重写它
+     *
+     * @return 指定类型的实际类型
      */
     @SuppressWarnings("unchecked")
     default Class<T> componentType() {

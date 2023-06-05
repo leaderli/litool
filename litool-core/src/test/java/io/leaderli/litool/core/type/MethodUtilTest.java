@@ -32,6 +32,9 @@ class MethodUtilTest {
         same = MethodUtil.getSameSignatureMethod(new LiTypeToken<Function<String, Integer>>() {
         }, method);
         Assertions.assertNotNull(same);
+
+        Assertions.assertNotNull(MethodUtil.getSameSignatureMethod(LiTypeToken.of(MethodUtilBean.class), new MethodSignature("test")));
+
     }
 
     @SuppressWarnings("Convert2Lambda")
@@ -69,10 +72,12 @@ class MethodUtilTest {
     }
 
     @Test
-    void findMethod() {
+    void shortString() throws NoSuchMethodException {
 
-        Assertions.assertTrue(MethodUtil.findMethod(MethodUtilBean.class, new MethodSignature("test")).present());
+        Method method = this.getClass().getMethod("apply", String.class);
 
+        Assertions.assertEquals("MethodUtilTest#apply(String):Integer", MethodUtil.shortString(method));
+        Assertions.assertEquals("MethodUtilTest#apply", MethodUtil.veryShortString(method));
     }
 
     @Test

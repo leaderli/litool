@@ -452,9 +452,11 @@ public class ClassUtil {
     }
 
     /**
-     * @param constructor the constructor
-     * @param <T>         the type of constructor
-     * @return the declare class of constructor
+     * 获取构造方法所属的类。
+     *
+     * @param constructor 构造方法
+     * @param <T>         构造方法的类型
+     * @return 构造方法所属的类
      */
     public static <T> Class<T> getDeclaringClass(Constructor<T> constructor) {
 
@@ -465,8 +467,10 @@ public class ClassUtil {
     }
 
     /**
-     * @param method the  method
-     * @return the declare class of method
+     * 获取方法所属的类。
+     *
+     * @param method 方法
+     * @return 构造方法所属的类
      */
     public static Class<?> getDeclaringClass(Method method) {
         if (method == null) {
@@ -476,8 +480,10 @@ public class ClassUtil {
     }
 
     /**
-     * @param field the  field
-     * @return the declare class of field
+     * 获取字段的声明类
+     *
+     * @param field 字段
+     * @return 字段的声明类
      */
     public static Class<?> getDeclaringClass(Field field) {
         if (field == null) {
@@ -487,8 +493,10 @@ public class ClassUtil {
     }
 
     /**
-     * @param field the field
-     * @return the type of field
+     * 获取字段的类型
+     *
+     * @param field 字段
+     * @return 获取字段的类型
      */
     public static Class<?> getType(Field field) {
         if (field == null) {
@@ -498,8 +506,8 @@ public class ClassUtil {
     }
 
     /**
-     * @param method the method
-     * @return the type of  method return
+     * @param method 方法
+     * @return 获取方法的返回类型
      */
     public static Class<?> getType(Method method) {
         if (method == null) {
@@ -509,12 +517,14 @@ public class ClassUtil {
     }
 
     /**
-     * @param cls the class
-     * @return return the class jar file
+     * 获取一个类的Jar文件
+     *
+     * @param clazz 需要获取Jar文件的类
+     * @return 返回包含该类所在Jar文件的Lino对象
      */
-    public static Lino<File> getJarFile(Class<?> cls) {
+    public static Lino<File> getJarFile(Class<?> clazz) {
 
-        return Lino.of(cls)
+        return Lino.of(clazz)
                 .map(Class::getProtectionDomain)
                 .map(ProtectionDomain::getCodeSource)
                 .map(CodeSource::getLocation)

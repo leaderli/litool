@@ -32,7 +32,7 @@ class MethodScannerTest {
 
 
         methodScanner = new MethodScanner(MethodScannerTest.class, true, NullableFunction.notNull());
-        methodScanner.set_scan_object();
+        methodScanner.includeObjectMethods();
         scan = methodScanner.scan();
         Assertions.assertTrue(scan.first(f -> f.getName().equals("toString")).present());
 

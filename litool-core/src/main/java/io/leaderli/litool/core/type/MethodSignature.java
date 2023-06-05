@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
- * the signature of method, include method name, method returnType, method parameterTypes
+ * 该类表示方法签名，包括方法名、返回类型和参数类型。
  *
  * @author leaderli
  * @since 2022/7/26 10:36 AM
@@ -30,7 +30,7 @@ public class MethodSignature {
      */
     public final Type[] parameterTypes;
     /**
-     * if {@code modifiers < 0}, it means the modifiers will not be compared at {@link  #equals(Method)}
+     * 修饰符，如果修饰符<0，则在equals(Method)中不进行比较。
      *
      * @see Method#getModifiers()
      */
@@ -68,10 +68,10 @@ public class MethodSignature {
     }
 
     /**
-     * Return strict signature of method, it's will compare method modifiers
+     * 返回严格的方法签名，将比较方法的修饰符。
      *
-     * @param method the method
-     * @return strict signature of method
+     * @param method 方法。
+     * @return 严格的方法签名。
      */
     public static MethodSignature strict(Method method) {
         Class<?> declaringClass = method.getDeclaringClass();
@@ -79,22 +79,12 @@ public class MethodSignature {
     }
 
     /**
-     * Return no-strict signature of method, it mean {@code modifiers=-1}
+     * 返回严格的方法签名，将比较方法的修饰符。
      *
-     * @param method the method
-     * @return no-strict signature of method
-     */
-    public static MethodSignature non_strict(Method method) {
-
-        Class<?> declaringClass = method.getDeclaringClass();
-        return non_strict(method, declaringClass);
-    }
-
-    /**
-     * Return strict signature of method, it's will compare method modifiers
-     *
-     * @param method the method
-     * @return strict signature of method
+     * @param method  方法。
+     * @param context 类型上下文。 用于将返回的参数和返回类型中的泛型替换为实际类型
+     * @return 严格的方法签名。
+     * @see TypeUtil#resolve(Type, Type)
      */
     public static MethodSignature strict(Method method, Type context) {
         Type returnType = TypeUtil.resolve(context, method.getGenericReturnType());
@@ -107,10 +97,35 @@ public class MethodSignature {
     }
 
     /**
-     * Return no-strict signature of method, it mean {@code modifiers=-1}
+     * 确定两个方法是否具有相同的签名。
      *
-     * @param method the method
-     * @return no-strict signature of method
+     * @param method 方法。
+     * @return 两个方法是否具有相同的签名。
+     */
+    public boolean equals(Method method) {
+        return this.equals(non_strict(method));
+    }
+
+    /**
+     * 返回非严格的方法签名，这意味着modifiers=-1。
+     *
+     * @param method 方法。
+     * @return 非严格的方法签名。
+     */
+
+    public static MethodSignature non_strict(Method method) {
+
+        Class<?> declaringClass = method.getDeclaringClass();
+        return non_strict(method, declaringClass);
+    }
+
+    /**
+     * 返回非严格的方法签名，这意味着modifiers=-1。
+     *
+     * @param method  方法。
+     * @param context 类型上下文。 用于将返回的参数和返回类型中的泛型替换为实际类型
+     * @return 非严格的方法签名。
+     * @see TypeUtil#resolve(Type, Type)
      */
     public static MethodSignature non_strict(Method method, Type context) {
 
@@ -121,19 +136,6 @@ public class MethodSignature {
 
         return new MethodSignature(method.getName(), returnType, parameterTypes, -1);
 
-    }
-
-    /**
-     * Return whether two method have same signature
-     *
-     * @param method a  method
-     * @return whether two method have same signature
-     * @see #name
-     * @see #returnType
-     * @see #parameterTypes
-     */
-    public boolean equals(Method method) {
-        return this.equals(non_strict(method));
     }
 
 

@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.util.function.Function;
 
 /**
- * a tool to help find method of class
+ * 用于查找类中的方法的工具类
  *
  * @author leaderli
  * @since 2022/7/26 8:41 AM
@@ -16,58 +16,66 @@ public class MethodScanner {
 
 
     /**
-     * the class being look up
+     * 被查找的类
      */
-    private final Class<?> cls;
+    private final Class<?> targetClass;
     /**
-     * whether find private method
+     * 是否查找私有方法
      *
      * @see Class#getDeclaredMethods()
      */
     private final boolean scan_private;
 
     /**
-     * the filter of found method
+     * 查找到的方法需要满足的条件
      *
      * @see io.leaderli.litool.core.util.BooleanUtil#parse(Object)
      */
     private final Function<Method, ?> filter;
     /**
-     * exclude object method
+     * 是否排除 Object 类的方法
      */
-    private boolean not_scan_object = true;
+    private boolean excludeObjectMethods = true;
 
-    public MethodScanner(Class<?> cls, boolean scan_private, Function<Method, ?> filter) {
-        this.cls = cls;
+    public MethodScanner(Class<?> targetClass, boolean scan_private, Function<Method, ?> filter) {
+        this.targetClass = targetClass;
         this.scan_private = scan_private;
         this.filter = filter;
     }
 
-    public static MethodScanner of(Class<?> cls, boolean scan_private, Function<Method, ?> filter) {
-        return new MethodScanner(cls, scan_private, filter);
-    }
-
-    public void set_scan_object() {
-        this.not_scan_object = false;
+    /**
+     * 创建 MethodScanner 实例
+     *
+     * @param targetClass 需要查找方法的类
+     * @param scanPrivate 是否查找私有方法
+     * @param filter      查找到的方法需要满足的条件
+     * @return 返回新的 MethodScanner 实例
+     */
+    public static MethodScanner of(Class<?> targetClass, boolean scanPrivate, Function<Method, ?> filter) {
+        return new MethodScanner(targetClass, scanPrivate, filter);
     }
 
     /**
-     * the lira of found method, the scope of the lookup method according to {@link  #scan_private}
-     * , {@link  #not_scan_object} and {@link  #filter}
+     * 设置包含 Object 类的方法
+     */
+    public void includeObjectMethods() {
+        this.excludeObjectMethods = false;
+    }
+
+    /**
+     * 在 targetClass 中查找方法
      *
-     * @return the found methods
-     * @see #filter
-     * @see #scan_private
+     * @return 返回一个 Lira 实例，包含所有符合条件的方法
      */
     public Lira<Method> scan() {
-        if (cls != null) {
+        if (targetClass != null) {
 
-            Lira<Method> methods = Lira.of(cls.getMethods());
+            Lira<Method> methods = Lira.of(targetClass.getMethods());
 
             if (scan_private) {
-                methods = CollectionUtils.union(Method.class, methods, Lira.of(cls.getDeclaredMethods()));
+                methods = CollectionUtils.union(Method.class, methods, Lira.of(targetClass.getDeclaredMethods()));
             }
-            if (not_scan_object) {
+            if (excludeObjectMethods) {
                 methods = methods.filter(MethodUtil::notObjectMethod);
             }
 

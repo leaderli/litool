@@ -14,47 +14,60 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * @author leaderli
- * @since 2022/9/26 12:34 PM
+ * 用于获取特定注解下另一个注解的信息，同时提供了创建一个对象的方法
+ *
+ * @param <A> 特定注解
+ * @param <F> 另一个注解
  */
 public class MetaAnnotation<A extends Annotation, F extends MetaFunction<? extends Annotation, ?, ?>> {
 
     public final Map<A, F> meta_function = new HashMap<>();
-    public final Class<A> meta;
-    public final Class<F> functionType;
+    public final Class<A> metaClass;
+    public final Class<F> functionClass;
 
     @SuppressWarnings("unchecked")
-    public MetaAnnotation(Class<A> meta, LiTypeToken<F> typeToken) {
-        this(meta, (Class<F>) typeToken.getRawType());
+    public MetaAnnotation(Class<A> metaClass, LiTypeToken<F> typeToken) {
+        this(metaClass, (Class<F>) typeToken.getRawType());
     }
 
-    public MetaAnnotation(Class<A> meta, Class<F> functionType) {
+    public MetaAnnotation(Class<A> metaClass, Class<F> functionClass) {
 
-        Objects.requireNonNull(meta);
-        LiAssertUtil.assertTrue(meta.isAnnotation());
+        Objects.requireNonNull(metaClass);
+        LiAssertUtil.assertTrue(metaClass.isAnnotation());
 
-        Method method = ReflectUtil.getMethod(meta, "value").get();
+        Method method = ReflectUtil.getMethod(metaClass, "value").get();
         Objects.requireNonNull(method);
 
 
         Class<?> metaFunctionType =
                 ParameterizedTypeImpl.make(method.getGenericReturnType()).getActualClassArgument().get();
 
-        LiAssertUtil.assertTrue(metaFunctionType == functionType);
+        LiAssertUtil.assertTrue(metaFunctionType == functionClass);
 
-        this.meta = meta;
-        this.functionType = functionType;
+        this.metaClass = metaClass;
+        this.functionClass = functionClass;
     }
 
-
+    /**
+     * 获取特定注解下另一个注解的信息
+     *
+     * @param annotatedElement 被特定注解标记的元素
+     * @return 包含另一个注解和特定注解的元组
+     */
     public Lino<LiTuple2<F, Annotation>> relative(AnnotatedElement annotatedElement) {
         return relatives(annotatedElement).first();
     }
 
+    /**
+     * 获取特定注解下另一个注解的信息
+     *
+     * @param annotatedElement 被特定注解标记的元素
+     * @return 包含另一个注解和特定注解的元组的列表
+     */
     public Lira<LiTuple2<F, Annotation>> relatives(AnnotatedElement annotatedElement) {
-        return ReflectUtil.findAnnotationsWithMetaAnnotation(annotatedElement, meta)
-                .tuple(an -> an.annotationType().getAnnotation(meta))
-                .map(tu -> tu.map2(metaInstance -> this.compute(tu._1, tu._2))
+        return ReflectUtil.findAnnotationsWithMetaAnnotation(annotatedElement, metaClass)
+                .tuple(an -> an.annotationType().getAnnotation(metaClass))
+                .map(tu -> tu.map2(metaInstance -> this.computeIfAbsent(tu._1, tu._2))
                         .swap()         // swap to human readable
                 )
                 .assertTrue(a ->
@@ -66,16 +79,30 @@ public class MetaAnnotation<A extends Annotation, F extends MetaFunction<? exten
 
     }
 
-    private F compute(Annotation annotated, A metaInstance) {
+    /**
+     * 计算并返回另一个注解的对象
+     *
+     * @param annotated    注释
+     * @param metaInstance 特定注解的实例
+     * @return 另一个注解的对象
+     */
+    private F computeIfAbsent(Annotation annotated, A metaInstance) {
         return meta_function.computeIfAbsent(metaInstance, k -> createBy(annotated, metaInstance));
     }
 
+    /**
+     * 创建另一个注解的对象
+     *
+     * @param annotated    注释
+     * @param metaInstance 特定注解的实例
+     * @return 另一个注解的对象
+     */
     @SuppressWarnings("unchecked")
     private F createBy(Annotation annotated, A metaInstance) {
         return (F) ReflectUtil.invokeMethodByName(metaInstance, "value")
                 .cast(Class.class)
                 .unzip(ReflectUtil::newInstance)
-                .cast(functionType)
+                .cast(functionClass)
                 .get();
     }
 }

@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.type;
 
-import io.leaderli.litool.core.meta.Lino;
-
 import java.lang.annotation.Repeatable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -10,12 +8,32 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * 提供了一系列工具方法，用于操作Method对象。
+ *
  * @author leaderli
  * @since 2022/6/26 7:00 AM
  */
 public class MethodUtil {
     public static final String CLINIT_METHOD_NAME = "<clinit>";
 
+    /**
+     * 获取与参考方法具有相同签名的方法对象。
+     *
+     * @param lookup          要查找方法的类
+     * @param referenceMethod 参考方法的方法
+     * @return 与参考方法具有相同签名的方法对象或null（如果找不到匹配的方法）
+     */
+    public static Method getSameSignatureMethod(LiTypeToken<?> lookup, Method referenceMethod) {
+        return getSameSignatureMethod(lookup, MethodSignature.non_strict(referenceMethod));
+    }
+
+    /**
+     * 获取与参考方法具有相同签名的方法对象。
+     *
+     * @param lookup                   要查找方法的类
+     * @param referenceMethodSignature 参考方法的方法签名
+     * @return 与参考方法具有相同签名的方法对象或null（如果找不到匹配的方法）
+     */
     public static Method getSameSignatureMethod(LiTypeToken<?> lookup, MethodSignature referenceMethodSignature) {
         for (Method m : ReflectUtil.getMethods(lookup.getRawType())) {
 
@@ -35,36 +53,10 @@ public class MethodUtil {
     }
 
     /**
-     * Return the method of lookup class which have same signature with referenceMethod method
+     * 判断方法是否不属于Object类。
      *
-     * @param lookup          the look up  class
-     * @param referenceMethod the method  will use to be compare
-     * @return the method of lookup class which have same signature with referenceMethod method
-     */
-    public static Method getSameSignatureMethod(LiTypeToken<?> lookup, Method referenceMethod) {
-        return getSameSignatureMethod(lookup, MethodSignature.non_strict(referenceMethod));
-    }
-
-
-    /**
-     * Return the same signature method of lookup class
-     *
-     * @param lookup    the lookup class
-     * @param signature the signature
-     * @return the same signature method of lookup class
-     */
-    public static Lino<Method> findMethod(Class<?> lookup, MethodSignature signature) {
-
-        MethodScanner methodScanner = new MethodScanner(lookup, true, signature::equals);
-        return methodScanner.scan().first();
-    }
-
-
-    /**
-     * Return method is not belong to {@link Object}
-     *
-     * @param method a method
-     * @return method is not belong to {@link Object}
+     * @param method 要判断的方法
+     * @return 如果方法不属于Object类，则返回true，否则返回false。
      * @see #belongsTo(Method, Class)
      */
     public static boolean notObjectMethod(Method method) {
@@ -72,11 +64,11 @@ public class MethodUtil {
     }
 
     /**
-     * Return method is belong to {@link Object}
+     * 判断方法是否属于指定的类。
      *
-     * @param method a method
-     * @param cls    a  class
-     * @return method is belong to {@link Object}
+     * @param method 要判断的方法
+     * @param cls    要比较的类
+     * @return 如果方法属于指定的类，则返回true，否则返回false。
      */
     public static boolean belongsTo(Method method, Class<?> cls) {
         return method.getDeclaringClass() == cls;
@@ -84,10 +76,10 @@ public class MethodUtil {
 
 
     /**
-     * Return method is  {@link  Repeatable#value()} class's value method
+     * 判断方法是否是 {@link  Repeatable#value()} 方法的实现。
      *
-     * @param method a method
-     * @return method is  {@link  Repeatable#value()} class's value method
+     * @param method 要判断的方法
+     * @return 如果方法是 {@link  Repeatable#value()} 方法的实现，则返回true，否则返回false。
      */
     public static boolean methodOfRepeatableContainer(Method method) {
 
@@ -111,8 +103,8 @@ public class MethodUtil {
      *  Object#toString():String
      * </pre>
      *
-     * @param method a method
-     * @return get a short toString of Method
+     * @param method 方法
+     * @return 方法的简短字符串表现形式，包含参数类型和返回类型
      */
     public static String shortString(Method method) {
 
@@ -130,8 +122,8 @@ public class MethodUtil {
      *  Object#toString
      * </pre>
      *
-     * @param method a method
-     * @return get a very short toString of Method
+     * @param method 方法
+     * @return 方法的简短字符串表现形式，不包含参数类型和返回类型
      */
     public static String veryShortString(Method method) {
         return method.getDeclaringClass().getSimpleName() + "#" + method.getName();

@@ -11,6 +11,39 @@ import java.lang.reflect.Modifier;
  */
 public class ModifierUtil {
 
+
+    /**
+     * 获取成员变量访问权限的优先级
+     * <p>
+     * 计算公式如下：
+     * <pre>
+     * public    0b100
+     * protected 0b010
+     * default   0b001
+     * private   0b000
+     * </pre>
+     * </p>
+     * <p>
+     * 优先级越高，则表示访问权限越大
+     * </p>
+     *
+     * @param member 成员变量
+     * @return 成员变量访问权限的优先级
+     */
+    public static int priority(Member member) {
+        int priority;
+        if (ModifierUtil.isPublic(member)) {
+            priority = 0b100;
+        } else if (ModifierUtil.isProtected(member)) {
+            priority = 0b10;
+        } else if (ModifierUtil.isPrivate(member)) {
+            priority = 0;
+        } else {
+            priority = 1;
+        }
+        return priority;
+    }
+
     public static boolean isFinal(Member member) {
         return Modifier.isFinal(member.getModifiers());
     }
@@ -29,34 +62,6 @@ public class ModifierUtil {
 
     public static boolean isStatic(Class<?> cls) {
         return Modifier.isStatic(cls.getModifiers());
-    }
-
-    /**
-     * the Calculation formula:
-     * <pre>
-     * public  0b100
-     * protected 0b10
-     * default 0b1
-     * private 0b0
-     * </pre>
-     * <p>
-     * Higher priority means easier access
-     *
-     * @param member the member have modifier
-     * @return the priority of {@link  Member}
-     */
-    public static int priority(Member member) {
-        int priority;
-        if (ModifierUtil.isPublic(member)) {
-            priority = 0b100;
-        } else if (ModifierUtil.isProtected(member)) {
-            priority = 0b10;
-        } else if (ModifierUtil.isPrivate(member)) {
-            priority = 0;
-        } else {
-            priority = 1;
-        }
-        return priority;
     }
 
     public static boolean isPublic(Member member) {

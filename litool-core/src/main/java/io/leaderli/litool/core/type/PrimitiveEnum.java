@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * The enum Primitive enum.
+ * 枚举类，封装了Java的基本数据类型及其包装类型，提供了一些常用的操作方法。
  *
  * @author leaderli
  * @since 2022 /8/17 6:53 PM
@@ -148,10 +148,8 @@ public enum PrimitiveEnum {
     }
 
     /**
-     * Is number boolean.
-     *
      * @param obj the obj
-     * @return is instanceof {@link Number}
+     * @return 如果是基本数字类型，返回true，否则返回false
      */
     public static boolean isNumber(Object obj) {
         return isNumber(get(obj));
@@ -168,68 +166,72 @@ public enum PrimitiveEnum {
      * </ul>
      *
      * @param primitiveEnum the  primitive enum
-     * @return the primitive is the number
+     * @return 如果是基本数字类型，返回true，否则返回false
      */
     public static boolean isNumber(PrimitiveEnum primitiveEnum) {
         return ObjectsUtil.sameAny(primitiveEnum, BYTE, FLOAT, DOUBLE, LONG, INT, SHORT);
     }
 
-    public static boolean isPrimitive(Type type) {
-        return PRIMITIVE_WRAPPER_MAP.get(type) != null;
-    }
-
     /**
-     * Return the primitive enum related to obj
+     * 获取指定类型的PrimitiveEnum实例
      *
-     * @param obj the obj
-     * @return the primitive enum related to obj
-     * @see #get(Class) #get(Class)
+     * @param obj 类
+     * @return PrimitiveEnum实例，如果不是基本数据类型或其包装类型，返回 {@link #OBJECT}
      */
     public static PrimitiveEnum get(Object obj) {
         return get(ClassUtil.getDeclaringClass(obj));
     }
 
     /**
-     * Return the primitive enum related to cls
+     * 获取指定类型的PrimitiveEnum实例
      *
-     * @param cls the cls
-     * @return the primitive enum related to cls
-     * @see #get(Class) #get(Class)
+     * @param clazz 类型
+     * @return PrimitiveEnum实例，如果不是基本数据类型或其包装类型，返回 {@link #OBJECT}
      */
-    public static PrimitiveEnum get(Class<?> cls) {
-        cls = ClassUtil.primitiveToWrapper(cls);
+    public static PrimitiveEnum get(Class<?> clazz) {
 
+        clazz = ClassUtil.primitiveToWrapper(clazz);
 
-        if (cls == Byte.class) {
+        if (clazz == Byte.class) {
             return BYTE;
         }
-        if (cls == Boolean.class) {
+        if (clazz == Boolean.class) {
             return BOOLEAN;
         }
-        if (cls == Character.class) {
+        if (clazz == Character.class) {
             return CHAR;
         }
-        if (cls == Double.class) {
+        if (clazz == Double.class) {
             return DOUBLE;
         }
-        if (cls == Float.class) {
+        if (clazz == Float.class) {
             return FLOAT;
         }
-        if (cls == Long.class) {
+        if (clazz == Long.class) {
             return LONG;
         }
-        if (cls == Integer.class) {
+        if (clazz == Integer.class) {
             return INT;
         }
 
-        if (cls == Short.class) {
+        if (clazz == Short.class) {
             return SHORT;
         }
-        if (cls == Void.class) {
+        if (clazz == Void.class) {
             return VOID;
         }
 
         return OBJECT;
+    }
+
+    /**
+     * 判断指定的类型是否为基本数据类型或其包装类型
+     *
+     * @param type 要判断的类型
+     * @return 如果是基本数据类型或其包装类型，返回true，否则返回false
+     */
+    public static boolean isPrimitive(Type type) {
+        return PRIMITIVE_WRAPPER_MAP.get(type) != null;
     }
 
     /**
@@ -244,11 +246,10 @@ public enum PrimitiveEnum {
     }
 
     /**
-     * Zero value t.
+     * 获取指定类型的零值
      *
-     * @param <T>  the type parameter of class
-     * @param type the class
-     * @return the class zero value
+     * @param type 类型
+     * @return 零值，如果不是基本数据类型或其包装类型，返回null
      */
     @SuppressWarnings({"unchecked", "java:S1845"})
     public static <T> T zero_value(Class<T> type) {
@@ -257,11 +258,12 @@ public enum PrimitiveEnum {
 
 
     /**
-     * Read t.
+     * 如果value为null，则返回{@link #zero_value}
      *
-     * @param <T>   the type parameter
-     * @param value the value
-     * @return the t
+     * @param <T>   枚举所指代的类型
+     * @param value 值
+     * @return 将值转换为枚举所指代的类型
+     * @see StringConvert#parser(String, Object)
      */
     @SuppressWarnings("unchecked")
     public <T> T read(Object value) {

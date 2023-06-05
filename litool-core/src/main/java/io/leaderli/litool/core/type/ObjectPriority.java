@@ -1,5 +1,10 @@
 package io.leaderli.litool.core.type;
 
+/**
+ * 该类用于封装一个对象和一个优先级，方便进行优先级排序
+ *
+ * @param <T> 对象类型
+ */
 public class ObjectPriority<T> {
 
 

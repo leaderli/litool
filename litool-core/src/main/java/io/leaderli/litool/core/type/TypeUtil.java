@@ -2,7 +2,6 @@ package io.leaderli.litool.core.type;
 
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.internal.GenericArrayTypeImpl;
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import io.leaderli.litool.core.internal.WildcardTypeImpl;
 
@@ -43,8 +42,6 @@ public class TypeUtil {
     public static boolean isUnknown(Type type) {
         return null == type || type instanceof TypeVariable;
     }
-
-
 
 
     /**
@@ -118,7 +115,7 @@ public class TypeUtil {
 
             Type componentType = ((GenericArrayType) type).getGenericComponentType();
             componentType = resolveByTypeVariables(componentType, visitedTypeVariables);
-            return new GenericArrayTypeImpl(componentType);
+            return LiTypes.arrayOf(componentType);
 //            return Array.newInstance(erase(componentType), 0).getClass();
 
 
@@ -393,7 +390,7 @@ public class TypeUtil {
     public static Type canonicalize(Type type) {
         if (type instanceof Class) {
             Class<?> c = (Class<?>) type;
-            return c.isArray() ? new GenericArrayTypeImpl(canonicalize(c.getComponentType())) : c;
+            return c.isArray() ? LiTypes.arrayOf(canonicalize(c.getComponentType())) : c;
 
         } else if (type instanceof ParameterizedType) {
             ParameterizedType p = (ParameterizedType) type;
@@ -401,7 +398,7 @@ public class TypeUtil {
 
         } else if (type instanceof GenericArrayType) {
             GenericArrayType g = (GenericArrayType) type;
-            return new GenericArrayTypeImpl(g.getGenericComponentType());
+            return LiTypes.arrayOf(g.getGenericComponentType());
 
         } else if (type instanceof WildcardType) {
             WildcardType w = (WildcardType) type;
