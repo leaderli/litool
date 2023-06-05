@@ -205,16 +205,7 @@ class TypeUtilTest {
 
     }
 
-    @Test
-    void checkNotPrimitive() {
 
-        Assertions.assertThrows(RuntimeException.class, () -> TypeUtil.checkNotPrimitive(int.class));
-        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(Integer.class));
-        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(null));
-        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(ParameterizedTypeImpl.make(null,
-                ArrayList.class, String.class)));
-        Assertions.assertDoesNotThrow(() -> TypeUtil.checkNotPrimitive(List.class.getTypeParameters()[0]));
-    }
 
     @Test
     void testEquals() {

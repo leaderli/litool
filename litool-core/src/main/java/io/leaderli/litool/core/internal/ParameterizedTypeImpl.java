@@ -3,6 +3,7 @@ package io.leaderli.litool.core.internal;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.TypeUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
@@ -36,7 +37,7 @@ public class ParameterizedTypeImpl implements ParameterizedType {
         for (int i = 0; i < length; i++) {
             Type typeArgument = typeArguments[i];
             Objects.requireNonNull(typeArgument);
-            TypeUtil.checkNotPrimitive(typeArgument);
+            PrimitiveEnum.checkNotPrimitive(typeArgument);
             this.typeArguments[i] = TypeUtil.canonicalize(typeArgument);
         }
     }

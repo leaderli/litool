@@ -1,57 +1,61 @@
 package io.leaderli.litool.core.type;
 
 
-import io.leaderli.litool.core.meta.Lino;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * a map like class use class type as key to store value, provide type-safe {@link  #put(Class, Object)},
- * {@link  #get(Class)} method
- * <p>
- * to avoid auto-box, only use wrapper class
+ * 类似于Map的数据结构，使用类类型作为键来存储值，提供类型安全的 put 和 get 方法。
+ * 为了避免自动装箱，仅使用包装类。
  */
 public class TypeMap {
 
     private final Map<Class<?>, Object> proxy = new HashMap<>();
 
-    public <T> Lino<T> computeIfAbsent(Class<T> type, Supplier<T> supplier) {
-        return this.get(type).or(() -> this.put(type, supplier.get()));
-    }
-
     /**
-     * Return the value stored by class
+     * 如果TypeMap中不存在该类型的值，则使用指定的Supplier生成新值并将其存储在TypeMap中。
      *
-     * @param type the key
-     * @param <T>  the type parameter of key and  the type of value
-     * @return the value stored by class
+     * @param <T>      值的类型
+     * @param type     值的类型
+     * @param supplier 新值的生成器
+     * @return Lino对象，其中包含从TypeMap中获取到的新值
      */
     @SuppressWarnings("unchecked")
-    public <T> Lino<T> get(Class<T> type) {
-        // 基本类型在 LiTypeMap 会被装箱，因此需要使用其包装类去查找
-        return Lino.of((T) this.proxy.get(ClassUtil.primitiveToWrapper(type)));
+    public <T> T computeIfAbsent(Class<T> type, Supplier<T> supplier) {
+        return (T) proxy.computeIfAbsent(type, k -> supplier.get());
     }
 
     /**
-     * Store the key-value
+     * 获取TypeMap中存储的值。
      *
-     * @param type  the key
-     * @param value the value
-     * @param <T>   the type parameter of key and  the type of value
-     * @return the value
+     * @param <T>  值的类型
+     * @param type 值的类型
+     * @return Lino对象，其中包含从TypeMap中获取到的值
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T get(Class<T> type) {
+        // 基本类型在 LiTypeMap 会被装箱，因此需要使用其包装类去查找
+        return (T) this.proxy.get(ClassUtil.primitiveToWrapper(type));
+    }
+
+    /**
+     * 存储键值对到TypeMap中。
+     * @param <T> 值的类型
+     * @param type 键的类型
+     * @param value 值
+     * @return 存储的值
      */
     public <T> T put(Class<T> type, T value) {
         this.proxy.put(ClassUtil.primitiveToWrapper(type), value);
         return value;
     }
 
+
     /**
-     * Remove the key and relative value from type map
-     *
-     * @param type the key
-     * @param <T>  the type parameter of key and  the type of value
+     * 从TypeMap中删除键和相关值。
+     * @param <T> 值的类型
+     * @param type 键的类型
      */
     public <T> void remove(Class<T> type) {
         this.proxy.remove(ClassUtil.primitiveToWrapper(type));

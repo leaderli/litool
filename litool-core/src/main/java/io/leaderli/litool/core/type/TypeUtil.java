@@ -31,13 +31,12 @@ public class TypeUtil {
     public static final TypeVariable[] EMPTY_TYPE_VARIABLE_ARRAY = new TypeVariable[0];
 
     /**
-     * the type is unknown
      * <pre>
      * null == type || type instanceof TypeVariable;
      * </pre>
      *
-     * @param type the type
-     * @return the type is unknown
+     * @param type 类型
+     * @return 类型是未知的
      */
     public static boolean isUnknown(Type type) {
         return null == type || type instanceof TypeVariable;
@@ -45,10 +44,8 @@ public class TypeUtil {
 
 
     /**
-     * Erase class.
-     *
-     * @param type the type
-     * @return the type raw class
+     * @param type 类型
+     * @return 根据传入的Type类型参数，获取其原始类型Class
      */
     public static Class<?> erase(Type type) {
         if (type instanceof Class<?>) {
@@ -193,16 +190,14 @@ public class TypeUtil {
         return type;
     }
 
+
     /**
-     * the generic class type will be declared at actual class that can be new.
-     * the resolving progress will replace {@link  TypeVariable} to the {@link  Class},
-     * at end, it will return  {@link  ParameterizedType} with the toResolve class and with
-     * actual context typeParameters
+     * 该方法用于解析泛型类型，将TypeVariable替换为Class，最终返回带有实际上下文类型参数的ParameterizedType
      *
-     * @param <T>       the type parameter of toResolve
-     * @param context   the context type
-     * @param toResolve the toResolve class that has generic typeParameter
-     * @return the LiParameterizedType with toResolve class with context class typeParameters
+     * @param <T>       toResolve的类型参数
+     * @param context   上下文类型
+     * @param toResolve 需要解析的泛型类型
+     * @return 带有toResolve类和上下文类类型参数的ParameterizedTypeImpl
      */
     public static <T> ParameterizedTypeImpl resolve2Parameterized(Type context, Class<T> toResolve) {
         Type resolve = resolve(context, toResolve);
@@ -211,16 +206,16 @@ public class TypeUtil {
 
 
     /**
-     * Resolve type variable type.
+     * 解析 TypeVariable 类型
      *
-     * @param context      the context
-     * @param typeVariable the type variable
-     * @return the type
+     * @param context      上下文
+     * @param typeVariable 待解析的 TypeVariable 类型
+     * @return 解析后的类型
      */
     public static Type resolveTypeVariable(Type context, TypeVariable<?> typeVariable) {
 
 
-        Class<?> declaredByRaw = getDeclaringClass(typeVariable);
+        Class<?> declaredByRaw = ClassUtil.getDeclaringClass(typeVariable);
 
         // we can't reduce this further
         if (declaredByRaw == null) {
@@ -282,48 +277,31 @@ public class TypeUtil {
 
     }
 
-
     /**
-     * the declare type have declare the actual {@link  ParameterizedType} of it's {@link  Class#getTypeParameters()}.
-     * store the corresponding pair. just expand {@link  TypeVariable} of {@link ParameterizedType#getRawType()}
-     * <p>
-     * if declare type is  {@link  GenericArrayType}, expand it's {@link GenericArrayType#getGenericComponentType()}
+     * 将类型变量展开为实际类型，并将其存储在类型变量-类型映射中。
+     * 对于 {@link ParameterizedType}，将展开其 {@link ParameterizedType#getRawType()} 的 {@link TypeVariable}。
+     * 对于 {@link GenericArrayType}，将展开其 {@link GenericArrayType#getGenericComponentType()}。
+     * 对于其他类型，将查找该类型中声明的类型变量，并将其解析为实际类型。
      *
-     * @param declare              the type that have declare type
-     * @param visitedTypeVariables the typeVariable-type map
-     *                             不查找父类
+     * @param context              声明了类型变量的类型
+     * @param visitedTypeVariables 类型变量-类型映射
+     *                             不查找父类型
      */
-    public static void expandTypeVariables(Type declare, Map<TypeVariable<?>, Type> visitedTypeVariables) {
+    public static void expandTypeVariables(Type context, Map<TypeVariable<?>, Type> visitedTypeVariables) {
 
-        if (declare instanceof ParameterizedType) {
-            expandParameterizedTypeTypeVariables((ParameterizedType) declare, visitedTypeVariables);
-        } else if (declare instanceof GenericArrayType) {
-            expandTypeVariables(((GenericArrayType) declare).getGenericComponentType(), visitedTypeVariables);
+        if (context instanceof ParameterizedType) {
+            expandParameterizedTypeTypeVariables((ParameterizedType) context, visitedTypeVariables);
+        } else if (context instanceof GenericArrayType) {
+            expandTypeVariables(((GenericArrayType) context).getGenericComponentType(), visitedTypeVariables);
         }
-
-
-//        else if (declare instanceof Class) {
-//            expandClassTypeVariables((Class<?>) declare, visitedTypeVariables);
-//        } else if (declare instanceof TypeVariable) {
-//            resolveByTypeVariables(declare,visitedTypeVariables);
-//
-////            expandTypeVariableTypeVariables((TypeVariable<?>) declare, visitedTypeVariables);
-//        }
         //仅查找在类上直接声明的
         else {
 
-            Type type = resolveByTypeVariables(declare, visitedTypeVariables);
+            Type type = resolveByTypeVariables(context, visitedTypeVariables);
         }
 
     }
 
-//    private static void expandTypeVariableTypeVariables(TypeVariable<?> clazz, Map<TypeVariable<?>, Type> visitedTypeVariables) {
-//        if (visitedTypeVariables.containsKey(clazz)) {
-//            return;
-//        }
-//        resolveByTypeVariables(clazz, visitedTypeVariables);
-//
-//    }
 
     private static void expandClassTypeVariables(Class<?> clazz, Map<TypeVariable<?>, Type> visitedTypeVariables) {
         if (clazz != null && clazz.getTypeParameters().length > 0) {
@@ -355,10 +333,8 @@ public class TypeUtil {
     }
 
     /**
-     * Type to string string.
-     *
-     * @param type the type
-     * @return the string
+     * @param type -
+     * @return 类型的字符串表示形式
      */
     public static String typeToString(Type type) {
         if (type instanceof Class) {
@@ -370,22 +346,12 @@ public class TypeUtil {
         return type instanceof Class ? ((Class<?>) type).getName() : type.toString();
     }
 
-    /**
-     * Check not primitive.
-     *
-     * @param type the type
-     */
-    public static void checkNotPrimitive(Type type) {
-        LiAssertUtil.assertTrue(!(type instanceof Class<?>) || !((Class<?>) type).isPrimitive());
-    }
 
     /**
-     * Returns a type that is functionally equal but not necessarily equal
-     * according to {@link Object#equals(Object) Object.equals()}. The returned
-     * type is {@link java.io.Serializable}.
+     * 返回一个与给定类型功能上相等但不一定与 {@link Object#equals(Object) Object.equals()} 相等的类型。返回的类型是 {@link java.io.Serializable}。
      *
-     * @param type the type
-     * @return the type
+     * @param type 要处理的类型
+     * @return 处理后的类型
      */
     public static Type canonicalize(Type type) {
         if (type instanceof Class) {
@@ -410,24 +376,11 @@ public class TypeUtil {
         }
     }
 
-    /**
-     * Gets declaring class.
-     *
-     * @param typeVariable the type variable
-     * @return the declaring class
-     */
-    public static Class<?> getDeclaringClass(TypeVariable<?> typeVariable) {
-        GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
-        return genericDeclaration instanceof Class ? (Class<?>) genericDeclaration : null;
-    }
-
 
     /**
-     * Returns true if {@code a} and {@code b} are equal.
-     *
      * @param a the a
      * @param b the b
-     * @return the boolean
+     * @return 两个类型是否相等
      */
     public static boolean equals(Type a, Type b) {
         if (a == b) {

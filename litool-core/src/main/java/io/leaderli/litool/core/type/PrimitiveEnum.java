@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.text.StringConvert;
@@ -232,6 +233,15 @@ public enum PrimitiveEnum {
      */
     public static boolean isPrimitive(Type type) {
         return PRIMITIVE_WRAPPER_MAP.get(type) != null;
+    }
+
+    /**
+     * 断言类型不是基本类型
+     *
+     * @param type 类型
+     */
+    public static void checkNotPrimitive(Type type) {
+        LiAssertUtil.assertFalse(isPrimitive(type));
     }
 
     /**

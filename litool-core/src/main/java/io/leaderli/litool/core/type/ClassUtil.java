@@ -8,10 +8,7 @@ import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.io.File;
 import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
@@ -493,6 +490,17 @@ public class ClassUtil {
     }
 
     /**
+     * 获取泛型变量的声明类
+     *
+     * @param typeVariable 泛型变量
+     * @return 获取泛型变量的声明类
+     */
+    public static Class<?> getDeclaringClass(TypeVariable<?> typeVariable) {
+        GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
+        return genericDeclaration instanceof Class ? (Class<?>) genericDeclaration : null;
+    }
+
+    /**
      * 获取字段的类型
      *
      * @param field 字段
@@ -538,4 +546,6 @@ public class ClassUtil {
                     }
                 });
     }
+
+
 }

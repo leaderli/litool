@@ -1,13 +1,27 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author leaderli
  * @since 2022/8/17 7:11 PM
  */
 class PrimitiveEnumTest {
+    @Test
+    void checkNotPrimitive() {
+
+        Assertions.assertThrows(RuntimeException.class, () -> PrimitiveEnum.checkNotPrimitive(int.class));
+        Assertions.assertDoesNotThrow(() -> PrimitiveEnum.checkNotPrimitive(Integer.class));
+        Assertions.assertDoesNotThrow(() -> PrimitiveEnum.checkNotPrimitive(null));
+        Assertions.assertDoesNotThrow(() -> PrimitiveEnum.checkNotPrimitive(ParameterizedTypeImpl.make(null,
+                ArrayList.class, String.class)));
+        Assertions.assertDoesNotThrow(() -> PrimitiveEnum.checkNotPrimitive(List.class.getTypeParameters()[0]));
+    }
 
     @Test
     void read() {

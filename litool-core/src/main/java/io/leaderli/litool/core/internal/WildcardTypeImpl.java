@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.internal;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.TypeUtil;
 
 import java.io.Serializable;
@@ -28,14 +29,14 @@ public final class WildcardTypeImpl implements WildcardType, Serializable {
 
         if (lowerBounds.length == 1) {
             Objects.requireNonNull(lowerBounds[0]);
-            TypeUtil.checkNotPrimitive(lowerBounds[0]);
+            PrimitiveEnum.checkNotPrimitive(lowerBounds[0]);
             LiAssertUtil.assertTrue(upperBounds[0] == Object.class);
             this.lowerBound = TypeUtil.canonicalize(lowerBounds[0]);
             this.upperBound = Object.class;
 
         } else {
             Objects.requireNonNull(upperBounds[0]);
-            TypeUtil.checkNotPrimitive(upperBounds[0]);
+            PrimitiveEnum.checkNotPrimitive(upperBounds[0]);
             this.lowerBound = null;
             this.upperBound = TypeUtil.canonicalize(upperBounds[0]);
         }
