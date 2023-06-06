@@ -7,10 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * 提供获取脚本标准输出和错误输出的 {@link ErrorHandledFuture} 实现。对于一些像 {@code 'tail -f xxx'} 这样的脚本，
@@ -27,11 +24,19 @@ public class InputStreamCompletableFuture implements ErrorHandledFuture<String> 
     private final CompletableFuture<Void> task;
     private int index;
 
+    /**
+     * @param inputStream -
+     * @see #InputStreamCompletableFuture(InputStream, Charset)
+     */
     public InputStreamCompletableFuture(InputStream inputStream) {
         this(inputStream, Charset.defaultCharset());
     }
 
 
+    /**
+     * @param inputStream -
+     * @param charset     -
+     */
     public InputStreamCompletableFuture(InputStream inputStream, Charset charset) {
         this.task = CompletableFuture.runAsync(() -> read(inputStream, charset));
     }
@@ -74,7 +79,7 @@ public class InputStreamCompletableFuture implements ErrorHandledFuture<String> 
 
     /**
      * @return 获取输入流的结果
-     * @see #task#get()
+     * @see FutureTask#get()
      */
     @SuppressWarnings("java:S2142")
     @Override
@@ -89,7 +94,7 @@ public class InputStreamCompletableFuture implements ErrorHandledFuture<String> 
 
     /**
      * @return 获取输入流的结果, 如果超时了，则会将已经读取到的输入流返回，下一次再使用该方法，则从上一次读取的位置后继续读取。
-     * @see #task#get(long, TimeUnit)
+     * @see FutureTask#get(long, TimeUnit)
      */
     @SuppressWarnings("java:S2142")
     @Override

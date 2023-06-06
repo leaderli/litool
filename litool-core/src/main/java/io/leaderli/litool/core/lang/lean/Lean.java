@@ -134,13 +134,14 @@ public class Lean {
     /**
      * 从源对象中复制属性到目标对象
      *
-     * @param source 源对象
-     * @param target 目标对象
-     * @param <T>    目标对象的类型
+     * @param source     源对象
+     * @param target     目标对象
+     * @param targetType 目标对象类型
+     * @param <T>        目标对象的类型
      */
-    public <T> void copyBean(Object source, T target, Class<T> typeToken) {
+    public <T> void copyBean(Object source, T target, Class<T> targetType) {
 
-        TypeAdapter<T> adapter = getTypeAdapter(typeToken);
+        TypeAdapter<T> adapter = getTypeAdapter(targetType);
         LiAssertUtil.assertTrue(adapter instanceof ReflectTypeAdapterFactory.ReflectAdapter, "only support copy to pojo bean");
         //noinspection unchecked
         ((ReflectTypeAdapterFactory.ReflectAdapter<Object>) adapter).populate(source, target, this);
@@ -149,13 +150,14 @@ public class Lean {
     /**
      * 从源对象中复制属性到目标对象
      *
-     * @param source 源对象
-     * @param target 目标对象
-     * @param <T>    目标对象的类型
+     * @param source          源对象
+     * @param target          目标对象
+     * @param targetTypeToken 目标对象类型
+     * @param <T>             目标对象的类型
      */
-    public <T> void copyBean(Object source, T target, LiTypeToken<T> typeToken) {
+    public <T> void copyBean(Object source, T target, LiTypeToken<T> targetTypeToken) {
 
-        TypeAdapter<T> adapter = getTypeAdapter(typeToken);
+        TypeAdapter<T> adapter = getTypeAdapter(targetTypeToken);
         LiAssertUtil.assertTrue(adapter instanceof ReflectTypeAdapterFactory.ReflectAdapter, "only support copy to pojo bean");
         //noinspection unchecked
         ((ReflectTypeAdapterFactory.ReflectAdapter<Object>) adapter).populate(source, target, this);
@@ -210,9 +212,14 @@ public class Lean {
 
     }
 
+    /**
+     * @param typeToken -
+     * @param <T>       typeToken的类型
+     * @return 根据 typeToken 返回缓存的 TypeAdapter
+     */
     @SuppressWarnings("unchecked")
-    public <T> TypeAdapter<T> getCacheTypeAdapter(LiTypeToken<T> type) {
-        return (TypeAdapter<T>) typeTokenAdapterCache.get(type);
+    public <T> TypeAdapter<T> getCacheTypeAdapter(LiTypeToken<T> typeToken) {
+        return (TypeAdapter<T>) typeTokenAdapterCache.get(typeToken);
     }
 
 
