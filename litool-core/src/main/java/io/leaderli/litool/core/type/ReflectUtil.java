@@ -572,9 +572,11 @@ public class ReflectUtil {
      * Function func = ReflectUtil.newInterfaceImpl(Function.class, delegate);
      * }</pre>
      *
-     * @param typeToken 接口
-     * @param proxyObj  代理对象bean
-     * @param <T>       接口类型
+     * @param typeToken      接口类型
+     * @param proxyTypeToken 代理类型
+     * @param proxyObj       代理对象bean
+     * @param <T>            接口类型
+     * @param <P>            代理类型
      * @return 接口的动态实现
      * @throws AssertException 如果接口不是单方法接口且没有超类,或者proxyObj没有委托方法
      */

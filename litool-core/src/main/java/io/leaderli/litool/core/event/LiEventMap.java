@@ -63,6 +63,7 @@ class LiEventMap {
      * @param listener 要移除的监听器
      * @param <S>      事件的数据类型
      * @param <E>      事件类型与监听器的泛型类型
+     *
      */
     public <E extends LiEventObject<S>, S> void remove(ILiEventListener<E, S> listener) {
 
