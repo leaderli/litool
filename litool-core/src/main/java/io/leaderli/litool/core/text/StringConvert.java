@@ -1,14 +1,13 @@
 package io.leaderli.litool.core.text;
 
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.type.ClassUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 /**
- * a tool that convert string to specifier class
+ * 一个将字符串转换为指定类的工具
  *
  * @author leaderli
  * @since 2022/7/9 2:01 PM
@@ -40,10 +39,10 @@ public class StringConvert {
     }
 
     /**
-     * Return class is support to converted
+     * 返回是否支持转换的类
      *
-     * @param cls the class
-     * @return class is support to converted
+     * @param cls 要转换的类
+     * @return 是否支持转换
      */
     public static boolean support(Class<?> cls) {
         return CONVERTS.containsKey(cls);
@@ -51,28 +50,28 @@ public class StringConvert {
 
 
     /**
-     * Return the def  if parsed fail, or the parsed value
+     * 如果解析失败,返回def,否则返回解析的值
      *
-     * @param value the string value
-     * @param def   the def value if parsed fail
-     * @param <T>   the type parameter of parsed type, it's same with def type
-     * @return the parsed value
+     * @param value 要解析的字符串值
+     * @param def   如果解析失败的默认值
+     * @param <T>   解析类型的参数类型,与def类型相同
+     * @return 解析的值
+     * @throws NullPointerException 如果def为null
      */
+    @SuppressWarnings("unchecked")
     public static <T> T parser(String value, T def) {
-
-        Class<T> cls = ClassUtil.getDeclaringClass(def);
-
+        Class<T> cls = (Class<T>) def.getClass();
         return parser(cls, value, def);
     }
 
     /**
-     * Return the def  if parsed fail, or the parsed value
+     * 如果解析失败,返回def,否则返回解析的值
      *
-     * @param cls   the type of parsed value
-     * @param value the string value
-     * @param def   the def value if parsed fail
-     * @param <T>   the type parameter of parsed type
-     * @return the parsed value
+     * @param cls   要解析的值的类型
+     * @param value 要解析的字符串值
+     * @param def   如果解析失败的默认值
+     * @param <T>   解析类型的参数类型
+     * @return 解析的值
      */
     public static <T> T parser(Class<T> cls, String value, T def) {
 
@@ -83,6 +82,14 @@ public class StringConvert {
 
     }
 
+    /**
+     * 如果解析失败,返回 {@link  Lino#none()},否则返回解析的值
+     *
+     * @param cls   要解析的值的类型
+     * @param value 要解析的字符串值
+     * @param <T>   解析类型的参数类型
+     * @return 解析的值
+     */
     public static <T> Lino<T> parser(Class<T> cls, String value) {
 
         return Lino.of(CONVERTS.get(cls))

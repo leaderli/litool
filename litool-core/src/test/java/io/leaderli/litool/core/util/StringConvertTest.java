@@ -26,7 +26,6 @@ class StringConvertTest {
 
         LiConstant.WHEN_THROW = null;
         Assertions.assertSame(0, StringConvert.parser(null, 0));
-        Assertions.assertSame(null, StringConvert.parser(null, (Object) null));
         Assertions.assertSame(1, StringConvert.parser("1", 0));
         Assertions.assertSame(true, StringConvert.parser("true", false));
         Assertions.assertSame((byte) 1, StringConvert.parser("1", (byte) 0));
