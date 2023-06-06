@@ -146,15 +146,12 @@ public class TypeUtil {
     }
 
     /**
-     * the generic class type be declared at a context type, the resolving progress will fill {@link  TypeVariable},
-     * {@link  GenericArrayType}, {@link  ParameterizedType} undefined type to the defined type. such as {@link  Class},
-     * {@link  ParameterizedType} with defined typed actualTypeArguments
-     * <p>
-     * expand the context typeVariable and fill to the toResolve
+     * 该方法用于解析包含类型变量的泛型类型，根据上下文类型将类型变量替换为具体类型。其处理过程就是将 {@link  TypeVariable},{@link  GenericArrayType}, {@link  ParameterizedType}
+     * 这些不确定的类型，填充为确定的类型
      *
-     * @param context   the context
-     * @param toResolve the toResolve toResolve that has generic typeParameter
-     * @return the toResolve with toResolve class with context class typeParameters
+     * @param context   上下文类型,可能包含类型变量
+     * @param toResolve 待解析类型,可能包含未知的类型变量
+     * @return 解析后的类型, 类型变量被具体类型替换
      */
     public static Type resolve(Type context, Type toResolve) {
 
@@ -319,13 +316,6 @@ public class TypeUtil {
             Type actualTypeArgument = actualTypeArguments[i];
             // expand  args first
             expandTypeVariables(actualTypeArgument, visitedTypeVariables);
-
-
-            //
-//            if (actualTypeArgument instanceof TypeVariable) {
-//                resolveByTypeVariables(actualTypeArgument,visitedTypeVariables);
-////                expandTypeVariableTypeVariables((TypeVariable<?>) actualTypeArgument, visitedTypeVariables);
-//            }
 
             Type resolve = resolveByTypeVariables(actualTypeArgument, visitedTypeVariables);
             visitedTypeVariables.put(typeParameters[i], resolve);

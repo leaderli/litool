@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * a simple str substitution tool
+ * 一个简单的字符串替换工具
  * <p>
- * support replace placeholder by custom, provide to default behavior
- * 1. replace by array parameters , {@link #format(String, Object...)}, the placeholder value is positioned in order
- * 2. replace by map , {@link #format(String, Object...)}, the placeholder value  get by it's name
+ * 支持通过自定义替换占位符,提供默认行为
+ * 1. 通过数组参数替换, {@link #format(String, Object...)}, 占位符的值按顺序定位
+ * 2. 通过Map替换,{@link #forMap(String, Map)} ,占位符的值通过其名称获取
  * <pre>
  *
  *  replace("a={a},b={b}","1","2")
@@ -33,18 +33,18 @@ public class StrSubstitution {
     private static final int VARIABLE_LITERAL = 3;
 
     /**
-     * format text by map. the placeholder in format text are regard as a map key.
-     * and use {@link BeanPath#parse(Object, String)} to get the replace value. if replace value
-     * is {@code  null} the placeholder will not be replaced
-     * eg:
+     * 通过Map格式化文本。占位符在格式化文本中被视为Map键。
+     * 并使用{@link BeanPath#parse(Object, String)}获取替换值。如果替换值
+     * 为{@code null},占位符将不被替换。
+     * 例如:
      * <pre>{@code
      * beanPath("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
      * beanPath("a={a},b={b}",{a=1}) // "a=1,b={b}"
      * }</pre>
      *
-     * @param format a format string
-     * @param map    the map
-     * @return a formatted string
+     * @param format 格式字符串
+     * @param map    Map
+     * @return 格式化后的字符串
      * @see #format(String, Function)
      */
     public static String forMap(String format, Map<String, ?> map) {
@@ -52,79 +52,32 @@ public class StrSubstitution {
     }
 
     /**
-     * format text by variable parameter. the placeholder in format text calculates it's index based on
-     * where it's appear, the same name placeholder reuse previous index. the placeholder will replaced
-     * the the index parameter string value. if index is outbound of provide args, the placeholder will
-     * not be replaced.
+     * {@code  {xxx}} 被视为占位符 {@code  xxx}。不支持嵌套占位符。
+     * {}不会被视为占位符,{{}会被视为转义{
      * <p>
-     * eg:
-     * <pre>
-     *  format("a={a},b={b}","1") // "a=1,b={b}"
-     *  format("a={a},b={b}","1","2") // "a=1,b=2"
-     *  format("a={a},b={b},a={a}","1","2") // to "a=1,b=2,a=1"
-     * </pre>
-     *
-     * @param format a format string
-     * @param args   Arguments referenced by the format
-     * @return a formatted string
-     * @see VariablesFunction
-     * @see #format(String, Function)
-     */
-    public static String format(String format, Object... args) {
-
-        return format(format, new VariablesFunction(args));
-    }
-
-    /**
-     * the {@code  {xxx}}  are regard as placeholder {@code  xxx}. not support recursive placeholder.
-     * the {} will not regard as placeholder, {{ will regard as escape {
-     * <p>
-     * eg:
-     *
+     * 例如:
      * <pre>
      *     format("a={}")   // "a={}"
      *     format("a={{a}") // "a={a}"
-     *
      * </pre>
      *
-     * @param format          a format string
-     * @param replaceFunction a function that accept the placeholder variable and return a value to replace it
-     * @return a formatted string
+     * @param format          格式字符串
+     * @param replaceFunction 接受占位符变量并返回替换值的函数
+     * @return 格式化后的字符串
      */
     public static String format(String format, Function<String, Object> replaceFunction) {
         return parse(format, VARIABLE_BEING_CHAR, VARIABLE_END_CHAR, replaceFunction);
     }
 
     /**
-     * format text by bean. the placeholder in format text are regard as a bean-path expression.
-     * and use {@link BeanPath#parse(Object, String)} to search the replace value. if replace value
-     * is {@code  null} the placeholder will not be replaced
-     * eg:
-     * <pre>{@code
-     * beanPath("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
-     * beanPath("a={a},b={b}",{a=1}) // "a=1,b={b}"
-     * }</pre>
+     * 与{@link  #format(String, Function)}类似,不同之处在于占位符使用自定义字符定义。
      *
-     * @param format a format string
-     * @param bean   Arguments referenced by the format
-     * @return a formatted string
-     * @see BeanPath#parse(Object)
-     * @see #format(String, Function)
+     * @param format          格式字符串
+     * @param variableBegin   占位符开始标记
+     * @param variableEnd     占位符结束标记
+     * @param replaceFunction 接受占位符变量并返回替换值的函数
+     * @return 格式化后的字符串
      */
-    public static String beanPath(String format, Object bean) {
-        return format(format, s -> BeanPath.parse(bean, s).get());
-    }
-
-    /**
-     * just like {@link  #format(String, Function)}, the different is placeholder define with custom char
-     *
-     * @param format          a format string
-     * @param variableBegin   the placeholder begin mark
-     * @param variableEnd     the placeholder end mark
-     * @param replaceFunction a function that accept the placeholder variable and return a value to replace it
-     * @return a formatted string
-     */
-
 
     public static String parse(String format, char variableBegin, char variableEnd, Function<String, Object> replaceFunction) {
         if (format == null) {
@@ -199,18 +152,62 @@ public class StrSubstitution {
     }
 
     /**
-     * just same as {@link  #format(String, Object...)}, use ${ as begin placeholder
+     * 通过变量参数格式化文本。占位符在格式化文本中根据其出现位置计算索引,
+     * 相同名称的占位符重用以前的索引。占位符将被对应索引的参数字符串值替换。
+     * 如果索引超出提供的args范围,占位符将不被替换。
      * <p>
-     * eg:
+     * 例如:
      * <pre>
-     *  format("a=${a},b=${b}","1") // "a=1,b={b}"
-     *  format("a=${a},b=${b}","1","2") // "a=1,b=2"
-     *  format("a=${a},b=${b},a=${a}","1","2") // to "a=1,b=2,a=1"
+     *  format("a={a},b={b}","1") // "a=1,b={b}"
+     *  format("a={a},b={b}","1","2") // "a=1,b=2"
+     *  format("a={a},b={b},a={a}","1","2") // 变为 "a=1,b=2,a=1"
      * </pre>
      *
-     * @param format a format string
-     * @param args   Arguments referenced by the format
-     * @return a formatted string
+     * @param format 格式字符串
+     * @param args   格式引用的参数
+     * @return 格式化后的字符串
+     * @see VariablesFunction
+     * @see #format(String, Function)
+     */
+    public static String format(String format, Object... args) {
+
+        return format(format, new VariablesFunction(args));
+    }
+
+    /**
+     * 通过bean格式化文本。占位符在格式化文本中被视为bean路径表达式。
+     * 并使用
+     * {@link BeanPath#parse(Object, String)}搜索替换值。如果替换值
+     * 为{@code null},占位符将不被替换。
+     * 例如:
+     * <pre>{@code
+     * beanPath("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
+     * beanPath("a={a},b={b}",{a=1}) // "a=1,b={b}"
+     * }</pre>
+     *
+     * @param format 格式字符串
+     * @param bean   格式引用的参数
+     * @return 格式化后的字符串
+     * @see BeanPath#parse(Object)
+     * @see #format(String, Function)
+     */
+    public static String beanPath(String format, Object bean) {
+        return format(format, s -> BeanPath.parse(bean, s).get());
+    }
+
+    /**
+     * 与{@link #format(String, Object...)}相同,使用$作为占位符开始标记
+     * <p>
+     * 例如:
+     * <pre>
+     *  $format("a=${a},b=${b}","1") // "a=1,b={b}"
+     *  $format("a=${a},b=${b}","1","2") // "a=1,b=2"
+     *  $format("a=${a},b=${b},a=${a}","1","2") // 变为 "a=1,b=2,a=1"
+     * </pre>
+     *
+     * @param format 格式字符串
+     * @param args   格式引用的参数
+     * @return 格式化后的字符串
      * @see VariablesFunction
      * @see #$format(String, Function)
      */
@@ -220,18 +217,17 @@ public class StrSubstitution {
     }
 
     /**
-     * just same as {@link  #format(String, Function)}, use ${ as begin placeholder
-     * the $},${} will not regard as placeholder, $$ will regard as escape {
-     * eg:
-     *
-     * <pre>{@code
+     * 与{@link #format(String, Function)}相同,使用$作为占位符开始标记
+     * $}、${}不会被视为占位符,$是转义{的标记
+     * 例如:
+     * <pre>
      *     $format("a=${}")   // "a=${}"
      *     $format("a=$${a}") // "a=${a}"
-     * }</pre>*
+     * </pre>
      *
-     * @param format          a format string
-     * @param replaceFunction a function that accept the placeholder variable and return a value to replace it
-     * @return a formatted string
+     * @param format          格式字符串
+     * @param replaceFunction 接受占位符变量并返回替换值的函数
+     * @return 格式化后的字符串
      */
     public static String $format(String format, Function<String, Object> replaceFunction) {
         return parse(format, '$', '}', name -> {
@@ -246,17 +242,17 @@ public class StrSubstitution {
     }
 
     /**
-     * just same as {@link  #forMap(String, Map)}, use ${ as begin placeholder
-     * <p>
+     * 与{@link #forMap(String, Map)} 相同,使用$作为占位符开始标记
+     * $}、${}不会被视为占位符,$是转义{的标记     * <p>
      * eg:
      * <pre>{@code
      * beanPath("a=${a},b=${b},c=${c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
      * beanPath("a=${a},b=${b}",${a=1}) // "a=1,b={b}"
      * }</pre>
      *
-     * @param format a format string
-     * @param map    the map
-     * @return a formatted string
+     * @param format 格式字符串
+     * @param map    Map
+     * @return 格式化后的字符串
      * @see #$format(String, Function)
      */
     public static String $forMap(String format, Map<String, ?> map) {
@@ -264,7 +260,7 @@ public class StrSubstitution {
     }
 
     /**
-     * just same as {@link  #beanPath(String, Object)}, use ${ as begin placeholder
+     * 与{@link #beanPath(String, Object)} 相同,使用$作为占位符开始标记
      * <p>
      * eg:
      * <pre>{@code
@@ -273,9 +269,10 @@ public class StrSubstitution {
      * $beanPath("a=${a},b=${b}",${a=1}) // "a=1,b={b}"
      * }</pre>
      *
-     * @param format a format string
-     * @param bean   Arguments referenced by the format
-     * @return a formatted string
+     * @param format 格式字符串
+     * @param bean   格式引用的参数
+     * @return 格式化后的字符串
+     * @see #beanPath(String, Object)
      */
     public static String $beanPath(String format, Object bean) {
         return $format(format, s -> BeanPath.parse(bean, s).get());
@@ -299,11 +296,11 @@ public class StrSubstitution {
 
             int find = placeholderNames.indexOf(s);
             if (find > -1) {
-                return placeholderValues[find] + "";
+                return String.valueOf(placeholderValues[find]);
             }
             if (this.index < placeholderValues.length) {
                 placeholderNames.add(s);
-                return placeholderValues[this.index++] + "";
+                return String.valueOf(placeholderValues[this.index++]);
             }
             return null;
         }

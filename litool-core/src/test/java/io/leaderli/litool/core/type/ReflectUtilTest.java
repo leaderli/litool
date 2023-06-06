@@ -3,6 +3,7 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.lang.DisposableRunnableProxy;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.ra.LiraRuntimeException;
 import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -37,43 +38,46 @@ class ReflectUtilTest {
     }
 
     @Test
-    void addInterface() {
+    void newInterfaceImpl() {
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> ReflectUtil.newInterfaceInstance(LiTypeToken.of(Proxy.class), LiTypeToken.of(Proxy.class), new Proxy()));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ReflectUtil.newInterfaceImpl(LiTypeToken.of(Proxy.class), LiTypeToken.of(Proxy.class), new Proxy()));
 
 
-        Assertions.assertDoesNotThrow(() -> ReflectUtil.newInterfaceInstance(LiTypeToken.of(Runnable.class), LiTypeToken.of(DisposableRunnableProxy.class), DisposableRunnableProxy.of(() -> System.out.println(123))));
+        Assertions.assertDoesNotThrow(() -> ReflectUtil.newInterfaceImpl(LiTypeToken.of(Runnable.class), LiTypeToken.of(DisposableRunnableProxy.class), DisposableRunnableProxy.of(() -> System.out.println(123))));
 
-        ClassUtilTest.MyFunction<String, Integer> function = ReflectUtil.newInterfaceInstance(new LiTypeToken<ClassUtilTest.MyFunction<String, Integer>>() {
+        ClassUtilTest.MyFunction<String, Integer> function = ReflectUtil.newInterfaceImpl(new LiTypeToken<ClassUtilTest.MyFunction<String, Integer>>() {
         }, LiTypeToken.of(Proxy.class), new Proxy());
 
         Assertions.assertSame(123, function.apply("123"));
-        function = ReflectUtil.newInterfaceInstance(LiTypeToken.of(ClassUtilTest.MyFunction.class), LiTypeToken.of(Proxy.class), new Proxy());
+        function = ReflectUtil.newInterfaceImpl(LiTypeToken.of(ClassUtilTest.MyFunction.class), LiTypeToken.of(Proxy.class), new Proxy());
 
 
         Assertions.assertEquals(456, function.apply("123"));
-    }
-
-    @Test
-    void newInterfaceImpl() {
 
         DynamicDelegation1 delegate = new DynamicDelegation1();
 
 
-        Service service = ReflectUtil.newInterfaceInstance(LiTypeToken.of(Service.class), LiTypeToken.of(DynamicDelegation1.class), delegate);
+        Service service = ReflectUtil.newInterfaceImpl(LiTypeToken.of(Service.class), LiTypeToken.of(DynamicDelegation1.class), delegate);
         Assertions.assertEquals("request", service.service(new Request("request")).name);
 
         Assertions.assertEquals(delegate.toString(), service.toString());
         Assertions.assertEquals(delegate.hashCode(), service.hashCode());
 
-        assertThrows(NullPointerException.class, () -> ReflectUtil.newInterfaceInstance(LiTypeToken.of(Function.class), LiTypeToken.of(Function.class), null));
+        assertThrows(NullPointerException.class, () -> ReflectUtil.newInterfaceImpl(LiTypeToken.of(Function.class), LiTypeToken.of(Function.class), null));
 
 
-        Service2 my = ReflectUtil.newInterfaceInstance(LiTypeToken.of(Service2.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3());
+        Service2 my = ReflectUtil.newInterfaceImpl(LiTypeToken.of(Service2.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3());
         Assertions.assertSame(String.class, my.service(123).getClass());
-        Service3 my3 = ReflectUtil.newInterfaceInstance(LiTypeToken.of(Service3.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3());
+        Service3 my3 = ReflectUtil.newInterfaceImpl(LiTypeToken.of(Service3.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3());
         Assertions.assertEquals(123, my3.service(123));
+
+        Assertions.assertThrows(LiraRuntimeException.class, () -> ReflectUtil.newInterfaceImpl(LiTypeToken.of(Function.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3()));
+
+        Assertions.assertEquals(3, ReflectUtil.newInterfaceImpl(new LiTypeToken<Function<String, Integer>>() {
+        }, LiTypeToken.of(DynamicDelegation4.class), new DynamicDelegation4()).apply("123"));
+
     }
+
 
     interface Service {
         Request service(Request request);
@@ -130,6 +134,14 @@ class ReflectUtilTest {
         @RuntimeType
         public String apply2(int arg) {
             return arg + "";
+        }
+    }
+
+    class DynamicDelegation4 implements Function<String, Integer> {
+
+        @Override
+        public Integer apply(String s) {
+            return s.length();
         }
     }
 
