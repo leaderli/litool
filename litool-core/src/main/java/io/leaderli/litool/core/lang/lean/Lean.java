@@ -4,7 +4,7 @@ import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.lang.lean.adapters.CustomTypeAdapterFactory;
 import io.leaderli.litool.core.lang.lean.adapters.ReflectTypeAdapterFactory;
-import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.*;
 
@@ -22,18 +22,35 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2022/9/24 9:39 AM
  */
 public class Lean {
+    /**
+     * 用于定义变量取值的key的处理器
+     */
     public final Lira<LeanKeyHandler> leanKeyHandlers;
-    public final Map<Class<? extends TypeAdapter<?>>, LiTuple2<TypeAdapter<?>, Type>> leanValueHandlers = new HashMap<>();
+    /**
+     * 用于自定义类型适配器使用。处理被 {@link  LeanValue}
+     */
+    public final Map<Class<? extends TypeAdapter<?>>, LiTuple<TypeAdapter<?>, Type>> leanValueHandlers = new HashMap<>();
+    /**
+     * 用于注册自定义类型适配器
+     */
     public final CustomTypeAdapterFactory customTypeAdapterFactory = new CustomTypeAdapterFactory();
     private final List<TypeAdapterFactory> typeAdapterFactories = new ArrayList<>();
     private final Map<LiTypeToken<?>, TypeAdapter<?>> typeTokenAdapterCache = new ConcurrentHashMap<>();
     private final ConstructorConstructor constructorConstructor;
 
 
+    /**
+     * @see #Lean(LinkedHashMap, List)
+     */
     public Lean() {
         this(new LinkedHashMap<>(), null);
     }
 
+    /**
+     * @param instanceCreators 构造器
+     * @param leanKeyHandlers  key处理器
+     * @see #Lean(LinkedHashMap, List, boolean)
+     */
     public Lean(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators, List<LeanKeyHandler> leanKeyHandlers) {
 
         this(instanceCreators, leanKeyHandlers, false);
@@ -81,6 +98,11 @@ public class Lean {
         return CollectionUtils.toList(leanKeyHandler, fieldNameAdapter);
     }
 
+    /**
+     * @param typeAdapter 类型适配器
+     * @param classes     类似数组
+     * @param <T>         类型适配器泛型
+     */
     @SafeVarargs
     public final <T> void addCustomTypeAdapter(TypeAdapter<T> typeAdapter, Class<? super T>... classes) {
         customTypeAdapterFactory.puts(typeAdapter, classes);

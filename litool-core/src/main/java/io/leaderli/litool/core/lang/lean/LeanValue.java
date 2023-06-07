@@ -11,5 +11,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface LeanValue {
+    /**
+     * @return 自定义类型适配器接口类
+     */
     Class<? extends TypeAdapter<?>> value();
 }

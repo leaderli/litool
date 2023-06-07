@@ -2,7 +2,7 @@ package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
-import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
@@ -54,7 +54,7 @@ public class MetaAnnotation<A extends Annotation, F extends MetaFunction<? exten
      * @param annotatedElement 被特定注解标记的元素
      * @return 包含另一个注解和特定注解的元组
      */
-    public Lino<LiTuple2<F, Annotation>> relative(AnnotatedElement annotatedElement) {
+    public Lino<LiTuple<F, Annotation>> relative(AnnotatedElement annotatedElement) {
         return relatives(annotatedElement).first();
     }
 
@@ -64,7 +64,7 @@ public class MetaAnnotation<A extends Annotation, F extends MetaFunction<? exten
      * @param annotatedElement 被特定注解标记的元素
      * @return 包含另一个注解和特定注解的元组的列表
      */
-    public Lira<LiTuple2<F, Annotation>> relatives(AnnotatedElement annotatedElement) {
+    public Lira<LiTuple<F, Annotation>> relatives(AnnotatedElement annotatedElement) {
         return ReflectUtil.findAnnotationsWithMetaAnnotation(annotatedElement, metaClass)
                 .tuple(an -> an.annotationType().getAnnotation(metaClass))
                 .map(tu -> tu.map2(metaInstance -> this.computeIfAbsent(tu._1, tu._2))

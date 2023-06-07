@@ -33,10 +33,10 @@ class EitherTest {
     @Test
     void tuple2() {
 
-        LiTuple2<Integer, Integer> either = LiTuple.of(null, null);
+        LiTuple<Integer, Integer> either = LiTuple.of(null, null);
 
         Assertions.assertTrue(either.isRight());
-        LiTuple2<Integer, Integer> finalEither = either;
+        LiTuple<Integer, Integer> finalEither = either;
         Assertions.assertThrows(NoSuchElementException.class, finalEither::getLeft);
         Assertions.assertFalse(either.isLeft());
 

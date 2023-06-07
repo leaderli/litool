@@ -8,6 +8,8 @@ import io.leaderli.litool.core.meta.link.PublisherLink;
 import io.leaderli.litool.core.meta.link.ValueLink;
 import io.leaderli.litool.core.util.BooleanUtil;
 
+import java.util.function.Supplier;
+
 /**
  * @param <T> 泛型
  *            <p>
@@ -52,7 +54,7 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
      * @param <T>      the type of value
      * @return a liLink
      */
-    static <T> LiLink<T> supplier(java.util.function.Supplier<T> supplier) {
+    static <T> LiLink<T> supplier(Supplier<T> supplier) {
 
         if (supplier == null) {
             return new ValueLink<>(null);

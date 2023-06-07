@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.test;
 
 import io.leaderli.litool.core.meta.Either;
-import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.LiTypeToken;
@@ -32,11 +32,11 @@ public class CartesianContext {
         registerCustomValuable(DynamicValues.class, new DynamicCustomCartesian());
     }
 
-    Lira<LiTuple2<CartesianFunction<Annotation, Object>, Annotation>> relatives(AnnotatedElement annotatedElement) {
+    Lira<LiTuple<CartesianFunction<Annotation, Object>, Annotation>> relatives(AnnotatedElement annotatedElement) {
         return valuableMeta.relatives(annotatedElement);
     }
 
-    Lino<LiTuple2<CartesianFunction<Annotation, Object>, Annotation>> relative(AnnotatedElement annotatedElement) {
+    Lino<LiTuple<CartesianFunction<Annotation, Object>, Annotation>> relative(AnnotatedElement annotatedElement) {
         return valuableMeta.relative(annotatedElement);
     }
 
@@ -48,9 +48,9 @@ public class CartesianContext {
     public Either<Integer, Object[]> custom(Class<?> type, AnnotatedElement annotatedElement) {
         Lira<Annotation> classLira = Lira.of(annotatedElement.getAnnotations());
 
-        Lino<LiTuple2<Annotation, CustomValuable>> first = classLira
+        Lino<LiTuple<Annotation, CustomValuable>> first = classLira
                 .tuple(an -> customValuables.get(an.annotationType()))
-                .filter(LiTuple2::isRight)
+                .filter(LiTuple::isRight)
                 .first();
 
         if (first.absent()) {

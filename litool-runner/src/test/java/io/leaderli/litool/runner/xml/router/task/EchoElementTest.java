@@ -2,7 +2,7 @@ package io.leaderli.litool.runner.xml.router.task;
 
 import io.leaderli.litool.core.event.ILiEventListener;
 import io.leaderli.litool.core.meta.LiBox;
-import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import io.leaderli.litool.runner.Context;
@@ -26,10 +26,10 @@ class EchoElementTest {
         Context context = new Context(new HashMap<>());
         context.setResponse("Code", "114514");
         context.setTemp("coordinate", "你好");
-        LiBox<LiTuple2<Integer, String>> echos = LiBox.none();
-        context.registerListener(new ILiEventListener<EchoEvent, LiTuple2<Integer, String>>() {
+        LiBox<LiTuple<Integer, String>> echos = LiBox.none();
+        context.registerListener(new ILiEventListener<EchoEvent, LiTuple<Integer, String>>() {
             @Override
-            public void listen(LiTuple2<Integer, String> source) {
+            public void listen(LiTuple<Integer, String> source) {
                 echos.value(source);
 
             }

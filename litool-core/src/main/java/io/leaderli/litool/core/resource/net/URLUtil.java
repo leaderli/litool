@@ -15,14 +15,13 @@ import java.util.jar.JarFile;
  */
 public class URLUtil {
 
-
     /**
      * 解码application/x-www-form-urlencoded字符<br>
      * 将%开头的16进制表示的内容解码。
      *
-     * @param content URL
-     * @param charset 编码
-     * @return 解码后的URL
+     * @param content URL编码字符串
+     * @param charset 编码格式
+     * @return 解码后的字符串
      */
     public static String decode(String content, String charset) {
         return decode(content, StringUtils.isEmpty(charset) ? null : CharsetUtil.charset(charset));
@@ -36,17 +35,16 @@ public class URLUtil {
      * @param content 被解码内容
      * @param charset 编码，null表示不解码
      * @return 编码后的字符
-     * @since 4.4.1
      */
     public static String decode(String content, Charset charset) {
         return URLDecoder.decode(content, charset);
     }
 
     /**
-     * get jar file from url
+     * 获取Url对应的JarFile
      *
-     * @param url URL
-     * @return JarFile
+     * @param url URL对象
+     * @return JarFile对象
      */
     public static JarFile getJarFile(URL url) {
         try {

@@ -431,9 +431,9 @@ class LiraTest {
     void toMap() {
 
 
-        Assertions.assertEquals("{1=2}", Lira.of(LiTuple.of(1, 2)).toMap(LiTuple2::_1, LiTuple2::_2).toString());
-        Assertions.assertNull(Lira.of(LiTuple.of(1, null)).toMap(LiTuple2::_1, LiTuple2::_2).get(1));
-        Assertions.assertEquals("{}", Lira.of(LiTuple.of(null, null)).toMap(LiTuple2::_1, LiTuple2::_2).toString());
+        Assertions.assertEquals("{1=2}", Lira.of(LiTuple.of(1, 2)).toMap(LiTuple::_1, LiTuple::_2).toString());
+        Assertions.assertNull(Lira.of(LiTuple.of(1, null)).toMap(LiTuple::_1, LiTuple::_2).get(1));
+        Assertions.assertEquals("{}", Lira.of(LiTuple.of(null, null)).toMap(LiTuple::_1, LiTuple::_2).toString());
 
         Assertions.assertEquals("{1=2}", Lira.of(LiTuple.of(1, 2)).toMap(l -> l).toString());
         Assertions.assertNull(Lira.of(LiTuple.of(1, null)).toMap(l -> l).get(1));

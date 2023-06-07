@@ -347,7 +347,7 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
-    public <R> Lira<LiTuple2<T, R>> tuple(java.util.function.Function<? super T, ? extends R> mapper) {
+    public <R> Lira<LiTuple<T, R>> tuple(java.util.function.Function<? super T, ? extends R> mapper) {
         return new TupleRa<>(this, mapper);
     }
 
@@ -371,7 +371,7 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
-    public <K, V> Map<K, V> toMap(java.util.function.Function<? super T, LiTuple2<? extends K, ? extends V>> mapper) {
+    public <K, V> Map<K, V> toMap(java.util.function.Function<? super T, LiTuple<? extends K, ? extends V>> mapper) {
         Map<K, V> result = new HashMap<>();
         subscribe(new ConsumerSubscriber<>(e -> Lino.of(e).map(mapper).filter(tuple2 -> tuple2._1 != null).ifPresent(tuple2 -> result.put(tuple2._1
                 , tuple2._2))));

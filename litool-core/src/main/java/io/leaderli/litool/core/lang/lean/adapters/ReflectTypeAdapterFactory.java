@@ -5,7 +5,7 @@ import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.lang.lean.LeanValue;
 import io.leaderli.litool.core.lang.lean.TypeAdapter;
 import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
-import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.type.*;
 
@@ -78,7 +78,7 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
 
             Class<? extends TypeAdapter<?>> cls = annotation.value();
 
-            LiTuple2<TypeAdapter<?>, Type> find = computeIfAbsentHandler(cls, lean);
+            LiTuple<TypeAdapter<?>, Type> find = computeIfAbsentHandler(cls, lean);
 
             // the 2nd of tuple is TypeAdapter actualClassParameter, is always wrapper class .
             // add primitive support
@@ -91,9 +91,9 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         @SuppressWarnings("unchecked")
-        private LiTuple2<TypeAdapter<?>, Type> computeIfAbsentHandler(Class<? extends TypeAdapter<?>> cls, Lean lean) {
+        private LiTuple<TypeAdapter<?>, Type> computeIfAbsentHandler(Class<? extends TypeAdapter<?>> cls, Lean lean) {
 
-            LiTuple2<TypeAdapter<?>, Type> find = lean.leanValueHandlers.get(cls);
+            LiTuple<TypeAdapter<?>, Type> find = lean.leanValueHandlers.get(cls);
             if (find != null) {
                 return find;
             }
@@ -101,7 +101,7 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
             find = ReflectUtil.newInstance(cls)
                     .tuple2(actualTypeArgument)
                     .assertNotNone(() -> StrSubstitution.format("the {adapter} is cannot " + "create instance}", cls))
-                    .cast(LiTuple2.class)
+                    .cast(LiTuple.class)
                     .get();
             synchronized (lean.leanValueHandlers) {
                 lean.leanValueHandlers.put(cls, find);

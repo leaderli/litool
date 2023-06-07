@@ -1,7 +1,7 @@
 package io.leaderli.litool.runner.xml.router;
 
 import io.leaderli.litool.core.event.ILiEventListener;
-import io.leaderli.litool.core.meta.LiTuple2;
+import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.dom.LiDomUtil;
 import io.leaderli.litool.dom.XmlMapConvert;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
@@ -34,7 +34,7 @@ class UnitElementTest {
         request.put("bfzType", "1");
 
         Context context = new Context(request);
-        ILiEventListener<UnitErrorEvent, LiTuple2<String, Throwable>> listener = new UnitErrorEventILiEventListener();
+        ILiEventListener<UnitErrorEvent, LiTuple<String, Throwable>> listener = new UnitErrorEventILiEventListener();
         context.registerListener(listener);
         mainElement.executor().visit(context);
         CharSequence skill = context.getResponse("skill");
@@ -79,11 +79,11 @@ class UnitElementTest {
 
     }
 
-    private static class UnitErrorEventILiEventListener implements ILiEventListener<UnitErrorEvent, LiTuple2<String, Throwable>> {
+    private static class UnitErrorEventILiEventListener implements ILiEventListener<UnitErrorEvent, LiTuple<String, Throwable>> {
 
 
         @Override
-        public void listen(LiTuple2<String, Throwable> source) {
+        public void listen(LiTuple<String, Throwable> source) {
         }
     }
 

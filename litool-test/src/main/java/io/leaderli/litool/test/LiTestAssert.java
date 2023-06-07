@@ -2,7 +2,6 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.LiTuple;
-import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.type.ReflectUtil;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.method.MethodDescription;
@@ -21,7 +20,7 @@ import java.util.function.BiConsumer;
 public class LiTestAssert {
 
     public static final Set<Class<?>> assertClasses = new HashSet<>();
-    public static final Map<Method, LiTuple2<Object[], Object>> assert_method_call_records = new HashMap<>();
+    public static final Map<Method, LiTuple<Object[], Object>> assert_method_call_records = new HashMap<>();
     public static Method assertMethod;
     public static Object assertObj;
     public static boolean staticRecord;
@@ -51,7 +50,7 @@ public class LiTestAssert {
 
     public static void assertion(Runnable methodCall, BiConsumer<Object[], Object> assertLambda) {
         methodCall(methodCall);
-        LiTuple2<Object[], Object> argsReturn = assert_method_call_records.get(assertMethod);
+        LiTuple<Object[], Object> argsReturn = assert_method_call_records.get(assertMethod);
         Objects.requireNonNull(argsReturn);
         assertLambda.accept(argsReturn._1, argsReturn._2);
     }
@@ -104,7 +103,7 @@ public class LiTestAssert {
                 return;
             }
 
-            LiTuple2<Object[], Object> argsReturn = LiTuple.of(args, _return);
+            LiTuple<Object[], Object> argsReturn = LiTuple.of(args, _return);
             assert_method_call_records.put(origin, argsReturn);
         }
     }

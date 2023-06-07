@@ -2,7 +2,6 @@ package io.leaderli.litool.core.event;
 
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiTuple;
-import io.leaderli.litool.core.meta.LiTuple2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -215,17 +214,17 @@ class LiEventBusTest {
         }
     }
 
-    private static class LiEventTuple extends LiEventObject<LiTuple2<String, Integer>> {
+    private static class LiEventTuple extends LiEventObject<LiTuple<String, Integer>> {
         public LiEventTuple(String s, int i) {
             super(LiTuple.of(s, i));
         }
     }
 
-    private static class TestLiEventListener4 implements ILiEventListener<LiEventTuple, LiTuple2<String, Integer>> {
+    private static class TestLiEventListener4 implements ILiEventListener<LiEventTuple, LiTuple<String, Integer>> {
         public int value;
 
         @Override
-        public void listen(LiTuple2<String, Integer> source) {
+        public void listen(LiTuple<String, Integer> source) {
 
             this.value = source._2;
         }

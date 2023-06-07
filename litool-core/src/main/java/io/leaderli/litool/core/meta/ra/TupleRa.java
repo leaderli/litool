@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
 import io.leaderli.litool.core.meta.LiTuple;
-import io.leaderli.litool.core.meta.LiTuple2;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -10,7 +9,7 @@ import java.util.function.Function;
  * @author leaderli
  * @since 2022/6/27
  */
-public class TupleRa<T, R> extends Ra<LiTuple2<T, R>> {
+public class TupleRa<T, R> extends Ra<LiTuple<T, R>> {
     private final Function<? super T, ? extends R> mapper;
     private final PublisherRa<T> prevPublisher;
 
@@ -22,15 +21,15 @@ public class TupleRa<T, R> extends Ra<LiTuple2<T, R>> {
 
 
     @Override
-    public void subscribe(SubscriberRa<? super LiTuple2<T, R>> actualSubscriber) {
+    public void subscribe(SubscriberRa<? super LiTuple<T, R>> actualSubscriber) {
         prevPublisher.subscribe(new MapSubscriberSubscription(actualSubscriber));
 
     }
 
-    private class MapSubscriberSubscription extends IntermediateSubscriberSubscription<T, LiTuple2<T, R>> {
+    private class MapSubscriberSubscription extends IntermediateSubscriberSubscription<T, LiTuple<T, R>> {
 
 
-        private MapSubscriberSubscription(SubscriberRa<? super LiTuple2<T, R>> actualSubscriber) {
+        private MapSubscriberSubscription(SubscriberRa<? super LiTuple<T, R>> actualSubscriber) {
             super(actualSubscriber);
         }
 

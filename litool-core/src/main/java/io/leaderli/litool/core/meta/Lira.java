@@ -354,12 +354,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     <R> Lira<R> flatMap();
 
-    /**
-     * @param mapper the function that accept element and provide iterator
-     * @param <R>    the type of the flatted lira
-     * @return a new lira
-     * @see #flatMap(Function)
-     */
     <R> Lira<R> flatMap(Function<? super T, Iterator<? extends R>> mapper);
 
     /**
@@ -807,7 +801,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
         return copy;
     }
 
-    <R> Lira<LiTuple2<T, R>> tuple(Function<? super T, ? extends R> mapper);
+    <R> Lira<LiTuple<T, R>> tuple(Function<? super T, ? extends R> mapper);
 
 
     /**
@@ -865,7 +859,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param <V>    the type of  {@code Map} value
      * @return the new map
      */
-    <K, V> Map<K, V> toMap(Function<? super T, LiTuple2<? extends K, ? extends V>> mapper);
+    <K, V> Map<K, V> toMap(Function<? super T, LiTuple<? extends K, ? extends V>> mapper);
 
 
 }

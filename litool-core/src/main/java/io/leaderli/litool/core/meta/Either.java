@@ -6,60 +6,58 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * @author leaderli
- * @since 2022/9/25 11:17 AM
+ * Either类型表示一个值可以是两种类型之一，左边或右边。
+ *
+ * @param <L> 左边值的类型
+ * @param <R> 右边值的类型
  */
 public interface Either<L, R> extends LiValue, Supplier<R> {
 
 
     /**
-     * Constructs a {@link Right}
+     * 构造一个{@link Right}对象。
      *
-     * @param right The value.
-     * @param <L>   Type of left value.
-     * @param <R>   Type of right value.
-     * @return A new {@code Right} instance.
+     * @param right 右边的值
+     * @param <L>   左边值的类型
+     * @param <R>   右边值的类型
+     * @return 一个新的{@code Right}实例
      */
     static <L, R> Either<L, R> right(R right) {
         return new Right<>(right);
     }
 
+
     /**
-     * Constructs a {@link Right}
+     * 构造一个{@link Left}对象，其值为null
      *
-     * @param <L> Type of left value.
-     * @param <R> Type of right value.
-     * @return A new {@code Left} instance.
+     * @param <L> 左边值的类型
+     * @param <R> 右边值的类型
+     * @return 一个{@link Left}对象，其值为null
      */
     static <L, R> Either<L, R> none() {
         return new Left<>(null);
     }
 
     /**
-     * Constructs a {@link Left}
+     * 构造一个{@link Left}对象。
      *
-     * @param left The value.
-     * @param <L>  Type of left value.
-     * @param <R>  Type of right value.
-     * @return A new {@code Left} instance.
+     * @param left 左边的值
+     * @param <L>  左边值的类型
+     * @param <R>  右边值的类型
+     * @return 一个新的{@code Left}实例
      */
     static <L, R> Either<L, R> left(L left) {
         return new Left<>(left);
     }
 
-    static <T> T fold(Either<T, T> either) {
-        return either.fold(l -> l, r -> r);
-    }
 
     /**
-     * Narrows a widened {@code Either<? extends L, ? extends R>} to {@code Either<L, R>}
-     * by performing a type-safe cast. This is eligible because immutable/read-only
-     * collections are covariant.
+     * 将类型为{@code Either<? extends L, ? extends R>}的Either缩小为类型{@code Either<L, R>}，以进行类型安全的强制转换。
      *
-     * @param either A {@code Either}.
-     * @param <L>    Type of left value.
-     * @param <R>    Type of right value.
-     * @return the given {@code either} instance as narrowed type {@code Either<L, R>}.
+     * @param either {@code Either}实例
+     * @param <L>    左边值的类型
+     * @param <R>    右边值的类型
+     * @return 给定的{@code either}实例作为缩小类型{@code Either<L，R>}的实例。
      */
     @SuppressWarnings("unchecked")
     static <L, R> Either<L, R> narrow(Either<? extends L, ? extends R> either) {
@@ -67,28 +65,9 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
     }
 
     /**
-     * @return the lino of left value if {@link  #isLeft()}  otherwise return {@link Lino#none()}
-     */
-    default Lino<L> getLeftLino() {
-        if (isLeft()) {
-            return Lino.of(getLeft());
-        }
-        return Lino.none();
-    }
-
-    /**
-     * Returns whether this Either is a Left.
+     * 如果此Either为{@code Right}，则获取其右侧值或返回null（不会抛出异常）。
      *
-     * @return true, if this is a Left, false otherwise
-     */
-    boolean isLeft();
-
-
-    /**
-     * different with {@link  #getRight()}, it's will return null when {@link  #isLeft()}
-     * replace throw{@link  NoSuchElementException}
-     *
-     * @return the right value
+     * @return 右边的值，或者返回null
      */
     @Override
     default R get() {
@@ -99,30 +78,47 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
     }
 
     /**
-     * Returns the left value.
+     * 如果此Either为{@code Right}，则返回其右侧值。
      *
-     * @return The left value.
-     * @throws NoSuchElementException if this is a {@code Right}.
-     */
-    L getLeft();
-
-    /**
-     * Gets the right value if this is a {@code Right} or throws if this is a {@code Left}.
-     *
-     * @return the right value
-     * @throws NoSuchElementException if this is a {@code Left}.
+     * @return 右边的值
+     * @throws NoSuchElementException 如果为{@code Left}则抛出此异常
      */
     R getRight();
 
     /**
-     * Returns whether this Either is a Right.
+     * 返回此Either是否为{@code Right}。
      *
-     * @return true, if this is a Right, false otherwise
+     * @return 如果为{@code Right}则返回true，否则返回false
      */
     boolean isRight();
 
     /**
-     * @return the lino of right value if {@link  #isRight()} ()}  otherwise return {@link Lino#none()}
+     * @return 如果该要素为左值，则返回左值，否则返回{@link Lino#none()}
+     */
+    default Lino<L> getLeftLino() {
+        if (isLeft()) {
+            return Lino.of(getLeft());
+        }
+        return Lino.none();
+    }
+
+    /**
+     * 返回此Either是否为{@code Left}。
+     *
+     * @return 如果为{@code Left}则返回true，否则返回false
+     */
+    boolean isLeft();
+
+    /**
+     * 如果此Either为{@code Left}，则返回其左侧值。
+     *
+     * @return 左边的值
+     * @throws NoSuchElementException 如果为{@code Right}则抛出此异常
+     */
+    L getLeft();
+
+    /**
+     * @return 如果该要素为右值，则返回右值，否则返回{@link Lino#none()}
      */
     default Lino<R> getRightLino() {
         if (isRight()) {
@@ -132,17 +128,20 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
     }
 
 
+    /**
+     * @return 返回其 Lino
+     */
     default Lino<Either<L, R>> lino() {
         return Lino.of(this);
     }
 
     /**
-     * Folds either the left or the right side of this disjunction.
+     * 将左侧或右侧折叠到这个二进制分支中的一个。
      *
-     * @param leftMapper  maps the left value if this is a Left
-     * @param rightMapper maps the right value if this is a Right
-     * @param <U>         type of the folded value
-     * @return A value of type U
+     * @param leftMapper  如果是左侧，则映射左侧的值
+     * @param rightMapper 如果是右侧，则映射右侧的值
+     * @param <U>         折叠值的类型
+     * @return 类型U的值
      */
     default <U> U fold(Function<? super L, ? extends U> leftMapper, Function<? super R, ? extends U> rightMapper) {
         Objects.requireNonNull(leftMapper, "leftMapper is null");
@@ -156,9 +155,9 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
 
 
     /**
-     * Converts a {@code Left} to a {@code Right} vice versa by wrapping the value in a new type.
+     * 将{@code Left}转换为{@code Right}，将{@code Right}转换为{@code Left}，并将值包装在新类型中。
      *
-     * @return a new {@code Either}
+     * @return 新的{@code Either}
      */
     default Either<R, L> swap() {
         if (isRight()) {
@@ -175,11 +174,10 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
     }
 
     /**
-     * The {@code Right} version of an {@code Either}.
+     * 表示 {@code Either} 的 {@code Right} 版本。
      *
-     * @param <L> left component type
-     * @param <R> right component type
-     * @author Daniel Dietrich
+     * @param <L> 左侧元素类型
+     * @param <R> 右侧元素类型
      */
     class Right<L, R> implements Either<L, R> {
 
@@ -187,11 +185,7 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
 
         private final R value;
 
-        /**
-         * Constructs a {@code Right}.
-         *
-         * @param value a right value
-         */
+
         Right(R value) {
             this.value = value;
         }
@@ -238,22 +232,17 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
     }
 
     /**
-     * The {@code Left} version of an {@code Either}.
+     * 表示 {@code Either} 的 {@code Left} 版本。
      *
-     * @param <L> left component type
-     * @param <R> right component type
-     * @author Daniel Dietrich
+     * @param <L> 左侧元素类型
+     * @param <R> 右侧元素类型
      */
     final class Left<L, R> implements Either<L, R> {
 
 
         private final L value;
 
-        /**
-         * Constructs a {@code Left}.
-         *
-         * @param value a left value
-         */
+
         Left(L value) {
             this.value = value;
         }

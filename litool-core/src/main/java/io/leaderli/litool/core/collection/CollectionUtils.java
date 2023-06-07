@@ -2,7 +2,6 @@ package io.leaderli.litool.core.collection;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.LiTuple;
-import io.leaderli.litool.core.meta.LiTuple2;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
@@ -165,21 +164,21 @@ public class CollectionUtils {
     }
 
     /**
-     * 将两个长度相同的数组合并成一个由{@link LiTuple2}组成的列表
+     * 将两个长度相同的数组合并成一个由{@link LiTuple}组成的列表
      *
      * @param arr1 第一个数组
      * @param arr2 第二个数组
      * @param <T1> arr1的元素类型
      * @param <T2> arr2的元素类型
-     * @return 合并后的列表，其中每个元素都是一个由t1和t2组成的{@link LiTuple2}
+     * @return 合并后的列表，其中每个元素都是一个由t1和t2组成的{@link LiTuple}
      * @throws IllegalArgumentException 当arr1和arr2的长度不一致时抛出
      */
-    public static <T1, T2> Lira<LiTuple2<T1, T2>> tuple(T1[] arr1, T2[] arr2) {
+    public static <T1, T2> Lira<LiTuple<T1, T2>> tuple(T1[] arr1, T2[] arr2) {
 
         ObjectsUtil.requireNotNull(arr1, arr2);
         LiAssertUtil.assertTrue(arr1.length == arr2.length, IllegalArgumentException::new, "arr length not same");
 
-        List<LiTuple2<T1, T2>> list = new ArrayList<>();
+        List<LiTuple<T1, T2>> list = new ArrayList<>();
         for (int i = 0; i < arr1.length; i++) {
 
             list.add(LiTuple.of(arr1[i], arr2[i]));

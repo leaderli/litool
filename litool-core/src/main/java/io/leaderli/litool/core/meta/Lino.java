@@ -10,6 +10,7 @@ import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Base on the functional programming thinking, all operation
@@ -332,13 +333,13 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
     <R> Lino<R> unzip(java.util.function.Function<? super T, java.util.function.Supplier<? extends R>> mapper);
 
     /**
-     * @param mapper the provide function of {@link  LiTuple2}
-     * @param <R>    the type of {@link  LiTuple2} 2rd
-     * @return a new lino consist of {@link  LiTuple2}
+     * @param mapper the provide function of {@link  LiTuple}
+     * @param <R>    the type of {@link  LiTuple} 2rd
+     * @return a new lino consist of {@link  LiTuple}
      */
-    <R> Lino<LiTuple2<T, R>> tuple(java.util.function.Function<? super T, ? extends R> mapper);
+    <R> Lino<LiTuple<T, R>> tuple(java.util.function.Function<? super T, ? extends R> mapper);
 
-    <R> Lino<LiTuple2<T, R>> tuple2(R t2);
+    <R> Lino<LiTuple<T, R>> tuple2(R t2);
 
     /**
      * @param consumer the consumer of lino
@@ -612,14 +613,14 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public <R> Lino<LiTuple2<T, R>> tuple(java.util.function.Function<? super T, ? extends R> mapper) {
+        public <R> Lino<LiTuple<T, R>> tuple(java.util.function.Function<? super T, ? extends R> mapper) {
             return map(mapper).map(r -> LiTuple.of(value, r));
         }
 
         @Override
-        public <R> Lino<LiTuple2<T, R>> tuple2(R t2) {
+        public <R> Lino<LiTuple<T, R>> tuple2(R t2) {
 
-            LiTuple2<T, R> of = LiTuple.of(value, t2);
+            LiTuple<T, R> of = LiTuple.of(value, t2);
             return Lino.of(of);
         }
 
@@ -838,12 +839,12 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public <R> Lino<LiTuple2<T, R>> tuple(java.util.function.Function<? super T, ? extends R> mapper) {
+        public <R> Lino<LiTuple<T, R>> tuple(java.util.function.Function<? super T, ? extends R> mapper) {
             return none();
         }
 
         @Override
-        public <R> Lino<LiTuple2<T, R>> tuple2(R t2) {
+        public <R> Lino<LiTuple<T, R>> tuple2(R t2) {
             return none();
         }
 
@@ -864,7 +865,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public <L> Lino<Either<L, T>> eitherSupplier(java.util.function.Supplier<? extends L> l) {
+        public <L> Lino<Either<L, T>> eitherSupplier(Supplier<? extends L> l) {
             if (l == null) {
                 return Lino.of(Either.none());
             }

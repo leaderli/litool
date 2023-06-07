@@ -18,7 +18,7 @@ import java.util.Map;
 
 
 /**
- * a  utilities  of  resource such as {@link  File}, {@link  InputStream}
+ * ResourceUtil 是一个工具类，用于处理资源类工作，其中包括文件和输入流等资源。
  */
 public class ResourceUtil {
 
@@ -27,11 +27,12 @@ public class ResourceUtil {
      */
     public static final Charset DEFAULT_CHARACTER_ENCODING = StandardCharsets.UTF_8;
 
+
     /**
-     * Return  an inputStream create by string
+     * 根据字符串创建一个流
      *
-     * @param string a  string of charset {@link  #DEFAULT_CHARACTER_ENCODING}
-     * @return an inputStream create by string
+     * @param string 字符串，编码格式为 {@link #DEFAULT_CHARACTER_ENCODING}
+     * @return 返回一个对应的输入流
      */
     public static InputStream createContentStream(String string) {
         if (string == null) {
@@ -40,11 +41,12 @@ public class ResourceUtil {
         return (new ByteArrayInputStream(string.getBytes(DEFAULT_CHARACTER_ENCODING)));
     }
 
+
     /**
-     * Return a lira of resource files under classpath, include subdirectories
+     * 获取资源文件列表，包括子目录中的文件
      *
-     * @param walkFileFilter the filter of {@link  File}
-     * @return a lira of files
+     * @param walkFileFilter 过滤器
+     * @return 返回一个 {@link Lira} 列表，其中包含符合条件的文件
      * @see #getResourceFiles(String, WalkFileFilter)
      */
     public static Lira<File> getResourceFiles(WalkFileFilter walkFileFilter) {
@@ -52,19 +54,20 @@ public class ResourceUtil {
         return getResourceFiles("", walkFileFilter);
     }
 
+
     /**
-     * Return a lira of resource files under classpath, include subdirectories
+     * 获取资源文件列表，包括子目录中的文件
      *
-     * @param resource_name the name of resource under classpath
-     * @param fileFilter    the filter of {@link  File}
-     * @return a lira of files
+     * @param resourceName 资源名称
+     * @param fileFilter   过滤器
+     * @return 返回一个 {@link Lira} 列表，其中包含符合条件的文件。
      * @see #getResourceURLs(String)
      */
-    public static Lira<File> getResourceFiles(String resource_name, WalkFileFilter fileFilter) {
+    public static Lira<File> getResourceFiles(String resourceName, WalkFileFilter fileFilter) {
 
 
         List<File> result = new ArrayList<>();
-        getResourceURLs(resource_name).throwable_map(URL::toURI).map(Paths::get).forThrowableEach(path -> {
+        getResourceURLs(resourceName).throwable_map(URL::toURI).map(Paths::get).forThrowableEach(path -> {
 
             SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
                 @Override
@@ -92,27 +95,28 @@ public class ResourceUtil {
         return Lira.of(result);
     }
 
-    /**
-     * Return a lira consist of {@link  URL} according to  {@link  ClassLoader#getResources(String)}
-     *
-     * @param resource_name the name of resource_name
-     * @return a lira consist of {@link  URL}
-     */
-    public static Lira<URL> getResourceURLs(String resource_name) {
 
-        return Lino.of(resource_name).throwable_map(ClassLoaderUtil.getClassLoader()::getResources).toLira(URL.class);
+    /**
+     * 获取资源列表中的 URL
+     *
+     * @param resourceName 相对于 classpath 的资源名
+     * @return 返回一个 {@link Lira} 列表，其中包含对应的 URL
+     */
+    public static Lira<URL> getResourceURLs(String resourceName) {
+
+        return Lino.of(resourceName).throwable_map(ClassLoaderUtil.getClassLoader()::getResources).toLira(URL.class);
 
     }
 
     /**
-     * Return  the map of line of content
+     * 返回一个资源文件的每一行内容组成的 Map。
      *
-     * @param path file path under classpath
-     * @return a map of line of content
+     * @param resourceName 相对于 classpath 的资源名
+     * @return 返回一个 Map，其中 key 为行号，value 为对应的行内容。
      */
-    public static Map<Integer, String> lineStrOfResourcesFile(String path) {
+    public static Map<Integer, String> lineStrOfResourcesFile(String resourceName) {
 
-        return Lino.of(path)
+        return Lino.of(resourceName)
                 .map(ResourceUtil::getResource).throwable_map(URL::openStream)
                 .map(InputStreamReader::new).map(BufferedReader::new)
                 .throwable_map(reader -> {
@@ -127,64 +131,66 @@ public class ResourceUtil {
                 .get(HashMap::new);
     }
 
+
     /**
-     * get file URL
-     *
+     * 获取文件的 URL
      * <pre>
      * config/a/db.config
      * spring/xml/test.xml
-     * </pre>
+     * </pre>*
      *
-     * @param path file path under classpath
-     * @return file url
+     * @param path 相对于 classpath 的文件路径
+     * @return 返回对应文件的 URL
      */
     public static URL getResource(String path) {
 
         return getResource(path, null);
     }
 
+
     /**
-     * Return the relative URL under benchmark class
+     * 获取相对于指定类的路径的资源文件 URL
      *
-     * @param resource_name the relative path of resource, {@code null} and "" both represent classpath path
-     * @param baseClass     the benchmark Class，
-     * @return {@link URL}
+     * @param path  相对于 classpath 的文件路径
+     * @param clazz 指定的类
+     * @return 返回对应文件的 URL
      */
-    public static URL getResource(String resource_name, Class<?> baseClass) {
-        resource_name = StringUtils.stripToEmpty(resource_name);
-        if (baseClass == null) {
-            resource_name = StringUtils.removeStart(resource_name, "/");
-            return ClassLoaderUtil.getClassLoader().getResource(resource_name);
+    public static URL getResource(String path, Class<?> clazz) {
+        path = StringUtils.stripToEmpty(path);
+        if (clazz == null) {
+            path = StringUtils.removeStart(path, "/");
+            return ClassLoaderUtil.getClassLoader().getResource(path);
         }
-        return baseClass.getResource(resource_name);
+        return clazz.getResource(path);
     }
 
     /**
-     * An inputStream of resource under classpath
+     * 从classpath下获取资源的输入流
      *
-     * @param resource_path the relative path under classpath
-     * @return an  inputStream
+     * @param resourcePath 资源的相对路径
+     * @return 资源的输入流
      * @see #getResourceAsStream(String, Class)
      */
-    public static InputStream getResourceAsStream(String resource_path) {
+    public static InputStream getResourceAsStream(String resourcePath) {
 
-        return getResourceAsStream(resource_path, null);
+        return getResourceAsStream(resourcePath, null);
 
     }
 
+
     /**
-     * An inputStream of resource under benchmark class
+     * 从基准类所在的路径下获取资源的输入流
      *
-     * @param resource_relative_path the relative path under benchmark class
-     * @param baseClass              benchmark class
-     * @return an inputStream
+     * @param resourceRelativePath 资源的相对路径
+     * @param baseClass            基准类
+     * @return 资源的输入流
      * @see #getResource(String, Class)
      * @see URL#openStream()
      */
-    public static InputStream getResourceAsStream(String resource_relative_path, Class<?> baseClass) {
+    public static InputStream getResourceAsStream(String resourceRelativePath, Class<?> baseClass) {
 
         try {
-            return getResource(resource_relative_path, baseClass).openStream();
+            return getResource(resourceRelativePath, baseClass).openStream();
         } catch (IOException e) {
             return null;
         }
