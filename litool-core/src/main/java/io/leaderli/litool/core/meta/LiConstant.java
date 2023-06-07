@@ -8,39 +8,36 @@ import java.util.Iterator;
 import java.util.function.Consumer;
 
 /**
- * @author leaderli
- * @since 2022/7/12
+ * LiConstant类包含了一些常量和方法，用于支持LiTool工具的实现
  */
 public class LiConstant {
 
-
     /**
-     * the bash path used for {@link  Shell}
+     * {@link Shell} 实例的默认bash路径
      */
     public static final String BASH = "sh";
+
     /**
-     * the default delimiter of
-     * {@link  StringUtils#join(String, Iterable)}
-     * {@link  StringUtils#join(String, Iterator)}
-     * {@link  StringUtils#join(String, Object...)}
-     * {@link  StringUtils#join0(String, Object[])}
+     * {@link StringUtils#join(String, Iterable)}、
+     * {@link StringUtils#join(String, Iterator)}、
+     * {@link StringUtils#join(String, Object...)} 以及
+     * {@link StringUtils#join0(String, Object[])} 方法中使用的默认分隔符
      */
     public static final String JOIN_DELIMITER = ",";
 
-
     /**
-     * A prefix for a field that represents a property of a lambda expression.
+     * 用于表示lambda表达式的属性字段的前缀
      */
     public static final String LAMBDA_FIELD_PREFIX = "arg$";
 
     /**
-     * the field of inner class create by jvm that reference the out class,
-     * if you manually define a field named {@code  this$0}, the jvm will
-     * choose {@code this$0$}
+     * 内部类由JVM创建的引用外部类的字段，如果手动定义一个名为{@code this$0}的字段，
+     * JVM将会选择{@code this$0$}
      */
     public static final String INNER_CLASS_THIS_FIELD = "this$0";
+
     /**
-     * The default consumer when exception occurs, it suitable for
+     * 当发生异常时的默认消费者，适用于以下方法：
      *
      * @see Lino#throwable_map(ThrowableFunction)
      * @see Lira#throwable_map(ThrowableFunction)
@@ -48,19 +45,22 @@ public class LiConstant {
     @SuppressWarnings("all")
     public static Consumer<Throwable> WHEN_THROW = Throwable::printStackTrace;
 
-    public static void accept(Throwable e) {
-
+    /**
+     * 使用默认异常消费者接受一个异常
+     *
+     * @param e 异常
+     */
+    public static void whenThrow(Throwable e) {
         if (WHEN_THROW != null) {
             WHEN_THROW.accept(e);
         }
     }
 
     /**
-     * the action only provide for junit test, it clear the default
-     * exception consumer, and run the code, and then reset the default
-     * consumer back
+     * 此方法仅供JUnit测试使用，用于清除默认异常消费者，执行代码，
+     * 然后重新设置默认消费者
      *
-     * @param runnable the action
+     * @param runnable 执行的操作
      * @see #clear_when_throw()
      * @see #reset()
      */
@@ -68,18 +68,17 @@ public class LiConstant {
         clear_when_throw();
         runnable.run();
         reset();
-
     }
 
     /**
-     * clear the default error consumer
+     * 清除默认错误消费者
      */
     public static void clear_when_throw() {
         WHEN_THROW = null;
     }
 
     /**
-     * reset the default error consumer
+     * 重置默认错误消费者
      */
     public static void reset() {
         WHEN_THROW = Throwable::printStackTrace;

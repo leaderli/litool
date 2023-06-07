@@ -71,7 +71,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
             try {
                 return filter.apply(t);
             } catch (Throwable e) {
-                LiConstant.accept(e);
+                LiConstant.whenThrow(e);
                 return false;
             }
         });
@@ -84,7 +84,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
             try {
                 return filter.get();
             } catch (Throwable e) {
-                LiConstant.accept(e);
+                LiConstant.whenThrow(e);
                 return false;
             }
         });
@@ -97,7 +97,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
             try {
                 consumer.accept(t);
             } catch (Throwable e) {
-                LiConstant.accept(e);
+                LiConstant.whenThrow(e);
                 return false;
             }
             return true;
@@ -111,7 +111,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
             try {
                 runner.run();
             } catch (Throwable e) {
-                LiConstant.accept(e);
+                LiConstant.whenThrow(e);
                 return false;
             }
             return true;
@@ -138,7 +138,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
             try {
                 runnable.run();
             } catch (Throwable e) {
-                LiConstant.accept(e);
+                LiConstant.whenThrow(e);
             }
         });
     }
@@ -150,7 +150,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
             try {
                 consumer.accept(v);
             } catch (Throwable e) {
-                LiConstant.accept(e);
+                LiConstant.whenThrow(e);
             }
 
         });

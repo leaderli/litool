@@ -10,6 +10,7 @@ import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -17,6 +18,7 @@ import java.util.function.Supplier;
  * on the value is type-safe and null-safe, the most action will
  * invoked only when {@link  #present()}.
  *
+ * @param <T> 实际值的类型
  * @author leaderli
  * @since 2022/6/16
  */
@@ -104,7 +106,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
             }
             return new Some<>(value);
         } catch (Throwable e) {
-            LiConstant.accept(e);
+            LiConstant.whenThrow(e);
             return none();
         }
     }
@@ -337,8 +339,13 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param <R>    the type of {@link  LiTuple} 2rd
      * @return a new lino consist of {@link  LiTuple}
      */
-    <R> Lino<LiTuple<T, R>> tuple(java.util.function.Function<? super T, ? extends R> mapper);
+    <R> Lino<LiTuple<T, R>> tuple(Function<? super T, ? extends R> mapper);
 
+    /**
+     * @param t2  第二个值
+     * @param <R> 第二个值的类型
+     * @return 一个由当前值和第二个值组成的元祖
+     */
     <R> Lino<LiTuple<T, R>> tuple2(R t2);
 
     /**
@@ -464,10 +471,16 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
     <R> Lira<R> toLira(LiTypeToken<? extends R> type);
 
 
+    /**
+     * @param <T> 值的类型
+     */
     final class Some<T> implements Lino<T> {
 
         private final T value;
 
+        /**
+         * @param value -
+         */
         public Some(T value) {
             this.value = value;
         }
@@ -701,7 +714,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         public Lira<Object> toLira() {
 
             IterableItr<Object> iterable = IterableItr.of(this.value);
-                return Lira.of(iterable);
+            return Lira.of(iterable);
 
         }
 
@@ -718,6 +731,9 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
     }
 
 
+    /**
+     * @param <T> 值的类型
+     */
     final class None<T> implements Lino<T> {
         private static final None<?> INSTANCE = new None<>();
 

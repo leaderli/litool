@@ -109,7 +109,6 @@ public interface LiIf<T, R> extends PublisherIf<T, R> {
      *
      * @param supplier if the prev predicate all failed, get supplier value  as the target value
      * @return the lino of target value
-     * @see #_else(Supplier)
      */
     Lino<R> _else(Supplier<? extends R> supplier);
 
