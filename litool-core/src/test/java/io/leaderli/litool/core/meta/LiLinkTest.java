@@ -36,7 +36,7 @@ class LiLinkTest {
 
         e1.reset();
 
-        LiLink.none()
+        LiLink.of(null)
                 .onInterrupt(v -> LiAssertUtil.assertNotRun()).onInterrupt(() -> e1.value(1))
                 .present();
         Assertions.assertEquals(1, e1.value());
@@ -55,10 +55,10 @@ class LiLinkTest {
 
 
         LiLink.of().onFinally(LiAssertUtil::assertTrue);
-        LiLink.none().onFinally(LiAssertUtil::assertFalse);
+        LiLink.of(null).onFinally(LiAssertUtil::assertFalse);
 
 
-        LiConstant.temporary(
+        WhenThrowBehavior.temporaryIgnore(
                 () -> LiLink.of()
                         .throwable_then(i -> {
                             System.out.println(i / (i - 1));
@@ -83,7 +83,7 @@ class LiLinkTest {
         Assertions.assertDoesNotThrow(() -> LiLink.of(1)
                 .onInterrupt(LiAssertUtil::assertNotRun)
                 .run());
-        Assertions.assertThrows(IllegalStateException.class, () -> LiLink.none()
+        Assertions.assertThrows(IllegalStateException.class, () -> LiLink.of(null)
                 .onInterrupt(LiAssertUtil::assertNotRun)
                 .run());
 

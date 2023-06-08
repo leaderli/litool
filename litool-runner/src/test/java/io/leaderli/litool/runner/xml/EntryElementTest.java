@@ -1,6 +1,6 @@
 package io.leaderli.litool.runner.xml;
 
-import io.leaderli.litool.core.meta.LiConstant;
+import io.leaderli.litool.core.meta.WhenThrowBehavior;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.dom.parser.SaxEventInterceptor;
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +14,7 @@ class EntryElementTest {
 
     @Test
     void type_error() {
-        LiConstant.WHEN_THROW = null;
+        WhenThrowBehavior.WHEN_THROW = null;
         SaxEventInterceptor<RequestElement> dfs = new SaxEventInterceptor<>(RequestElement.class);
 
         RequestElement requestElement = dfs.parse("entry.xml");

@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
+ * @param <T> 集合元素的类型
  * @author leaderli
  * @since 2022/6/28
  */
@@ -299,7 +300,7 @@ public abstract class Ra<T> implements Lira<T> {
 
     @Override
     public void forThrowableEach(ThrowableConsumer<? super T> action) {
-        forThrowableEach(action, LiConstant.WHEN_THROW);
+        forThrowableEach(action, WhenThrowBehavior.WHEN_THROW);
     }
 
     @Override

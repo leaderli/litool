@@ -8,21 +8,24 @@ import io.leaderli.litool.core.meta.link.PublisherLink;
 import io.leaderli.litool.core.meta.link.ValueLink;
 import io.leaderli.litool.core.util.BooleanUtil;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
+
 /**
+ * 链式执行，每个节点执行成功后才会执行下一个节点，若某一个节点执行结果为失败或者执行结果为false，
+ * 则调用最靠近的一组onInterrupt方法
+ * 执行动作是响应式的，需要显式的调用present()才会触发
+ *
  * @param <T> 泛型
- *            <p>
- *            链式执行，每个节点执行成功后才会执行下一个节点，若某一个节点执行结果为失败或者执行结果为false，
- *            则调用最靠近的一组  error 节点
- *            执行动作是响应式的， 需要显式的调用 {@link #present()} 才会触发
- * @author leaderli
  * @see BooleanUtil#parse(Object)
- * @since 2022/7/16
  */
 public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
 
     /**
+     * 返回一个值为1的LiLink，这个值仅用于驱动链式执行。
+     *
      * @return a liLink with value 1, the value only to drive chain execute
      */
     static LiLink<Integer> of() {
@@ -31,17 +34,24 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     }
 
     /**
-     * @param <T> the type of value
-     * @return a none liLink
+     * @param supplier -
+     * @param <T>      泛型
+     * @return a liLink
+     * @see #of(Object)
      */
-    static <T> LiLink<T> none() {
+    static <T> LiLink<T> supplier(Supplier<T> supplier) {
 
-        return new ValueLink<>(null);
+        if (supplier == null) {
+            return of(null);
+        }
+        return of(supplier.get());
     }
 
     /**
-     * @param value a value
-     * @param <T>   the type of value
+     * 返回一个带有指定值的LiLink。如果value的值为null，则直接执行最近的一组onInterrupt方法
+     *
+     * @param value LiLink的值
+     * @param <T>   泛型
      * @return a liLink
      */
     static <T> LiLink<T> of(T value) {
@@ -50,133 +60,129 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     }
 
     /**
-     * @param supplier a value provider
-     * @param <T>      the type of value
-     * @return a liLink
+     * 当函数结果为null时，会中断执行链。
+     *
+     * @param mapper 映射函数
+     * @param <R>    映射结果泛型
+     * @return 新的LiLink
+     * @see Function#apply(Object)
      */
-    static <T> LiLink<T> supplier(Supplier<T> supplier) {
-
-        if (supplier == null) {
-            return new ValueLink<>(null);
-        }
-        return new ValueLink<>(supplier.get());
-    }
+    <R> LiLink<R> map(Function<? super T, ? extends R> mapper);
 
     /**
-     * when the filter result is null, interrupt the execution chain
+     * 当函数值为false时，会中断执行链。
      *
-     * @param mapper the mapper function
-     * @param <R>    the type of mapper result
-     * @return new link
+     * @param filter 过滤函数
+     * @return 新的LiLink
+     * @see BooleanUtil#parse(Object)
      */
-    <R> LiLink<R> map(java.util.function.Function<? super T, ? extends R> mapper);
 
+    LiLink<T> then(Function<? super T, ?> filter);
 
     /**
-     * when the filter  result is false, interrupt the execution chain
+     * 当函数值为false时，会中断执行链。
      *
-     * @param filter the filter
+     * @param supplier -
      * @return new link
      * @see BooleanUtil#parse(Object)
      */
-    LiLink<T> then(java.util.function.Function<? super T, ?> filter);
+    LiLink<T> then(Supplier<?> supplier);
 
     /**
-     * when the filter result is false, interrupt the execution chain
+     * 在执行下一个节点之前执行一个消费者。
      *
-     * @param filter the filter
-     * @return new link
-     * @see BooleanUtil#parse(Object)
+     * @param consumer 消费者
+     * @return 新的LiLink
      */
-    LiLink<T> then(java.util.function.Supplier<?> filter);
+    LiLink<T> then(Consumer<? super T> consumer);
 
     /**
-     * @param consumer the consumer
-     * @return new link
-     */
-    LiLink<T> then(java.util.function.Consumer<? super T> consumer);
-
-    /**
-     * @param runnable the runnable
-     * @return new link
+     * 在执行下一个节点之前执行一个Runnable。
+     *
+     * @param runnable -
+     * @return 新的LiLink
      */
     LiLink<T> then(Runnable runnable);
 
 
     /**
-     * when the filter throw a exception or it result is false, interrupt the execution chain
+     * 当函数值为false时或者异常时，会中断执行链。
      *
-     * @param filter the filter
+     * @param filter 过滤函数
      * @return new link
      * @see BooleanUtil#parse(Object)
      */
     LiLink<T> throwable_then(ThrowableFunction<? super T, ?> filter);
 
-    /**
-     * when the filter throw a exception or it result is false, interrupt the execution chain
-     *
-     * @param filter the filter
-     * @return new link
-     */
-    LiLink<T> throwable_then(ThrowableSupplier<?> filter);
 
     /**
-     * when the consumer throw a exception, interrupt the execution chain
+     * 当函数值为false时或者异常时，会中断执行链。
      *
-     * @param consumer the consumer
+     * @param supplier -
      * @return new link
+     * @see BooleanUtil#parse(Object)
+     */
+    LiLink<T> throwable_then(ThrowableSupplier<?> supplier);
+
+    /**
+     * 在执行下一个节点之前执行一个Runnable。异常时，会中断执行链。
+     *
+     * @param consumer -
+     * @return new link
+     * @see BooleanUtil#parse(Object)
      */
     LiLink<T> throwable_then(ThrowableConsumer<? super T> consumer);
 
     /**
-     * when the runnable throw a exception, interrupt the execution chain
+     * 在执行下一个节点之前执行一个消费者。异常时，会中断执行链。
      *
-     * @param runner the runnable
+     * @param runner -
      * @return new link
      */
     LiLink<T> throwable_then(ThrowableRunner runner);
 
 
     /**
-     * runnable only run when the execution chain has interrupt
+     * 当执行链被中断时执行
      *
      * @param runnable the runnable
      * @return new link
-     * @see LiConstant#WHEN_THROW
+     * @see WhenThrowBehavior#WHEN_THROW
      */
     LiLink<T> onInterrupt(Runnable runnable);
 
     /**
-     * consumer only accept when the execution chain has interrupt and the  notify value is not null
+     * 当执行链被中断且发出信息的值不为null时执行
      *
      * @param consumer the consumer
      * @return new link
-     * @see LiConstant#WHEN_THROW
+     * @see WhenThrowBehavior#WHEN_THROW
      */
-    LiLink<T> onInterrupt(java.util.function.Consumer<? super T> consumer);
+    LiLink<T> onInterrupt(Consumer<? super T> consumer);
 
     /**
-     * runnable only run when the execution chain has interrupt
+     * 当执行链被中断时执行
      *
      * @param runnable the runnable
      * @return new link
-     * @see LiConstant#WHEN_THROW
+     * @see WhenThrowBehavior#WHEN_THROW
      */
     LiLink<T> onThrowableInterrupt(ThrowableRunner runnable);
 
     /**
-     * consumer only accept when the execution chain has interrupt and the  notify value is not null
+     * 当执行链被中断且发出信息的值不为null时执行
      *
      * @param consumer the consumer
      * @return new link
-     * @see LiConstant#WHEN_THROW
+     * @see WhenThrowBehavior#WHEN_THROW
      */
     LiLink<T> onThrowableInterrupt(ThrowableConsumer<? super T> consumer);
 
+
     /**
-     * the terminal action
+     * 终结操作
      *
-     * @return {@code  true} if the execution chain has not interrupted
+     * @return {@code  true} 如果执行链没有被中断
      */
     @Override
     boolean present();
@@ -184,17 +190,16 @@ public interface LiLink<T> extends LiValue, PublisherLink<T>, Runnable {
     @Override
     String name();
 
-
     /**
-     * the terminal action, call finally with the parameter of whether the execution chains is not interrupted
+     * 终止操作，调用最后的消费者函数，并传递执行链是否被中断的参数
      *
-     * @param onFinally the last consumer, will always called
+     * @param onFinally 最后的消费者函数，无论如何都会被调用
      * @see #present()
      */
-    void onFinally(java.util.function.Consumer<Boolean> onFinally);
+    void onFinally(Consumer<Boolean> onFinally);
 
     /**
-     * the terminal action,  behavior like {@link  Runnable}
+     * 终结操作
      *
      * @see #present()
      */

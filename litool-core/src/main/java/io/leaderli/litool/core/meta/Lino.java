@@ -106,7 +106,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
             }
             return new Some<>(value);
         } catch (Throwable e) {
-            LiConstant.whenThrow(e);
+            WhenThrowBehavior.whenThrow(e);
             return none();
         }
     }
@@ -414,13 +414,13 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
     /**
      * when the error occurs will return {@link  Lino#none()}
      * <p>
-     * use {@link  LiConstant#WHEN_THROW} as error consumer
+     * use {@link  WhenThrowBehavior#WHEN_THROW} as error consumer
      *
      * @param mapper the  mapper
      * @param <R>    the type of after mapper
      * @return a new lino of type R
      * @see #throwable_map(ThrowableFunction, java.util.function.Consumer)
-     * @see LiConstant#WHEN_THROW
+     * @see WhenThrowBehavior#WHEN_THROW
      */
     <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
 
@@ -687,7 +687,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
 
         @Override
         public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
-            return throwable_map(mapper, LiConstant.WHEN_THROW);
+            return throwable_map(mapper, WhenThrowBehavior.WHEN_THROW);
         }
 
 

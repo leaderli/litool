@@ -1,7 +1,7 @@
 package io.leaderli.litool.core.util;
 
-import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.WhenThrowBehavior;
 import io.leaderli.litool.core.text.StringConvert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class StringConvertTest {
     @Test
     void parserInt() {
 
-        LiConstant.WHEN_THROW = null;
+        WhenThrowBehavior.WHEN_THROW = null;
         Assertions.assertSame(0, StringConvert.parser(null, 0));
         Assertions.assertSame(1, StringConvert.parser("1", 0));
         Assertions.assertSame(true, StringConvert.parser("true", false));

@@ -1,17 +1,16 @@
 package io.leaderli.litool.core.meta.logic;
 
 /**
- * provide not operation, and after this only allow test operation.
- * so it will return {@link TestOperation}
+ * 提供逻辑非操作，经过逻辑非操作后只允许进行测试操作，返回{@link TestOperation}类型的对象。
  *
- * @param <T> the type of test value {@link  UnionOperation#apply(Object)}
+ * @param <T> 测试值的类型 {@link UnionOperation#apply(Object)}
  */
 @FunctionalInterface
 public interface NotOperation<T> {
     /**
-     * negate nest test operation
+     * 对嵌套的测试操作执行逻辑非操作，返回 {@link NotSome} 类型的对象进行测试操作。
      *
-     * @return a  {@link  NotSome}
+     * @return 返回一个 {@link NotSome} 类型的对象进行测试操作。
      */
     TestOperation<T> not();
 }

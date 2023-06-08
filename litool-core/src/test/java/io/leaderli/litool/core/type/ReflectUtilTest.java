@@ -1,8 +1,8 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.lang.DisposableRunnableProxy;
-import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.WhenThrowBehavior;
 import io.leaderli.litool.core.meta.ra.LiraRuntimeException;
 import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
@@ -147,7 +147,7 @@ class ReflectUtilTest {
 
 
     static {
-        LiConstant.WHEN_THROW = null;
+        WhenThrowBehavior.WHEN_THROW = null;
 
     }
 

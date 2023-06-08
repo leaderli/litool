@@ -1,17 +1,19 @@
 package io.leaderli.litool.core.meta.logic;
 
 /**
- * @author leaderli
- * @since 2022/9/12
+ * 逻辑运算类，表示多个订阅者同时满足条件时，所有订阅者都会收到数据。
+ * 继承自 LogicSome 抽象类。
+ *
+ * @param <T> 订阅者订阅的数据类型。
  */
 class AndSome<T> extends LogicSome<T> {
 
-    public AndSome(PublisherLogic<T> prePublisher) {
+    public AndSome(Publisher<T> prePublisher) {
         super(prePublisher);
     }
 
     @Override
-    public void subscribe(SubscriberLogic<T> actualSubscriber) {
+    public void subscribe(Subscriber<T> actualSubscriber) {
         prevPublisher.subscribe(new TestSubscriberSubscription(actualSubscriber));
 
     }
@@ -19,15 +21,15 @@ class AndSome<T> extends LogicSome<T> {
     private class TestSubscriberSubscription extends IntermediateSubscriberSubscription<T> {
 
 
-        protected TestSubscriberSubscription(SubscriberLogic<T> actualSubscriber) {
+        protected TestSubscriberSubscription(Subscriber<T> actualSubscriber) {
             super(actualSubscriber);
         }
 
         @Override
-        public void next(T t, boolean last) {
+        public void next(T t, boolean lastState) {
 
-            if (last) {
-                super.next(t, last);
+            if (lastState) {
+                super.next(t, lastState);
             } else {
                 this.actualSubscriber.onComplete(false);
             }

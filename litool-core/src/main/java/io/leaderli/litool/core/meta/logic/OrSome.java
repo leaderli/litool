@@ -1,17 +1,19 @@
 package io.leaderli.litool.core.meta.logic;
 
 /**
+ * 或操作类
+ *
  * @author leaderli
  * @since 2022/9/12
  */
 class OrSome<T> extends LogicSome<T> {
 
-    public OrSome(PublisherLogic<T> prePublisher) {
+    public OrSome(Publisher<T> prePublisher) {
         super(prePublisher);
     }
 
     @Override
-    public void subscribe(SubscriberLogic<T> actualSubscriber) {
+    public void subscribe(Subscriber<T> actualSubscriber) {
         prevPublisher.subscribe(new TestSubscriberSubscription(actualSubscriber));
 
     }
@@ -19,17 +21,17 @@ class OrSome<T> extends LogicSome<T> {
     private class TestSubscriberSubscription extends IntermediateSubscriberSubscription<T> {
 
 
-        protected TestSubscriberSubscription(SubscriberLogic<T> actualSubscriber) {
+        protected TestSubscriberSubscription(Subscriber<T> actualSubscriber) {
             super(actualSubscriber);
         }
 
         @Override
-        public void next(T t, boolean last) {
+        public void next(T t, boolean lastState) {
 
-            if (last) {
+            if (lastState) {
                 this.actualSubscriber.onComplete(true);
             } else {
-                super.next(t, last);
+                super.next(t, lastState);
             }
         }
     }

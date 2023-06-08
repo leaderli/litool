@@ -5,8 +5,11 @@ import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableRunner;
 import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.LiBox;
-import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.LiLink;
+import io.leaderli.litool.core.meta.WhenThrowBehavior;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 abstract class SomeLink<P, T> implements LiLink<T> {
@@ -31,7 +34,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
 
 
     @Override
-    public <R> LiLink<R> map(java.util.function.Function<? super T, ? extends R> mapper) {
+    public <R> LiLink<R> map(Function<? super T, ? extends R> mapper) {
         return new MapLink<>(this, mapper);
     }
 
@@ -42,8 +45,8 @@ abstract class SomeLink<P, T> implements LiLink<T> {
     }
 
     @Override
-    public LiLink<T> then(java.util.function.Supplier<?> filter) {
-        return new FilterLink<>(this, t -> filter.get());
+    public LiLink<T> then(Supplier<?> supplier) {
+        return new FilterLink<>(this, t -> supplier.get());
     }
 
 
@@ -71,7 +74,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
             try {
                 return filter.apply(t);
             } catch (Throwable e) {
-                LiConstant.whenThrow(e);
+                WhenThrowBehavior.whenThrow(e);
                 return false;
             }
         });
@@ -79,12 +82,12 @@ abstract class SomeLink<P, T> implements LiLink<T> {
     }
 
     @Override
-    public LiLink<T> throwable_then(ThrowableSupplier<?> filter) {
+    public LiLink<T> throwable_then(ThrowableSupplier<?> supplier) {
         return new FilterLink<>(this, t -> {
             try {
-                return filter.get();
+                return supplier.get();
             } catch (Throwable e) {
-                LiConstant.whenThrow(e);
+                WhenThrowBehavior.whenThrow(e);
                 return false;
             }
         });
@@ -97,7 +100,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
             try {
                 consumer.accept(t);
             } catch (Throwable e) {
-                LiConstant.whenThrow(e);
+                WhenThrowBehavior.whenThrow(e);
                 return false;
             }
             return true;
@@ -111,7 +114,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
             try {
                 runner.run();
             } catch (Throwable e) {
-                LiConstant.whenThrow(e);
+                WhenThrowBehavior.whenThrow(e);
                 return false;
             }
             return true;
@@ -138,7 +141,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
             try {
                 runnable.run();
             } catch (Throwable e) {
-                LiConstant.whenThrow(e);
+                WhenThrowBehavior.whenThrow(e);
             }
         });
     }
@@ -150,7 +153,7 @@ abstract class SomeLink<P, T> implements LiLink<T> {
             try {
                 consumer.accept(v);
             } catch (Throwable e) {
-                LiConstant.whenThrow(e);
+                WhenThrowBehavior.whenThrow(e);
             }
 
         });

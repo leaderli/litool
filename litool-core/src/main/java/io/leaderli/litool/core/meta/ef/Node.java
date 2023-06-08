@@ -7,6 +7,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
+ * 抽象节点，实现了LiIf接口，提供了一些方法实现
+ *
+ * @param <T> 节点类的泛型类型
+ * @param <R> 节点返回值的类型*
  * @author leaderli
  * @since 2022/9/6
  */
@@ -38,16 +42,16 @@ abstract class Node<T, R> implements LiIf<T, R> {
 
 
     @Override
-    public LiThen<T, T, R> _if(Function<? super T, ?> predicate) {
+    public LiThen<T, T, R> _if(Function<? super T, ?> filter) {
 
-        return new PredicateNode<>(this, predicate);
+        return new PredicateNode<>(this, filter);
     }
 
 
     @Override
     public Lino<R> _else(Supplier<? extends R> supplier) {
         ElseNode<T, R> elseNode = new ElseNode<>(this, supplier);
-        elseNode.subscribe(SubscriptionIf::request);
+        elseNode.subscribe(Subscription::request);
         return elseNode.getResult();
     }
 

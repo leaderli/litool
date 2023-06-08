@@ -1,17 +1,18 @@
 package io.leaderli.litool.core.meta.logic;
 
 /**
+ * @param <T> 测试值类型
  * @author leaderli
  * @since 2022/9/12
  */
 @FunctionalInterface
-public interface SubscriptionLogic<T> {
+public interface Subscription<T> {
 
 
     /**
-     * request the test value
+     * 请求测试值
      *
-     * @param value the test value
+     * @param value 测试值
      */
     void request(T value);
 

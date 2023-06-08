@@ -3,23 +3,24 @@ package io.leaderli.litool.core.meta.logic;
 import java.util.function.Function;
 
 /**
- * provide and, or, apply operation, and  after this only allow not,test operation.
- * so it will return {@link  CombineOperation}
+ * 提供 and、or、apply 操作，之后只允许 not、test 操作。
+ * 因此它将返回 {@link CombineOperation}。
  *
- * @param <T> the type of test value {@link  UnionOperation#apply(Object)}
+ * @param <T> 测试值的类型，参见 {@link UnionOperation#apply(Object)}
  */
 public interface UnionOperation<T> extends Function<T, Boolean> {
+
     /**
-     * like logical operator and
+     * 类似于逻辑运算符 and。
      *
-     * @return {@link  AndSome}
+     * @return 返回 {@link AndSome}
      */
     CombineOperation<T> and();
 
     /**
-     * like logical operator or
+     * 类似于逻辑运算符 or。
      *
-     * @return {@link  OrSome}
+     * @return 返回 {@link OrSome}
      */
     CombineOperation<T> or();
 }

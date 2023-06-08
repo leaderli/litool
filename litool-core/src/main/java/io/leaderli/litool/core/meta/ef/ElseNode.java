@@ -6,23 +6,22 @@ import io.leaderli.litool.core.meta.Lino;
 import java.util.function.Supplier;
 
 /**
- * the end node of chain, it will hold the target value, and will drive chain execute
+ * ElseNode是责任链模式的最终节点，它持有目标值并驱动链执行
  *
- * @param <T> the type of source value
- * @param <R> the type pf target value
- * @author leaderli
+ * @param <T> 源值的类型
+ * @param <R> 目标值的类型
  * @see LiIf#_else(Supplier)
  * @see LiIf#_else(Object)
  * @see LiIf#_else()
  * @since 2022/9/6
  */
-class ElseNode<T, R> implements PublisherIf<T, R> {
-    private final PublisherIf<T, R> prevPublisher;
+class ElseNode<T, R> implements Publisher<T, R> {
+    private final Publisher<T, R> prevPublisher;
     private final Supplier<? extends R> supplier;
     private R result;
 
 
-    ElseNode(PublisherIf<T, R> prevPublisher, Supplier<? extends R> supplier) {
+    ElseNode(Publisher<T, R> prevPublisher, Supplier<? extends R> supplier) {
         this.prevPublisher = prevPublisher;
         this.supplier = supplier;
     }
@@ -32,7 +31,7 @@ class ElseNode<T, R> implements PublisherIf<T, R> {
     }
 
     @Override
-    public void subscribe(SubscriberIf<? super T, R> actualSubscriber) {
+    public void subscribe(Subscriber<? super T, R> actualSubscriber) {
         prevPublisher.subscribe(new EndSubscriber(actualSubscriber));
     }
 
@@ -40,7 +39,7 @@ class ElseNode<T, R> implements PublisherIf<T, R> {
     private class EndSubscriber extends IntermediateSubscriber<T, R> {
 
 
-        protected EndSubscriber(SubscriberIf<? super T, R> actualSubscriber) {
+        protected EndSubscriber(Subscriber<? super T, R> actualSubscriber) {
             super(actualSubscriber);
         }
 
