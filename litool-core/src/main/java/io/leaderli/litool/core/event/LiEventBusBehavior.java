@@ -13,6 +13,8 @@ public interface LiEventBusBehavior {
      * 注销监听器。
      *
      * @param listener 要注销的监听器
+     * @param <E>      事件类型
+     * @param <S>      消息类型
      * @see LiEventBus#unRegisterListener(ILiEventListener)
      */
     <E extends LiEventObject<S>, S> void unRegisterListener(ILiEventListener<E, S> listener);
