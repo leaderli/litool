@@ -1,6 +1,10 @@
 package io.leaderli.litool.core.collection;
 
-import java.util.ArrayList;
+import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.Lira;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * 一个固定长度的列表，不包含 null 或重复元素。
@@ -9,15 +13,33 @@ import java.util.ArrayList;
  *
  * @param <T> {@link #elements} 的类型
  */
-public class LiLimitArray<T> implements ToList<T, ArrayList<T>>, ToArray<T> {
+public class LiFixedSizeSet<T> implements ToList<T, List<T>>, ToArray<T>, Iterable<T> {
 
+    /**
+     * 列表的长度
+     */
     public final int size;
     private final T[] elements;
 
+    private final boolean allowReorderIndex;
+
+    /**
+     * @param size -
+     */
+    public LiFixedSizeSet(int size) {
+        this(size, false);
+    }
+
+    /**
+     * @param size              -
+     * @param allowReorderIndex 是否允许add时，碰到重复元素时重新调整顺序
+     */
     @SuppressWarnings("unchecked")
-    public LiLimitArray(int size) {
+    public LiFixedSizeSet(int size, boolean allowReorderIndex) {
+        LiAssertUtil.assertTrue(size > 0, IllegalArgumentException::new, "size is less than 1");
         this.size = size;
-        elements = (T[]) new Object[size];
+        this.elements = (T[]) new Object[size];
+        this.allowReorderIndex = allowReorderIndex;
     }
 
 
@@ -29,8 +51,15 @@ public class LiLimitArray<T> implements ToList<T, ArrayList<T>>, ToArray<T> {
      * @see #contains(Object)
      */
     public void add(T element) {
-        if (element == null || contains(element) || size == 0) {
+        if (element == null) {
             return;
+        }
+        if (contains(element)) {
+            if (allowReorderIndex) {
+                remove(element);
+            } else {
+                return;
+            }
         }
         System.arraycopy(elements, 0, elements, 1, size - 1);
         elements[0] = element;
@@ -90,14 +119,19 @@ public class LiLimitArray<T> implements ToList<T, ArrayList<T>>, ToArray<T> {
      */
     @Override
     public T[] toArray(Class<T> type) {
-        return ArrayUtils.convertToTargetArray(type, (Object[]) elements);
+        return Lira.of(elements).toArray(type);
     }
 
     /**
      * @return 转换成 ArrayList
      */
     @Override
-    public ArrayList<T> toList() {
-        return CollectionUtils.toList(elements);
+    public List<T> toList() {
+        return Lira.of(elements).get();
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return Lira.of(elements).iterator();
     }
 }

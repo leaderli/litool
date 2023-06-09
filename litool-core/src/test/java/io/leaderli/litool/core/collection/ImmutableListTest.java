@@ -21,6 +21,7 @@ class ImmutableListTest {
         Assertions.assertSame(ImmutableList.none(), ImmutableList.of(Collections.emptyList()));
         Assertions.assertSame(ImmutableList.none(), ImmutableList.of(Stream.empty()));
         Assertions.assertSame(ImmutableList.none(), ImmutableList.of(Collections.emptyIterator()));
+        String[] array = ImmutableList.<String>of().toArray(String.class);
 
         Assertions.assertEquals(ImmutableList.of(1, 2), ImmutableList.of(1, 2));
         Assertions.assertEquals(ImmutableList.of(1, 2), ImmutableList.of(Arrays.asList(1, 2)));

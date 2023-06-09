@@ -16,12 +16,13 @@ public class ImmutableList<T> implements Iterable<T>, ToList<T, ArrayList<T>>, T
 
     private static final ImmutableList<?> NONE_INSTANCE = new NoneImmutableList<>();
     private final int size;
-    private final Object[] elements;
+    private final T[] elements;
 
 
+    @SuppressWarnings("unchecked")
     private ImmutableList(Object[] arr) {
         this.size = arr.length;
-        this.elements = Arrays.copyOf(arr, size);
+        this.elements = (T[]) Arrays.copyOf(arr, size);
     }
 
     /**
@@ -49,31 +50,30 @@ public class ImmutableList<T> implements Iterable<T>, ToList<T, ArrayList<T>>, T
         return (ImmutableList<T>) NONE_INSTANCE;
     }
 
+    /**
+     * 将 {@link Iterator} 对象转换为  对象。
+     * * @param iterator 待转换的 {@link Iterator} 对象
+     *
+     * @param iterator -
+     * @param <T>      迭代器中元素的类型
+     * @return 转换后的  对象
+     */
+    public static <T> ImmutableList<T> of(Iterator<T> iterator) {
+        return of(IterableItr.of(iterator));
+    }
 
     /**
-     * 将 {@link ArrayItr} 对象转换为 {@link ImmutableList} 对象。
+     * 将 {@link ArrayItr} 对象转换为  对象。
      *
      * @param iterableItr 待转换的 {@link IterableItr} 对象
      * @param <T>         迭代器中元素的类型
-     * @return 转换后的 {@link ImmutableList} 对象
+     * @return 转换后的  对象
      */
     public static <T> ImmutableList<T> of(IterableItr<T> iterableItr) {
         if (iterableItr == NoneItr.of()) {
             return none();
         }
         return new ImmutableList<>(iterableItr.toArray());
-    }
-
-    /**
-     * 将 {@link Iterator} 对象转换为 {@link ImmutableList} 对象。
-     * * @param iterator 待转换的 {@link Iterator} 对象
-     *
-     * @param iterator -
-     * @param <T>      迭代器中元素的类型
-     * @return 转换后的 {@link ImmutableList} 对象
-     */
-    public static <T> ImmutableList<T> of(Iterator<T> iterator) {
-        return of(IterableItr.of(iterator));
     }
 
     /**
@@ -88,22 +88,22 @@ public class ImmutableList<T> implements Iterable<T>, ToList<T, ArrayList<T>>, T
     }
 
     /**
-     * 将 {@link Enumeration} 对象转换为 {@link ImmutableList} 对象。
+     * 将 {@link Enumeration} 对象转换为  对象。
      *
      * @param enumeration 待转换的 {@link Enumeration} 对象
      * @param <T>         迭代器中元素的类型
-     * @return 转换后的 {@link ImmutableList} 对象
+     * @return 转换后的  对象
      */
     public static <T> ImmutableList<T> of(Enumeration<T> enumeration) {
         return of(IterableItr.of(enumeration));
     }
 
     /**
-     * 将 {@link Stream} 对象转换为 {@link ImmutableList} 对象。
+     * 将 {@link Stream} 对象转换为  对象。
      *
      * @param stream 待转换的 {@link Stream} 对象
      * @param <T>    迭代器中元素的类型
-     * @return 转换后的 {@link ImmutableList} 对象
+     * @return 转换后的  对象
      */
     public static <T> ImmutableList<T> of(Stream<T> stream) {
         return of(IterableItr.of(stream));
@@ -150,13 +150,12 @@ public class ImmutableList<T> implements Iterable<T>, ToList<T, ArrayList<T>>, T
      * @return 指定位置的元素
      * @throws IndexOutOfBoundsException 如果索引越界，则抛出异常
      */
-    @SuppressWarnings("unchecked")
     public T get(int index) {
 
         if (index < 0) {
             index = size + index;
         }
-        return (T) elements[index];
+        return elements[index];
     }
 
 
@@ -172,10 +171,9 @@ public class ImmutableList<T> implements Iterable<T>, ToList<T, ArrayList<T>>, T
      *
      * @return 迭代器
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Iterator<T> iterator() {
-        return IterableItr.ofs((T[]) elements);
+        return IterableItr.ofs(elements);
     }
 
     /**
@@ -183,16 +181,15 @@ public class ImmutableList<T> implements Iterable<T>, ToList<T, ArrayList<T>>, T
      *
      * @return {@link java.util.ArrayList}
      */
-    @SuppressWarnings("unchecked")
     public ArrayList<T> toList() {
-        return CollectionUtils.toList((T[]) elements);
+        return CollectionUtils.toList(elements);
     }
 
     /**
      * @return 返回一个包含所有元素的数组
      */
     public T[] toArray(Class<T> type) {
-        return ArrayUtils.convertToTargetArray(type, elements);
+        return ArrayUtils.toWrapperArray(type, elements);
     }
 
 

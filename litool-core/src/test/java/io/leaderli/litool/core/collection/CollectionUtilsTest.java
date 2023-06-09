@@ -17,7 +17,6 @@ import java.util.Set;
 class CollectionUtilsTest {
 
 
-
     @Test
     void tuple() {
 

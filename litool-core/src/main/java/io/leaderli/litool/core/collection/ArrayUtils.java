@@ -1056,6 +1056,22 @@ public class ArrayUtils {
      * @return 新数组，其类型为T
      * @throws ArrayStoreException 如果数组中包含其他类型的成员
      */
+    @SafeVarargs
+    public static <T> T[] toWrapperArray(Class<? extends T> componentType, T... elements) {
+        T[] arr = ClassUtil.newWrapperArray(componentType, elements.length);
+        System.arraycopy(elements, 0, arr, 0, elements.length);
+        return arr;
+    }
+
+    /**
+     * 将可变参数转换为指定类型的数组
+     *
+     * @param componentType 数组的类型
+     * @param elements      源数组
+     * @param <T>           数组的类型
+     * @return 新数组，其类型为T
+     * @throws ArrayStoreException 如果数组中包含其他类型的成员
+     */
     public static <T> T[] convertToTargetArray(Class<? extends T> componentType, Object... elements) {
 
         T[] arr = ClassUtil.newWrapperArray(componentType, elements.length);

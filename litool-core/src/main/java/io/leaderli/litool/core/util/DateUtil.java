@@ -60,14 +60,17 @@ public class DateUtil {
 
         SimpleDateFormat before = new SimpleDateFormat(beforeFormat);
         SimpleDateFormat after = new SimpleDateFormat(afterFormat);
-        before.setLenient(true);
-        after.setLenient(true);
 
         return after.format(RuntimeExceptionTransfer.apply(before::parse, date));
 
     }
 
     /**
+     * 示例：
+     * <pre>
+     *     DateUtil.between("HHmm","0800","2200")
+     * </pre>
+     *
      * @param format 时间格式
      * @param before format格式的起始时间
      * @param after  format格式的结束时间
@@ -81,6 +84,12 @@ public class DateUtil {
     }
 
     /**
+     * 测试啊啊
+     * 示例：
+     * <pre>
+     *     DateUtil.between("HHmm","0759","0800","2200")
+     * </pre>
+     *
      * @param format  时间格式
      * @param between format格式的比较时间
      * @param before  format格式的起始时间
@@ -102,7 +111,6 @@ public class DateUtil {
      */
     public static Date parse(String dateStr, String format) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-        simpleDateFormat.setLenient(true);
         return RuntimeExceptionTransfer.apply(simpleDateFormat::parse, dateStr);
 
     }
