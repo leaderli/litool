@@ -8,6 +8,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+/**
+ * 时间工具类
+ */
 public class DateUtil {
 
 
@@ -48,16 +51,6 @@ public class DateUtil {
 
 
     /**
-     * @param dateStr 字符串格式的日期
-     * @param format  日期的格式
-     * @return 日期
-     */
-    public static Date parse(String dateStr, String format) {
-        return RuntimeExceptionTransfer.apply(new SimpleDateFormat(format)::parse, dateStr);
-
-    }
-
-    /**
      * @param date         字符串格式的日期
      * @param beforeFormat 原始日期的格式
      * @param afterFormat  转换后日期的格式
@@ -67,9 +60,50 @@ public class DateUtil {
 
         SimpleDateFormat before = new SimpleDateFormat(beforeFormat);
         SimpleDateFormat after = new SimpleDateFormat(afterFormat);
+        before.setLenient(true);
+        after.setLenient(true);
 
         return after.format(RuntimeExceptionTransfer.apply(before::parse, date));
 
     }
 
+    /**
+     * @param format 时间格式
+     * @param before format格式的起始时间
+     * @param after  format格式的结束时间
+     * @return 判断当时时间是否在时间范围内
+     * @see #between(String, String, String, String)
+     */
+
+    public static boolean between(String format, String before, String after) {
+
+        return between(format, now(format), before, after);
+    }
+
+    /**
+     * @param format  时间格式
+     * @param between format格式的比较时间
+     * @param before  format格式的起始时间
+     * @param after   format格式的结束时间
+     * @return 判断当时时间是否在时间范围内
+     */
+    public static boolean between(String format, String between, String before, String after) {
+
+        Date nowDate = parse(between, format);
+        Date beforeDate = parse(before, format);
+        Date afterDate = parse(after, format);
+        return beforeDate.before(nowDate) && afterDate.after(nowDate);
+    }
+
+    /**
+     * @param dateStr 字符串格式的日期
+     * @param format  日期的格式
+     * @return 日期
+     */
+    public static Date parse(String dateStr, String format) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        simpleDateFormat.setLenient(true);
+        return RuntimeExceptionTransfer.apply(simpleDateFormat::parse, dateStr);
+
+    }
 }

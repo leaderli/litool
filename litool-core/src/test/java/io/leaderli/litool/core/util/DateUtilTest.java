@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class DateUtilTest {
 
     @Test
@@ -40,5 +43,52 @@ class DateUtilTest {
         Assertions.assertNotNull(DateUtil.parse("19910103 112235", "yyyyMMdd HHmmss"));
         Assertions.assertEquals("1991/01/03", DateUtil.parse("19910103", "yyyyMMdd", "yyyy/MM/dd"));
         Assertions.assertEquals("19910103", DateUtil.parse("19910103 112235", "yyyyMMdd HHmmss", "yyyyMMdd"));
+    }
+
+
+    @Test
+    void between() {
+
+        String format = "yyyy-MM-dd HH:mm:ss";
+        String now = "2022-01-01 00:00:00";
+        String before = "2021-01-01 00:00:00";
+        String after = "2121-12-31 23:59:59";
+
+        assertTrue(DateUtil.between(format, now, before, after));
+        format = "HHmm";
+        now = "0001";
+        before = "0000";
+        after = "2359";
+
+        assertTrue(DateUtil.between(format, now, before, after));
+        format = "HHmm";
+        now = "0759";
+        before = "0800";
+        after = "2000";
+
+        assertFalse(DateUtil.between(format, now, before, after));
+        now = "2001";
+        assertFalse(DateUtil.between(format, now, before, after));
+
+        format = "MM";
+        before = "01";
+        now = "02";
+        after = "12";
+
+        assertTrue(DateUtil.between(format, now, before, after));
+        format = "HH";
+        before = "01";
+        now = "02";
+        after = "23";
+
+        assertTrue(DateUtil.between(format, now, before, after));
+        format = "HH";
+        before = "08";
+        now = "07";
+        after = "20";
+
+        assertFalse(DateUtil.between(format, now, before, after));
+        now = "20";
+        assertFalse(DateUtil.between(format, now, before, after));
     }
 }

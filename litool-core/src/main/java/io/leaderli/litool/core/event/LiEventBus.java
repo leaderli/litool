@@ -19,6 +19,7 @@ public class LiEventBus implements LiEventBusBehavior {
      * @param <E>      事件类型
      * @param <S>      消息类型
      * @param listener 要注册的监听器
+     *
      */
     public <E extends LiEventObject<S>, S> void registerListener(ILiEventListener<E, S> listener) {
         liEventMap.put(listener.componentType(), listener);
