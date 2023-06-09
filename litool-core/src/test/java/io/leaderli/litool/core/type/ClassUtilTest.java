@@ -209,6 +209,7 @@ class ClassUtilTest {
 
     }
 
+    @SuppressWarnings("all")
     @Test
     void getArrayClass() {
 
@@ -321,7 +322,6 @@ class ClassUtilTest {
     }
 
 
-
     @SuppressWarnings("rawtypes")
     @Test
     void getClassHierarchyDistance() {
@@ -359,10 +359,6 @@ class ClassUtilTest {
     private interface A {
     }
 
-    @FunctionalInterface
-    public interface Fuck extends Function<String, Integer> {
-
-    }
 
     interface MyFunction<T, R> {
 
@@ -376,7 +372,6 @@ class ClassUtilTest {
 
     private static class C extends B {
     }
-
 
 
     private static class Param implements Function<String, String> {

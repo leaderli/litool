@@ -1057,27 +1057,12 @@ public class ArrayUtils {
      * @throws ArrayStoreException 如果数组中包含其他类型的成员
      */
     @SafeVarargs
-    public static <T> T[] toWrapperArray(Class<? extends T> componentType, T... elements) {
+    public static <T> T[] toWrapperArray(Class<T> componentType, T... elements) {
         T[] arr = ClassUtil.newWrapperArray(componentType, elements.length);
         System.arraycopy(elements, 0, arr, 0, elements.length);
         return arr;
     }
 
-    /**
-     * 将可变参数转换为指定类型的数组
-     *
-     * @param componentType 数组的类型
-     * @param elements      源数组
-     * @param <T>           数组的类型
-     * @return 新数组，其类型为T
-     * @throws ArrayStoreException 如果数组中包含其他类型的成员
-     */
-    public static <T> T[] convertToTargetArray(Class<? extends T> componentType, Object... elements) {
-
-        T[] arr = ClassUtil.newWrapperArray(componentType, elements.length);
-        System.arraycopy(elements, 0, arr, 0, elements.length);
-        return arr;
-    }
 
     /**
      * 将 {@link  Iterable} 可提供的元素转换为类型为{@code T}的数组。
@@ -1088,7 +1073,7 @@ public class ArrayUtils {
      * @return 类型为{@code T}的数组，其中包含{@link  Iterator} 提供的元素
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] toArray(Class<? extends T> componentType, Iterable<T> iterable) {
+    public static <T> T[] toArray(Class<T> componentType, Iterable<T> iterable) {
         if (iterable != null) {
 
             List<T> list = new ArrayList<>();
@@ -1100,7 +1085,8 @@ public class ArrayUtils {
 
             return array;
         }
-        return toArray(componentType);
+        return ClassUtil.newWrapperArray(componentType, 0);
+
     }
 
 
@@ -1112,11 +1098,14 @@ public class ArrayUtils {
      * @param stream        流对象
      * @return 类型为{@code T}的数组，其中包含{@link  Stream} 提供的元素
      */
-    public static <T> T[] toArray(Class<? extends T> componentType, Stream<T> stream) {
+    public static <T> T[] toArray(Class<T> componentType, Stream<T> stream) {
         if (stream != null) {
-            return convertToTargetArray(componentType, stream.toArray());
+            Object[] array = stream.toArray();
+            T[] result = ClassUtil.newWrapperArray(componentType, array.length);
+            System.arraycopy(array, 0, result, 0, array.length);
+            return result;
         }
-        return toArray(componentType);
+        return ClassUtil.newWrapperArray(componentType, 0);
 
     }
 
@@ -1128,13 +1117,14 @@ public class ArrayUtils {
      * @param iterator      迭代
      * @return 类型为{@code T}的数组，其中包含{@link  Iterator} 提供的元素
      */
-    public static <T> T[] toArray(Class<? extends T> componentType, Iterator<T> iterator) {
-        if (iterator == null) {
-            return toArray(componentType);
+    public static <T> T[] toArray(Class<T> componentType, Iterator<T> iterator) {
+        if (iterator != null) {
+
+            List<T> list = new ArrayList<>();
+            iterator.forEachRemaining(list::add);
+            return CollectionUtils.toArray(componentType, list);
         }
-        List<T> list = new ArrayList<>();
-        iterator.forEachRemaining(list::add);
-        return convertToTargetArray(componentType, list.toArray());
+        return ClassUtil.newWrapperArray(componentType, 0);
     }
 
     /**
@@ -1146,18 +1136,19 @@ public class ArrayUtils {
      * @return 类型为{@code T}的数组，其中包含{@link  Enumeration} 提供的元素
      */
 
-    public static <T> T[] toArray(Class<? extends T> componentType, Enumeration<T> enumeration) {
+    public static <T> T[] toArray(Class<T> componentType, Enumeration<T> enumeration) {
 
-        if (enumeration == null) {
-            return toArray(componentType);
+        if (enumeration != null) {
+            List<T> list = new ArrayList<>();
+
+            while (enumeration.hasMoreElements()) {
+                list.add(enumeration.nextElement());
+            }
+
+            return CollectionUtils.toArray(componentType, list);
         }
-        List<T> list = new ArrayList<>();
+        return ClassUtil.newWrapperArray(componentType, 0);
 
-        while (enumeration.hasMoreElements()) {
-            list.add(enumeration.nextElement());
-        }
-
-        return convertToTargetArray(componentType, list.toArray());
     }
 
     /**

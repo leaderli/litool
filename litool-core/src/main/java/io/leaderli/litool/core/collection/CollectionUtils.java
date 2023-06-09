@@ -3,6 +3,7 @@ package io.leaderli.litool.core.collection;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
 import java.util.*;
@@ -40,6 +41,24 @@ public class CollectionUtils {
     public static <T> ArrayList<T> emptyList() {
 
         return new ArrayList<>();
+    }
+
+    /**
+     * 将可变参数转换为指定类型的数组
+     *
+     * @param componentType 数组的类型
+     * @param elements      源数组
+     * @param <T>           数组的类型
+     * @return 新数组，其类型为T
+     * @throws ArrayStoreException 如果数组中包含其他类型的成员
+     */
+    public static <T> T[] toArray(Class<? extends T> componentType, List<T> elements) {
+
+        T[] arr = ClassUtil.newWrapperArray(componentType, elements.size());
+        for (int i = 0; i < elements.size(); i++) {
+            arr[i] = elements.get(i);
+        }
+        return arr;
     }
 
     /**
@@ -121,6 +140,7 @@ public class CollectionUtils {
 
     /**
      * @param <T>    元素类型
+     * @param type   元素类型
      * @param first  -
      * @param second -
      * @return 两个 {@link  Iterable}的异或合集
@@ -135,6 +155,7 @@ public class CollectionUtils {
 
     /**
      * @param <T>    元素类型
+     * @param type   元素类型
      * @param first  -
      * @param second -
      * @return 两个 {@link  Iterable}的合集，union 需要保证顺序
@@ -148,6 +169,7 @@ public class CollectionUtils {
 
     /**
      * @param <T>    元素类型
+     * @param type   元素类型
      * @param first  -
      * @param second -
      * @return 两个 {@link  Iterable}的合集，union 需要保证顺序

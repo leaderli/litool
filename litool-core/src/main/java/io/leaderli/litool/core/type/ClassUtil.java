@@ -116,13 +116,15 @@ public class ClassUtil {
      * </pre>
      *
      * @param clazz 类型的 Class 对象
+     * @param <T>   类型
      * @return 由类实例元素组成的数组类型的 Class 对象
      * @throws NullPointerException 当clazz为null
      */
-    public static Class<?> getArrayClass(Class<?> clazz) {
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T[]> getArrayClass(Class<T> clazz) {
 
 
-        return Array.newInstance(clazz, 0).getClass();
+        return (Class<T[]>) Array.newInstance(clazz, 0).getClass();
     }
 
 

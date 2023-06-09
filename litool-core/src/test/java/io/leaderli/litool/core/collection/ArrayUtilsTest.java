@@ -4,9 +4,7 @@ import io.leaderli.litool.core.type.ClassUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,13 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class ArrayUtilsTest {
 
 
-    @Test
-    void convertToTargetArray() {
-
-        Assertions.assertThrows(ArrayStoreException.class, () -> ArrayUtils.convertToTargetArray(Integer.class, 1, 2, true));
-
-        Assertions.assertEquals(1, ArrayUtils.convertToTargetArray(Integer.class, (Object) null).length);
-    }
 
     @Test
     void arraycopy() {
@@ -382,6 +373,7 @@ class ArrayUtilsTest {
         actual = ArrayUtils.toArray(Integer.class, Stream.of(1, 2));
         assertArrayEquals(new Integer[]{1, 2}, actual);
 
+
         actual = ArrayUtils.toArray(Integer.class, Arrays.asList(1, 2));
         assertArrayEquals(new Integer[]{1, 2}, actual);
 
@@ -394,6 +386,13 @@ class ArrayUtilsTest {
         List<Integer> iterable = Collections.emptyList();
         actual = ArrayUtils.toArray(Integer.class, iterable);
         assertArrayEquals(new Integer[]{}, actual);
+
+        assertArrayEquals(new Integer[]{}, ArrayUtils.toArray(Integer.class, (Stream<Integer>) null));
+        assertArrayEquals(new Integer[]{}, ArrayUtils.toArray(Integer.class, (Iterable<Integer>) null));
+        assertArrayEquals(new Integer[]{}, ArrayUtils.toArray(Integer.class, (Iterator<Integer>) null));
+        assertArrayEquals(new Integer[]{}, ArrayUtils.toArray(Integer.class, (Enumeration<Integer>) null));
+
+
     }
 
     @SuppressWarnings("ConstantConditions")
