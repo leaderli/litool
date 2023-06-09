@@ -10,6 +10,9 @@ public class OncePerPeriod {
     private long lastExecutedAt = 0;
     private final long period;
 
+    /**
+     * @param period 时间毫秒区间
+     */
     public OncePerPeriod(long period) {
         this.period = period;
     }
