@@ -28,6 +28,15 @@ public class ExceptionUtil {
         return null;
     }
 
+    public static String beauty(Throwable throwable) {
+        Throwable cause = getCause(throwable);
+
+        if (cause != null) {
+            return cause.getStackTrace()[0] + " " + cause;
+        }
+        return "";
+    }
+
 
     /**
      * 获取在指定类中抛出的异常
