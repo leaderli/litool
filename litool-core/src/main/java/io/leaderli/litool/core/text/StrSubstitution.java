@@ -129,7 +129,7 @@ public class StrSubstitution {
             switch (state) {
 
                 case LITERAL:
-                    if (c == prefixChars[0]) {
+                    if (c == prefixChars[0]) {// 占位符开始
                         result.append(literalSB);
                         literalSB = new StringBuilder();
                         prefixSB.append(c);
@@ -141,18 +141,18 @@ public class StrSubstitution {
                         literalSB.append(c);
                     }
                     break;
-                case ESCAPE:
+                case ESCAPE:// 转义字符，仅支持在字面量中。
                     literalSB.append(c);
                     state = LITERAL;
                     break;
                 case VARIABLE_PREFIX:
 
                     if (prefixChars.length > prefixSB.length()) {
-                        if (c != prefixChars[prefixSB.length()]) {// 前缀剩余字符不匹配,将其全部填充
+                        if (c != prefixChars[prefixSB.length()]) {// 前缀不完全匹配，则视为字面量
                             result.append(prefixSB);
                             prefixSB = new StringBuilder();
-                            if (c != prefixChars[0]) {
-                                if (c == ESCAPLE_CHAR) {
+                            if (c != prefixChars[0]) {// 不匹配的字节为不是前缀首字节
+                                if (c == ESCAPLE_CHAR) {// 转义字节
                                     state = ESCAPE;
                                 } else {
                                     literalSB.append(c);
@@ -169,6 +169,7 @@ public class StrSubstitution {
 
                     } else {
 
+                        // 前缀完全匹配后，首个字节为后缀首字节
                         if (c == suffixChars[0]) {
                             suffixSB.append(c);
                             state = VARIABLE_SUFFIX;
@@ -181,18 +182,18 @@ public class StrSubstitution {
 
                 case VARIABLE_SUFFIX:
                     if (suffixChars.length > suffixSB.length()) {
-                        if (c != suffixChars[suffixSB.length()]) {// 后缀剩余字符不匹配,将其全部填充
+                        if (c != suffixChars[suffixSB.length()]) {// 后缀不完全匹配，视为占位符变量
                             variableSB.append(suffixSB);
                             suffixSB = new StringBuilder();
 
-                            if (c != suffixChars[0]) {
+                            if (c != suffixChars[0]) {// 不匹配的字节不为后缀首字节，视为占位符变量，否则视为后缀开始
                                 variableSB.append(c);
                                 state = VARIABLE_LITERAL;
                                 break;
                             }
                         }
                         suffixSB.append(c);
-                        if (suffixSB.length() == suffixChars.length) {// 后缀完全匹配了
+                        if (suffixSB.length() == suffixChars.length) {// 后缀完全匹配，则替换变量，清空状态
                             result.append(replaceVariable(prefixSB, variableSB, suffixSB, replaceFunction));
                             prefixSB = new StringBuilder();
                             variableSB = new StringBuilder();
@@ -202,12 +203,13 @@ public class StrSubstitution {
                     } else {
 
 
+                        // 后缀完全匹配，则替换变量，清空状态
                         result.append(replaceVariable(prefixSB, variableSB, suffixSB, replaceFunction));
                         prefixSB = new StringBuilder();
                         variableSB = new StringBuilder();
                         suffixSB = new StringBuilder();
 
-                        if (c == prefixChars[0]) {
+                        if (c == prefixChars[0]) {// 前缀开始
                             prefixSB.append(c);
                             state = VARIABLE_PREFIX;
                         } else {
@@ -223,7 +225,7 @@ public class StrSubstitution {
 
                 case VARIABLE_LITERAL:
 
-                    if (c == suffixChars[0]) {
+                    if (c == suffixChars[0]) {// 后缀开始
                         suffixSB.append(c);
                         state = VARIABLE_SUFFIX;
                     } else {
@@ -239,13 +241,14 @@ public class StrSubstitution {
 
         }
 
+        // 后续状态处理
         if (state == VARIABLE_PREFIX) {
             result.append(prefixSB);
-        } else if (state == VARIABLE_LITERAL) {
+        } else if (state == VARIABLE_LITERAL) {// 占位符变量状态
             result.append(variablePrefix);
             result.append(variableSB);
         } else if (state == VARIABLE_SUFFIX) {
-            if (suffixSB.length() == suffixChars.length) {
+            if (suffixSB.length() == suffixChars.length) {// 占位符结尾
                 result.append(replaceVariable(prefixSB, variableSB, suffixSB, replaceFunction));
             } else {
                 result.append(variablePrefix);
