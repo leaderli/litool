@@ -42,14 +42,26 @@ public class LiYamlConfig {
 
     }
 
+    /**
+     * @param file -
+     * @return 是否为yaml文件
+     */
     public static boolean isYamlFile(File file) {
         return isYamlFile(file.getName());
     }
 
+    /**
+     * @param fileName -
+     * @return 是否为yaml文件
+     */
     public static boolean isYamlFile(String fileName) {
         return StringUtils.equalsAny(FileNameUtil.extName(fileName), "yml", "yaml");
     }
 
+    /**
+     * @param url -
+     * @return 是否为yaml文件
+     */
     public static boolean isYamlFile(URL url) {
         return isYamlFile(url.getFile());
     }

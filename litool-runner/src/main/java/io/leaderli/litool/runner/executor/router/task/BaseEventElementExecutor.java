@@ -8,6 +8,8 @@ import io.leaderli.litool.runner.util.ExpressionUtil;
 import io.leaderli.litool.runner.xml.router.task.BaseEventElement;
 
 /**
+ * @param <B> 事件元素类型
+ * @param <E> 事件信息类型
  * @author leaderli
  * @since 2022/8/14
  */
@@ -27,6 +29,10 @@ public abstract class BaseEventElementExecutor<B extends BaseEventElement<B, ?, 
 
     }
 
+    /**
+     * @param message -
+     * @return -
+     */
     public abstract E newEvent(String message);
 
 }

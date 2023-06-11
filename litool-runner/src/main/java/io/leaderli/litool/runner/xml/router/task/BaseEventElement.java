@@ -5,6 +5,11 @@ import io.leaderli.litool.dom.sax.BodyEvent;
 import io.leaderli.litool.runner.LongExpression;
 import io.leaderli.litool.runner.executor.router.task.BaseEventElementExecutor;
 
+/**
+ * @param <B>
+ * @param <EXE>
+ * @param <E>
+ */
 public abstract class BaseEventElement<B extends BaseEventElement<B, EXE, E>, EXE extends BaseEventElementExecutor<B,
         E>, E extends LiEventObject<?>> extends BaseElement<B, EXE> {
 
@@ -15,10 +20,16 @@ public abstract class BaseEventElement<B extends BaseEventElement<B, EXE, E>, EX
         super(tag);
     }
 
+    /**
+     * @return 获取表达式
+     */
     public LongExpression getLongExpression() {
         return longExpression;
     }
 
+    /**
+     * @param longExpression 表达式
+     */
     public void setLongExpression(LongExpression longExpression) {
         this.longExpression = longExpression;
     }

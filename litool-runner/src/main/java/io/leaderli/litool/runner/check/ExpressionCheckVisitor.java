@@ -20,6 +20,9 @@ public class ExpressionCheckVisitor extends CheckVisitor {
 
     private final ModelCheckVisitor modelCheckVisitor;
 
+    /**
+     * @param modelCheckVisitor -
+     */
     public ExpressionCheckVisitor(ModelCheckVisitor modelCheckVisitor) {
         this.modelCheckVisitor = modelCheckVisitor;
     }
@@ -31,6 +34,10 @@ public class ExpressionCheckVisitor extends CheckVisitor {
         modelCheckVisitor.setParseErrorMsgs(this.parseErrorMsgs);
     }
 
+    /**
+     * @param ifElement -
+     * @param saxBean   -
+     */
     public void check(IfElement ifElement, SaxBean saxBean) {
         IfElementExpressionCheckVisitor visitor = new IfElementExpressionCheckVisitor(ifElement);
         visitor.setMainElement(mainElement);
@@ -38,6 +45,10 @@ public class ExpressionCheckVisitor extends CheckVisitor {
         visitor.visit();
     }
 
+    /**
+     * @param longExpression -
+     * @param saxBean        -
+     */
     public void check(LongExpression longExpression, SaxBean saxBean) {
 
         // 依次对占位符进行校验
@@ -47,6 +58,10 @@ public class ExpressionCheckVisitor extends CheckVisitor {
         });
     }
 
+    /**
+     * @param expression -
+     * @param saxBean    -
+     */
     public void check(Expression expression, SaxBean saxBean) {
 
 
@@ -75,6 +90,10 @@ public class ExpressionCheckVisitor extends CheckVisitor {
         }
     }
 
+    /**
+     * @param coordinate -
+     * @param saxBean    -
+     */
     public void check(CoordinateElement coordinate, SaxBean saxBean) {
         CoordinateExpressionElementCheckVisitor visitor = new CoordinateExpressionElementCheckVisitor(coordinate);
         visitor.setMainElement(mainElement);
