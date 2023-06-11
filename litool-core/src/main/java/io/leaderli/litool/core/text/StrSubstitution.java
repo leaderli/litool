@@ -5,7 +5,7 @@ import io.leaderli.litool.core.lang.BeanPath;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * 一个简单的字符串替换工具
@@ -43,47 +43,6 @@ public class StrSubstitution {
 
 
     /**
-     * {@code  {xxx}} 被视为占位符 {@code  xxx}。不支持嵌套占位符。
-     * {}不会被视为占位符,{{}会被视为转义{
-     * <p>
-     * 例如:
-     * <pre>
-     *     format("a={}")   // "a={}"
-     *     format("a={{a}") // "a={a}"
-     * </pre>
-     *
-     * @param format          格式字符串
-     * @param replaceFunction 接受占位符变量并返回替换值的函数
-     * @return 格式化后的字符串
-     */
-    public static String format(String format, Function<String, Object> replaceFunction) {
-        return parse(format, VARIABLE_BEING_CHAR, VARIABLE_END_CHAR, replaceFunction);
-    }
-
-    private static void replaceVariable(StringBuilder prefix, StringBuilder variableStr, StringBuilder suffix, Function<String, Object> replaceFunction, StringBuilder result) {
-        String key = variableStr.toString();
-        Object value = replaceFunction.apply(key);
-        result.append(key.length() == 0 || value == null ? prefix + key + suffix : value);
-    }
-
-    /**
-     * 与{@link #format(String, Function)}相同,使用$作为占位符开始标记
-     * $}、${}不会被视为占位符,$是转义{的标记
-     * 例如:
-     * <pre>
-     *     $format("a=${}")   // "a=${}"
-     *     $format("a=$${a}") // "a=${a}"
-     * </pre>
-     *
-     * @param format          格式字符串
-     * @param replaceFunction 接受占位符变量并返回替换值的函数
-     * @return 格式化后的字符串
-     */
-    public static String $format(String format, Function<String, Object> replaceFunction) {
-        return parse(format, "${", "}", replaceFunction);
-    }
-
-    /**
      * 通过变量参数格式化文本。占位符在格式化文本中根据其出现位置计算索引,
      * 相同名称的占位符重用以前的索引。占位符将被对应索引的参数字符串值替换。
      * 如果索引超出提供的args范围,占位符将不被替换。
@@ -99,7 +58,7 @@ public class StrSubstitution {
      * @param args   格式引用的参数
      * @return 格式化后的字符串
      * @see VariablesFunction
-     * @see #format(String, Function)
+     * @see #format(String, BiFunction)
      */
     public static String format(String format, Object... args) {
 
@@ -107,48 +66,24 @@ public class StrSubstitution {
     }
 
     /**
-     * 通过bean格式化文本。占位符在格式化文本中被视为bean路径表达式。
-     * 并使用
-     * {@link BeanPath#parse(Object, String)}搜索替换值。如果替换值
-     * 为{@code null},占位符将不被替换。
-     * 例如:
-     * <pre>{@code
-     * beanPath("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
-     * beanPath("a={a},b={b}",{a=1}) // "a=1,b={b}"
-     * }</pre>
-     *
-     * @param format 格式字符串
-     * @param bean   格式引用的参数
-     * @return 格式化后的字符串
-     * @see BeanPath#parse(Object)
-     * @see #format(String, Function)
-     */
-    public static String beanPath(String format, Object bean) {
-        return format(format, s -> BeanPath.parse(bean, s).get());
-    }
-
-    /**
-     * 与{@link #format(String, Object...)}相同,使用$作为占位符开始标记
+     * {@code  {xxx}} 被视为占位符 {@code  xxx}。不支持嵌套占位符。可以使用 {@link  #parse(String, String, String, BiFunction)}
+     * 来自定义占位符前缀和后缀的方式来实现特殊字符的不被替换
      * <p>
      * 例如:
      * <pre>
-     *  $format("a=${a},b=${b}","1") // "a=1,b={b}"
-     *  $format("a=${a},b=${b}","1","2") // "a=1,b=2"
-     *  $format("a=${a},b=${b},a=${a}","1","2") // 变为 "a=1,b=2,a=1"
+     *     format("a={}")   // "a={}"
      * </pre>
      *
-     * @param format 格式字符串
-     * @param args   格式引用的参数
+     * @param format          格式字符串
+     * @param replaceFunction 接受占位符变量并返回替换值的函数
      * @return 格式化后的字符串
-     * @see VariablesFunction
-     * @see #$format(String, Function)
      */
-    public static String $format(String format, Object... args) {
-        return $format(format, new VariablesFunction(args));
+    public static String format(String format, BiFunction<String, String, Object> replaceFunction) {
+        return parse(format, VARIABLE_BEING_CHAR, VARIABLE_END_CHAR, replaceFunction);
     }
 
     /**
-     * 与{@link  #format(String, Function)}类似,不同之处在于占位符使用自定义字符定义。
+     * 与{@link  #format(String, BiFunction)}类似,不同之处在于占位符使用自定义字符定义。
      *
      * @param format          格式字符串
      * @param variablePrefix  占位符开始标记
@@ -158,7 +93,7 @@ public class StrSubstitution {
      */
 
     @SuppressWarnings("DuplicatedCode")
-    public static String parse(String format, String variablePrefix, String variableSuffix, Function<String, Object> replaceFunction) {
+    public static String parse(String format, String variablePrefix, String variableSuffix, BiFunction<String, String, Object> replaceFunction) {
         if (format == null) {
             return "";
         }
@@ -236,7 +171,7 @@ public class StrSubstitution {
                         suffixSB.append(c);
                         if (suffixSB.length() == suffixChars.length) {// 后缀完全匹配了
                             String key = variableSB.toString();
-                            Object value = replaceFunction.apply(key);
+                            Object value = replaceFunction.apply(key, null);
                             result.append(key.length() == 0 || value == null ? prefixSB + key + suffixSB : value);
                             prefixSB = new StringBuilder();
                             variableSB = new StringBuilder();
@@ -247,7 +182,7 @@ public class StrSubstitution {
 
 
                         String key = variableSB.toString();
-                        Object value = replaceFunction.apply(key);
+                        Object value = replaceFunction.apply(key, null);
                         result.append(key.length() == 0 || value == null ? prefixSB + key + suffixSB : value);
                         prefixSB = new StringBuilder();
                         variableSB = new StringBuilder();
@@ -289,7 +224,7 @@ public class StrSubstitution {
         } else if (state == VARIABLE_SUFFIX) {
             if (suffixSB.length() == suffixChars.length) {
                 String key = variableSB.toString();
-                Object value = replaceFunction.apply(key);
+                Object value = replaceFunction.apply(key, null);
                 result.append(key.length() == 0 || value == null ? prefixSB + key + suffixSB : value);
 
             } else {
@@ -302,6 +237,62 @@ public class StrSubstitution {
         return result.append(literalSB).toString();
     }
 
+    /**
+     * 通过bean格式化文本。占位符在格式化文本中被视为bean路径表达式。
+     * 并使用
+     * {@link BeanPath#parse(Object, String)}搜索替换值。如果替换值
+     * 为{@code null},占位符将不被替换。
+     * 例如:
+     * <pre>{@code
+     * beanPath("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
+     * beanPath("a={a},b={b}",{a=1}) // "a=1,b={b}"
+     * }</pre>
+     *
+     * @param format 格式字符串
+     * @param bean   格式引用的参数
+     * @return 格式化后的字符串
+     * @see BeanPath#parse(Object)
+     * @see #format(String, BiFunction)
+     */
+    public static String beanPath(String format, Object bean) {
+        return format(format, (k, v) -> BeanPath.parse(bean, k).get(v));
+    }
+
+    /**
+     * 与{@link #format(String, Object...)}相同,使用$作为占位符开始标记
+     * <p>
+     * 例如:
+     * <pre>
+     *  $format("a=${a},b=${b}","1") // "a=1,b={b}"
+     *  $format("a=${a},b=${b}","1","2") // "a=1,b=2"
+     *  $format("a=${a},b=${b},a=${a}","1","2") // 变为 "a=1,b=2,a=1"
+     * </pre>
+     *
+     * @param format 格式字符串
+     * @param args   格式引用的参数
+     * @return 格式化后的字符串
+     * @see VariablesFunction
+     * @see #$format(String, BiFunction)
+     */
+    public static String $format(String format, Object... args) {
+        return $format(format, new VariablesFunction(args));
+    }
+
+    /**
+     * 与{@link #format(String, BiFunction)}相同,使用$作为占位符开始标记
+     * $}、${}不会被视为占位符,$是转义{的标记
+     * 例如:
+     * <pre>
+     *     $format("a=${}")   // "a=${}"
+     * </pre>
+     *
+     * @param format          格式字符串
+     * @param replaceFunction 接受占位符变量并返回替换值的函数
+     * @return 格式化后的字符串
+     */
+    public static String $format(String format, BiFunction<String, String, Object> replaceFunction) {
+        return parse(format, "${", "}", replaceFunction);
+    }
 
     /**
      * 与{@link #beanPath(String, Object)} 相同,使用$作为占位符开始标记
@@ -319,10 +310,10 @@ public class StrSubstitution {
      * @see #beanPath(String, Object)
      */
     public static String $beanPath(String format, Object bean) {
-        return $format(format, s -> BeanPath.parse(bean, s).get());
+        return $format(format, (k, v) -> BeanPath.parse(bean, k).get(v));
     }
 
-    private static class VariablesFunction implements Function<String, Object> {
+    private static class VariablesFunction implements BiFunction<String, String, Object> {
 
         private final Object[] placeholderValues;
         private final List<String> placeholderNames = new ArrayList<>();
@@ -336,17 +327,17 @@ public class StrSubstitution {
         }
 
         @Override
-        public String apply(String s) {
+        public String apply(String key, String def) {
 
-            int find = placeholderNames.indexOf(s);
+            int find = placeholderNames.indexOf(key);
             if (find > -1) {
                 return String.valueOf(placeholderValues[find]);
             }
             if (this.index < placeholderValues.length) {
-                placeholderNames.add(s);
+                placeholderNames.add(key);
                 return String.valueOf(placeholderValues[this.index++]);
             }
-            return null;
+            return def;
         }
     }
 

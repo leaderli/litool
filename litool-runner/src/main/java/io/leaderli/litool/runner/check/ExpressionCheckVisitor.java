@@ -41,7 +41,7 @@ public class ExpressionCheckVisitor extends CheckVisitor {
     public void check(LongExpression longExpression, SaxBean saxBean) {
 
         // 依次对占位符进行校验
-        StrSubstitution.format(longExpression.getExpr(), expr -> {
+        StrSubstitution.format(longExpression.getExpr(), (expr, def) -> {
             check(ExpressionUtil.getExpression(expr), saxBean);
             return null;
         });

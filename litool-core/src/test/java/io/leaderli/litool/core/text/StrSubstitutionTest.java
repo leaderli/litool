@@ -22,11 +22,11 @@ class StrSubstitutionTest {
         Assertions.assertEquals("123$", StrSubstitution.$format("123$"));
         Assertions.assertEquals("123${", StrSubstitution.$format("123${"));
         Assertions.assertEquals("123${1", StrSubstitution.$format("123${1"));
-        Assertions.assertEquals("123$1", StrSubstitution.$format("123$${1}", s -> s));
-        Assertions.assertEquals("123{}#", StrSubstitution.parse("123{}#", "{", "}#", s -> s));
-        Assertions.assertEquals("1234", StrSubstitution.parse("123{4}#", "{", "}#", s -> s));
-        Assertions.assertEquals("123{4}", StrSubstitution.parse("123{4}", "{", "}#", s -> s));
-        Assertions.assertEquals("1234}", StrSubstitution.parse("123{4}}#", "{", "}#", s -> s));
+        Assertions.assertEquals("123$1", StrSubstitution.$format("123$${1}", (k, v) -> k));
+        Assertions.assertEquals("123{}#", StrSubstitution.parse("123{}#", "{", "}#", (k, v) -> k));
+        Assertions.assertEquals("1234", StrSubstitution.parse("123{4}#", "{", "}#", (k, v) -> k));
+        Assertions.assertEquals("123{4}", StrSubstitution.parse("123{4}", "{", "}#", (k, v) -> k));
+        Assertions.assertEquals("1234}", StrSubstitution.parse("123{4}}#", "{", "}#", (k, v) -> k));
 
 
         Assertions.assertEquals("${}${}${}", StrSubstitution.$format("${}${}${}"));
@@ -41,12 +41,12 @@ class StrSubstitutionTest {
         Assertions.assertEquals("{", StrSubstitution.format("{"));
         Assertions.assertEquals("{123", StrSubstitution.format("{123"));
 
-        Assertions.assertEquals("$$}", StrSubstitution.$format("$$}", s -> s));
-        Assertions.assertEquals("$$", StrSubstitution.$format("$$", s -> s));
-        Assertions.assertEquals("$}", StrSubstitution.$format("$}", s -> s));
-        Assertions.assertEquals("${}", StrSubstitution.$format("${}", s -> s));
-        Assertions.assertEquals("$x", StrSubstitution.$format("$${x}", s -> s));
-        Assertions.assertEquals("${123}", StrSubstitution.parse("${#{x}}", "#{", "}", s -> 123));
+        Assertions.assertEquals("$$}", StrSubstitution.$format("$$}", (k, v) -> k));
+        Assertions.assertEquals("$$", StrSubstitution.$format("$$", (k, v) -> k));
+        Assertions.assertEquals("$}", StrSubstitution.$format("$}", (k, v) -> k));
+        Assertions.assertEquals("${}", StrSubstitution.$format("${}", (k, v) -> k));
+        Assertions.assertEquals("$x", StrSubstitution.$format("$${x}", (k, v) -> k));
+        Assertions.assertEquals("${123}", StrSubstitution.parse("${#{x}}", "#{", "}", (k, v) -> 123));
 
 
         Assertions.assertEquals("a true b", StrSubstitution.format("a {a} {b}", true, 'b'));
@@ -58,11 +58,11 @@ class StrSubstitutionTest {
 
     @Test
     void parse() {
-        Assertions.assertEquals("%%", StrSubstitution.parse("%%", "%", "%", s -> 1));
-        Assertions.assertEquals("%%%", StrSubstitution.parse("%%%", "%", "%", s -> 1));
+        Assertions.assertEquals("%%", StrSubstitution.parse("%%", "%", "%", (k, v) -> 1));
+        Assertions.assertEquals("%%%", StrSubstitution.parse("%%%", "%", "%", (k, v) -> 1));
         Map<String, Object> map = new HashMap<>();
         map.put("a", "li");
-        Assertions.assertEquals("li{b}", StrSubstitution.parse("${a}{b}", "$", "}", name -> {
+        Assertions.assertEquals("li{b}", StrSubstitution.parse("${a}{b}", "$", "}", (name, def) -> {
             if (name.startsWith("{")) {
                 return map.get(name.substring(1));
             }

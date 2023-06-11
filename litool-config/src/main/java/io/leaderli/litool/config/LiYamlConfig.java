@@ -16,7 +16,7 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * @author leaderli
@@ -75,7 +75,7 @@ public class LiYamlConfig {
      * @param names multi yaml file name
      * @return merged multi yaml configuration,  the latter have high priority
      * @see LiMapUtil#merge(Map, Map)
-     * @see StrSubstitution#$format(String, Function)
+     * @see StrSubstitution#$format(String, BiFunction)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static Map<String, Object> loadResourcesYmlFiles(String... names) {
@@ -98,7 +98,7 @@ public class LiYamlConfig {
         String mergeYaml = yaml.dumpAsMap(config);
 
         // replace placeholder
-        mergeYaml = StrSubstitution.$format(mergeYaml, variable -> {
+        mergeYaml = StrSubstitution.$format(mergeYaml, (variable, def) -> {
 
             String property = System.getProperty(variable);
             if (property != null) {

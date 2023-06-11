@@ -30,7 +30,7 @@ public class ActionLoader {
 
         String actionYml = StringUtils.read(ResourceUtil.getResourceAsStream(yamlFullPath));
 
-        actionYml = StrSubstitution.$format(actionYml, variable -> {
+        actionYml = StrSubstitution.$format(actionYml, (variable, def) -> {
 
             String property = System.getProperty(variable);
             if (property != null) {
