@@ -170,9 +170,7 @@ public class StrSubstitution {
                         }
                         suffixSB.append(c);
                         if (suffixSB.length() == suffixChars.length) {// 后缀完全匹配了
-                            String key = variableSB.toString();
-                            Object value = replaceFunction.apply(key, null);
-                            result.append(key.length() == 0 || value == null ? prefixSB + key + suffixSB : value);
+                            result.append(replaceVariable(prefixSB, variableSB, suffixSB, replaceFunction));
                             prefixSB = new StringBuilder();
                             variableSB = new StringBuilder();
                             suffixSB = new StringBuilder();
@@ -181,9 +179,7 @@ public class StrSubstitution {
                     } else {
 
 
-                        String key = variableSB.toString();
-                        Object value = replaceFunction.apply(key, null);
-                        result.append(key.length() == 0 || value == null ? prefixSB + key + suffixSB : value);
+                        result.append(replaceVariable(prefixSB, variableSB, suffixSB, replaceFunction));
                         prefixSB = new StringBuilder();
                         variableSB = new StringBuilder();
                         suffixSB = new StringBuilder();
@@ -223,10 +219,7 @@ public class StrSubstitution {
             result.append(variableSB);
         } else if (state == VARIABLE_SUFFIX) {
             if (suffixSB.length() == suffixChars.length) {
-                String key = variableSB.toString();
-                Object value = replaceFunction.apply(key, null);
-                result.append(key.length() == 0 || value == null ? prefixSB + key + suffixSB : value);
-
+                result.append(replaceVariable(prefixSB, variableSB, suffixSB, replaceFunction));
             } else {
                 result.append(variablePrefix);
                 result.append(variableSB);
@@ -235,6 +228,21 @@ public class StrSubstitution {
         }
 
         return result.append(literalSB).toString();
+    }
+
+    private static Object replaceVariable(StringBuilder prefix, StringBuilder name, StringBuilder suffix, BiFunction<String, String, Object> replaceFunction) {
+        String key;
+        String def;
+        int index = name.lastIndexOf(":");
+        if (index > -1) {
+            key = name.substring(0, index);
+            def = name.substring(index + 1);
+        } else {
+            key = name.toString();
+            def = prefix + key + suffix;
+        }
+        Object value = replaceFunction.apply(key, def);
+        return key.length() == 0 || value == null ? def : value;
     }
 
     /**

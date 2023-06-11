@@ -54,6 +54,14 @@ class StrSubstitutionTest {
         Assertions.assertEquals("a a b {c}", StrSubstitution.format("a {a} {b} {c}", 'a', 'b'));
         Assertions.assertEquals("a", StrSubstitution.format("{aa}", 'a'));
 
+        Assertions.assertEquals("", StrSubstitution.format("{a:}"));
+        Assertions.assertEquals("123", StrSubstitution.format("{a:}", 123));
+        Assertions.assertEquals("123", StrSubstitution.format("{a:123}"));
+        Assertions.assertEquals("456", StrSubstitution.format("{a:123:456}"));
+        Assertions.assertEquals("789", StrSubstitution.format("{a:123:456}", 789));
+        Assertions.assertEquals("", StrSubstitution.format("{:}"));
+
+
     }
 
     @Test
