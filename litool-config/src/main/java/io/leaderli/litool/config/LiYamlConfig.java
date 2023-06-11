@@ -87,7 +87,7 @@ public class LiYamlConfig {
      * @param names multi yaml file name
      * @return merged multi yaml configuration,  the latter have high priority
      * @see LiMapUtil#merge(Map, Map)
-     * @see StrSubstitution#$format(String, BiFunction)
+     * @see StrSubstitution#$parse(String, BiFunction)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static Map<String, Object> loadResourcesYmlFiles(String... names) {
@@ -110,7 +110,7 @@ public class LiYamlConfig {
         String mergeYaml = yaml.dumpAsMap(config);
 
         // replace placeholder
-        mergeYaml = StrSubstitution.$format(mergeYaml, (variable, def) -> {
+        mergeYaml = StrSubstitution.$parse(mergeYaml, (variable, def) -> {
 
             String property = System.getProperty(variable);
             if (property != null) {

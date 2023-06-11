@@ -7,6 +7,9 @@ import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.text.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
+/**
+ * 命令加载器
+ */
 public class ActionLoader {
 
     private ActionLoader() {
@@ -30,7 +33,7 @@ public class ActionLoader {
 
         String actionYml = StringUtils.read(ResourceUtil.getResourceAsStream(yamlFullPath));
 
-        actionYml = StrSubstitution.$format(actionYml, (variable, def) -> {
+        actionYml = StrSubstitution.$parse(actionYml, (variable, def) -> {
 
             String property = System.getProperty(variable);
             if (property != null) {

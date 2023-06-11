@@ -21,11 +21,22 @@ import java.util.function.BiFunction;
  * </pre>
  * <p>
  * 支持转义字符 ` , 其仅在字面上上有效
- *
  * <pre>
  *
  *  replace("a=`{{a}}","1","2") // a={1}
  *  replace("a={`{a}}","1","2") // a=1}
+ * </pre>
+ * <p>
+ * 支持默认值行为 ,通过 :
+ * <pre>
+ *  replace("a={a:123}","1","2") // a={1}
+ *  replace("a={a:123}") // a={123}
+ * </pre>
+ * <p>
+ * 可以通过自定义函数，来对 : 后的进线特殊处理
+ * <pre>
+ * map.put("now", DateUtil.parse("20220101", "yyyyMMdd"));
+ * parse("{now:yyyy-MM-dd}", (k, d) -> DateUtil.format(d, (Date) map.get(k)));
  * </pre>
  *
  * @author leaderli
@@ -71,11 +82,11 @@ public class StrSubstitution {
      * @param args   格式引用的参数
      * @return 格式化后的字符串
      * @see VariablesFunction
-     * @see #format(String, BiFunction)
+     * @see #parse(String, BiFunction)
      */
     public static String format(String format, Object... args) {
 
-        return format(format, new VariablesFunction(args));
+        return parse(format, new VariablesFunction(args));
     }
 
     /**
@@ -91,12 +102,12 @@ public class StrSubstitution {
      * @param replaceFunction 接受占位符变量并返回替换值的函数
      * @return 格式化后的字符串
      */
-    public static String format(String format, BiFunction<String, String, Object> replaceFunction) {
+    public static String parse(String format, BiFunction<String, String, Object> replaceFunction) {
         return parse(format, VARIABLE_BEING_CHAR, VARIABLE_END_CHAR, replaceFunction);
     }
 
     /**
-     * 与{@link  #format(String, BiFunction)}类似,不同之处在于占位符使用自定义字符定义。
+     * 与{@link  #parse(String, BiFunction)}类似,不同之处在于占位符使用自定义字符定义。
      *
      * @param format          格式字符串
      * @param variablePrefix  占位符开始标记
@@ -290,10 +301,10 @@ public class StrSubstitution {
      * @param bean   格式引用的参数
      * @return 格式化后的字符串
      * @see BeanPath#parse(Object)
-     * @see #format(String, BiFunction)
+     * @see #parse(String, BiFunction)
      */
     public static String beanPath(String format, Object bean) {
-        return format(format, (k, v) -> BeanPath.parse(bean, k).get(v));
+        return parse(format, (k, v) -> BeanPath.parse(bean, k).get(v));
     }
 
     /**
@@ -310,14 +321,14 @@ public class StrSubstitution {
      * @param args   格式引用的参数
      * @return 格式化后的字符串
      * @see VariablesFunction
-     * @see #$format(String, BiFunction)
+     * @see #$parse(String, BiFunction)
      */
     public static String $format(String format, Object... args) {
-        return $format(format, new VariablesFunction(args));
+        return $parse(format, new VariablesFunction(args));
     }
 
     /**
-     * 与{@link #format(String, BiFunction)}相同,使用$作为占位符开始标记
+     * 与{@link #parse(String, BiFunction)}相同,使用$作为占位符开始标记
      * $}、${}不会被视为占位符,$是转义{的标记
      * 例如:
      * <pre>
@@ -328,7 +339,7 @@ public class StrSubstitution {
      * @param replaceFunction 接受占位符变量并返回替换值的函数
      * @return 格式化后的字符串
      */
-    public static String $format(String format, BiFunction<String, String, Object> replaceFunction) {
+    public static String $parse(String format, BiFunction<String, String, Object> replaceFunction) {
         return parse(format, "${", "}", replaceFunction);
     }
 
@@ -348,7 +359,7 @@ public class StrSubstitution {
      * @see #beanPath(String, Object)
      */
     public static String $beanPath(String format, Object bean) {
-        return $format(format, (k, v) -> BeanPath.parse(bean, k).get(v));
+        return $parse(format, (k, v) -> BeanPath.parse(bean, k).get(v));
     }
 
     private static class VariablesFunction implements BiFunction<String, String, Object> {

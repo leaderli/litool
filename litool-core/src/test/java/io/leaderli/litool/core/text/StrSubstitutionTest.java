@@ -1,9 +1,11 @@
 package io.leaderli.litool.core.text;
 
+import io.leaderli.litool.core.util.DateUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +24,7 @@ class StrSubstitutionTest {
         Assertions.assertEquals("123$", StrSubstitution.$format("123$"));
         Assertions.assertEquals("123${", StrSubstitution.$format("123${"));
         Assertions.assertEquals("123${1", StrSubstitution.$format("123${1"));
-        Assertions.assertEquals("123$1", StrSubstitution.$format("123$${1}", (k, v) -> k));
+        Assertions.assertEquals("123$1", StrSubstitution.$parse("123$${1}", (k, v) -> k));
         Assertions.assertEquals("123{}#", StrSubstitution.parse("123{}#", "{", "}#", (k, v) -> k));
         Assertions.assertEquals("1234", StrSubstitution.parse("123{4}#", "{", "}#", (k, v) -> k));
         Assertions.assertEquals("123{4}", StrSubstitution.parse("123{4}", "{", "}#", (k, v) -> k));
@@ -41,11 +43,11 @@ class StrSubstitutionTest {
         Assertions.assertEquals("{", StrSubstitution.format("{"));
         Assertions.assertEquals("{123", StrSubstitution.format("{123"));
 
-        Assertions.assertEquals("$$}", StrSubstitution.$format("$$}", (k, v) -> k));
-        Assertions.assertEquals("$$", StrSubstitution.$format("$$", (k, v) -> k));
-        Assertions.assertEquals("$}", StrSubstitution.$format("$}", (k, v) -> k));
-        Assertions.assertEquals("${}", StrSubstitution.$format("${}", (k, v) -> k));
-        Assertions.assertEquals("$x", StrSubstitution.$format("$${x}", (k, v) -> k));
+        Assertions.assertEquals("$$}", StrSubstitution.$parse("$$}", (k, v) -> k));
+        Assertions.assertEquals("$$", StrSubstitution.$parse("$$", (k, v) -> k));
+        Assertions.assertEquals("$}", StrSubstitution.$parse("$}", (k, v) -> k));
+        Assertions.assertEquals("${}", StrSubstitution.$parse("${}", (k, v) -> k));
+        Assertions.assertEquals("$x", StrSubstitution.$parse("$${x}", (k, v) -> k));
         Assertions.assertEquals("${123}", StrSubstitution.parse("${#{x}}", "#{", "}", (k, v) -> 123));
 
 
@@ -79,12 +81,16 @@ class StrSubstitutionTest {
         Assertions.assertEquals("%%%", StrSubstitution.parse("%%%", "%", "%", (k, v) -> 1));
         Map<String, Object> map = new HashMap<>();
         map.put("a", "li");
+        map.put("now", DateUtil.parse("20220101", "yyyyMMdd"));
         Assertions.assertEquals("li{b}", StrSubstitution.parse("${a}{b}", "$", "}", (name, def) -> {
             if (name.startsWith("{")) {
                 return map.get(name.substring(1));
             }
             return name;
         }));
+
+        Assertions.assertEquals("2022-01-01", StrSubstitution.parse("{now:yyyy-MM-dd}", (k, d) -> DateUtil.format(d, (Date) map.get(k))));
+
     }
 
     @Test
