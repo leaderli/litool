@@ -62,6 +62,15 @@ class StrSubstitutionTest {
         Assertions.assertEquals("", StrSubstitution.format("{:}"));
 
 
+        Assertions.assertEquals("`", StrSubstitution.format("``"));
+        Assertions.assertEquals("{", StrSubstitution.format("`{"));
+        Assertions.assertEquals("{1", StrSubstitution.format("`{{1}", 1));
+        Assertions.assertEquals("{1}", StrSubstitution.format("`{{1}}", 1));
+        Assertions.assertEquals("{1}", StrSubstitution.format("`{{1}`}", 1));
+        Assertions.assertEquals("1}", StrSubstitution.format("{`{1}}", 1));
+        Assertions.assertEquals("{`{1}}", StrSubstitution.format("{`{1}}"));
+
+
     }
 
     @Test

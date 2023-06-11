@@ -19,6 +19,14 @@ import java.util.function.BiFunction;
  *  replace("a={a},b={b},a={a}","1","2")
  *  replace("a={a},b={b}",{a=1,b=2})
  * </pre>
+ * <p>
+ * 支持转义字符 ` , 其仅在字面上上有效
+ *
+ * <pre>
+ *
+ *  replace("a=`{{a}}","1","2") // a={1}
+ *  replace("a={`{a}}","1","2") // a=1}
+ * </pre>
  *
  * @author leaderli
  * @since 2022/8/14
@@ -34,12 +42,17 @@ public class StrSubstitution {
      */
     private static final String VARIABLE_END_CHAR = "}";
     /**
+     * 转义字符
+     */
+    private static final char ESCAPLE_CHAR = '`';
+    /**
      * 解析开始标记
      */
     private static final int LITERAL = 1;
     private static final int VARIABLE_PREFIX = 2;
-    private static final int VARIABLE_SUFFIX = 4;
-    private static final int VARIABLE_LITERAL = 6;
+    private static final int VARIABLE_SUFFIX = 3;
+    private static final int VARIABLE_LITERAL = 4;
+    private static final int ESCAPE = 0;
 
 
     /**
@@ -122,9 +135,15 @@ public class StrSubstitution {
                         prefixSB.append(c);
                         state = VARIABLE_PREFIX;
 
+                    } else if (c == ESCAPLE_CHAR) {
+                        state = ESCAPE;
                     } else {
                         literalSB.append(c);
                     }
+                    break;
+                case ESCAPE:
+                    literalSB.append(c);
+                    state = LITERAL;
                     break;
                 case VARIABLE_PREFIX:
 
@@ -133,8 +152,12 @@ public class StrSubstitution {
                             result.append(prefixSB);
                             prefixSB = new StringBuilder();
                             if (c != prefixChars[0]) {
-                                literalSB.append(c);
-                                state = LITERAL;
+                                if (c == ESCAPLE_CHAR) {
+                                    state = ESCAPE;
+                                } else {
+                                    literalSB.append(c);
+                                    state = LITERAL;
+                                }
                                 break;
                             }
                         }
@@ -188,8 +211,12 @@ public class StrSubstitution {
                             prefixSB.append(c);
                             state = VARIABLE_PREFIX;
                         } else {
-                            literalSB.append(c);
-                            state = LITERAL;
+                            if (c == ESCAPLE_CHAR) {
+                                state = ESCAPE;
+                            } else {
+                                literalSB.append(c);
+                                state = LITERAL;
+                            }
                         }
                     }
                     break;
