@@ -80,17 +80,7 @@ public class StrSubstitution {
      * @return 格式化后的字符串
      */
     public static String $format(String format, Function<String, Object> replaceFunction) {
-
         return parse(format, "${", "}", replaceFunction);
-//        return parse(format, "$", "}", name -> {
-//            if (name.startsWith("{")) {
-//                if (name.endsWith("{")) {
-//                    return "${}";
-//                }
-//                return replaceFunction.apply(name.substring(1));
-//            }
-//            return name;
-//        });
     }
 
     /**
@@ -154,7 +144,6 @@ public class StrSubstitution {
      * @see #$format(String, Function)
      */
     public static String $format(String format, Object... args) {
-
         return $format(format, new VariablesFunction(args));
     }
 
