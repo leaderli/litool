@@ -25,15 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SuppressWarnings("ALL")
 class ReflectUtilTest {
-    public static class Proxy {
-
-        public Object apply(Object s) {
-            return 456;
-        }
-
-        public Integer apply(String s) {
-            return Integer.valueOf(s);
-        }
+    static {
+        WhenThrowBehavior.WHEN_THROW = null;
 
     }
 
@@ -76,81 +69,10 @@ class ReflectUtilTest {
         Assertions.assertEquals(3, ReflectUtil.newInterfaceImpl(new LiTypeToken<Function<String, Integer>>() {
         }, LiTypeToken.of(DynamicDelegation4.class), new DynamicDelegation4()).apply("123"));
 
+        Service5 service5 = ReflectUtil.newInterfaceImpl(LiTypeToken.of(Service5.class), LiTypeToken.of(DynamicDelegation5.class), new DynamicDelegation5());
+        Assertions.assertArrayEquals(new Class[0], service5.get());
+        Assertions.assertArrayEquals(new Class[]{String.class}, service5.get(""));
     }
-
-
-    interface Service {
-        Request service(Request request);
-    }
-
-    interface Service2 {
-        String service(Integer request);
-    }
-
-    interface Service3 {
-        int service(Integer request);
-    }
-
-    class Request {
-        private String name;
-
-        public Request(String name) {
-            this.name = name;
-        }
-    }
-
-    class DynamicDelegation1 {
-        @RuntimeType
-        public Object apply(int arg) {
-            return arg;
-        }
-
-        @RuntimeType
-        public Object apply(Object arg) {
-            return arg;
-        }
-    }
-
-    class DynamicDelegation2 {
-        @RuntimeType
-        public Object apply(int arg) {
-            return arg;
-        }
-
-        @RuntimeType
-        public Object apply(Object o1, Object o2) {
-            return o1;
-        }
-
-    }
-
-    class DynamicDelegation3 {
-        @RuntimeType
-        public Object apply(int arg) {
-            return arg;
-        }
-
-
-        @RuntimeType
-        public String apply2(int arg) {
-            return arg + "";
-        }
-    }
-
-    class DynamicDelegation4 implements Function<String, Integer> {
-
-        @Override
-        public Integer apply(String s) {
-            return s.length();
-        }
-    }
-
-
-    static {
-        WhenThrowBehavior.WHEN_THROW = null;
-
-    }
-
 
     @Test
     void getFields() {
@@ -158,7 +80,6 @@ class ReflectUtilTest {
         assertTrue(ReflectUtil.getFields(Test1.class).absent());
         assertTrue(ReflectUtil.getFields(Out.In.class).absent());
     }
-
 
     @Test
     void getField() {
@@ -279,7 +200,6 @@ class ReflectUtilTest {
         Assertions.assertNotNull(ReflectUtil.newInstance(cls).get().get());
     }
 
-
     @Test
     void findAnnotations() {
 
@@ -291,7 +211,6 @@ class ReflectUtilTest {
         assertEquals(0, ReflectUtil.findAnnotations(TestBean.class,
                 an -> an.annotationType() != NotNull.class).size());
     }
-
 
     @Test
     void findAnnotationsWithMetaAnnotation() {
@@ -352,6 +271,36 @@ class ReflectUtilTest {
         assertEquals(2, ReflectUtil.invokeMethodByName(new Static(), "m2", null).get());
         assertEquals(null, ReflectUtil.invokeMethodByName(new Static(), "m3").get());
         assertEquals(2, ReflectUtil.invokeMethodByName(new Static(), "m3", 2).get());
+    }
+
+    interface Service {
+        Request service(Request request);
+    }
+
+    interface Service2 {
+        String service(Integer request);
+    }
+
+    interface Service3 {
+        int service(Integer request);
+    }
+
+    interface Service5 {
+        Class[] get();
+
+        Class[] get(String s);
+    }
+
+    public static class Proxy {
+
+        public Object apply(Object s) {
+            return 456;
+        }
+
+        public Integer apply(String s) {
+            return Integer.valueOf(s);
+        }
+
     }
 
     public static class Out {
@@ -461,6 +410,73 @@ class ReflectUtilTest {
         @Override
         public void accept(String o) {
 
+        }
+    }
+
+    class Request {
+        private String name;
+
+        public Request(String name) {
+            this.name = name;
+        }
+    }
+
+    class DynamicDelegation1 {
+        @RuntimeMethod
+        public Object apply(int arg) {
+            return arg;
+        }
+
+        @RuntimeMethod
+        public Object apply(Object arg) {
+            return arg;
+        }
+    }
+
+    class DynamicDelegation2 {
+        @RuntimeMethod
+        public Object apply(int arg) {
+            return arg;
+        }
+
+        @RuntimeMethod
+        public Object apply(Object o1, Object o2) {
+            return o1;
+        }
+
+    }
+
+    class DynamicDelegation3 {
+        @RuntimeMethod
+        public Object apply(int arg) {
+            return arg;
+        }
+
+
+        @RuntimeMethod
+        public String apply2(int arg) {
+            return arg + "";
+        }
+    }
+
+    class DynamicDelegation4 implements Function<String, Integer> {
+
+        @Override
+        public Integer apply(String s) {
+            return s.length();
+        }
+    }
+
+    class DynamicDelegation5 {
+
+        @RuntimeMethod
+        public Object apply(@RuntimeParameter Method origin) {
+            return origin.getParameterTypes();
+        }
+
+        @RuntimeMethod
+        public Object apply(@RuntimeParameter Method origin, String s) {
+            return origin.getParameterTypes();
         }
     }
 

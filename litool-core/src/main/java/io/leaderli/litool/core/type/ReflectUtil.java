@@ -1,8 +1,10 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.internal.ReflectionAccessor;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
@@ -563,7 +565,7 @@ public class ReflectUtil {
     /**
      * 使用{@link Proxy#newProxyInstance(ClassLoader, Class[], InvocationHandler)}动态创建接口的实现。
      * 接口中的原始成员方法将委托给具有相同{@link MethodSignature}的proxyObj bean,接口中所有的Object类的方法也会直接委托给proxy来执行
-     * 或者委托给类型兼容并标记有{@link RuntimeType}注解的方法。
+     * 或者委托给类型兼容并标记有{@link RuntimeMethod}注解的方法。
      * <p>
      * proxyObj将注入原始方法
      * <p>
@@ -588,35 +590,27 @@ public class ReflectUtil {
         LiAssertUtil.assertTrue(interfaceType.isInterface(), IllegalArgumentException::new, "only support interface");
 
         Lira<Method> runtimeTypeMethods = ReflectUtil.getMethods(proxyObj.getClass())
-                .filter(m -> ReflectUtil.getAnnotation(m, RuntimeType.class));
-        Map<Method, Method> proxyMethodMap = Lira.of(interfaceType.getMethods())
+                .filter(m -> ReflectUtil.getAnnotation(m, RuntimeMethod.class));
+
+
+        Map<Method, ThrowableFunction<Object[], ?>> proxyMethodMap = Lira.of(interfaceType.getMethods())
                 .filter(m -> !ModifierUtil.isStatic(m)) // 静态方法不需要代理
-                .tuple(origin -> findProxyMethod(typeToken, proxyTypeToken, runtimeTypeMethods, origin))
+                .tuple(origin -> findProxyFunction(typeToken, proxyTypeToken, proxyObj, runtimeTypeMethods, origin))
                 .toMap(m -> m);
         for (Method method : Object.class.getMethods()) {
-            proxyMethodMap.put(method, method);
+            proxyMethodMap.put(method, args -> method.invoke(proxyObj, args));
         }
-        InvocationHandler invocationHandler = (proxy, method, args) -> proxyMethodMap.get(method).invoke(proxyObj, args);
+        InvocationHandler invocationHandler = (proxy, method, args) -> proxyMethodMap.get(method).apply(args);
         return (T) Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class[]{interfaceType}, invocationHandler);
 
     }
 
-    private static <T, P> Method findProxyMethod(LiTypeToken<T> typeToken, LiTypeToken<P> proxyTypeToken, Lira<Method> runtimeTypeMethods, Method originMethod) {
+    private static <T, P> ThrowableFunction<Object[], ?> findProxyFunction(LiTypeToken<T> typeToken, LiTypeToken<P> proxyTypeToken, P proxyObj, Lira<Method> runtimeTypeMethods, Method originMethod) {
         //优先查找相同签名的方法
         MethodSignature referenceMethodSignature = MethodSignature.non_strict(originMethod, typeToken);
         Method sameSignatureMethod = MethodUtil.getSameSignatureMethod(proxyTypeToken, referenceMethodSignature);
         if (sameSignatureMethod != null) {
-            return sameSignatureMethod;
-        }
-
-        // 查询具有相同请求参数和返回参数，且被 RuntimeType注解的方法
-        for (Method runtimeMethod : runtimeTypeMethods) {
-
-            MethodSignature runtimeMethodSignature = MethodSignature.non_strict(runtimeMethod, proxyTypeToken);
-            if (referenceMethodSignature.returnType == runtimeMethodSignature.returnType
-                    && Arrays.equals(referenceMethodSignature.parameterTypes, runtimeMethodSignature.parameterTypes)) {
-                return runtimeMethod;
-            }
+            return args -> sameSignatureMethod.invoke(proxyObj, args);
         }
 
         //查找具有兼容性的请求参数和返回参数，且被RuntimeType注解的方法
@@ -625,8 +619,13 @@ public class ReflectUtil {
 
 
             // 代理方法返回类型为实际类型子类或者为Object类
-            if (ClassUtil.isAssignableFromOrIsWrapper(runtimeMethod.getReturnType(), originMethod.getReturnType()) && parameterTypeCovariant(originMethod, runtimeMethod)) {
-                return runtimeMethod;
+            if (ClassUtil.isAssignableFromOrIsWrapper(runtimeMethod.getReturnType(), originMethod.getReturnType())) {
+                int stat = parameterTypeCovariant(originMethod, runtimeMethod);
+                if (stat == 1) {
+                    return args -> runtimeMethod.invoke(proxyObj, args);
+                } else if (stat == 2) {
+                    return args -> runtimeMethod.invoke(proxyObj, ArrayUtils.insert(args, 0, originMethod));
+                }
             }
 
         }
@@ -634,15 +633,20 @@ public class ReflectUtil {
 
 
             // 代理方法返回类型为Object类
-            if (runtimeMethod.getReturnType() == Object.class && parameterTypeCovariant(originMethod, runtimeMethod)) {
-                return runtimeMethod;
-            }
+            if (runtimeMethod.getReturnType() == Object.class) {
+                int stat = parameterTypeCovariant(originMethod, runtimeMethod);
+                if (stat == 1) {
+                    return args -> runtimeMethod.invoke(proxyObj, args);
+                } else if (stat == 2) {
+                    return args -> runtimeMethod.invoke(proxyObj, ArrayUtils.insert(args, 0, originMethod));
 
+                }
+            }
         }
         throw new LiraRuntimeException("can not proxy method " + originMethod);
     }
 
-    private static boolean parameterTypeCovariant(Method origin, Method runtimeMethod) {
+    private static int parameterTypeCovariant(Method origin, Method runtimeMethod) {
 
         if (origin.getParameterCount() == runtimeMethod.getParameterCount()) {
 
@@ -650,12 +654,26 @@ public class ReflectUtil {
 
                 // 代码方法的参数类型均为原方法的父类，这样就可以保证兼容性
                 if (!ClassUtil.isAssignableFromOrIsWrapper(runtimeMethod.getParameterTypes()[i], origin.getParameterTypes()[i])) {
-                    return false;
+                    return 0;
                 }
             }
-            return true;
+            return 1;
+        } else if (origin.getParameterCount() + 1 == runtimeMethod.getParameterCount()) {
+            Class<?> firstParameterType = runtimeMethod.getParameterTypes()[0];
+            if (firstParameterType == Method.class && firstParameterType.isAnnotationPresent(RuntimeParameter.class)) {
+
+                for (int i = 0; i < origin.getParameterTypes().length; i++) {
+
+                    // 代码方法的参数类型均为原方法的父类，这样就可以保证兼容性
+                    if (!ClassUtil.isAssignableFromOrIsWrapper(runtimeMethod.getParameterTypes()[i + 1], origin.getParameterTypes()[i])) {
+                        return 0;
+                    }
+                }
+
+            }
+            return 2;
         }
-        return false;
+        return 0;
     }
 
 }

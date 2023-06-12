@@ -128,6 +128,12 @@ class ArrayUtilsTest {
         assertNotSame(add, append);
         assertArrayEquals(add, append);
 
+        append = new Object[]{2, 3};
+        assertArrayEquals(new Object[]{1, 2, 3}, ArrayUtils.append(new Object[]{1}, append));
+        Object appendObj = new Object[]{2, 3};
+        assertArrayEquals(new Object[]{1, new Object[]{2, 3}}, ArrayUtils.append(new Object[]{1}, appendObj));
+
+
         Object[] newAppend = ArrayUtils.append(append, (Object[]) null);
         assertNotSame(newAppend, append);
         assertArrayEquals(newAppend, append);
