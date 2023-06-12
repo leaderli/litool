@@ -182,12 +182,26 @@ public class LiMapUtil {
     }
 
 
+    /**
+     * @param k   -
+     * @param v   -
+     * @param <K> -
+     * @param <V> -
+     * @return 返回一个 HashMap, 初始化的元素为k、v
+     */
     public static <K, V> HashMap<K, V> newHashMap(K k, V v) {
         HashMap<K, V> map = new HashMap<>();
         map.put(k, v);
         return map;
     }
 
+    /**
+     * @param k   -
+     * @param v   -
+     * @param <K> -
+     * @param <V> -
+     * @return 返回一个 LinkedHashMap, 初始化的元素为k、v
+     */
     public static <K, V> LinkedHashMap<K, V> newLinkedHashMap(K k, V v) {
         LinkedHashMap<K, V> map = new LinkedHashMap<>();
         map.put(k, v);

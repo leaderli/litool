@@ -619,7 +619,7 @@ public class ReflectUtil {
 
 
             // 代理方法返回类型为实际类型子类或者为Object类
-            if (ClassUtil.isAssignableFromOrIsWrapper(runtimeMethod.getReturnType(), originMethod.getReturnType())) {
+            if (ClassUtil.isAssignableFromOrIsWrapper(originMethod.getReturnType(), runtimeMethod.getReturnType())) {
                 int stat = parameterTypeCovariant(originMethod, runtimeMethod);
                 if (stat == 1) {
                     return args -> runtimeMethod.invoke(proxyObj, args);
