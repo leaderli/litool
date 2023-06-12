@@ -59,8 +59,8 @@ class ReflectUtilTest {
         assertThrows(NullPointerException.class, () -> ReflectUtil.newInterfaceImpl(LiTypeToken.of(Function.class), LiTypeToken.of(Function.class), null));
 
 
-        Service2 my = ReflectUtil.newInterfaceImpl(LiTypeToken.of(Service2.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3());
-        Assertions.assertSame(String.class, my.service(123).getClass());
+        Service2 service2 = ReflectUtil.newInterfaceImpl(LiTypeToken.of(Service2.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3());
+        Assertions.assertSame(String.class, service2.service(123).getClass());
         Service3 my3 = ReflectUtil.newInterfaceImpl(LiTypeToken.of(Service3.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3());
         Assertions.assertEquals(123, my3.service(123));
 
@@ -72,6 +72,10 @@ class ReflectUtilTest {
         Service5 service5 = ReflectUtil.newInterfaceImpl(LiTypeToken.of(Service5.class), LiTypeToken.of(DynamicDelegation5.class), new DynamicDelegation5());
         Assertions.assertArrayEquals(new Class[0], service5.get());
         Assertions.assertArrayEquals(new Class[]{String.class}, service5.get(""));
+
+
+        Service6 service6 = ReflectUtil.newInterfaceImpl(LiTypeToken.of(Service6.class), LiTypeToken.of(DynamicDelegation6.class), new DynamicDelegation6());
+        Assertions.assertSame(String.class, service6.service(123).getClass());
     }
 
     @Test
@@ -291,6 +295,11 @@ class ReflectUtilTest {
         Class[] get(String s);
     }
 
+    interface Service6 {
+        CharSequence service(Integer request);
+    }
+
+
     public static class Proxy {
 
         public Object apply(Object s) {
@@ -477,6 +486,19 @@ class ReflectUtilTest {
         @RuntimeMethod
         public Object apply(@RuntimeParameter Method origin, String s) {
             return origin.getParameterTypes();
+        }
+    }
+
+    class DynamicDelegation6 {
+        @RuntimeMethod
+        public int apply(int arg) {
+            return arg;
+        }
+
+
+        @RuntimeMethod
+        public String apply2(int arg) {
+            return arg + "";
         }
     }
 
