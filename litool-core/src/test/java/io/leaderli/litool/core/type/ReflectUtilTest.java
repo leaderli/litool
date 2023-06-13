@@ -31,7 +31,7 @@ class ReflectUtilTest {
     }
 
     @Test
-    void newInterfaceImpl() {
+    void newInterfaceImpl() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> ReflectUtil.newInterfaceImpl(LiTypeToken.of(Proxy.class), LiTypeToken.of(Proxy.class), new Proxy()));
 
@@ -76,6 +76,11 @@ class ReflectUtilTest {
 
         Service6 service6 = ReflectUtil.newInterfaceImpl(LiTypeToken.of(Service6.class), LiTypeToken.of(DynamicDelegation6.class), new DynamicDelegation6());
         Assertions.assertSame(String.class, service6.service(123).getClass());
+
+
+        Method method = Service6.class.getMethod("service", Integer.class);
+        Assertions.assertSame(String.class, method.invoke(service6, 123).getClass());
+
     }
 
     @Test

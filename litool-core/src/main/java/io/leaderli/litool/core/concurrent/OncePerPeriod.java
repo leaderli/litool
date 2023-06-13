@@ -7,8 +7,8 @@ package io.leaderli.litool.core.concurrent;
 public class OncePerPeriod {
 
 
-    private long lastExecutedAt = 0;
     private final long period;
+    private long lastExecutedAt = 0;
 
     /**
      * @param period 时间毫秒区间
@@ -23,7 +23,7 @@ public class OncePerPeriod {
      * @param runnable 执行的任务
      * @param sync     是否加锁，保证在多线程的情况下也能满足条件
      */
-    public void executeOnce(Runnable runnable, boolean sync) {
+    public boolean executeOnce(Runnable runnable, boolean sync) {
         long now = System.currentTimeMillis();
         if (now - lastExecutedAt > period) {
             if (sync) {
@@ -32,13 +32,16 @@ public class OncePerPeriod {
                     if (now - lastExecutedAt > period) {
                         runnable.run();
                         lastExecutedAt = now;
+                        return true;
                     }
                 }
             } else {
                 runnable.run();
                 lastExecutedAt = now;
+                return true;
             }
         }
+        return false;
     }
 
     /**
@@ -47,8 +50,8 @@ public class OncePerPeriod {
      * @param runnable 执行的任务
      * @see #executeOnce(Runnable, boolean)
      */
-    public void executeOnce(Runnable runnable) {
-        executeOnce(runnable, false);
+    public boolean executeOnce(Runnable runnable) {
+        return executeOnce(runnable, false);
     }
 
 }
