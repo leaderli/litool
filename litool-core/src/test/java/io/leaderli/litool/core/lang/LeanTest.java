@@ -46,7 +46,9 @@ class LeanTest {
         });
 
         Assertions.assertEquals("{str=str, 1=1, true=true}", strMap.toString());
-
+        strMap = lean.fromBean(null, new LiTypeToken<Map<String, String>>() {
+        });
+        Assertions.assertNotNull(strMap);
     }
 
 

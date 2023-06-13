@@ -47,6 +47,10 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
             this.constructor = constructor;
         }
 
+        @Override
+        public Map<K, V> read(Lean lean) {
+            return constructor.get();
+        }
 
         @Override
         public Map<K, V> read(Object source, Lean lean) {
