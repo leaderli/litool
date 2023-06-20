@@ -20,7 +20,6 @@ class LiraBit extends BitPermission {
      * the request before terminal have a limit action, so the infinity generator could be stop
      *
      * @see Lira#range()
-     * @see io.leaderli.litool.core.collection.Generator
      */
     public static final int LIMIT = 1 << 1;
 
