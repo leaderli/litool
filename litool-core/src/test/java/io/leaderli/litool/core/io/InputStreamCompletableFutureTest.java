@@ -26,7 +26,7 @@ class InputStreamCompletableFutureTest {
 
         List<Byte> bytes = new ArrayList<>();
 
-        Iterator<Integer> range = Lira.range().iterator();
+        Iterator<Integer> range = Lira.range(1, 1000).iterator();
         InputStreamCompletableFuture fu = new InputStreamCompletableFuture(new MockInfiniteInputStream(() -> {
 
             if (bytes.isEmpty()) {

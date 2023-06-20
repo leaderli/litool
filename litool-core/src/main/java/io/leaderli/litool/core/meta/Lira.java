@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.meta;
 
-import io.leaderli.litool.core.collection.Generators;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
@@ -128,13 +127,22 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
-     * 返回一个包含自增整数的无限Lira，起始值为0
+     * 0 到 1024
      *
-     * @return 自增整数的无限Lira
-     * @see Generators#range()
+     * @return {@link #range(int, int)}
      */
     static Lira<Integer> range() {
-        return Lira.of(Generators.range());
+        return range(0, 1024);
+    }
+
+    /**
+     * @param start 起始值
+     * @param end   结束值
+     *              返回一个从start到end(不包括)的数组
+     */
+    static Lira<Integer> range(int start, int end) {
+
+        return Lira.of(new RangeIterator(start, end));
     }
 
     /**

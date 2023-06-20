@@ -1,9 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
 
-import io.leaderli.litool.core.collection.Generator;
-import io.leaderli.litool.core.exception.InfiniteException;
-
 import java.util.Iterator;
 
 /**
@@ -13,11 +10,9 @@ import java.util.Iterator;
 public class IterableRa<T> extends Ra<T> {
 
     private final Iterable<? extends T> iterable;
-    private final boolean infinite;
 
     public IterableRa(Iterable<? extends T> iterable) {
         this.iterable = iterable;
-        this.infinite = iterable instanceof Generator;
 
     }
 
@@ -43,12 +38,6 @@ public class IterableRa<T> extends Ra<T> {
             LiraBit bit = LiraBit.of(state);
 
             // not active response onComplete signal, only response on when the next request
-            if (infinite) {
-                if (LiraBit.isTerminal(state) && bit.lacks(LiraBit.LIMIT)) {
-                    throw new InfiniteException("generator loop \r\n\tat " + iterator);
-                }
-            }
-
 
             if (LiraBit.isTerminal(state)) {
                 while (true) {

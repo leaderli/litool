@@ -18,7 +18,6 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
      * 将一个对象转换为 IterableItr。支持以下对象的转换，按照列出的顺序依次判断
      * <ul>
      *     <li>{@code null}</li>
-     *     <li>{@link  Generator}</li>
      *     <li>{@link  IterableItr} </li>
      *     <li>{@link  Iterator}</li>
      *     <li>{@link  Iterable}</li>
@@ -30,7 +29,7 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
      * <p>
      * 如果无法转换为 IterableItr，则返回 {@link NoneItr} 。
      * <p>
-     * 大多数对象将会被转换为 {@link ArrayItr} 对象，除了 {@link Generator} 对象，因为它是无穷的，只能返回它本身。
+     * 大多数对象将会被转换为 {@link ArrayItr} 对象
      *
      * @param obj a obj
      * @param <T> IterableItr 迭续器中元素的类型
@@ -42,9 +41,7 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
             return NoneItr.of();
         }
 
-        if (obj instanceof Generator) {
-            return of((Generator<T>) obj);
-        }
+
         if (obj instanceof NoneItr) {
             return NoneItr.of();
         }
@@ -102,16 +99,6 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
         return new ArrayItr<>(iterator.arr);
     }
 
-    /**
-     * 将 {@link Generator} 对象转换为 {@link IterableItr} 对象。
-     *
-     * @param generator 待转换的 {@link Generator} 对象
-     * @param <T>       迭代器中元素的类型
-     * @return 转换后的 {@link IterableItr} 对象
-     */
-    static <T> IterableItr<T> of(Generator<T> generator) {
-        return generator;
-    }
 
     /**
      * @param itr 待转换的 {@link IterableItr} 对象
@@ -231,8 +218,6 @@ public interface IterableItr<T> extends Iterable<T>, Iterator<T>, Enumeration<T>
      * @return 返回一个包含所有元素的新的数组
      */
     Object[] toArray();
-
-
 
 
 }

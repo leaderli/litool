@@ -55,10 +55,6 @@ class IterableItrTest {
         ((HashMap<String, String>) obj).put("1", "1");
         Assertions.assertSame(ArrayItr.class, IterableItr.of(obj).getClass());
 
-        // generator
-        obj = Generators.range();
-        Assertions.assertSame(IntGenerator.class, IterableItr.of(obj).getClass());
-
 
         Object temp = obj;
         Assertions.assertThrows(ClassCastException.class, () -> {
@@ -210,7 +206,6 @@ class IterableItrTest {
 
         Assertions.assertTrue(IterableItr.ofs((Object[]) null).toList().isEmpty());
         Assertions.assertFalse(IterableItr.ofs(1, 2).toList().isEmpty());
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> IterableItr.of(new IntGenerator()).toList());
 
         List<Integer> of = CollectionUtils.toList(1);
 
