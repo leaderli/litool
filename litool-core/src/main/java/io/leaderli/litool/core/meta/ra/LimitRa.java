@@ -29,12 +29,12 @@ class LimitRa<T> extends RaWithPrevPublisher<T> {
 
 
         @Override
-        public void request(int states) {
+        public void request() {
             if (limit < 1) {
                 this.cancel();
                 return;
             }
-            super.request(states | LiraBit.LIMIT);
+            super.request();
         }
 
         @Override

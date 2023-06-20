@@ -25,7 +25,7 @@ class NoneRa<T> extends RaWithPrevPublisher<T> {
 
 
         @Override
-        public void request(int bit) {
+        public void request() {
             prevSubscription.cancel();
         }
 

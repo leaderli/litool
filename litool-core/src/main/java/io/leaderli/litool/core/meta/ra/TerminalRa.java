@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.lang.DisposableRunnableProxy;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +32,6 @@ class TerminalRa<T> extends RaWithPrevPublisher<T> {
         private final SubscriberRa<? super T> actualSubscriber;
         private final List<T> cache = new ArrayList<>();
         SubscriptionRa prevSubscription;
-        private final Runnable disposable = DisposableRunnableProxy.of(() -> prevSubscription.request(0));
         private SubscriptionRa terminalSubscription;
 
         private TerminalSubscriberSubscription(SubscriberRa<? super T> actualSubscriber) {
@@ -43,14 +40,17 @@ class TerminalRa<T> extends RaWithPrevPublisher<T> {
 
 
         @Override
-        public void request(int state) {
-            disposable.run();
-            terminalSubscription.request(state);
+        public void request() {
+            while (terminalSubscription == null) {
+                prevSubscription.request();
+            }
+            terminalSubscription.request();
         }
 
         @Override
         public void cancel() {
             // terminal don not accept cancel  signal
+            terminalSubscription.cancel();
         }
 
         @Override
@@ -71,17 +71,9 @@ class TerminalRa<T> extends RaWithPrevPublisher<T> {
 
         @Override
         public void onComplete() {
-            completeTerminal();
-        }
-
-        void completeTerminal() {
             terminalSubscription = new IterableRa<>(deliverAction.apply(cache)).newGenerator(actualSubscriber);
         }
 
-        @Override
-        public void onCancel() {
-            completeTerminal();
-        }
 
     }
 

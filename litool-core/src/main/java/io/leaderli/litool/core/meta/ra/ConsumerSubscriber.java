@@ -11,6 +11,7 @@ import java.util.function.Consumer;
  */
 class ConsumerSubscriber<T> implements SubscriberRa<T> {
     private final Consumer<? super T> consumer;
+    private boolean done;
 
 
     public ConsumerSubscriber(Consumer<? super T> consumer) {
@@ -21,7 +22,9 @@ class ConsumerSubscriber<T> implements SubscriberRa<T> {
     @Override
     public void onSubscribe(SubscriptionRa prevSubscription) {
         //  terminal
-        prevSubscription.request();
+        while (!done) {
+            prevSubscription.request();
+        }
     }
 
     @Override
@@ -29,5 +32,8 @@ class ConsumerSubscriber<T> implements SubscriberRa<T> {
         consumer.accept(t);
     }
 
-
+    @Override
+    public void onComplete() {
+        done = true;
+    }
 }

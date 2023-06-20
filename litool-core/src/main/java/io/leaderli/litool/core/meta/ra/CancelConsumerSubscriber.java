@@ -11,10 +11,11 @@ import java.util.Objects;
 class CancelConsumerSubscriber<T> implements SubscriberRa<T> {
     /**
      * 该消费者仅保留 {@link CancelSubscription#cancel()} 操作，不允许使用
-     * {@link SubscriptionRa#request(int)}
+     * {@link SubscriptionRa#request()}
      */
     private final CancelConsumer<? super T> consumer;
     private SubscriptionRa prevSubscription;
+    private boolean done;
 
     public CancelConsumerSubscriber(CancelConsumer<? super T> consumer) {
         Objects.requireNonNull(consumer);
@@ -24,7 +25,9 @@ class CancelConsumerSubscriber<T> implements SubscriberRa<T> {
     @Override
     public void onSubscribe(SubscriptionRa prevSubscription) {
         this.prevSubscription = prevSubscription;
-        this.prevSubscription.request();
+        while (!done) {
+            this.prevSubscription.request();
+        }
     }
 
     @Override
@@ -32,5 +35,8 @@ class CancelConsumerSubscriber<T> implements SubscriberRa<T> {
         consumer.accept(t, this.prevSubscription);
     }
 
-
+    @Override
+    public void onComplete() {
+        done = true;
+    }
 }

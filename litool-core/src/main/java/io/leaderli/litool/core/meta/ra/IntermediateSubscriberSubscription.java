@@ -16,9 +16,8 @@ abstract class IntermediateSubscriberSubscription<T, R> implements SubscriberRa<
     }
 
     @Override
-    public void request(int bit) {
-        this.prevSubscription.request(bit);
-
+    public void request() {
+        this.prevSubscription.request();
     }
 
 
@@ -45,10 +44,6 @@ abstract class IntermediateSubscriberSubscription<T, R> implements SubscriberRa<
         this.actualSubscriber.onComplete();
     }
 
-    @Override
-    public void onCancel() {
-        this.actualSubscriber.onCancel();
-    }
 
     @Override
     public void onError(Throwable t, CancelSubscription cancel) {

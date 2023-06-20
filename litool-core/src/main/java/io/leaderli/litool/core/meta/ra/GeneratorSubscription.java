@@ -22,6 +22,6 @@ abstract class GeneratorSubscription<T> implements SubscriptionRa {
     @Override
     public final void cancel() {
         completed = true;
-        actualSubscriber.onCancel();
+        actualSubscriber.onComplete();
     }
 }

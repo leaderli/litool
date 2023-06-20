@@ -97,7 +97,7 @@ class LiraTest {
                 .debug(d -> count.incrementAndGet())
                 .limit(1)
                 .get();
-        Assertions.assertEquals(2, count.get());
+        Assertions.assertEquals(1, count.get());
         count.set(0);
         Lira.range(1, 100).limit(10)
                 .debug(d -> count.incrementAndGet())
@@ -132,7 +132,9 @@ class LiraTest {
             @Override
             public void onSubscribe(SubscriptionRa subscription) {
 
-                subscription.request();
+                while (box.absent()) {
+                    subscription.request();
+                }
             }
 
             @Override
@@ -271,31 +273,9 @@ class LiraTest {
         Assertions.assertEquals("[1, 2]", Lira.of("1", null, "2").get().toString());
 
 
-
-
-
         Enumeration<Integer> enumeration = new IteratorEnumeration(Arrays.asList(1, 2, 3).iterator());
         Assertions.assertEquals("[1, 2, 3]", Lira.of(enumeration).toString());
 
-    }
-
-    private static class IteratorEnumeration implements Enumeration<Integer> {
-
-        final Iterator<Integer> iterator;
-
-        private IteratorEnumeration(Iterator<Integer> iterator) {
-            this.iterator = iterator;
-        }
-
-        @Override
-        public boolean hasMoreElements() {
-            return iterator.hasNext();
-        }
-
-        @Override
-        public Integer nextElement() {
-            return iterator.next();
-        }
     }
 
     @Test
@@ -353,7 +333,6 @@ class LiraTest {
         Assertions.assertEquals(3, of.nullableGet().size());
     }
 
-
     @Test
     void or() {
 
@@ -367,7 +346,6 @@ class LiraTest {
         Assertions.assertSame(4, Lira.of(1, 2).filter(i -> i > 3).or(1, 2, 3, 4).size());
     }
 
-
     @Test
     void skip() {
 
@@ -377,7 +355,6 @@ class LiraTest {
         Assertions.assertSame(1, Lira.of(1, 2).skip(1).size());
         Assertions.assertSame(2, Lira.of(1, 2).skip(-1).size());
     }
-
 
     @Test
     void sorted() {
@@ -393,7 +370,6 @@ class LiraTest {
         Assertions.assertEquals("[1, 2]", Lira.of(2, 1).sorted().toString());
         Assertions.assertEquals("[1, 2, 3]", Lira.of(2, 1, 3).sorted(Comparator.comparingInt(o -> o)).toString());
     }
-
 
     @Test
     void limit() {
@@ -508,7 +484,6 @@ class LiraTest {
         Assertions.assertEquals(18, Lira.range().distinct((a, b) -> (a - b) / 2 == 0).limit(10).last().get());
     }
 
-
     @Test
     void equals() {
 
@@ -534,7 +509,6 @@ class LiraTest {
         Assertions.assertEquals(2, linos.size());
 
     }
-
 
     @Test
     void iterator() {
@@ -602,6 +576,25 @@ class LiraTest {
         Lira<Integer> nullable =
                 Lira.of(1, 2, 3).onError((t, cancel) -> cancel.cancel()).map(i -> i / (i % 2)).nullable(() -> 10);
         Assertions.assertEquals("[1, 10]", nullable.toString());
+    }
+
+    private static class IteratorEnumeration implements Enumeration<Integer> {
+
+        final Iterator<Integer> iterator;
+
+        private IteratorEnumeration(Iterator<Integer> iterator) {
+            this.iterator = iterator;
+        }
+
+        @Override
+        public boolean hasMoreElements() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public Integer nextElement() {
+            return iterator.next();
+        }
     }
 
 }

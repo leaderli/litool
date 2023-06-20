@@ -34,11 +34,6 @@ class IterableSubscriber<T> implements SubscriberRa<T>, Iterator<T> {
         completed = true;
     }
 
-    @Override
-    public void onCancel() {
-        completed = true;
-    }
-
 
     @SuppressWarnings("java:S2583")
     @Override
@@ -53,7 +48,7 @@ class IterableSubscriber<T> implements SubscriberRa<T>, Iterator<T> {
 
         // trigger
         while (true) {
-            this.prevSubscription.request(LiraBit.ITR);
+            this.prevSubscription.request();
             if (completed) {
                 return false;
             }

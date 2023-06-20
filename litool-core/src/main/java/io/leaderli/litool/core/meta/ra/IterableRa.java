@@ -34,22 +34,22 @@ public class IterableRa<T> extends Ra<T> {
         }
 
         @Override
-        public final void request(int state) {
-            LiraBit bit = LiraBit.of(state);
+        public final void request() {
 
             // not active response onComplete signal, only response on when the next request
-
-            if (LiraBit.isTerminal(state)) {
-                while (true) {
-                    performRequest();
-                    if (completed) {
-                        return;
-                    }
-                }
-
-            } else {
-                performRequest();
-            }
+//
+//            if (LiraBit.isTerminal(state)) {
+//                while (true) {
+//                    performRequest();
+//                    if (completed) {
+//                        return;
+//                    }
+//                }
+//
+//            } else {
+//                performRequest();
+//            }
+            performRequest();
 
         }
 
