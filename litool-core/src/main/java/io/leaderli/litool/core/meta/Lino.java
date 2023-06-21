@@ -5,11 +5,13 @@ import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableSupplier;
+import io.leaderli.litool.core.meta.ra.DebugConsumer;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.util.BooleanUtil;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -22,7 +24,7 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/6/16
  */
-public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
+public interface Lino<T> extends LiValue, Supplier<T> {
 
 
     /**
@@ -75,7 +77,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param <T>      the type of lino
      * @return a lino
      */
-    static <T> Lino<T> supplier(java.util.function.Supplier<T> supplier) {
+    static <T> Lino<T> supplier(Supplier<T> supplier) {
         if (supplier == null) {
             return none();
         }
@@ -121,7 +123,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @return a lino
      * @see #of(Object)
      */
-    static <T> Lino<T> throwable_of(ThrowableSupplier<? extends T> supplier, java.util.function.Consumer<Throwable> consumer) {
+    static <T> Lino<T> throwable_of(ThrowableSupplier<? extends T> supplier, Consumer<Throwable> consumer) {
         if (supplier == null) {
             return none();
         }
@@ -158,9 +160,9 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param filter the filter function
      * @return return  this if match the assert
      * @throws IllegalStateException if assert false
-     * @see #assertTrue(java.util.function.Function, String)
+     * @see #assertTrue(Function, String)
      */
-    default Lino<T> assertTrue(java.util.function.Function<? super T, ?> filter) {
+    default Lino<T> assertTrue(Function<? super T, ?> filter) {
         return assertTrue(filter, "");
     }
 
@@ -175,7 +177,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @throws IllegalStateException if assert false
      * @see BooleanUtil#parse(Object)
      */
-    Lino<T> assertTrue(java.util.function.Function<? super T, ?> filter, String msg);
+    Lino<T> assertTrue(Function<? super T, ?> filter, String msg);
 
     /**
      * assert the result of function and parse to boolean by {@link BooleanUtil#parse(Object)} is true. otherwise
@@ -187,7 +189,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @throws IllegalStateException if assert false
      * @see BooleanUtil#parse(Object)
      */
-    Lino<T> assertTrue(java.util.function.Function<? super T, ?> filter, RuntimeException runtimeException);
+    Lino<T> assertTrue(Function<? super T, ?> filter, RuntimeException runtimeException);
 
     /**
      * assert {@link  #present()}
@@ -211,7 +213,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param supplier the error msg provider
      * @return this
      */
-    Lino<T> assertNotNone(java.util.function.Supplier<String> supplier);
+    Lino<T> assertNotNone(Supplier<String> supplier);
 
     /**
      * @param <R>  the type parameter of casted
@@ -263,7 +265,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @see #filter(boolean)
      * @see BooleanUtil#parse(Object)
      */
-    Lino<T> filter(java.util.function.Function<? super T, ?> filter);
+    Lino<T> filter(Function<? super T, ?> filter);
 
     /**
      * @return the underlying value
@@ -282,7 +284,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param alternate the alternate value provider
      * @return the underlying value if {@link  #present()} otherwise return alternate
      */
-    T get(java.util.function.Supplier<T> alternate);
+    T get(Supplier<T> alternate);
 
 
     /**
@@ -291,7 +293,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param consumer the consumer
      * @return this
      */
-    Lino<T> ifPresent(java.util.function.Consumer<? super T> consumer);
+    Lino<T> ifPresent(Consumer<? super T> consumer);
 
     /**
      * perform action only when {@link #present()}, the action may throw a exception
@@ -321,7 +323,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param <R>    the type of mapper provide value
      * @return a new lino
      */
-    <R> Lino<R> map(java.util.function.Function<? super T, ? extends R> mapper);
+    <R> Lino<R> map(Function<? super T, ? extends R> mapper);
 
     /**
      * <pre>
@@ -332,7 +334,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param <R>    the type of mapper provide lino's value
      * @return a new lino
      */
-    <R> Lino<R> unzip(java.util.function.Function<? super T, java.util.function.Supplier<? extends R>> mapper);
+    <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapper);
 
     /**
      * @param mapper the provide function of {@link  LiTuple}
@@ -352,16 +354,8 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param consumer the consumer of lino
      * @return this
      */
-    Lino<T> nest(java.util.function.Consumer<? super Lino<T>> consumer);
+    Lino<T> nest(Consumer<? super Lino<T>> consumer);
 
-
-    /**
-     * use {@code system.out.println} as consumer
-     *
-     * @return this
-     * @see #debug(java.util.function.Consumer)
-     */
-    Lino<T> debug();
 
     /**
      * if {@link  #present()} return {@link  Either#right(Object)}
@@ -381,13 +375,23 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param <L> the type of left value
      * @return a  either value
      */
-    <L> Lino<Either<L, T>> eitherSupplier(java.util.function.Supplier<? extends L> l);
+    <L> Lino<Either<L, T>> eitherSupplier(Supplier<? extends L> l);
+
+    /**
+     * use {@code system.out.println} as consumer
+     *
+     * @return this
+     * @see #debug(DebugConsumer)
+     */
+    default Lino<T> debug() {
+        return debug(System.out::println);
+    }
 
     /**
      * @param debug the consumer perform on value
      * @return this
      */
-    Lino<T> debug(java.util.function.Consumer<? super T> debug);
+    Lino<T> debug(DebugConsumer<? super T> debug);
 
 
     /**
@@ -401,7 +405,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param supplier the other
      * @return return {@link  #of(Object)} )} if this is {@link  #none()} otherwise return this
      */
-    Lino<T> or(java.util.function.Supplier<? extends T> supplier);
+    Lino<T> or(Supplier<? extends T> supplier);
 
 
     /**
@@ -419,7 +423,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param mapper the  mapper
      * @param <R>    the type of after mapper
      * @return a new lino of type R
-     * @see #throwable_map(ThrowableFunction, java.util.function.Consumer)
+     * @see #throwable_map(ThrowableFunction, Consumer)
      * @see WhenThrowBehavior#WHEN_THROW
      */
     <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
@@ -433,7 +437,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
      * @param whenThrow the consumer when {@link  ThrowableFunction#apply(Object)} throw
      * @return a new lino of type R
      */
-    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, java.util.function.Consumer<Throwable> whenThrow);
+    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
 
     /**
      * @param <R> the type of lira result
@@ -518,7 +522,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> assertTrue(java.util.function.Function<? super T, ?> filter, String msg) {
+        public Lino<T> assertTrue(Function<? super T, ?> filter, String msg) {
             if (filter(filter).absent()) {
                 throw new IllegalStateException(msg);
             }
@@ -526,7 +530,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> assertTrue(java.util.function.Function<? super T, ?> filter, RuntimeException runtimeException) {
+        public Lino<T> assertTrue(Function<? super T, ?> filter, RuntimeException runtimeException) {
             if (filter(filter).absent()) {
                 throw runtimeException;
             }
@@ -544,7 +548,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> assertNotNone(java.util.function.Supplier<String> supplier) {
+        public Lino<T> assertNotNone(Supplier<String> supplier) {
             return this;
         }
 
@@ -576,7 +580,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> filter(java.util.function.Function<? super T, ?> filter) {
+        public Lino<T> filter(Function<? super T, ?> filter) {
             Objects.requireNonNull(filter);
             return filter(BooleanUtil.parse(filter.apply(this.value)));
         }
@@ -592,12 +596,12 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public T get(java.util.function.Supplier<T> alternate) {
+        public T get(Supplier<T> alternate) {
             return value;
         }
 
         @Override
-        public Lino<T> ifPresent(java.util.function.Consumer<? super T> consumer) {
+        public Lino<T> ifPresent(Consumer<? super T> consumer) {
             consumer.accept(this.value);
             return this;
         }
@@ -615,18 +619,18 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
 
 
         @Override
-        public <R> Lino<R> map(java.util.function.Function<? super T, ? extends R> mapper) {
+        public <R> Lino<R> map(Function<? super T, ? extends R> mapper) {
             return of(mapper.apply(this.value));
         }
 
         @Override
-        public <R> Lino<R> unzip(java.util.function.Function<? super T, java.util.function.Supplier<? extends R>> mapper) {
+        public <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapper) {
 
-            return map(mapper).map(java.util.function.Supplier::get);
+            return map(mapper).map(Supplier::get);
         }
 
         @Override
-        public <R> Lino<LiTuple<T, R>> tuple(java.util.function.Function<? super T, ? extends R> mapper) {
+        public <R> Lino<LiTuple<T, R>> tuple(Function<? super T, ? extends R> mapper) {
             return map(mapper).map(r -> LiTuple.of(value, r));
         }
 
@@ -638,16 +642,11 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> nest(java.util.function.Consumer<? super Lino<T>> consumer) {
+        public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
             consumer.accept(this);
             return this;
         }
 
-        @Override
-        public Lino<T> debug() {
-            System.out.println(value);
-            return this;
-        }
 
         @Override
         public <L> Lino<Either<L, T>> either(L l) {
@@ -655,12 +654,12 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public <L> Lino<Either<L, T>> eitherSupplier(java.util.function.Supplier<? extends L> l) {
+        public <L> Lino<Either<L, T>> eitherSupplier(Supplier<? extends L> l) {
             return Lino.of(Either.right(value));
         }
 
         @Override
-        public Lino<T> debug(java.util.function.Consumer<? super T> debug) {
+        public Lino<T> debug(DebugConsumer<? super T> debug) {
             debug.accept(value);
             return this;
         }
@@ -671,7 +670,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> or(java.util.function.Supplier<? extends T> supplier) {
+        public Lino<T> or(Supplier<? extends T> supplier) {
             return this;
         }
 
@@ -693,7 +692,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
 
         @Override
         public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper,
-                                         java.util.function.Consumer<Throwable> whenThrow) {
+                                         Consumer<Throwable> whenThrow) {
             try {
 
                 return of(mapper.apply(this.value));
@@ -757,12 +756,12 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> assertTrue(java.util.function.Function<? super T, ?> filter, String msg) {
+        public Lino<T> assertTrue(Function<? super T, ?> filter, String msg) {
             throw new IllegalStateException(msg);
         }
 
         @Override
-        public Lino<T> assertTrue(java.util.function.Function<? super T, ?> filter, RuntimeException runtimeException) {
+        public Lino<T> assertTrue(Function<? super T, ?> filter, RuntimeException runtimeException) {
             throw runtimeException;
         }
 
@@ -777,7 +776,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> assertNotNone(java.util.function.Supplier<String> supplier) {
+        public Lino<T> assertNotNone(Supplier<String> supplier) {
             throw new IllegalStateException(supplier.get());
         }
 
@@ -808,7 +807,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> filter(java.util.function.Function<? super T, ?> filter) {
+        public Lino<T> filter(Function<? super T, ?> filter) {
             return this;
         }
 
@@ -823,12 +822,12 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public T get(java.util.function.Supplier<T> alternate) {
+        public T get(Supplier<T> alternate) {
             return alternate.get();
         }
 
         @Override
-        public Lino<T> ifPresent(java.util.function.Consumer<? super T> consumer) {
+        public Lino<T> ifPresent(Consumer<? super T> consumer) {
             return this;
         }
 
@@ -845,17 +844,17 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
 
 
         @Override
-        public <R> Lino<R> map(java.util.function.Function<? super T, ? extends R> mapper) {
+        public <R> Lino<R> map(Function<? super T, ? extends R> mapper) {
             return none();
         }
 
         @Override
-        public <R> Lino<R> unzip(java.util.function.Function<? super T, java.util.function.Supplier<? extends R>> mapper) {
+        public <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapper) {
             return Lino.none();
         }
 
         @Override
-        public <R> Lino<LiTuple<T, R>> tuple(java.util.function.Function<? super T, ? extends R> mapper) {
+        public <R> Lino<LiTuple<T, R>> tuple(Function<? super T, ? extends R> mapper) {
             return none();
         }
 
@@ -865,15 +864,11 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> nest(java.util.function.Consumer<? super Lino<T>> consumer) {
+        public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
             return this;
         }
 
-        @Override
-        public Lino<T> debug() {
-            System.out.println("none");
-            return this;
-        }
+
 
         @Override
         public <L> Lino<Either<L, T>> either(L l) {
@@ -889,8 +884,9 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> debug(java.util.function.Consumer<? super T> debug) {
+        public Lino<T> debug(DebugConsumer<? super T> debug) {
 
+            debug.onNull();
             return this;
         }
 
@@ -900,7 +896,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
         }
 
         @Override
-        public Lino<T> or(java.util.function.Supplier<? extends T> supplier) {
+        public Lino<T> or(Supplier<? extends T> supplier) {
             return of(supplier.get());
         }
 
@@ -918,7 +914,7 @@ public interface Lino<T> extends LiValue, java.util.function.Supplier<T> {
 
         @Override
         public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper,
-                                         java.util.function.Consumer<Throwable> whenThrow) {
+                                         Consumer<Throwable> whenThrow) {
             return none();
         }
 

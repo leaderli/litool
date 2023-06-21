@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.meta.ra.DebugConsumer;
 import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,26 @@ import java.util.function.Function;
  */
 class LinoTest {
 
+
+    @Test
+    void debug() {
+
+        LiBox<Integer> box = LiBox.none();
+        Lino.none().debug(new DebugConsumer<Object>() {
+            @Override
+            public void onNull() {
+                box.value(123);
+            }
+
+            @Override
+            public void accept(Object o) {
+
+            }
+        });
+
+        Assertions.assertEquals(123, box.value());
+
+    }
 
     @Test
     void assertTrue() {

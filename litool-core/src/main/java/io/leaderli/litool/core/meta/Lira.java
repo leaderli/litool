@@ -544,6 +544,13 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     }
 
     /**
+     * 遍历此Lira中的每个元素，并对元素执行{@code System.out.println(element)}
+     *
+     * @return 返回当前对象
+     */
+    Lira<T> debug();
+
+    /**
      * 遍历此Lira中的每个元素，并对元素执行某个操作
      *
      * @param action 对元素执行的操作
@@ -592,12 +599,6 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     <L> Lira<Either<L, T>> eitherSupplier(Supplier<? extends L> l);
 
-    /**
-     * 遍历此Lira中的每个元素，并对元素执行{@code System.out.println(element)}
-     *
-     * @return 返回当前对象
-     */
-    Lira<T> debug();
 
     /**
      * or方法为终端操作，将调用{@link #present()}方法判断元素是否存在于此处。

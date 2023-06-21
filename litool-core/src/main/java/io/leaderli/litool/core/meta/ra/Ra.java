@@ -272,7 +272,6 @@ public abstract class Ra<T> implements Lira<T> {
     @Override
     public Lira<T> debug() {
         return debug(System.out::println);
-
     }
 
     @Override
