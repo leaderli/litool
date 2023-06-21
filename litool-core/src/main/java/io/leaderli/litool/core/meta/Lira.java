@@ -139,6 +139,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param start 起始值
      * @param end   结束值
      *              返回一个从start到end(不包括)的数组
+     * @return 一个新的由int组成的lira
      */
     static Lira<Integer> range(int start, int end) {
 
