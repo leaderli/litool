@@ -30,6 +30,9 @@ class LiraTest {
         Lira.of(null, 1, 2).forNullableEach(collection::add);
         Assertions.assertSame(3, collection.size());
 
+        collection = new ArrayList<>();
+        Lira.of(1, 2, 3).forThrowableEach(collection::add);
+        Assertions.assertSame(3, collection.size());
 
         List<Integer> list = CollectionUtils.toList(1, 2, 3, 4, 5);
         Assertions.assertThrows(ConcurrentModificationException.class, () -> Lira.of(list).forEach(list::remove));
@@ -490,6 +493,7 @@ class LiraTest {
         Assertions.assertEquals(Lira.none(), Lira.of(1).filter(i -> i > 10));
         Assertions.assertEquals(Lira.of(1), Lira.of(1).filter(i -> i < 10));
     }
+
 
     @Test
     void flatMap() {

@@ -92,6 +92,23 @@ class ResourceUtilTest {
     }
 
     @Test
+    void test() {
+        Lira<File> resourceFile = ResourceUtil.getResourceFiles("io/leaderli/litool/core/bit", new WalkFileFilter() {
+            @Override
+            public boolean dir(File file) {
+                return !file.getAbsolutePath().contains("test-classes");
+            }
+
+            @Override
+            public boolean file(File file) {
+                return !file.getName().contains("$");
+            }
+        });
+        Assertions.assertEquals(5, resourceFile.size());
+    }
+
+
+    @Test
     void getResourceAsStream() {
 
         AutoCloseableUtil.autoCloseConsumer(() -> ResourceUtil.getResourceAsStream("io/leaderli/litool/core/bit" +

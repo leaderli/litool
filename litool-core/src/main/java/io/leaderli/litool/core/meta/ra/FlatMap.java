@@ -31,7 +31,6 @@ class FlatMap<T, R> extends Ra<R> {
 
 
         protected SubscriptionRa barricadeSubscription;
-        private int actual_states;
 
 
         private FlatMapSubscriberSubscription(SubscriberRa<? super R> actualSubscriber) {
@@ -70,13 +69,11 @@ class FlatMap<T, R> extends Ra<R> {
             if (iterator == null || !iterator.hasNext()) {
                 return;
             }
-            if (LiraBit.isTerminal(actual_states)) {
-                iterator.forEachRemaining(e -> SubscriberUtil.next(actualSubscriber, e));
-            } else {
+            if (barricadeSubscription == null) {
                 barricadeSubscription = new BarricadeGenerator(this, actualSubscriber, iterator);
-                barricadeSubscription.request();
-
             }
+            barricadeSubscription.request();
+
 
         }
 
@@ -96,15 +93,7 @@ class FlatMap<T, R> extends Ra<R> {
             @SuppressWarnings("java:S2583")
             @Override
             public void request() {
-//                if (LiraBit.isTerminal(state)) {
-//                    throw new IllegalStateException("barricade in flat map not support terminal request");
-//                }
 
-                performRequest();
-
-            }
-
-            private void performRequest() {
                 if (completed) {
                     // just tell  barricade is completed, not tell actualSubscriber
                     onComplete();

@@ -4,6 +4,9 @@ package io.leaderli.litool.core.meta.ra;
 import java.util.Iterator;
 
 /**
+ * 迭代Ra
+ *
+ * @param <T> 集合类型
  * @author leaderli
  * @since 2022/7/16
  */
@@ -11,6 +14,9 @@ public class IterableRa<T> extends Ra<T> {
 
     private final Iterable<? extends T> iterable;
 
+    /**
+     * @param iterable 迭代器
+     */
     public IterableRa(Iterable<? extends T> iterable) {
         this.iterable = iterable;
 
@@ -22,11 +28,18 @@ public class IterableRa<T> extends Ra<T> {
         actualSubscriber.onSubscribe(newGenerator(actualSubscriber));
     }
 
+    /**
+     * @param actualSubscriber 实际订阅者
+     * @return -
+     */
     public ItrGenerator newGenerator(SubscriberRa<? super T> actualSubscriber) {
         return new ItrGenerator(actualSubscriber, iterable.iterator());
     }
 
 
+    /**
+     * 一个新的迭代订阅者
+     */
     public class ItrGenerator extends GeneratorSubscription<T> {
 
         protected ItrGenerator(SubscriberRa<? super T> actualSubscriber, Iterator<? extends T> iterator) {
@@ -36,24 +49,7 @@ public class IterableRa<T> extends Ra<T> {
         @Override
         public final void request() {
 
-            // not active response onComplete signal, only response on when the next request
-//
-//            if (LiraBit.isTerminal(state)) {
-//                while (true) {
-//                    performRequest();
-//                    if (completed) {
-//                        return;
-//                    }
-//                }
-//
-//            } else {
-//                performRequest();
-//            }
-            performRequest();
 
-        }
-
-        private void performRequest() {
             if (completed) {
                 this.actualSubscriber.onComplete();
                 return;

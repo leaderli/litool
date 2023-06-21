@@ -16,13 +16,13 @@ public interface PublisherRa<T> {
 
 
     /**
-     * Request {@link PublisherRa} to start streaming data
+     * Request  to start streaming data
      * <p>
      * This is a "factory method" and can be call multi times, each time starting a new  {@link  SubscriptionRa}
      * <p>
      * Each {@link SubscriptionRa} will work for only a single {@link SubscriberRa}
      *
-     * @param subscriber the  {@link SubscriberRa} will consume signal from this {@link PublisherRa}
+     * @param subscriber the  {@link SubscriberRa} will consume signal from this
      */
     void subscribe(SubscriberRa<? super T> subscriber);
 
