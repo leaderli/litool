@@ -10,5 +10,9 @@ package io.leaderli.litool.core.function;
 public interface ThrowableConsumer<T> {
 
 
+    /**
+     * @param t -
+     * @throws Exception 抛出的异常
+     */
     void accept(T t) throws Throwable;
 }

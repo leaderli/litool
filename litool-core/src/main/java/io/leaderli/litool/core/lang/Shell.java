@@ -23,16 +23,26 @@ public class Shell {
     private final Charset charset;
 
 
+    /**
+     * @param workDir shell的执行目录
+     */
     public Shell(File workDir) {
         this(workDir, Charset.defaultCharset());
     }
 
+    /**
+     * @param workDir 执行目录
+     * @param charset 字符集
+     */
     public Shell(File workDir, Charset charset) {
         LiAssertUtil.assertTrue(workDir == null || workDir.exists() && workDir.isDirectory());
         this.workDir = workDir;
         this.charset = charset;
     }
 
+    /**
+     * 当前目录、默认字符集
+     */
     public Shell() {
         this(null, Charset.defaultCharset());
     }

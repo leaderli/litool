@@ -345,18 +345,22 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     <R> Lino<R> unzip(Function<? super T, Supplier<? extends R>> mapper);
 
     /**
-     * @param mapper the provide function of {@link  LiTuple}
-     * @param <R>    the type of {@link  LiTuple} 2rd
-     * @return a new lino consist of {@link  LiTuple}
+     * 当原值为 none时，恒返回 {@code LiTuple.of(null, null)}
+     *
+     * @param mapper 根据源值计算得到第二个值
+     * @param <R>    第二个值的类型
+     * @return 转换为{@link  LiTuple}
      */
-    <R> Lino<LiTuple<T, R>> tuple(Function<? super T, ? extends R> mapper);
+    <R> LiTuple<T, R> zip(Function<? super T, ? extends R> mapper);
 
     /**
+     * 当原值为 none时，恒返回 {@code LiTuple.of(null, null)}
+     *
      * @param t2  第二个值
      * @param <R> 第二个值的类型
      * @return 一个由当前值和第二个值组成的元祖
      */
-    <R> Lino<LiTuple<T, R>> tuple(R t2);
+    <R> LiTuple<T, R> tuple(R t2);
 
     /**
      * @param consumer the consumer of lino
@@ -489,7 +493,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     final class Some<T> implements Lino<T> {
 
         private final T value;
-        private Throwable throwable;
 
         /**
          * @param value -
@@ -644,15 +647,14 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public <R> Lino<LiTuple<T, R>> tuple(Function<? super T, ? extends R> mapper) {
-            return map(mapper).map(r -> LiTuple.of(value, r));
+        public <R> LiTuple<T, R> zip(Function<? super T, ? extends R> mapper) {
+            return LiTuple.of(value, mapper.apply(value));
         }
 
         @Override
-        public <R> Lino<LiTuple<T, R>> tuple(R t2) {
+        public <R> LiTuple<T, R> tuple(R t2) {
 
-            LiTuple<T, R> of = LiTuple.of(value, t2);
-            return Lino.of(of);
+            return LiTuple.of(value, t2);
         }
 
         @Override
@@ -711,7 +713,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
                 return of(mapper.apply(this.value));
             } catch (Throwable throwable) {
-                this.throwable = throwable;
                 if (whenThrow != null) {
                     whenThrow.accept(throwable);
                 }
@@ -874,13 +875,13 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public <R> Lino<LiTuple<T, R>> tuple(Function<? super T, ? extends R> mapper) {
-            return none();
+        public <R> LiTuple<T, R> zip(Function<? super T, ? extends R> mapper) {
+            return LiTuple.of(null, null);
         }
 
         @Override
-        public <R> Lino<LiTuple<T, R>> tuple(R t2) {
-            return none();
+        public <R> LiTuple<T, R> tuple(R t2) {
+            return LiTuple.of(null, null);
         }
 
         @Override

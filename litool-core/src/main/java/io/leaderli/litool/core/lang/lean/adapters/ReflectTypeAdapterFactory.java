@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.lang.lean.adapters;
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.lang.BeanPath;
 import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.lang.lean.LeanValue;
@@ -32,9 +33,16 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
     }
 
 
+    /**
+     * @param <T> 反射类适配器
+     */
     public static class ReflectAdapter<T> implements TypeAdapter<T> {
         private final LiTypeToken<T> typeToken;
 
+        /**
+         * @param lean      -
+         * @param typeToken -
+         */
         public ReflectAdapter(Lean lean, LiTypeToken<T> typeToken) {
             this.typeToken = typeToken;
         }
@@ -48,6 +56,13 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
             return bean;
         }
 
+        /**
+         * 根据源对象的属性或值填充目标对象
+         *
+         * @param source 源对象
+         * @param target 目标对象
+         * @param lean   lean
+         */
         public void populate(Object source, Object target, Lean lean) {
 
             for (Field field : ReflectUtil.getFields(target.getClass()).filter(f -> !ModifierUtil.isStatic(f))) {
@@ -90,19 +105,17 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
             return (TypeAdapter<T>) find._1;
         }
 
-        @SuppressWarnings("unchecked")
         private LiTuple<TypeAdapter<?>, Type> computeIfAbsentHandler(Class<? extends TypeAdapter<?>> cls, Lean lean) {
 
             LiTuple<TypeAdapter<?>, Type> find = lean.leanValueHandlers.get(cls);
             if (find != null) {
                 return find;
             }
+
             Type actualTypeArgument = TypeUtil.resolve2Parameterized(cls, TypeAdapter.class).getActualTypeArguments()[0];
-            find = ReflectUtil.newInstance(cls)
-                    .tuple(actualTypeArgument)
-                    .assertNotNone(() -> StrSubstitution.format("the {adapter} is cannot " + "create instance}", cls))
-                    .cast(LiTuple.class)
-                    .get();
+            find = LiTuple.narrow(ReflectUtil.newInstance(cls).tuple(actualTypeArgument));
+            LiAssertUtil.assertTrue(find.notIncludeNull(), StrSubstitution.format("the {adapter} is cannot " + "create instance}", cls));
+
             synchronized (lean.leanValueHandlers) {
                 lean.leanValueHandlers.put(cls, find);
             }
