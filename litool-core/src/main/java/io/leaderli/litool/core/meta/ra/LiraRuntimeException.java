@@ -8,24 +8,34 @@ package io.leaderli.litool.core.meta.ra;
  * @since 2022/9/27 2:20 PM
  */
 public class LiraRuntimeException extends RuntimeException {
+    /**
+     *
+     */
     public LiraRuntimeException() {
         super();
     }
 
+    /**
+     * @param message 异常信息
+     */
     public LiraRuntimeException(String message) {
         super(message);
     }
 
+    /**
+     * @param message 异常信息
+     * @param cause   异常原因
+     */
     public LiraRuntimeException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * @param cause 异常原因
+     */
     public LiraRuntimeException(Throwable cause) {
         super(cause);
     }
 
 
-    public LiraRuntimeException(LiraRuntimeException cause) {
-        super(cause.getMessage(), cause.getCause());
-    }
 }

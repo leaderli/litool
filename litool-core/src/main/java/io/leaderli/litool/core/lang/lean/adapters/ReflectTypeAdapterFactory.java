@@ -99,7 +99,7 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
             }
             Type actualTypeArgument = TypeUtil.resolve2Parameterized(cls, TypeAdapter.class).getActualTypeArguments()[0];
             find = ReflectUtil.newInstance(cls)
-                    .tuple2(actualTypeArgument)
+                    .tuple(actualTypeArgument)
                     .assertNotNone(() -> StrSubstitution.format("the {adapter} is cannot " + "create instance}", cls))
                     .cast(LiTuple.class)
                     .get();

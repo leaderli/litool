@@ -119,11 +119,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      *
      * @param supplier the supplier provide value
      * @param <T>      the type of lino
-     * @param consumer the consumer when error occur
+     * @param function the function when error occur
      * @return a lino
      * @see #of(Object)
      */
-    static <T> Lino<T> throwable_of(ThrowableSupplier<? extends T> supplier, Consumer<Throwable> consumer) {
+    static <T> Lino<T> throwable_of(ThrowableSupplier<? extends T> supplier, Function<Throwable, T> function) {
         if (supplier == null) {
             return none();
         }
@@ -134,8 +134,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             }
             return new Some<>(value);
         } catch (Throwable e) {
-            consumer.accept(e);
-            return none();
+            return of(function.apply(e));
         }
     }
 
@@ -214,6 +213,15 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @return this
      */
     Lino<T> assertNotNone(Supplier<String> supplier);
+
+
+    /**
+     * {@link #none()} 一定不会触发
+     *
+     * @param throwableConsumer 当有异常时发生时则会调用
+     * @return this
+     */
+    Lino<T> onError(Consumer<Throwable> throwableConsumer);
 
     /**
      * @param <R>  the type parameter of casted
@@ -348,7 +356,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @param <R> 第二个值的类型
      * @return 一个由当前值和第二个值组成的元祖
      */
-    <R> Lino<LiTuple<T, R>> tuple2(R t2);
+    <R> Lino<LiTuple<T, R>> tuple(R t2);
 
     /**
      * @param consumer the consumer of lino
@@ -481,6 +489,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     final class Some<T> implements Lino<T> {
 
         private final T value;
+        private Throwable throwable;
 
         /**
          * @param value -
@@ -550,6 +559,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         @Override
         public Lino<T> assertNotNone(Supplier<String> supplier) {
             return this;
+        }
+
+        @Override
+        public Lino<T> onError(Consumer<Throwable> throwableConsumer) {
+            return null;
         }
 
         @Override
@@ -635,7 +649,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public <R> Lino<LiTuple<T, R>> tuple2(R t2) {
+        public <R> Lino<LiTuple<T, R>> tuple(R t2) {
 
             LiTuple<T, R> of = LiTuple.of(value, t2);
             return Lino.of(of);
@@ -697,6 +711,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
                 return of(mapper.apply(this.value));
             } catch (Throwable throwable) {
+                this.throwable = throwable;
                 if (whenThrow != null) {
                     whenThrow.accept(throwable);
                 }
@@ -781,6 +796,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
+        public Lino<T> onError(Consumer<Throwable> throwableConsumer) {
+            return this;
+        }
+
+        @Override
         public <R> Lino<R> cast(Class<? extends R> type) {
             return none();
         }
@@ -859,7 +879,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public <R> Lino<LiTuple<T, R>> tuple2(R t2) {
+        public <R> Lino<LiTuple<T, R>> tuple(R t2) {
             return none();
         }
 
@@ -867,7 +887,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         public Lino<T> nest(Consumer<? super Lino<T>> consumer) {
             return this;
         }
-
 
 
         @Override
