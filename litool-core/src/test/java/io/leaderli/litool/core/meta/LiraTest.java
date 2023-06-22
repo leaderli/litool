@@ -344,7 +344,6 @@ class LiraTest {
         Assertions.assertEquals("1", none.or("1").get().get(0));
         Assertions.assertEquals("1", Lira.of("1", "2").or(Arrays.asList("5", "4")).get().get(0));
 
-
         Assertions.assertSame(0, Lira.of(1, 2).filter(i -> i > 3).size());
         Assertions.assertSame(4, Lira.of(1, 2).filter(i -> i > 3).or(1, 2, 3, 4).size());
     }
