@@ -264,9 +264,9 @@ class LinoTest {
     @Test
     void throwable_map() {
         LiBox<Integer> box = LiBox.none();
-        Assertions.assertSame(Lino.of(0).throwable_map(i -> 5 / i, null), Lino.none());
+        Assertions.assertSame(Lino.of(0).mapIgnoreError(i -> 5 / i, null), Lino.none());
         Assertions.assertNull(box.value());
-        Lino.of(0).throwable_map(i -> 5 / i, t -> box.value(2));
+        Lino.of(0).mapIgnoreError(i -> 5 / i, t -> box.value(2));
         Assertions.assertSame(2, box.value());
         Assertions.assertThrows(ArithmeticException.class, () -> Lino.of(0).map(i -> 5 / i));
     }

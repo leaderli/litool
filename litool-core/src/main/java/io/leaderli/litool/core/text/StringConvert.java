@@ -76,7 +76,7 @@ public class StringConvert {
     public static <T> T parser(Class<T> cls, String value, T def) {
 
         return Lino.of(CONVERTS.get(cls))
-                .throwable_map(f -> f.apply(value), null)
+                .mapIgnoreError(f -> f.apply(value), null)
                 .cast(cls)
                 .get(def);
 
@@ -93,7 +93,7 @@ public class StringConvert {
     public static <T> Lino<T> parser(Class<T> cls, String value) {
 
         return Lino.of(CONVERTS.get(cls))
-                .throwable_map(f -> f.apply(value), null)
+                .mapIgnoreError(f -> f.apply(value), null)
                 .cast(cls);
     }
 }

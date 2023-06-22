@@ -95,19 +95,19 @@ class ReflectUtilTest {
 
         LittleBean littleBean = new LittleBean();
         assertEquals("bean",
-                ReflectUtil.getField(LittleBean.class, "name").throwable_map(f -> f.get(littleBean)).get());
-        assertEquals(8, ReflectUtil.getField(LittleBean.class, "age").throwable_map(f -> f.get(littleBean)).get());
+                ReflectUtil.getField(LittleBean.class, "name").mapIgnoreError(f -> f.get(littleBean)).get());
+        assertEquals(8, ReflectUtil.getField(LittleBean.class, "age").mapIgnoreError(f -> f.get(littleBean)).get());
 
         Lino<Field> name = ReflectUtil.getField(LittleBean.class, "name", true);
-        assertNull(name.throwable_map(f -> f.get(littleBean), null).get());
+        assertNull(name.mapIgnoreError(f -> f.get(littleBean), null).get());
 
-        assertEquals("little", name.throwable_map(f -> {
+        assertEquals("little", name.mapIgnoreError(f -> {
             f.setAccessible(true);
             return f.get(littleBean);
         }).get());
 
         assertEquals(8,
-                ReflectUtil.getField(LittleBean.class, "age", true).throwable_map(f -> f.get(littleBean)).get());
+                ReflectUtil.getField(LittleBean.class, "age", true).mapIgnoreError(f -> f.get(littleBean)).get());
     }
 
     @Test

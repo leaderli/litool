@@ -449,10 +449,10 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param mapper 一个函数，接受元素并返回泛型R类型的元素
      * @param <R>    新Lira中元素的类型
      * @return 返回一个新的Lira对象
-     * @see #throwable_map(ThrowableFunction, Consumer)
+     * @see #mapIgnoreError(ThrowableFunction, Consumer)
      * @see WhenThrowBehavior#WHEN_THROW
      */
-    <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
+    <R> Lira<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper);
 
     /**
      * 当发生异常时，执行{@link SubscriberRa#next_null()}和
@@ -463,7 +463,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param whenThrow 当{@link ThrowableFunction#apply(Object)}抛出异常时执行的消费者
      * @return 返回一个新的Lira对象
      */
-    <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
+    <R> Lira<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
 
     /**
      * 终端操作，触发执行先前的元素

@@ -435,10 +435,10 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @param mapper the  mapper
      * @param <R>    the type of after mapper
      * @return a new lino of type R
-     * @see #throwable_map(ThrowableFunction, Consumer)
+     * @see #mapIgnoreError(ThrowableFunction, Consumer)
      * @see WhenThrowBehavior#WHEN_THROW
      */
-    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper);
+    <R> Lino<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper);
 
 
     /**
@@ -449,7 +449,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @param whenThrow the consumer when {@link  ThrowableFunction#apply(Object)} throw
      * @return a new lino of type R
      */
-    <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
+    <R> Lino<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow);
 
     /**
      * @param <R> the type of lira result
@@ -701,14 +701,14 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
-            return throwable_map(mapper, WhenThrowBehavior.WHEN_THROW);
+        public <R> Lino<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper) {
+            return mapIgnoreError(mapper, WhenThrowBehavior.WHEN_THROW);
         }
 
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper,
-                                         Consumer<Throwable> whenThrow) {
+        public <R> Lino<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper,
+                                          Consumer<Throwable> whenThrow) {
             try {
 
                 return of(mapper.apply(this.value));
@@ -927,14 +927,14 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
+        public <R> Lino<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper) {
             return none();
         }
 
 
         @Override
-        public <R> Lino<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper,
-                                         Consumer<Throwable> whenThrow) {
+        public <R> Lino<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper,
+                                          Consumer<Throwable> whenThrow) {
             return none();
         }
 

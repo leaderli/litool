@@ -67,7 +67,7 @@ public class ResourceUtil {
 
 
         List<File> result = new ArrayList<>();
-        getResourceURLs(resourceName).throwable_map(URL::toURI).map(Paths::get).forThrowableEach(path -> {
+        getResourceURLs(resourceName).mapIgnoreError(URL::toURI).map(Paths::get).forThrowableEach(path -> {
 
             SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
                 @Override
@@ -104,7 +104,7 @@ public class ResourceUtil {
      */
     public static Lira<URL> getResourceURLs(String resourceName) {
 
-        return Lino.of(resourceName).throwable_map(ClassLoaderUtil.getClassLoader()::getResources).toLira(URL.class);
+        return Lino.of(resourceName).mapIgnoreError(ClassLoaderUtil.getClassLoader()::getResources).toLira(URL.class);
 
     }
 
@@ -117,9 +117,9 @@ public class ResourceUtil {
     public static Map<Integer, String> lineStrOfResourcesFile(String resourceName) {
 
         return Lino.of(resourceName)
-                .map(ResourceUtil::getResource).throwable_map(URL::openStream)
+                .map(ResourceUtil::getResource).mapIgnoreError(URL::openStream)
                 .map(InputStreamReader::new).map(BufferedReader::new)
-                .throwable_map(reader -> {
+                .mapIgnoreError(reader -> {
                     Map<Integer, String> lines = new HashMap<>();
                     int i = 0;
                     while (reader.ready()) {

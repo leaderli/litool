@@ -92,11 +92,11 @@ class StringUtilsTest {
                     "StringUtilsTest.lambda"));
             Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, null).length() > 0);
         }
-        Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e,
-                Lino.class).contains("Some.throwable_map(")));
-        Lino.of(0).throwable_map(i -> 5 / i, e -> Assertions.assertTrue(StringUtils.localMessageAtLineOfPackage(e,
-                Lino.class.getPackage()).contains("Some.throwable_map(")));
-        Lino.of(0).throwable_map(i -> 5 / i, e -> {
+        Lino.of(0).mapIgnoreError(i -> 5 / i, e -> Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e,
+                Lino.class).contains("Some.mapIgnoreError(")));
+        Lino.of(0).mapIgnoreError(i -> 5 / i, e -> Assertions.assertTrue(StringUtils.localMessageAtLineOfPackage(e,
+                Lino.class.getPackage()).contains("Some.mapIgnoreError(")));
+        Lino.of(0).mapIgnoreError(i -> 5 / i, e -> {
             String s = StringUtils.localMessageAtLineOfPackage(e, StringUtilsTest.class.getPackage());
             Assertions.assertTrue(s.contains("line$"));
         });

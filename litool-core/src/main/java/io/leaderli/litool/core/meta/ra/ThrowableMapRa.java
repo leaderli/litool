@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.meta.ra;
 
-import io.leaderli.litool.core.exception.ThrowableInterfaceException;
+import io.leaderli.litool.core.exception.MapperRuntimeException;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.meta.Lino;
 
@@ -10,7 +10,7 @@ import java.util.Objects;
  * 忽视异常的 转换操作
  *
  * @author leaderli
- * @see Lino#throwable_map(ThrowableFunction)
+ * @see Lino#mapIgnoreError(ThrowableFunction)
  * @since 2022/6/27
  */
 class ThrowableMapRa<T, R> extends Ra<R> {
@@ -44,7 +44,7 @@ class ThrowableMapRa<T, R> extends Ra<R> {
             try {
                 SubscriberUtil.next(actualSubscriber, mapper.apply(t));
             } catch (Throwable e) {
-                throw new ThrowableInterfaceException(e);
+                throw new MapperRuntimeException(e);
             }
         }
 

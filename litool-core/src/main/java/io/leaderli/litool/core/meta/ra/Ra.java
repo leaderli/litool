@@ -145,7 +145,7 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
-    public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper) {
+    public <R> Lira<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper) {
         return new ThrowableMapRa<>(this, mapper);
 
 
@@ -164,7 +164,7 @@ public abstract class Ra<T> implements Lira<T> {
     }
 
     @Override
-    public <R> Lira<R> throwable_map(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
+    public <R> Lira<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
         return new ThrowableMapRa<>(this, mapper);
 
     }

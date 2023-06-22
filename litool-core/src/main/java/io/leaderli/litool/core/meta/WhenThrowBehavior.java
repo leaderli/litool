@@ -11,8 +11,8 @@ public class WhenThrowBehavior {
     /**
      * 当发生异常时的默认消费者，适用于以下方法：
      *
-     * @see Lino#throwable_map(ThrowableFunction)
-     * @see Lira#throwable_map(ThrowableFunction)
+     * @see Lino#mapIgnoreError(ThrowableFunction)
+     * @see Lira#mapIgnoreError(ThrowableFunction)
      */
     @SuppressWarnings("all")
     public static Consumer<Throwable> WHEN_THROW = Throwable::printStackTrace;

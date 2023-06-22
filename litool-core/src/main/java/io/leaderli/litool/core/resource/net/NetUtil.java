@@ -21,8 +21,8 @@ public class NetUtil {
     public static boolean pingable(String ipAddress) {
 
         return Lino.of(ipAddress)
-                .throwable_map(InetAddress::getByName)
-                .throwable_map(net -> net.isReachable(10000))
+                .mapIgnoreError(InetAddress::getByName)
+                .mapIgnoreError(net -> net.isReachable(10000))
                 .get(false);
 
     }
@@ -37,8 +37,8 @@ public class NetUtil {
     public static boolean pingable(String ipAddress, int timeoutMillis) {
 
         return Lino.of(ipAddress)
-                .throwable_map(InetAddress::getByName)
-                .throwable_map(net -> net.isReachable(timeoutMillis))
+                .mapIgnoreError(InetAddress::getByName)
+                .mapIgnoreError(net -> net.isReachable(timeoutMillis))
                 .get(false);
 
     }

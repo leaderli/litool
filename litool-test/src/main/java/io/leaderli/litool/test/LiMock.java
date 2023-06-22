@@ -35,13 +35,34 @@ public class LiMock {
     };
 
 
+    /**
+     * 基于参数的匹配的返回值的集合
+     */
     public static final Map<Method, Function<Object[], Object[]>> methodValuesDependsOnParametersOfTestMethod = new HashMap<>();
+    /**
+     * 被mock 的类
+     */
     public static final Set<Class<?>> mockedClasses = new HashSet<>();
+    /**
+     *
+     */
     public static final ByteBuddy byteBuddy = new ByteBuddy();
-    public static Method mockMethod;
-    public static boolean onMockProgress;
-    public static LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
+    /**
+     * mock过程中重新定义的类
+     */
     public static final Set<Class<?>> redefineClassesInMockInit = new HashSet<>();
+    /**
+     * 作为标记使用
+     */
+    public static final Object NONE = new Object();
+    /**
+     * mock的方法
+     */
+    public static Method mockMethod;
+    /**
+     * 当前处于mock的过程中
+     */
+    public static boolean onMockProgress;
 
     static {
         ByteBuddyAgent.install();
@@ -65,26 +86,10 @@ public class LiMock {
         instanceCreators.clear();
         redefineClassesInMockInit.clear();
     }
-
-
-    public static void ignoreTypeInitError(Class<?> mockingClass) {
-
-
-        StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
-
-        LiAssertUtil.assertTrue(MethodUtil.CLINIT_METHOD_NAME.equals(caller.getMethodName()), "only support call in <clinit>");
-        byteBuddy.redefine(mockingClass)
-                .visit(Advice.to(MockInitAdvice.class).on(MethodDescription::isMethod))
-                .visit(Advice.to(MockStaticBlock.class).on(MethodDescription::isTypeInitializer))
-                .visit(Advice.to(ConstructorAdvice.class).on(MethodDescription::isConstructor))
-                .make()
-                .load(mockingClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
-        try {
-            Class.forName(mockingClass.getName());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    /**
+     * 缓存的构造函数
+     */
+    public static LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
 
     /**
      * delegate the class method to {@link  MockInitAdvice}
@@ -176,6 +181,28 @@ public class LiMock {
     }
 
     /**
+     * @param mockingClass mock的类
+     */
+    public static void ignoreTypeInitError(Class<?> mockingClass) {
+
+
+        StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
+
+        LiAssertUtil.assertTrue(MethodUtil.CLINIT_METHOD_NAME.equals(caller.getMethodName()), "only support call in <clinit>");
+        byteBuddy.redefine(mockingClass)
+                .visit(Advice.to(MockInitAdvice.class).on(MethodDescription::isMethod))
+                .visit(Advice.to(MockStaticBlock.class).on(MethodDescription::isTypeInitializer))
+                .visit(Advice.to(ConstructorAdvice.class).on(MethodDescription::isConstructor))
+                .make()
+                .load(mockingClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
+        try {
+            Class.forName(mockingClass.getName());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * if  instance class is same as type, run all get and set method of  type. will ignore
      * Object method
      *
@@ -192,7 +219,7 @@ public class LiMock {
                     }
                     return c == TypeUtil.erase(type);
                 })
-                .throwable_map(cls -> Introspector.getBeanInfo(cls, Object.class).getPropertyDescriptors())
+                .mapIgnoreError(cls -> Introspector.getBeanInfo(cls, Object.class).getPropertyDescriptors())
                 .toLira(PropertyDescriptor.class);
 
         // mock run pojo set get achieve test coverage
@@ -202,7 +229,9 @@ public class LiMock {
         }
     }
 
-
+    /**
+     * mock静态代码块
+     */
     public static class MockStaticBlock {
         @Advice.OnMethodExit(onThrowable = Throwable.class)
         @SuppressWarnings("all")
@@ -210,8 +239,6 @@ public class LiMock {
             th = null;
         }
     }
-
-    public static final Object NONE = new Object();
 
 
 }
