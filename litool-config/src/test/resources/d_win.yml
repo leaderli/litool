@@ -1,8 +1,8 @@
 task: |-
   tmp=`mktemp`
-  echo $tmp > $tmp
+#  echo $tmp > $tmp
   echo $tmp
-  tail -f $tmp
+#  tail -f $tmp
 
 # now loop through the above array
 #  for i in "${arr[@]}"
