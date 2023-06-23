@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.lang;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,5 +28,16 @@ class WrapIntTest {
         assertEquals(0, wrapInt.next());
         assertEquals(0, wrapInt.iterator().next());
 
+
+        wrapInt = new WrapInt(1, 4);
+
+        wrapInt.set(-1);
+        Assertions.assertEquals(3, wrapInt.get());
+        wrapInt.set(-2);
+        Assertions.assertEquals(2, wrapInt.get());
+        wrapInt.set(2);
+        Assertions.assertEquals(2, wrapInt.get());
+        wrapInt.set(6);
+        Assertions.assertEquals(2, wrapInt.get());
     }
 }

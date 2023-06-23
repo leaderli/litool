@@ -55,4 +55,23 @@ public class WrapInt implements Iterator<Integer>, Iterable<Integer> {
     public Iterator<Integer> iterator() {
         return new WrapInt(min, max);
     }
+
+    /**
+     * @param index 设定一个index，将其转换为环绕内的数值
+     */
+    public void set(Integer index) {
+
+        index = index % (max - min + 1);
+        if (index < min) {
+            index = (max - min + 1) + index;
+        }
+        this.index = index;
+    }
+
+    /**
+     * @return {@link #index}
+     */
+    public Integer get() {
+        return this.index;
+    }
 }
