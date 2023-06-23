@@ -3,9 +3,9 @@ package io.leaderli.litool.core.lang;
 import java.util.Iterator;
 
 /**
- * 用来表示一个范围的int,其值为 min ~ max。当值等于max时，下一个值将会是min
+ * 用来表示一个环绕的int,其值为 min ~ max。当值等于max时，下一个值将会是min
  */
-public class RangeInt implements Iterator<Integer>, Iterable<Integer> {
+public class WrapInt implements Iterator<Integer>, Iterable<Integer> {
     /**
      * 最大值
      */
@@ -21,7 +21,7 @@ public class RangeInt implements Iterator<Integer>, Iterable<Integer> {
      *
      * @param max 最大值
      */
-    public RangeInt(int max) {
+    public WrapInt(int max) {
         this(0, max);
     }
 
@@ -29,7 +29,7 @@ public class RangeInt implements Iterator<Integer>, Iterable<Integer> {
      * @param max 最大值
      * @param min 最小值
      */
-    public RangeInt(int min, int max) {
+    public WrapInt(int min, int max) {
         this.min = min;
         this.max = max;
         this.index = min;
@@ -53,6 +53,6 @@ public class RangeInt implements Iterator<Integer>, Iterable<Integer> {
 
     @Override
     public Iterator<Integer> iterator() {
-        return new RangeInt(min, max);
+        return new WrapInt(min, max);
     }
 }
