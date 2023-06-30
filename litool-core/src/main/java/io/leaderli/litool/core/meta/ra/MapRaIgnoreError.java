@@ -13,12 +13,12 @@ import java.util.Objects;
  * @see Lino#mapIgnoreError(ThrowableFunction)
  * @since 2022/6/27
  */
-class ThrowableMapRa<T, R> extends Ra<R> {
+class MapRaIgnoreError<T, R> extends Ra<R> {
     private final ThrowableFunction<? super T, ? extends R> mapper;
     private final PublisherRa<T> prevPublisher;
 
 
-    public ThrowableMapRa(PublisherRa<T> prevPublisher, ThrowableFunction<? super T, ? extends R> mapper) {
+    public MapRaIgnoreError(PublisherRa<T> prevPublisher, ThrowableFunction<? super T, ? extends R> mapper) {
         Objects.requireNonNull(mapper);
         this.prevPublisher = prevPublisher;
         this.mapper = mapper;
@@ -26,14 +26,14 @@ class ThrowableMapRa<T, R> extends Ra<R> {
 
     @Override
     public void subscribe(SubscriberRa<? super R> actualSubscriber) {
-        prevPublisher.subscribe(new ThrowableMapSubscriberSubscription(actualSubscriber));
+        prevPublisher.subscribe(new MapIgnoreErrorSubscriberSubscription(actualSubscriber));
 
     }
 
-    private class ThrowableMapSubscriberSubscription extends IntermediateSubscriberSubscription<T, R> {
+    private class MapIgnoreErrorSubscriberSubscription extends IntermediateSubscriberSubscription<T, R> {
 
 
-        private ThrowableMapSubscriberSubscription(SubscriberRa<? super R> actualSubscriber) {
+        private MapIgnoreErrorSubscriberSubscription(SubscriberRa<? super R> actualSubscriber) {
             super(actualSubscriber);
         }
 

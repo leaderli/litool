@@ -310,7 +310,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      * @return this
      * @see RuntimeExceptionTransfer
      */
-    Lino<T> ifThrowablePresent(ThrowableConsumer<? super T> consumer);
+    Lino<T> ifPresentIgnoreError(ThrowableConsumer<? super T> consumer);
 
 
     /**
@@ -624,7 +624,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public Lino<T> ifThrowablePresent(ThrowableConsumer<? super T> consumer) {
+        public Lino<T> ifPresentIgnoreError(ThrowableConsumer<? super T> consumer) {
             RuntimeExceptionTransfer.accept(consumer, this.value);
             return this;
         }
@@ -853,7 +853,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
-        public Lino<T> ifThrowablePresent(ThrowableConsumer<? super T> consumer) {
+        public Lino<T> ifPresentIgnoreError(ThrowableConsumer<? super T> consumer) {
             return this;
         }
 

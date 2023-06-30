@@ -758,7 +758,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      *
      * @param action 可能会出现异常的操作
      */
-    void forThrowableEach(ThrowableConsumer<? super T> action);
+    void forEachIgnoreError(ThrowableConsumer<? super T> action);
 
 
     /**
@@ -771,7 +771,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @param action    可能会出现异常的操作
      * @param whenThrow 异常处理器
      */
-    void forThrowableEach(ThrowableConsumer<? super T> action, Consumer<Throwable> whenThrow);
+    void forEachIgnoreError(ThrowableConsumer<? super T> action, Consumer<Throwable> whenThrow);
 
     /**
      * 返回一个 {@link Stream} 对象，可以对 Lira 中的元素进行更多操作。

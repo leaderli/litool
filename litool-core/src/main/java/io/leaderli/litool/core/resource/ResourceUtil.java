@@ -67,7 +67,7 @@ public class ResourceUtil {
 
 
         List<File> result = new ArrayList<>();
-        getResourceURLs(resourceName).mapIgnoreError(URL::toURI).map(Paths::get).forThrowableEach(path -> {
+        getResourceURLs(resourceName).mapIgnoreError(URL::toURI).map(Paths::get).forEachIgnoreError(path -> {
 
             SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
                 @Override

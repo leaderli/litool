@@ -227,7 +227,7 @@ class LinoTest {
     @SuppressWarnings("all")
     @Test
     void ifThrowablePresent() {
-        Throwable cause = Assertions.assertThrows(RuntimeException.class, () -> Lino.of(0).ifThrowablePresent(in -> {
+        Throwable cause = Assertions.assertThrows(RuntimeException.class, () -> Lino.of(0).ifPresentIgnoreError(in -> {
             TimeUnit.MICROSECONDS.sleep(1);
             @SuppressWarnings("unused") int i = 1 / in;
 

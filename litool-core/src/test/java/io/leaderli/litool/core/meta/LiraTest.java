@@ -31,7 +31,7 @@ class LiraTest {
         Assertions.assertSame(3, collection.size());
 
         collection = new ArrayList<>();
-        Lira.of(1, 2, 3).forThrowableEach(collection::add);
+        Lira.of(1, 2, 3).forEachIgnoreError(collection::add);
         Assertions.assertSame(3, collection.size());
 
         List<Integer> list = CollectionUtils.toList(1, 2, 3, 4, 5);

@@ -146,7 +146,7 @@ public abstract class Ra<T> implements Lira<T> {
 
     @Override
     public <R> Lira<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper) {
-        return new ThrowableMapRa<>(this, mapper);
+        return new MapRaIgnoreError<>(this, mapper);
 
 
     }
@@ -165,7 +165,7 @@ public abstract class Ra<T> implements Lira<T> {
 
     @Override
     public <R> Lira<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper, Consumer<Throwable> whenThrow) {
-        return new ThrowableMapRa<>(this, mapper);
+        return new MapRaIgnoreError<>(this, mapper);
 
     }
 
@@ -299,12 +299,12 @@ public abstract class Ra<T> implements Lira<T> {
 
 
     @Override
-    public void forThrowableEach(ThrowableConsumer<? super T> action) {
-        forThrowableEach(action, WhenThrowBehavior.WHEN_THROW);
+    public void forEachIgnoreError(ThrowableConsumer<? super T> action) {
+        forEachIgnoreError(action, WhenThrowBehavior.WHEN_THROW);
     }
 
     @Override
-    public void forThrowableEach(ThrowableConsumer<? super T> action, Consumer<Throwable> whenThrow) {
+    public void forEachIgnoreError(ThrowableConsumer<? super T> action, Consumer<Throwable> whenThrow) {
 
         subscribe((new ThrowableConsumerSubscriber<>(action, whenThrow)));
     }

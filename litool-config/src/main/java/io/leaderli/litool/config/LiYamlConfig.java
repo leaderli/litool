@@ -100,7 +100,7 @@ public class LiYamlConfig {
         ResourceUtil.getResourceFiles(f -> nameList.contains(f.getName()))
                 .sorted(Comparator.comparingInt(f -> nameList.indexOf(f.getName())))
                 .mapIgnoreError(f -> (Map<?, ?>) yaml.load(Files.newInputStream(f.toPath())))
-                .forThrowableEach(f -> {
+                .forEachIgnoreError(f -> {
                     Map<?, ?> merge = LiMapUtil.merge(box.value(), f);
                     box.value(merge);
                 });

@@ -36,7 +36,7 @@ public class CartesianMap<K, V> {
      */
 
     @SuppressWarnings("unchecked")
-    public Lira<Map<K, V>> cartesian() {
+    public Map<K, V>[] cartesian() {
 
 
         Lira<LiTuple<K, Object[]>> tuples = Lira.of(source.entrySet())
@@ -55,7 +55,7 @@ public class CartesianMap<K, V> {
                 map.put((K) keys[i], (V) values[i]);
             }
             return map;
-        });
+        }).toArray(Map.class);
     }
 
 

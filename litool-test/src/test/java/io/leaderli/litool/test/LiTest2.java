@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import io.leaderli.litool.core.test.CartesianMap;
 import io.leaderli.litool.core.util.ConsoleUtil;
 import io.leaderli.litool.core.util.RandomUtil;
+import io.leaderli.litool.test2.limock.Foo2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,13 +41,16 @@ public class LiTest2 {
     static void init2() {
 
         //language=JSON
-        String json = "{\"height\": 188, \"gender\": [true, false], \"age\": [1, 2]}";
+        String json = "{\"height\": 188, \"gender\": [true, false], \"age\": [1, null]}";
 
         Gson gson = new Gson();
         Map<String, Object[]> map = gson.fromJson(json, Map.class);
 
         CartesianMap<String, Object> cartesianMap = new CartesianMap<>(HashMap::new, map);
-        cartesianMap.cartesian();
+
+        LiMock.mock(Foo2.class);
+        Foo2 foo2 = new Foo2();
+        LiMock.when(foo2::map, cartesianMap.cartesian());
 
 
     }
@@ -55,9 +59,9 @@ public class LiTest2 {
     @MockInit("init2")
     @LiTest
     void test2() {
-        Map<String, String> map = new MockMap<>();
-        ConsoleUtil.print_format("123:{1},124:{2},other:{other}", map.get("123"), map.get("124"),
-                map.get(RandomUtil.randomString(3)));
+        Foo2 foo2 = new Foo2();
+        Map<String, Object[]> map = foo2.map();
+        ConsoleUtil.print_format("height:{height},gender:{gender},age:{age}", map.get("height"), map.get("gender"), map.get("age"));
 
     }
 
