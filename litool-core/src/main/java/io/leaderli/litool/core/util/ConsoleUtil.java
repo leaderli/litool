@@ -2,6 +2,7 @@ package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.text.StrPool;
+import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.io.PrintStream;
@@ -142,7 +143,7 @@ public class ConsoleUtil {
      * @param arguments 占位符变量
      */
     public static void print_format(String pattern, Object... arguments) {
-        CONSOLE.println(MessageFormat.format(pattern, arguments));
+        CONSOLE.println(StrSubstitution.format(pattern, arguments));
     }
 
     /**

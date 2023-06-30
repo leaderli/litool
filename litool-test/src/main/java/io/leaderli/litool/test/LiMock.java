@@ -16,7 +16,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -38,7 +37,7 @@ public class LiMock {
     /**
      * 基于参数的匹配的返回值的集合
      */
-    public static final Map<Method, Function<Object[], Object[]>> methodValuesDependsOnParametersOfTestMethod = new HashMap<>();
+    public static final Map<Method, MethodResultCartesianForParameter> methodValuesDependsOnParameters = new HashMap<>();
     /**
      * 被mock 的类
      */
@@ -80,12 +79,13 @@ public class LiMock {
             }
         }
         mockedClasses.clear();
-        methodValuesDependsOnParametersOfTestMethod.clear();
+        methodValuesDependsOnParameters.clear();
         mockMethod = null;
         onMockProgress = false;
         instanceCreators.clear();
         redefineClassesInMockInit.clear();
     }
+
     /**
      * 缓存的构造函数
      */
@@ -142,7 +142,7 @@ public class LiMock {
         PrimitiveEnum primitiveEnum = PrimitiveEnum.get(returnType);
 
         Object zero_value = primitiveEnum == PrimitiveEnum.VOID || primitiveEnum == PrimitiveEnum.OBJECT ? SKIP : primitiveEnum.zero_value;
-        methodValuesDependsOnParametersOfTestMethod.put(mockMethod, params -> new Object[]{zero_value});
+        methodValuesDependsOnParameters.put(mockMethod, new MethodResultCartesianForParameter(zero_value));
         mockedClasses.add(mockMethod.getDeclaringClass());
 
         mockMethod = null;
@@ -157,15 +157,15 @@ public class LiMock {
      */
     @SafeVarargs
     public static <T> void when(Supplier<T> supplier, T... mockValues) {
-        whenArgs(supplier, params -> mockValues);
+        whenArgs(supplier, new MethodResultCartesianForParameter((Object[]) mockValues));
     }
 
     /**
-     * @param supplier                  the mock method call progress
-     * @param mockValuesProvideByParams the mock method potential return values on specific test parameters
-     * @param <T>                       the  mock method return type
+     * @param supplier                          the mock method call progress
+     * @param methodResultCartesianForParameter the mock method potential return values on specific test parameters
+     * @param <T>                               the  mock method return type
      */
-    public static <T> void whenArgs(Supplier<T> supplier, Function<Object[], Object[]> mockValuesProvideByParams) {
+    public static <T> void whenArgs(Supplier<T> supplier, MethodResultCartesianForParameter methodResultCartesianForParameter) {
 
 
         mockMethod = null;
@@ -173,7 +173,7 @@ public class LiMock {
         supplier.get();
 
         Objects.requireNonNull(mockMethod);
-        methodValuesDependsOnParametersOfTestMethod.put(mockMethod, mockValuesProvideByParams);
+        methodValuesDependsOnParameters.put(mockMethod, methodResultCartesianForParameter);
         mockedClasses.add(mockMethod.getDeclaringClass());
 
         mockMethod = null;

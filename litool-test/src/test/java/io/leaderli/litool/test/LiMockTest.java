@@ -27,13 +27,12 @@ class LiMockTest {
         LiMock.light(testBean::m1);
         LiMock.light(testBean::m3);
         LiMock.light(testBean::m4);
-        LiMock.whenArgs(() -> testBean.m2(0), params -> {
-            int len = (int) params[0];
-            if (len == 0) {
-                return new Object[]{-100, 0};
-            }
-            return new Object[]{17, 19};
-        });
+
+
+        MethodResultCartesianForParameter methodResultCartesianForParameter = new MethodResultCartesianForParameter(-100, 0);
+
+
+        LiMock.whenArgs(() -> testBean.m2(0), methodResultCartesianForParameter);
         LiMock.when(testBean::m5, (Foo) null);
 
     }

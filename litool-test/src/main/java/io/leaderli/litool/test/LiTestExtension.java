@@ -59,12 +59,12 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
         Lira<Object[]> parameterCartesian = new CartesianMethodParameters(templateMethod, cartesianContext).cartesian();
 
         Class<?>[] mockingClasses = Lira.of(LiMock.mockedClasses).toArray(Class.class);
-        Lira<Method> mockingMethods = Lira.of(LiMock.methodValuesDependsOnParametersOfTestMethod.keySet());
+        Lira<Method> mockingMethods = Lira.of(LiMock.methodValuesDependsOnParameters.keySet());
 
         for (Object[] parameters : parameterCartesian) {
 
             Object[][] mockingReturns = mockingMethods
-                    .map(m -> LiMock.methodValuesDependsOnParametersOfTestMethod.get(m).apply(parameters))
+                    .map(m -> LiMock.methodValuesDependsOnParameters.get(m).catesian())
                     .assertNoError()
                     .toNullableArray(Object[].class);
 

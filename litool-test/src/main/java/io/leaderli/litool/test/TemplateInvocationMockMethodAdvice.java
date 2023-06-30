@@ -9,9 +9,15 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+/**
+ * 单条测试用例的切面
+ */
 public class TemplateInvocationMockMethodAdvice {
 
 
+    /**
+     * 方法的执行结果缓存，用于拦截实际请求，直接返回结果,支持根据参数进行返回
+     */
     public static Map<Method, Object> METHOD_VALUE;
 
     /**
@@ -30,8 +36,8 @@ public class TemplateInvocationMockMethodAdvice {
                                @Advice.This(optional = true) Object _this) {
 
         Object value = METHOD_VALUE.get(origin);
-        if (value instanceof ArgsFunction) {
-            return ((ArgsFunction) value).apply(args);
+        if (value instanceof MethodResultForParameter) {
+            value = ((MethodResultForParameter) value).get(args);
         }
         Class<?> returnType = origin.getReturnType();
         if (value == LiMock.SKIP) {

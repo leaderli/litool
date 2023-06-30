@@ -1,7 +1,9 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.util.ConsoleUtil;
+import io.leaderli.litool.core.util.RandomUtil;
+
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * @author leaderli
@@ -13,32 +15,21 @@ public class LiTest2 {
     static void init() {
 
         LiMock.mock(MockMap.class);
-        Map map = new MockMap();
+        Map<String, String> map = new MockMap<>();
 
-        LiMock.whenArgs(() -> map.get("123"), args -> new Function[]{
+        MethodResultCartesianForParameter v = new MethodResultCartesianForParameter(null, "def");
+        v.add(new Object[]{"123"}, null, 123);
+        v.add(new Object[]{"124"}, null, 124);
+        LiMock.whenArgs(() -> map.get(""), v);
 
-                (ArgsFunction) ar -> {
-                    if ("123".equalsIgnoreCase((String) ar[0])) {
-
-                        return "456";
-                    }
-                    return ar[0];
-                },
-                (ArgsFunction) ar -> {
-                    if ("123".equalsIgnoreCase((String) ar[0])) {
-
-                        return null;
-                    }
-                    return ar[0];
-                }
-        });
     }
 
     @MockInit
     @LiTest
     void test() {
-        Map map = new MockMap();
-        System.out.println(map.get("123"));
-        System.out.println(map.get("124"));
+        Map<String, String> map = new MockMap<>();
+        ConsoleUtil.print_format("123:{1},124:{2},other:{other}", map.get("123"), map.get("124"),
+                map.get(RandomUtil.randomString(3)));
+
     }
 }

@@ -5,6 +5,9 @@ import net.bytebuddy.asm.Advice;
 import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
+/**
+ *
+ */
 public class MockInitAdvice {
     /**
      * used to record the mocking class method has be called, and mark method potention return values by {@link  LiMock#when(Supplier, Object[])}
