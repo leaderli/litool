@@ -90,6 +90,12 @@ public class CartesianUtil {
         return (T[]) arr;
     }
 
+    /**
+     * @param cls      类
+     * @param template 类属性值赋值模板
+     * @param <T>      类的泛型
+     * @return 类属性的值的笛卡尔积组合
+     */
     public static <T> Lira<T> cartesianByTemplate(Class<T> cls, Map<String, Object> template) {
 
         CartesianObject<T> cartesianObject = new CartesianObject<>(cls, field -> {

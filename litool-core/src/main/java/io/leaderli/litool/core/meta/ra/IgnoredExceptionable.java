@@ -7,7 +7,7 @@ package io.leaderli.litool.core.meta.ra;
 public interface IgnoredExceptionable extends Exceptionable {
 
     default void onError(Throwable t, CancelSubscription cancel) {
-
+        t.printStackTrace();
     }
 
 }

@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.util.function.Function;
 
 /**
+ * @param <T> 类型
  * @author leaderli
  * @since 2022/8/17 7:16 PM
  */
@@ -19,6 +20,10 @@ public class CartesianObject<T> {
     private final Function<Field, Object[]> fieldValueProvider;
 
 
+    /**
+     * @param cls                类
+     * @param fieldValueProvider 类的属性的可能的值提供函数
+     */
     public CartesianObject(Class<T> cls, Function<Field, Object[]> fieldValueProvider) {
         this.cls = cls;
         this.instance = ReflectUtil.newInstance(cls).get();

@@ -1,5 +1,8 @@
 package io.leaderli.litool.test2.limock;
 
+/**
+ * 用于测试
+ */
 public class GetSetBean {
 
     private String name;

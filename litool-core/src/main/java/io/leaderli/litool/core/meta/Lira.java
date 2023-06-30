@@ -580,6 +580,16 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Lira<T> onError(Exceptionable onError);
 
     /**
+     * 打印错误信息
+     *
+     * @return 返回一个新的Lira对象
+     * @see #onError(Exceptionable)
+     */
+    default Lira<T> debugError() {
+        return onError((t, cancel) -> t.printStackTrace());
+    }
+
+    /**
      * 当元素为null是，返回左值，不为null时返回右值
      *
      * @param l   left值
