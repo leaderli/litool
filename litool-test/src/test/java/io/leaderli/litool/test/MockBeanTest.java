@@ -2,6 +2,7 @@ package io.leaderli.litool.test;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.leaderli.litool.core.test.IntValues;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -133,6 +134,7 @@ class MockBeanTest {
     }
 
     static class FooBar extends Bar<Integer, List<Integer>> {
+        @IntValues({1, 2})
         private boolean init;
 
         public boolean isInit() {

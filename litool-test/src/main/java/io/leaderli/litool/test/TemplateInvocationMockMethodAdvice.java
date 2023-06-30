@@ -30,6 +30,9 @@ public class TemplateInvocationMockMethodAdvice {
                                @Advice.This(optional = true) Object _this) {
 
         Object value = METHOD_VALUE.get(origin);
+        if (value instanceof ArgsFunction) {
+            return ((ArgsFunction) value).apply(args);
+        }
         Class<?> returnType = origin.getReturnType();
         if (value == LiMock.SKIP) {
 
