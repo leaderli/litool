@@ -129,7 +129,7 @@ public class ReflectUtil {
         }
 
         setAccessible(field);
-        return Lino.throwable_of(() -> field.get(object));
+        return Lino.ofIgnoreError(() -> field.get(object));
     }
 
     /**
@@ -283,7 +283,7 @@ public class ReflectUtil {
             return Lino.none();
         }
         setAccessible(constructor);
-        return Lino.throwable_of(() -> constructor.newInstance(args));
+        return Lino.ofIgnoreError(() -> constructor.newInstance(args));
     }
 
     /**
@@ -559,7 +559,7 @@ public class ReflectUtil {
         }
         setAccessible(method);
 
-        return Lino.throwable_of(() -> method.invoke(obj, args));
+        return Lino.ofIgnoreError(() -> method.invoke(obj, args));
     }
 
     /**

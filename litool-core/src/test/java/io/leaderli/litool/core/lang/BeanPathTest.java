@@ -87,8 +87,8 @@ class BeanPathTest {
                 "]"));
         Assertions.assertEquals(Lino.none(), BeanPath.parse(null, "map[0]"));
 
-        Assertions.assertEquals(12, BeanPath.parse(origin, "list2[0][1]", l -> l.toLira().size() > 2).get());
-        Assertions.assertEquals(15.0, BeanPath.parse(origin, "list2[0][1]", l -> l.toLira().size() > 2,
+        Assertions.assertEquals(12, BeanPath.parse(origin, "list2[0][1]", l -> l.toLira(Object.class).size() > 2).get());
+        Assertions.assertEquals(15.0, BeanPath.parse(origin, "list2[0][1]", l -> l.toLira(Object.class).size() > 2,
                 l -> l.cast(Double.class)).get());
 
 

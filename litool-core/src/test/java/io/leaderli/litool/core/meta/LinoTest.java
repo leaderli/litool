@@ -139,8 +139,7 @@ class LinoTest {
         Assertions.assertNull(mono.filter(str -> str.length() == 4).get());
 
         mono = Lino.of("123");
-        Assertions.assertNull(mono.filter(false).get());
-        Assertions.assertNotNull(mono.filter(true).get());
+
         Assertions.assertNotNull(mono.filter(Objects::nonNull).get());
         Assertions.assertNull(mono.filter(str -> str.length() == 4).get());
 
@@ -227,7 +226,7 @@ class LinoTest {
     @SuppressWarnings("all")
     @Test
     void ifThrowablePresent() {
-        Throwable cause = Assertions.assertThrows(RuntimeException.class, () -> Lino.of(0).ifPresentIgnoreError(in -> {
+        Throwable cause = Assertions.assertThrows(RuntimeException.class, () -> Lino.of(0).ifThrowablePresent(in -> {
             TimeUnit.MICROSECONDS.sleep(1);
             @SuppressWarnings("unused") int i = 1 / in;
 
@@ -277,8 +276,8 @@ class LinoTest {
 
         String[] value = {"1", "2"};
 
-        Assertions.assertTrue(Lino.of(1).toLira().absent());
-        Assertions.assertEquals("1", Lino.of(value).toLira().first().get());
+        Assertions.assertTrue(Lino.of(1).toLira(Object.class).absent());
+        Assertions.assertEquals("1", Lino.of(value).toLira(Object.class).first().get());
         Assertions.assertEquals("1", Lino.of(value).toLira(CharSequence.class).get().get(0));
 
 

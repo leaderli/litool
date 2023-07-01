@@ -46,7 +46,7 @@ public class XmlMapConvert {
         String body = (String) map.remove($BODY);
         DOMElement element = new DOMElement(tag);
         element.setText(body);
-        Lira<Map<String, Object>> children = Lino.of(map.remove($CHILD)).toLira()
+        Lira<Map<String, Object>> children = Lino.of(map.remove($CHILD)).toLira(Map.class)
                 .cast(String.class, Object.class);
 
         for (Map<String, Object> child : children) {

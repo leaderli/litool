@@ -2,6 +2,7 @@ package io.leaderli.litool.core.collection;
 
 
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.meta.Lira;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -140,9 +141,7 @@ public class LiMapUtil {
      */
     public static <K, V, T> List<T> getTypeList(Map<K, V> map, K key, Class<? extends T> listItemType) {
 
-        return getTypeObject(map, key, List.class)
-                .toLira()
-                .<T>cast(listItemType).get();
+        return Lira.<T>narrow(getTypeObject(map, key, List.class).toLira(listItemType)).get();
     }
 
     /**

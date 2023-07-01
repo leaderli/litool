@@ -107,7 +107,7 @@ public interface SaxEventHandler {
                 fieldValue = complexField(parameterType, value);
             }
 
-            fieldValue.ifPresentIgnoreError(val -> method.invoke(this, val));
+            fieldValue.ifThrowablePresent(val -> method.invoke(this, val));
         });
 
     }
