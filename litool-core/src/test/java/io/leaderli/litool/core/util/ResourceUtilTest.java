@@ -127,5 +127,12 @@ class ResourceUtilTest {
             Assertions.assertTrue(sb.toString().startsWith("cafebabe"));
         });
     }
+
+    @Test
+    void getWorkDir() {
+
+        Assertions.assertTrue(ResourceUtil.getWorkDir().endsWith("litool-core"));
+
+    }
 }
 

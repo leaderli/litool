@@ -55,6 +55,8 @@ class BooleanUtilTest {
 
 
         Assertions.assertDoesNotThrow(() -> BooleanUtil.parse((LiValue) null));
+
+        System.out.println(BooleanUtil.parse(Optional.empty()));
     }
 
     @Test

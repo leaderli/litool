@@ -20,6 +20,7 @@
         <module>litool-json</module>
         <module>litool-test</module>
         <module>litool-action</module>
+        <module>litool-ast</module>
     </modules>
 
 

@@ -7,6 +7,7 @@ import java.lang.reflect.Array;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author leaderli
@@ -28,7 +29,8 @@ public class BooleanUtil {
 
     /**
      * 将不同类型的对象转换为布尔值
-     * <pl>
+     * <ol>
+     * <li> 如果obj是{@link Optional}，则返回{@link Optional#isPresent()} </li>
      * <li> 如果obj是{@link LiValue}，则返回{@link LiValue#present()}</li>
      * <li> 如果obj是集合，则返回不为空，支持{@link  Iterator}, {@link Iterable},{@link  Map},{@link  Enumeration} </li>
      * <li> 如果obj是数字，则返回不为0 </li>
@@ -44,6 +46,10 @@ public class BooleanUtil {
 
         if (obj instanceof LiValue) {
             return parse((LiValue) obj);
+        }
+
+        if (obj instanceof Optional) {
+            return parse((Optional<?>) obj);
         }
         if (obj instanceof Boolean) {
             return parse((Boolean) obj);
@@ -69,6 +75,16 @@ public class BooleanUtil {
         }
 
         return obj != null;
+    }
+
+    /**
+     * 将{@link Optional}类型的对象转换为布尔值
+     *
+     * @param optional LiValue对象
+     * @return {@link Optional#isPresent()}
+     */
+    public static boolean parse(Optional<?> optional) {
+        return optional != null && optional.isPresent();
     }
 
     /**
