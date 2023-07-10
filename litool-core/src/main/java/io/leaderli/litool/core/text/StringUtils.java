@@ -24,13 +24,15 @@ import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * <p>Operations on {@link String} that are
@@ -8452,7 +8454,6 @@ public class StringUtils implements StrPool {
      * @param min_length the min length of ljust string
      * @param padding    the padding char
      * @return the new string with fixed length
-     * @see #ljust(String, int, char)
      */
     public static String ljust(String origin, int min_length, char padding) {
 
@@ -8823,5 +8824,39 @@ public class StringUtils implements StrPool {
         return joiner.toString();
     }
 
+
+    public static String compress(String origin) {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
+
+            gzip.write(origin.getBytes(StandardCharsets.UTF_8));
+
+
+            gzip.finish();
+            return Base64.getEncoder().encodeToString(out.toByteArray());
+
+//            return out.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String decompress(String origin) {
+        byte[] decode = Base64.getDecoder().decode(origin);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayInputStream in = new ByteArrayInputStream(decode);
+        try (GZIPInputStream gzipStream = new GZIPInputStream(in)) {
+            byte[] buffer = new byte[256];
+            int n;
+            while ((n = gzipStream.read(buffer)) >= 0) {
+                out.write(buffer, 0, n);
+            }
+            return out.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
