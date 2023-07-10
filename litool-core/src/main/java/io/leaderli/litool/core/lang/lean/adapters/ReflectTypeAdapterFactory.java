@@ -65,10 +65,20 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
          */
         public void populate(Object source, Object target, Lean lean) {
 
-            for (Field field : ReflectUtil.getFields(target.getClass()).filter(f -> !ModifierUtil.isStatic(f))) {
-                Type targetType = TypeUtil.resolve(typeToken.getType(), field.getGenericType());
-                performField(source, targetType, target, field, lean);
+            Class<?> raw = target.getClass();
+            for (; raw != Object.class; raw = raw.getSuperclass()) {
+                for (Field field : raw.getDeclaredFields()) {
+                    if (!ModifierUtil.isStatic(field)) {
+                        Type targetType = TypeUtil.resolve(typeToken.getType(), field.getGenericType());
+                        performField(source, targetType, target, field, lean);
+                    }
+                }
+//                for (Field field : ReflectUtil.getFields(raw).filter(f -> !ModifierUtil.isStatic(f))) {
+//                    Type targetType = TypeUtil.resolve(typeToken.getType(), field.getGenericType());
+//                    performField(source, targetType, target, field, lean);
+//                }
             }
+
         }
 
 

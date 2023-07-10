@@ -44,9 +44,7 @@ public class ArrayTypeAdapterFactory implements TypeAdapterFactory {
 
             return Lira.iterableItr(source)
                     .map(e -> elementTypeAdapter.read(e, lean))
-                    .debug()
                     .nullable(() -> elementTypeAdapter.read(lean))
-                    .debug()
                     .toNullableArray(componentType);
         }
 

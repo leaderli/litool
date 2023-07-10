@@ -183,7 +183,6 @@ class LeanTest {
 
         Assertions.assertArrayEquals(new String[]{"123"}, copy.name);
         Assertions.assertArrayEquals(new Integer[]{10, 18}, copy.ages);
-        System.out.println(copy.ages.getClass());
     }
 
     @Test
@@ -196,7 +195,6 @@ class LeanTest {
         Bean13 bean131 = new Bean13();
         lean.copyBean(bean13, bean131, Bean13.class);
 
-        System.out.println(bean131.name);
 
     }
 
@@ -213,6 +211,18 @@ class LeanTest {
 
         Assertions.assertNull(map.get("size"));
 
+    }
+
+    @Test
+    void test15() {
+
+        Bean15 bean15 = new Bean15();
+        String json = "{\"name\": \"123\",\"ages\": [10,18]}";
+        Map map = gson.fromJson(json, Map.class);
+        Lean lean = new Lean();
+        Bean15 bean = lean.fromBean(map, new LiTypeToken<Bean15>() {
+        });
+        Assertions.assertEquals("{\"name\":\"123\"}", gson.toJson(bean));
     }
 
 
@@ -334,6 +344,10 @@ class LeanTest {
         private String name;
         private Bean1 bean;
         private List<T> beans;
+    }
+
+    private static class Bean15 extends Bean2 {
+
     }
 
 
