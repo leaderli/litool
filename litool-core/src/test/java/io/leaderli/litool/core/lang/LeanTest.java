@@ -54,6 +54,18 @@ class LeanTest {
 
     @Test
     void test3() {
+        String json = "{\"name\":\"1\",\"bean2\": {\"name\": \"2\",\"bean3\": {\"name\": \"3\"}}}";
+        Map map = gson.fromJson(json, Map.class);
+
+        Lean lean = new Lean();
+        Bean3 parser = lean.fromBean(map, Bean3.class);
+        System.out.println(gson.toJson(parser));
+//        Assertions.assertEquals("3", parser.beans.get(0).name);
+
+    }
+
+    @Test
+    void test4() {
         String json = "{\"name\":\"1\",\"bean\": {\"name\": \"2\"},\"beans\": [{\"name\": \"3\"}]}";
         Map map = gson.fromJson(json, Map.class);
         LiTypeToken<Bean4<Bean4>> parameterized = new LiTypeToken<Bean4<Bean4>>() {
