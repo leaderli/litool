@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
-public class AstUtil {
+public class SourceCodeUtil {
 
     /**
      * 解析工具目录的src目录的源码

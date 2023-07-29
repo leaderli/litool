@@ -14,35 +14,40 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 import java.util.Optional;
 
-class AstUtilTest {
+class SourceCodeUtilTest {
 
 
     @Test
-    void test1() {
+    void testMethodAndSource() {
 
-        for (Map.Entry<Class<?>, CompilationUnit> entry : AstUtil.classAndSource(AstUtil.getSources()).entrySet()) {
-            System.out.println(entry.getKey() + " " + entry.getValue().getClass());
-        }
+    }
+
+    @Test
+    void testClassAndSource() {
+
+        Map<Class<?>, CompilationUnit> classAndSource = SourceCodeUtil.classAndSource(SourceCodeUtil.getSources());
+
+        Assertions.assertEquals(SourceCodeUtil.class.getSimpleName(), classAndSource.get(SourceCodeUtil.class).getType(0).getNameAsString());
     }
 
     @Test
     void test() {
 
 
-        Assertions.assertFalse(AstUtil.getSources().isEmpty());
+        Assertions.assertFalse(SourceCodeUtil.getSources().isEmpty());
 
-        CompilationUnit cu = Lira.of(AstUtil.getSources()).filter(f -> f.findFirst(SimpleName.class, s -> s.toString().equals(CompilationUnit.class.getSimpleName()))).first().get();
+        CompilationUnit cu = Lira.of(SourceCodeUtil.getSources()).filter(f -> f.findFirst(SimpleName.class, s -> s.toString().equals(CompilationUnit.class.getSimpleName()))).first().get();
 
-        Assertions.assertTrue(AstUtil.isImport(cu, CompilationUnit.class));
+        Assertions.assertTrue(SourceCodeUtil.isImport(cu, CompilationUnit.class));
 
 
-        System.out.println(AstUtil.getClassDeclare(cu, String.class));
+        System.out.println(SourceCodeUtil.getClassDeclare(cu, String.class));
     }
 
     @Test
     void test2() {
 
-        ClassOrInterfaceDeclaration classOrInterfaceDeclaration = Lira.of(AstUtil.getSources(ResourceUtil.getWorkDir() + "/src/test/java"))
+        ClassOrInterfaceDeclaration classOrInterfaceDeclaration = Lira.of(SourceCodeUtil.getSources(ResourceUtil.getWorkDir() + "/src/test/java"))
                 .map(cu -> cu.getClassByName(TestBean.class.getSimpleName()))
                 .filter(o -> o)
                 .map(Optional::get)
