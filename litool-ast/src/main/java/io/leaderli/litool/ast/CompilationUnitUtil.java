@@ -2,6 +2,7 @@ package io.leaderli.litool.ast;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import io.leaderli.litool.core.meta.Lino;
 
@@ -11,6 +12,10 @@ import java.util.Map;
 
 public class CompilationUnitUtil {
 
+    public static Map<Method, MethodDeclaration> methodAndSource2(com.github.javaparser.ast.CompilationUnit cu) {
+
+        return null;
+    }
 
     public static Map<Method, MethodDeclaration> methodAndSource(CompilationUnit cu) {
         Map<Method, MethodDeclaration> declaretion = new HashMap<>();
@@ -19,6 +24,10 @@ public class CompilationUnitUtil {
             for (MethodDeclaration method : type.getMethods()) {
                 System.out.println(method.getNameAsString());
 
+                for (Parameter parameter : method.getParameters()) {
+                    System.out.println(parameter.getTypeAsString());
+                    System.out.println(parameter.getType().asReferenceType());
+                }
 //                declaretion.put(method, method);
             }
         }

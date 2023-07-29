@@ -8,6 +8,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.resource.ResourceUtil;
+import io.leaderli.litool.core.type.ClassScanner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +19,9 @@ class SourceCodeUtilTest {
 
 
     @Test
-    void testMethodAndSource() {
+    void getClassSource() {
 
+        Assertions.assertNotNull(SourceCodeUtil.getClassSource(SourceCodeUtil.class));
     }
 
     @Test
@@ -28,6 +30,13 @@ class SourceCodeUtilTest {
         Map<Class<?>, CompilationUnit> classAndSource = SourceCodeUtil.classAndSource(SourceCodeUtil.getSources());
 
         Assertions.assertEquals(SourceCodeUtil.class.getSimpleName(), classAndSource.get(SourceCodeUtil.class).getType(0).getNameAsString());
+    }
+
+    @Test
+    void getImportClassByName() {
+        CompilationUnit cu = SourceCodeUtil.getClassSource(SourceCodeUtil.class);
+
+        System.out.println(SourceCodeUtil.getImportClassByName(cu, CompilationUnit.class.getSimpleName()));
     }
 
     @Test
@@ -64,4 +73,15 @@ class SourceCodeUtilTest {
 
     }
 
+
+    @Test
+    void test111() {
+        String packageName = CompilationUnit.class.getPackage().getName();
+
+        ClassScanner classScanner = new ClassScanner(packageName);
+        for (Class<?> aClass : classScanner.scan()) {
+            System.out.println(aClass);
+
+        }
+    }
 }

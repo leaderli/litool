@@ -549,5 +549,62 @@ public class ClassUtil {
                 });
     }
 
+    /**
+     * Java中，有一些类不需要使用import语句就可以直接使用，这是因为这些类被默认导入到了所有Java源文件中。以下是默认导入的一些类：
+     * java.lang包中的所有类，如String、Object、System等。
+     * java.io包中的所有类，如InputStream、OutputStream、File等。
+     * java.util包中的所有类，如List、Map、Set等。
+     * java.net包中的所有类，如URL、URLConnection等。
+     * java.awt包和javax.swing包中的所有类，如JFrame、JButton等。
+     *
+     * @param clazz 类
+     * @return 类是否需要import
+     */
+    public static boolean isDefaultPackage(Class<?> clazz) {
+
+        return isDefaultPackage(clazz.getPackage().getName());
+    }
+
+    /**
+     * Java中，有一些类不需要使用import语句就可以直接使用，这是因为这些类被默认导入到了所有Java源文件中。以下是默认导入的一些类：
+     * <ul>
+     *     <li>java.lang</li>
+     *     <li>java.io</li>
+     *     <li>java.util</li>
+     *     <li>java.net</li>
+     *     <li>java.awt</li>
+     *     <li>java.applet</li>
+     *     <li>java.swing</li>
+     * </ul>
+     * java.lang包中的所有类，如String、Object、System等。
+     * java.io包中的所有类，如InputStream、OutputStream、File等。
+     * java.util包中的所有类，如List、Map、Set等。
+     * java.net包中的所有类，如URL、URLConnection等。
+     * java.awt包和javax.swing包中的所有类，如JFrame、JButton等。
+     *
+     * @param packageName 包名
+     * @return 类是否需要import
+     */
+    public static boolean isDefaultPackage(String packageName) {
+
+        if (packageName.startsWith("java")) {
+            if (packageName.startsWith("java.lang")) {
+                return true;
+            } else if (packageName.startsWith("java.io")) {
+                return true;
+            } else if (packageName.startsWith("java.util")) {
+                return true;
+            } else if (packageName.startsWith("java.net")) {
+                return true;
+            } else if (packageName.startsWith("java.awt")) {
+                return true;
+            } else if (packageName.startsWith("javax.swing")) {
+                return true;
+            } else return packageName.startsWith("java.applet");
+        }
+
+        return false;
+    }
+
 
 }
