@@ -14,6 +14,7 @@ public class CompilationUnitUtil {
 
     public static Map<Method, MethodDeclaration> methodAndSource2(com.github.javaparser.ast.CompilationUnit cu) {
 
+        SourceCodeUtil.getSources();
         return null;
     }
 

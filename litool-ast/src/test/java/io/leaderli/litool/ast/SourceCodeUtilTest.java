@@ -34,9 +34,10 @@ class SourceCodeUtilTest {
 
     @Test
     void getImportClassByName() {
-        CompilationUnit cu = SourceCodeUtil.getClassSource(SourceCodeUtil.class);
+        CompilationUnit cu = SourceCodeUtil.getClassSource(TestBean.class, ResourceUtil.getWorkDir() + "/src/test/java/");
 
-        System.out.println(SourceCodeUtil.getImportClassByName(cu, CompilationUnit.class.getSimpleName()));
+//        SourceCodeUtil.printYaml(cu);
+//        Assertions.assertNotNull(SourceCodeUtil.getImportClassByName(cu, SourceCodeUtil.class.getSimpleName()));
     }
 
     @Test

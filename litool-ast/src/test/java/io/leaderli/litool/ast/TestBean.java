@@ -6,6 +6,8 @@ import java.util.ArrayList;
 public class TestBean {
 
     public static void main(String[] args) {
+        SourceCodeUtil.getSources();
+        io.leaderli.litool.ast.SourceCodeUtil.getSources();
 
     }
 

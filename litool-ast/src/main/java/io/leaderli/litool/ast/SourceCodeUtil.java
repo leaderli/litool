@@ -7,6 +7,7 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.printer.YamlPrinter;
 import com.github.javaparser.utils.SourceRoot;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lino;
@@ -132,6 +133,18 @@ public class SourceCodeUtil {
      */
     public static Class<?> getImportClassByName(CompilationUnit cu, String name) {
 
+        // 查找使用类名的代码
+        cu.findAll(SimpleName.class, n -> {
+            String nameAsString = n.asString();
+
+//            System.out.println(name+"   "+nameAsString);
+            if (nameAsString.equals(name)) {
+
+//                System.out.println(n.getParentNode().get());
+                System.out.println(name);
+            }
+            return false;
+        });
         return Lira.of(cu.getImports())
                 .filter(i -> name.equals(i.getName().getIdentifier()))
                 .map(NodeWithName::getNameAsString)
@@ -147,5 +160,15 @@ public class SourceCodeUtil {
 //            return type == cls;
             return true;
         })).map(VariableDeclarator::getName);
+    }
+
+    /**
+     * 按照 yaml 的格式打印
+     *
+     * @param cu 源码单元
+     */
+    public static void printYaml(CompilationUnit cu) {
+        YamlPrinter printer = new YamlPrinter(true);
+        System.out.println(printer.output(cu));
     }
 }
