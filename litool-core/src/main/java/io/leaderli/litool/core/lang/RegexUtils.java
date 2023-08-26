@@ -3,6 +3,8 @@ package io.leaderli.litool.core.lang;
 
 import io.leaderli.litool.core.text.StrPool;
 
+import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegexUtils {
@@ -27,7 +29,6 @@ public class RegexUtils {
      * <ul>
      *  <li>{@code pattern.matcher(text).replaceAll(replacement)}</li>
      * </ul>
-     * </p>
      *
      * <p>传递给此方法的{@code null}引用无操作。</p>
      *
@@ -80,9 +81,6 @@ public class RegexUtils {
         return replaceFirst(text, regex, StrPool.EMPTY);
     }
 
-    /**
-     * @see #replaceFirst(String, Pattern, String) 替换位空字符串
-     */
     public static String replaceFirst(final String text, final Pattern regex, final String replacement) {
         if (text == null || regex == null || replacement == null) {
             return text;
@@ -155,4 +153,27 @@ public class RegexUtils {
         return Pattern.compile(regex, Pattern.DOTALL).matcher(text).replaceAll(replacement);
     }
 
+
+    /**
+     * @param text            源字符串
+     * @param regex           正则表达式，不需要额外添加括号，方法内部会自动添加匹配组的括号
+     * @param replaceFunction 以正则表达式匹配到的组1作为参数，以函数执行结果替换组1
+     * @return 替换正则表达式匹配的字符串
+     */
+    public static String replacePatternByFunction(final String text, final String regex, Function<String, String> replaceFunction) {
+        if (text == null || regex == null || replaceFunction == null) {
+            return text;
+        }
+        Pattern pattern = Pattern.compile("(" + regex + ")");
+        Matcher matcher = pattern.matcher(text);
+        StringBuffer result = new StringBuffer();
+
+        while (matcher.find()) {
+            String match = matcher.group(1); // 获取匹配的字符串
+            String replacement = replaceFunction.apply(match);
+            matcher.appendReplacement(result, replacement);
+        }
+        matcher.appendTail(result);
+        return result.toString();
+    }
 }

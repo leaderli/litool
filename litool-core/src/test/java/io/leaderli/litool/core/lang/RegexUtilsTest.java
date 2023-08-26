@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.lang;
 
+import io.leaderli.litool.core.text.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
@@ -39,5 +40,13 @@ class RegexUtilsTest {
         assertEquals("ABC_123", RegexUtils.replaceAll("ABCabc123", Pattern.compile("[^A-Z0-9]+"), "_"));
         assertEquals("ABC123", RegexUtils.replaceAll("ABCabc123", Pattern.compile("[^A-Z0-9]+"), ""));
         assertEquals("Lorem_ipsum_dolor_sit", RegexUtils.replaceAll("Lorem ipsum  dolor   sit", Pattern.compile("( +)([a-z]+)"), "_$2"));
+    }
+
+    @Test
+    void replacePatternByFunction() {
+
+        assertEquals("a*b****c*********", RegexUtils.replacePatternByFunction("a1b22c333", "[0-9]", s -> StringUtils.repeat('*', Integer.parseInt(s))));
+        assertEquals("a*b**c***", RegexUtils.replacePatternByFunction("a1b22c333", "[0-9]+", s -> StringUtils.repeat('*', s.length())));
+
     }
 }
