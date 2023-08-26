@@ -176,4 +176,30 @@ public class RegexUtils {
         matcher.appendTail(result);
         return result.toString();
     }
+
+    /**
+     * @param text  源字符串
+     * @param regex 带有匹配组的正则表达式
+     * @return 返回所有匹配组匹配的字符串数组，不包含组0。仅会查找第一个满足正则的字符串
+     */
+    public static String[] matchGroup(String text, String regex) {
+
+        if (text == null || regex == null) {
+            return new String[0];
+        }
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(text);
+
+        int groupCount = matcher.groupCount();
+        String[] result = new String[groupCount];
+
+        int index = 0;
+        if (matcher.find()) {
+            for (int i = 1; i <= groupCount; i++) {
+                result[index++] = matcher.group(i);
+            }
+        }
+        return result;
+    }
+
 }

@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.lang;
 
 import io.leaderli.litool.core.text.StringUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
@@ -45,8 +46,19 @@ class RegexUtilsTest {
     @Test
     void replacePatternByFunction() {
 
+
         assertEquals("a*b****c*********", RegexUtils.replacePatternByFunction("a1b22c333", "[0-9]", s -> StringUtils.repeat('*', Integer.parseInt(s))));
         assertEquals("a*b**c***", RegexUtils.replacePatternByFunction("a1b22c333", "[0-9]+", s -> StringUtils.repeat('*', s.length())));
+
+
+    }
+
+
+    @Test
+    void matchGroup() {
+
+        Assertions.assertArrayEquals(new String[]{"123"}, RegexUtils.matchGroup("123abc", "(\\d+)"));
+        Assertions.assertArrayEquals(new String[]{"123"}, RegexUtils.matchGroup("123abc123", "(\\d+)"));
 
     }
 }

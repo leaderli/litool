@@ -121,7 +121,7 @@ public class StrSubstitution {
         if (format == null) {
             return "";
         }
-        LiAssertUtil.assertTrue(variablePrefix.length() > 0 && variableSuffix.length() > 0);
+        LiAssertUtil.assertTrue(!variablePrefix.isEmpty() && !variableSuffix.isEmpty());
 
         char[] prefixChars = variablePrefix.toCharArray();
         char[] suffixChars = variableSuffix.toCharArray();
@@ -283,7 +283,7 @@ public class StrSubstitution {
             def = prefix + key + suffix;
         }
         Object value = replaceFunction.apply(key, def);
-        return key.length() == 0 || value == null ? def : value;
+        return key.isEmpty() || value == null ? def : value;
     }
 
     /**
