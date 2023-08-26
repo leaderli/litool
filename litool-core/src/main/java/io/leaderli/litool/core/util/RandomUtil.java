@@ -21,10 +21,9 @@ public class RandomUtil {
 
     /**
      * 生成随机字符串，字符集为{@link #POSSIBLE_CHAR_NUMBER}
-     * Generate a random string consisting of {@link #POSSIBLE_CHAR_NUMBER}
      *
-     * @param length 随机字符串的长度 / The length of the random string
-     * @return 返回一个随机字符串 / A random string
+     * @param length 随机字符串的长度
+     * @return 返回一个随机字符串
      * @see #POSSIBLE_CHAR_NUMBER
      * @see #randomString(String, int)
      */
@@ -35,11 +34,10 @@ public class RandomUtil {
     /**
      * 生成随机字符串，字符集为给定的baseString
      * <p>
-     * Generate a random string consisting of the given baseString
      *
-     * @param baseString 随机字符集 / A sample of random characters
-     * @param length     随机字符串的长度 / The length of the random string
-     * @return 返回一个随机字符串 / A random string
+     * @param baseString 随机字符集
+     * @param length     随机字符串的长度
+     * @return 返回一个随机字符串
      * @see #nextInt(int)
      */
     public static String randomString(String baseString, int length) {
@@ -57,6 +55,18 @@ public class RandomUtil {
             sb.append(baseString.charAt(number));
         }
         return sb.toString();
+    }
+
+    /**
+     * 生成随机字符串，字符集为{@link #POSSIBLE_NUMBERS}
+     *
+     * @param length 随机字符串的长度
+     * @return 返回一个随机纯数字字符串
+     * @see #POSSIBLE_NUMBERS
+     * @see #randomString(String, int)
+     */
+    public static String randomNumerString(int length) {
+        return randomString(POSSIBLE_NUMBERS, length);
     }
 
     /**
