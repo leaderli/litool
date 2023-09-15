@@ -10,12 +10,15 @@ import java.lang.reflect.Method;
 
 
 //@ExtendWith(ContainerExtension.class)
+@LiTestClass
 public class LiT1Test {
+
 
     @BeforeAll
     static void beforeAll() {
         ByteBuddyAgent.install();
     }
+
 
     @LiTest
     void test() {

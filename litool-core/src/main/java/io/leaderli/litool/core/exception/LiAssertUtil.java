@@ -87,6 +87,18 @@ public class LiAssertUtil {
     }
 
     /**
+     * 判断对象obj是否为null，如果为null就抛出异常，并带有错误信息
+     *
+     * @param obj 判断对象
+     * @param msg 错误信息
+     */
+    public static void assertNotNull(Object obj, String msg) {
+        if (obj == null) {
+            throw new NullPointerException(msg);
+        }
+    }
+
+    /**
      * 判断assertTrue是否为true，如果为false就抛出一个自定义的异常，并带有错误信息
      *
      * @param assertTrue 判断条件
