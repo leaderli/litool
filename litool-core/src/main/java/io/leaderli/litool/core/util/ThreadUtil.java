@@ -92,6 +92,10 @@ public class ThreadUtil {
         }
     }
 
+    public static void println(String msg) {
+        System.out.println(Thread.currentThread().getName() + "\t" + msg);
+    }
+
     /**
      * 返回当前线程的堆栈信息。
      *
