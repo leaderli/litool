@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -18,11 +17,7 @@ class SimpleFutureTest {
     @Test
     void test() throws ExecutionException, InterruptedException {
         SimpleFuture<Integer> simpleFuture = new SimpleFuture<>();
-
-        Executors.newSingleThreadExecutor().submit(() -> {
-            ThreadUtil.sleep(30);
-            simpleFuture.setResult(1);
-        });
+        simpleFuture.submit(() -> ThreadUtil.delay(30, () -> 1));
         Assertions.assertThrows(TimeoutException.class, () -> simpleFuture.get(10, TimeUnit.MILLISECONDS));
         Assertions.assertEquals(1, simpleFuture.get());
 

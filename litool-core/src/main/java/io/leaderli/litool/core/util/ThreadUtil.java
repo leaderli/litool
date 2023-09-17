@@ -80,6 +80,20 @@ public class ThreadUtil {
     }
 
     /**
+     * 延时一定时间，并返回结果。
+     *
+     * @param millis   休眠的时间
+     * @param supplier 提供返回值的方法
+     * @param <T>      返回值类型
+     * @return 休眠一定时间后的返回值
+     */
+    public static <T> T delay(long millis, Supplier<T> supplier) {
+
+        sleep(millis);
+        return supplier.get();
+    }
+
+    /**
      * 打印当前线程的堆栈信息。
      *
      * @param start 堆栈信息的起始位置

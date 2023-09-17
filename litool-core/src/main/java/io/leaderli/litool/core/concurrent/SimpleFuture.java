@@ -1,9 +1,7 @@
 package io.leaderli.litool.core.concurrent;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 /**
  * @author leaderli
@@ -12,7 +10,7 @@ import java.util.concurrent.TimeoutException;
 public class SimpleFuture<T> implements Future<T> {
     private volatile boolean cancelled;
     private volatile boolean done;
-    private T result;
+    private volatile T result;
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
@@ -72,6 +70,14 @@ public class SimpleFuture<T> implements Future<T> {
                 notifyAll();
             }
         }
+    }
+
+    public void submit(Supplier<T> supplier) {
+        Executors.newSingleThreadExecutor().submit(() -> setResult(supplier.get()));
+    }
+
+    public void submit(ExecutorService executorService, Supplier<T> supplier) {
+        executorService.submit(() -> setResult(supplier.get()));
     }
 
 }
