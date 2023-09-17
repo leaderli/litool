@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -90,5 +91,12 @@ class DateUtilTest {
         assertFalse(DateUtil.between(format, now, before, after));
         now = "20";
         assertFalse(DateUtil.between(format, now, before, after));
+    }
+
+    @Test
+    void calc() {
+
+        Assertions.assertEquals("20010102", DateUtil.calc("20010101", "yyyyMMdd", Calendar.DAY_OF_YEAR, 1));
+        Assertions.assertEquals("20001231", DateUtil.calc("20010101", "yyyyMMdd", Calendar.DAY_OF_YEAR, -1));
     }
 }

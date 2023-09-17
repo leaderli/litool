@@ -1,11 +1,12 @@
 package io.leaderli.litool.core.util;
 
-import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -61,7 +62,12 @@ public class DateUtil {
         SimpleDateFormat before = new SimpleDateFormat(beforeFormat);
         SimpleDateFormat after = new SimpleDateFormat(afterFormat);
 
-        return after.format(RuntimeExceptionTransfer.apply(before::parse, date));
+
+        try {
+            return after.format(before.parse(date));
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -111,7 +117,33 @@ public class DateUtil {
      */
     public static Date parse(String dateStr, String format) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-        return RuntimeExceptionTransfer.apply(simpleDateFormat::parse, dateStr);
+        try {
+            return simpleDateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String calc(String dateStr, String format, int field, int cacl) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        Date date = parse(dateStr, simpleDateFormat);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(field, cacl);
+        return simpleDateFormat.format(calendar.getTime());
+    }
+
+    /**
+     * @param dateStr 字符串格式的日期
+     * @param format  日期的格式
+     * @return 日期
+     */
+    public static Date parse(String dateStr, SimpleDateFormat format) {
+        try {
+            return format.parse(dateStr);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }

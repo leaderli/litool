@@ -1,7 +1,6 @@
 package io.leaderli.litool.config;
 
 import io.leaderli.litool.core.collection.LiMapUtil;
-import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.lang.BeanPath;
 import io.leaderli.litool.core.meta.LiBox;
@@ -13,6 +12,7 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.*;
@@ -37,7 +37,11 @@ public class LiYamlConfig {
         Lira<File> resourceFile = ResourceUtil.getResourceFiles(LiYamlConfig::isYamlFile);
 
         for (File file : resourceFile) {
-            RuntimeExceptionTransfer.run(() -> yaml.load(Files.newInputStream(file.toPath())));
+            try {
+                yaml.load(Files.newInputStream(file.toPath()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
     }

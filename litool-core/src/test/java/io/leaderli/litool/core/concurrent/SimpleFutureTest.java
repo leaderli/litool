@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.concurrent;
 
 import io.leaderli.litool.core.util.ThreadUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
@@ -15,15 +16,15 @@ import java.util.concurrent.TimeoutException;
 class SimpleFutureTest {
 
     @Test
-    void test() throws ExecutionException, InterruptedException, TimeoutException {
+    void test() throws ExecutionException, InterruptedException {
         SimpleFuture<Integer> simpleFuture = new SimpleFuture<>();
 
-        Executors.newSingleThreadExecutor().submit(()->{
-            ThreadUtil.sleep(1000);
+        Executors.newSingleThreadExecutor().submit(() -> {
+            ThreadUtil.sleep(30);
             simpleFuture.setResult(1);
         });
-        System.out.println(simpleFuture.get(100, TimeUnit.MILLISECONDS));
-        System.out.println(simpleFuture.get());
+        Assertions.assertThrows(TimeoutException.class, () -> simpleFuture.get(10, TimeUnit.MILLISECONDS));
+        Assertions.assertEquals(1, simpleFuture.get());
 
     }
 

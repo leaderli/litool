@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.IterableItr;
-import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableSupplier;
@@ -310,7 +309,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      *
      * @param consumer 操作的消费者
      * @return 返回当前对象
-     * @see RuntimeExceptionTransfer
      */
     Lino<T> ifThrowablePresent(ThrowableConsumer<? super T> consumer);
 
@@ -628,7 +626,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public Lino<T> ifThrowablePresent(ThrowableConsumer<? super T> consumer) {
-            RuntimeExceptionTransfer.accept(consumer, this.value);
+            try {
+                consumer.accept(this.value);
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
             return this;
         }
 

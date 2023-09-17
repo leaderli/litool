@@ -1,6 +1,5 @@
 package io.leaderli.litool.dom.parser;
 
-import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.resource.ResourceUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.dom.sax.*;
@@ -49,7 +48,12 @@ public class SaxEventInterceptor<T extends SaxBean> {
 
     public T parse(InputStream xmlStream) {
 
-        List<SaxEvent> saxEventList = RuntimeExceptionTransfer.get(() -> getSaxEventList(xmlStream));
+        List<SaxEvent> saxEventList;
+        try {
+            saxEventList = getSaxEventList(xmlStream);
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            throw new RuntimeException(e);
+        }
 
         T root = ReflectUtil.newInstance(entryClass).get();
 
@@ -79,12 +83,14 @@ public class SaxEventInterceptor<T extends SaxBean> {
             } else if (saxEvent instanceof AttributeEvent) {
 
                 SaxBeanAdapter peek = saxBeanStack.peek();
+                assert peek != null;
                 peek.attribute((AttributeEvent) saxEvent);
 
             } else if (saxEvent instanceof BodyEvent) {
 
                 SaxBeanAdapter peek = saxBeanStack.peek();
 
+                assert peek != null;
                 peek.body((BodyEvent) saxEvent);
 
             } else if (saxEvent instanceof EndEvent) {

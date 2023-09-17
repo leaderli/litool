@@ -1,7 +1,6 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.collection.IterableItr;
-import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.io.FileNameUtil;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.resource.ResourceUtil;
@@ -12,6 +11,7 @@ import io.leaderli.litool.core.text.StrPool;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -217,7 +217,11 @@ public class ClassScanner {
                 addIfAccept(className);
             } else if (fileName.endsWith(FileNameUtil.EXT_JAR)) {
 
-                RuntimeExceptionTransfer.run(() -> scanJar(new JarFile(file)));
+                try {
+                    scanJar(new JarFile(file));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         } else if (file.isDirectory()) {
             final File[] files = file.listFiles();
