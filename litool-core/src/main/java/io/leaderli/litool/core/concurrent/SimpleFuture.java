@@ -33,7 +33,7 @@ public class SimpleFuture<T> implements Future<T> {
     }
 
     @Override
-    public T get() throws InterruptedException, ExecutionException {
+    public T get() throws InterruptedException {
         synchronized (this) {
             while (!done) {
                 wait();
@@ -42,7 +42,12 @@ public class SimpleFuture<T> implements Future<T> {
         return result;
     }
 
-    public T get(long timeoutMillis) throws InterruptedException, ExecutionException, TimeoutException {
+    @Override
+    public T get(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
+        return get(unit.toMillis(timeout));
+    }
+
+    public T get(long timeoutMillis) throws InterruptedException, TimeoutException {
         long endTime = System.currentTimeMillis() + timeoutMillis;
 
         synchronized (this) {
@@ -55,11 +60,6 @@ public class SimpleFuture<T> implements Future<T> {
             }
         }
         return result;
-    }
-
-    @Override
-    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        return get(unit.toMillis(timeout));
     }
 
     public void setResult(T result) {
