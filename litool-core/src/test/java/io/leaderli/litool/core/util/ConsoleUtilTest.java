@@ -24,6 +24,7 @@ class ConsoleUtilTest {
         ConsoleUtil.CONSOLE = new PrintStream(out);
     }
 
+
     @Test
     void print() {
 

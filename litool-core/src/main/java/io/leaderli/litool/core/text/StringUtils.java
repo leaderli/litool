@@ -27,6 +27,7 @@ import io.leaderli.litool.core.meta.Lira;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -8703,6 +8704,27 @@ public class StringUtils implements StrPool {
      */
     public static String read(InputStream inputStream, Charset charset) {
         return new StringReader(inputStream, charset).get();
+    }
+
+    /**
+     * Return read inputStream to string, use {@link  Charset#defaultCharset()}
+     *
+     * @param file the read file
+     * @return a string
+     */
+    public static String read(String file) throws IOException {
+        return new StringReader(Files.newInputStream(new File(file).toPath())).get();
+    }
+
+    /**
+     * Return read inputStream to string
+     *
+     * @param file    the read file
+     * @param charset the string charset
+     * @return a string
+     */
+    public static String readFile(String file, Charset charset) throws IOException {
+        return new StringReader(Files.newInputStream(new File(file).toPath()), charset).get();
     }
 
     /**

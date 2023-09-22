@@ -8,6 +8,7 @@ import io.leaderli.litool.core.text.StringUtils;
 import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * 控制台输出工具类
@@ -116,6 +117,14 @@ public class ConsoleUtil {
      */
     public static void println(Iterator<?> args) {
         print0(LINE_SEPARATOR, args);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static void printMap(Map<?, ?> map) {
+
+        for (Map.Entry entry : map.entrySet()) {
+            System.out.println(entry.getKey() + "=" + entry.getValue());
+        }
     }
 
     private static int LINE_COUNT;

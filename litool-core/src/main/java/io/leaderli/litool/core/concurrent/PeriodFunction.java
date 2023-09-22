@@ -48,6 +48,8 @@ public class PeriodFunction<T, R> implements Function<T, R> {
 
         if (periodSupplier != null) {
             return periodSupplier.get();
+
+
         }
 
         synchronized (periodSupplierMap) {
