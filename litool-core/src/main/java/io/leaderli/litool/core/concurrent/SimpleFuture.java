@@ -73,7 +73,7 @@ public class SimpleFuture<T> implements Future<T> {
     }
 
     public void submit(Supplier<T> supplier) {
-        Executors.newSingleThreadExecutor().submit(() -> setResult(supplier.get()));
+        new Thread(() -> setResult(supplier.get())).start();
     }
 
     public void submit(ExecutorService executorService, Supplier<T> supplier) {
