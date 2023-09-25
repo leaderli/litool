@@ -10,7 +10,14 @@ import java.util.Map;
 
 /**
  * 一个用于生产随机字符串的工具
- * 支持注册函数，通过@符号调用
+ * 支持注册函数，通过@符号调用，可使用参数。
+ * 示例：
+ *
+ * <pre>{@code
+ * @date()
+ * @date(yyyyMMdd)
+ * }
+ * </pre>
  */
 public class GenerateTemplate {
 
