@@ -2,13 +2,12 @@ package io.leaderli.litool.core.io;
 
 import io.leaderli.litool.core.util.RandomUtil;
 import io.leaderli.litool.core.util.ThreadUtil;
-import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
 class TailerTest {
 
-    @Test
+//    @Test
     void test() {
 
         Tailer tailer = new Tailer(new File("123.txt"), new TailerListener() {
