@@ -126,16 +126,41 @@ public class ThreadUtil {
     }
 
     /**
+     * 启动一个线程
+     *
+     * @param runnable 任务
+     * @param daemon   是否守护进程
+     */
+    public static void start(Runnable runnable, boolean daemon) {
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(daemon);
+        thread.start();
+
+        join(thread);
+    }
+
+    /**
+     * 等待线程结束。
+     *
+     * @param thread 线程
+     * @throws RuntimeException 如果当前线程被中断，抛出RuntimeException。
+     */
+    public static void join(Thread thread) {
+
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 等待当前线程结束。
      *
      * @throws RuntimeException 如果当前线程被中断，抛出RuntimeException。
      */
     @SuppressWarnings("java:S2142")
     public static void join() {
-        try {
-            Thread.currentThread().join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        join(Thread.currentThread());
     }
 }
