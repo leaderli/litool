@@ -57,6 +57,6 @@ public class FileUtil {
      * @see File#pathSeparator
      */
     public static File getFile(File dir, String name) {
-        return new File(dir.getAbsolutePath() + File.pathSeparator + name);
+        return new File(dir.getAbsolutePath() + File.separator + name);
     }
 }
