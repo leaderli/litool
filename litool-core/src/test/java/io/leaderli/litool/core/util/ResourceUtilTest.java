@@ -43,7 +43,6 @@ class ResourceUtilTest {
 
     }
 
-    @SuppressWarnings("resource")
     @Test
     void createContentStream() throws IOException {
 
