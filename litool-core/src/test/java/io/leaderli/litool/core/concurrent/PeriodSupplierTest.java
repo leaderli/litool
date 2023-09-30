@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 class PeriodSupplierTest {
 
     @Test
-    void executeOnce() throws InterruptedException {
+    void executeOnce() {
 
 
         AtomicInteger num = new AtomicInteger(0);
