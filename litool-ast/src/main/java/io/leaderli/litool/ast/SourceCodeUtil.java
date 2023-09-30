@@ -10,9 +10,9 @@ import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.printer.YamlPrinter;
 import com.github.javaparser.utils.SourceRoot;
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.io.FileUtil;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.resource.ResourceUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,7 +41,7 @@ public class SourceCodeUtil {
      * @return 源码目录的所有源码单元
      */
     public static List<CompilationUnit> getSources(ParserConfiguration parserConfiguration) {
-        return getSources(parserConfiguration, ResourceUtil.getWorkDir() + "/src");
+        return getSources(parserConfiguration, FileUtil.getWorkDir() + "/src");
     }
 
     /**
@@ -82,7 +82,7 @@ public class SourceCodeUtil {
      * @see #getClassSource(Class, String)
      */
     public static CompilationUnit getClassSource(Class<?> clazz) {
-        return getClassSource(clazz, ResourceUtil.getWorkDir() + "/src/main/java/");
+        return getClassSource(clazz, FileUtil.getWorkDir() + "/src/main/java/");
     }
 
     /**

@@ -6,8 +6,8 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
+import io.leaderli.litool.core.io.FileUtil;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.resource.ResourceUtil;
 import io.leaderli.litool.core.type.ClassScanner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class SourceCodeUtilTest {
 
     @Test
     void getImportClassByName() {
-        CompilationUnit cu = SourceCodeUtil.getClassSource(TestBean.class, ResourceUtil.getWorkDir() + "/src/test/java/");
+        CompilationUnit cu = SourceCodeUtil.getClassSource(TestBean.class, FileUtil.getWorkDir() + "/src/test/java/");
 
 //        SourceCodeUtil.printYaml(cu);
 //        Assertions.assertNotNull(SourceCodeUtil.getImportClassByName(cu, SourceCodeUtil.class.getSimpleName()));
@@ -57,7 +57,7 @@ class SourceCodeUtilTest {
     @Test
     void test2() {
 
-        ClassOrInterfaceDeclaration classOrInterfaceDeclaration = Lira.of(SourceCodeUtil.getSources(ResourceUtil.getWorkDir() + "/src/test/java"))
+        ClassOrInterfaceDeclaration classOrInterfaceDeclaration = Lira.of(SourceCodeUtil.getSources(FileUtil.getWorkDir() + "/src/test/java"))
                 .map(cu -> cu.getClassByName(TestBean.class.getSimpleName()))
                 .filter(o -> o)
                 .map(Optional::get)

@@ -197,9 +197,4 @@ public class ResourceUtil {
 
     }
 
-    public static String getWorkDir() {
-        return System.getProperty("user.dir");
-    }
-
-
 }

@@ -29,4 +29,34 @@ public class FileUtil {
             throw new RuntimeException(e);
         }
     }
+
+    public static String getWorkDir() {
+        return System.getProperty("user.dir");
+    }
+
+
+    /**
+     * @return 返回用户跟目录
+     */
+    public static String getHome() {
+        return System.getProperty("user.home");
+    }
+
+    /**
+     * @return 返回用户跟目录
+     */
+    public static File getHomeFile() {
+        return new File(System.getProperty("user.home"));
+    }
+
+
+    /**
+     * @param dir  目录
+     * @param name 目录下的文件
+     * @return 返回目录下的文件名
+     * @see File#pathSeparator
+     */
+    public static File getFile(File dir, String name) {
+        return new File(dir.getAbsolutePath() + File.pathSeparator + name);
+    }
 }

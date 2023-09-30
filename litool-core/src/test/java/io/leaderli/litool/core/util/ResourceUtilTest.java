@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.io.FileUtil;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.resource.ResourceUtil;
 import io.leaderli.litool.core.resource.WalkFileFilter;
@@ -131,7 +132,7 @@ class ResourceUtilTest {
     @Test
     void getWorkDir() {
 
-        Assertions.assertTrue(ResourceUtil.getWorkDir().endsWith("litool-core"));
+        Assertions.assertTrue(FileUtil.getWorkDir().endsWith("litool-core"));
 
     }
 }
