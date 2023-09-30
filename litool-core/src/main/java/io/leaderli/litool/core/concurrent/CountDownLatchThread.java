@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.concurrent;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class CountDownLatchThread extends Thread {
@@ -19,5 +20,15 @@ public class CountDownLatchThread extends Thread {
         } finally {
             this.countDownLatch.countDown();
         }
+    }
+
+
+    public static void execute(List<Runnable> runnables) throws InterruptedException {
+
+        CountDownLatch countDownLatch = new CountDownLatch(runnables.size());
+        for (Runnable runnable : runnables) {
+            new CountDownLatchThread(countDownLatch, runnable).start();
+        }
+        countDownLatch.await();
     }
 }
