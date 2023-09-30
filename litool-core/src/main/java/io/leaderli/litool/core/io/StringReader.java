@@ -35,8 +35,14 @@ public class StringReader implements Supplier<String> {
 
     private void read() {
         try (InputStreamReader reader = new InputStreamReader(this.inputStream, charset)) {
+            if (this.inputStream.available() < 1) {
+                return;
+            }
+            if (!reader.ready()) {
+                return;
+            }
             int read;
-            while ((read = inputStream.read()) != -1) {
+            while ((read = reader.read()) != -1) {
                 sb.append((char) read);
             }
         } catch (IOException e) {

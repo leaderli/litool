@@ -19,6 +19,9 @@ class StringReaderTest {
         StringReader stringReader = new StringReader(stream);
         Assertions.assertEquals("hello", stringReader.get());
         Assertions.assertEquals("hello", stringReader.get());
+
+
+        System.out.println(new StringReader(System.in).get());
     }
 
 }
