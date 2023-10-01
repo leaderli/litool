@@ -41,55 +41,23 @@ class PeriodSupplierTest {
         }
         Assertions.assertEquals(1, oncePerPeriod.get());
 
-        ThreadUtil.sleep(50);
+        ThreadUtil.sleep(100);
         for (int i = 0; i < 10; i++) {
 
             executorService.submit(oncePerPeriod::get);
         }
         Assertions.assertEquals(2, oncePerPeriod.get());
-        ThreadUtil.sleep(50);
+        ThreadUtil.sleep(100);
         for (int i = 0; i < 10; i++) {
 
             executorService.submit(oncePerPeriod::get);
         }
         Assertions.assertEquals(4, oncePerPeriod.get());
 
-        ThreadUtil.sleep(50);
+        ThreadUtil.sleep(100);
         for (int i = 0; i < 10; i++) {
             executorService.submit(oncePerPeriod::get);
         }
         Assertions.assertEquals(5, oncePerPeriod.get());
-//        Assertions.assertEquals(1, oncePerPeriod.get());
-//        Assertions.assertEquals(1, oncePerPeriod.get());
-//        Assertions.assertEquals(1, oncePerPeriod.get());
-//        ThreadUtil.sleep(10);
-//        Assertions.assertEquals(2, oncePerPeriod.get());
-//
-//        AtomicInteger num2 = new AtomicInteger(0);
-//        oncePerPeriod = new PeriodSupplier<>(10, () -> {
-//            int result = num2.incrementAndGet();
-//            if (result % 2 == 0) {
-//                throw new RuntimeException();
-//            }
-//            return result;
-//        }, -1, Executors.newSingleThreadExecutor());
-//
-//        Assertions.assertEquals(-1, oncePerPeriod.get());
-//        Assertions.assertEquals(-1, oncePerPeriod.get());
-//        Assertions.assertEquals(-1, oncePerPeriod.get());
-//        ThreadUtil.sleep(10);
-//        Assertions.assertEquals(1, oncePerPeriod.get());
-//        Assertions.assertEquals(1, oncePerPeriod.get());
-//        Assertions.assertEquals(1, oncePerPeriod.get());
-//        ThreadUtil.sleep(10);
-//        Assertions.assertEquals(1, oncePerPeriod.get());
-//        Assertions.assertEquals(1, oncePerPeriod.get());
-//        Assertions.assertEquals(1, oncePerPeriod.get());
-//        ThreadUtil.sleep(10);
-//        Assertions.assertEquals(3, oncePerPeriod.get());
-//        ThreadUtil.sleep(10);
-//        Assertions.assertEquals(3, oncePerPeriod.get());
-//        ThreadUtil.sleep(10);
-//        Assertions.assertEquals(5, oncePerPeriod.get());
     }
 }

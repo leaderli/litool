@@ -25,6 +25,13 @@ public class StringReader implements Supplier<String> {
 
     public StringReader(InputStream inputStream, Charset charset) {
         this.inputStream = inputStream;
+        try {
+            if (this.inputStream.available() <= 0) {
+                throw new IllegalStateException("inputstream is unavaliable");
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
         this.charset = charset;
     }
 
@@ -34,13 +41,9 @@ public class StringReader implements Supplier<String> {
     }
 
     private void read() {
+
         try (InputStreamReader reader = new InputStreamReader(this.inputStream, charset)) {
-            if (this.inputStream.available() < 1) {
-                return;
-            }
-            if (!reader.ready()) {
-                return;
-            }
+
             int read;
             while ((read = reader.read()) != -1) {
                 sb.append((char) read);
