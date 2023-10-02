@@ -19,6 +19,7 @@ public class IOUtils {
         while ((length = source.read(buf)) != -1) {
             target.write(buf, 0, length);
         }
+        target.flush();
     }
 
     public static void copy(InputStream source, OutputStream... targets) throws IOException {
@@ -32,6 +33,9 @@ public class IOUtils {
             for (OutputStream target : targets) {
                 target.write(buf, 0, length);
             }
+        }
+        for (OutputStream target : targets) {
+            target.flush();
         }
     }
 
