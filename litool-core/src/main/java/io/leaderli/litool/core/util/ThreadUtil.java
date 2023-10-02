@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.text.StringUtils;
+
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -107,7 +109,7 @@ public class ThreadUtil {
     }
 
     public static void println(String msg) {
-        System.out.println(Thread.currentThread().getName() + "\t" + msg);
+        System.out.println(StringUtils.rjust(Thread.currentThread().getName(), 15) + "\t" + msg);
     }
 
     /**
