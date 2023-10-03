@@ -103,6 +103,10 @@ class BeanPathTest {
 
     }
 
+    private static class Out extends Inner {
+
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     void test() {
@@ -116,6 +120,8 @@ class BeanPathTest {
 
         list.add(map);
         Assertions.assertEquals("123", BeanPath.parse(list, "[0].a").get(() -> "123"));
+
+        Assertions.assertEquals(0, BeanPath.simple(new Out(), "age").get());
 
     }
 }

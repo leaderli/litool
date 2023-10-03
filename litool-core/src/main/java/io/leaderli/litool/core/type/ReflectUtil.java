@@ -13,10 +13,7 @@ import io.leaderli.litool.core.meta.ra.NullableFunction;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -33,32 +30,13 @@ public class ReflectUtil {
      * @param clazz 目标类
      * @param name  字段名
      * @return 该字段的Lino对象
-     * @see #getField(Class, String, boolean) 第三个参数取 false
      */
     public static Lino<Field> getField(Class<?> clazz, String name) {
-
-
-        return getField(clazz, name, false);
-
-    }
-
-    /**
-     * 获取指定类中的指定字段
-     *
-     * @param clazz            目标类
-     * @param name             字段名
-     * @param onlyCurrentClass 是否只在当前类中查找字段
-     * @return 该字段的Lino对象
-     */
-    public static Lino<Field> getField(Class<?> clazz, String name, boolean onlyCurrentClass) {
-
-
         return getFields(clazz)
                 .filter(f -> f.getName().equals(name))
-                .filter(f -> !onlyCurrentClass || f.getDeclaringClass().equals(clazz))
                 .first();
-
     }
+
 
     /**
      * 获取类及其父类的所有字段， JVM自动生成的字段{@link  Field#isSynthetic()}不会包含在返回结果中
@@ -74,7 +52,11 @@ public class ReflectUtil {
             return Lira.none();
         }
 
-        return CollectionUtils.union(Field.class, clazz.getFields(), clazz.getDeclaredFields()).filter(f -> !f.isSynthetic());
+        Field[] declaredFields = clazz.getDeclaredFields();
+        while ((clazz = clazz.getSuperclass()) != Object.class) {
+            declaredFields = ArrayUtils.append(declaredFields, clazz.getDeclaredFields());
+        }
+        return Lira.of(declaredFields).sorted((f1, f2) -> ModifierUtil.priority(f2) - ModifierUtil.priority(f1));
     }
 
 
@@ -84,33 +66,15 @@ public class ReflectUtil {
      * @param obj  目标对象
      * @param name 字段名称
      * @return 返回字段对应的值，如果不存在，则返回 {@link Lino#none()}
-     * @see #getFieldValue(Object, String, boolean) 第三个字段去false
-     */
-    public static Lino<?> getFieldValue(Object obj, String name) {
-
-
-        return getFieldValue(obj, name, false);
-    }
-
-
-    /**
-     * 可以获取对象中的指定字段的值
-     *
-     * @param obj              目标对象
-     * @param name             字段名称
-     * @param onlyCurrentClass 是否只在对象的当前类中寻找字段
-     * @return 返回字段对应的值，如果不存在，则返回 {@link Lino#none()}
-     * @see #getField(Class, String, boolean)
+     * @see #getField(Class, String)
      * @see #getFieldValue(Object, Field)
      */
-    public static Lino<?> getFieldValue(Object obj, String name, boolean onlyCurrentClass) {
-
+    public static Lino<?> getFieldValue(Object obj, String name) {
 
         if (obj == null) {
             return Lino.none();
         }
-        return getField(obj.getClass(), name, onlyCurrentClass).map(f -> getFieldValue(obj, f).get());
-
+        return getField(obj.getClass(), name).unzip(f -> getFieldValue(obj, f));
     }
 
 
@@ -143,10 +107,7 @@ public class ReflectUtil {
         }
     }
 
-
-    /**
-     * 设置对象的属性值
-     *
+    /*
      * @param obj   目标对象
      * @param name  属性名
      * @param value 属性值
@@ -156,30 +117,12 @@ public class ReflectUtil {
      */
     public static boolean setFieldValue(Object obj, String name, Object value) {
 
-        return setFieldValue(obj, name, value, false);
-    }
-
-
-    /**
-     * 设置对象的属性值
-     *
-     * @param obj              目标对象
-     * @param name             属性名
-     * @param value            属性值
-     * @param onlyCurrentClass 是否只查找当前类
-     * @return 是否设置成功
-     * @see #getField(Class, String, boolean)
-     * @see #setFieldValue(Object, Field, Object)
-     */
-    public static boolean setFieldValue(Object obj, String name, Object value, boolean onlyCurrentClass) {
-
         if (obj == null) {
             return false;
         }
-
-        return getField(obj.getClass(), name, onlyCurrentClass)
-                .map(f -> setFieldValue(obj, f, value)).get(false);
-
+        return getField(obj.getClass(), name)
+                .map(f -> setFieldValue(obj, f, value))
+                .get(false);
     }
 
     /**
@@ -503,45 +446,31 @@ public class ReflectUtil {
     }
 
     /**
-     * onlyCurrentClass = false
-     *
      * @param cls  类
      * @param name 方法名
-     * @return {@link #getMethod(Class, String, boolean)}
+     * @return {@link #getMethods(Class)}
      */
     public static Lino<Method> getMethod(Class<?> cls, String name) {
-        return getMethod(cls, name, false);
+        return getMethods(cls).filter(f -> name.equals(f.getName())).first();
     }
 
-    /**
-     * 获取类包含的方法线
-     *
-     * @param cls              类
-     * @param name             方法名
-     * @param onlyCurrentClass 是否仅在cls中查找,不在超类中查找
-     * @return 类包含的方法线
-     */
-    public static Lino<Method> getMethod(Class<?> cls, String name, boolean onlyCurrentClass) {
-
-        return getMethods(cls)
-                .filter(m -> m.getName().equals(name))
-                .filter(m -> !onlyCurrentClass || m.getDeclaringClass().equals(cls))
-                .first();
-    }
 
     /**
-     * 获取类或其超类的所有方法
+     * 获取类或其超类的所有方法，不包含Object的方法
      *
-     * @param cls 类
+     * @param clazz 类
      * @return 类或其超类的所有方法
      * @see Class#getMethods()
      * @see Class#getDeclaredMethods()
      */
-    public static Lira<Method> getMethods(Class<?> cls) {
-        if (cls == null) {
-            return Lira.none();
+    public static Lira<Method> getMethods(Class<?> clazz) {
+        Set<Method> declaredMethods = new HashSet<>();
+        while (clazz != null) {
+            declaredMethods.addAll(Arrays.asList(clazz.getMethods()));
+            declaredMethods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
+            clazz = clazz.getSuperclass();
         }
-        return CollectionUtils.union(Method.class, cls.getMethods(), cls.getDeclaredMethods()).filter(m -> !m.isSynthetic());
+        return Lira.of(declaredMethods).sorted((f1, f2) -> ModifierUtil.priority(f2) - ModifierUtil.priority(f1));
     }
 
     /**

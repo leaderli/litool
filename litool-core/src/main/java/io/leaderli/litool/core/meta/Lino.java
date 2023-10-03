@@ -216,16 +216,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
 
     /**
-     * 该方法用于设置异常处理函数，当流中发生异常时，会调用该函数进行异常处理。
-     *
-     * @param throwableConsumer 异常处理函数，接收一个 Throwable 类型的参数，无返回值
-     * @return 返回当前 Lino 流对象
-     * @see #none()
-     */
-    Lino<T> onError(Consumer<Throwable> throwableConsumer);
-
-
-    /**
      * 该方法用于将当前Lino对象强制类型转换为指定的类型，如果当前对象类型不是指定类型的实例，则返回一个空的Lino对象。
      *
      * @param <R>  泛型参数，用于指定返回值类型
@@ -569,10 +559,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             return this;
         }
 
-        @Override
-        public Lino<T> onError(Consumer<Throwable> throwableConsumer) {
-            return null;
-        }
 
         @Override
         public <R> Lino<R> cast(Class<? extends R> type) {
@@ -795,10 +781,6 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             throw new IllegalStateException(supplier.get());
         }
 
-        @Override
-        public Lino<T> onError(Consumer<Throwable> throwableConsumer) {
-            return this;
-        }
 
         @Override
         public <R> Lino<R> cast(Class<? extends R> type) {
