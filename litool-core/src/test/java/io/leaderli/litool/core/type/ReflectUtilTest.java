@@ -84,26 +84,18 @@ class ReflectUtilTest {
     }
 
     @Test
-    void getFields() throws NoSuchFieldException, IllegalAccessException {
-        assertEquals(4, ReflectUtil.getFields(LittleBean.class).size());
+    void getFields() {
+        assertEquals(3, ReflectUtil.getFields(LittleBean.class).size());
         assertTrue(ReflectUtil.getFields(Test1.class).absent());
         assertTrue(ReflectUtil.getFields(Out.In.class).absent());
-
     }
 
     @Test
     void getField() {
 
         LittleBean littleBean = new LittleBean();
-//        assertEquals("bean",
-//                ReflectUtil.getField(LittleBean.class, "name").map(f -> {
-//                    System.out.println(f);
-//                    try {
-//                        return f.get(littleBean);
-//                    } catch (IllegalAccessException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                }).get());
+        assertEquals("bean",
+                ReflectUtil.getField(LittleBean.class, "name").mapIgnoreError(f -> f.get(littleBean)).get());
         assertEquals(8, ReflectUtil.getField(LittleBean.class, "age").mapIgnoreError(f -> f.get(littleBean)).get());
 
         Lino<Field> name = ReflectUtil.getField(LittleBean.class, "name", true);
@@ -122,7 +114,7 @@ class ReflectUtilTest {
     void getFieldValue() throws NoSuchFieldException {
 
         LittleBean littleBean = new LittleBean();
-        assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name").get());
+        assertEquals("bean", ReflectUtil.getFieldValue(littleBean, "name").get());
         assertEquals(8, ReflectUtil.getFieldValue(littleBean, "age").get());
 
         assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name", true).get());
@@ -148,16 +140,18 @@ class ReflectUtilTest {
         Assertions.assertFalse(ReflectUtil.setFieldValue(null, "name", null));
         Assertions.assertFalse(ReflectUtil.setFieldValue(null, "name", null, true));
 
-        assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name").get());
+        assertEquals("bean", ReflectUtil.getFieldValue(littleBean, "name").get());
         assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name", true).get());
         assertTrue(ReflectUtil.setFieldValue(littleBean, "name", "hello"));
         assertEquals("hello", ReflectUtil.getFieldValue(littleBean, "name").get());
-        assertEquals("hello", ReflectUtil.getFieldValue(littleBean, "name", true).get());
+        assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name", true).get());
 
         littleBean = new LittleBean();
 
+        assertEquals("bean", ReflectUtil.getFieldValue(littleBean, "name").get());
         assertEquals("little", ReflectUtil.getFieldValue(littleBean, "name", true).get());
         assertTrue(ReflectUtil.setFieldValue(littleBean, "name", "hello", true));
+        assertEquals("bean", ReflectUtil.getFieldValue(littleBean, "name").get());
         assertEquals("hello", ReflectUtil.getFieldValue(littleBean, "name", true).get());
 
 

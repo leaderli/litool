@@ -74,11 +74,7 @@ public class ReflectUtil {
             return Lira.none();
         }
 
-        Field[] declaredFields = clazz.getDeclaredFields();
-        while ((clazz = clazz.getSuperclass()) != Object.class) {
-            declaredFields = ArrayUtils.append(declaredFields, clazz.getDeclaredFields());
-        }
-        return Lira.of(declaredFields).filter(f -> !f.isSynthetic());
+        return CollectionUtils.union(Field.class, clazz.getFields(), clazz.getDeclaredFields()).filter(f -> !f.isSynthetic());
     }
 
 
