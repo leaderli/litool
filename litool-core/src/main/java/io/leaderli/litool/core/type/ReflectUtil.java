@@ -25,18 +25,35 @@ public class ReflectUtil {
     private static final ReflectionAccessor REFLECTION_ACCESSOR = ReflectionAccessor.getInstance();
 
     /**
+     * 可以获取对象中的指定字段的值
+     *
+     * @param obj  目标对象
+     * @param name 字段名称
+     * @return 返回字段对应的值，如果不存在，则返回 {@link Lino#none()}
+     * @see #getField(Class, String)
+     * @see #getFieldValue(Object, Field)
+     */
+    public static Lino<?> getFieldValue(Object obj, String name) {
+
+        if (obj == null) {
+            return Lino.none();
+        }
+
+        Class<?> clazz = obj.getClass();
+        return getField(clazz, name).unzip(f -> getFieldValue(obj, f));
+    }
+
+    /**
      * 可以获取指定类中的指定字段
      *
      * @param clazz 目标类
      * @param name  字段名
      * @return 该字段的Lino对象
+     * @see #getField(Class, Function)
      */
     public static Lino<Field> getField(Class<?> clazz, String name) {
-        return getFields(clazz)
-                .filter(f -> f.getName().equals(name))
-                .first();
+        return getField(clazz, f -> f.getName().equals(name));
     }
-
 
     /**
      * 获取类及其父类的所有字段， JVM自动生成的字段{@link  Field#isSynthetic()}不会包含在返回结果中
@@ -61,22 +78,33 @@ public class ReflectUtil {
                 .sorted((f1, f2) -> ModifierUtil.priority(f2) - ModifierUtil.priority(f1));
     }
 
-
     /**
-     * 可以获取对象中的指定字段的值
+     * 获取指定的属性
      *
-     * @param obj  目标对象
-     * @param name 字段名称
-     * @return 返回字段对应的值，如果不存在，则返回 {@link Lino#none()}
-     * @see #getField(Class, String)
-     * @see #getFieldValue(Object, Field)
+     * @param clazz  要获取字段的类
+     * @param filter 属性是否满足条件
+     * @return 类及其父类的所有字段
+     * @see Class#getFields()
+     * @see Class#getDeclaredFields()
      */
-    public static Lino<?> getFieldValue(Object obj, String name) {
+    public static Lino<Field> getField(Class<?> clazz, Function<Field, Boolean> filter) {
 
-        if (obj == null) {
-            return Lino.none();
+        // 相对于获取全部属性在过滤，速度更快
+        while (clazz != null && clazz != Object.class) {
+            for (Field field : clazz.getFields()) {
+                if (filter.apply(field)) {
+                    return Lino.of(field);
+                }
+            }
+            for (Field field : clazz.getDeclaredFields()) {
+                if (filter.apply(field)) {
+                    return Lino.of(field);
+                }
+            }
+            clazz = clazz.getSuperclass();
         }
-        return getField(obj.getClass(), name).unzip(f -> getFieldValue(obj, f));
+        return Lino.none();
+
     }
 
 
@@ -448,14 +476,38 @@ public class ReflectUtil {
     }
 
     /**
-     * @param cls  类
-     * @param name 方法名
-     * @return {@link #getMethods(Class)}
+     * @param clazz 类
+     * @param name  方法名
+     * @return {@link #getMethod(Class, Function)}
      */
-    public static Lino<Method> getMethod(Class<?> cls, String name) {
-        return getMethods(cls).filter(f -> name.equals(f.getName())).first();
+    public static Lino<Method> getMethod(Class<?> clazz, String name) {
+        return getMethod(clazz, m -> m.getName().equals(name));
     }
 
+    /**
+     * @param clazz  类
+     * @param filter 满足条件的方法
+     * @return {@link #getMethods(Class)}
+     */
+    public static Lino<Method> getMethod(Class<?> clazz, Function<Method, Boolean> filter) {
+        while (clazz != null) {
+            //相比较于属性，多添加一个，是添加接口的方法
+            for (Method method : clazz.getMethods()) {
+                if (filter.apply(method)) {
+                    return Lino.of(method);
+                }
+            }
+
+            for (Method method : clazz.getDeclaredMethods()) {
+                if (filter.apply(method)) {
+                    return Lino.of(method);
+                }
+            }
+
+            clazz = clazz.getSuperclass();
+        }
+        return Lino.none();
+    }
 
     /**
      * 获取类或其超类的所有方法，不包含Object的方法
@@ -468,6 +520,7 @@ public class ReflectUtil {
     public static Lira<Method> getMethods(Class<?> clazz) {
         Set<Method> declaredMethods = new HashSet<>();
         while (clazz != null) {
+            //相比较于属性，多添加一个，是添加接口的方法
             declaredMethods.addAll(Arrays.asList(clazz.getMethods()));
             declaredMethods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
             clazz = clazz.getSuperclass();

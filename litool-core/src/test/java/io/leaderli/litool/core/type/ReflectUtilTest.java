@@ -90,7 +90,7 @@ class ReflectUtilTest {
     @Test
     void getFields() {
 
-        assertEquals(4, ReflectUtil.getFields(LittleBean.class).size());
+        assertEquals(5, ReflectUtil.getFields(LittleBean.class).size());
     }
 
     @Test
@@ -105,6 +105,7 @@ class ReflectUtilTest {
         assertEquals(8,
                 ReflectUtil.getField(LittleBean.class, "age").mapIgnoreError(f -> f.get(littleBean)).get());
     }
+
 
     @Test
     void getFieldValue() throws NoSuchFieldException {
@@ -125,7 +126,11 @@ class ReflectUtilTest {
 
 
         assertEquals(1, ReflectUtil.getFieldValue(null, Static.class.getField("age")).get());
+
+        assertEquals(1, (ReflectUtil.getFieldValue(littleBean, "gender").get()));
+
     }
+
 
     @SuppressWarnings("JavaReflectionMemberAccess")
     @Test
@@ -359,6 +364,7 @@ class ReflectUtilTest {
 
         private final int age = 80;
         public String name = "bean";
+        private int gender = 1;
 
         public void m1() {
 
