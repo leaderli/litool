@@ -32,12 +32,12 @@ public class SimpleFuture<T> implements Future<T> {
         return done;
     }
 
-    public boolean hasException() {
-        return exception != null;
-    }
 
     public Exception getException() {
-        return exception;
+        if (isDone()) {
+            return exception;
+        }
+        throw new IllegalStateException("task not finished");
     }
 
     @Override
@@ -57,7 +57,6 @@ public class SimpleFuture<T> implements Future<T> {
 
     public T get(long timeoutMillis) throws InterruptedException, TimeoutException {
         long endTime = System.currentTimeMillis() + timeoutMillis;
-
         synchronized (this) {
             while (!done) {
                 long timeLeft = endTime - System.currentTimeMillis();
@@ -80,14 +79,26 @@ public class SimpleFuture<T> implements Future<T> {
         }
     }
 
+    public void setException(Exception exception) {
+        synchronized (this) {
+            if (!done && !cancelled) {
+                this.exception = exception;
+                done = true;
+                notifyAll();
+            }
+        }
+    }
+
     public void reset() {
         synchronized (this) {
             done = false;
             cancelled = false;
             result = null;
             exception = null;
+            notifyAll();
         }
     }
+
 
     public void submit(Callable<T> supplier) {
         new Thread(() -> {
@@ -97,16 +108,6 @@ public class SimpleFuture<T> implements Future<T> {
                 setException(e);
             }
         }).start();
-    }
-
-    public void setException(Exception exception) {
-        synchronized (this) {
-            if (!done && !cancelled) {
-                this.exception = exception;
-                done = true;
-                notifyAll();
-            }
-        }
     }
 
     public void submit(ExecutorService executorService, Callable<T> supplier) {
