@@ -16,40 +16,36 @@ public class PeriodSupplier<T> implements Supplier<T> {
     private volatile T result;
     private volatile long lastExecutedAt = 0;
     private volatile boolean update = false;
+    private final boolean allowNullValue;
 
     /**
-     * 5000ms
+     * check_millis= 5000
+     * resetNow = false
+     * allowNullValue = false
      *
-     * @see #PeriodSupplier(long, Supplier, Object, ExecutorService)
+     * @param supplier        更新函数
+     * @param initResult      初始值
+     * @param executorService 线程
+     * @see #PeriodSupplier(long, Supplier, Object, ExecutorService, boolean, boolean)
      */
-    public PeriodSupplier(Supplier<T> supplier, T result, ExecutorService executorService) {
-        this(5000, supplier, result, executorService);
+    public PeriodSupplier(Supplier<T> supplier, T initResult, ExecutorService executorService) {
+        this(5000, supplier, initResult, executorService, false, false);
     }
+
 
     /**
      * @param check_millis    检测周期
      * @param supplier        更新函数
      * @param initResult      初始值
      * @param executorService 线程
+     * @param allowNullValue  是否允许空值
      */
-    public PeriodSupplier(long check_millis, Supplier<T> supplier, T initResult, ExecutorService executorService) {
+    public PeriodSupplier(long check_millis, Supplier<T> supplier, T initResult, ExecutorService executorService, boolean allowNullValue, boolean resetNow) {
         this.check_millis = check_millis;
         this.supplier = supplier;
         this.result = initResult;
         this.executorService = executorService;
-    }
-
-    /**
-     * @param check_millis    检测周期
-     * @param supplier        更新函数
-     * @param initResult      初始值
-     * @param executorService 线程
-     */
-    public PeriodSupplier(long check_millis, Supplier<T> supplier, T initResult, ExecutorService executorService, boolean resetNow) {
-        this.check_millis = check_millis;
-        this.supplier = supplier;
-        this.result = initResult;
-        this.executorService = executorService;
+        this.allowNullValue = allowNullValue;
         if (resetNow) {
             this.lastExecutedAt = System.currentTimeMillis();
         }
@@ -87,7 +83,7 @@ public class PeriodSupplier<T> implements Supplier<T> {
                     try {
 
                         T temp = supplier.get();
-                        if (temp != null) {
+                        if (allowNullValue || temp != null) {
                             result = temp;
                             lastExecutedAt = now;
                         }

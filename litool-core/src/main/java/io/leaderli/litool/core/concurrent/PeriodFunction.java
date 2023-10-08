@@ -19,14 +19,15 @@ public class PeriodFunction<T, R> implements Function<T, R> {
     private final Function<T, R> function;
     private final ExecutorService executorService;
     private final Map<T, PeriodSupplier<R>> periodSupplierMap = new HashMap<>();
+    private final boolean allowNullValue;
 
     /**
      * 5000ms
      *
-     * @see #PeriodFunction(long, Function, ExecutorService)
+     * @see #PeriodFunction(long, Function, ExecutorService, boolean)
      */
     public PeriodFunction(Function<T, R> function, ExecutorService executorService) {
-        this(5000, function, executorService);
+        this(5000, function, executorService, false);
     }
 
 
@@ -35,10 +36,11 @@ public class PeriodFunction<T, R> implements Function<T, R> {
      * @param function        更新函数
      * @param executorService 线程
      */
-    public PeriodFunction(long check_millis, Function<T, R> function, ExecutorService executorService) {
+    public PeriodFunction(long check_millis, Function<T, R> function, ExecutorService executorService, boolean allowNull) {
         this.check_millis = check_millis;
         this.function = function;
         this.executorService = executorService;
+        this.allowNullValue = allowNull;
     }
 
 
@@ -48,15 +50,14 @@ public class PeriodFunction<T, R> implements Function<T, R> {
 
         if (periodSupplier != null) {
             return periodSupplier.get();
-
-
         }
 
         synchronized (periodSupplierMap) {
             R def = function.apply(t);
-
-            LiAssertUtil.assertNotNull(def, "error at init period supplier");
-            periodSupplierMap.put(t, new PeriodSupplier<>(check_millis, () -> function.apply(t), def, executorService, true));
+            if (!allowNullValue) {
+                LiAssertUtil.assertNotNull(def, "error at init period supplier");
+            }
+            periodSupplierMap.put(t, new PeriodSupplier<>(check_millis, () -> function.apply(t), def, executorService, allowNullValue, true));
             return def;
         }
     }

@@ -25,6 +25,7 @@ class ShellTest {
 
         command = new Shell().bash("echo 123 && sleep 1 && echo 4 && sleep 1");
 
+
         Assertions.assertEquals("123", command.get(500, TimeUnit.MILLISECONDS));
         Assertions.assertEquals("", command.get(100, TimeUnit.MILLISECONDS));
         Assertions.assertEquals("4", command.get(1, TimeUnit.SECONDS));

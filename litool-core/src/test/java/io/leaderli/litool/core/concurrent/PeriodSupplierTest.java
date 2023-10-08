@@ -29,7 +29,7 @@ class PeriodSupplierTest {
             long now = System.currentTimeMillis();
             Assertions.assertTrue(now - time.get() > 50);
             return result;
-        }, -1, Executors.newSingleThreadExecutor());
+        }, -1, Executors.newSingleThreadExecutor(), false, false);
 
         new Thread(() -> {
             for (; ; ) {

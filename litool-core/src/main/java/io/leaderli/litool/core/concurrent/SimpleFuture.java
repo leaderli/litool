@@ -1,6 +1,9 @@
 package io.leaderli.litool.core.concurrent;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
 /**
@@ -69,6 +72,14 @@ public class SimpleFuture<T> implements Future<T> {
                 done = true;
                 notifyAll();
             }
+        }
+    }
+
+    public void reset() {
+        synchronized (this) {
+            done = false;
+            cancelled = false;
+            result = null;
         }
     }
 

@@ -19,6 +19,13 @@ class SimpleFutureTest {
         simpleFuture.submit(() -> ThreadUtil.delay(30, () -> 1));
         Assertions.assertThrows(TimeoutException.class, () -> simpleFuture.get(10, TimeUnit.MILLISECONDS));
         Assertions.assertEquals(1, simpleFuture.get());
+        SimpleFuture<Integer> simpleFuture2 = new SimpleFuture<>();
+        simpleFuture2.submit(() -> {
+            ThreadUtil.sleep(TimeUnit.DAYS, 100);
+            return 2;
+        });
+        Assertions.assertThrows(TimeoutException.class, () -> simpleFuture2.get(10, TimeUnit.MILLISECONDS));
+
 
     }
 

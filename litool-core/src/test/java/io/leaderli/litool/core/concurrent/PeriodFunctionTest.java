@@ -21,7 +21,7 @@ class PeriodFunctionTest {
         Map<Integer, AtomicInteger> map = new HashMap<>();
         map.put(1, new AtomicInteger(10));
         map.put(2, new AtomicInteger(20));
-        PeriodFunction<Integer, Integer> periodFunction = new PeriodFunction<>(50, i -> map.get(i).incrementAndGet(), Executors.newSingleThreadExecutor());
+        PeriodFunction<Integer, Integer> periodFunction = new PeriodFunction<>(50, i -> map.get(i).incrementAndGet(), Executors.newSingleThreadExecutor(), false);
 
 
         Assertions.assertEquals(11, periodFunction.apply(1));
