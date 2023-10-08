@@ -22,6 +22,14 @@ public class CountDownLatchThread extends Thread {
         }
     }
 
+    public static void execute(Runnable... runnables) throws InterruptedException {
+
+        CountDownLatch countDownLatch = new CountDownLatch(runnables.length);
+        for (Runnable runnable : runnables) {
+            new CountDownLatchThread(countDownLatch, runnable).start();
+        }
+        countDownLatch.await();
+    }
 
     public static void execute(List<Runnable> runnables) throws InterruptedException {
 

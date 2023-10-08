@@ -85,6 +85,7 @@ public class SimpleFuture<T> implements Future<T> {
             done = false;
             cancelled = false;
             result = null;
+            exception = null;
         }
     }
 
