@@ -26,6 +26,15 @@ class SimpleFutureTest {
         });
         Assertions.assertThrows(TimeoutException.class, () -> simpleFuture2.get(10, TimeUnit.MILLISECONDS));
 
+        SimpleFuture<Integer> simpleFuture3 = new SimpleFuture<>();
+
+        simpleFuture3.submit(() -> {
+            throw new RuntimeException();
+        });
+        Assertions.assertNull(simpleFuture3.get());
+        Assertions.assertTrue(simpleFuture3.hasException());
+        Assertions.assertEquals(RuntimeException.class, simpleFuture3.getException().getClass());
+
 
     }
 

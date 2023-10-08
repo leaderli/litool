@@ -1,10 +1,6 @@
 package io.leaderli.litool.core.concurrent;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Supplier;
+import java.util.concurrent.*;
 
 /**
  * @author leaderli
@@ -14,6 +10,7 @@ public class SimpleFuture<T> implements Future<T> {
     private volatile boolean cancelled;
     private volatile boolean done;
     private volatile T result;
+    private volatile Exception exception;
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
@@ -33,6 +30,14 @@ public class SimpleFuture<T> implements Future<T> {
     @Override
     public boolean isDone() {
         return done;
+    }
+
+    public boolean hasException() {
+        return exception != null;
+    }
+
+    public Exception getException() {
+        return exception;
     }
 
     @Override
@@ -83,12 +88,34 @@ public class SimpleFuture<T> implements Future<T> {
         }
     }
 
-    public void submit(Supplier<T> supplier) {
-        new Thread(() -> setResult(supplier.get())).start();
+    public void submit(Callable<T> supplier) {
+        new Thread(() -> {
+            try {
+                setResult(supplier.call());
+            } catch (Exception e) {
+                setException(e);
+            }
+        }).start();
     }
 
-    public void submit(ExecutorService executorService, Supplier<T> supplier) {
-        executorService.submit(() -> setResult(supplier.get()));
+    public void setException(Exception exception) {
+        synchronized (this) {
+            if (!done && !cancelled) {
+                this.exception = exception;
+                done = true;
+                notifyAll();
+            }
+        }
+    }
+
+    public void submit(ExecutorService executorService, Callable<T> supplier) {
+        executorService.submit(() -> {
+            try {
+                setResult(supplier.call());
+            } catch (Exception e) {
+                setException(e);
+            }
+        });
     }
 
 }
