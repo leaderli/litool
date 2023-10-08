@@ -89,10 +89,8 @@ class ReflectUtilTest {
 
     @Test
     void getFields() {
+
         assertEquals(4, ReflectUtil.getFields(LittleBean.class).size());
-//        System.out.println(ReflectUtil.getFields(Test1.class));
-//        assertTrue(ReflectUtil.getFields(Test1.class).absent());
-//        assertTrue(ReflectUtil.getFields(Out.In.class).absent());
     }
 
     @Test
@@ -221,7 +219,6 @@ class ReflectUtilTest {
         assertEquals(2, ReflectUtil.findAnnotationsWithMetaAnnotation(TestBean.class, API.class).size());
         assertEquals(0, ReflectUtil.findAnnotationsWithMetaAnnotation(TestBean.class, NotNull.class).size());
     }
-
 
 
     @Test

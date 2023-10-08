@@ -56,7 +56,9 @@ public class ReflectUtil {
         while ((clazz = clazz.getSuperclass()) != Object.class) {
             declaredFields = ArrayUtils.append(declaredFields, clazz.getDeclaredFields());
         }
-        return Lira.of(declaredFields).sorted((f1, f2) -> ModifierUtil.priority(f2) - ModifierUtil.priority(f1));
+        return Lira.of(declaredFields)
+                .filter(f -> !f.isSynthetic())
+                .sorted((f1, f2) -> ModifierUtil.priority(f2) - ModifierUtil.priority(f1));
     }
 
 
@@ -470,7 +472,9 @@ public class ReflectUtil {
             declaredMethods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
             clazz = clazz.getSuperclass();
         }
-        return Lira.of(declaredMethods).sorted((f1, f2) -> ModifierUtil.priority(f2) - ModifierUtil.priority(f1));
+        return Lira.of(declaredMethods)
+                .filter(f -> !f.isSynthetic())
+                .sorted((f1, f2) -> ModifierUtil.priority(f2) - ModifierUtil.priority(f1));
     }
 
     /**
