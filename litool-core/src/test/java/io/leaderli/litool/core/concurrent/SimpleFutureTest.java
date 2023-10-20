@@ -32,7 +32,6 @@ class SimpleFutureTest {
             throw new RuntimeException();
         });
         Assertions.assertNull(simpleFuture3.get());
-        Assertions.assertTrue(simpleFuture3.hasException());
         Assertions.assertEquals(RuntimeException.class, simpleFuture3.getException().getClass());
 
 

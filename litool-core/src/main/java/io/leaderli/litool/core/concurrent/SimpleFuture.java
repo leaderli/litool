@@ -7,9 +7,21 @@ import java.util.concurrent.*;
  * @since 2023/9/15 11:38 AM
  */
 public class SimpleFuture<T> implements Future<T> {
+    /**
+     * 任务是否取消了
+     */
     private volatile boolean cancelled;
+    /**
+     * 任务是否结束
+     */
     private volatile boolean done;
+    /**
+     * 执行结果，当没有值时可能为null
+     */
     private volatile T result;
+    /**
+     * 任务执行时，可能存在的异常
+     */
     private volatile Exception exception;
 
     @Override
@@ -32,11 +44,14 @@ public class SimpleFuture<T> implements Future<T> {
         return done;
     }
 
-    public boolean hasException() {
-        return exception != null;
-    }
 
+    /**
+     * @return 返回执行的异常，该方法任务结束后执行
+     */
     public Exception getException() {
+        if (!isDone()) {
+            return new IllegalStateException("task is not finished");
+        }
         return exception;
     }
 
