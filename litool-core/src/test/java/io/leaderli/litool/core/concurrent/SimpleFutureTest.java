@@ -29,8 +29,11 @@ class SimpleFutureTest {
         SimpleFuture<Integer> simpleFuture3 = new SimpleFuture<>();
 
         simpleFuture3.submit(() -> {
+            ThreadUtil.sleep(100);
             throw new RuntimeException();
         });
+
+        Assertions.assertThrows(IllegalStateException.class, simpleFuture3::getException);
         Assertions.assertNull(simpleFuture3.get());
         Assertions.assertEquals(RuntimeException.class, simpleFuture3.getException().getClass());
 

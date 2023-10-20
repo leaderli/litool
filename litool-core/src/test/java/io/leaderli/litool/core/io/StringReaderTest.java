@@ -20,7 +20,12 @@ class StringReaderTest {
         Assertions.assertEquals("hello", stringReader.get());
         Assertions.assertEquals("hello", stringReader.get());
 
-        Assertions.assertThrows(IllegalStateException.class, () -> new StringReader(System.in));
+        Assertions.assertThrows(IllegalStateException.class, () -> new StringReader(new InputStream() {
+            @Override
+            public int read() {
+                return 0;
+            }
+        }));
 
 
     }

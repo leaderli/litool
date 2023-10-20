@@ -44,15 +44,15 @@ public class SimpleFuture<T> implements Future<T> {
         return done;
     }
 
+    public boolean hasException() {
+        return exception != null;
+    }
 
-    /**
-     * @return 返回执行的异常，该方法任务结束后执行
-     */
     public Exception getException() {
-        if (!isDone()) {
-            return new IllegalStateException("task is not finished");
+        if (isDone()) {
+            return exception;
         }
-        return exception;
+        return new IllegalStateException("task not finished");
     }
 
     @Override
@@ -95,14 +95,26 @@ public class SimpleFuture<T> implements Future<T> {
         }
     }
 
+    public void setException(Exception exception) {
+        synchronized (this) {
+            if (!done && !cancelled) {
+                this.exception = exception;
+                done = true;
+                notifyAll();
+            }
+        }
+    }
+
     public void reset() {
         synchronized (this) {
             done = false;
             cancelled = false;
             result = null;
             exception = null;
+            notifyAll();
         }
     }
+
 
     public void submit(Callable<T> supplier) {
         new Thread(() -> {

@@ -44,7 +44,6 @@ public class BeanPath {
 
 
     /**
-     *
      * 该方法用于解析类似于xpath的表达式，将表达式解析为对应的key和数组下标
      * 表达式的合法格式如下：
      * <ul>
