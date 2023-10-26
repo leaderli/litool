@@ -33,7 +33,7 @@ class SimpleFutureTest {
             throw new RuntimeException();
         });
 
-        Assertions.assertThrows(IllegalStateException.class, simpleFuture3::getException);
+        Assertions.assertEquals(IllegalStateException.class, simpleFuture3.getException().getClass());
         Assertions.assertNull(simpleFuture3.get());
         Assertions.assertEquals(RuntimeException.class, simpleFuture3.getException().getClass());
 

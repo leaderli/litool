@@ -126,15 +126,6 @@ public class SimpleFuture<T> implements Future<T> {
         }).start();
     }
 
-    public void setException(Exception exception) {
-        synchronized (this) {
-            if (!done && !cancelled) {
-                this.exception = exception;
-                done = true;
-                notifyAll();
-            }
-        }
-    }
 
     public void submit(ExecutorService executorService, Callable<T> supplier) {
         executorService.submit(() -> {
