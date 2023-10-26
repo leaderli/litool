@@ -351,8 +351,21 @@ public class Tailer implements Runnable {
                 // See if the file needs to be read again
                 if (length > position) {
                     // The file has more content than it did last time
+                    long lastPos = position;
                     position = readLines(reader);
+                    /*
+                     * when in one listening period, if the file has been removed or deleted,
+                     * and a new file with content large than read position, it should reopen
+                     * the file and read from beginning
+                     */
+                    if (lastPos == position) {//
+                        reader = new RandomAccessFile(file, "r");
+                        position = 0;
+                        reader.seek(position);
+                        position = readLines(reader);
+                    }
                     last = FileUtil.lastModified(file);
+
                 } else if (newer) {
                     /*
                      * This can happen if the file is truncated or overwritten with the exact same length of
