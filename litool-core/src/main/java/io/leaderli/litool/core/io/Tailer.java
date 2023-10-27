@@ -360,7 +360,9 @@ public class Tailer implements Runnable {
                      */
                     if (lastPos == position) {//
                         reader = new RandomAccessFile(file, "r");
-                        position = 0;
+                        if (newer) {
+                            position = 0;
+                        }
                         reader.seek(position);
                         position = readLines(reader);
                     }
