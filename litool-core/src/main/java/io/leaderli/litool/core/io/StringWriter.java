@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.io;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.function.Supplier;
 
@@ -15,10 +16,20 @@ public class StringWriter extends ByteArrayOutputStream implements Supplier<Stri
     private final Charset charset;
 
     public StringWriter() {
-        this(Charset.defaultCharset());
+        this.charset = Charset.defaultCharset();
+    }
+
+    public StringWriter(int size) {
+        super(size);
+        this.charset = Charset.defaultCharset();
     }
 
     public StringWriter(Charset charset) {
+        this.charset = charset;
+    }
+
+    public StringWriter(Charset charset, int size) {
+        super(size);
         this.charset = charset;
     }
 
@@ -29,5 +40,12 @@ public class StringWriter extends ByteArrayOutputStream implements Supplier<Stri
     @Override
     public void flush() {
         super.reset();
+    }
+
+    /**
+     * @return new PrintStream(this);
+     */
+    public PrintStream printStream() {
+        return new PrintStream(this);
     }
 }

@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.exception;
 
+import io.leaderli.litool.core.io.StringWriter;
 import io.leaderli.litool.core.text.StringUtils;
 
 /**
@@ -31,8 +32,17 @@ public class ExceptionUtil {
     public static String beauty(Throwable throwable) {
         Throwable cause = getCause(throwable);
 
-        if (cause != null) {
+        if (cause != null && cause.getStackTrace().length > 0) {
             return cause.getStackTrace()[0] + " " + cause;
+        }
+        return "";
+    }
+
+    public static String getStackTrace(Throwable throwable) {
+        if (throwable != null) {
+            StringWriter stringWriter = new StringWriter();
+            throwable.printStackTrace(stringWriter.printStream());
+            return stringWriter.get();
         }
         return "";
     }
@@ -49,7 +59,7 @@ public class ExceptionUtil {
         if (throwout == null) {
             return null;
         }
-        while (throwable != null) {
+        while (throwable != null && throwable.getStackTrace().length > 0) {
             if (StringUtils.equals(throwout.getName(), throwable.getStackTrace()[0].getClassName())) {
 
                 return throwable;
@@ -60,4 +70,5 @@ public class ExceptionUtil {
         return null;
 
     }
+
 }
