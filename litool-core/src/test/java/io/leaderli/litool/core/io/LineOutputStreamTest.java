@@ -2,7 +2,6 @@ package io.leaderli.litool.core.io;
 
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.resource.ResourceUtil;
-import io.leaderli.litool.core.util.ConsoleUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,17 +26,7 @@ class LineOutputStreamTest {
         lineOutputStream.flush();
         Assertions.assertTrue(str.absent());
 
-        try {
 
-            throw new RuntimeException();
-        } catch (Throwable throwable) {
-
-            StringWriter stringWriter = new StringWriter();
-            throwable.printStackTrace(stringWriter.printStream());
-            ConsoleUtil.line();
-            System.out.println(stringWriter.get());
-            ConsoleUtil.line();
-        }
     }
 
 }

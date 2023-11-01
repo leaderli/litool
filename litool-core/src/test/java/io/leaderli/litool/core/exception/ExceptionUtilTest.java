@@ -73,4 +73,16 @@ class ExceptionUtilTest {
         }
     }
 
+    @Test
+    void getStackTrace() {
+
+        try {
+
+            throw new RuntimeException();
+        } catch (Throwable throwable) {
+
+            String stackTrace = ExceptionUtil.getStackTrace(throwable);
+            Assertions.assertTrue(stackTrace.startsWith("java.lang.RuntimeException"));
+        }
+    }
 }
