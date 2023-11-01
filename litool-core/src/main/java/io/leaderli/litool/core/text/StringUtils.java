@@ -22,7 +22,6 @@ import io.leaderli.litool.core.lang.RegexUtils;
 import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.meta.Lira;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -8588,28 +8587,23 @@ public class StringUtils implements StrPool {
      * @return one line error message  start with prefix
      */
     public static String localMessageStartWith(Throwable throwable, String prefix) {
-
+        if (prefix == null) {
+            prefix = "";
+        }
+        String err = "";
+        if (throwable != null) {
+            err = throwable + "";
+        }
 
         while (throwable != null) {
-
-            Throwable cause = throwable.getCause();
-            if (cause == null) {
-                break;
+            for (StackTraceElement stackTraceElement : throwable.getStackTrace()) {
+                if (stackTraceElement.toString().startsWith(prefix)) {
+                    return throwable + " at " + stackTraceElement;
+                }
             }
-            throwable = cause;
+            throwable = throwable.getCause();
         }
-
-        if (throwable != null) {
-
-            if (prefix == null) {
-                prefix = "";
-            }
-            StackTraceElement[] stackTrace = throwable.getStackTrace();
-            String finalPrefix = prefix;
-            return throwable + " at " + Lira.of(stackTrace).map(StackTraceElement::toString)
-                    .filter(s -> s.startsWith(finalPrefix)).limit(5).first().get(stackTrace[0].toString());
-        }
-        return "";
+        return err;
     }
 
     /**

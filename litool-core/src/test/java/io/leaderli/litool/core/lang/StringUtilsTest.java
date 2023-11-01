@@ -90,20 +90,27 @@ class StringUtilsTest {
             outmock();
         } catch (Exception e) {
             Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, Lino.class).contains("Lino$Some.map("));
-            Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, StringUtilsTest.class).contains(
-                    "StringUtilsTest.lambda"));
-            Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, null).length() > 0);
+            Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, StringUtilsTest.class).contains("StringUtilsTest.outmock"));
+            Assertions.assertFalse(StringUtils.localMessageAtLineOfClass(e, null).isEmpty());
         }
-        Lino.of(0).mapIgnoreError(i -> 5 / i, e -> Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e,
-                Lino.class).contains("Some.mapIgnoreError(")));
-        Lino.of(0).mapIgnoreError(i -> 5 / i, e -> Assertions.assertTrue(StringUtils.localMessageAtLineOfPackage(e,
-                Lino.class.getPackage()).contains("Some.mapIgnoreError(")));
+        Lino.of(0).mapIgnoreError(i -> 5 / i, e -> Assertions.assertTrue(StringUtils.localMessageAtLineOfClass(e, Lino.class).contains("Some.mapIgnoreError(")));
+        Lino.of(0).mapIgnoreError(i -> 5 / i, e -> Assertions.assertTrue(StringUtils.localMessageAtLineOfPackage(e, Lino.class.getPackage()).contains("Some.mapIgnoreError(")));
         Lino.of(0).mapIgnoreError(i -> 5 / i, e -> {
             String s = StringUtils.localMessageAtLineOfPackage(e, StringUtilsTest.class.getPackage());
             Assertions.assertTrue(s.contains("line$"));
         });
 
         Assertions.assertEquals("", StringUtils.localMessageAtLineOfClass(null, null));
+
+
+        Assertions.assertEquals("io.leaderli.litool.core.lang.StringUtilsTest$ZeroStackTraceElementException", StringUtils.localMessageStartWith(new ZeroStackTraceElementException(), ""));
+    }
+
+    static class ZeroStackTraceElementException extends RuntimeException {
+        @Override
+        public StackTraceElement[] getStackTrace() {
+            return new StackTraceElement[0];
+        }
     }
 
     @Test
