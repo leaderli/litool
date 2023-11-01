@@ -8592,7 +8592,7 @@ public class StringUtils implements StrPool {
         }
         String err = "";
         if (throwable != null) {
-            err = throwable + "";
+            err = String.valueOf(throwable);
         }
 
         while (throwable != null) {
