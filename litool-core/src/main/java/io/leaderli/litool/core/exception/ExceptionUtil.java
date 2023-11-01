@@ -38,6 +38,11 @@ public class ExceptionUtil {
         return "";
     }
 
+    /**
+     * @param throwable 错误信息
+     * @return 将错误信息转换为字符串返回
+     * @see Throwable#printStackTrace()
+     */
     public static String getStackTrace(Throwable throwable) {
         if (throwable != null) {
             StringWriter stringWriter = new StringWriter();
