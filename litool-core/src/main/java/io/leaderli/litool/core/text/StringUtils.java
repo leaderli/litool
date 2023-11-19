@@ -978,6 +978,42 @@ public class StringUtils implements StrPool {
         return compare(str1, str2, true);
     }
 
+
+    /**
+     * 示例
+     *
+     * @param text   用于查找的字符串
+     * @param search 检索
+     * @return 根据search的char，一个个按照顺序查找text，若text中包含全部的search，则返回其查找的最短距离。
+     * 否则返回-1，表示不匹配
+     */
+    public static int complete(String text, String search) {
+        search = search.toLowerCase();
+        text = text.toLowerCase();
+
+        char[] texts = text.toCharArray();
+
+        int step = 0;
+        int i = 0;
+        for (char c : search.toCharArray()) {
+
+            boolean found = false;
+            for (; i < texts.length; i++) {
+                if (c == texts[i]) {
+                    step += (i + 1);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return -1;
+            }
+        }
+        // 完全匹配时最小查找距离
+        int shortestStep = (search.length() + 1) * search.length() / 2;
+        return step - shortestStep;
+    }
+
     /**
      * <p>Compare two Strings lexicographically, as per {@link String#compareTo(String)}, returning :</p>
      * <ul>

@@ -18,6 +18,19 @@ import java.util.stream.Stream;
 class StringUtilsTest {
 
     @Test
+    void complete() {
+        Assertions.assertEquals(0, StringUtils.complete("1", "1"));
+        Assertions.assertEquals(0, StringUtils.complete("12", "12"));
+        Assertions.assertEquals(0, StringUtils.complete("12", "1"));
+        Assertions.assertEquals(0, StringUtils.complete("123", "12"));
+        Assertions.assertEquals(-1, StringUtils.complete("2", "1"));
+        Assertions.assertEquals(-1, StringUtils.complete("12", "13"));
+        Assertions.assertEquals(1, StringUtils.complete("123", "13"));
+        Assertions.assertEquals(2, StringUtils.complete("1223", "13"));
+
+    }
+
+    @Test
     void just() {
         Assertions.assertEquals("**1**", StringUtils.just("1", 4, '*'));
         Assertions.assertEquals("  1  ", StringUtils.just("1", 4));
