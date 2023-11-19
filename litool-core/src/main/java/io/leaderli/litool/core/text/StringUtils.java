@@ -980,12 +980,12 @@ public class StringUtils implements StrPool {
 
 
     /**
-     * 示例
+     * 根据search的char，一个个按照顺序查找text，若text中包含全部的search，则返回其查找的最短距离。
+     * 越早查找到则其值越小
      *
      * @param text   用于查找的字符串
      * @param search 检索
-     * @return 根据search的char，一个个按照顺序查找text，若text中包含全部的search，则返回其查找的最短距离。
-     * 否则返回-1，表示不匹配
+     * @return 否则返回-1，表示不匹配。0 表示前缀完全匹配。
      */
     public static int complete(String text, String search) {
         search = search.toLowerCase();
@@ -1544,8 +1544,7 @@ public class StringUtils implements StrPool {
      * {@code -1} ({@code INDEX_NOT_FOUND}) if no match or {@code null} string input
      */
 // Shared code between ordinalIndexOf(String, String, int) and lastOrdinalIndexOf(String, String, int)
-    private static int ordinalIndexOf(final CharSequence str, final CharSequence searchStr, final int ordinal,
-                                      final boolean lastIndex) {
+    private static int ordinalIndexOf(final CharSequence str, final CharSequence searchStr, final int ordinal, final boolean lastIndex) {
         if (str == null || searchStr == null || ordinal <= 0) {
             return INDEX_NOT_FOUND;
         }
@@ -3100,103 +3099,36 @@ public class StringUtils implements StrPool {
     }
 
     /**
-     * Performs the logic for the {@code split} and
-     * {@code splitPreserveAllTokens} methods that return a maximum array
-     * length.
+     * <p>Splits the provided text into an array, separator string specified.
+     * Returns a maximum of {@code max} substrings.</p>
      *
-     * @param str               the String to parse, may be {@code null}
-     * @param separatorChars    the separate character
-     * @param max               the maximum number of elements to include in the
-     *                          array. A zero or negative value implies no limit.
-     * @param preserveAllTokens if {@code true}, adjacent separators are
-     *                          treated as empty token separators; if {@code false}, adjacent
-     *                          separators are treated as one separator.
-     * @return an array of parsed Strings, {@code null} if null String input
+     * <p>The separator is not included in the returned String array.
+     * Adjacent separators are treated as separators for empty tokens.
+     * For more control over the split use the StrTokenizer class.</p>
+     *
+     * <p>A {@code null} input String returns {@code null}.
+     * A {@code null} separator splits on whitespace.</p>
+     *
+     * <pre>
+     * StringUtils.splitByWholeSeparatorPreserveAllTokens(null, *, *)               = null
+     * StringUtils.splitByWholeSeparatorPreserveAllTokens("", *, *)                 = []
+     * StringUtils.splitByWholeSeparatorPreserveAllTokens("ab de fg", null, 0)      = ["ab", "de", "fg"]
+     * StringUtils.splitByWholeSeparatorPreserveAllTokens("ab   de fg", null, 0)    = ["ab", "", "", "de", "fg"]
+     * StringUtils.splitByWholeSeparatorPreserveAllTokens("ab:cd:ef", ":", 2)       = ["ab", "cd:ef"]
+     * StringUtils.splitByWholeSeparatorPreserveAllTokens("ab-!-cd-!-ef", "-!-", 5) = ["ab", "cd", "ef"]
+     * StringUtils.splitByWholeSeparatorPreserveAllTokens("ab-!-cd-!-ef", "-!-", 2) = ["ab", "cd-!-ef"]
+     * </pre>
+     *
+     * @param str       the String to parse, may be null
+     * @param separator String containing the String to be used as a delimiter,
+     *                  {@code null} splits on whitespace
+     * @param max       the maximum number of elements to include in the returned
+     *                  array. A zero or negative value implies no limit.
+     * @return an array of parsed Strings, {@code null} if null String was input
+     * @since 2.4
      */
-    private static String[] splitWorker(final String str, final String separatorChars, final int max,
-                                        final boolean preserveAllTokens) {
-        // Performance tuned for 2.0 (JDK1.4)
-        // Direct code is quicker than StringTokenizer.
-        // Also, StringTokenizer uses isSpace() not isWhitespace()
-
-        if (str == null) {
-            return null;
-        }
-        final int len = str.length();
-        if (len == 0) {
-            return ArrayUtils.EMPTY_STRING_ARRAY;
-        }
-        final List<String> list = new ArrayList<>();
-        int sizePlus1 = 1;
-        int i = 0, start = 0;
-        boolean match = false;
-        boolean lastMatch = false;
-        if (separatorChars == null) {
-            // Null separator means use whitespace
-            while (i < len) {
-                if (Character.isWhitespace(str.charAt(i))) {
-                    if (match || preserveAllTokens) {
-                        lastMatch = true;
-                        if (sizePlus1++ == max) {
-                            i = len;
-                            lastMatch = false;
-                        }
-                        list.add(str.substring(start, i));
-                        match = false;
-                    }
-                    start = ++i;
-                    continue;
-                }
-                lastMatch = false;
-                match = true;
-                i++;
-            }
-        } else if (separatorChars.length() == 1) {
-            // Optimise 1 character case
-            final char sep = separatorChars.charAt(0);
-            while (i < len) {
-                if (str.charAt(i) == sep) {
-                    if (match || preserveAllTokens) {
-                        lastMatch = true;
-                        if (sizePlus1++ == max) {
-                            i = len;
-                            lastMatch = false;
-                        }
-                        list.add(str.substring(start, i));
-                        match = false;
-                    }
-                    start = ++i;
-                    continue;
-                }
-                lastMatch = false;
-                match = true;
-                i++;
-            }
-        } else {
-            // standard case
-            while (i < len) {
-                if (separatorChars.indexOf(str.charAt(i)) >= 0) {
-                    if (match || preserveAllTokens) {
-                        lastMatch = true;
-                        if (sizePlus1++ == max) {
-                            i = len;
-                            lastMatch = false;
-                        }
-                        list.add(str.substring(start, i));
-                        match = false;
-                    }
-                    start = ++i;
-                    continue;
-                }
-                lastMatch = false;
-                match = true;
-                i++;
-            }
-        }
-        if (match || preserveAllTokens && lastMatch) {
-            list.add(str.substring(start, i));
-        }
-        return list.toArray(new String[0]);
+    public static String[] splitByWholeSeparatorPreserveAllTokens(final String str, final String separator, final int max) {
+        return splitByWholeSeparatorWorker(str, separator, max, true);
     }
 
 // Nested extraction
@@ -3246,8 +3178,7 @@ public class StringUtils implements StrPool {
      * @return an array of parsed Strings, {@code null} if null String input
      * @since 2.4
      */
-    private static String[] splitByWholeSeparatorWorker(
-            final String str, final String separator, final int max, final boolean preserveAllTokens) {
+    private static String[] splitByWholeSeparatorWorker(final String str, final String separator, final int max, final boolean preserveAllTokens) {
         if (str == null) {
             return null;
         }
@@ -3373,37 +3304,102 @@ public class StringUtils implements StrPool {
     }
 
     /**
-     * <p>Splits the provided text into an array, separator string specified.
-     * Returns a maximum of {@code max} substrings.</p>
+     * Performs the logic for the {@code split} and
+     * {@code splitPreserveAllTokens} methods that return a maximum array
+     * length.
      *
-     * <p>The separator is not included in the returned String array.
-     * Adjacent separators are treated as separators for empty tokens.
-     * For more control over the split use the StrTokenizer class.</p>
-     *
-     * <p>A {@code null} input String returns {@code null}.
-     * A {@code null} separator splits on whitespace.</p>
-     *
-     * <pre>
-     * StringUtils.splitByWholeSeparatorPreserveAllTokens(null, *, *)               = null
-     * StringUtils.splitByWholeSeparatorPreserveAllTokens("", *, *)                 = []
-     * StringUtils.splitByWholeSeparatorPreserveAllTokens("ab de fg", null, 0)      = ["ab", "de", "fg"]
-     * StringUtils.splitByWholeSeparatorPreserveAllTokens("ab   de fg", null, 0)    = ["ab", "", "", "de", "fg"]
-     * StringUtils.splitByWholeSeparatorPreserveAllTokens("ab:cd:ef", ":", 2)       = ["ab", "cd:ef"]
-     * StringUtils.splitByWholeSeparatorPreserveAllTokens("ab-!-cd-!-ef", "-!-", 5) = ["ab", "cd", "ef"]
-     * StringUtils.splitByWholeSeparatorPreserveAllTokens("ab-!-cd-!-ef", "-!-", 2) = ["ab", "cd-!-ef"]
-     * </pre>
-     *
-     * @param str       the String to parse, may be null
-     * @param separator String containing the String to be used as a delimiter,
-     *                  {@code null} splits on whitespace
-     * @param max       the maximum number of elements to include in the returned
-     *                  array. A zero or negative value implies no limit.
-     * @return an array of parsed Strings, {@code null} if null String was input
-     * @since 2.4
+     * @param str               the String to parse, may be {@code null}
+     * @param separatorChars    the separate character
+     * @param max               the maximum number of elements to include in the
+     *                          array. A zero or negative value implies no limit.
+     * @param preserveAllTokens if {@code true}, adjacent separators are
+     *                          treated as empty token separators; if {@code false}, adjacent
+     *                          separators are treated as one separator.
+     * @return an array of parsed Strings, {@code null} if null String input
      */
-    public static String[] splitByWholeSeparatorPreserveAllTokens(final String str, final String separator,
-                                                                  final int max) {
-        return splitByWholeSeparatorWorker(str, separator, max, true);
+    private static String[] splitWorker(final String str, final String separatorChars, final int max, final boolean preserveAllTokens) {
+        // Performance tuned for 2.0 (JDK1.4)
+        // Direct code is quicker than StringTokenizer.
+        // Also, StringTokenizer uses isSpace() not isWhitespace()
+
+        if (str == null) {
+            return null;
+        }
+        final int len = str.length();
+        if (len == 0) {
+            return ArrayUtils.EMPTY_STRING_ARRAY;
+        }
+        final List<String> list = new ArrayList<>();
+        int sizePlus1 = 1;
+        int i = 0, start = 0;
+        boolean match = false;
+        boolean lastMatch = false;
+        if (separatorChars == null) {
+            // Null separator means use whitespace
+            while (i < len) {
+                if (Character.isWhitespace(str.charAt(i))) {
+                    if (match || preserveAllTokens) {
+                        lastMatch = true;
+                        if (sizePlus1++ == max) {
+                            i = len;
+                            lastMatch = false;
+                        }
+                        list.add(str.substring(start, i));
+                        match = false;
+                    }
+                    start = ++i;
+                    continue;
+                }
+                lastMatch = false;
+                match = true;
+                i++;
+            }
+        } else if (separatorChars.length() == 1) {
+            // Optimise 1 character case
+            final char sep = separatorChars.charAt(0);
+            while (i < len) {
+                if (str.charAt(i) == sep) {
+                    if (match || preserveAllTokens) {
+                        lastMatch = true;
+                        if (sizePlus1++ == max) {
+                            i = len;
+                            lastMatch = false;
+                        }
+                        list.add(str.substring(start, i));
+                        match = false;
+                    }
+                    start = ++i;
+                    continue;
+                }
+                lastMatch = false;
+                match = true;
+                i++;
+            }
+        } else {
+            // standard case
+            while (i < len) {
+                if (separatorChars.indexOf(str.charAt(i)) >= 0) {
+                    if (match || preserveAllTokens) {
+                        lastMatch = true;
+                        if (sizePlus1++ == max) {
+                            i = len;
+                            lastMatch = false;
+                        }
+                        list.add(str.substring(start, i));
+                        match = false;
+                    }
+                    start = ++i;
+                    continue;
+                }
+                lastMatch = false;
+                match = true;
+                i++;
+            }
+        }
+        if (match || preserveAllTokens && lastMatch) {
+            list.add(str.substring(start, i));
+        }
+        return list.toArray(new String[0]);
     }
 
     /**
@@ -4031,8 +4027,7 @@ public class StringUtils implements StrPool {
      * @return the text with any replacements processed,
      * {@code null} if null String input
      */
-    public static String replace(final String text, final String searchString, final String replacement,
-                                 final int max) {
+    public static String replace(final String text, final String searchString, final String replacement, final int max) {
         return replace(text, searchString, replacement, max, false);
     }
 
@@ -4067,8 +4062,7 @@ public class StringUtils implements StrPool {
      * @return the text with any replacements processed,
      * {@code null} if null String input
      */
-    private static String replace(final String text, String searchString, final String replacement, int max,
-                                  final boolean ignoreCase) {
+    private static String replace(final String text, String searchString, final String replacement, int max, final boolean ignoreCase) {
         if (isEmpty(text) || isEmpty(searchString) || replacement == null || max == 0) {
             return text;
         }
@@ -4166,8 +4160,7 @@ public class StringUtils implements StrPool {
      * {@code null} if null String input
      * @since 3.5
      */
-    public static String replaceIgnoreCase(final String text, final String searchString, final String replacement,
-                                           final int max) {
+    public static String replaceIgnoreCase(final String text, final String searchString, final String replacement, final int max) {
         return replace(text, searchString, replacement, max, true);
     }
 
@@ -4661,8 +4654,7 @@ public class StringUtils implements StrPool {
      *                                  and/or size 0)
      * @since 2.4
      */
-    public static String replaceEachRepeatedly(final String text, final String[] searchList,
-                                               final String[] replacementList) {
+    public static String replaceEachRepeatedly(final String text, final String[] searchList, final String[] replacementList) {
         // timeToLive should be 0 if not used or nothing to replace, else it's
         // the length of the replace array
         final int timeToLive = searchList == null ? 0 : searchList.length;
@@ -4713,22 +4705,18 @@ public class StringUtils implements StrPool {
      *                                  and/or size 0)
      * @since 2.4
      */
-    private static String replaceEach(
-            final String text, final String[] searchList, final String[] replacementList, final boolean repeat,
-            final int timeToLive) {
+    private static String replaceEach(final String text, final String[] searchList, final String[] replacementList, final boolean repeat, final int timeToLive) {
 
         // mchyzer Performance note: This creates very few new objects (one major goal)
         // let me know if there are performance requests, we can create a harness to measure
 
-        if (text == null || text.isEmpty() || searchList == null ||
-                searchList.length == 0 || replacementList == null || replacementList.length == 0) {
+        if (text == null || text.isEmpty() || searchList == null || searchList.length == 0 || replacementList == null || replacementList.length == 0) {
             return text;
         }
 
         // if recursing, this shouldn't be less than 0
         if (timeToLive < 0) {
-            throw new IllegalStateException("Aborting to protect against StackOverflowError - " +
-                    "output of one loop is the input of another");
+            throw new IllegalStateException("Aborting to protect against StackOverflowError - " + "output of one loop is the input of another");
         }
 
         final int searchLength = searchList.length;
@@ -4736,10 +4724,7 @@ public class StringUtils implements StrPool {
 
         // make sure lengths are ok, these need to be equal
         if (searchLength != replacementLength) {
-            throw new IllegalArgumentException("Search and Replace array lengths don't match: "
-                    + searchLength
-                    + " vs "
-                    + replacementLength);
+            throw new IllegalArgumentException("Search and Replace array lengths don't match: " + searchLength + " vs " + replacementLength);
         }
 
         // keep track of which still have matches
@@ -4753,8 +4738,7 @@ public class StringUtils implements StrPool {
         // index of replace array that will replace the search string found
         // NOTE: logic duplicated below START
         for (int i = 0; i < searchLength; i++) {
-            if (noMoreMatchesForReplIndex[i] || searchList[i] == null ||
-                    searchList[i].isEmpty() || replacementList[i] == null) {
+            if (noMoreMatchesForReplIndex[i] || searchList[i] == null || searchList[i].isEmpty() || replacementList[i] == null) {
                 continue;
             }
             tempIndex = text.indexOf(searchList[i]);
@@ -4810,8 +4794,7 @@ public class StringUtils implements StrPool {
             // find the next earliest match
             // NOTE: logic mostly duplicated above START
             for (int i = 0; i < searchLength; i++) {
-                if (noMoreMatchesForReplIndex[i] || searchList[i] == null ||
-                        searchList[i].isEmpty() || replacementList[i] == null) {
+                if (noMoreMatchesForReplIndex[i] || searchList[i] == null || searchList[i].isEmpty() || replacementList[i] == null) {
                     continue;
                 }
                 tempIndex = text.indexOf(searchList[i], start);
@@ -4990,9 +4973,7 @@ public class StringUtils implements StrPool {
             start = end;
             end = temp;
         }
-        return str.substring(0, start) +
-                overlay +
-                str.substring(end);
+        return str.substring(0, start) + overlay + str.substring(end);
     }
 
 // Overlay
@@ -6994,8 +6975,7 @@ public class StringUtils implements StrPool {
             return str.substring(0, maxWidth - abbrevMarkerLength) + abbrevMarker;
         }
         if (maxWidth < minAbbrevWidthOffset) {
-            throw new IllegalArgumentException(String.format("Minimum abbreviation width with offset is %d",
-                    minAbbrevWidthOffset));
+            throw new IllegalArgumentException(String.format("Minimum abbreviation width with offset is %d", minAbbrevWidthOffset));
         }
         if (offset + maxWidth - abbrevMarkerLength < str.length()) {
             return abbrevMarker + abbreviate(str.substring(offset), abbrevMarker, maxWidth - abbrevMarkerLength);
@@ -7045,9 +7025,7 @@ public class StringUtils implements StrPool {
         final int startOffset = targetSting / 2 + targetSting % 2;
         final int endOffset = str.length() - targetSting / 2;
 
-        return str.substring(0, startOffset) +
-                middle +
-                str.substring(endOffset);
+        return str.substring(0, startOffset) + middle + str.substring(endOffset);
     }
 
     /**
@@ -7968,31 +7946,6 @@ public class StringUtils implements StrPool {
 
     /**
      * Appends the suffix to the end of the string if the string does not
-     * already end with the suffix.
-     *
-     * @param str        The string.
-     * @param suffix     The suffix to append to the end of the string.
-     * @param ignoreCase Indicates whether the compare should ignore case.
-     * @param suffixes   Additional suffixes that are valid terminators (optional).
-     * @return A new String if suffix was appended, the same string otherwise.
-     */
-    private static String appendIfMissing(final String str, final CharSequence suffix, final boolean ignoreCase,
-                                          final CharSequence... suffixes) {
-        if (str == null || isEmpty(suffix) || endsWith(str, suffix, ignoreCase)) {
-            return str;
-        }
-        if (suffixes != null) {
-            for (final CharSequence s : suffixes) {
-                if (endsWith(str, s, ignoreCase)) {
-                    return str;
-                }
-            }
-        }
-        return str + suffix;
-    }
-
-    /**
-     * Appends the suffix to the end of the string if the string does not
      * already end, case insensitive, with any of the suffixes.
      *
      * <pre>
@@ -8023,9 +7976,32 @@ public class StringUtils implements StrPool {
      * @return A new String if suffix was appended, the same string otherwise.
      * @since 3.2
      */
-    public static String appendIfMissingIgnoreCase(final String str, final CharSequence suffix,
-                                                   final CharSequence... suffixes) {
+    public static String appendIfMissingIgnoreCase(final String str, final CharSequence suffix, final CharSequence... suffixes) {
         return appendIfMissing(str, suffix, true, suffixes);
+    }
+
+    /**
+     * Appends the suffix to the end of the string if the string does not
+     * already end with the suffix.
+     *
+     * @param str        The string.
+     * @param suffix     The suffix to append to the end of the string.
+     * @param ignoreCase Indicates whether the compare should ignore case.
+     * @param suffixes   Additional suffixes that are valid terminators (optional).
+     * @return A new String if suffix was appended, the same string otherwise.
+     */
+    private static String appendIfMissing(final String str, final CharSequence suffix, final boolean ignoreCase, final CharSequence... suffixes) {
+        if (str == null || isEmpty(suffix) || endsWith(str, suffix, ignoreCase)) {
+            return str;
+        }
+        if (suffixes != null) {
+            for (final CharSequence s : suffixes) {
+                if (endsWith(str, s, ignoreCase)) {
+                    return str;
+                }
+            }
+        }
+        return str + suffix;
     }
 
     /**
@@ -8066,31 +8042,6 @@ public class StringUtils implements StrPool {
 
     /**
      * Prepends the prefix to the start of the string if the string does not
-     * already start with any of the prefixes.
-     *
-     * @param str        The string.
-     * @param prefix     The prefix to prepend to the start of the string.
-     * @param ignoreCase Indicates whether the compare should ignore case.
-     * @param prefixes   Additional prefixes that are valid (optional).
-     * @return A new String if prefix was prepended, the same string otherwise.
-     */
-    private static String prependIfMissing(final String str, final CharSequence prefix, final boolean ignoreCase,
-                                           final CharSequence... prefixes) {
-        if (str == null || isEmpty(prefix) || startsWith(str, prefix, ignoreCase)) {
-            return str;
-        }
-        if (prefixes != null) {
-            for (final CharSequence p : prefixes) {
-                if (startsWith(str, p, ignoreCase)) {
-                    return str;
-                }
-            }
-        }
-        return prefix + str;
-    }
-
-    /**
-     * Prepends the prefix to the start of the string if the string does not
      * already start, case insensitive, with any of the prefixes.
      *
      * <pre>
@@ -8121,9 +8072,32 @@ public class StringUtils implements StrPool {
      * @return A new String if prefix was prepended, the same string otherwise.
      * @since 3.2
      */
-    public static String prependIfMissingIgnoreCase(final String str, final CharSequence prefix,
-                                                    final CharSequence... prefixes) {
+    public static String prependIfMissingIgnoreCase(final String str, final CharSequence prefix, final CharSequence... prefixes) {
         return prependIfMissing(str, prefix, true, prefixes);
+    }
+
+    /**
+     * Prepends the prefix to the start of the string if the string does not
+     * already start with any of the prefixes.
+     *
+     * @param str        The string.
+     * @param prefix     The prefix to prepend to the start of the string.
+     * @param ignoreCase Indicates whether the compare should ignore case.
+     * @param prefixes   Additional prefixes that are valid (optional).
+     * @return A new String if prefix was prepended, the same string otherwise.
+     */
+    private static String prependIfMissing(final String str, final CharSequence prefix, final boolean ignoreCase, final CharSequence... prefixes) {
+        if (str == null || isEmpty(prefix) || startsWith(str, prefix, ignoreCase)) {
+            return str;
+        }
+        if (prefixes != null) {
+            for (final CharSequence p : prefixes) {
+                if (startsWith(str, p, ignoreCase)) {
+                    return str;
+                }
+            }
+        }
+        return prefix + str;
     }
 
     /**
@@ -8785,18 +8759,16 @@ public class StringUtils implements StrPool {
             delimiter = LiConstant.JOIN_DELIMITER;
         }
         StringJoiner joiner = new StringJoiner(delimiter);
-        iterable.forEach(
-                element -> {
-                    String value;
-                    if (element == null) {
-                        value = "";
-                    } else {
-                        value = String.valueOf(element);
-                    }
+        iterable.forEach(element -> {
+            String value;
+            if (element == null) {
+                value = "";
+            } else {
+                value = String.valueOf(element);
+            }
 
-                    joiner.add(value);
-                }
-        );
+            joiner.add(value);
+        });
         return joiner.toString();
     }
 
@@ -8829,18 +8801,16 @@ public class StringUtils implements StrPool {
             delimiter = LiConstant.JOIN_DELIMITER;
         }
         StringJoiner joiner = new StringJoiner(delimiter);
-        iterator.forEachRemaining(
-                element -> {
-                    String value;
-                    if (element == null) {
-                        value = "";
-                    } else {
-                        value = String.valueOf(element);
-                    }
+        iterator.forEachRemaining(element -> {
+            String value;
+            if (element == null) {
+                value = "";
+            } else {
+                value = String.valueOf(element);
+            }
 
-                    joiner.add(value);
-                }
-        );
+            joiner.add(value);
+        });
         return joiner.toString();
     }
 
@@ -8861,18 +8831,16 @@ public class StringUtils implements StrPool {
             delimiter = LiConstant.JOIN_DELIMITER;
         }
         StringJoiner joiner = new StringJoiner(delimiter);
-        stream.forEach(
-                element -> {
-                    String value;
-                    if (element == null) {
-                        value = "";
-                    } else {
-                        value = String.valueOf(element);
-                    }
+        stream.forEach(element -> {
+            String value;
+            if (element == null) {
+                value = "";
+            } else {
+                value = String.valueOf(element);
+            }
 
-                    joiner.add(value);
-                }
-        );
+            joiner.add(value);
+        });
         return joiner.toString();
     }
 
