@@ -14,7 +14,7 @@ class TypeAdaptersTest {
     @Test
     void test() {
 
-        TypeAdapter<?> typeAdapter = TypeAdapterFactories.PRIMITIVE_FACTORY.create(new Lean(), LiTypeToken.of(int.class));
+        TypeAdapter<?> typeAdapter = TypeAdapterFactories.INSTANCE.PRIMITIVE_FACTORY.create(new Lean(), LiTypeToken.of(int.class));
 
         Lean lean = null;
         Assertions.assertEquals(1, typeAdapter.read("1", lean));

@@ -1,10 +1,9 @@
 package io.leaderli.litool.core.lang;
 
 import com.google.gson.Gson;
-import io.leaderli.litool.core.lang.lean.Lean;
-import io.leaderli.litool.core.lang.lean.LeanKey;
-import io.leaderli.litool.core.lang.lean.LeanValue;
-import io.leaderli.litool.core.lang.lean.TypeAdapter;
+import io.leaderli.litool.core.lang.lean.*;
+import io.leaderli.litool.core.lang.lean.adapters.MapTypeAdapterFactory;
+import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,7 @@ import java.util.*;
  * @author leaderli
  * @since 2022/9/24 9:41 AM
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 class LeanTest {
 
 
@@ -237,6 +236,34 @@ class LeanTest {
         Assertions.assertEquals("{\"name\":\"123\"}", gson.toJson(bean));
     }
 
+    @Test
+    void test16() {
+
+        LiBox<Integer> count = LiBox.none();
+        TypeAdapterFactories.Builder builder = new TypeAdapterFactories.Builder();
+        builder.withMapFactory(new MapTypeAdapterFactory() {
+
+            @Override
+            public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
+
+                TypeAdapter<T> adapter = super.create(lean, typeToken);
+                if (adapter instanceof MapAdapter) {
+
+                    return (source, l) -> {
+                        Map read = (Map) adapter.read(source, l);
+                        count.value(1);
+                        return (T) read;
+                    };
+                }
+                return adapter;
+
+            }
+        });
+        Lean lean = new Lean(builder);
+        Map map = lean.fromBean(new Bean14(), Map.class);
+        Assertions.assertTrue(count.present());
+
+    }
 
     private static class StringTypeAdapter implements TypeAdapter<String> {
 

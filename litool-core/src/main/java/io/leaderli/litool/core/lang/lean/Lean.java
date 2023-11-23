@@ -42,6 +42,10 @@ public class Lean {
     /**
      * @see #Lean(LinkedHashMap, List)
      */
+    public Lean(TypeAdapterFactories.Builder builder) {
+        this(new LinkedHashMap<>(), null, false, builder.build());
+    }
+
     public Lean() {
         this(new LinkedHashMap<>(), null);
     }
@@ -64,25 +68,31 @@ public class Lean {
      */
     public Lean(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators, List<LeanKeyHandler> leanKeyHandlers, boolean strict) {
 
+        this(instanceCreators, leanKeyHandlers, strict, TypeAdapterFactories.INSTANCE);
+
+    }
+
+    public Lean(LinkedHashMap<Type, InstanceCreator<?>> instanceCreators, List<LeanKeyHandler> leanKeyHandlers, boolean strict, TypeAdapterFactories typeAdapterFactories) {
+
         this.constructorConstructor = new ConstructorConstructor(instanceCreators);
 
-        typeAdapterFactories.add(TypeAdapterFactories.PRIMITIVE_FACTORY);
-        typeAdapterFactories.add(TypeAdapterFactories.STRING_FACTORY);
-        typeAdapterFactories.add(TypeAdapterFactories.ENUM_FACTORY);
+        this.typeAdapterFactories.add(typeAdapterFactories.PRIMITIVE_FACTORY);
+        this.typeAdapterFactories.add(typeAdapterFactories.STRING_FACTORY);
+        this.typeAdapterFactories.add(typeAdapterFactories.ENUM_FACTORY);
 
-        typeAdapterFactories.add(TypeAdapterFactories.ARRAY_FACTORY);
-        typeAdapterFactories.add(TypeAdapterFactories.ITERABLE_FACTORY);
-        typeAdapterFactories.add(TypeAdapterFactories.MAP_FACTORY);
+        this.typeAdapterFactories.add(typeAdapterFactories.ARRAY_FACTORY);
+        this.typeAdapterFactories.add(typeAdapterFactories.ITERABLE_FACTORY);
+        this.typeAdapterFactories.add(typeAdapterFactories.MAP_FACTORY);
 
-        typeAdapterFactories.add(customTypeAdapterFactory);
+        this.typeAdapterFactories.add(customTypeAdapterFactory);
 
 
-        typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
-        typeAdapterFactories.add(TypeAdapterFactories.OBJECT_FACTORY);
-        typeAdapterFactories.add(TypeAdapterFactories.REFLECT_FACTORY);
+        this.typeAdapterFactories.add(typeAdapterFactories.OBJECT_FACTORY);
+        this.typeAdapterFactories.add(typeAdapterFactories.OBJECT_FACTORY);
+        this.typeAdapterFactories.add(typeAdapterFactories.REFLECT_FACTORY);
 
         if (!strict) {
-            typeAdapterFactories.add(TypeAdapterFactories.NULL_FACTORY);
+            this.typeAdapterFactories.add(typeAdapterFactories.NULL_FACTORY);
         }
 
         this.leanKeyHandlers = initLeanKeyHandlers(leanKeyHandlers);
