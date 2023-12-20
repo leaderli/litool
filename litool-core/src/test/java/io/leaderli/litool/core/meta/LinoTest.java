@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.collection.CollectionUtils;
+import io.leaderli.litool.core.collection.LiMapUtil;
 import io.leaderli.litool.core.meta.ra.DebugConsumer;
 import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
@@ -297,6 +299,12 @@ class LinoTest {
 
         Assertions.assertEquals(1, Lino.of(new int[]{1, 2}).toLira(Object.class).get().get(0));
 
+
+        Object obj = CollectionUtils.toList(LiMapUtil.newHashMap("k", 1));
+
+        List<Map<String, String>> maps = Lino.of(obj).toLira(new LiTypeToken<Map<String, String>>() {
+        }).cast(String.class, String.class).get();
+        Assertions.assertTrue(maps.isEmpty());
 
     }
 
