@@ -341,7 +341,7 @@ public class CharUtils implements CharPool {
     }
 
     /**
-     * <p>Converts the string to the Unicode format '\u0020'.</p>
+     * <p>Converts the string to the Unicode format ' '.</p>
      *
      * <p>This format is the Java source code format.</p>
      *
@@ -349,8 +349,8 @@ public class CharUtils implements CharPool {
      *
      * <pre>
      *   LiCharUtils.unicodeEscaped(null) = null
-     *   LiCharUtils.unicodeEscaped(' ')  = "\u0020"
-     *   LiCharUtils.unicodeEscaped('A')  = "\u0041"
+     *   LiCharUtils.unicodeEscaped(' ')  = " "
+     *   LiCharUtils.unicodeEscaped('A')  = "A"
      * </pre>
      *
      * @param ch the character to convert, may be null
@@ -366,13 +366,13 @@ public class CharUtils implements CharPool {
 //--------------------------------------------------------------------------
 
     /**
-     * <p>Converts the string to the Unicode format '\u0020'.</p>
+     * <p>Converts the string to the Unicode format ' '.</p>
      *
      * <p>This format is the Java source code format.</p>
      *
      * <pre>
-     *   LiCharUtils.unicodeEscaped(' ') = "\u0020"
-     *   LiCharUtils.unicodeEscaped('A') = "\u0041"
+     *   LiCharUtils.unicodeEscaped(' ') = " "
+     *   LiCharUtils.unicodeEscaped('A') = "A"
      * </pre>
      *
      * @param ch the character to convert

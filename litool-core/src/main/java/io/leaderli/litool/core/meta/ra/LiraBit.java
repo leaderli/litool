@@ -13,7 +13,6 @@ class LiraBit extends BitPermission {
     /**
      * the iterator request, evert request only get one element
      *
-     * @see SubscriptionRa#request(int)
      */
     public static final int ITR = 1;
     /**

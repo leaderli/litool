@@ -1,4 +1,5 @@
 int: 1
+# noinspection YAMLIncompatibleTypes
 list:
   - 1
   - 2

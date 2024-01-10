@@ -18,7 +18,7 @@ class InstructContainerTest {
     void scan() {
 
         Map<String, Instruct> scanner = InstructContainer.scanner();
-        Assertions.assertTrue(scanner.size() > 0);
+        Assertions.assertFalse(scanner.isEmpty());
 
         Assertions.assertThrows(AssertException.class, () -> InstructContainer.registerInstruct(new AddInstruct()));
 

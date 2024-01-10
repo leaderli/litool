@@ -2,11 +2,11 @@
 <router>
 
     <unit>123</unit>
-    <unit></unit>
-    <unit></unit>
+    <unit/>
+    <unit/>
     <unit>
         <if>
-            <condition></condition>
+            <condition/>
             <then>
 
             </then>

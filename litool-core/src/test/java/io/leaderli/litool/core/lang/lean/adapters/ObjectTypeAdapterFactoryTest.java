@@ -21,11 +21,11 @@ class ObjectTypeAdapterFactoryTest {
 
         ObjectTypeAdapterFactory.ObjectTypeAdapter typeAdapter = new ObjectTypeAdapterFactory.ObjectTypeAdapter();
         Assertions.assertEquals(1, typeAdapter.read(1, lean));
-        Assertions.assertTrue(typeAdapter.read(new HashMap<>(), lean) instanceof Map);
-        Assertions.assertTrue(typeAdapter.read(new ArrayList<>(), lean) instanceof List);
-        Assertions.assertTrue(typeAdapter.read(new LinkedList<>(), lean) instanceof List);
+        Assertions.assertInstanceOf(Map.class, typeAdapter.read(new HashMap<>(), lean));
+        Assertions.assertInstanceOf(List.class, typeAdapter.read(new ArrayList<>(), lean));
+        Assertions.assertInstanceOf(List.class, typeAdapter.read(new LinkedList<>(), lean));
         Object read = typeAdapter.read(new LinkedList<>(), lean);
-        Assertions.assertTrue(read instanceof List);
+        Assertions.assertInstanceOf(List.class, read);
         Assertions.assertSame(Integer[].class, bean.ages.getClass());
         Bean<Integer> copy = new Bean<>();
         lean.copyBean(bean, copy, new LiTypeToken<Bean<Integer>>() {

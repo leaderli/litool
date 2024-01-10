@@ -51,6 +51,11 @@ public class Lean {
     }
 
     /**
+     * 默认实现
+     */
+    public static Lean INSTANCE = new Lean();
+
+    /**
      * @param instanceCreators 构造器
      * @param leanKeyHandlers  key处理器
      * @see #Lean(LinkedHashMap, List, boolean)

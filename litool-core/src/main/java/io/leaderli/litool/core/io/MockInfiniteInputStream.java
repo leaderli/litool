@@ -2,7 +2,6 @@ package io.leaderli.litool.core.io;
 
 import io.leaderli.litool.core.util.RandomUtil;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Supplier;
 
@@ -25,7 +24,7 @@ public class MockInfiniteInputStream extends InputStream {
     }
 
     @Override
-    public int read() throws IOException {
+    public int read() {
         // don not use sleep
         return supplier.get();
     }

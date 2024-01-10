@@ -53,13 +53,7 @@ class LiDomUtilTest {
 
         MyDom myDom = new MyDom(dom);
         myDom.accept(new Visitor() {
-            @Override
-            void visit(DOMElement dom) {
-            }
 
-            @Override
-            void visit(String text) {
-            }
         });
 
     }

@@ -2,6 +2,7 @@ package io.leaderli.litool.core.cache;
 
 import java.lang.annotation.Annotation;
 
+@SuppressWarnings("ClassExplicitlyAnnotation")
 public class LiCacheImpl implements LiCache {
     private long millis = 5000;
 

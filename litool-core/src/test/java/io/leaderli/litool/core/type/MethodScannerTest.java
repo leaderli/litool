@@ -5,7 +5,6 @@ import io.leaderli.litool.core.meta.ra.NullableFunction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -18,7 +17,7 @@ class MethodScannerTest {
 
 
     @Test
-    void test() throws InvocationTargetException, IllegalAccessException {
+    void test() {
 
 
         MethodScanner methodScanner = new MethodScanner(MethodScannerTest.class, true, f -> f.getName().contains("$"));

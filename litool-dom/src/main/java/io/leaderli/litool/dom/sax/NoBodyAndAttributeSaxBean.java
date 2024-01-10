@@ -10,8 +10,4 @@ public abstract class NoBodyAndAttributeSaxBean extends NoAttributeSaxBean {
         super(tag);
     }
 
-    @Override
-    public void body(BodyEvent bodyEvent) {
-    }
-
 }

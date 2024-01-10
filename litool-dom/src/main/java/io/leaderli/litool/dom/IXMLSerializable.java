@@ -5,7 +5,7 @@ import org.dom4j.dom.DOMElement;
 
 public interface IXMLSerializable {
 
-    void writeToXML(DOMDocument document, DOMElement parent) throws XMLSerializationException;
+    void writeToXML(DOMDocument document, DOMElement parent);
 
-    void readFromXML(DOMElement element) throws XMLSerializationException;
+    void readFromXML(DOMElement element);
 }

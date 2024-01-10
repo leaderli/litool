@@ -9,7 +9,4 @@ public abstract class NoBodySaxBean extends SaxBean {
         super(tag);
     }
 
-    @Override
-    public void body(BodyEvent bodyEvent) {
-    }
 }

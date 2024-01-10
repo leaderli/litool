@@ -143,7 +143,7 @@ public class ClassUtil {
      * @return 所有 Java 类路径的列表
      */
     public static Lira<String> getJavaClassPaths() {
-        return Lira.of(System.getProperty("java.class.path").split(System.getProperty("path.separator"))).map(path -> path.replace(File.separatorChar, '/'));
+        return Lira.of(System.getProperty("java.class.path").split(File.pathSeparator)).map(path -> path.replace(File.separatorChar, '/'));
     }
 
 

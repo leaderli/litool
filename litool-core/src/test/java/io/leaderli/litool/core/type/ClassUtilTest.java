@@ -226,7 +226,7 @@ class ClassUtilTest {
         Assertions.assertTrue("file:/".matches("^[^/]++/$"));
         Assertions.assertTrue("jar:file:/".matches("^[^/]++/$"));
         Assertions.assertFalse("/jar/".matches("^[^/]++/$"));
-        Assertions.assertTrue(ClassUtil.getAllJarFilePaths().size() > 0);
+        Assertions.assertFalse(ClassUtil.getAllJarFilePaths().isEmpty());
 
         Lira<String> a = ClassUtil.getJavaClassPaths();
         Lira<String> b = Lira.of(ClassUtil.getAllJarFilePaths());

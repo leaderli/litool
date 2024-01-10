@@ -31,10 +31,10 @@ class LeanTest {
         Lean lean = new Lean();
 
         Map map = lean.fromBean(bean1, Map.class);
-        Assertions.assertTrue(map.get("bean") instanceof Map);
-        Assertions.assertTrue(map.get("beans") instanceof List);
+        Assertions.assertInstanceOf(Map.class, map.get("bean"));
+        Assertions.assertInstanceOf(List.class, map.get("beans"));
         List list = (List) map.get("beans");
-        Assertions.assertTrue(list.get(0) instanceof HashMap);
+        Assertions.assertInstanceOf(HashMap.class, list.get(0));
 
         map.clear();
         map.put(1, 1);

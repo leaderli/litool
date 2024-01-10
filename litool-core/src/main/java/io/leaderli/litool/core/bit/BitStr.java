@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
  * <p>
  * 例如：
  * <p>
- * <code>
+ * {@code
  * 0000 0000 0000 0000 0000 1100 0001 1111
  * STRICT|ABSTRACT|FINAL|STATIC|PROTECTED|PRIVATE|PUBLIC
- * </code>
+ * }
  */
 public class BitStr {
 

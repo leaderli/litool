@@ -293,7 +293,6 @@ class ArrayUtilsTest {
 
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Test
     void removeSub() {
 

@@ -60,7 +60,7 @@ class LiraTest {
                 }).get());
 
         Assertions.assertEquals("java.lang.IllegalArgumentException: 123", liraRuntimeException.getMessage());
-        Assertions.assertTrue(liraRuntimeException.getCause() instanceof IllegalArgumentException);
+        Assertions.assertInstanceOf(IllegalArgumentException.class, liraRuntimeException.getCause());
 
     }
 

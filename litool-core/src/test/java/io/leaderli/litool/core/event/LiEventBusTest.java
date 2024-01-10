@@ -98,7 +98,7 @@ class LiEventBusTest {
         ((LiEventBusBehavior) eventBus).unRegisterListener(listener);
     }
 
-    private static class TestStringLiEventObject extends LiEventObject<String> {
+    static class TestStringLiEventObject extends LiEventObject<String> {
 
         public TestStringLiEventObject(String source) {
             super(source);

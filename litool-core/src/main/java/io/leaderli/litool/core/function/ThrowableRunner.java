@@ -12,7 +12,6 @@ public interface ThrowableRunner {
     /**
      * Performs an action
      *
-     * @throws Throwable error
      */
-    void run() throws Throwable;
+    void run();
 }

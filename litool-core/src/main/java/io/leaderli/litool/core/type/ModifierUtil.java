@@ -22,10 +22,8 @@ public class ModifierUtil {
      * default   0b001
      * private   0b000
      * </pre>
-     * </p>
      * <p>
      * 优先级越高，则表示访问权限越大
-     * </p>
      *
      * @param member 成员变量
      * @return 成员变量访问权限的优先级

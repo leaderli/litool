@@ -3,6 +3,7 @@ package io.leaderli.litool.core.collection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("EqualsWithItself")
 class ArrayEqualTest {
 
     @SuppressWarnings({"RedundantArrayCreation", "ConfusingArgumentToVarargsMethod"})

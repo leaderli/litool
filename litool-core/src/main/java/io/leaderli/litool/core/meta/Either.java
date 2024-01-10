@@ -181,7 +181,6 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
      */
     class Right<L, R> implements Either<L, R> {
 
-        private static final long serialVersionUID = 1L;
 
         private final R value;
 

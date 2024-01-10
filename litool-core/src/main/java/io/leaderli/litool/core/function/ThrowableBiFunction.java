@@ -15,6 +15,6 @@ package io.leaderli.litool.core.function;
 
 public interface ThrowableBiFunction<T, U, R> {
 
-    R apply(T t, U u) throws Throwable;
+    R apply(T t, U u);
 
 }

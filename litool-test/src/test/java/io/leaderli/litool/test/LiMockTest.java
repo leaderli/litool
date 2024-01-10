@@ -115,7 +115,7 @@ class LiMockTest {
     @LiTest
     void test(@DynamicValues("values") Object obj) {
 
-        Assertions.assertTrue(obj instanceof Integer);
+        Assertions.assertInstanceOf(Integer.class, obj);
     }
 
     @Test

@@ -116,7 +116,6 @@ public class StrSubstitution {
      * @return 格式化后的字符串
      */
 
-    @SuppressWarnings("DuplicatedCode")
     public static String parse(String format, String variablePrefix, String variableSuffix, BiFunction<String, String, Object> replaceFunction) {
         if (format == null) {
             return "";

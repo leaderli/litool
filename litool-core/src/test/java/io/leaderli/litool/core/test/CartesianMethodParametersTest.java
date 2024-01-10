@@ -35,7 +35,7 @@ class CartesianMethodParametersTest {
         return length * width;
     }
 
-    private static class Bean {
+    static class Bean {
 
     }
 }

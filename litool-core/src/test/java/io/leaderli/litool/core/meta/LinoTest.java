@@ -249,7 +249,6 @@ class LinoTest {
         Assertions.assertEquals(Lino.of(1), Lino.of(1));
         Assertions.assertNotEquals(Lino.of(2), Lino.of(1));
         Assertions.assertNotEquals(null, Lino.of(2));
-        Assertions.assertNotEquals(2, Lino.of(2));
         Assertions.assertSame(Lino.of(null), Lino.none());
 
     }

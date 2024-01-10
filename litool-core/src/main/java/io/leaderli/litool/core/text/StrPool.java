@@ -20,11 +20,11 @@ public interface StrPool {
      * 字符串常量：tab {@code "\t"}
      */
 
-    String TAB = "\u0009";
+    String TAB = "\t";
     /**
      * 字符串常量空格 {@code " "}
      */
-    String SPACE = "\u0020";
+    String SPACE = " ";
     /**
      * 字符串常量：点 {@code "."}
      */
