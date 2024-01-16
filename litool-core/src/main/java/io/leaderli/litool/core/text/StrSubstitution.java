@@ -64,6 +64,23 @@ public class StrSubstitution {
         return parse(format, "{", "}", new VariablesFunction(args));
     }
 
+    /**
+     * 通过bean格式化文本。占位符在格式化文本中被视为bean路径表达式。
+     * 并使用
+     * {@link Map#get(Object)} 搜索替换值。如果替换值
+     * 为{@code null},占位符将不被替换。
+     * 例如:
+     * <pre>{@code
+     * beanPath("a={a},b={b},c={c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
+     * beanPath("a={a},b={b}",{a=1}) // "a=1,b={b}"
+     * }</pre>
+     *
+     * @param format 格式字符串
+     * @param map    格式引用的参数
+     * @return 格式化后的字符串
+     * @see BeanPath#parse(Object)
+     * @see #parse(String, String, String, BiFunction)
+     */
     public static String map(String format, Map<String, Object> map) {
         return parse(format, "{", "}", map::getOrDefault);
     }
@@ -90,11 +107,20 @@ public class StrSubstitution {
     }
 
 
+    /**
+     * 使用 '{
+     *
+     * @see #format(String, Object...)
+     */
     public static String $format(String format, Object... args) {
         return parse(format, "${", "}", new VariablesFunction(args));
     }
 
-
+    /**
+     * 使用 '{
+     *
+     * @see #beanPath(String, Object)
+     */
     public static String $beanPath(String format, Object bean) {
         return parse(format, "${", "}", (k, v) -> BeanPath.parse(bean, k).get(v));
 
@@ -121,8 +147,8 @@ public class StrSubstitution {
      * @param variableSuffix  占位符结束标记
      * @param replaceFunction 接受占位符变量并返回替换值的函数
      * @return 格式化后的字符串
-     * @see StringPlaceholder#parse(String, PlaceholderFunction)
      * @see #replaceVariable(String, StringBuilder, String, BiFunction)
+     * @see StringPlaceholder#parse(String, PlaceholderFunction)
      */
 
     public static String parse(String str, String variablePrefix, String variableSuffix, BiFunction<String, String, Object> replaceFunction) {
