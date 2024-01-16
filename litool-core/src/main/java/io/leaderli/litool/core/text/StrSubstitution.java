@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.text;
 
-import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.lang.BeanPath;
 
 import java.util.ArrayList;
@@ -20,13 +19,6 @@ import java.util.function.BiFunction;
  *  replace("a={a},b={b}",{a=1,b=2})
  * </pre>
  * <p>
- * 支持转义字符 ` , 其仅在字面上上有效
- * <pre>
- *
- *  replace("a=`{{a}}","1","2") // a={1}
- *  replace("a={`{a}}","1","2") // a=1}
- * </pre>
- * <p>
  * 支持默认值行为 ,通过 :
  * <pre>
  *  replace("a={a:123}","1","2") // a={1}
@@ -43,27 +35,6 @@ import java.util.function.BiFunction;
  * @since 2022/8/14
  */
 public class StrSubstitution {
-
-    /**
-     * 占位符开始标记
-     */
-    private static final String VARIABLE_BEING_CHAR = "{";
-    /**
-     * 占位符结束标记
-     */
-    private static final String VARIABLE_END_CHAR = "}";
-    /**
-     * 转义字符
-     */
-    private static final char ESCAPLE_CHAR = '`';
-    /**
-     * 解析开始标记
-     */
-    private static final int LITERAL = 1;
-    private static final int VARIABLE_PREFIX = 2;
-    private static final int VARIABLE_SUFFIX = 3;
-    private static final int VARIABLE_LITERAL = 4;
-    private static final int ESCAPE = 0;
 
 
     /**
@@ -103,187 +74,9 @@ public class StrSubstitution {
      * @return 格式化后的字符串
      */
     public static String parse(String format, BiFunction<String, String, Object> replaceFunction) {
-        return parse(format, VARIABLE_BEING_CHAR, VARIABLE_END_CHAR, replaceFunction);
+        return parse(format, "{", "}", replaceFunction);
     }
 
-    /**
-     * 与{@link  #parse(String, BiFunction)}类似,不同之处在于占位符使用自定义字符定义。
-     *
-     * @param format          格式字符串
-     * @param variablePrefix  占位符开始标记
-     * @param variableSuffix  占位符结束标记
-     * @param replaceFunction 接受占位符变量并返回替换值的函数
-     * @return 格式化后的字符串
-     */
-
-    public static String parse(String format, String variablePrefix, String variableSuffix, BiFunction<String, String, Object> replaceFunction) {
-        if (format == null) {
-            return "";
-        }
-        LiAssertUtil.assertTrue(!variablePrefix.isEmpty() && !variableSuffix.isEmpty());
-
-        char[] prefixChars = variablePrefix.toCharArray();
-        char[] suffixChars = variableSuffix.toCharArray();
-
-        int state = LITERAL;
-
-        StringBuilder result = new StringBuilder();
-
-        StringBuilder prefixSB = new StringBuilder();
-        StringBuilder literalSB = new StringBuilder();
-        StringBuilder variableSB = new StringBuilder();
-        StringBuilder suffixSB = new StringBuilder();
-
-        for (char c : format.toCharArray()) {
-
-            switch (state) {
-
-                case LITERAL:
-                    if (c == prefixChars[0]) {// 占位符开始
-                        result.append(literalSB);
-                        literalSB = new StringBuilder();
-                        prefixSB.append(c);
-                        state = VARIABLE_PREFIX;
-
-                    } else if (c == ESCAPLE_CHAR) {
-                        state = ESCAPE;
-                    } else {
-                        literalSB.append(c);
-                    }
-                    break;
-                case ESCAPE:// 转义字符，仅支持在字面量中。
-                    literalSB.append(c);
-                    state = LITERAL;
-                    break;
-                case VARIABLE_PREFIX:
-
-                    if (prefixChars.length > prefixSB.length()) {
-                        if (c != prefixChars[prefixSB.length()]) {// 前缀不完全匹配，则视为字面量
-                            result.append(prefixSB);
-                            prefixSB = new StringBuilder();
-                            if (c != prefixChars[0]) {// 不匹配的字节为不是前缀首字节
-                                if (c == ESCAPLE_CHAR) {// 转义字节
-                                    state = ESCAPE;
-                                } else {
-                                    literalSB.append(c);
-                                    state = LITERAL;
-                                }
-                                break;
-                            }
-                        }
-                        prefixSB.append(c);
-
-                        if (prefixSB.length() == prefixChars.length) {// 前缀完全匹配了
-                            state = VARIABLE_LITERAL;
-                        }
-
-                    } else {
-
-                        // 前缀完全匹配后，首个字节为后缀首字节
-                        if (c == suffixChars[0]) {
-                            suffixSB.append(c);
-                            state = VARIABLE_SUFFIX;
-                        } else {
-                            variableSB.append(c);
-                            state = VARIABLE_LITERAL;
-                        }
-                    }
-                    break;
-
-                case VARIABLE_SUFFIX:
-                    if (suffixChars.length > suffixSB.length()) {
-                        if (c != suffixChars[suffixSB.length()]) {// 后缀不完全匹配，视为占位符变量
-                            variableSB.append(suffixSB);
-                            suffixSB = new StringBuilder();
-
-                            if (c != suffixChars[0]) {// 不匹配的字节不为后缀首字节，视为占位符变量，否则视为后缀开始
-                                variableSB.append(c);
-                                state = VARIABLE_LITERAL;
-                                break;
-                            }
-                        }
-                        suffixSB.append(c);
-                        if (suffixSB.length() == suffixChars.length) {// 后缀完全匹配，则替换变量，清空状态
-                            result.append(replaceVariable(prefixSB, variableSB, suffixSB, replaceFunction));
-                            prefixSB = new StringBuilder();
-                            variableSB = new StringBuilder();
-                            suffixSB = new StringBuilder();
-                            state = LITERAL;
-                        }
-                    } else {
-
-
-                        // 后缀完全匹配，则替换变量，清空状态
-                        result.append(replaceVariable(prefixSB, variableSB, suffixSB, replaceFunction));
-                        prefixSB = new StringBuilder();
-                        variableSB = new StringBuilder();
-                        suffixSB = new StringBuilder();
-
-                        if (c == prefixChars[0]) {// 前缀开始
-                            prefixSB.append(c);
-                            state = VARIABLE_PREFIX;
-                        } else {
-                            if (c == ESCAPLE_CHAR) {
-                                state = ESCAPE;
-                            } else {
-                                literalSB.append(c);
-                                state = LITERAL;
-                            }
-                        }
-                    }
-                    break;
-
-                case VARIABLE_LITERAL:
-
-                    if (c == suffixChars[0]) {// 后缀开始
-                        suffixSB.append(c);
-                        state = VARIABLE_SUFFIX;
-                    } else {
-                        variableSB.append(c);
-                    }
-                    break;
-
-                default:
-                    break;
-
-            }
-
-
-        }
-
-        // 后续状态处理
-        if (state == VARIABLE_PREFIX) {
-            result.append(prefixSB);
-        } else if (state == VARIABLE_LITERAL) {// 占位符变量状态
-            result.append(variablePrefix);
-            result.append(variableSB);
-        } else if (state == VARIABLE_SUFFIX) {
-            if (suffixSB.length() == suffixChars.length) {// 占位符结尾
-                result.append(replaceVariable(prefixSB, variableSB, suffixSB, replaceFunction));
-            } else {
-                result.append(variablePrefix);
-                result.append(variableSB);
-                result.append(suffixSB);
-            }
-        }
-
-        return result.append(literalSB).toString();
-    }
-
-    private static Object replaceVariable(StringBuilder prefix, StringBuilder name, StringBuilder suffix, BiFunction<String, String, Object> replaceFunction) {
-        String key;
-        String def;
-        int index = name.lastIndexOf(":");
-        if (index > -1) {
-            key = name.substring(0, index);
-            def = name.substring(index + 1);
-        } else {
-            key = name.toString();
-            def = prefix + key + suffix;
-        }
-        Object value = replaceFunction.apply(key, def);
-        return key.isEmpty() || value == null ? def : value;
-    }
 
     /**
      * 通过bean格式化文本。占位符在格式化文本中被视为bean路径表达式。
@@ -359,6 +152,48 @@ public class StrSubstitution {
      */
     public static String $beanPath(String format, Object bean) {
         return $parse(format, (k, v) -> BeanPath.parse(bean, k).get(v));
+    }
+
+    private static Object replaceVariable(String prefix, StringBuilder name, String suffix, BiFunction<String, String, Object> replaceFunction) {
+        String key;
+        String def;
+        int index = name.lastIndexOf(":");
+        if (index > -1) {
+            key = name.substring(0, index);
+            def = name.substring(index + 1);
+        } else {
+            key = name.toString();
+            def = prefix + key + suffix;
+        }
+        Object value = replaceFunction.apply(key, def);
+        return key.isEmpty() || value == null ? def : value;
+    }
+
+    /**
+     * @param str             格式字符串
+     * @param variablePrefix  占位符开始标记
+     * @param variableSuffix  占位符结束标记
+     * @param replaceFunction 接受占位符变量并返回替换值的函数
+     * @return 格式化后的字符串
+     * @see StringPlaceholder#parse(String, PlaceholderFunction)
+     * @see #replaceVariable(String, StringBuilder, String, BiFunction)
+     */
+
+    public static String parse(String str, String variablePrefix, String variableSuffix, BiFunction<String, String, Object> replaceFunction) {
+
+        StringBuilderPlaceholderFunction placer = new StringBuilderPlaceholderFunction() {
+            @Override
+            public void variable(StringBuilder variable) {
+                append(replaceVariable(variablePrefix, variable, variableSuffix, replaceFunction));
+            }
+        };
+        new StringPlaceholder.Builder()
+                .variable_prefix(variablePrefix)
+                .variable_suffix(variableSuffix)
+                .build()
+                .parse(str, placer);
+
+        return placer.toString();
     }
 
     private static class VariablesFunction implements BiFunction<String, String, Object> {

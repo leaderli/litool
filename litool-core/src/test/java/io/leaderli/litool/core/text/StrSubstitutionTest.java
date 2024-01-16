@@ -16,6 +16,12 @@ import java.util.Map;
 @SuppressWarnings("CollectionAddedToSelf")
 class StrSubstitutionTest {
 
+    @Test
+    void test() {
+        Assertions.assertEquals("123${", StrSubstitution.$format("123${"));
+
+
+    }
 
     @Test
     void format() {
@@ -64,19 +70,11 @@ class StrSubstitutionTest {
         Assertions.assertEquals("", StrSubstitution.format("{:}"));
 
 
-        Assertions.assertEquals("`", StrSubstitution.format("``"));
-        Assertions.assertEquals("{", StrSubstitution.format("`{"));
-        Assertions.assertEquals("{1", StrSubstitution.format("`{{1}", 1));
-        Assertions.assertEquals("{1}", StrSubstitution.format("`{{1}}", 1));
-        Assertions.assertEquals("{1}", StrSubstitution.format("`{{1}`}", 1));
-        Assertions.assertEquals("1}", StrSubstitution.format("{`{1}}", 1));
-        Assertions.assertEquals("{`{1}}", StrSubstitution.format("{`{1}}"));
-
-
     }
 
     @Test
     void parse() {
+        Assertions.assertEquals("1", StrSubstitution.parse("%%a%%", "%%", "%%", (k, v) -> 1));
         Assertions.assertEquals("%%", StrSubstitution.parse("%%", "%", "%", (k, v) -> 1));
         Assertions.assertEquals("%%%", StrSubstitution.parse("%%%", "%", "%", (k, v) -> 1));
         Map<String, Object> map = new HashMap<>();
