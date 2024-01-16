@@ -7,6 +7,8 @@ import io.leaderli.litool.runner.executor.BaseElementExecutor;
 import io.leaderli.litool.runner.util.ExpressionUtil;
 import io.leaderli.litool.runner.xml.router.task.BaseEventElement;
 
+import java.util.function.BiFunction;
+
 /**
  * @param <B> 事件元素类型
  * @param <E> 事件信息类型
@@ -22,8 +24,9 @@ public abstract class BaseEventElementExecutor<B extends BaseEventElement<B, ?, 
     public final void execute(Context context) {
 
 
-        String message = StrSubstitution.parse(element.getLongExpression().getExpr()
-                , (expr, def) -> String.valueOf(ExpressionUtil.getExpression(expr).apply(context)));
+        BiFunction<String, String, Object> replacer = (expr, def) -> String.valueOf(ExpressionUtil.getExpression(expr).apply(context));
+        String expr = element.getLongExpression().getExpr();
+        String message = StrSubstitution.parse(expr, "{", "}", replacer);
         LiEventObject<?> e = newEvent(message);
         context.publishEvent(e);
 

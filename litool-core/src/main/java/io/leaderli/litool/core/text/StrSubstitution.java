@@ -4,6 +4,7 @@ import io.leaderli.litool.core.lang.BeanPath;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
@@ -12,6 +13,7 @@ import java.util.function.BiFunction;
  * 支持通过自定义替换占位符,提供默认行为
  * 1. 通过数组参数替换, {@link #format(String, Object...)}, 占位符的值按顺序定位
  * 2. 通过beanPath替换,{@link #beanPath(String, Object)} ,占位符的值通过其名称获取
+ * 3. 通过beanPath替换,{@link #map(String, Map)} ,占位符的值通过其名称获取
  * <pre>
  *
  *  replace("a={a},b={b}","1","2")
@@ -30,6 +32,8 @@ import java.util.function.BiFunction;
  * map.put("now", DateUtil.parse("20220101", "yyyyMMdd"));
  * parse("{now:yyyy-MM-dd}", (k, d) -> DateUtil.format(d, (Date) map.get(k)));
  * </pre>
+ * <p>
+ * 不支持嵌套占位符
  *
  * @author leaderli
  * @since 2022/8/14
@@ -53,30 +57,16 @@ public class StrSubstitution {
      * @param args   格式引用的参数
      * @return 格式化后的字符串
      * @see VariablesFunction
-     * @see #parse(String, BiFunction)
+     * @see #parse(String, String, String, BiFunction)
      */
     public static String format(String format, Object... args) {
 
-        return parse(format, new VariablesFunction(args));
+        return parse(format, "{", "}", new VariablesFunction(args));
     }
 
-    /**
-     * {@code  {xxx}} 被视为占位符 {@code  xxx}。不支持嵌套占位符。可以使用 {@link  #parse(String, String, String, BiFunction)}
-     * 来自定义占位符前缀和后缀的方式来实现特殊字符的不被替换
-     * <p>
-     * 例如:
-     * <pre>
-     *     format("a={}")   // "a={}"
-     * </pre>
-     *
-     * @param format          格式字符串
-     * @param replaceFunction 接受占位符变量并返回替换值的函数
-     * @return 格式化后的字符串
-     */
-    public static String parse(String format, BiFunction<String, String, Object> replaceFunction) {
-        return parse(format, "{", "}", replaceFunction);
+    public static String map(String format, Map<String, Object> map) {
+        return parse(format, "{", "}", map::getOrDefault);
     }
-
 
     /**
      * 通过bean格式化文本。占位符在格式化文本中被视为bean路径表达式。
@@ -93,65 +83,21 @@ public class StrSubstitution {
      * @param bean   格式引用的参数
      * @return 格式化后的字符串
      * @see BeanPath#parse(Object)
-     * @see #parse(String, BiFunction)
+     * @see #parse(String, String, String, BiFunction)
      */
     public static String beanPath(String format, Object bean) {
-        return parse(format, (k, v) -> BeanPath.parse(bean, k).get(v));
+        return parse(format, "{", "}", (k, v) -> BeanPath.parse(bean, k).get(v));
     }
 
-    /**
-     * 与{@link #format(String, Object...)}相同,使用$作为占位符开始标记
-     * <p>
-     * 例如:
-     * <pre>
-     *  $format("a=${a},b=${b}","1") // "a=1,b={b}"
-     *  $format("a=${a},b=${b}","1","2") // "a=1,b=2"
-     *  $format("a=${a},b=${b},a=${a}","1","2") // 变为 "a=1,b=2,a=1"
-     * </pre>
-     *
-     * @param format 格式字符串
-     * @param args   格式引用的参数
-     * @return 格式化后的字符串
-     * @see VariablesFunction
-     * @see #$parse(String, BiFunction)
-     */
+
     public static String $format(String format, Object... args) {
-        return $parse(format, new VariablesFunction(args));
+        return parse(format, "${", "}", new VariablesFunction(args));
     }
 
-    /**
-     * 与{@link #parse(String, BiFunction)}相同,使用$作为占位符开始标记
-     * $}、${}不会被视为占位符,$是转义{的标记
-     * 例如:
-     * <pre>
-     *     $format("a=${}")   // "a=${}"
-     * </pre>
-     *
-     * @param format          格式字符串
-     * @param replaceFunction 接受占位符变量并返回替换值的函数
-     * @return 格式化后的字符串
-     */
-    public static String $parse(String format, BiFunction<String, String, Object> replaceFunction) {
-        return parse(format, "${", "}", replaceFunction);
-    }
 
-    /**
-     * 与{@link #beanPath(String, Object)} 相同,使用$作为占位符开始标记
-     * <p>
-     * eg:
-     * <pre>{@code
-     *
-     * $beanPath("a=${a},b=${b},c=${c.a}",{a=1,b=2,c={a=1}}) // "a=1,b=2,c=1"
-     * $beanPath("a=${a},b=${b}",${a=1}) // "a=1,b={b}"
-     * }</pre>
-     *
-     * @param format 格式字符串
-     * @param bean   格式引用的参数
-     * @return 格式化后的字符串
-     * @see #beanPath(String, Object)
-     */
     public static String $beanPath(String format, Object bean) {
-        return $parse(format, (k, v) -> BeanPath.parse(bean, k).get(v));
+        return parse(format, "${", "}", (k, v) -> BeanPath.parse(bean, k).get(v));
+
     }
 
     private static Object replaceVariable(String prefix, StringBuilder name, String suffix, BiFunction<String, String, Object> replaceFunction) {

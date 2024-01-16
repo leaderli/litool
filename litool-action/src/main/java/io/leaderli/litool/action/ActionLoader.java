@@ -33,7 +33,7 @@ public class ActionLoader {
 
         String actionYml = StringUtils.read(ResourceUtil.getResourceAsStream(yamlFullPath));
 
-        actionYml = StrSubstitution.$parse(actionYml, (variable, def) -> {
+        actionYml = StrSubstitution.parse(actionYml, "${", "}", (variable, def) -> {
 
             String property = System.getProperty(variable);
             if (property != null) {
