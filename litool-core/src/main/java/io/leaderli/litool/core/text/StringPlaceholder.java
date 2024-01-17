@@ -74,17 +74,13 @@ public class StringPlaceholder {
 
                         if (prefix.length() == variable_prefix.length) {// 前缀完全匹配了
                             state = STATE_VARIABLE;
-                            if (literal.length() > 0) {
-                                place.literal(literal);
-                                literal = new StringBuilder();
-                            }
+                            consumer_literal(place, literal);
+                            literal = new StringBuilder();
                         }
 
                     } else {
-                        if (literal.length() > 0) {
-                            place.literal(literal);
-                            literal = new StringBuilder();
-                        }
+                        consumer_literal(place, literal);
+                        literal = new StringBuilder();
                         // 前缀完全匹配后，首个字节为后缀首字节
                         if (c == variable_suffix[0]) {
                             suffix.append(c);
@@ -156,17 +152,23 @@ public class StringPlaceholder {
         }
         // 后续状态处理
         if (state == STATE_LITERAL) {
-            place.literal(literal);
+            consumer_literal(place, literal);
         } else if (state == STATE_VARIABLE_BEGIN) {
-            place.literal(literal.append(prefix));
+            consumer_literal(place, literal.append(prefix));
         } else if (state == STATE_VARIABLE) {// 占位符变量状态
-            place.literal(prefix.append(variable));
+            consumer_literal(place, prefix.append(variable));
         } else if (state == STATE_VARIABLE_END) {
             if (suffix.length() == variable_suffix.length) {// 占位符结尾
                 place.variable(variable);
             } else {
-                place.literal(prefix.append(variable).append(suffix));
+                consumer_literal(place, prefix.append(variable).append(suffix));
             }
+        }
+    }
+
+    private static void consumer_literal(PlaceholderFunction place, StringBuilder literal) {
+        if (literal.length() > 0) {
+            place.literal(literal);
         }
     }
 
