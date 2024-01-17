@@ -74,13 +74,17 @@ public class StringPlaceholder {
 
                         if (prefix.length() == variable_prefix.length) {// 前缀完全匹配了
                             state = STATE_VARIABLE;
-                            place.literal(literal);
-                            literal = new StringBuilder();
+                            if (literal.length() > 0) {
+                                place.literal(literal);
+                                literal = new StringBuilder();
+                            }
                         }
 
                     } else {
-                        place.literal(literal);
-                        literal = new StringBuilder();
+                        if (literal.length() > 0) {
+                            place.literal(literal);
+                            literal = new StringBuilder();
+                        }
                         // 前缀完全匹配后，首个字节为后缀首字节
                         if (c == variable_suffix[0]) {
                             suffix.append(c);
