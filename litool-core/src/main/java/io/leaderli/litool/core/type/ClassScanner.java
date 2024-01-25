@@ -26,7 +26,6 @@ import java.util.jar.JarFile;
  * @author leaderli
  * @since 2022/7/19
  * <p>
- * 参考 hutool
  */
 public class ClassScanner {
 
@@ -62,7 +61,7 @@ public class ClassScanner {
     /**
      * 类加载器
      */
-    private ClassLoader classLoader;
+    private ClassLoader classLoader = ClassLoaderUtil.getClassLoader();
 
 
     private boolean forceScanJavaClassPaths;
@@ -134,16 +133,22 @@ public class ClassScanner {
     }
 
     /**
-     * 获取指定类所在包下所有继承自指定父类的子类。
+     * 获取指定类所在包下所有继承自指定父类的子类。会使用查找类所在的类加载器
      *
      * @param packageClass 查找类所在包位置
      * @param superClass   父类
      * @param <T>          父类的泛型
      * @return 返回packageClass所在目录下所有继承自superClass的子类
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> Lira<Class<T>> getSubTypesOf(Class<?> packageClass, Class<T> superClass) {
 
-        return getSubTypesOf(packageClass.getPackage().getName(), superClass);
+        ClassScanner classScanner = new ClassScanner(packageClass.getPackage().getName(),
+                find -> ClassUtil.isAssignableFromOrIsWrapper(superClass, find) && superClass != find);
+        classScanner.classLoader = packageClass.getClassLoader();
+        classScanner.scan();
+
+        return (Lira) Lira.of(classScanner.classes);
     }
 
     /**
@@ -169,7 +174,8 @@ public class ClassScanner {
      * @return 类集合
      */
     public Set<Class<?>> scan() {
-        for (URL url : ResourceUtil.getResourceURLs(this.packagePath).get()) {
+
+        for (URL url : ResourceUtil.getResourceURLs(this.classLoader, this.packagePath).get()) {
             if ("file".equals(url.getProtocol())) {
                 scanFile(new File(URLUtil.decode(url.getFile(), this.charset.name())), null);
             } else if ("jar".equals(url.getProtocol())) {
@@ -254,15 +260,9 @@ public class ClassScanner {
      * @return 加载的类
      */
     private Class<?> loadClass(String className) {
-        ClassLoader loader = this.classLoader;
-        if (null == loader) {
-            loader = ClassLoaderUtil.getClassLoader();
-            this.classLoader = loader;
-        }
-
         Class<?> clazz = null;
         try {
-            clazz = Class.forName(className, false, loader);
+            clazz = Class.forName(className, false, this.classLoader);
         } catch (NoClassDefFoundError | ClassNotFoundException |
                  UnsupportedClassVersionError e) {
 
