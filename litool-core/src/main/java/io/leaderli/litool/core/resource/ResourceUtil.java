@@ -95,6 +95,17 @@ public class ResourceUtil {
         return Lira.of(result);
     }
 
+    /**
+     * 获取资源列表中的 URL
+     *
+     * @param resourceName 相对于 classpath 的资源名
+     * @return 返回一个 {@link Lira} 列表，其中包含对应的 URL
+     */
+    public static Lira<URL> getResourceURLs(ClassLoader classLoader, String resourceName) {
+
+        return Lino.of(resourceName).mapIgnoreError(classLoader::getResources).toLira(URL.class);
+
+    }
 
     /**
      * 获取资源列表中的 URL
@@ -103,9 +114,7 @@ public class ResourceUtil {
      * @return 返回一个 {@link Lira} 列表，其中包含对应的 URL
      */
     public static Lira<URL> getResourceURLs(String resourceName) {
-
-        return Lino.of(resourceName).mapIgnoreError(ClassLoaderUtil.getClassLoader()::getResources).toLira(URL.class);
-
+        return getResourceURLs(ClassLoaderUtil.getClassLoader(), resourceName);
     }
 
     /**
