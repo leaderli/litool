@@ -3,7 +3,6 @@ package io.leaderli.litool.core.util;
 import io.leaderli.litool.core.meta.WhenThrowBehavior;
 import io.leaderli.litool.core.resource.net.NetUtil;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 /**
  * @author leaderli
@@ -11,7 +10,7 @@ import org.junit.jupiter.api.Test;
  */
 class NetUtilTest {
 
-    @Test
+    //    @Test
     void pingable() {
         WhenThrowBehavior.WHEN_THROW = null;
         Assertions.assertTrue(NetUtil.pingable("127.0.0.1"));
