@@ -15,17 +15,14 @@ public class SimpleTest {
             ClassPool pool = ClassPool.getDefault();
             CtClass cc = pool.get(clazz.getName());
             CtClass ccd = pool.get(delegate.getName());
-//        CtClass cc = pool.get("io.leaderli.demo.bytebuddy.ByteDemo");
             CtConstructor classInitializer = cc.getClassInitializer();
             if (classInitializer != null) {
                 CtConstructor classInitializerD = ccd.getClassInitializer();
                 classInitializer.setBody(classInitializerD, null);
             }
             for (CtMethod method : cc.getMethods()) {
-                CtMethod methodd = ccd.getMethod(method.getName(), method.getMethodInfo().getDescriptor());
-                if (method != null) {
-                    method.setBody(methodd, null);
-                }
+                CtMethod methodD = ccd.getMethod(method.getName(), method.getMethodInfo().getDescriptor());
+                method.setBody(methodD, null);
             }
             ClassDefinition definition = new ClassDefinition(clazz, cc.toBytecode());
             RedefineClassAgent.redefineClasses(definition);
