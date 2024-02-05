@@ -18,7 +18,11 @@ public class SimpleTest {
             CtConstructor classInitializer = cc.getClassInitializer();
             if (classInitializer != null) {
                 CtConstructor classInitializerD = ccd.getClassInitializer();
-                classInitializer.setBody(classInitializerD, null);
+                if (classInitializerD != null) {
+                    classInitializer.setBody(classInitializerD, null);
+                } else {
+                    classInitializer.setBody("{}");
+                }
             }
             for (CtMethod method : cc.getMethods()) {
                 CtMethod methodD = ccd.getMethod(method.getName(), method.getMethodInfo().getDescriptor());
