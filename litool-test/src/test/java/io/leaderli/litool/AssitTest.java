@@ -21,6 +21,7 @@ public class AssitTest {
 
         SimpleTest.transfer(B.class, A.class);
         Assertions.assertEquals("b", B.test());
+        Assertions.assertEquals("hello", B.hello());
     }
 
     static class A {
@@ -42,6 +43,10 @@ public class AssitTest {
 
         public static String test() {
             return "a";
+        }
+
+        public static String hello() {
+            return "hello";
         }
     }
 }

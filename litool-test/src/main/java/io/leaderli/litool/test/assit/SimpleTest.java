@@ -1,9 +1,6 @@
 package io.leaderli.litool.test.assit;
 
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtMethod;
+import javassist.*;
 
 import java.lang.instrument.ClassDefinition;
 
@@ -25,8 +22,13 @@ public class SimpleTest {
                 }
             }
             for (CtMethod method : cc.getMethods()) {
-                CtMethod methodD = ccd.getMethod(method.getName(), method.getMethodInfo().getDescriptor());
-                method.setBody(methodD, null);
+
+                try {
+
+                    CtMethod methodD = ccd.getMethod(method.getName(), method.getMethodInfo().getDescriptor());
+                    method.setBody(methodD, null);
+                } catch (NotFoundException ignore) {
+                }
             }
             ClassDefinition definition = new ClassDefinition(clazz, cc.toBytecode());
             RedefineClassAgent.redefineClasses(definition);
