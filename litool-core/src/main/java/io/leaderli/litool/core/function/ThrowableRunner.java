@@ -11,7 +11,6 @@ package io.leaderli.litool.core.function;
 public interface ThrowableRunner {
     /**
      * Performs an action
-     *
      */
-    void run();
+    void run() throws Throwable;
 }
