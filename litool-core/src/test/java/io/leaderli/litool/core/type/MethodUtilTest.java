@@ -20,6 +20,7 @@ class MethodUtilTest {
 
         MethodUtil.onlyCallByCLINIT();
     }
+
     @Test
     void getSameSignatureMethod() throws NoSuchMethodException {
         Method method = Object.class.getMethod("toString");
@@ -106,5 +107,11 @@ class MethodUtilTest {
 
         Assertions.assertTrue(MethodUtil.methodOfRepeatableContainer(NotNulls.class.getMethod("value")));
         Assertions.assertFalse(MethodUtil.methodOfRepeatableContainer(NotNulls.class.getMethod("toString")));
+    }
+
+    @Test
+    void invoke() {
+
+        Assertions.assertEquals(456, MethodUtil.methodInvoke(MethodUtilTest.class, "apply", new Class[]{String.class}, new Object[]{"abc"}, (m, arg) -> 456));
     }
 }

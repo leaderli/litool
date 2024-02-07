@@ -15,6 +15,7 @@ class FileUtilTest {
 
         URLClassLoader urlClassLoader = URLClassLoader.newInstance(new URL[]{FileUtil.getJavaToolsJava().toURI().toURL()}, null);
         Assertions.assertNotNull(Class.forName("com.sun.tools.attach.VirtualMachine", false, urlClassLoader));
+
     }
 
 }

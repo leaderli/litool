@@ -135,4 +135,14 @@ public class MethodUtil {
         StackTraceElement caller = Thread.currentThread().getStackTrace()[3];
         LiAssertUtil.assertTrue(MethodUtil.CLINIT_METHOD_NAME.equals(caller.getMethodName()), "only support call in <clinit>");
     }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static Object methodInvoke(Class clazz, String name, Class[] parameterType, Object[] parameter, MethodInvoker methodInvoker) {
+        try {
+            Method method = clazz.getDeclaredMethod(name, parameterType);
+            return methodInvoker.invoke(method, parameter);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

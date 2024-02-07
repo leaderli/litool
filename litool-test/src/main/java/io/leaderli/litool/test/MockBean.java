@@ -108,7 +108,7 @@ public class MockBean<T> {
             instance = (T) ReflectUtil.newInstance(rawType).get();
         }
         if (instance == null) {
-            // try to use a ache value that inherit from rawType
+            // try to use a cache value that inherit from rawType
             for (Object value : cache.values()) {
                 if (value != null && ClassUtil.isAssignableFromOrIsWrapper(rawType, value.getClass())) {
                     cache.put(typeToken, value);
