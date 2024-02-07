@@ -49,6 +49,20 @@ public class FileUtil {
         return new File(System.getProperty("user.home"));
     }
 
+    /**
+     * @return 返回jdk目录
+     */
+    public static String getJavaHome() {
+        return System.getProperty("java.home");
+    }
+
+    /**
+     * @return 返回 tools.jar
+     */
+    public static File getJavaToolsJava() {
+        return new File(System.getProperty("java.home"), "../lib/tools.jar");
+    }
+
 
     /**
      * @param dir  目录
