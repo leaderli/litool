@@ -4,6 +4,9 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.*;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtConstructor;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.asm.Advice;
@@ -13,6 +16,8 @@ import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.instrument.ClassDefinition;
+import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -42,6 +47,7 @@ public class LiMock {
      * 被mock 的类
      */
     public static final Set<Class<?>> mockedClasses = new HashSet<>();
+    public static final Map<Class<?>, byte[]> ctClasses = new HashMap<>();
     /**
      *
      */
@@ -63,9 +69,7 @@ public class LiMock {
      */
     public static boolean onMockProgress;
 
-    static {
-        ByteBuddyAgent.install();
-    }
+    static Instrumentation instrumentation = ByteBuddyAgent.install();
 
     /**
      * reset the mock
@@ -84,6 +88,15 @@ public class LiMock {
         onMockProgress = false;
         instanceCreators.clear();
         redefineClassesInMockInit.clear();
+        ctClasses.forEach((c, b) -> {
+            try {
+                instrumentation.redefineClasses(new ClassDefinition(c, b));
+                instrumentation.retransformClasses(c);
+                Class.forName(c.getName());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     /**
@@ -110,9 +123,58 @@ public class LiMock {
         byteBuddy.redefine(mockingClass)
                 .visit(Advice.to(MockInitAdvice.class).on(MethodDescription::isMethod))
                 .visit(Advice.to(ConstructorAdvice.class).on(MethodDescription::isConstructor))
+//                .visit(Advice.to(MockStaticBlock.class).on(MethodDescription::isTypeInitializer))
                 .make()
                 .load(mockingClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
 
+    }
+
+    /**
+     * @param mockingClass mock的类
+     */
+    public static void skipClassInitializer(Class<?> mockingClass) {
+        MethodUtil.onlyCallByCLINIT();
+        try {
+            ClassPool cl = ClassPool.getDefault();
+            CtClass ct = cl.getCtClass(mockingClass.getName());
+
+            byte[] bytecode = ct.toBytecode();
+
+            System.out.println(bytecode + " " + bytecode.length);
+            ctClasses.put(mockingClass, bytecode);
+            ct.defrost();
+            CtConstructor classInitializer = ct.makeClassInitializer();
+            classInitializer.setBody("{}");
+            bytecode = ct.toBytecode();
+            System.out.println(bytecode + " " + bytecode.length);
+            instrumentation.redefineClasses(new ClassDefinition(mockingClass, bytecode));
+            ct.defrost();
+            Class.forName(mockingClass.getName());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * @param mockingClass mock的类
+     */
+    public static void skipClassInitializerError(Class<?> mockingClass) {
+
+        MethodUtil.onlyCallByCLINIT();
+        try {
+            ClassPool cl = ClassPool.getDefault();
+            CtClass ct = cl.getCtClass(mockingClass.getName());
+            ctClasses.put(mockingClass, ct.toBytecode());
+            ct.defrost();
+            CtConstructor classInitializer = ct.makeClassInitializer();
+            CtClass exceptionType = cl.get("java.lang.Throwable");
+            classInitializer.addCatch("{  return ;  }", exceptionType);
+            instrumentation.redefineClasses(new ClassDefinition(mockingClass, ct.toBytecode()));
+            ct.defrost();
+            Class.forName(mockingClass.getName());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -180,27 +242,6 @@ public class LiMock {
         onMockProgress = false;
     }
 
-    /**
-     * @param mockingClass mock的类
-     */
-    public static void ignoreTypeInitError(Class<?> mockingClass) {
-
-
-        StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
-
-        LiAssertUtil.assertTrue(MethodUtil.CLINIT_METHOD_NAME.equals(caller.getMethodName()), "only support call in <clinit>");
-        byteBuddy.redefine(mockingClass)
-                .visit(Advice.to(MockInitAdvice.class).on(MethodDescription::isMethod))
-                .visit(Advice.to(MockStaticBlock.class).on(MethodDescription::isTypeInitializer))
-                .visit(Advice.to(ConstructorAdvice.class).on(MethodDescription::isConstructor))
-                .make()
-                .load(mockingClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
-        try {
-            Class.forName(mockingClass.getName());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * if  instance class is same as type, run all get and set method of  type. will ignore

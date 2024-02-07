@@ -12,6 +12,14 @@ import java.util.function.Function;
  */
 class MethodUtilTest {
 
+    static {
+        staticInit();
+    }
+
+    private static void staticInit() {
+
+        MethodUtil.onlyCallByCLINIT();
+    }
     @Test
     void getSameSignatureMethod() throws NoSuchMethodException {
         Method method = Object.class.getMethod("toString");

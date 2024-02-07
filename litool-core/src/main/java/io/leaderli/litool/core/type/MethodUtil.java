@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
+
 import java.lang.annotation.Repeatable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -127,5 +129,10 @@ public class MethodUtil {
      */
     public static String veryShortString(Method method) {
         return method.getDeclaringClass().getSimpleName() + "#" + method.getName();
+    }
+
+    public static void onlyCallByCLINIT() {
+        StackTraceElement caller = Thread.currentThread().getStackTrace()[3];
+        LiAssertUtil.assertTrue(MethodUtil.CLINIT_METHOD_NAME.equals(caller.getMethodName()), "only support call in <clinit>");
     }
 }

@@ -8,6 +8,5 @@ public class BeanTestTest {
 
     @BeanTest
     void test(Object obj) {
-
     }
 }

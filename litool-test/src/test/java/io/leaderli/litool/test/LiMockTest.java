@@ -1,6 +1,5 @@
 package io.leaderli.litool.test;
 
-import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.test.*;
 import io.leaderli.litool.test2.limock.Foo;
 import io.leaderli.litool.test2.limock.GetSetBean;
@@ -17,8 +16,9 @@ import java.util.function.Supplier;
 
 class LiMockTest {
 
+
     static {
-        LiMock.ignoreTypeInitError(StaticBlock.class);
+        LiMock.skipClassInitializerError(StaticBlock.class);
     }
 
     static void init() {
@@ -84,11 +84,6 @@ class LiMockTest {
 
     }
 
-    @Test
-    void test() {
-
-        Assertions.assertThrows(AssertException.class, () -> LiMock.ignoreTypeInitError(LiMockTest.class));
-    }
 
     static void init2(CartesianContext context) {
         context.registerCustomValuable(IntValues.class, (type, annotation, annotatedElement, context1) -> new Object[]{100});
@@ -127,30 +122,19 @@ class LiMockTest {
 
     }
 
-    @MockInit("init3")
-    @LiTest
-    void staticBlock3() {
-        Assertions.assertEquals(StaticBlock.size(), StaticBlock.size);
-    }
-
-    @SuppressWarnings("all")
-    static void init3() {
-        LiMock.mock(StaticBlock.class);
-
-    }
-
-    @MockInit("init4")
-    @LiTest
-    void staticBlock4() {
-        Assertions.assertEquals(100, StaticBlock.size);
-
-    }
-
-    static void init4() {
+    static void init1() {
         LiMock.mock(StaticBlock.class);
         LiMock.when(StaticBlock::size, 300);
+    }
+
+    @MockInit("init1")
+    @LiTest
+    void staticBlock1() {
+        Assertions.assertEquals(100, StaticBlock.size);
+        Assertions.assertEquals(300, StaticBlock.size());
 
     }
+
 
 
     static class Inter {
