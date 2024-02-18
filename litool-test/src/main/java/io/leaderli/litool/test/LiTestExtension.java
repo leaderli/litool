@@ -19,19 +19,24 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
 
     @Override
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext context) {
-        return Stream.of(new MyTestTemplateInvocationContext());
+        return Stream.of(new MyTestTemplateInvocationContext(context));
     }
 
     private static class MyTestTemplateInvocationContext implements TestTemplateInvocationContext {
+        private final ExtensionContext context;
+
+        public MyTestTemplateInvocationContext(ExtensionContext context) {
+            this.context = context;
+        }
+
         @Override
         public String getDisplayName(int invocationIndex) {
-            return TestTemplateInvocationContext.super.getDisplayName(invocationIndex);
+            return invocationIndex + "";
         }
 
         @Override
         public List<Extension> getAdditionalExtensions() {
-            List<Extension> list = new ArrayList<>();
-            return list;
+            return new ArrayList<>();
         }
     }
 }
