@@ -12,7 +12,7 @@ class LiTestTest {
     }
 
     @LiTest
-    public void test(int a) {
+    public void test() {
         System.out.println("test--------->");
     }
 
