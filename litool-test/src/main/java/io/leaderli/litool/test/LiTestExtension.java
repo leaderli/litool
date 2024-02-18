@@ -1,11 +1,8 @@
 package io.leaderli.litool.test;
 
-import org.junit.jupiter.api.extension.Extension;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
-import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
+import org.junit.jupiter.api.extension.*;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -23,10 +20,8 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
     }
 
     private static class MyTestTemplateInvocationContext implements TestTemplateInvocationContext {
-        private final ExtensionContext context;
 
         public MyTestTemplateInvocationContext(ExtensionContext context) {
-            this.context = context;
         }
 
         @Override
@@ -36,7 +31,7 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
 
         @Override
         public List<Extension> getAdditionalExtensions() {
-            return new ArrayList<>();
+            return Collections.singletonList((AfterEachCallback) context -> LiMock.reset());
         }
     }
 }

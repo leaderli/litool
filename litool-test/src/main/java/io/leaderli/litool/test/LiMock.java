@@ -10,6 +10,7 @@ import net.bytebuddy.asm.Advice;
 import java.io.IOException;
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
+import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -20,50 +21,45 @@ public class LiMock {
     public static final ByteBuddy byteBuddy = new ByteBuddy();
     static Instrumentation instrumentation = ByteBuddyAgent.install();
 
-    private static void skipClassInitializer(Class<?> mockingClass) {
 
-
-        try {
-
-            ClassPool cl = ClassPool.getDefault();
-            CtClass ct = cl.getCtClass(mockingClass.getName());
-            byte[] bytecode = ct.toBytecode();
-            ct.defrost();
-            originClasses.putIfAbsent(mockingClass, bytecode);
-            skipClassInitializer(ct);
-            bytecode = ct.toBytecode();
-            ct.defrost();
-            instrumentation.redefineClasses(new ClassDefinition(mockingClass, bytecode));
-//            Class.forName(mockingClass.getName());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private static void skipClassInitializer(CtClass ct) throws CannotCompileException {
         CtConstructor classInitializer = ct.makeClassInitializer();
         classInitializer.setBody("{}");
     }
 
-    private static CtClass backup(Class<?> clazz) throws NotFoundException, IOException, CannotCompileException {
+    private static CtClass backupOrRestore(Class<?> clazz) throws NotFoundException, IOException, CannotCompileException {
         ClassPool cl = ClassPool.getDefault();
+
         CtClass ct = cl.getCtClass(clazz.getName());
+        if (originClasses.containsKey(clazz)) {
+            byte[] bytes = originClasses.get(clazz);
+            try {
+                instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
+            } catch (ClassNotFoundException | UnmodifiableClassException e) {
+                throw new RuntimeException(e);
+            }
+            return ct;
+
+        }
         byte[] bytecode = ct.toBytecode();
         ct.defrost();
+        System.out.println(bytecode.length);
         originClasses.putIfAbsent(clazz, bytecode);
+        System.out.println(originClasses.get(clazz).length);
         return ct;
     }
 
-    private static void mockStaticMethod(CtClass ct, StaticMethodInvoker invoker) throws CannotCompileException, InstantiationException, IllegalAccessException, IOException {
+    private static void mockStaticMethod(CtClass ct, StaticMethodInvoker invoker) throws CannotCompileException {
 
         ct.getClassPool().importPackage("io.leaderli.litool.test.MockMethodInvoker");
         ct.getClassPool().importPackage("io.leaderli.litool.test.StaticMethodInvoker");
-        for (CtMethod method : ct.getMethods()) {
+        for (CtMethod method : ct.getDeclaredMethods()) {
             if (method.getDeclaringClass() == ct && Modifier.isStatic(method.getModifiers())) {
                 String invokerClassName = invoker.getClass().getName();
                 MockMethodInvoker.invokers.put(invokerClassName, invoker);
 
-                String src = StrSubstitution.format2("StaticMethodInvoker invoker = MockMethodInvoker.getInvoke(#id#,#name#,$sig,$args,$type);\r\n" + "if( invoker!=null) return ($r)invoker.invoke(#name#,$sig,$args,$type);", "#", "#", StringUtils.wrap(invokerClassName, '"'), StringUtils.wrap(method.getName(), '"'));
+                String src = StrSubstitution.format2("java.util.function.Supplier invoker = MockMethodInvoker.getInvoke($class,#id#,#name#,$sig,$args);\r\n" + "if( invoker!=null) return ($r)invoker.get();", "#", "#", StringUtils.wrap(invokerClassName, '"'), StringUtils.wrap(method.getName(), '"'));
                 method.insertBefore(src);
             }
         }
@@ -71,17 +67,21 @@ public class LiMock {
 
     }
 
+    public static void mockStatic(Class<?> mockClass, StaticMethodInvoker invoker) {
+        mockStatic(mockClass, invoker, false);
+    }
+
     public static void mockStatic(Class<?> mockClass, StaticMethodInvoker invoker, boolean ignoreStaticBlock) {
-        ClassPool cl = ClassPool.getDefault();
         try {
 
-            CtClass ct = backup(mockClass);
+            CtClass ct = backupOrRestore(mockClass);
             if (ignoreStaticBlock) {
                 skipClassInitializer(ct);
             }
             mockStaticMethod(ct, invoker);
             byte[] bytecode = ct.toBytecode();
             ct.defrost();
+            System.out.println("redefine " + bytecode.length);
             instrumentation.redefineClasses(new ClassDefinition(mockClass, bytecode));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -94,6 +94,15 @@ public class LiMock {
     }
 
 
+    public static void reset() {
+        originClasses.forEach((k, v) -> {
+            try {
+                instrumentation.redefineClasses(new ClassDefinition(k, v));
+            } catch (ClassNotFoundException | UnmodifiableClassException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 }
 
 class MockAdvice {

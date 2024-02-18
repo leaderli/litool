@@ -10,12 +10,12 @@ class LiTestTest {
     public void test() {
         LiMock.mockStatic(Error.class, (method, args) -> {
             if (args.length == 0) {
-                return 3;
+                return 30;
             }
-            return (int) args[0] + 1;
+            return (int) args[0] + 40;
         }, true);
-        Assertions.assertEquals(3, Error.m1());
-        Assertions.assertEquals(5, Error.m1(4));
+        Assertions.assertEquals(30, Error.m1());
+        Assertions.assertEquals(44, Error.m1(4));
         LiMock.mockStatic(Error.class, (method, args) -> 100);
         Assertions.assertEquals(100, Error.m3());
         Assertions.assertEquals(100, Error.m1());
@@ -25,8 +25,8 @@ class LiTestTest {
 
     @Test
     void test2() {
+        System.out.println(Error.m1());
         System.out.println(Error.m3());
-
     }
 
     static class Error {
