@@ -1,6 +1,5 @@
 package io.leaderli.litool.test.cartesian;
 
-import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import org.junit.jupiter.api.Assertions;
@@ -15,7 +14,6 @@ public class LiT1Test {
 
     @BeforeAll
     static void beforeAll() {
-        ByteBuddyAgent.install();
     }
 
 

@@ -1,6 +1,6 @@
 package io.leaderli.litool.test;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.ElementType;
@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@ExtendWith(LiTestExtension.class)
-@Test
+@TestTemplate
+@ExtendWith({LiTestExtension.class})
 public @interface LiTest {
 }
 

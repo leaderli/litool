@@ -65,6 +65,20 @@ public class StrSubstitution {
     }
 
     /**
+     * @param format         格式字符串
+     * @param variablePrefix 占位符前缀
+     * @param variableSuffix 占位符后缀
+     * @param args           格式引用的参数
+     * @return 格式化后的字符串
+     * @see VariablesFunction
+     * @see #format(String, Object...) 使用了自定义前后缀
+     * @see #parse(String, String, String, BiFunction)
+     */
+    public static String format2(String format, String variablePrefix, String variableSuffix, Object... args) {
+        return parse(format, variablePrefix, variableSuffix, new VariablesFunction(args));
+    }
+
+    /**
      * 通过bean格式化文本。占位符在格式化文本中被视为bean路径表达式。
      * 并使用
      * {@link Map#get(Object)} 搜索替换值。如果替换值
@@ -108,7 +122,7 @@ public class StrSubstitution {
 
 
     /**
-     * 使用 '{
+     * 使用 ${
      *
      * @see #format(String, Object...)
      */
@@ -168,7 +182,7 @@ public class StrSubstitution {
         return placer.toString();
     }
 
-    private static class VariablesFunction implements BiFunction<String, String, Object> {
+    public static class VariablesFunction implements BiFunction<String, String, Object> {
 
         private final Object[] placeholderValues;
         private final List<String> placeholderNames = new ArrayList<>();
