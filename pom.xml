@@ -6,7 +6,7 @@
 
     <groupId>io.leaderli.litool</groupId>
     <artifactId>litool-parent</artifactId>
-    <version>2.2.2</version>
+    <version>2.3.0</version>
     <name>litool</name>
 
     <packaging>pom</packaging>

@@ -1,0 +1,19 @@
+package io.leaderli.litool.test.cartesian;
+
+import io.leaderli.litool.core.collection.ArrayUtils;
+
+/**
+ * @author leaderli
+ * @since 2022/8/21
+ */
+public class ShortCartesian implements CartesianFunction<ShortValues, Short> {
+    @Override
+    public Short[] apply(ShortValues annotatedByValuable, CartesianContext context) {
+
+        short[] value = annotatedByValuable.value();
+        if (value.length > 0) {
+            return ArrayUtils.toArray(value);
+        }
+        return CartesianUtil.cartesian_single_def(Short.class);
+    }
+}
