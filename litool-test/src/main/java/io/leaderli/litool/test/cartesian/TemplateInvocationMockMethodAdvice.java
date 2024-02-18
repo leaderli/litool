@@ -21,7 +21,7 @@ public class TemplateInvocationMockMethodAdvice {
     public static Map<Method, Object> METHOD_VALUE;
 
     /**
-     * for skip real method call, the return value must not be null. use {@link LiMock#SKIP} to
+     * for skip real method call, the return value must not be null. use {@link CartesianMock#SKIP} to
      * mark the return null. and put it back at {@link #exit(Object, Object, Method, Object[])}
      *
      * @param origin origin method
@@ -40,10 +40,10 @@ public class TemplateInvocationMockMethodAdvice {
             value = ((MethodResultForParameter) value).get(args);
         }
         Class<?> returnType = origin.getReturnType();
-        if (value == LiMock.SKIP) {
+        if (value == CartesianMock.SKIP) {
 
             if (returnType == void.class) {
-                value = LiMock.SKIP;
+                value = CartesianMock.SKIP;
             } else {
 
                 Type type = origin.getGenericReturnType();
@@ -60,7 +60,7 @@ public class TemplateInvocationMockMethodAdvice {
             }
         }
         if (value == null) {
-            return LiMock.SKIP;
+            return CartesianMock.SKIP;
         }
         return value;
     }
@@ -73,7 +73,7 @@ public class TemplateInvocationMockMethodAdvice {
             @Advice.Origin Method origin,
             @Advice.AllArguments Object[] args) {
 
-        if (mock == LiMock.SKIP) {
+        if (mock == CartesianMock.SKIP) {
             mock = null;
         }
         _return = mock;

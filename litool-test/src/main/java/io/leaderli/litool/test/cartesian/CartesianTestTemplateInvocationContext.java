@@ -13,13 +13,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
+class CartesianTestTemplateInvocationContext implements TestTemplateInvocationContext {
     private final Object[] parameters;
     private final Class<?>[] mockingClasses;
     private final Map<Method, Object> methodValue;
     private final ByteBuddy byteBuddy = new ByteBuddy();
 
-    LiTestTemplateInvocationContext(Object[] parameters, Class<?>[] mockingClasses, Map<Method, Object> methodValue) {
+    CartesianTestTemplateInvocationContext(Object[] parameters, Class<?>[] mockingClasses, Map<Method, Object> methodValue) {
         this.parameters = parameters;
         this.mockingClasses = mockingClasses;
         this.methodValue = methodValue;
@@ -56,7 +56,7 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
                         .make()
                         .load(mockClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
             }
-            LiTestAssert.reset();
+            CartesianTestAssert.reset();
             TemplateInvocationMockMethodAdvice.METHOD_VALUE = methodValue;
         };
 
@@ -70,9 +70,9 @@ class LiTestTemplateInvocationContext implements TestTemplateInvocationContext {
             }
 
         };
-        LiCartesianParameterResolver liCartesianParameterResolver = new LiCartesianParameterResolver(parameters);
+        CartesianParameterResolver cartesianParameterResolver = new CartesianParameterResolver(parameters);
 
-        return Arrays.asList(beforeTestExecutionCallback, afterTestExecutionCallback, liCartesianParameterResolver);
+        return Arrays.asList(beforeTestExecutionCallback, afterTestExecutionCallback, cartesianParameterResolver);
     }
 
 }

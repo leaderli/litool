@@ -22,7 +22,7 @@ public class ConstructorAdvice {
     @Advice.OnMethodExit
     public static void exit(@Advice.This Object _this) {
 
-        LiMock.mockedClasses.add(_this.getClass());
+        CartesianMock.mockedClasses.add(_this.getClass());
 
         for (Field field : ReflectUtil.getFields(_this.getClass())) {
 
@@ -49,14 +49,14 @@ public class ConstructorAdvice {
             if (MethodUtil.notObjectMethod(origin)) {
 
 
-                if (LiMock.onMockProgress) {
+                if (CartesianMock.onMockProgress) {
                     // use for record mocking method call
-                    LiMock.mockMethod = origin;
+                    CartesianMock.mockMethod = origin;
                     return null;
                 }
                 Object value = TemplateInvocationMockMethodAdvice.METHOD_VALUE.get(origin);
                 Class<?> returnType = origin.getReturnType();
-                if (value == LiMock.SKIP) {
+                if (value == CartesianMock.SKIP) {
 
                     if (returnType == void.class) {
                         return null;
@@ -74,7 +74,7 @@ public class ConstructorAdvice {
                 }
 
             }
-            return origin.invoke(LiMock.NONE, args);
+            return origin.invoke(CartesianMock.NONE, args);
         });
     }
 }

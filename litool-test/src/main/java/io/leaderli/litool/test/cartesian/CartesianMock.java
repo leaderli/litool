@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 /**
  * used to mock the method call
  */
-public class LiMock {
+public class CartesianMock {
 
     /**
      * it's used for mark method return void or the bean that had be mocked or mocking
@@ -47,7 +47,7 @@ public class LiMock {
      * 被mock 的类
      */
     public static final Set<Class<?>> mockedClasses = new HashSet<>();
-    public static final Map<Class<?>, byte[]> ctClasses = new HashMap<>();
+    public static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
     /**
      *
      */
@@ -88,7 +88,7 @@ public class LiMock {
         onMockProgress = false;
         instanceCreators.clear();
         redefineClassesInMockInit.clear();
-        ctClasses.forEach((c, b) -> {
+        originClasses.forEach((c, b) -> {
             try {
                 instrumentation.redefineClasses(new ClassDefinition(c, b));
                 instrumentation.retransformClasses(c);
@@ -139,7 +139,7 @@ public class LiMock {
 
             byte[] bytecode = ct.toBytecode();
 
-            ctClasses.put(mockingClass, bytecode);
+            originClasses.put(mockingClass, bytecode);
             ct.defrost();
             CtConstructor classInitializer = ct.makeClassInitializer();
             classInitializer.setBody("{}");
@@ -161,7 +161,7 @@ public class LiMock {
         try {
             ClassPool cl = ClassPool.getDefault();
             CtClass ct = cl.getCtClass(mockingClass.getName());
-            ctClasses.put(mockingClass, ct.toBytecode());
+            originClasses.put(mockingClass, ct.toBytecode());
             ct.defrost();
             CtConstructor classInitializer = ct.makeClassInitializer();
             CtClass exceptionType = cl.get("java.lang.Throwable");

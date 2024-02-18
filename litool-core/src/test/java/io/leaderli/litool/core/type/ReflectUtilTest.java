@@ -4,6 +4,7 @@ import io.leaderli.litool.core.lang.DisposableRunnableProxy;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.WhenThrowBehavior;
 import io.leaderli.litool.core.meta.ra.LiraRuntimeException;
+import io.leaderli.litool.core.util.ConsoleUtil;
 import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -164,16 +165,24 @@ class ReflectUtilTest {
 
     }
 
+
+    @Test
+    void test111() {
+
+        ConsoleUtil.printArray(ReflectUtil.newInstance(Integer[].class).get());
+    }
+
     @Test
     void newInstance() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
 
-        assertTrue(ReflectUtil.newInstance(Integer.class).absent());
-        assertTrue(ReflectUtil.newInstance(PrimitiveEnum.class).absent());
-        assertTrue(ReflectUtil.newInstance(Integer[].class).absent());
+        assertTrue(ReflectUtil.newInstance(Integer.class).present());
+        assertTrue(ReflectUtil.newInstance(PrimitiveEnum.class).present());
+        assertTrue(ReflectUtil.newInstance(NoneEnum.class).absent());
+        assertTrue(ReflectUtil.newInstance(Integer[].class).present());
         assertTrue(ReflectUtil.newInstance(ConstructorBean.class).present());
         assertTrue(ReflectUtil.newInstance(Bean.class).present());
 
-        assertTrue(ReflectUtil.newInstance(Integer.class, new Object[]{}).absent());
+        assertTrue(ReflectUtil.newInstance(Integer.class, new Object[]{}).present());
 
         assertTrue(ReflectUtil.newInstance(Integer.class, (String) null).absent());
         assertTrue(ReflectUtil.newInstance(Integer.class, (Integer) null).absent());
@@ -203,6 +212,9 @@ class ReflectUtilTest {
         Class<? extends Supplier> cls = supplier.getClass();
 
         Assertions.assertNotNull(ReflectUtil.newInstance(cls).get().get());
+    }
+
+    enum NoneEnum {
     }
 
     @Test

@@ -83,7 +83,7 @@ public class MockBean<T> {
      */
     public static Object mockBean(Type type) {
 
-        return instance(type, LiMock.instanceCreators).create();
+        return instance(type, CartesianMock.instanceCreators).create();
     }
 
     @SuppressWarnings("unchecked")

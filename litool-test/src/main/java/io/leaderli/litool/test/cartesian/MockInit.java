@@ -12,10 +12,10 @@ import java.lang.annotation.Target;
 @API(status = API.Status.STABLE)
 public @interface MockInit {
     /**
-     * the mock-method called before the {@link CartesianTest} test-method. the mock detail is achieved by {@link  LiMock}
+     * the mock-method called before the {@link CartesianTest} test-method. the mock detail is achieved by {@link  CartesianMock}
      *
      * @return the mock-method name, default is 'init'
-     * @see LiMock
+     * @see CartesianMock
      */
     String value() default "init";
 }

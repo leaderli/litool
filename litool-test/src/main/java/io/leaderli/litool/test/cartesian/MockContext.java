@@ -27,7 +27,7 @@ public @interface MockContext {
      * </pre>
      *
      * @return the init context-method name, default is 'context'
-     * @see LiMock
+     * @see CartesianMock
      */
     String value() default "context";
 }

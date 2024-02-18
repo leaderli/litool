@@ -25,7 +25,7 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
     public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
 
         Class<? super T> raw = typeToken.getRawType();
-        if (ModifierUtil.isAbstract(raw) || ReflectUtil.newInstance(typeToken.getRawType()).absent()) {
+        if (ModifierUtil.isAbstract(raw) || ClassUtil.isPrimitiveOrWrapper(raw) || ReflectUtil.newInstance(typeToken.getRawType()).absent()) {
             return null;
         }
 

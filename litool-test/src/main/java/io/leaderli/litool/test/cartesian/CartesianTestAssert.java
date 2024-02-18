@@ -17,7 +17,7 @@ import java.util.function.BiConsumer;
  * @author leaderli
  * @since 2022/9/30 5:16 PM
  */
-public class LiTestAssert {
+public class CartesianTestAssert {
 
     public static final Set<Class<?>> assertClasses = new HashSet<>();
     public static final Map<Method, LiTuple<Object[], Object>> assert_method_call_records = new HashMap<>();
@@ -30,7 +30,7 @@ public class LiTestAssert {
 
         LiAssertUtil.assertFalse(assertClasses.contains(assertClass), "duplicate record class");
 
-        LiMock.byteBuddy.redefine(assertClass)
+        CartesianMock.byteBuddy.redefine(assertClass)
                 .visit(Advice.to(RecordAdvice.class).on(MethodDescription::isMethod))
                 .make()
                 .load(assertClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
@@ -86,7 +86,7 @@ public class LiTestAssert {
                                    @Advice.This(optional = true) Object _this) {
             if (assertObj == _this || _this == null && staticRecord) {
                 assertMethod = origin;
-                return LiMock.SKIP;
+                return CartesianMock.SKIP;
             }
             return null;
         }

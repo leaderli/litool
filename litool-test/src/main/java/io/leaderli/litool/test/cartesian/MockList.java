@@ -7,7 +7,7 @@ import java.util.*;
  *
  * @param <T> the type of list
  * @see MockBean
- * @see LiMock
+ * @see CartesianMock
  */
 
 @SuppressWarnings("all")

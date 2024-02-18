@@ -4,11 +4,11 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
-class LiCartesianParameterResolver implements ParameterResolver {
+class CartesianParameterResolver implements ParameterResolver {
 
     private final Object[] parameters;
 
-    LiCartesianParameterResolver(Object[] parameters) {
+    CartesianParameterResolver(Object[] parameters) {
         this.parameters = parameters;
     }
 

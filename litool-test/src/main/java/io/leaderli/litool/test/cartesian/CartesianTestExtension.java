@@ -23,7 +23,7 @@ import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
  * @author leaderli
  * @since 2022/8/18
  */
-public class LiTestExtension implements TestTemplateInvocationContextProvider {
+public class CartesianTestExtension implements TestTemplateInvocationContextProvider {
 
 
     /**
@@ -41,51 +41,15 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
                 .isPresent();
     }
 
-    @Override
-    public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext extensionContext) {
-
-
-        LiMock.reset();
-
-        Method templateMethod = extensionContext.getRequiredTestMethod();
-        List<TestTemplateInvocationContext> tests = new ArrayList<>();
-        CartesianContext cartesianContext = new CartesianContext();
-
-        setUpCartesianContext(templateMethod, cartesianContext);
-        setUpMock(templateMethod);
-
-        Lira<Object[]> parameterCartesian = new CartesianMethodParameters(templateMethod, cartesianContext).cartesian();
-
-        Class<?>[] mockingClasses = Lira.of(LiMock.mockedClasses).toArray(Class.class);
-        Lira<Method> mockingMethods = Lira.of(LiMock.methodValuesDependsOnParameters.keySet());
-
-        for (Object[] parameters : parameterCartesian) {
-
-            Object[][] mockingReturns = mockingMethods
-                    .map(m -> LiMock.methodValuesDependsOnParameters.get(m).catesian())
-                    .assertNoError()
-                    .toNullableArray(Object[].class);
-
-            Object[][] mockingMethodReturnCartesian = CollectionUtils.cartesian(mockingReturns);
-
-            addTestTemplateInvocationContext(tests, mockingClasses, mockingMethods, parameters, mockingMethodReturnCartesian);
-        }
-
-        LiMock.reset();
-
-        return tests.stream();
-
-    }
-
     private static void addTestTemplateInvocationContext(List<TestTemplateInvocationContext> tests, Class<?>[] mockingClasses, Lira<Method> mockingMethods, Object[] parameters, Object[][] mockingMethodReturnCartesian) {
         if (mockingMethodReturnCartesian.length == 0) {
-            tests.add(new LiTestTemplateInvocationContext(parameters, mockingClasses, new HashMap<>()));
+            tests.add(new CartesianTestTemplateInvocationContext(parameters, mockingClasses, new HashMap<>()));
         } else {
 
             for (Object[] scenario : mockingMethodReturnCartesian) {
 
                 Map<Method, Object> methodReturn = CollectionUtils.tuple(mockingMethods.toArray(Method.class), scenario).toMap(l -> l);
-                tests.add(new LiTestTemplateInvocationContext(parameters, mockingClasses, methodReturn));
+                tests.add(new CartesianTestTemplateInvocationContext(parameters, mockingClasses, methodReturn));
             }
         }
     }
@@ -98,11 +62,47 @@ public class LiTestExtension implements TestTemplateInvocationContextProvider {
                     LiAssertUtil.assertTrue(ModifierUtil.isStatic(staticInitMethod) && staticInitMethod.getParameterTypes().length == 0, "must be static method without parameter");
                     ReflectUtil.invokeMethod(staticInitMethod, null);
                 });
-        for (Class<?> redefine : LiMock.redefineClassesInMockInit) {
-            LiMock.byteBuddy.redefine(redefine).make()
+        for (Class<?> redefine : CartesianMock.redefineClassesInMockInit) {
+            CartesianMock.byteBuddy.redefine(redefine).make()
                     .load(redefine.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
 
         }
+    }
+
+    @Override
+    public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext extensionContext) {
+
+
+        CartesianMock.reset();
+
+        Method templateMethod = extensionContext.getRequiredTestMethod();
+        List<TestTemplateInvocationContext> tests = new ArrayList<>();
+        CartesianContext cartesianContext = new CartesianContext();
+
+        setUpCartesianContext(templateMethod, cartesianContext);
+        setUpMock(templateMethod);
+
+        Lira<Object[]> parameterCartesian = new CartesianMethodParameters(templateMethod, cartesianContext).cartesian();
+
+        Class<?>[] mockingClasses = Lira.of(CartesianMock.mockedClasses).toArray(Class.class);
+        Lira<Method> mockingMethods = Lira.of(CartesianMock.methodValuesDependsOnParameters.keySet());
+
+        for (Object[] parameters : parameterCartesian) {
+
+            Object[][] mockingReturns = mockingMethods
+                    .map(m -> CartesianMock.methodValuesDependsOnParameters.get(m).catesian())
+                    .assertNoError()
+                    .toNullableArray(Object[].class);
+
+            Object[][] mockingMethodReturnCartesian = CollectionUtils.cartesian(mockingReturns);
+
+            addTestTemplateInvocationContext(tests, mockingClasses, mockingMethods, parameters, mockingMethodReturnCartesian);
+        }
+
+        CartesianMock.reset();
+
+        return tests.stream();
+
     }
 
     private static void setUpCartesianContext(Method templateMethod, CartesianContext cartesianContext) {

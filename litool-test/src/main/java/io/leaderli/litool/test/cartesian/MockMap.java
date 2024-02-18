@@ -11,7 +11,7 @@ import java.util.Set;
  * @param <K> the key type
  * @param <V> the value type
  * @see MockBean
- * @see LiMock
+ * @see CartesianMock
  */
 @SuppressWarnings("all")
 public class MockMap<K, V> implements Map<K, V> {

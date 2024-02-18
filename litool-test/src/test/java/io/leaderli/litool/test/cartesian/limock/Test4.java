@@ -1,6 +1,6 @@
 package io.leaderli.litool.test.cartesian.limock;
 
-import io.leaderli.litool.test.cartesian.LiMock;
+import io.leaderli.litool.test.cartesian.CartesianMock;
 import io.leaderli.litool.test2.limock.Foo2;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ public class Test4 {
 
     @Test
     public void test3() {
-        LiMock.reset();
+        CartesianMock.reset();
         Foo2 foo2 = new Foo2();
         Map<String, Object[]> map = foo2.map();
         System.out.println(map);

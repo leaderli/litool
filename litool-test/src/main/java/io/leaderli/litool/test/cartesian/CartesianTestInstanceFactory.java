@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.TestInstantiationException;
  * @author leaderli
  * @since 2023/7/21 10:26 AM
  */
-public class LiTestInstanceFactory implements TestInstanceFactory {
+public class CartesianTestInstanceFactory implements TestInstanceFactory {
     @Override
     public Object createTestInstance(TestInstanceFactoryContext factoryContext, ExtensionContext extensionContext) throws TestInstantiationException {
         try {

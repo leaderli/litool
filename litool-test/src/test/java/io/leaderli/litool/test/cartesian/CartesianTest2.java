@@ -17,13 +17,13 @@ public class CartesianTest2 {
 
     static void init() {
 
-        LiMock.mock(MockMap.class);
+        CartesianMock.mock(MockMap.class);
         Map<String, String> map = new MockMap<>();
 
         MethodResultCartesianForParameter v = new MethodResultCartesianForParameter(null, "def");
         v.add(new Object[]{"123"}, null, 123);
         v.add(new Object[]{"124"}, null, 124);
-        LiMock.whenArgs(() -> map.get(""), v);
+        CartesianMock.whenArgs(() -> map.get(""), v);
 
     }
 
@@ -47,9 +47,9 @@ public class CartesianTest2 {
 
         CartesianMap<String, Object> cartesianMap = new CartesianMap<>(HashMap::new, map);
 
-        LiMock.mock(Foo2.class);
+        CartesianMock.mock(Foo2.class);
         Foo2 foo2 = new Foo2();
-        LiMock.when(foo2::map, cartesianMap.cartesian());
+        CartesianMock.when(foo2::map, cartesianMap.cartesian());
 
 
     }

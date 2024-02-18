@@ -220,11 +220,19 @@ public class ReflectUtil {
         if (cls == null) {
             return Lino.none();
         }
-        if (cls.isPrimitive()) { // 基础类型isAbstract
+        PrimitiveEnum primitiveEnum = PrimitiveEnum.get(cls);
+        if (primitiveEnum != PrimitiveEnum.OBJECT) {
             return (Lino<T>) Lino.of(PrimitiveEnum.get(cls).zero_value);
         }
-        if (cls.isInterface() || ModifierUtil.isAbstract(cls) || cls.isEnum()) {
+
+        if (cls.isArray()) {
+            return (Lino<T>) Lino.of(Array.newInstance(cls.getComponentType(), 0));
+        }
+        if (cls.isInterface() || ModifierUtil.isAbstract(cls)) {
             return Lino.none();
+        }
+        if (cls.isEnum()) {
+            return getMethod(cls, "values").mapIgnoreError(m -> m.invoke(null)).toLira(cls).first();
         }
         Lino<T> instance = getConstructor(cls).unzip(ReflectUtil::newInstance);
 
@@ -473,6 +481,23 @@ public class ReflectUtil {
             return Lino.none();
         }
         return ReflectUtil.getMethod(obj.getClass(), name).unzip(method -> invokeMethod(method, obj, args));
+    }
+
+
+    /**
+     * 通过对象和方法名调用方法
+     *
+     * @param clazz 类
+     * @param name  对象中的方法名
+     * @param args  方法的参数
+     * @return 方法返回的值, 如果方法的返回值是void, 则总是返回{@code null}
+     */
+    public static Lino<?> invokeStaticMethodByName(Class<?> clazz, String name, Object... args) {
+
+        if (clazz == null || name == null) {
+            return Lino.none();
+        }
+        return ReflectUtil.getMethod(clazz, name).unzip(method -> invokeMethod(method, null, args));
     }
 
     /**
