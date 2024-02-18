@@ -1,19 +1,26 @@
 package io.leaderli.litool.test;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class MockMethodInvoker {
 
 
     public static final Map<String, StaticMethodInvoker> invokers = new HashMap<>();
 
-    public static Object getInvoke(String invoker, String name, Class<?>[] argsType, Object[] args, Class<?> resultType) {
+
+    public static Supplier<?> getInvoke(Class<?> clazz, String invoker, String name, Class<?>[] argsType, Object[] args) {
         StaticMethodInvoker staticMethodInvoker = invokers.get(invoker);
         if (staticMethodInvoker != null) {
-            if (staticMethodInvoker.can(name, argsType, args, resultType)) {
-                return staticMethodInvoker;
+            try {
+                Method declaredMethod = clazz.getDeclaredMethod(name, argsType);
+                if (staticMethodInvoker.can(declaredMethod, args)) {
+                    return () -> staticMethodInvoker.invoke(declaredMethod, args);
+                }
+            } catch (NoSuchMethodException ignore) {
             }
         }
         return null;

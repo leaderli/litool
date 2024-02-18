@@ -1,24 +1,32 @@
 package io.leaderli.litool.test;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class LiTestTest {
 
-    @BeforeEach
-    public void before() {
-        LiMock.mockStatic(Error.class, (name, argsType, args, resultType) -> {
+
+    @LiTest
+    public void test() {
+        LiMock.mockStatic(Error.class, (method, args) -> {
             if (args.length == 0) {
                 return 3;
             }
             return (int) args[0] + 1;
         }, true);
-    }
-
-    @LiTest
-    public void test() {
         Assertions.assertEquals(3, Error.m1());
         Assertions.assertEquals(5, Error.m1(4));
+        LiMock.mockStatic(Error.class, (method, args) -> 100);
+        Assertions.assertEquals(100, Error.m3());
+        Assertions.assertEquals(100, Error.m1());
+
+
+    }
+
+    @Test
+    void test2() {
+        System.out.println(Error.m3());
+
     }
 
     static class Error {
@@ -34,6 +42,14 @@ class LiTestTest {
 
         public static int m1(int a) {
             return a + 1;
+        }
+
+        public static int m3() {
+            return m4();
+        }
+
+        private static int m4() {
+            return 4;
         }
     }
 
