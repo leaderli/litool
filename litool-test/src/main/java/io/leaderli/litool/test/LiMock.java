@@ -19,6 +19,7 @@ import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -143,30 +144,35 @@ public class LiMock {
         return new Builder(mockClass);
     }
 
-    @SuppressWarnings("rawtypes")
-    public interface Then {
-        Other then(Object value);
-
-        WhenBuilder other(Supplier value);
+    public interface Then extends Other {
+        WhenOther then(Object value);
     }
 
-    @SuppressWarnings("rawtypes")
-    public interface Other extends WhenBuilder {
-        WhenBuilder other(Supplier value);
 
-        default WhenBuilder other(Object value) {
-            return other(() -> value);
+    @SuppressWarnings("rawtypes")
+    public interface Other {
+
+        WhenBuild other(BiFunction<Method, Object[], Object> biFunction);
+
+        default WhenBuild other(Supplier supplier) {
+            return other((m, args) -> supplier.get());
         }
+
+        default WhenBuild other(Object value) {
+            return other((m, args) -> value);
+        }
+    }
+
+    public interface WhenOther extends WhenBuild, Other {
     }
 
     public interface When {
         Then when(Object when);
     }
 
-    public interface WhenBuilder extends When {
+    public interface WhenBuild extends When {
         void build();
     }
-
 
     /**
      * 利用不同的接口来控制链式调用
@@ -181,7 +187,7 @@ public class LiMock {
      * </pre>
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static class Builder implements Other, Then {
+    public static class Builder implements WhenOther, Then {
 
         private final Class<?> mockClass;
         private final Map<Method, MethodValue> methodValueMap = new HashMap<>();
@@ -203,15 +209,16 @@ public class LiMock {
             return this;
         }
 
-        public Other then(Object value) {
+        public WhenOther then(Object value) {
             methodValueMap.get(currenMethod).whenValue.put(currentArgs, value);
             return this;
         }
 
-        public WhenBuilder other(Supplier supplier) {
-            methodValueMap.get(currenMethod).otherValue = supplier;
+        public WhenBuild other(BiFunction<Method, Object[], Object> biFunction) {
+            methodValueMap.get(currenMethod).otherValue = biFunction;
             return this;
         }
+
 
         public void build() {
             mock(mockClass, methodValueMap::containsKey, (m, args) -> {
@@ -220,13 +227,13 @@ public class LiMock {
                 if (methodValue.whenValue.containsKey(key)) {
                     return methodValue.whenValue.get(key);
                 }
-                return methodValue.otherValue.get();
+                return methodValue.otherValue.apply(m, args);
             });
         }
 
         public static class MethodValue<T, R> {
             final Method method;
-            Supplier<R> otherValue = () -> null;
+            BiFunction<Method, Object[], R> otherValue = (m, args) -> null;
             Map<ArrayEqual<T>, R> whenValue = new HashMap<>();
 
             MethodValue(Method method) {
@@ -234,14 +241,4 @@ public class LiMock {
             }
         }
     }
-
-//class MockAdvice {
-//    @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
-//    public static Object enter(@Advice.Origin Method method, @Advice.AllArguments Object[] args) throws Throwable {
-//        System.out.println("bytebuddy method call before  ");
-//        Object result = method.invoke(null, args);
-//        System.out.println("bytebuddy method call after   ");
-//        return result;
-//    }
-//}
 }

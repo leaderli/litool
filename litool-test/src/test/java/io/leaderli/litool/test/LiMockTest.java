@@ -55,6 +55,14 @@ class LiMockTest {
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 
+        LiMock.builder(Error.class).when(Error.m1(1)).other((m, args) -> {
+            if ((int) args[0] == 1) {
+                return 21;
+            }
+            return 22;
+        }).build();
+        Assertions.assertEquals(21, Error.m1(1));
+        Assertions.assertEquals(22, Error.m1(2));
         Bean bean = new Bean();
 
         LiMock.builder(Bean.class).when(bean.m1(1)).then(11)
