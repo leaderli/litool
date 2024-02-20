@@ -3,6 +3,7 @@ package io.leaderli.litool.test.cartesian;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.test.LiMock;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
@@ -30,7 +31,7 @@ public class CartesianTestAssert {
 
         LiAssertUtil.assertFalse(assertClasses.contains(assertClass), "duplicate record class");
 
-        CartesianMock.byteBuddy.redefine(assertClass)
+        LiMock.byteBuddy.redefine(assertClass)
                 .visit(Advice.to(RecordAdvice.class).on(MethodDescription::isMethod))
                 .make()
                 .load(assertClass.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());

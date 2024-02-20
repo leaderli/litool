@@ -7,8 +7,6 @@ import io.leaderli.litool.core.type.*;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
@@ -17,11 +15,13 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.instrument.ClassDefinition;
-import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Supplier;
+
+import static io.leaderli.litool.test.LiMock.byteBuddy;
+import static io.leaderli.litool.test.LiMock.instrumentation;
 
 /**
  * used to mock the method call
@@ -48,10 +48,7 @@ public class CartesianMock {
      */
     public static final Set<Class<?>> mockedClasses = new HashSet<>();
     public static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
-    /**
-     *
-     */
-    public static final ByteBuddy byteBuddy = new ByteBuddy();
+
     /**
      * mock过程中重新定义的类
      */
@@ -69,7 +66,6 @@ public class CartesianMock {
      */
     public static boolean onMockProgress;
 
-    static Instrumentation instrumentation = ByteBuddyAgent.install();
 
     /**
      * reset the mock

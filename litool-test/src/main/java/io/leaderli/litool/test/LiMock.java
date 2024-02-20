@@ -2,6 +2,7 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.text.StringUtils;
+import io.leaderli.litool.core.type.MethodUtil;
 import javassist.*;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
@@ -19,14 +20,30 @@ import java.util.Map;
 public class LiMock {
     public static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
     public static final ByteBuddy byteBuddy = new ByteBuddy();
-    static Instrumentation instrumentation = ByteBuddyAgent.install();
+    public static Instrumentation instrumentation = ByteBuddyAgent.install();
 
+    /**
+     * 当类已经加载后，对静态代码块的修改无法在生效，因此仅允许在静态代码块中去调用
+     */
+    public static void skipClassInitializer(Class<?> mockClass) {
+        MethodUtil.onlyCallByCLINIT();
+        try {
 
-
-    private static void skipClassInitializer(CtClass ct) throws CannotCompileException {
-        CtConstructor classInitializer = ct.makeClassInitializer();
-        classInitializer.setBody("{}");
+            CtClass ct = backupOrRestore(mockClass);
+            CtConstructor classInitializer = ct.makeClassInitializer();
+            classInitializer.setBody("{}");
+            redefineClasses(mockClass, ct);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
+
+    public static void redefineClasses(Class<?> mockClass, CtClass ct) throws IOException, CannotCompileException, UnmodifiableClassException, ClassNotFoundException {
+        byte[] bytecode = ct.toBytecode();
+        ct.defrost();
+        instrumentation.redefineClasses(new ClassDefinition(mockClass, bytecode));
+    }
+
 
     private static CtClass backupOrRestore(Class<?> clazz) throws NotFoundException, IOException, CannotCompileException {
         ClassPool cl = ClassPool.getDefault();
@@ -40,13 +57,10 @@ public class LiMock {
                 throw new RuntimeException(e);
             }
             return ct;
-
         }
         byte[] bytecode = ct.toBytecode();
         ct.defrost();
-        System.out.println(bytecode.length);
         originClasses.putIfAbsent(clazz, bytecode);
-        System.out.println(originClasses.get(clazz).length);
         return ct;
     }
 
@@ -68,31 +82,18 @@ public class LiMock {
     }
 
     public static void mockStatic(Class<?> mockClass, StaticMethodInvoker invoker) {
-        mockStatic(mockClass, invoker, false);
-    }
-
-    public static void mockStatic(Class<?> mockClass, StaticMethodInvoker invoker, boolean ignoreStaticBlock) {
         try {
 
             CtClass ct = backupOrRestore(mockClass);
-            if (ignoreStaticBlock) {
-                skipClassInitializer(ct);
-            }
+
             mockStaticMethod(ct, invoker);
             byte[] bytecode = ct.toBytecode();
             ct.defrost();
-            System.out.println("redefine " + bytecode.length);
             instrumentation.redefineClasses(new ClassDefinition(mockClass, bytecode));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-
-    public static Object invoke() {
-
-        return 4;
-    }
-
 
     public static void reset() {
         originClasses.forEach((k, v) -> {

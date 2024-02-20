@@ -3,8 +3,11 @@ package io.leaderli.litool.test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class LiTestTest {
+class LiMockTest {
 
+    static {
+        LiMock.skipClassInitializer(Error.class);
+    }
 
     @LiTest
     public void test() {
@@ -13,7 +16,7 @@ class LiTestTest {
                 return 30;
             }
             return (int) args[0] + 40;
-        }, true);
+        });
         Assertions.assertEquals(30, Error.m1());
         Assertions.assertEquals(44, Error.m1(4));
         LiMock.mockStatic(Error.class, (method, args) -> 100);

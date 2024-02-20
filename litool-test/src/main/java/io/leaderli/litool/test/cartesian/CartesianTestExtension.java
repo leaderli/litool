@@ -5,6 +5,7 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.test.LiMock;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
@@ -63,7 +64,7 @@ public class CartesianTestExtension implements TestTemplateInvocationContextProv
                     ReflectUtil.invokeMethod(staticInitMethod, null);
                 });
         for (Class<?> redefine : CartesianMock.redefineClassesInMockInit) {
-            CartesianMock.byteBuddy.redefine(redefine).make()
+            LiMock.byteBuddy.redefine(redefine).make()
                     .load(redefine.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
 
         }
