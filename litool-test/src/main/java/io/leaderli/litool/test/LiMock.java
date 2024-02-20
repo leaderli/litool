@@ -1,8 +1,10 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.MethodUtil;
+import io.leaderli.litool.core.type.ModifierUtil;
 import javassist.*;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
@@ -13,9 +15,9 @@ import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class LiMock {
     public static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
@@ -64,32 +66,46 @@ public class LiMock {
         return ct;
     }
 
-    private static void mockStaticMethod(CtClass ct, StaticMethodInvoker invoker) throws CannotCompileException {
 
-        ct.getClassPool().importPackage("io.leaderli.litool.test.MockMethodInvoker");
-        ct.getClassPool().importPackage("io.leaderli.litool.test.StaticMethodInvoker");
-        for (CtMethod method : ct.getDeclaredMethods()) {
-            if (method.getDeclaringClass() == ct && Modifier.isStatic(method.getModifiers())) {
-                String invokerClassName = invoker.getClass().getName();
-                MockMethodInvoker.invokers.put(invokerClassName, invoker);
-
-                String src = StrSubstitution.format2("java.util.function.Supplier invoker = MockMethodInvoker.getInvoke($class,#id#,#name#,$sig,$args);\r\n" + "if( invoker!=null) return ($r)invoker.get();", "#", "#", StringUtils.wrap(invokerClassName, '"'), StringUtils.wrap(method.getName(), '"'));
-                method.insertBefore(src);
-            }
-        }
-
-
-    }
-
-    public static void mockStatic(Class<?> mockClass, StaticMethodInvoker invoker) {
+    /**
+     * 根据筛选器来代理满足条件的静态方法,将方法由 {@link  StaticMethodProxy} 去执行。
+     * 可以通过{@link  StaticMethodProxy#when(Method, Object[])}来根据参数来决定是否需要最终由
+     * {@link  StaticMethodProxy#apply(Method, Object[])}代理执行
+     *
+     * @param mockClass         代理类
+     * @param mockMethodFilter  代理方法的过滤类，用于筛选需要代理的方法
+     * @param staticMethodProxy 代理函数
+     */
+    public static void mockStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, StaticMethodProxy staticMethodProxy) {
         try {
 
             CtClass ct = backupOrRestore(mockClass);
+            ClassPool classPool = ct.getClassPool();
+            classPool.importPackage("io.leaderli.litool.test.MockMethodInvoker");
+            classPool.importPackage("io.leaderli.litool.test.StaticMethodInvoker");
+            for (Method method : mockClass.getDeclaredMethods()) {
 
-            mockStaticMethod(ct, invoker);
-            byte[] bytecode = ct.toBytecode();
-            ct.defrost();
-            instrumentation.redefineClasses(new ClassDefinition(mockClass, bytecode));
+                CtClass[] params = ArrayUtils.map(method.getParameterTypes(), CtClass.class, c -> {
+                    try {
+                        return classPool.getCtClass(c.getName());
+                    } catch (NotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                if (method.getDeclaringClass() == mockClass && ModifierUtil.isStatic(method) && mockMethodFilter.apply(method)) {
+                    CtMethod ctMethod = ct.getDeclaredMethod(method.getName(), params);
+                    String invokerClassName = staticMethodProxy.getClass().getName();
+                    MockMethodInvoker.invokers.put(invokerClassName, staticMethodProxy);
+                    String src = StrSubstitution.format2("java.util.function.Supplier staticMethodProxy = MockMethodInvoker.getInvoke($class,#id#,#name#,$sig,$args);\r\n"
+                                    + "if( staticMethodProxy!=null) return ($r)staticMethodProxy.get();",
+                            "#", "#",
+                            StringUtils.wrap(invokerClassName, '"'), StringUtils.wrap(method.getName(), '"')
+                    );
+                    ctMethod.insertBefore(src);
+                }
+            }
+
+            redefineClasses(mockClass, ct);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

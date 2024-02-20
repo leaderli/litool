@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SuppressWarnings("ConstantConditions")
 class ArrayUtilsTest {
-
 
 
     @Test
@@ -424,6 +424,20 @@ class ArrayUtilsTest {
         Assertions.assertSame(String.class, ArrayUtils.toArray(new String[]{}).getClass().getComponentType());
 
         Assertions.assertSame(2, ArrayUtils.toArray(new int[]{1, 2}).length);
+    }
+
+    @Test
+    void map() {
+
+        Integer[] a = null;
+
+        ArrayUtils.map(a, Integer.class, new Function<Integer, Integer>() {
+            @Override
+            public Integer apply(Integer integer) {
+                return null;
+            }
+        });
+
     }
 
 }

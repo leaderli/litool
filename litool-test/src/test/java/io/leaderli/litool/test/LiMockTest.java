@@ -11,17 +11,21 @@ class LiMockTest {
 
     @LiTest
     public void test() {
-        LiMock.mockStatic(Error.class, (method, args) -> {
-            if (args.length == 0) {
-                return 30;
-            }
-            return (int) args[0] + 40;
-        });
+        LiMock.mockStatic(Error.class, method -> method.getName().equals("m1"),
+                (method, args) -> {
+                    if (args.length == 0) {
+                        return 30;
+                    }
+                    return (int) args[0] + 40;
+                }
+        );
         Assertions.assertEquals(30, Error.m1());
         Assertions.assertEquals(44, Error.m1(4));
-        LiMock.mockStatic(Error.class, (method, args) -> 100);
+        Assertions.assertEquals(4, Error.m4());
+        LiMock.mockStatic(Error.class, m -> true, (method, args) -> 100);
         Assertions.assertEquals(100, Error.m3());
         Assertions.assertEquals(100, Error.m1());
+        Assertions.assertEquals(100, Error.m4());
 
 
     }

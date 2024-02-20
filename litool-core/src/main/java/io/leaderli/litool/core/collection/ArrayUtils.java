@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -1177,5 +1178,26 @@ public class ArrayUtils {
         }
 
         return arr;
+    }
+
+
+    /**
+     * @param origin         源数组
+     * @param componentClass 目标数组类型
+     * @param mapper         函数转换类
+     * @param <T>            源数组类型泛型
+     * @param <R>            目标数组类型泛型
+     * @return 转换后的目标数组
+     */
+    public static <T, R> R[] map(T[] origin, Class<? extends R> componentClass, Function<? super T, ? extends R> mapper) {
+        if (origin == null) {
+            return ClassUtil.newWrapperArray(componentClass, 0);
+        }
+        R[] target = ClassUtil.newWrapperArray(componentClass, origin.length);
+
+        for (int i = 0; i < origin.length; i++) {
+            target[i] = mapper.apply(origin[i]);
+        }
+        return target;
     }
 }
