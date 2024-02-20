@@ -197,10 +197,11 @@ public class LiMock {
         public Builder(Class<?> mockClass) {
             this.mockClass = mockClass;
             mock(mockClass, m -> true, (method, args) -> {
+                // 用以记录当前调用的方法，参数，以供后续打桩使用
                 currenMethod = method;
                 currentArgs = ArrayEqual.of(args);
-                MethodValue methodValue = new MethodValue(currenMethod);
-                methodValueMap.put(currenMethod, methodValue);
+                methodValueMap.put(currenMethod, new MethodValue(currenMethod));
+
                 return PrimitiveEnum.get(method.getReturnType()).zero_value;
             });
         }
