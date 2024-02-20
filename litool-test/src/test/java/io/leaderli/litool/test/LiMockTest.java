@@ -55,6 +55,13 @@ class LiMockTest {
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 
+        Bean bean = new Bean();
+
+        LiMock.builder(Bean.class).when(bean.m1(1)).then(11)
+                .other(12).build();
+        Assertions.assertEquals(11, bean.m1(1));
+        Assertions.assertEquals(12, bean.m1(2));
+
     }
 
     static class Error {
@@ -81,5 +88,23 @@ class LiMockTest {
         }
 
 
+    }
+
+    static class Bean {
+        public int m1() {
+            return 1;
+        }
+
+        public int m1(int a) {
+            return a + 1;
+        }
+
+        public int m3() {
+            return m4();
+        }
+
+        private int m4() {
+            return 4;
+        }
     }
 }
