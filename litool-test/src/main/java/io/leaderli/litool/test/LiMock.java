@@ -164,23 +164,21 @@ public class LiMock {
     }
 
     public interface WhenBuilder extends When {
-        Then when(Object when);
-
         void build();
     }
 
-    public static class MethodValue<T, R> {
-        final Method method;
-        Supplier<R> otherValue = () -> null;
-        Map<ArrayEqual<T>, R> whenValue = new HashMap<>();
-
-        MethodValue(Method method) {
-            this.method = method;
-        }
-    }
 
     /**
      * 利用不同的接口来控制链式调用
+     * <p>
+     * eg:
+     * <pre>
+     *  builder(Bean.class)
+     *  .when(bean.m1(1)).then(1)
+     *  .when(bean.m1(2)).then(2)
+     *  .other(0)
+     *  .build()
+     * </pre>
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static class Builder implements Other, Then {
@@ -224,6 +222,16 @@ public class LiMock {
                 }
                 return methodValue.otherValue.get();
             });
+        }
+
+        public static class MethodValue<T, R> {
+            final Method method;
+            Supplier<R> otherValue = () -> null;
+            Map<ArrayEqual<T>, R> whenValue = new HashMap<>();
+
+            MethodValue(Method method) {
+                this.method = method;
+            }
         }
     }
 
