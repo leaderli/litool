@@ -1,7 +1,12 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.type.ModifierUtil;
+import javassist.CannotCompileException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.lang.instrument.UnmodifiableClassException;
 
 class LiMockTest {
 
@@ -11,7 +16,7 @@ class LiMockTest {
 
 
     @LiTest
-    public void test() {
+    public void testMockStatic() {
         LiMock.mockStatic(Error.class, m -> true, (method, args) -> 100);
         Assertions.assertEquals(100, Error.m3());
         Assertions.assertEquals(100, Error.m1());
@@ -41,7 +46,7 @@ class LiMockTest {
     }
 
     @Test
-    void test3() {
+    void testMockBean() {
 
         LiMock.builder(Error.class).when(Error.m1()).then(101).build();
         Assertions.assertEquals(101, Error.m1());
@@ -65,11 +70,55 @@ class LiMockTest {
         Assertions.assertEquals(22, Error.m1(2));
         Bean bean = new Bean();
 
-        LiMock.builder(Bean.class).when(bean.m1(1)).then(11)
-                .other(12).build();
-        Assertions.assertEquals(11, bean.m1(1));
-        Assertions.assertEquals(12, bean.m1(2));
 
+    }
+
+    @Test
+    void testWhen() {
+        LiMock.builder(Error.class).when(Error.m1(1)).then(11)
+                .other(12).build();
+        Assertions.assertEquals(11, Error.m1(1));
+        Assertions.assertEquals(12, Error.m1(2));
+        LiMock.builder(Error.class).when(Error.m1(1)).then(11).build();
+        Assertions.assertEquals(11, Error.m1(1));
+        Assertions.assertEquals(3, Error.m1(2));
+
+        LiMock.builder(Error.class).when(Error.m1(1)).then(10)
+                .when(Error.m1()).then(10)
+                .build();
+        Assertions.assertEquals(10, Error.m1(1));
+        Assertions.assertEquals(3, Error.m1(2));
+        Assertions.assertEquals(10, Error.m1());
+        LiMock.builder(Error.class).when(Error.m1(1)).then(20).build();
+        Assertions.assertEquals(20, Error.m1(1));
+        Assertions.assertEquals(1, Error.m1());
+        Assertions.assertEquals(3, Error.m1(2));
+    }
+
+    @Test
+    void testSkipClassInitializer() throws UnmodifiableClassException, IOException, CannotCompileException, ClassNotFoundException {
+        Assertions.assertDoesNotThrow(() -> Error.m1());
+    }
+
+    @Test
+    void testRecordStatic() {
+
+        Assertions.assertEquals(2, Error.m1(1));
+        LiMock.builder(Error.class).when(Error.m1(1)).then(11)
+                .other(12).build();
+
+        LiMock.recordStatic(Error.class, ModifierUtil::isPublic, (args, value) -> {
+            if (args.length == 1) {
+                if ((int) args[0] == 1) {
+                    Assertions.assertEquals(11, value);
+                } else {
+                    Assertions.assertEquals(12, value);
+                }
+            }
+            return null;
+        });
+        Error.m1(1);
+        Error.m1(2);
     }
 
     static class Error {

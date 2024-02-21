@@ -3,6 +3,7 @@ package io.leaderli.litool.test;
 import io.leaderli.litool.core.collection.ArrayEqual;
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.meta.LiTuple;
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.MethodUtil;
@@ -19,6 +20,7 @@ import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -32,6 +34,74 @@ public class LiMock {
     static {
         classPool.importPackage("io.leaderli.litool.test.MockMethodInvoker");
         classPool.importPackage("io.leaderli.litool.test.StaticMethodInvoker");
+        classPool.importPackage("java.util.function.Supplier");
+    }
+
+
+    private static void redefineClasses(Class<?> mockClass, CtClass ct) throws IOException, CannotCompileException, UnmodifiableClassException, ClassNotFoundException {
+        byte[] bytecode = ct.toBytecode();
+
+        ct.defrost();
+        instrumentation.redefineClasses(new ClassDefinition(mockClass, bytecode));
+    }
+
+
+    private static CtClass backupOrRestore(Class<?> clazz) throws IOException, CannotCompileException {
+
+        if (originClasses.containsKey(clazz)) {
+            byte[] bytes = originClasses.get(clazz);
+            try {
+                instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
+                getCtClass(clazz).detach(); // 恢复初始状态
+            } catch (ClassNotFoundException | UnmodifiableClassException e) {
+                throw new RuntimeException(e);
+            }
+            return getCtClass(clazz);
+        }
+        CtClass ct = getCtClass(clazz);
+        byte[] bytecode = ct.toBytecode();
+        ct.defrost();
+        originClasses.put(clazz, bytecode);
+
+//        originClasses.put(clazz,  Arrays.copyOf(bytecode,bytecode.length));
+        return ct;
+    }
+
+    private static CtClass getCtClass(Class<?> clazz) {
+        try {
+            return classPool.getCtClass(clazz.getName());
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static CtMethod getCtMethod(Method method, CtClass ct) throws NotFoundException {
+        CtClass[] params = ArrayUtils.map(method.getParameterTypes(), CtClass.class, LiMock::getCtClass);
+        return ct.getDeclaredMethod(method.getName(), params);
+    }
+
+
+    private static Method[] findDeclaredMethods(Class<?> clazz, Function<Method, Boolean> methodfilter) {
+        return Lira.of(clazz.getDeclaredMethods())
+                .filter(methodfilter)
+                .filter(m -> !m.isSynthetic())
+                .toArray(Method.class);
+    }
+
+    public static void detach(Class<?> clazz) throws IOException, CannotCompileException, UnmodifiableClassException, ClassNotFoundException {
+        if (originClasses.containsKey(clazz)) {
+            byte[] bytecode = originClasses.get(clazz);
+
+            try {
+                instrumentation.redefineClasses(new ClassDefinition(clazz, bytecode));
+                Class.forName(clazz.getName(), true, clazz.getClassLoader());
+                getCtClass(clazz).detach(); // 恢复初始状态
+            } catch (ClassNotFoundException | UnmodifiableClassException e) {
+                throw new RuntimeException(e);
+            }
+            instrumentation.redefineClasses(new ClassDefinition(clazz, getCtClass(clazz).toBytecode()));
+
+        }
     }
 
     /**
@@ -50,47 +120,8 @@ public class LiMock {
         }
     }
 
-    public static void redefineClasses(Class<?> mockClass, CtClass ct) throws IOException, CannotCompileException, UnmodifiableClassException, ClassNotFoundException {
-        byte[] bytecode = ct.toBytecode();
-        ct.defrost();
-        instrumentation.redefineClasses(new ClassDefinition(mockClass, bytecode));
-    }
-
-
-    private static CtClass backupOrRestore(Class<?> clazz) throws IOException, CannotCompileException {
-
-        CtClass ct = getCtClass(clazz);
-        if (originClasses.containsKey(clazz)) {
-            byte[] bytes = originClasses.get(clazz);
-            try {
-                instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
-                ct.detach(); // 恢复初始状态
-            } catch (ClassNotFoundException | UnmodifiableClassException e) {
-                throw new RuntimeException(e);
-            }
-            return ct;
-        }
-        byte[] bytecode = ct.toBytecode();
-        ct.defrost();
-
-        originClasses.putIfAbsent(clazz, bytecode);
-        return ct;
-    }
-
-    public static void mockStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, StaticMethodProxy staticMethodProxy) {
-        mock(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), staticMethodProxy);
-    }
-
-    static CtClass getCtClass(Class<?> clazz) {
-        try {
-            return classPool.getCtClass(clazz.getName());
-        } catch (NotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     /**
-     * 根据筛选器来代理满足条件的静态方法,将方法由 {@link  StaticMethodProxy} 去执行。
+     * 根据筛选器来代理满足条件的方法,方法由 {@link  StaticMethodProxy} 去执行。
      * 可以通过{@link  StaticMethodProxy#when(Method, Object[])}来根据参数来决定是否需要最终由
      * {@link  StaticMethodProxy#apply(Method, Object[])}代理执行
      *
@@ -98,36 +129,79 @@ public class LiMock {
      * @param mockMethodFilter  代理方法的过滤类，用于筛选需要代理的方法
      * @param staticMethodProxy 代理函数
      */
-    static void mock(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, StaticMethodProxy staticMethodProxy) {
+    public static void mock(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, StaticMethodProxy staticMethodProxy) {
         try {
 
             CtClass ct = backupOrRestore(mockClass);
 
-            for (Method method : mockClass.getDeclaredMethods()) {
-                if (method.isSynthetic() || !mockMethodFilter.apply(method)) {
-                    continue;
-                }
+            for (Method method : findDeclaredMethods(mockClass, mockMethodFilter)) {
 
-                CtClass[] params = ArrayUtils.map(method.getParameterTypes(), CtClass.class, LiMock::getCtClass);
-                CtMethod ctMethod = ct.getDeclaredMethod(method.getName(), params);
-
-                LiTuple<StaticMethodProxy, Method> invokerTuple = LiTuple.of(staticMethodProxy, method);
-                String invokerName = invokerTuple.toString();
-                MockMethodInvoker.invokers.put(invokerName, invokerTuple);
-                String src = StrSubstitution.format2("java.util.function.Supplier staticMethodProxy = MockMethodInvoker.getInvoke($class,#id#,#name#,$sig,$args);\r\n"
-                                + "if( staticMethodProxy!=null) return ($r)staticMethodProxy.get();",
+                CtMethod ctMethod = getCtMethod(method, ct);
+                String uuid = method.getName() + " " + UUID.randomUUID();
+                MockMethodInvoker.invokers.put(uuid, LiTuple.of(staticMethodProxy, method));
+                String src = StrSubstitution.format2("Supplier supplier= MockMethodInvoker.getInvoke(#uuid#,$class,#name#,$sig,$args);\r\n"
+                                + "if( supplier!=null) return ($r)supplier.get();",
                         "#", "#",
-                        StringUtils.wrap(invokerName, '"'), StringUtils.wrap(method.getName(), '"')
+                        StringUtils.wrap(uuid, '"'), StringUtils.wrap(method.getName(), '"')
                 );
                 ctMethod.insertBefore(src);
             }
 
+//            CtConstructor classInitializer = ct.makeClassInitializer();
+//            classInitializer.setBody("{}");
             redefineClasses(mockClass, ct);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * 拦截静态方法
+     *
+     * @see #mock(Class, Function, StaticMethodProxy)
+     */
+    public static void mockStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, StaticMethodProxy staticMethodProxy) {
+        mock(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), staticMethodProxy);
+    }
+
+
+    /**
+     * 根据筛选器来代理满足条件的方法,断言方法的调用参数、返回值满足条件
+     *
+     * @param mockClass        记录类
+     * @param mockMethodFilter 方法过滤器
+     * @param assertFunction   断言函数
+     */
+    public static void record(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, BiFunction<Object[], Object, String> assertFunction) {
+
+        CtClass ct = getCtClass(mockClass);
+
+
+        try {
+            for (Method method : findDeclaredMethods(mockClass, mockMethodFilter)) {
+
+                CtMethod ctMethod = getCtMethod(method, ct);
+                String uuid = method.getName() + " " + UUID.randomUUID();
+                MockMethodInvoker.recorders.put(uuid, assertFunction);
+                ctMethod.insertAfter(StrSubstitution.format2("MockMethodInvoker.record( #uuid#,$args,($w)$_);", "#", "#", StringUtils.wrap(uuid, '"')));
+
+            }
+            redefineClasses(mockClass, ct);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    /**
+     * 拦截静态方法
+     *
+     * @see #record(Class, Function, BiFunction)
+     */
+    public static void recordStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, BiFunction<Object[], Object, String> assertFunction) {
+        record(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), assertFunction);
+    }
 
     public static void reset() {
         originClasses.forEach((k, v) -> {
@@ -222,20 +296,32 @@ public class LiMock {
 
 
         public void build() {
-            mock(mockClass, methodValueMap::containsKey, (m, args) -> {
-                MethodValue methodValue = methodValueMap.get(m);
-                ArrayEqual<Object> key = ArrayEqual.of(args);
-                if (methodValue.whenValue.containsKey(key)) {
-                    return methodValue.whenValue.get(key);
-                }
-                return methodValue.otherValue.apply(m, args);
-            });
+            mock(mockClass, methodValueMap::containsKey,
+                    new StaticMethodProxy() {
+                        @Override
+                        public boolean when(Method m, Object[] args) {
+                            MethodValue methodValue = methodValueMap.get(m);
+                            ArrayEqual<Object> key = ArrayEqual.of(args);
+                            return methodValue.whenValue.containsKey(key) || methodValue.otherValue != null;
+                        }
+
+                        @Override
+                        public Object apply(Method m, Object[] args) {
+                            MethodValue methodValue = methodValueMap.get(m);
+                            ArrayEqual<Object> key = ArrayEqual.of(args);
+                            if (methodValue.whenValue.containsKey(key)) {
+                                return methodValue.whenValue.get(key);
+                            }
+                            return methodValue.otherValue.apply(m, args);
+                        }
+                    }
+            );
         }
 
         public static class MethodValue<T, R> {
             final Method method;
-            BiFunction<Method, Object[], R> otherValue = (m, args) -> null;
-            Map<ArrayEqual<T>, R> whenValue = new HashMap<>();
+            final Map<ArrayEqual<T>, R> whenValue = new HashMap<>();
+            BiFunction<Method, Object[], R> otherValue;
 
             MethodValue(Method method) {
                 this.method = method;
