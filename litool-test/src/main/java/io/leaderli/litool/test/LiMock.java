@@ -107,15 +107,15 @@ public class LiMock {
     }
 
     /**
-     * 根据筛选器来代理满足条件的方法,方法由 {@link  StaticMethodProxy} 去执行。
-     * 可以通过{@link  StaticMethodProxy#when(Method, Object[])}来根据参数来决定是否需要最终由
-     * {@link  StaticMethodProxy#apply(Method, Object[])}代理执行
+     * 根据筛选器来代理满足条件的方法,方法由 {@link  MethodProxy} 去执行。
+     * 可以通过{@link  MethodProxy#when(Method, Object[])}来根据参数来决定是否需要最终由
+     * {@link  MethodProxy#apply(Method, Object[])}代理执行
      *
-     * @param mockClass         代理类，仅代理属于该类的方法，不涉及其他方法
-     * @param mockMethodFilter  代理方法的过滤类，用于筛选需要代理的方法
-     * @param staticMethodProxy 代理函数
+     * @param mockClass        代理类，仅代理属于该类的方法，不涉及其他方法
+     * @param mockMethodFilter 代理方法的过滤类，用于筛选需要代理的方法
+     * @param methodProxy      代理函数
      */
-    public static void mock(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, StaticMethodProxy staticMethodProxy) {
+    public static void mock(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodProxy methodProxy) {
         try {
             backupOrReset(mockClass);
             CtClass ct = getCtClass(mockClass);
@@ -124,7 +124,7 @@ public class LiMock {
 
                 CtMethod ctMethod = getCtMethod(method, ct);
                 String uuid = method.getName() + " " + UUID.randomUUID();
-                MockMethodInvoker.invokers.put(uuid, LiTuple.of(staticMethodProxy, method));
+                MockMethodInvoker.invokers.put(uuid, LiTuple.of(methodProxy, method));
                 String src = StrSubstitution.format2("Supplier supplier= MockMethodInvoker.getInvoke(#uuid#,$class,#name#,$sig,$args);\r\n"
                                 + "if( supplier!=null) return ($r)supplier.get();",
                         "#", "#",
@@ -142,10 +142,10 @@ public class LiMock {
     /**
      * 拦截静态方法
      *
-     * @see #mock(Class, Function, StaticMethodProxy)
+     * @see #mock(Class, Function, MethodProxy)
      */
-    public static void mockStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, StaticMethodProxy staticMethodProxy) {
-        mock(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), staticMethodProxy);
+    public static void mockStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodProxy methodProxy) {
+        mock(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), methodProxy);
     }
 
 
@@ -154,9 +154,9 @@ public class LiMock {
      *
      * @param mockClass        记录类
      * @param mockMethodFilter 方法过滤器
-     * @param assertFunction   断言函数
+     * @param methodAssert     断言函数
      */
-    public static void record(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, BiFunction<Object[], Object, String> assertFunction) {
+    public static void record(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodAssert methodAssert) {
 
         CtClass ct = getCtClass(mockClass);
 
@@ -166,8 +166,8 @@ public class LiMock {
 
                 CtMethod ctMethod = getCtMethod(method, ct);
                 String uuid = method.getName() + " " + UUID.randomUUID();
-                MockMethodInvoker.recorders.put(uuid, assertFunction);
-                ctMethod.insertAfter(StrSubstitution.format2("MockMethodInvoker.record( #uuid#,$args,($w)$_);", "#", "#", StringUtils.wrap(uuid, '"')));
+                MockMethodInvoker.recorders.put(uuid, methodAssert);
+                ctMethod.insertAfter(StrSubstitution.format2("MockMethodInvoker.record( #uuid#,#this#,$args,($w)$_);", "#", "#", StringUtils.wrap(uuid, '"'), ModifierUtil.isStatic(method) ? "null" : "$0"));
 
             }
             redefineClasses(mockClass, ct, false);
@@ -181,10 +181,10 @@ public class LiMock {
     /**
      * 拦截静态方法
      *
-     * @see #record(Class, Function, BiFunction)
+     * @see #record(Class, Function, MethodAssert)
      */
-    public static void recordStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, BiFunction<Object[], Object, String> assertFunction) {
-        record(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), assertFunction);
+    public static void recordStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodAssert methodAssert) {
+        record(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), methodAssert);
     }
 
 
@@ -198,8 +198,8 @@ public class LiMock {
         });
     }
 
-    public static When builder(Class<?> mockClass) {
-        return new Builder(mockClass);
+    public static When mocker(Class<?> mockClass) {
+        return new Mocker(mockClass);
     }
 
     public interface Then extends Other {
@@ -245,14 +245,14 @@ public class LiMock {
      * </pre>
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static class Builder implements WhenOther, Then {
+    public static class Mocker implements WhenOther, Then {
 
         private final Class<?> mockClass;
         private final Map<Method, MethodValue> methodValueMap = new HashMap<>();
         private Method currenMethod;
         private ArrayEqual currentArgs;
 
-        public Builder(Class<?> mockClass) {
+        public Mocker(Class<?> mockClass) {
             this.mockClass = mockClass;
             mock(mockClass, m -> true, (method, args) -> {
                 // 用以记录当前调用的方法，参数，以供后续打桩使用
@@ -281,7 +281,7 @@ public class LiMock {
 
         public void build() {
             mock(mockClass, methodValueMap::containsKey,
-                    new StaticMethodProxy() {
+                    new MethodProxy() {
                         @Override
                         public boolean when(Method m, Object[] args) {
                             MethodValue methodValue = methodValueMap.get(m);

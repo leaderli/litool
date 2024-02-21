@@ -1,7 +1,9 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.type.ModifierUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 class LiMockTest {
 
@@ -44,19 +46,19 @@ class LiMockTest {
     @LiTest
     void testMockBean() {
 
-        LiMock.builder(Error.class).when(Error.m1()).then(101).build();
+        LiMock.mocker(Error.class).when(Error.m1()).then(101).build();
         Assertions.assertEquals(101, Error.m1());
         Assertions.assertEquals(4, Error.m4());
-        LiMock.builder(Error.class).when(Error.m1(1)).then(11)
+        LiMock.mocker(Error.class).when(Error.m1(1)).then(11)
                 .other(() -> 12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
-        LiMock.builder(Error.class).when(Error.m1(1)).then(11)
+        LiMock.mocker(Error.class).when(Error.m1(1)).then(11)
                 .other(12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 
-        LiMock.builder(Error.class).when(Error.m1(1)).other((m, args) -> {
+        LiMock.mocker(Error.class).when(Error.m1(1)).other((m, args) -> {
             if ((int) args[0] == 1) {
                 return 21;
             }
@@ -71,21 +73,21 @@ class LiMockTest {
 
     @LiTest
     void testWhen() {
-        LiMock.builder(Error.class).when(Error.m1(1)).then(11)
+        LiMock.mocker(Error.class).when(Error.m1(1)).then(11)
                 .other(12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
-        LiMock.builder(Error.class).when(Error.m1(1)).then(11).build();
+        LiMock.mocker(Error.class).when(Error.m1(1)).then(11).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(3, Error.m1(2));
 
-        LiMock.builder(Error.class).when(Error.m1(1)).then(10)
+        LiMock.mocker(Error.class).when(Error.m1(1)).then(10)
                 .when(Error.m1()).then(10)
                 .build();
         Assertions.assertEquals(10, Error.m1(1));
         Assertions.assertEquals(3, Error.m1(2));
         Assertions.assertEquals(10, Error.m1());
-        LiMock.builder(Error.class).when(Error.m1(1)).then(20).build();
+        LiMock.mocker(Error.class).when(Error.m1(1)).then(20).build();
         Assertions.assertEquals(20, Error.m1(1));
         Assertions.assertEquals(1, Error.m1());
         Assertions.assertEquals(3, Error.m1(2));
@@ -101,12 +103,12 @@ class LiMockTest {
     void testRecordStatic() {
 
         Assertions.assertEquals(2, Error.m1(1));
-        LiMock.builder(Error.class).when(Error.m1(1)).then(11)
+        LiMock.mocker(Error.class).when(Error.m1(1)).then(11)
                 .other(12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 
-        LiMock.recordStatic(Error.class, ModifierUtil::isPublic, (args, value) -> {
+        LiMock.recordStatic(Error.class, ModifierUtil::isPublic, (obj, args, value) -> {
             if (args.length == 1) {
                 if ((int) args[0] == 1) {
                     Assertions.assertEquals(11, value);
@@ -118,6 +120,21 @@ class LiMockTest {
         });
 //        Error.m1(1);
 //        Error.m1(2);
+    }
+
+    @Test
+    void testRecord() {
+
+        LiBox<Object> box = LiBox.none();
+        LiMock.record(Bean.class, m -> "m1".equals(m.getName()), (_this, args, _return) -> {
+            box.value(_this);
+            return null;
+        });
+
+        Bean bean = new Bean();
+        bean.m1();
+        Assertions.assertSame(bean, box.value());
+
     }
 
     static class Error {

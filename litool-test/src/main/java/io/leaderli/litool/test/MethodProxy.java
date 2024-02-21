@@ -2,7 +2,7 @@ package io.leaderli.litool.test;
 
 import java.lang.reflect.Method;
 
-public interface StaticMethodProxy {
+public interface MethodProxy {
 
     default boolean when(Method method, Object[] args) {
         return true;
