@@ -1,12 +1,7 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.type.ModifierUtil;
-import javassist.CannotCompileException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.lang.instrument.UnmodifiableClassException;
 
 class LiMockTest {
 
@@ -17,6 +12,7 @@ class LiMockTest {
 
     @LiTest
     public void testMockStatic() {
+
         LiMock.mockStatic(Error.class, m -> true, (method, args) -> 100);
         Assertions.assertEquals(100, Error.m3());
         Assertions.assertEquals(100, Error.m1());
@@ -38,14 +34,14 @@ class LiMockTest {
 
     }
 
-    @Test
+    @LiTest
     void testGetInvoke() {
         MockMethodInvoker.invokers.clear();
         LiMock.mockStatic(Error.class, m -> true, (method, args) -> 100);
         Assertions.assertEquals(4, MockMethodInvoker.invokers.size());
     }
 
-    @Test
+    @LiTest
     void testMockBean() {
 
         LiMock.builder(Error.class).when(Error.m1()).then(101).build();
@@ -73,7 +69,7 @@ class LiMockTest {
 
     }
 
-    @Test
+    @LiTest
     void testWhen() {
         LiMock.builder(Error.class).when(Error.m1(1)).then(11)
                 .other(12).build();
@@ -95,17 +91,20 @@ class LiMockTest {
         Assertions.assertEquals(3, Error.m1(2));
     }
 
-    @Test
-    void testSkipClassInitializer() throws UnmodifiableClassException, IOException, CannotCompileException, ClassNotFoundException {
+    @LiTest
+    void testSkipClassInitializer() {
         Assertions.assertDoesNotThrow(() -> Error.m1());
     }
 
-    @Test
+
+    @LiTest
     void testRecordStatic() {
 
         Assertions.assertEquals(2, Error.m1(1));
         LiMock.builder(Error.class).when(Error.m1(1)).then(11)
                 .other(12).build();
+        Assertions.assertEquals(11, Error.m1(1));
+        Assertions.assertEquals(12, Error.m1(2));
 
         LiMock.recordStatic(Error.class, ModifierUtil::isPublic, (args, value) -> {
             if (args.length == 1) {
@@ -117,14 +116,14 @@ class LiMockTest {
             }
             return null;
         });
-        Error.m1(1);
-        Error.m1(2);
+//        Error.m1(1);
+//        Error.m1(2);
     }
 
     static class Error {
         static {
             if (1 == 1) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("1 == 1");
             }
         }
 

@@ -38,33 +38,33 @@ public class LiMock {
     }
 
 
-    private static void redefineClasses(Class<?> mockClass, CtClass ct) throws IOException, CannotCompileException, UnmodifiableClassException, ClassNotFoundException {
-        byte[] bytecode = ct.toBytecode();
-
-        ct.defrost();
-        instrumentation.redefineClasses(new ClassDefinition(mockClass, bytecode));
+    private static void redefineClasses(Class<?> mockClass, CtClass ct, boolean detach) throws IOException, CannotCompileException, UnmodifiableClassException, ClassNotFoundException {
+        byte[] bytes = ct.toBytecode();
+        instrumentation.redefineClasses(new ClassDefinition(mockClass, bytes));
+        if (detach) {
+            ct.detach();
+        } else {
+            ct.defrost();
+        }
     }
 
 
-    private static CtClass backupOrRestore(Class<?> clazz) throws IOException, CannotCompileException {
+    private static void backupOrReset(Class<?> clazz) throws IOException, CannotCompileException {
 
+        CtClass ct = getCtClass(clazz);
         if (originClasses.containsKey(clazz)) {
             byte[] bytes = originClasses.get(clazz);
             try {
                 instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
-                getCtClass(clazz).detach(); // 恢复初始状态
             } catch (ClassNotFoundException | UnmodifiableClassException e) {
                 throw new RuntimeException(e);
             }
-            return getCtClass(clazz);
+            ct.detach();
+        } else {
+            byte[] bytes = ct.toBytecode();
+            ct.defrost();
+            originClasses.put(clazz, bytes);
         }
-        CtClass ct = getCtClass(clazz);
-        byte[] bytecode = ct.toBytecode();
-        ct.defrost();
-        originClasses.put(clazz, bytecode);
-
-//        originClasses.put(clazz,  Arrays.copyOf(bytecode,bytecode.length));
-        return ct;
     }
 
     private static CtClass getCtClass(Class<?> clazz) {
@@ -88,21 +88,6 @@ public class LiMock {
                 .toArray(Method.class);
     }
 
-    public static void detach(Class<?> clazz) throws IOException, CannotCompileException, UnmodifiableClassException, ClassNotFoundException {
-        if (originClasses.containsKey(clazz)) {
-            byte[] bytecode = originClasses.get(clazz);
-
-            try {
-                instrumentation.redefineClasses(new ClassDefinition(clazz, bytecode));
-                Class.forName(clazz.getName(), true, clazz.getClassLoader());
-                getCtClass(clazz).detach(); // 恢复初始状态
-            } catch (ClassNotFoundException | UnmodifiableClassException e) {
-                throw new RuntimeException(e);
-            }
-            instrumentation.redefineClasses(new ClassDefinition(clazz, getCtClass(clazz).toBytecode()));
-
-        }
-    }
 
     /**
      * 当类已经加载后，对静态代码块的修改无法在生效，因此仅允许在静态代码块中去调用
@@ -110,11 +95,12 @@ public class LiMock {
     public static void skipClassInitializer(Class<?> mockClass) {
         MethodUtil.onlyCallByCLINIT();
         try {
-
-            CtClass ct = backupOrRestore(mockClass);
+            backupOrReset(mockClass);
+            CtClass ct = getCtClass(mockClass);
             CtConstructor classInitializer = ct.makeClassInitializer();
             classInitializer.setBody("{}");
-            redefineClasses(mockClass, ct);
+            redefineClasses(mockClass, ct, true);
+            Class.forName(mockClass.getName(), true, mockClass.getClassLoader());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -131,8 +117,8 @@ public class LiMock {
      */
     public static void mock(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, StaticMethodProxy staticMethodProxy) {
         try {
-
-            CtClass ct = backupOrRestore(mockClass);
+            backupOrReset(mockClass);
+            CtClass ct = getCtClass(mockClass);
 
             for (Method method : findDeclaredMethods(mockClass, mockMethodFilter)) {
 
@@ -147,9 +133,7 @@ public class LiMock {
                 ctMethod.insertBefore(src);
             }
 
-//            CtConstructor classInitializer = ct.makeClassInitializer();
-//            classInitializer.setBody("{}");
-            redefineClasses(mockClass, ct);
+            redefineClasses(mockClass, ct, false);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -186,7 +170,7 @@ public class LiMock {
                 ctMethod.insertAfter(StrSubstitution.format2("MockMethodInvoker.record( #uuid#,$args,($w)$_);", "#", "#", StringUtils.wrap(uuid, '"')));
 
             }
-            redefineClasses(mockClass, ct);
+            redefineClasses(mockClass, ct, false);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -203,10 +187,10 @@ public class LiMock {
         record(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), assertFunction);
     }
 
+
     public static void reset() {
         originClasses.forEach((k, v) -> {
             try {
-                getCtClass(k).detach();
                 instrumentation.redefineClasses(new ClassDefinition(k, v));
             } catch (ClassNotFoundException | UnmodifiableClassException e) {
                 throw new RuntimeException(e);
