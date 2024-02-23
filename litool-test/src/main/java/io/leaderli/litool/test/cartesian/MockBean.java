@@ -130,7 +130,10 @@ public class MockBean<T> {
             return;
         }
 
-        for (Field field : ReflectUtil.getFields(rawType)) {
+        for (Field field : ReflectUtil.getFields(rawType)
+                .filter(f -> !ModifierUtil.isStatic(f))
+                .filter(f -> ReflectUtil.getFieldValue(instance, f))
+        ) {
             Type genericType = field.getGenericType();
 
             Type targetType = TypeUtil.resolve(typeToken.getType(), genericType);

@@ -320,8 +320,6 @@ public class LiMock {
             });
         }
 
-        public void ignoreInit() {
-        }
 
         public Then when(Object o) {
             return this;
