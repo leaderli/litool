@@ -64,6 +64,18 @@ class LiMockTest {
 
     }
 
+    @Test
+    void testMockReset() {
+        LiMock.mockStatic(Error.class, m -> "m1".equals(m.getName()), (method, args) -> 100, false);
+        LiMock.mockStatic(Error.class, m -> "m4".equals(m.getName()), (method, args) -> 200, false);
+        Assertions.assertEquals(100, Error.m1());
+        Assertions.assertEquals(200, Error.m4());
+        LiMock.mockStatic(Error.class, m -> "m4".equals(m.getName()), (method, args) -> 200, true);
+        Assertions.assertEquals(1, Error.m1());
+        Assertions.assertEquals(200, Error.m4());
+
+    }
+
     @LiTest
     void testGetInvoke() {
         MockMethodInvoker.invokers.clear();
@@ -116,6 +128,11 @@ class LiMockTest {
         Assertions.assertEquals(3, Error.m1(2));
         Assertions.assertEquals(10, Error.m1());
         LiMock.mocker(Error.class).when(Error.m1(1)).then(20).build();
+        Assertions.assertEquals(20, Error.m1(1));
+        Assertions.assertEquals(1, Error.m1());
+        Assertions.assertEquals(3, Error.m1(2));
+        LiMock.reset();
+        LiMock.mocker(Error.class).when(() -> Error.m1(1)).then(20).build();
         Assertions.assertEquals(20, Error.m1(1));
         Assertions.assertEquals(1, Error.m1());
         Assertions.assertEquals(3, Error.m1(2));

@@ -49,18 +49,23 @@ public class LiMock {
         }
     }
 
-
     private static void backupOrReset(Class<?> clazz) throws IOException, CannotCompileException {
+        backupOrReset(clazz, true);
+    }
+
+    private static void backupOrReset(Class<?> clazz, boolean reset) throws IOException, CannotCompileException {
 
         CtClass ct = getCtClass(clazz);
         if (originClasses.containsKey(clazz)) {
-            byte[] bytes = originClasses.get(clazz);
-            try {
-                instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
-            } catch (ClassNotFoundException | UnmodifiableClassException e) {
-                throw new RuntimeException(e);
+            if (reset) {
+                byte[] bytes = originClasses.get(clazz);
+                try {
+                    instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
+                } catch (ClassNotFoundException | UnmodifiableClassException e) {
+                    throw new RuntimeException(e);
+                }
+                ct.detach();
             }
-            ct.detach();
         } else {
             byte[] bytes = ct.toBytecode();
             ct.defrost();
@@ -82,9 +87,9 @@ public class LiMock {
     }
 
 
-    private static Method[] findDeclaredMethods(Class<?> clazz, Function<Method, Boolean> methodfilter) {
+    private static Method[] findDeclaredMethods(Class<?> clazz, Function<Method, Boolean> methodFilter) {
         return Lira.of(clazz.getDeclaredMethods())
-                .filter(methodfilter)
+                .filter(methodFilter)
                 .filter(m -> !m.isSynthetic())
                 .toArray(Method.class);
     }
@@ -141,18 +146,9 @@ public class LiMock {
         }
     }
 
-    /**
-     * 根据筛选器来代理满足条件的方法,方法由 {@link  MethodProxy} 去执行。
-     * 可以通过{@link  MethodProxy#when(Method, Object[])}来根据参数来决定是否需要最终由
-     * {@link  MethodProxy#apply(Method, Object[])}代理执行
-     *
-     * @param mockClass        代理类，仅代理属于该类的方法，不涉及其他方法
-     * @param mockMethodFilter 代理方法的过滤类，用于筛选需要代理的方法
-     * @param methodProxy      代理函数
-     */
-    public static void mock(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodProxy methodProxy) {
+    public static void mock(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodProxy methodProxy, boolean reset) {
         try {
-            backupOrReset(mockClass);
+            backupOrReset(mockClass, reset);
             CtClass ct = getCtClass(mockClass);
 
             for (Method method : findDeclaredMethods(mockClass, mockMethodFilter)) {
@@ -172,6 +168,20 @@ public class LiMock {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+    }
+
+    /**
+     * 根据筛选器来代理满足条件的方法,方法由 {@link  MethodProxy} 去执行。
+     * 可以通过{@link  MethodProxy#when(Method, Object[])}来根据参数来决定是否需要最终由
+     * {@link  MethodProxy#apply(Method, Object[])}代理执行
+     *
+     * @param mockClass        代理类，仅代理属于该类的方法，不涉及其他方法
+     * @param mockMethodFilter 代理方法的过滤类，用于筛选需要代理的方法
+     * @param methodProxy      代理函数
+     */
+    public static void mock(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodProxy methodProxy) {
+        mock(mockClass, mockMethodFilter, methodProxy, true);
     }
 
     /**
@@ -181,6 +191,15 @@ public class LiMock {
      */
     public static void mockStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodProxy methodProxy) {
         mock(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), methodProxy);
+    }
+
+    /**
+     * 拦截静态方法
+     *
+     * @see #mock(Class, Function, MethodProxy)
+     */
+    public static void mockStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodProxy methodProxy, boolean reset) {
+        mock(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), methodProxy, reset);
     }
 
 
@@ -261,6 +280,8 @@ public class LiMock {
 
     public interface When {
         Then when(Object when);
+
+        Then when(Supplier<?> when);
     }
 
     public interface WhenBuild extends When {
@@ -303,6 +324,11 @@ public class LiMock {
         }
 
         public Then when(Object o) {
+            return this;
+        }
+
+        public Then when(Supplier<?> supplier) {
+            supplier.get();
             return this;
         }
 
