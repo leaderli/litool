@@ -19,6 +19,25 @@ class LiMockTest {
         LiMock.skipClassConstructors(Foo.class);
         Assertions.assertEquals(0, new Foo().a);
 
+        Assertions.assertEquals(2, new Foo2(2).a);
+        LiMock.skipClassConstructors(Foo2.class);
+        Assertions.assertEquals(0, new Foo2(2).a);
+
+
+    }
+
+
+    @LiTest
+    void skipClassConstructors2() {
+//        Assertions.assertEquals(2, new Foo3(2).a);
+        LiMock.skipClassConstructors(Foo3.class);
+        Assertions.assertEquals(0, new Foo3(2).a);
+        LiMock.skipClassConstructors(Foo5.class);
+        Assertions.assertEquals(0, new Foo5(5, "5").a);
+
+        Assertions.assertEquals(2, new Foo7(1, 1).a);
+        LiMock.skipClassConstructors(Foo7.class);
+        Assertions.assertEquals(0, new Foo7(1, 1).a);
     }
 
     @LiTest
@@ -197,6 +216,59 @@ class LiMockTest {
 
         public Foo() {
             a = 2;
+        }
+    }
+
+    @SuppressWarnings("UnusedAssignment")
+    static class Foo2 {
+        public int a = 1;
+
+        public Foo2(int a) {
+            this.a = a;
+        }
+    }
+
+    static class Foo3 extends Foo2 {
+
+        public Foo3(int a) {
+            super(a);
+        }
+    }
+
+    static class Foo4 {
+        public int a;
+
+        public Foo4(int a, String b) {
+        }
+    }
+
+    static class Foo5 extends Foo4 {
+
+
+        public Foo5(int a, String b) {
+            super(a, b);
+        }
+    }
+
+    static class Foo6 {
+        int a;
+
+        Foo6(int a) {
+            this.a = 1;
+        }
+
+        Foo6() {
+            this.a = 0;
+        }
+
+        Foo6(int a, int b) {
+            this.a = 2;
+        }
+    }
+
+    static class Foo7 extends Foo6 {
+        public Foo7(int a, int b) {
+            super(a, b);
         }
     }
 }

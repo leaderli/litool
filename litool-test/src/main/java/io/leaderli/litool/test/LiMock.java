@@ -18,6 +18,7 @@ import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -106,12 +107,33 @@ public class LiMock {
         }
     }
 
+
     public static void skipClassConstructors(Class<?> mockClass) {
+        if (mockClass.isInterface() || mockClass.isArray() || mockClass.isEnum() || mockClass == Object.class) {
+            return;
+        }
         try {
             backupOrReset(mockClass);
             CtClass ct = getCtClass(mockClass);
             for (CtConstructor constructor : ct.getDeclaredConstructors()) {
-                constructor.setBody("{}");
+                if (constructor.callsSuper()) {
+                    // 组装调用super
+                    CtClass[] superConstructorParameterTypes = Lira.of(ct.getSuperclass().getDeclaredConstructors())
+                            .mapIgnoreError(CtBehavior::getParameterTypes)
+                            .sorted(Comparator.comparingInt(p -> p.length)).first().get();
+
+                    String[] parameters = Lira.of(superConstructorParameterTypes)
+                            .map(CtClass::getName)
+                            .map(PrimitiveEnum::get)
+                            .map(e -> String.valueOf(e.zero_value))
+                            .toNullableArray(String.class);
+
+                    String src = StrSubstitution.$format("{super(${param});}", String.join(",", parameters));
+                    constructor.setBody(src);
+                } else {
+
+                    constructor.setBody("{}");
+                }
             }
             redefineClasses(mockClass, ct, true);
         } catch (Exception e) {

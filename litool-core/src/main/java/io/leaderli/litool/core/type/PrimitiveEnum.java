@@ -226,6 +226,19 @@ public enum PrimitiveEnum {
     }
 
     /**
+     * @param name 类型名称
+     * @return 根据名称返回类型
+     */
+    public static PrimitiveEnum get(String name) {
+        for (PrimitiveEnum value : values()) {
+            if (value.name().equalsIgnoreCase(name)) {
+                return value;
+            }
+        }
+        return OBJECT;
+    }
+
+    /**
      * 判断指定的类型是否为基本数据类型或其包装类型
      *
      * @param type 要判断的类型

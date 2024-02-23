@@ -24,6 +24,14 @@ class PrimitiveEnumTest {
     }
 
     @Test
+    void getByName() {
+
+        Assertions.assertEquals(PrimitiveEnum.INT, PrimitiveEnum.get("int"));
+        Assertions.assertEquals(PrimitiveEnum.OBJECT, PrimitiveEnum.get((String) null));
+
+    }
+
+    @Test
     void read() {
 
         Assertions.assertEquals(0, (int) PrimitiveEnum.INT.read(null));
@@ -56,7 +64,7 @@ class PrimitiveEnumTest {
 
         Assertions.assertSame(PrimitiveEnum.VOID, PrimitiveEnum.get(void.class));
         Assertions.assertSame(PrimitiveEnum.VOID, PrimitiveEnum.get(Void.class));
-        Assertions.assertSame(PrimitiveEnum.OBJECT, PrimitiveEnum.get(null));
+        Assertions.assertSame(PrimitiveEnum.OBJECT, PrimitiveEnum.get((Class<?>) null));
 
     }
 
