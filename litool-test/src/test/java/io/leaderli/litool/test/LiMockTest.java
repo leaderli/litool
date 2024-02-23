@@ -13,6 +13,15 @@ class LiMockTest {
 
 
     @LiTest
+    void skipClassConstructors() {
+
+        Assertions.assertEquals(2, new Foo().a);
+        LiMock.skipClassConstructors(Foo.class);
+        Assertions.assertEquals(0, new Foo().a);
+
+    }
+
+    @LiTest
     public void testMockStatic() {
 
         LiMock.mockStatic(Error.class, m -> true, (method, args) -> 100);
@@ -137,6 +146,7 @@ class LiMockTest {
 
     }
 
+    @SuppressWarnings("ConstantValue")
     static class Error {
         static {
             if (1 == 1) {
@@ -178,6 +188,15 @@ class LiMockTest {
 
         private int m4() {
             return 4;
+        }
+    }
+
+    @SuppressWarnings("UnusedAssignment")
+    static class Foo {
+        public int a = 1;
+
+        public Foo() {
+            a = 2;
         }
     }
 }

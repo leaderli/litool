@@ -106,6 +106,19 @@ public class LiMock {
         }
     }
 
+    public static void skipClassConstructors(Class<?> mockClass) {
+        try {
+            backupOrReset(mockClass);
+            CtClass ct = getCtClass(mockClass);
+            for (CtConstructor constructor : ct.getDeclaredConstructors()) {
+                constructor.setBody("{}");
+            }
+            redefineClasses(mockClass, ct, true);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * 根据筛选器来代理满足条件的方法,方法由 {@link  MethodProxy} 去执行。
      * 可以通过{@link  MethodProxy#when(Method, Object[])}来根据参数来决定是否需要最终由
@@ -262,6 +275,9 @@ public class LiMock {
 
                 return PrimitiveEnum.get(method.getReturnType()).zero_value;
             });
+        }
+
+        public void ignoreInit() {
         }
 
         public Then when(Object o) {
