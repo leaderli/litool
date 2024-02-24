@@ -1,6 +1,7 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.meta.LiTuple;
+import io.leaderli.litool.core.type.PrimitiveEnum;
 import org.junit.jupiter.api.Assertions;
 
 import java.lang.reflect.Method;
@@ -34,6 +35,10 @@ public class MockMethodInvoker {
         if (apply != null) {
             Assertions.fail(Arrays.toString(args) + " -> " + _return + "\r\n" + apply);
         }
+    }
+
+    public static Object zero(Class<?> returnClass) {
+        return PrimitiveEnum.get(returnClass).zero_value;
     }
 
 }

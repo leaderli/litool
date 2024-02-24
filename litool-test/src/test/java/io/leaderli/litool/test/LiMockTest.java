@@ -86,19 +86,17 @@ class LiMockTest {
     @LiTest
     void testMockBean() {
 
-        LiMock.mocker(Error.class).when(Error.m1()).then(101).build();
+        LiMock.mocker(Error.class).when(Error.m1(), 101).build();
         Assertions.assertEquals(101, Error.m1());
         Assertions.assertEquals(4, Error.m4());
-        LiMock.mocker(Error.class).when(Error.m1(1)).then(11)
-                .other(() -> 12).build();
+        LiMock.mocker(Error.class).when(Error.m1(1), 11, (m, args) -> 12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
-        LiMock.mocker(Error.class).when(Error.m1(1)).then(11)
-                .other(12).build();
+        LiMock.mocker(Error.class).when(Error.m1(1), 11, 12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 
-        LiMock.mocker(Error.class).when(Error.m1(1)).other((m, args) -> {
+        LiMock.mocker(Error.class).when(Error.m1(1), (m, args) -> {
             if ((int) args[0] == 1) {
                 return 21;
             }
@@ -113,29 +111,36 @@ class LiMockTest {
 
     @LiTest
     void testWhen() {
-        LiMock.mocker(Error.class).when(Error.m1(1)).then(11)
-                .other(12).build();
+        LiMock.mocker(Error.class).when(Error.m1(1), 11, 12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
-        LiMock.mocker(Error.class).when(Error.m1(1)).then(11).build();
+        LiMock.mocker(Error.class).when(Error.m1(1), 11).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(3, Error.m1(2));
 
-        LiMock.mocker(Error.class).when(Error.m1(1)).then(10)
-                .when(Error.m1()).then(10)
+        LiMock.mocker(Error.class).when(Error.m1(1), 10)
+                .when(Error.m1(), 10)
                 .build();
         Assertions.assertEquals(10, Error.m1(1));
         Assertions.assertEquals(3, Error.m1(2));
         Assertions.assertEquals(10, Error.m1());
-        LiMock.mocker(Error.class).when(Error.m1(1)).then(20).build();
+        LiMock.mocker(Error.class).when(Error.m1(1), 20).build();
         Assertions.assertEquals(20, Error.m1(1));
         Assertions.assertEquals(1, Error.m1());
         Assertions.assertEquals(3, Error.m1(2));
         LiMock.reset();
-        LiMock.mocker(Error.class).when(() -> Error.m1(1)).then(20).build();
+        LiMock.mocker(Error.class).when(Error.m1(1), 20).build();
         Assertions.assertEquals(20, Error.m1(1));
         Assertions.assertEquals(1, Error.m1());
         Assertions.assertEquals(3, Error.m1(2));
+
+
+        Foo1 foo1 = () -> "";
+        LiMock.mocker(Foo1.class).when(foo1.get2(), "123").build();
+        Assertions.assertEquals("123", foo1.get2());
+
+        Assertions.assertThrows(IllegalStateException.class, () -> LiMock.mocker(Foo1.class).when(foo1.get(), "123").build());
+
     }
 
     @LiTest
@@ -148,8 +153,7 @@ class LiMockTest {
     void testRecordStatic() {
 
         Assertions.assertEquals(2, Error.m1(1));
-        LiMock.mocker(Error.class).when(Error.m1(1)).then(11)
-                .other(12).build();
+        LiMock.mocker(Error.class).when(Error.m1(1), 11, 12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 
@@ -179,6 +183,15 @@ class LiMockTest {
         Bean bean = new Bean();
         bean.m1();
         Assertions.assertSame(bean, box.value());
+
+    }
+
+    @Test
+    void testStr() {
+
+        Str1 str1 = MockBean.instance(Str1.class).create();
+        Assertions.assertEquals("a", Str1.a);
+        Assertions.assertEquals("", str1.b);
 
     }
 
@@ -287,5 +300,18 @@ class LiMockTest {
         public Foo7(int a, int b) {
             super(a, b);
         }
+    }
+
+    interface Foo1 {
+        Object get();
+
+        default Object get2() {
+            return get();
+        }
+    }
+
+    static class Str1 {
+        public static String a = "a";
+        public String b;
     }
 }

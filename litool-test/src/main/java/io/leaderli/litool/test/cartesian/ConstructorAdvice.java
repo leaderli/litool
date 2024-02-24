@@ -4,6 +4,7 @@ import io.leaderli.litool.core.type.MethodUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.type.TypeUtil;
+import io.leaderli.litool.test.MockBean;
 import net.bytebuddy.asm.Advice;
 
 import java.lang.reflect.Field;

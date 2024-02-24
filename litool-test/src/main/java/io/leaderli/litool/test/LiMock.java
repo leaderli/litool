@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class LiMock {
     public static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
@@ -91,6 +90,7 @@ public class LiMock {
         return Lira.of(clazz.getDeclaredMethods())
                 .filter(methodFilter)
                 .filter(m -> !m.isSynthetic())
+                .filter(m -> !ModifierUtil.isAbstract(m))
                 .toArray(Method.class);
     }
 
@@ -161,6 +161,9 @@ public class LiMock {
                         "#", "#",
                         StringUtils.wrap(uuid, '"'), StringUtils.wrap(method.getName(), '"')
                 );
+                if (ctMethod.isEmpty()) { // 接口或者抽象方法
+                    continue;
+                }
                 ctMethod.insertBefore(src);
             }
 
@@ -252,41 +255,10 @@ public class LiMock {
         });
     }
 
-    public static When mocker(Class<?> mockClass) {
+    public static Mocker mocker(Class<?> mockClass) {
         return new Mocker(mockClass);
     }
 
-    public interface Then extends Other {
-        WhenOther then(Object value);
-    }
-
-
-    @SuppressWarnings("rawtypes")
-    public interface Other {
-
-        WhenBuild other(BiFunction<Method, Object[], Object> biFunction);
-
-        default WhenBuild other(Supplier supplier) {
-            return other((m, args) -> supplier.get());
-        }
-
-        default WhenBuild other(Object value) {
-            return other((m, args) -> value);
-        }
-    }
-
-    public interface WhenOther extends WhenBuild, Other {
-    }
-
-    public interface When {
-        Then when(Object when);
-
-        Then when(Supplier<?> when);
-    }
-
-    public interface WhenBuild extends When {
-        void build();
-    }
 
     /**
      * 利用不同的接口来控制链式调用
@@ -301,45 +273,62 @@ public class LiMock {
      * </pre>
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static class Mocker implements WhenOther, Then {
+    public static class Mocker {
 
         private final Class<?> mockClass;
         private final Map<Method, MethodValue> methodValueMap = new HashMap<>();
-        private Method currenMethod;
+        private Method currentMethod;
         private ArrayEqual currentArgs;
 
-        public Mocker(Class<?> mockClass) {
+        private Mocker(Class<?> mockClass) {
             this.mockClass = mockClass;
             mock(mockClass, m -> true, (method, args) -> {
                 // 用以记录当前调用的方法，参数，以供后续打桩使用
-                currenMethod = method;
+                currentMethod = method;
                 currentArgs = ArrayEqual.of(args);
-                methodValueMap.put(currenMethod, new MethodValue(currenMethod));
+                methodValueMap.put(currentMethod, new MethodValue(currentMethod));
 
                 return PrimitiveEnum.get(method.getReturnType()).zero_value;
             });
         }
 
+        public <T> Mocker when(T call, T result) {
+            if (currentMethod == null) {
+                throw new IllegalStateException("method may abstruct, it's not support");
+            }
+            methodValueMap.get(currentMethod).whenValue.put(currentArgs, result);
 
-        public Then when(Object o) {
+            currentMethod = null;
+            currentArgs = null;
             return this;
         }
 
-        public Then when(Supplier<?> supplier) {
-            supplier.get();
+        public <T> Mocker when(T call, T result, T other) {
+            return when(call, result, (m, args) -> other);
+        }
+
+        public <T> Mocker when(T call, BiFunction<Method, Object[], T> otherValue) {
+            if (currentMethod == null) {
+                throw new IllegalStateException("method may abstruct, it's not support");
+            }
+            methodValueMap.get(currentMethod).otherValue = otherValue;
+
+            currentMethod = null;
+            currentArgs = null;
             return this;
         }
 
-        public WhenOther then(Object value) {
-            methodValueMap.get(currenMethod).whenValue.put(currentArgs, value);
+        public <T> Mocker when(T call, T result, BiFunction<Method, Object[], T> otherValue) {
+            if (currentMethod == null) {
+                throw new IllegalStateException("method may abstruct, it's not support");
+            }
+            methodValueMap.get(currentMethod).whenValue.put(currentArgs, result);
+            methodValueMap.get(currentMethod).otherValue = otherValue;
+
+            currentMethod = null;
+            currentArgs = null;
             return this;
         }
-
-        public WhenBuild other(BiFunction<Method, Object[], Object> biFunction) {
-            methodValueMap.get(currenMethod).otherValue = biFunction;
-            return this;
-        }
-
 
         public void build() {
             mock(mockClass, methodValueMap::containsKey,

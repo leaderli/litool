@@ -1,5 +1,7 @@
 package io.leaderli.litool.test.cartesian;
 
+import io.leaderli.litool.test.MockBean;
+
 import java.util.*;
 
 /**

@@ -1,6 +1,9 @@
-package io.leaderli.litool.test.cartesian;
+package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.type.*;
+import io.leaderli.litool.test.cartesian.CartesianMock;
+import io.leaderli.litool.test.cartesian.MockList;
+import io.leaderli.litool.test.cartesian.MockMap;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -40,6 +43,7 @@ public class MockBean<T> {
             cache.put(LiTypeToken.of(primitive.primitive), primitive.zero_value);
             cache.put(LiTypeToken.of(primitive.wrapper), primitive.zero_value);
         }
+        cache.put(LiTypeToken.of(String.class), "");
     }
 
     public static <T> MockBean<T> instance(Class<T> cls) {
@@ -52,8 +56,6 @@ public class MockBean<T> {
     }
 
     public static <T> MockBean<T> instance(LiTypeToken<T> token, LinkedHashMap<Type, InstanceCreator<?>> head, LinkedHashMap<Type, InstanceCreator<?>> tail) {
-
-        tail.put(String.class, t -> "");
         ConstructorConstructor constructorConstructor = new ConstructorConstructor(head, tail);
         return new MockBean<>(token, constructorConstructor, new HashMap<>());
     }
@@ -132,8 +134,7 @@ public class MockBean<T> {
 
         for (Field field : ReflectUtil.getFields(rawType)
                 .filter(f -> !ModifierUtil.isStatic(f))
-                .filter(f -> ReflectUtil.getFieldValue(instance, f))
-        ) {
+                .filter(f -> ReflectUtil.getFieldValue(instance, f).absent())) {
             Type genericType = field.getGenericType();
 
             Type targetType = TypeUtil.resolve(typeToken.getType(), genericType);

@@ -4,6 +4,7 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.*;
+import io.leaderli.litool.test.MockBean;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;

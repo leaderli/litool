@@ -2,6 +2,7 @@ package io.leaderli.litool.test.cartesian;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.leaderli.litool.test.MockBean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +39,7 @@ class MockBeanTest {
         Assertions.assertNotNull(MockBean.mockBean(Consumer[].class));
         Assertions.assertNotNull(MockBean.mockBean(List.class));
         Assertions.assertNotNull((MockBean.mockBean(Integer.class)));
+        Assertions.assertNotNull((MockBean.mockBean(int.class)));
         Assertions.assertNull(MockBean.mockBean(Consumer.class));
 
 
