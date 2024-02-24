@@ -189,7 +189,7 @@ class LiMockTest {
     @Test
     void testStr() {
 
-        Str1 str1 = MockBean.instance(Str1.class).create();
+        Str1 str1 = MockBean.mockBean(Str1.class);
         Assertions.assertEquals("a", Str1.a);
         Assertions.assertEquals("", str1.b);
 

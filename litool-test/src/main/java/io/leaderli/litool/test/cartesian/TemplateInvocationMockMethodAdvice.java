@@ -2,7 +2,6 @@ package io.leaderli.litool.test.cartesian;
 
 import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.TypeUtil;
-import io.leaderli.litool.test.MockBean;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
@@ -51,7 +50,7 @@ public class TemplateInvocationMockMethodAdvice {
                 if (_this != null) {
                     type = TypeUtil.resolve(_this.getClass(), origin.getGenericReturnType());
                 }
-                value = MockBean.mockBean(type);
+                value = ConstructorAdvice.instance(type).create();
             }
         } else {
 

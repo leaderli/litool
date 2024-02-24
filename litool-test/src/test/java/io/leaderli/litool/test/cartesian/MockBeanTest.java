@@ -6,6 +6,8 @@ import io.leaderli.litool.test.MockBean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -17,18 +19,18 @@ class MockBeanTest {
     @Test
     void test() {
 
-        FooBar fooBar = MockBean.instance(FooBar.class).create();
+        FooBar fooBar = MockBean.mockBean(FooBar.class);
 
         Assertions.assertSame(int[].class, fooBar.getArr().getClass());
         Assertions.assertSame(Integer[].class, fooBar.getWrapper().getClass());
-        Assertions.assertSame(MockList.class, fooBar.getList().getClass());
+        Assertions.assertSame(ArrayList.class, fooBar.getList().getClass());
 
         Assertions.assertNotNull(fooBar.getBar());
         Assertions.assertNotNull(fooBar.getFoo());
 
         Map<Integer, List<Integer>> map = fooBar.getMap();
 
-        Assertions.assertEquals(MockMap.class, map.getClass());
+        Assertions.assertEquals(HashMap.class, map.getClass());
 
 
     }
@@ -43,7 +45,7 @@ class MockBeanTest {
         Assertions.assertNull(MockBean.mockBean(Consumer.class));
 
 
-        Assertions.assertEquals(MockMap.class, MockBean.mockBean(Map.class).getClass());
+        Assertions.assertEquals(HashMap.class, MockBean.mockBean(Map.class).getClass());
     }
 
     static abstract class Foo<T, R> {

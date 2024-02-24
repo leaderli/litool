@@ -1,7 +1,6 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.type.*;
-import io.leaderli.litool.test.cartesian.CartesianMock;
 import io.leaderli.litool.test.cartesian.MockList;
 import io.leaderli.litool.test.cartesian.MockMap;
 
@@ -38,55 +37,26 @@ public class MockBean<T> {
         this.typeToken = typeToken;
         this.constructorConstructor = constructorConstructor;
         this.cache = cache;
-
-        for (PrimitiveEnum primitive : PrimitiveEnum.PRIMITIVES) {
-            cache.put(LiTypeToken.of(primitive.primitive), primitive.zero_value);
-            cache.put(LiTypeToken.of(primitive.wrapper), primitive.zero_value);
-        }
-        cache.put(LiTypeToken.of(String.class), "");
     }
 
-    public static <T> MockBean<T> instance(Class<T> cls) {
-        return instance(cls, new LinkedHashMap<>());
+
+    public static <T> T mockBean(Class<T> type) {
+        return create(type).build().create();
     }
 
-    public static <T> MockBean<T> instance(Type type, LinkedHashMap<Type, InstanceCreator<?>> instanceCreators) {
-        LiTypeToken<T> token = LiTypeToken.ofType(type);
-        return instance(token, instanceCreators);
+
+    public static <T> MockBeanBuilder<T> create(Class<T> clazz) {
+        return new MockBeanBuilder<>(LiTypeToken.of(clazz));
     }
 
-    public static <T> MockBean<T> instance(LiTypeToken<T> token, LinkedHashMap<Type, InstanceCreator<?>> head, LinkedHashMap<Type, InstanceCreator<?>> tail) {
-        ConstructorConstructor constructorConstructor = new ConstructorConstructor(head, tail);
-        return new MockBean<>(token, constructorConstructor, new HashMap<>());
+    public static <T> MockBeanBuilder<T> create(Type type) {
+        return new MockBeanBuilder<>(LiTypeToken.ofType(type));
     }
 
-    public static <T> MockBean<T> instance(LiTypeToken<T> token, LinkedHashMap<Type, InstanceCreator<?>> tail) {
-
-        LinkedHashMap<Type, InstanceCreator<?>> head = new LinkedHashMap<>();
-        head.put(MockMap.class, t -> new MockMap<>());
-        head.put(MockList.class, t -> new MockList<>());
-        return instance(token, head, tail);
+    public static <T> MockBeanBuilder<T> create(LiTypeToken<T> token) {
+        return new MockBeanBuilder<>(LiTypeToken.ofType(token));
     }
 
-    public static <T> MockBean<T> instance(Type type) {
-        return instance(type, new LinkedHashMap<>());
-    }
-
-    public static <T> MockBean<T> instance(LiTypeToken<T> token) {
-        return instance(token, new LinkedHashMap<>());
-    }
-
-    /**
-     * return a instance of type, if the instance class is same as type  invoke pojo set get
-     *
-     * @param type the type
-     * @return a instanceof type
-     * @see MockBean#create()
-     */
-    public static Object mockBean(Type type) {
-
-        return instance(type, CartesianMock.instanceCreators).create();
-    }
 
     @SuppressWarnings("unchecked")
     public T create() {
@@ -160,4 +130,35 @@ public class MockBean<T> {
         populate(instance, superTypeToken);
     }
 
+    public static class MockBeanBuilder<T> {
+        private final LiTypeToken<T> typeToken;
+        private final Map<LiTypeToken<?>, Object> cache = new HashMap<>();
+        private LinkedHashMap<Type, InstanceCreator<?>> head;
+        private LinkedHashMap<Type, InstanceCreator<?>> tail;
+
+        private MockBeanBuilder(LiTypeToken<T> typeToken) {
+            this.typeToken = typeToken;
+        }
+
+
+        public MockBeanBuilder<T> head(LinkedHashMap<Type, InstanceCreator<?>> head) {
+            this.head = head;
+            return this;
+        }
+
+        public MockBeanBuilder<T> tail(LinkedHashMap<Type, InstanceCreator<?>> tail) {
+            this.tail = tail;
+            return this;
+        }
+
+        public MockBean<T> build() {
+            ConstructorConstructor constructorConstructor = new ConstructorConstructor(head, tail);
+            for (PrimitiveEnum primitive : PrimitiveEnum.PRIMITIVES) {
+                cache.put(LiTypeToken.of(primitive.primitive), primitive.zero_value);
+                cache.put(LiTypeToken.of(primitive.wrapper), primitive.zero_value);
+            }
+            cache.put(LiTypeToken.of(String.class), "");
+            return new MockBean<>(typeToken, constructorConstructor, cache);
+        }
+    }
 }
