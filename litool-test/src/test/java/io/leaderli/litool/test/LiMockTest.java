@@ -1,6 +1,7 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.meta.LiBox;
+import io.leaderli.litool.core.type.BeanCreator;
 import io.leaderli.litool.core.type.ModifierUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -189,7 +190,7 @@ class LiMockTest {
     @Test
     void testStr() {
 
-        Str1 str1 = MockBean.mockBean(Str1.class);
+        Str1 str1 = BeanCreator.mockBean(Str1.class);
         Assertions.assertEquals("a", Str1.a);
         Assertions.assertEquals("", str1.b);
 

@@ -1,8 +1,9 @@
-package io.leaderli.litool.test.cartesian;
+package io.leaderli.litool.core.type;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.leaderli.litool.test.MockBean;
+import io.leaderli.litool.test.cartesian.IntValues;
+import io.leaderli.litool.test.cartesian.MockMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,15 +13,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-class MockBeanTest {
+class BeanCreatorTest {
 
     Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 
     @Test
     void test() {
 
-        FooBar fooBar = MockBean.mockBean(FooBar.class);
-
+        FooBar fooBar = BeanCreator.mockBean(FooBar.class);
         Assertions.assertSame(int[].class, fooBar.getArr().getClass());
         Assertions.assertSame(Integer[].class, fooBar.getWrapper().getClass());
         Assertions.assertSame(ArrayList.class, fooBar.getList().getClass());
@@ -38,14 +38,33 @@ class MockBeanTest {
     @Test
     void mockBean() {
 
-        Assertions.assertNotNull(MockBean.mockBean(Consumer[].class));
-        Assertions.assertNotNull(MockBean.mockBean(List.class));
-        Assertions.assertNotNull((MockBean.mockBean(Integer.class)));
-        Assertions.assertNotNull((MockBean.mockBean(int.class)));
-        Assertions.assertNull(MockBean.mockBean(Consumer.class));
+        Assertions.assertNotNull(BeanCreator.mockBean(Consumer[].class));
+        Assertions.assertNotNull(BeanCreator.mockBean(List.class));
+        Assertions.assertNotNull((BeanCreator.mockBean(Integer.class)));
+        Assertions.assertNotNull((BeanCreator.mockBean(int.class)));
+        Assertions.assertNull(BeanCreator.mockBean(Consumer.class));
 
 
-        Assertions.assertEquals(HashMap.class, MockBean.mockBean(Map.class).getClass());
+        Assertions.assertEquals(HashMap.class, BeanCreator.mockBean(Map.class).getClass());
+
+        Assertions.assertEquals(MockMap.class, BeanCreator.create(Map.class).head(MockMap.class, t -> new MockMap<>()).build().create().getClass());
+
+        Assertions.assertNotNull(
+                BeanCreator.create(AbstractFoo.class).cache(AbstractFoo.class, new AbstractFoo() {
+                    @Override
+                    public void m1() {
+
+                    }
+                }).build().create());
+
+        Foo2 foo2 = BeanCreator.create(Foo2.class).populate((b, f, t) -> {
+            if (f.getName().equals("b")) {
+                return "b";
+            }
+            return null;
+        }).build().create();
+        Assertions.assertEquals("", foo2.a);
+        Assertions.assertEquals("b", foo2.b);
     }
 
     static abstract class Foo<T, R> {
@@ -147,5 +166,14 @@ class MockBeanTest {
         public void setInit(boolean init) {
             this.init = init;
         }
+    }
+
+    abstract static class AbstractFoo {
+        public abstract void m1();
+    }
+
+    static class Foo2 {
+        private String a;
+        private String b;
     }
 }

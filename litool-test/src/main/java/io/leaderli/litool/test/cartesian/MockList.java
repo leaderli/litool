@@ -1,6 +1,6 @@
 package io.leaderli.litool.test.cartesian;
 
-import io.leaderli.litool.test.MockBean;
+import io.leaderli.litool.core.type.BeanCreator;
 
 import java.util.*;
 
@@ -8,7 +8,7 @@ import java.util.*;
  * specific used form mock
  *
  * @param <T> the type of list
- * @see MockBean
+ * @see BeanCreator
  * @see CartesianMock
  */
 

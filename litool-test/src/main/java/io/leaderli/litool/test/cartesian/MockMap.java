@@ -1,6 +1,6 @@
 package io.leaderli.litool.test.cartesian;
 
-import io.leaderli.litool.test.MockBean;
+import io.leaderli.litool.core.type.BeanCreator;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.Set;
  *
  * @param <K> the key type
  * @param <V> the value type
- * @see MockBean
+ * @see BeanCreator
  * @see CartesianMock
  */
 @SuppressWarnings("all")

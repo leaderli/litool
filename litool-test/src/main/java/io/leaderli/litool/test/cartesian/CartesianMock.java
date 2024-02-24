@@ -4,7 +4,6 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.*;
-import io.leaderli.litool.test.MockBean;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -184,7 +183,7 @@ public class CartesianMock {
      * support void,primitive,pojo returnType mock, auto generate one element of method returnValue
      *
      * @param runnable the method call
-     * @see MockBean#create()
+     * @see BeanCreator#create()
      * @see PrimitiveEnum#zero_value
      */
     public static void light(Runnable runnable) {

@@ -1,14 +1,12 @@
 package io.leaderli.litool.test.cartesian;
 
 import io.leaderli.litool.core.type.*;
-import io.leaderli.litool.test.MockBean;
 import net.bytebuddy.asm.Advice;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
-import java.util.LinkedHashMap;
 
 /**
  * delegate class constructor, the field that is interface and the value is null will be set a proxy by {@link  Proxy#newProxyInstance(ClassLoader, Class[], InvocationHandler)}
@@ -17,12 +15,11 @@ import java.util.LinkedHashMap;
  * @since 2022/10/28 5:17 PM
  */
 public class ConstructorAdvice {
-    public static <T> MockBean<T> instance(Type type) {
-
-        LinkedHashMap<Type, InstanceCreator<?>> head = new LinkedHashMap<>();
-        head.put(MockMap.class, t -> new MockMap<>());
-        head.put(MockList.class, t -> new MockList<>());
-        return MockBean.<T>create(type).head(head).build();
+    public static <T> BeanCreator<T> instance(Type type) {
+        return BeanCreator.<T>create(type)
+                .head(MockMap.class, t -> new MockMap<>())
+                .head(MockList.class, t -> new MockList<>())
+                .build();
     }
 
     @Advice.OnMethodExit
