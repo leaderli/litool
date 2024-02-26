@@ -4,9 +4,7 @@ import java.lang.reflect.Method;
 
 public interface MethodProxy {
 
-    default boolean when(Method method, Object[] args) {
-        return true;
-    }
 
     Object apply(Method method, Object[] args);
+
 }
