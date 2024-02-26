@@ -237,6 +237,7 @@ class LiMockTest {
                 .called()
                 .assertReturn(null)
                 .args(1)
+                .arg(0, 1)
                 .build();
 
         Assertions.assertThrows(AssertionFailedError.class, LiMock::assertMethodCalled);

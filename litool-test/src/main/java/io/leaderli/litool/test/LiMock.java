@@ -414,6 +414,15 @@ public class LiMock {
             return this;
         }
 
+
+        public Recorder arg(int index, Object arg) {
+            methodAsserts.get(currentMethod).add((method, _this, args, _return) -> {
+                Assertions.assertTrue(args.length > index);
+                Assertions.assertEquals(arg, args[index]);
+            });
+            return this;
+        }
+
         public Recorder args(Object... compareArgs) {
             methodAsserts.get(currentMethod).add((method, _this, args, _return) -> {
                 Assertions.assertArrayEquals(compareArgs, args);
