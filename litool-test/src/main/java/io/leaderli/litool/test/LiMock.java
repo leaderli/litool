@@ -1,12 +1,13 @@
 package io.leaderli.litool.test;
 
-import io.leaderli.litool.core.collection.ArrayEqual;
 import io.leaderli.litool.core.collection.ArrayUtils;
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.text.StringUtils;
+import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.MethodUtil;
 import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
@@ -21,12 +22,10 @@ import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class LiMock {
     public static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
-    private static final Set<Method> recordMethodCall = new HashSet<>();
     public static final ByteBuddy byteBuddy = new ByteBuddy();
     public static Instrumentation instrumentation = ByteBuddyAgent.install();
     public static ClassPool classPool = ClassPool.getDefault();
@@ -49,7 +48,7 @@ public class LiMock {
         return bytecode;
     }
 
-    private static void detach(Class<?> clazz) {
+    public static void detach(Class<?> clazz) {
 
         try {
             getCtClass(clazz).detach();
@@ -257,8 +256,24 @@ public class LiMock {
         record(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), methodAssert);
     }
 
+    /**
+     * 断言方法被调用
+     *
+     * @see Recorder#called()
+     */
     public static void assertMethodCalled() {
-        Assertions.assertTrue(recordMethodCall.isEmpty(), "the method is not called: " + recordMethodCall);
+        for (Method method : Recorder.recordMethodCall) {
+            Assertions.assertTrue(Recorder.actualMethodCall.contains(method), "the method is not called: " + method.getName());
+        }
+    }
+
+    /**
+     * 情况方法调用记录
+     *
+     * @see Recorder#called()
+     */
+    public static void clearMethodCalled() {
+        Recorder.actualMethodCall.clear();
     }
 
     public static void reset() {
@@ -279,106 +294,40 @@ public class LiMock {
         return new Mocker(mockClass, true);
     }
 
-    public static Mocker mocker(Class<?> mockClass, boolean reset) {
-        return new Mocker(mockClass, reset);
+    /**
+     * 方法记录自动带上实例
+     */
+    public static <T> MockBean<T> mockerBean(Class<T> mockClass) {
+        return new MockBean<>(mockClass, true);
     }
 
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static class Mocker {
-
-        private final Class<?> mockClass;
-        private final Map<Method, MethodValue> methodValueMap = new HashMap<>();
-        private Method currentMethod;
-        private ArrayEqual currentArgs;
-        private final boolean detach;
-        private boolean build;
-
-        private Mocker(Class<?> mockClass, boolean detach) {
-            this.mockClass = mockClass;
-            this.detach = detach;
-            // 仅在build过程中生效，用于记录方法的调用
-            mock(mockClass, m -> true, (method, args) -> {
-                if (build) {
-                    return Either.none();
-                }
-                currentMethod = method;
-                currentArgs = ArrayEqual.of(args);
-                methodValueMap.put(currentMethod, new MethodValue(currentMethod));
-                return PrimitiveEnum.get(method.getReturnType()).zero_value;
-            }, false);
-        }
-
-
-        public <T> Mocker when(T call, T result) {
-            if (currentMethod == null) {
-                throw new IllegalStateException("method may abstruct, it's not support");
-            }
-            methodValueMap.get(currentMethod).whenValue.put(currentArgs, result);
-
-            currentMethod = null;
-            currentArgs = null;
-            return this;
-        }
-
-        public <T> Mocker when(T call, T result, T other) {
-            return when(call, result, (m, args) -> other);
-        }
-
-        public <T> Mocker when(T call, BiFunction<Method, Object[], T> otherValue) {
-            if (currentMethod == null) {
-                throw new IllegalStateException("method may abstruct, it's not support");
-            }
-            methodValueMap.get(currentMethod).otherValue = otherValue;
-
-            currentMethod = null;
-            currentArgs = null;
-            return this;
-        }
-
-        public <T> Mocker when(T call, T result, BiFunction<Method, Object[], T> otherValue) {
-            if (currentMethod == null) {
-                throw new IllegalStateException("method may abstruct, it's not support");
-            }
-            methodValueMap.get(currentMethod).whenValue.put(currentArgs, result);
-            methodValueMap.get(currentMethod).otherValue = otherValue;
-
-            currentMethod = null;
-            currentArgs = null;
-            return this;
-        }
-
-        public void build() {
-
-            build = true;
-            mock(mockClass, methodValueMap::containsKey, (m, args) -> {
-                        MethodValue methodValue = methodValueMap.get(m);
-                        ArrayEqual<Object> key = ArrayEqual.of(args);
-                        if (methodValue.whenValue.containsKey(key)) {
-                            return methodValue.whenValue.get(key);
-                        }
-                        if (methodValue.otherValue == null) {
-                            return Either.none();
-                        }
-                        return methodValue.otherValue.apply(m, args);
-                    }
-                    , detach);
-        }
-
-
+    /**
+     * 方法记录自动带上实例
+     */
+    public static <T> MockInterface<T> mockerInterface(Class<T> mockClass) {
+        LiAssertUtil.assertTrue(mockClass.isInterface(), "only support interface");
+        return new MockInterface<>(mockClass);
     }
 
-    public static class MethodValue<T, R> {
-        final Method method;
-        final Map<ArrayEqual<T>, R> whenValue = new HashMap<>();
-        BiFunction<Method, Object[], R> otherValue;
-
-        MethodValue(Method method) {
-            this.method = method;
-        }
+    @SuppressWarnings("unchecked")
+    public static <T> MockInterface<T> mockerInterface(LiTypeToken<T> mockClass) {
+        LiAssertUtil.assertTrue(mockClass.getRawType().isInterface(), "only support interface");
+        return new MockInterface<>((Class<T>) (mockClass.getRawType()));
     }
+
+    /**
+     * @param mockClass 模拟类
+     * @param detach    是否重置之前变动
+     */
+    public static Mocker mocker(Class<?> mockClass, boolean detach) {
+        return new Mocker(mockClass, detach);
+    }
+
 
     public static class Recorder {
+
+        private static final Set<Method> recordMethodCall = new HashSet<>();
+        private static final Set<Method> actualMethodCall = new HashSet<>();
         private final Class<?> mockClass;
         private final Map<Method, List<MethodAssert>> methodAsserts = new HashMap<>();
         private Method currentMethod;
@@ -408,9 +357,7 @@ public class LiMock {
 
         public Recorder called() {
             recordMethodCall.add(currentMethod);
-            methodAsserts.get(currentMethod).add((method, _this, args, _return) -> {
-                recordMethodCall.remove(method);
-            });
+            methodAsserts.get(currentMethod).add((method, _this, args, _return) -> actualMethodCall.add(currentMethod));
             return this;
         }
 
@@ -424,16 +371,12 @@ public class LiMock {
         }
 
         public Recorder args(Object... compareArgs) {
-            methodAsserts.get(currentMethod).add((method, _this, args, _return) -> {
-                Assertions.assertArrayEquals(compareArgs, args);
-            });
+            methodAsserts.get(currentMethod).add((method, _this, args, _return) -> Assertions.assertArrayEquals(compareArgs, args));
             return this;
         }
 
         public Recorder assertReturn(Object compareReturn) {
-            methodAsserts.get(currentMethod).add((method, _this, args, _return) -> {
-                Assertions.assertEquals(compareReturn, _return);
-            });
+            methodAsserts.get(currentMethod).add((method, _this, args, _return) -> Assertions.assertEquals(compareReturn, _return));
             return this;
         }
 

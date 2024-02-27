@@ -3,10 +3,13 @@ package io.leaderli.litool.test;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.type.BeanCreator;
+import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.ModifierUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
+
+import java.util.function.Supplier;
 
 class LiMockTest {
 
@@ -201,6 +204,34 @@ class LiMockTest {
         LiMock.mocker(Error.class, false).when(Error.m1(1), 111).build();
         Assertions.assertEquals(111, Error.m1(1));
         Assertions.assertEquals(10, Error.m1());
+
+
+        LiMock.mocker(Void2.class).when(() -> Void2.m1(1))
+                .build();
+
+        Void2.m1(2);
+        Assertions.assertEquals(1, Void2.a);
+        LiMock.detach(Void2.class);
+        Void2.m1(2);
+        Assertions.assertEquals(2, Void2.a);
+    }
+
+    @Test
+    void testWhenBean() {
+
+        Bean1 foo = new Bean1();
+        Assertions.assertEquals(1, foo.m1());
+        LiMock.mockerBean(Bean1.class).when(Bean1::m1, 2).build();
+        Assertions.assertEquals(2, foo.m1());
+    }
+
+    @Test
+    void testWhenInterface() {
+        Supplier<Integer> supplier = LiMock.mockerInterface(new LiTypeToken<Supplier<Integer>>() {
+        }).when(Supplier::get, 1).build();
+
+        Assertions.assertEquals(1, supplier.get());
+
     }
 
     @LiTest
@@ -249,9 +280,7 @@ class LiMockTest {
     void testRecord() {
 
         LiBox<Object> box = LiBox.none();
-        LiMock.record(Bean.class, m -> "m1".equals(m.getName()), (m, _this, args, _return) -> {
-            box.value(_this);
-        });
+        LiMock.record(Bean.class, m -> "m1".equals(m.getName()), (m, _this, args, _return) -> box.value(_this));
 
         Bean bean = new Bean();
         bean.m1();
@@ -400,6 +429,20 @@ class LiMockTest {
     static class Void1 {
         static void m1(int a) {
             System.out.println();
+        }
+    }
+
+    static class Void2 {
+        public static int a = 1;
+
+        static void m1(int a) {
+            Void2.a = a;
+        }
+    }
+
+    static class Bean1 {
+        int m1() {
+            return 1;
         }
     }
 }
