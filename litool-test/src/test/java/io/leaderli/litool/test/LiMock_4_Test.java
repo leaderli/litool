@@ -5,7 +5,7 @@ import io.leaderli.litool.core.type.ModifierUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class LiMockTest4 {
+class LiMock_4_Test {
 
 
     @Test

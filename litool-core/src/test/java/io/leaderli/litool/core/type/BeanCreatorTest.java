@@ -2,8 +2,6 @@ package io.leaderli.litool.core.type;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.leaderli.litool.test.cartesian.IntValues;
-import io.leaderli.litool.test.cartesian.MockMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -156,7 +154,6 @@ class BeanCreatorTest {
     }
 
     static class FooBar extends Bar<Integer, List<Integer>> {
-        @IntValues({1, 2})
         private boolean init;
 
         public boolean isInit() {
@@ -175,5 +172,9 @@ class BeanCreatorTest {
     static class Foo2 {
         private String a;
         private String b;
+    }
+
+    static class MockMap<K, V> extends HashMap<K, V> {
+
     }
 }

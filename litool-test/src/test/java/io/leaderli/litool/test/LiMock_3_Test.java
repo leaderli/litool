@@ -2,7 +2,7 @@ package io.leaderli.litool.test;
 
 import org.junit.jupiter.api.Assertions;
 
-class LiMockTest3 {
+class LiMock_3_Test {
 
     static {
         LiMock.skipClassInitializer(Error3.class);

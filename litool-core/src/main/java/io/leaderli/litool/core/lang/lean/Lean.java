@@ -176,11 +176,11 @@ public class Lean {
      * @param targetType 目标对象类型
      * @param <T>        目标对象的类型
      */
+    @SuppressWarnings("unchecked")
     public <T> void copyBean(Object source, T target, Class<T> targetType) {
 
         TypeAdapter<T> adapter = getTypeAdapter(targetType);
         LiAssertUtil.assertTrue(adapter instanceof ReflectTypeAdapterFactory.ReflectAdapter, "only support copy to pojo bean");
-        //noinspection unchecked
         ((ReflectTypeAdapterFactory.ReflectAdapter<Object>) adapter).populate(source, target, this);
     }
 
@@ -192,11 +192,11 @@ public class Lean {
      * @param targetTypeToken 目标对象类型
      * @param <T>             目标对象的类型
      */
+    @SuppressWarnings("unchecked")
     public <T> void copyBean(Object source, T target, LiTypeToken<T> targetTypeToken) {
 
         TypeAdapter<T> adapter = getTypeAdapter(targetTypeToken);
         LiAssertUtil.assertTrue(adapter instanceof ReflectTypeAdapterFactory.ReflectAdapter, "only support copy to pojo bean");
-        //noinspection unchecked
         ((ReflectTypeAdapterFactory.ReflectAdapter<Object>) adapter).populate(source, target, this);
     }
 

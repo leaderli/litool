@@ -1,9 +1,9 @@
 package io.leaderli.litool.test.cartesian;
 
-import io.leaderli.litool.test2.limock.Foo;
-import io.leaderli.litool.test2.limock.GetSetBean;
-import io.leaderli.litool.test2.limock.StaticBlock;
-import io.leaderli.litool.test2.limock.TestBean;
+import io.leaderli.litool.test.cartesian.bean.Foo;
+import io.leaderli.litool.test.cartesian.bean.GetSetBean;
+import io.leaderli.litool.test.cartesian.bean.StaticBlock;
+import io.leaderli.litool.test.cartesian.bean.TestBean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

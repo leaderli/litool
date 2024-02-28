@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 public class LiParameterResolver implements ParameterResolver {
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        System.out.println(parameterContext.getIndex() + " " + parameterContext.getParameter() + " " + parameterContext.getTarget().get());
         return true;
     }
 

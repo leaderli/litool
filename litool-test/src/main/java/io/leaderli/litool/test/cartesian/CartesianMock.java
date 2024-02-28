@@ -159,8 +159,6 @@ public class CartesianMock {
             CtClass ct = LiMock.getCtClass(mockingClass);
             originClasses.put(mockingClass, ct.toBytecode());
             ct.defrost();
-            System.out.println("123123 " + Arrays.toString(mockingClass.getDeclaredFields()));
-            System.out.println("123123 " + Arrays.toString(ct.getDeclaredFields()));
             CtConstructor classInitializer = ct.makeClassInitializer();
             CtClass exceptionType = LiMock.getCtClass(Throwable.class);
             classInitializer.addCatch("{  return ;  }", exceptionType);

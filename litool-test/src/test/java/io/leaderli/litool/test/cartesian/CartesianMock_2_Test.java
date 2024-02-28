@@ -3,7 +3,7 @@ package io.leaderli.litool.test.cartesian;
 import com.google.gson.Gson;
 import io.leaderli.litool.core.util.ConsoleUtil;
 import io.leaderli.litool.core.util.RandomUtil;
-import io.leaderli.litool.test2.limock.Foo2;
+import io.leaderli.litool.test.cartesian.bean.Foo2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Map;
  * @author leaderli
  * @since 2023/6/30 9:59 AM
  */
-public class CartesianTest2 {
+public class CartesianMock_2_Test {
 
 
     static void init() {

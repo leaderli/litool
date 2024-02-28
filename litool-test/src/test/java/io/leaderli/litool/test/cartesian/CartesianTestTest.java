@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 
 
 //@ExtendWith(ContainerExtension.class)
-public class LiT1Test {
+public class CartesianTestTest {
 
 
     @BeforeAll

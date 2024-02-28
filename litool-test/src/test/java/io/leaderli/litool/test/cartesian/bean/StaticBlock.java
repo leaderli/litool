@@ -1,4 +1,4 @@
-package io.leaderli.litool.test2.limock;
+package io.leaderli.litool.test.cartesian.bean;
 
 /**
  * @author leaderli
