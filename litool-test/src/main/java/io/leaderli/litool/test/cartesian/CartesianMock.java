@@ -4,6 +4,7 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.*;
+import io.leaderli.litool.test.LiMock;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -155,17 +156,19 @@ public class CartesianMock {
 
         MethodUtil.onlyCallByCLINIT();
         try {
-            ClassPool cl = ClassPool.getDefault();
-            CtClass ct = cl.getCtClass(mockingClass.getName());
+            CtClass ct = LiMock.getCtClass(mockingClass);
             originClasses.put(mockingClass, ct.toBytecode());
             ct.defrost();
+            System.out.println("123123 " + Arrays.toString(mockingClass.getDeclaredFields()));
+            System.out.println("123123 " + Arrays.toString(ct.getDeclaredFields()));
             CtConstructor classInitializer = ct.makeClassInitializer();
-            CtClass exceptionType = cl.get("java.lang.Throwable");
+            CtClass exceptionType = LiMock.getCtClass(Throwable.class);
             classInitializer.addCatch("{  return ;  }", exceptionType);
             instrumentation.redefineClasses(new ClassDefinition(mockingClass, ct.toBytecode()));
             ct.defrost();
             Class.forName(mockingClass.getName());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

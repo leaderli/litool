@@ -16,6 +16,7 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import org.junit.jupiter.api.Assertions;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
@@ -33,6 +34,17 @@ public class LiMock {
     static {
         classPool.importPackage("io.leaderli.litool.test.MockMethodInvoker");
         classPool.importPackage("io.leaderli.litool.core.meta.Either");
+        instrumentation.addTransformer((loader, className, classBeingRedefined, protectionDomain, classfileBuffer) -> {
+            try {
+                if (className.startsWith("io/leaderli")) {
+                    CtClass ctClass = classPool.makeClass(new ByteArrayInputStream(classfileBuffer));
+                }
+            } catch (IOException ignore) {
+                System.out.println("--------------------instrumentation-----------------------");
+                ignore.printStackTrace();
+            }
+            return null;
+        }, true);
     }
 
 
@@ -50,8 +62,11 @@ public class LiMock {
 
     public static void detach(Class<?> clazz) {
 
+
         try {
             getCtClass(clazz).detach();
+            instrumentation.retransformClasses(clazz);
+
             if (originClasses.containsKey(clazz)) {
                 instrumentation.redefineClasses(new ClassDefinition(clazz, originClasses.get(clazz)));
             }
@@ -62,12 +77,46 @@ public class LiMock {
     }
 
 
-    private static CtClass getCtClass(Class<?> clazz) {
+    public static CtClass getCtClass(Class<?> clazz) {
         try {
+            instrumentation.retransformClasses(clazz);
+
             return classPool.getCtClass(clazz.getName());
-        } catch (NotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            System.out.println("------------getCtClass---------------------------------");
+            e.printStackTrace();
+            throw new RuntimeException(clazz + " : " + e);
+
         }
+
+//        boolean jacoco = false;
+//        try {
+//            clazz.getDeclaredField("$jacocoData");
+//            jacoco = true;
+//        } catch (NoSuchFieldException ignore) {
+//
+//        }
+//        System.out.println("getCtClass 1 --------------" + clazz + " --> " + jacoco);
+
+//        try {
+//
+////            if (jacoco) {
+//                CtClass ctClass = classPool.getCtClass(clazz.getName());
+//
+//                try {
+//
+//                    CtField $jacocoData = ctClass.getDeclaredField("$jacocoData");
+//                    System.out.println("getCtClass 2 --------------" + clazz + " --> " + jacoco);
+//                } catch (NotFoundException e) {
+//                    instrumentation.retransformClasses(clazz);
+//                }
+//            }
+//            return classPool.getCtClass(clazz.getName());
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException(e);
+//        }
     }
 
     private static CtMethod getCtMethod(Method method, CtClass ct) throws NotFoundException {
@@ -90,9 +139,11 @@ public class LiMock {
      */
     public static void skipClassInitializer(Class<?> mockClass) {
         MethodUtil.onlyCallByCLINIT();
+
         try {
             backup(mockClass);
             CtClass ct = getCtClass(mockClass);
+
             CtConstructor classInitializer = ct.makeClassInitializer();
             classInitializer.setBody("{}");
             instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));

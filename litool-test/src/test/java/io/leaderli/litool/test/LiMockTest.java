@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 class LiMockTest {
@@ -221,6 +222,7 @@ class LiMockTest {
 
         Bean1 foo = new Bean1();
         Assertions.assertEquals(1, foo.m1());
+        System.out.println("-------------testWhenBean----" + Arrays.toString(Bean1.class.getDeclaredFields()));
         LiMock.mockerBean(Bean1.class).when(Bean1::m1, 2).build();
         Assertions.assertEquals(2, foo.m1());
     }
