@@ -18,10 +18,9 @@ import org.junit.jupiter.api.Assertions;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.instrument.ClassDefinition;
-import java.lang.instrument.Instrumentation;
-import java.lang.instrument.UnmodifiableClassException;
+import java.lang.instrument.*;
 import java.lang.reflect.Method;
+import java.security.ProtectionDomain;
 import java.util.*;
 import java.util.function.Function;
 
@@ -30,21 +29,36 @@ public class LiMock {
     public static final ByteBuddy byteBuddy = new ByteBuddy();
     public static Instrumentation instrumentation = ByteBuddyAgent.install();
     public static ClassPool classPool = ClassPool.getDefault();
+    private static boolean jacoco;
 
     static {
+        checkJacoco();
         classPool.importPackage("io.leaderli.litool.test.MockMethodInvoker");
         classPool.importPackage("io.leaderli.litool.core.meta.Either");
-        instrumentation.addTransformer((loader, className, classBeingRedefined, protectionDomain, classfileBuffer) -> {
-            try {
-                if (className.startsWith("io/leaderli")) {
-                    CtClass ctClass = classPool.makeClass(new ByteArrayInputStream(classfileBuffer));
+    }
+
+    private static void checkJacoco() {
+        for (Class<?> loadedClass : instrumentation.getAllLoadedClasses()) {
+            if (ClassFileTransformer.class.isAssignableFrom(loadedClass)) {
+                if (loadedClass.getName().startsWith("org.jacoco.agent.rt")) {
+                    jacoco = true;
+                    return;
                 }
-            } catch (IOException ignore) {
-                System.out.println("--------------------instrumentation-----------------------");
-                ignore.printStackTrace();
             }
-            return null;
-        }, true);
+        }
+    }
+
+    public static CtClass getCtClass(Class<?> clazz) {
+        try {
+            if (jacoco && instrumentation.isModifiableClass(clazz)) {
+                instrumentation.addTransformer(new TempClassFileTransformer(instrumentation), true);
+                instrumentation.retransformClasses(clazz);
+            }
+
+            return classPool.getCtClass(clazz.getName());
+        } catch (Exception e) {
+            throw new RuntimeException(clazz + " : " + e);
+        }
     }
 
 
@@ -76,47 +90,22 @@ public class LiMock {
 
     }
 
+    static class TempClassFileTransformer implements ClassFileTransformer {
+        final Instrumentation instrumentation;
 
-    public static CtClass getCtClass(Class<?> clazz) {
-        try {
-            instrumentation.retransformClasses(clazz);
-
-            return classPool.getCtClass(clazz.getName());
-        } catch (Exception e) {
-            System.out.println("------------getCtClass---------------------------------");
-            e.printStackTrace();
-            throw new RuntimeException(clazz + " : " + e);
-
+        TempClassFileTransformer(Instrumentation instrumentation) {
+            this.instrumentation = instrumentation;
         }
 
-//        boolean jacoco = false;
-//        try {
-//            clazz.getDeclaredField("$jacocoData");
-//            jacoco = true;
-//        } catch (NoSuchFieldException ignore) {
-//
-//        }
-//        System.out.println("getCtClass 1 --------------" + clazz + " --> " + jacoco);
-
-//        try {
-//
-////            if (jacoco) {
-//                CtClass ctClass = classPool.getCtClass(clazz.getName());
-//
-//                try {
-//
-//                    CtField $jacocoData = ctClass.getDeclaredField("$jacocoData");
-//                    System.out.println("getCtClass 2 --------------" + clazz + " --> " + jacoco);
-//                } catch (NotFoundException e) {
-//                    instrumentation.retransformClasses(clazz);
-//                }
-//            }
-//            return classPool.getCtClass(clazz.getName());
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new RuntimeException(e);
-//        }
+        @Override
+        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+            try {
+                CtClass ctClass = classPool.makeClass(new ByteArrayInputStream(classfileBuffer));
+            } catch (IOException ignore) {
+            }
+            instrumentation.removeTransformer(this);
+            return null;
+        }
     }
 
     private static CtMethod getCtMethod(Method method, CtClass ct) throws NotFoundException {
