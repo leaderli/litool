@@ -15,6 +15,7 @@ class BeanCreatorTest {
 
     Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 
+    @SuppressWarnings("rawtypes")
     @Test
     void test() {
 
@@ -30,7 +31,9 @@ class BeanCreatorTest {
 
         Assertions.assertEquals(HashMap.class, map.getClass());
 
+        Bar bar = BeanCreator.mockBean(Bar.class);
 
+        Assertions.assertSame(bar, bar.getBar());
     }
 
     @Test

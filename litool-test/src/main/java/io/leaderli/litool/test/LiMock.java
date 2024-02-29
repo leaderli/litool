@@ -18,10 +18,16 @@ import org.junit.jupiter.api.Assertions;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.instrument.*;
+import java.lang.instrument.ClassDefinition;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.Instrumentation;
+import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 public class LiMock {
@@ -98,7 +104,7 @@ public class LiMock {
         }
 
         @Override
-        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
             try {
                 CtClass ctClass = classPool.makeClass(new ByteArrayInputStream(classfileBuffer));
             } catch (IOException ignore) {
@@ -318,6 +324,7 @@ public class LiMock {
 
     public static void reset() {
         originClasses.forEach((k, v) -> {
+            detach(k);
             try {
                 instrumentation.redefineClasses(new ClassDefinition(k, v));
             } catch (ClassNotFoundException | UnmodifiableClassException e) {
@@ -328,6 +335,10 @@ public class LiMock {
 
     public static Recorder recorder(Class<?> mockClass) {
         return new Recorder(mockClass);
+    }
+
+    public static <T> RecordBean<T> recordBean(Class<T> mockClass) {
+        return new RecordBean<>(mockClass);
     }
 
     public static Mocker mocker(Class<?> mockClass) {
@@ -364,68 +375,4 @@ public class LiMock {
     }
 
 
-    public static class Recorder {
-
-        private static final Set<Method> recordMethodCall = new HashSet<>();
-        private static final Set<Method> actualMethodCall = new HashSet<>();
-        private final Class<?> mockClass;
-        private final Map<Method, List<MethodAssert>> methodAsserts = new HashMap<>();
-        private Method currentMethod;
-        private boolean build;
-
-        public Recorder(Class<?> mockClass) {
-            this.mockClass = mockClass;
-            // 仅在build过程中生效，用于记录方法的调用
-            mock(mockClass, m -> true, (method, args) -> {
-                if (build) {
-                    return Either.none();
-                }
-                currentMethod = method;
-                methodAsserts.put(method, new ArrayList<>());
-                return PrimitiveEnum.get(method.getReturnType()).zero_value;
-            }, false);
-        }
-
-        public Recorder when(Object object) {
-            return this;
-        }
-
-        public Recorder when(Runnable runnable) {
-            runnable.run();
-            return this;
-        }
-
-        public Recorder called() {
-            recordMethodCall.add(currentMethod);
-            methodAsserts.get(currentMethod).add((method, _this, args, _return) -> actualMethodCall.add(currentMethod));
-            return this;
-        }
-
-
-        public Recorder arg(int index, Object arg) {
-            methodAsserts.get(currentMethod).add((method, _this, args, _return) -> {
-                Assertions.assertTrue(args.length > index);
-                Assertions.assertEquals(arg, args[index]);
-            });
-            return this;
-        }
-
-        public Recorder args(Object... compareArgs) {
-            methodAsserts.get(currentMethod).add((method, _this, args, _return) -> Assertions.assertArrayEquals(compareArgs, args));
-            return this;
-        }
-
-        public Recorder assertReturn(Object compareReturn) {
-            methodAsserts.get(currentMethod).add((method, _this, args, _return) -> Assertions.assertEquals(compareReturn, _return));
-            return this;
-        }
-
-        public void build() {
-
-            build = true;
-            record(mockClass, m -> !methodAsserts.getOrDefault(m, new ArrayList<>()).isEmpty(),
-                    (m, _this, args, _return) -> methodAsserts.get(m).forEach(methodAssert -> methodAssert.apply(m, _this, args, _return)));
-        }
-
-    }
 }

@@ -216,7 +216,7 @@ class LiMockTest {
         Assertions.assertEquals(2, Void2.a);
     }
 
-    @Test
+    @LiTest
     void testWhenBean() {
 
         Bean1 foo = new Bean1();
@@ -261,7 +261,7 @@ class LiMockTest {
 
     }
 
-    @Test
+    @LiTest
     void testRecordVoid() {
 
         LiMock.recorder(Void1.class).when(() -> Void1.m1(1))
@@ -274,6 +274,41 @@ class LiMockTest {
         Assertions.assertThrows(AssertionFailedError.class, LiMock::assertMethodCalled);
         Void1.m1(1);
         Assertions.assertDoesNotThrow(LiMock::assertMethodCalled);
+    }
+
+    @Test
+    void testReset() {
+        Bean1 bean1 = new Bean1();
+        LiMock.mockerBean(Bean1.class).when(Bean1::m1, 2).build();
+        Assertions.assertEquals(2, bean1.m1());
+        LiMock.reset();
+        LiMock.recordBean(Bean1.class).when(Bean1::m1).build();
+
+        Assertions.assertEquals(1, bean1.m1());
+
+
+    }
+
+    @LiTest
+    void testRecordBean() {
+        LiMock.mockerBean(Bean1.class).when(Bean1::m1, 2).build();
+
+        LiMock.reset();
+        Bean1 bean = LiMock.recordBean(Bean1.class).when(Bean1::m1)
+                .called()
+                .assertReturn(1)
+                .build();
+        Assertions.assertThrows(AssertionFailedError.class, LiMock::assertMethodCalled);
+        bean.m1();
+        Assertions.assertDoesNotThrow(LiMock::assertMethodCalled);
+        LiMock.recordBean(Bean1.class).when(Bean1::m1)
+                .called()
+                .assertReturn(2)
+                .build();
+        Assertions.assertThrows(AssertionFailedError.class, LiMock::assertMethodCalled);
+
+        Assertions.assertThrows(AssertionFailedError.class, bean::m1);
+
     }
 
     @Test

@@ -1,8 +1,10 @@
 package io.leaderli.litool.core.collection;
 
+import io.leaderli.litool.core.function.Filter;
+
 import java.util.Arrays;
 
-public class ArrayEqual<T> {
+public class ArrayEqual<T> implements Filter<T[]> {
 
 
     public final T[] arr;
@@ -27,5 +29,10 @@ public class ArrayEqual<T> {
     @Override
     public int hashCode() {
         return Arrays.hashCode(arr);
+    }
+
+    @Override
+    public Boolean apply(T[] compare) {
+        return Arrays.equals(arr, compare);
     }
 }

@@ -1,6 +1,7 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.collection.ArrayEqual;
+import io.leaderli.litool.core.function.Filter;
 import io.leaderli.litool.core.meta.Either;
 
 import java.lang.reflect.Method;
@@ -38,10 +39,12 @@ public abstract class MethodValueRecorder<T> {
     }
 
     protected Object getMethodValue(Method m, Object[] args) {
-        MethodValue methodValue = methodValueMap.get(m);
+        MethodValue<Object> methodValue = methodValueMap.get(m);
         ArrayEqual<Object> key = ArrayEqual.of(args);
-        if (methodValue.whenValue.containsKey(key)) {
-            return methodValue.whenValue.get(key);
+        for (Map.Entry<Filter<Object[]>, Object> filter : methodValue.whenValue.entrySet()) {
+            if (filter.getKey().apply(args)) {
+                return filter.getValue();
+            }
         }
         if (methodValue.otherValue == null) {
             return Either.none();

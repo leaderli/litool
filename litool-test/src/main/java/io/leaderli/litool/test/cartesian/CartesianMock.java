@@ -88,7 +88,6 @@ public class CartesianMock {
         originClasses.forEach((c, b) -> {
             try {
                 instrumentation.redefineClasses(new ClassDefinition(c, b));
-                instrumentation.retransformClasses(c);
                 Class.forName(c.getName());
             } catch (Exception e) {
                 throw new RuntimeException(e);
