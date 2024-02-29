@@ -1,6 +1,6 @@
 package io.leaderli.litool.test;
 
-import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.core.type.BeanCreator;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
@@ -14,6 +14,6 @@ public class LiParameterResolver implements ParameterResolver {
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return ReflectUtil.newInstance(parameterContext.getParameter().getType()).get();
+        return BeanCreator.mockBean(parameterContext.getParameter().getType());
     }
 }
