@@ -2,6 +2,7 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.function.Filter;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.Lira;
@@ -240,7 +241,7 @@ public class LiMock {
      *
      * @see #mock(Class, Function, MethodProxy, boolean)
      */
-    public static void mock(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodProxy methodProxy) {
+    public static void mock(Class<?> mockClass, Filter<Method> mockMethodFilter, MethodProxy methodProxy) {
         mock(mockClass, mockMethodFilter, methodProxy, true);
     }
 
@@ -249,7 +250,7 @@ public class LiMock {
      *
      * @see #mockStatic(Class, Function, MethodProxy, boolean)
      */
-    public static void mockStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodProxy methodProxy) {
+    public static void mockStatic(Class<?> mockClass, Filter<Method> mockMethodFilter, MethodProxy methodProxy) {
         mock(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), methodProxy);
     }
 
