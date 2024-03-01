@@ -33,6 +33,8 @@
         <!-- versions -->
         <compile.version>8</compile.version>
         <java.version>1.8</java.version>
+
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
