@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
+import java.util.Map;
 
 /**
  * @author leaderli
@@ -57,6 +58,15 @@ class GsonUtilTest {
 
             return context.serialize(src.value);
         }
+    }
+
+    @Test
+    void testToSpecialMap() {
+        Assertions.assertNotNull(GsonUtil.toSpecialMap(null));
+        String json = "{\"a\": 1,\"b\": null,\"c\": [{\"a\":\"1\",\"b\":\"\",\"c\":[]},{\"a\":2,\"b\":null,\"c\":[]}],\"d\": {\"a\":1,\"b\":null,\"c\":[]}}";
+        Map<String, Object> map = GsonUtil.toSpecialMap(json);
+        Assertions.assertEquals("{\"a\":\"1\",\"b\":\"\",\"c\":[{\"a\":\"1\",\"b\":\"\",\"c\":[]},{\"a\":\"2\",\"b\":\"\",\"c\":[]}],\"d\":{\"a\":\"1\",\"b\":\"\",\"c\":[]}}", GsonUtil.toJson(map));
+
     }
 
 }
