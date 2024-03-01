@@ -40,7 +40,7 @@ permissions:
 
 jobs:
   sonar:
-    name: Build and analyze
+    name: sonarcloud2
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -63,7 +63,7 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
+      - name: sonar-maven-plugin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -74,7 +74,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn org.sonarsource.scanner.maven:sonar
 
-      - name: Analyze with SonarCloud
+      - name: sonarcloud-github-action
 
         # You can pin the exact commit or the version.
         # uses: SonarSource/sonarcloud-github-action@de2e56b42aa84d0b1c5b622644ac17e505c9a049
