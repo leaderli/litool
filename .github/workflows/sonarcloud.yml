@@ -36,7 +36,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn clean test
-          mvn sonar:sonar
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=leaderli_io-leaderli-litool-litool-parent
       - name: Analyze with SonarCloud
 
         # You can pin the exact commit or the version.
