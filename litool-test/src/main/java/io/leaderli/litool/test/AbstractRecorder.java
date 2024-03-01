@@ -1,11 +1,13 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.meta.Either;
+import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 import org.junit.jupiter.api.Assertions;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Consumer;
 
 @SuppressWarnings("unchecked")
 public class AbstractRecorder<T> {
@@ -51,6 +53,16 @@ public class AbstractRecorder<T> {
         });
         return (T) this;
     }
+
+    public <R> T argAssert(int index, Consumer<R> argAssert, Class<R> paraType) {
+        methodAsserts.get(currentMethod).add((method, _this, args, _return) -> {
+            Assertions.assertTrue(args.length > index);
+            Assertions.assertEquals(ClassUtil.primitiveToWrapper(method.getParameterTypes()[index]), ClassUtil.primitiveToWrapper(paraType));
+            argAssert.accept((R) args[index]);
+        });
+        return (T) this;
+    }
+
 
     public T args(Object... compareArgs) {
         methodAsserts.get(currentMethod).add((method, _this, args, _return) -> Assertions.assertArrayEquals(compareArgs, args));

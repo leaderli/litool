@@ -277,11 +277,31 @@ class LiMockTest {
                 .assertReturn(null)
                 .args(1)
                 .arg(0, 1)
+
                 .build();
 
         Assertions.assertThrows(AssertionFailedError.class, LiMock::assertMethodCalled);
         Void1.m1(1);
         Assertions.assertDoesNotThrow(LiMock::assertMethodCalled);
+        LiMock.reset();
+        LiMock.recorder(Void1.class)
+                .run(() -> Void1.m1(1))
+                .argAssert(0, v -> {
+                }, Boolean.class)
+                .build();
+        Assertions.assertThrows(AssertionFailedError.class, () -> Void1.m1(1));
+        LiMock.reset();
+        LiMock.recorder(Void1.class)
+                .run(() -> Void1.m1(1))
+                .argAssert(0, v -> Assertions.assertEquals(2, v), Integer.class)
+                .build();
+        Assertions.assertThrows(AssertionFailedError.class, () -> Void1.m1(1));
+        LiMock.reset();
+        LiMock.recorder(Void1.class)
+                .run(() -> Void1.m1(1))
+                .argAssert(0, v -> Assertions.assertEquals(1, v), Integer.class)
+                .build();
+        Assertions.assertDoesNotThrow(() -> Void1.m1(1));
     }
 
     @Test
