@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 class LiMockTest {
@@ -126,14 +127,14 @@ class LiMockTest {
         LiMock.mocker(Error.class).when(Error.m1(), 101).build();
         Assertions.assertEquals(101, Error.m1());
         Assertions.assertEquals(4, Error.m4());
-        LiMock.mocker(Error.class).when(Error.m1(1), 11, (m, args) -> 12).build();
+        LiMock.mocker(Error.class).other(Error.m1(1), 11, (m, args) -> 12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
         LiMock.mocker(Error.class).when(Error.m1(1), 11, 12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 
-        LiMock.mocker(Error.class).when(Error.m1(1), (m, args) -> {
+        LiMock.mocker(Error.class).other(Error.m1(1), (m, args) -> {
             if ((int) args[0] == 1) {
                 return 21;
             }
@@ -206,7 +207,7 @@ class LiMockTest {
         Assertions.assertEquals(10, Error.m1());
 
 
-        LiMock.mocker(Void2.class).when(() -> Void2.m1(1))
+        LiMock.mocker(Void2.class).run(() -> Void2.m1(1))
                 .build();
 
         Void2.m1(2);
@@ -225,12 +226,19 @@ class LiMockTest {
         Assertions.assertEquals(2, foo.m1());
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     void testWhenInterface() {
         Supplier<Integer> supplier = LiMock.mockerInterface(new LiTypeToken<Supplier<Integer>>() {
         }).when(Supplier::get, 1).build();
 
         Assertions.assertEquals(1, supplier.get());
+
+
+        Function function = LiMock.mockerInterface(Function.class).when(f -> f.apply(1), 1).build();
+        Assertions.assertEquals(1, function.apply(1));
+        Assertions.assertNull(function.apply(2));
+
 
     }
 
@@ -264,7 +272,7 @@ class LiMockTest {
     @LiTest
     void testRecordVoid() {
 
-        LiMock.recorder(Void1.class).when(() -> Void1.m1(1))
+        LiMock.recorder(Void1.class).run(() -> Void1.m1(1))
                 .called()
                 .assertReturn(null)
                 .args(1)
@@ -308,6 +316,17 @@ class LiMockTest {
         Assertions.assertThrows(AssertionFailedError.class, LiMock::assertMethodCalled);
 
         Assertions.assertThrows(AssertionFailedError.class, bean::m1);
+
+    }
+
+    @LiTest
+    void testMockRecord() {
+
+        Bean2 bean2 = LiMock.mockerBean(Bean2.class).when(b -> b.m1(1), "2").build();
+        LiMock.recordBean(Bean2.class).when(b -> b.m1(1)).called().build();
+
+        bean2.m1(1);
+
 
     }
 
@@ -478,6 +497,15 @@ class LiMockTest {
     static class Bean1 {
         int m1() {
             return 1;
+        }
+
+        void m2(int a) {
+        }
+    }
+
+    static class Bean2 {
+        String m1(int a) {
+            return String.valueOf(a);
         }
     }
 }

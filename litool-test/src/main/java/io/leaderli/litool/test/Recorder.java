@@ -12,7 +12,7 @@ public class Recorder extends AbstractRecorder<Recorder> {
         return this;
     }
 
-    public Recorder when(Runnable runnable) {
+    public Recorder run(Runnable runnable) {
         runnable.run();
         return this;
     }

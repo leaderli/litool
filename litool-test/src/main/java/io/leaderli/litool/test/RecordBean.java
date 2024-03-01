@@ -17,7 +17,7 @@ public class RecordBean<T> extends AbstractRecorder<RecordBean<T>> {
         LiAssertUtil.assertNotNull(instance, "can not create instance of " + mockClass);
     }
 
-    public RecordBean<T> when(Consumer<T> consumer) {
+    public RecordBean<T> consume(Consumer<T> consumer) {
         consumer.accept(instance);
         return this;
     }

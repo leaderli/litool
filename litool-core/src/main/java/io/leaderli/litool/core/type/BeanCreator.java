@@ -3,9 +3,7 @@ package io.leaderli.litool.core.type;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * mock a bean, and will recursive set bean field with a default value.
@@ -27,13 +25,13 @@ public class BeanCreator<T> {
     private final ConstructorConstructor constructorConstructor;
     private final Map<LiTypeToken<?>, Object> cache;
 
-    private final FieldValueGetter fieldValueGetter;
+    private final Map<String, List<FieldValueGetter<?>>> fieldValueGetterMap;
 
-    private BeanCreator(LiTypeToken<T> typeToken, ConstructorConstructor constructorConstructor, Map<LiTypeToken<?>, Object> cache, FieldValueGetter<?> fieldValueGetter) {
+    private BeanCreator(LiTypeToken<T> typeToken, ConstructorConstructor constructorConstructor, Map<LiTypeToken<?>, Object> cache, Map<String, List<FieldValueGetter<?>>> fieldValueGetterMap) {
         this.typeToken = typeToken;
         this.constructorConstructor = constructorConstructor;
         this.cache = cache;
-        this.fieldValueGetter = fieldValueGetter;
+        this.fieldValueGetterMap = fieldValueGetterMap;
     }
 
 
@@ -115,10 +113,12 @@ public class BeanCreator<T> {
         Type targetType = TypeUtil.resolve(typeToken.getType(), genericType);
         Class<?> fieldType = TypeUtil.erase(targetType);
 
-        if (fieldValueGetter != null) {
-            Object value = fieldValueGetter.getValue(instance, field, fieldType);
-            if (value != null) {
-                return value;
+        if (fieldValueGetterMap != null) {
+            for (FieldValueGetter valueGetter : fieldValueGetterMap.getOrDefault(field.getName(), new ArrayList<>())) {
+                Object value = valueGetter.getValue(instance, field, fieldType);
+                if (value != null && ClassUtil.isAssignableFromOrIsWrapper(fieldType, value.getClass())) {
+                    return value;
+                }
             }
         }
         Object zero_value = PrimitiveEnum.get(fieldType).zero_value;
@@ -129,7 +129,7 @@ public class BeanCreator<T> {
             return Array.newInstance(fieldType.getComponentType(), 0);
         } else {
             LiTypeToken<?> fieldTypeToken = LiTypeToken.of(fieldType);
-            return new BeanCreator<>(fieldTypeToken, constructorConstructor, cache, this.fieldValueGetter).create();
+            return new BeanCreator<>(fieldTypeToken, constructorConstructor, cache, this.fieldValueGetterMap).create();
         }
     }
 
@@ -138,7 +138,7 @@ public class BeanCreator<T> {
         private final Map<LiTypeToken<?>, Object> cache = new HashMap<>();
         private final LinkedHashMap<Type, InstanceCreator<?>> head = new LinkedHashMap<>();
         private final LinkedHashMap<Type, InstanceCreator<?>> tail = new LinkedHashMap<>();
-        private FieldValueGetter<?> fieldValueGetter = (b, f, t) -> null;
+        private final Map<String, List<FieldValueGetter<?>>> fieldValueGetterMap = new HashMap<>();
 
 
         private MockBeanBuilder(LiTypeToken<T> typeToken) {
@@ -161,10 +161,16 @@ public class BeanCreator<T> {
             return this;
         }
 
-        public MockBeanBuilder<T> populate(FieldValueGetter<?> fieldValueGetter) {
-            this.fieldValueGetter = fieldValueGetter;
+        public MockBeanBuilder<T> populate(String name, FieldValueGetter<?> fieldValueGetter) {
+            this.fieldValueGetterMap.computeIfAbsent(name, k -> new ArrayList<>()).add(fieldValueGetter);
             return this;
         }
+
+        public MockBeanBuilder<T> populate(String name, Object value) {
+            populate(name, (bean, field, fieldType) -> value);
+            return this;
+        }
+
 
         public BeanCreator<T> build() {
             ConstructorConstructor constructorConstructor = new ConstructorConstructor(head, tail);
@@ -173,7 +179,7 @@ public class BeanCreator<T> {
                 cache.put(LiTypeToken.of(primitive.wrapper), primitive.zero_value);
             }
             cache.put(LiTypeToken.of(String.class), "");
-            return new BeanCreator<>(typeToken, constructorConstructor, cache, fieldValueGetter);
+            return new BeanCreator<>(typeToken, constructorConstructor, cache, fieldValueGetterMap);
         }
     }
 }

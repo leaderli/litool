@@ -224,6 +224,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      */
     <R> Lino<R> cast(Class<? extends R> type);
 
+
     /**
      * typeToken是用于转换带泛型的类型，实际类型为 {@link LiTypeToken#getRawType()}，注意该方法并不会保证泛型的准确性，仅会保证 rawType的准确性
      *

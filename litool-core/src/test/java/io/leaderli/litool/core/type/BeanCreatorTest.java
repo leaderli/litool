@@ -58,7 +58,7 @@ class BeanCreatorTest {
                     }
                 }).build().create());
 
-        Foo2 foo2 = BeanCreator.create(Foo2.class).populate((b, f, t) -> {
+        Foo2 foo2 = BeanCreator.create(Foo2.class).populate("b", (b, f, t) -> {
             if (f.getName().equals("b")) {
                 return "b";
             }
@@ -66,6 +66,14 @@ class BeanCreatorTest {
         }).build().create();
         Assertions.assertEquals("", foo2.a);
         Assertions.assertEquals("b", foo2.b);
+        foo2 = BeanCreator.create(Foo2.class).populate("a", 1).build().create();
+        Assertions.assertEquals("", foo2.a);
+        foo2 = BeanCreator.create(Foo2.class)
+                .populate("a", "1")
+                .populate("b", 1)
+                .build().create();
+        Assertions.assertEquals("1", foo2.a);
+        Assertions.assertEquals("", foo2.b);
     }
 
     static abstract class Foo<T, R> {

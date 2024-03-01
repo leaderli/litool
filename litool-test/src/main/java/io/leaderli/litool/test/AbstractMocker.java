@@ -24,8 +24,5 @@ public class AbstractMocker<T> extends MethodValueRecorder<T> {
         }, false);
     }
 
-    public void build() {
-        build = true;
-        LiMock.mock(mockClass, methodValueMap::containsKey, this::getMethodValue, detach);
-    }
+
 }

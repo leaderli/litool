@@ -17,17 +17,17 @@ public class MockBean<T> extends AbstractMocker<MockBean<T>> {
     }
 
 
+    public <R> MockBean<T> consume(Consumer<T> call) {
+        call.accept(instance);
+        return record(null, (m, arg) -> null, 0b01);
+    }
+
     public <R> MockBean<T> when(Function<T, R> call, R result) {
         call.apply(instance);
         return record(result, null, 0b10);
     }
 
-    public <R> MockBean<T> when(Consumer<T> call) {
-        call.accept(instance);
-        return record(null, (m, arg) -> null, 0b01);
-    }
-
-    public <R> MockBean<T> when(Function<T, R> call, BiFunction<Method, Object[], R> otherValue) {
+    public <R> MockBean<T> other(Function<T, R> call, BiFunction<Method, Object[], R> otherValue) {
         call.apply(instance);
         return record(null, (m, arg) -> null, 0b01);
     }
@@ -37,10 +37,14 @@ public class MockBean<T> extends AbstractMocker<MockBean<T>> {
         return record(result, (m, args) -> other, 0b11);
     }
 
-    public <R> MockBean<T> when(Function<T, R> call, R result, BiFunction<Method, Object[], R> otherValue) {
+    public <R> MockBean<T> other(Function<T, R> call, R result, BiFunction<Method, Object[], R> otherValue) {
         call.apply(instance);
         return record(result, otherValue, 0b11);
     }
 
-
+    public T build() {
+        build = true;
+        LiMock.mock(mockClass, methodValueMap::containsKey, this::getMethodValue, detach);
+        return instance;
+    }
 }

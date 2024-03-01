@@ -18,22 +18,24 @@ public class MockInterface<T> extends MethodValueRecorder<MockInterface<T>> {
         return record(result, null, 0b10);
     }
 
-    public <R> MockInterface<T> when(Consumer<T> call) {
+    public <R> MockInterface<T> consume(Consumer<T> call) {
         call.accept(instance);
         return record(null, (m, arg) -> null, 0b01);
     }
 
-    public <R> MockInterface<T> when(Function<T, R> call, BiFunction<Method, Object[], R> otherValue) {
-        call.apply(instance);
-        return record(null, (m, arg) -> null, 0b01);
-    }
 
     public <R> MockInterface<T> when(Function<T, R> call, R result, R other) {
         call.apply(instance);
         return record(result, (m, args) -> other, 0b11);
     }
 
-    public <R> MockInterface<T> when(Function<T, R> call, R result, BiFunction<Method, Object[], R> otherValue) {
+
+    public <R> MockInterface<T> other(Function<T, R> call, BiFunction<Method, Object[], R> otherValue) {
+        call.apply(instance);
+        return record(null, (m, arg) -> null, 0b01);
+    }
+
+    public <R> MockInterface<T> other(Function<T, R> call, R result, BiFunction<Method, Object[], R> otherValue) {
         call.apply(instance);
         return record(result, otherValue, 0b11);
     }
@@ -51,8 +53,7 @@ public class MockInterface<T> extends MethodValueRecorder<MockInterface<T>> {
     }
 
     public T build() {
-        return (T) Proxy.newProxyInstance(mockClass.getClassLoader(), new Class[]{mockClass}, (proxy, method, args) -> getMethodValue(method, args));
+        return (T) Proxy.newProxyInstance(mockClass.getClassLoader(), new Class[]{mockClass}, (proxy, method, args) -> getMethodValueOfInterface(method, args));
     }
-
 
 }

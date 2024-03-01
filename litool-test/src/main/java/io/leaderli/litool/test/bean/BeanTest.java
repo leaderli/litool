@@ -1,4 +1,4 @@
-package io.leaderli.litool.test.cartesian;
+package io.leaderli.litool.test.bean;
 
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,13 +8,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author leaderli
- * @since 2022/8/18
- */
 @TestTemplate
-@ExtendWith(CartesianTestExtension.class)
+@ExtendWith(BeanTestTestExtension.class)
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CartesianTest {
+public @interface BeanTest {
+    String value() default "";
 }

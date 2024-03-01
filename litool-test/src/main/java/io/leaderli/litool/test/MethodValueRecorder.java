@@ -3,6 +3,7 @@ package io.leaderli.litool.test;
 import io.leaderli.litool.core.collection.ArrayEqual;
 import io.leaderli.litool.core.function.Filter;
 import io.leaderli.litool.core.meta.Either;
+import io.leaderli.litool.core.type.PrimitiveEnum;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -36,6 +37,18 @@ public abstract class MethodValueRecorder<T> {
         currentMethod = null;
         currentArgs = null;
         return (T) this;
+    }
+
+    protected Object getMethodValueOfInterface(Method m, Object[] args) {
+
+        Object apply = getMethodValue(m, args);
+        if (apply instanceof Either) {
+            apply = ((Either<?, ?>) apply).get();
+        }
+        if (apply == null) {
+            return PrimitiveEnum.get(m.getReturnType()).zero_value;
+        }
+        return apply;
     }
 
     protected Object getMethodValue(Method m, Object[] args) {
