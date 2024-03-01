@@ -771,20 +771,21 @@ public class ArrayUtils {
     @SuppressWarnings({"unchecked", "java:S2259"})
     public static <T> T combineArrays(T firstArray, T secondArray) {
 
+        String thereIsNoArray = "there is no array";
         if (firstArray == null) {
-            LiAssertUtil.assertTrue(isArray(secondArray), IllegalArgumentException::new, "there is no array");
+            LiAssertUtil.assertTrue(isArray(secondArray), IllegalArgumentException::new, thereIsNoArray);
             return arraycopy(secondArray);
         }
 
         if (secondArray == null) {
-            LiAssertUtil.assertTrue(isArray(firstArray), IllegalArgumentException::new, "there is no array");
+            LiAssertUtil.assertTrue(isArray(firstArray), IllegalArgumentException::new, thereIsNoArray);
             return arraycopy(firstArray);
 
         }
         Class<?> firstArrayComponentType = firstArray.getClass().getComponentType();
         Class<?> secondArrayComponentType = secondArray.getClass().getComponentType();
 
-        LiAssertUtil.assertTrue(isArray(firstArray) && isArray(secondArray), IllegalArgumentException::new, "there is no array");
+        LiAssertUtil.assertTrue(isArray(firstArray) && isArray(secondArray), IllegalArgumentException::new, thereIsNoArray);
         LiAssertUtil.assertTrue(secondArrayComponentType == firstArrayComponentType, IllegalArgumentException::new, "two array don't have same componentType");
 
 

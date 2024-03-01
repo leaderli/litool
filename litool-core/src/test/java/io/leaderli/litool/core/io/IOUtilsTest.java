@@ -41,7 +41,6 @@ class IOUtilsTest {
         System.err.print(1);
         Assertions.assertEquals(49, box.value());
         box.reset();
-
         Assertions.assertNull(box.value());
         System.setErr(IOUtils.emptyPrintStream());
         System.err.print(1);

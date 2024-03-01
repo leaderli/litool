@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -294,7 +293,7 @@ class ArrayUtilsTest {
     }
 
     @Test
-    void removeSub() {
+    void testRemoveSub() {
 
         Object[] original;
 
@@ -427,16 +426,12 @@ class ArrayUtilsTest {
     }
 
     @Test
-    void map() {
+    void testMap() {
 
-        Integer[] a = null;
+        Integer[] map = ArrayUtils.map((Integer[]) null, Integer.class, integer -> integer);
+        Assertions.assertSame(0, map.length);
+        Assertions.assertArrayEquals(new String[]{"1"}, ArrayUtils.map(new Integer[]{1}, String.class, integer -> integer + ""));
 
-        ArrayUtils.map(a, Integer.class, new Function<Integer, Integer>() {
-            @Override
-            public Integer apply(Integer integer) {
-                return null;
-            }
-        });
 
     }
 
