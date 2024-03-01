@@ -56,12 +56,7 @@ public class FileUtil {
         return System.getProperty("java.home");
     }
 
-    /**
-     * @return 返回 tools.jar
-     */
-    public static File getJavaToolsJava() {
-        return new File(System.getProperty("java.home"), "../lib/tools.jar");
-    }
+
 
 
     /**
