@@ -72,7 +72,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn sonar:sonar
+        run: mvn sonar:sonar  -Dsonar.projectKey=leaderli_litool
 
       - name: sonarcloud-github-action
 
