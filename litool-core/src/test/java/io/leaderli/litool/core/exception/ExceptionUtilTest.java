@@ -20,9 +20,9 @@ class ExceptionUtilTest {
         } catch (Throwable throwable) {
 
             Throwable cause = ExceptionUtil.getCause(throwable);
-            System.out.println(ExceptionUtil.beauty(throwable));
             Assertions.assertEquals("test", cause.getStackTrace()[0].getMethodName());
             Assertions.assertInstanceOf(ArithmeticException.class, cause);
+            Assertions.assertTrue(ExceptionUtil.beauty(throwable).contains(" java.lang.ArithmeticException: / by zero"));
         }
 
         try {

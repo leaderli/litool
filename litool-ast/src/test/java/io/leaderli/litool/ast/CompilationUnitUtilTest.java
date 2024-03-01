@@ -8,6 +8,5 @@ class CompilationUnitUtilTest {
     void testMethodAndSource() {
 
         CompilationUnit cu = SourceCodeUtil.getClassSource(CompilationUnitUtil.class);
-        System.out.println(CompilationUnitUtil.methodAndSource(cu));
     }
 }

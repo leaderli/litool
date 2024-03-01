@@ -7,6 +7,7 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import io.leaderli.litool.core.io.FileUtil;
+import io.leaderli.litool.core.io.IOUtils;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassScanner;
 import org.junit.jupiter.api.Assertions;
@@ -17,6 +18,10 @@ import java.util.Optional;
 
 class SourceCodeUtilTest {
 
+
+    static {
+        System.setOut(IOUtils.emptyPrintStream());
+    }
 
     @Test
     void getClassSource() {

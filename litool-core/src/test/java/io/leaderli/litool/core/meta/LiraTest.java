@@ -4,6 +4,7 @@ import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.io.StringWriter;
 import io.leaderli.litool.core.meta.ra.LiraRuntimeException;
 import io.leaderli.litool.core.meta.ra.NullableFunction;
 import io.leaderli.litool.core.meta.ra.SubscriberRa;
@@ -13,6 +14,7 @@ import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -412,9 +414,12 @@ class LiraTest {
     @Test
     void tuple() {
 
+        StringWriter stringWriter = new StringWriter();
+        System.setErr(new PrintStream(stringWriter));
         Assertions.assertEquals("[(1, 4), (2, 2)]", Lira.of(1, 2, 0).tuple(i -> 4 / i).toString());
         Assertions.assertTrue(Lira.of(1).tuple(i -> null).first().get().isLeft());
         Assertions.assertFalse(Lira.of(1).tuple(i -> null).toMap(t -> t).isEmpty());
+        Assertions.assertTrue(stringWriter.get().contains("java.lang.ArithmeticException: / by zero"));
     }
 
     @Test

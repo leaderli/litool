@@ -3,6 +3,7 @@ package io.leaderli.litool.core.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 
 public class IOUtils {
     public static final int DEFAULT_BUFFER_SIZE = 8192;
@@ -33,6 +34,19 @@ public class IOUtils {
                 target.write(buf, 0, length);
             }
         }
+    }
+
+    public static PrintStream emptyPrintStream() {
+        return new PrintStream(emptyOutputStream());
+    }
+
+    public static OutputStream emptyOutputStream() {
+        return new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                // do nothing
+            }
+        };
     }
 
 }
