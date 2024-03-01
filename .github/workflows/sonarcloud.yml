@@ -1,32 +1,17 @@
-<<<<<<< HEAD
 name: SonarCloud
 on:
   push:
     branches:
       - master
-=======
-
-
-
-name: SonarCloud Backend
-on:
-  push:
-    branches: [ master]
->>>>>>> a3b5da62a66eb75a885fe19c658093ab86629de4
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
   build:
-<<<<<<< HEAD
     name: Build and analyze
-=======
-    name: SonarCloud Build & Test
->>>>>>> a3b5da62a66eb75a885fe19c658093ab86629de4
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
-<<<<<<< HEAD
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up JDK 8
         uses: actions/setup-java@v3
@@ -50,17 +35,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=leaderli_litool
-=======
-          fetch-depth: 0
-      - name: Set up JDK 8
-        uses: actions/setup-java@v1
-        with:
-          java-version: 8
-      
-      - name: Build and analyze SonarCloud
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          mvn --batch-mode --update-snapshots verify -B verify sonar:sonar -Dsonar.projectKey=leaderli_litool -Dsonar.organization=leaderli -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARCLOUD_TOKEN -Dsonar.tests=src/test/java/
->>>>>>> a3b5da62a66eb75a885fe19c658093ab86629de4
