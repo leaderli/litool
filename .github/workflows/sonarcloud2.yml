@@ -39,7 +39,7 @@ permissions:
   pull-requests: read # allows SonarCloud to decorate PRs with analysis results
 
 jobs:
-  build:
+  sonar:
     name: Build and analyze
     runs-on: ubuntu-latest
     steps:
@@ -68,10 +68,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=leaderli_litool
-  Analysis:
-    runs-on: ubuntu-latest
 
-    steps:
       - name: Analyze with SonarCloud
 
         # You can pin the exact commit or the version.
