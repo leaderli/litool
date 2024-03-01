@@ -34,7 +34,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn clean test
+        run: |
+          mvn clean test
+          mvn org.sonarsource.scanner.maven:sonar
       - name: Analyze with SonarCloud
 
         # You can pin the exact commit or the version.
