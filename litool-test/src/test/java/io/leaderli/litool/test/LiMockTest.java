@@ -525,6 +525,7 @@ class LiMockTest {
 
     static class Bean2 {
         String m1(int a) {
+
             return String.valueOf(a);
         }
     }
