@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class ArrayUtilsTest {
 
-
     @Test
     void arraycopy() {
 
@@ -424,13 +423,13 @@ class ArrayUtilsTest {
 
         Assertions.assertSame(2, ArrayUtils.toArray(new int[]{1, 2}).length);
     }
-
     @Test
     void testMap() {
 
         Integer[] map = ArrayUtils.map((Integer[]) null, Integer.class, integer -> integer);
         Assertions.assertSame(0, map.length);
         Assertions.assertArrayEquals(new String[]{"1"}, ArrayUtils.map(new Integer[]{1}, String.class, integer -> integer + ""));
+       //genereate test
 
 
     }
