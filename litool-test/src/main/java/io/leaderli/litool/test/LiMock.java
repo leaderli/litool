@@ -227,7 +227,6 @@ public class LiMock {
                 }
                 ctMethod.insertBefore(src);
             }
-
             instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));
         } catch (Exception e) {
             throw new RuntimeException(e);
