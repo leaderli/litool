@@ -37,9 +37,10 @@ class LiMockTest {
     @Test
     void testGetClass() {
 
-        System.out.println(LiMock.getCtClass(int.class));
+        Assertions.assertThrows(RuntimeException.class, () -> LiMock.getCtClass(null));
 
     }
+
     @LiTest
     void skipClassConstructors3() {
 
