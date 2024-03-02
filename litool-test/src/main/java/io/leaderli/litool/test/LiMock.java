@@ -369,6 +369,7 @@ public class LiMock {
     /**
      * @param mockClass 模拟类
      * @param detach    是否重置之前变动
+     * @return 一个模拟的记录类
      */
     public static Mocker mocker(Class<?> mockClass, boolean detach) {
         return new Mocker(mockClass, detach);
