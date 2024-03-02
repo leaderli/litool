@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.exception.AutoCloseRuntimeException;
 import io.leaderli.litool.core.function.ThrowableSupplier;
 import io.leaderli.litool.core.meta.LiBox;
 import org.junit.jupiter.api.Assertions;
@@ -32,5 +33,8 @@ class AutoCloseableUtilTest {
 
         AutoCloseableUtil.autoCloseFunction(supplier, at -> null);
         Assertions.assertEquals(1, of.value());
+        Assertions.assertThrows(AutoCloseRuntimeException.class, () -> AutoCloseableUtil.autoCloseFunction(supplier, at -> {
+            throw new NullPointerException();
+        }));
     }
 }
