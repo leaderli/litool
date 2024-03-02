@@ -81,18 +81,14 @@ public class LiMock {
         return bytecode;
     }
 
-    public static void detach(Class<?> clazz) {
+    public static void detach(Class<?> clazz) throws UnmodifiableClassException, ClassNotFoundException {
 
 
-        try {
-            getCtClass(clazz).detach();
-            instrumentation.retransformClasses(clazz);
+        getCtClass(clazz).detach();
+        instrumentation.retransformClasses(clazz);
 
-            if (originClasses.containsKey(clazz)) {
-                instrumentation.redefineClasses(new ClassDefinition(clazz, originClasses.get(clazz)));
-            }
-        } catch (ClassNotFoundException | UnmodifiableClassException e) {
-            throw new RuntimeException(e);
+        if (originClasses.containsKey(clazz)) {
+            instrumentation.redefineClasses(new ClassDefinition(clazz, originClasses.get(clazz)));
         }
 
     }
@@ -324,8 +320,8 @@ public class LiMock {
 
     public static void reset() {
         originClasses.forEach((k, v) -> {
-            detach(k);
             try {
+                detach(k);
                 instrumentation.redefineClasses(new ClassDefinition(k, v));
             } catch (ClassNotFoundException | UnmodifiableClassException e) {
                 throw new RuntimeException(e);

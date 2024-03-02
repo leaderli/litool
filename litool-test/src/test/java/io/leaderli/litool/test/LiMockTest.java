@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
+import java.lang.instrument.UnmodifiableClassException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -33,6 +34,12 @@ class LiMockTest {
 
     }
 
+    @Test
+    void testGetClass() {
+
+        System.out.println(LiMock.getCtClass(int.class));
+
+    }
     @LiTest
     void skipClassConstructors3() {
 
@@ -193,7 +200,7 @@ class LiMockTest {
     }
 
     @Test
-    void testWhen3() {
+    void testWhen3() throws UnmodifiableClassException, ClassNotFoundException {
         LiMock.mocker(Error.class)
                 .when(Error.m1(1), 11, 12)
                 .when(Error.m1(), 10)
