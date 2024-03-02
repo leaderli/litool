@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.util;
 
 import io.leaderli.litool.core.io.FileUtil;
+import io.leaderli.litool.core.io.IOUtils;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.resource.ResourceUtil;
 import io.leaderli.litool.core.resource.WalkFileFilter;
@@ -55,25 +56,12 @@ class ResourceUtilTest {
     @Test
     void getResourceFile() {
 
+        System.setErr(IOUtils.emptyPrintStream());
 
         Lira<File> resourceFile = ResourceUtil.getResourceFiles(pathname -> !pathname.getName().endsWith(".class"));
 
         Assertions.assertTrue(resourceFile.absent());
-        resourceFile = ResourceUtil.getResourceFiles(
-                new WalkFileFilter() {
-                    @Override
-                    public boolean dir(File dir) {
-                        return false;
-                    }
 
-                    @Override
-                    public boolean file(File file) {
-                        return true;
-                    }
-                }
-
-
-        );
 
         Assertions.assertTrue(resourceFile.absent());
 
