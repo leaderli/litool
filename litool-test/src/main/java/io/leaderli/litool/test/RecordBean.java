@@ -2,6 +2,7 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.type.BeanCreator;
+import io.leaderli.litool.core.type.MethodFilter;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -29,8 +30,11 @@ public class RecordBean<T> extends AbstractRecorder<RecordBean<T>> {
 
     public T build() {
         build = true;
-        LiMock.record(mockClass, m -> !methodAsserts.getOrDefault(m, new ArrayList<>()).isEmpty(),
-                (m, _this, args, _return) -> methodAsserts.get(m).forEach(methodAssert -> methodAssert.apply(m, _this, args, _return)));
+        LiMock.record(mockClass, MethodFilter.of(methodAsserts::containsKey),
+                (m, _this, args, _return) ->
+                        methodAsserts
+                                .getOrDefault(m, new ArrayList<>())
+                                .forEach(methodAssert -> methodAssert.apply(m, _this, args, _return)));
         return instance;
     }
 

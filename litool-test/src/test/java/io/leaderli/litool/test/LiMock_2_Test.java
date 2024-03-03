@@ -1,5 +1,6 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.type.MethodFilter;
 import org.junit.jupiter.api.Assertions;
 
 class LiMock_2_Test {
@@ -10,7 +11,7 @@ class LiMock_2_Test {
 
     @LiTest
     public void testMockStatic() {
-        LiMock.mockStatic(Error2.class, m -> true, (method, args) -> 100);
+        LiMock.mockStatic(Error2.class, MethodFilter.isMethod(), (method, args) -> 100);
         Assertions.assertEquals(100, Error2.m1());
     }
 

@@ -1,6 +1,7 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.type.BeanCreator;
+import io.leaderli.litool.core.type.MethodFilter;
 
 import java.lang.reflect.Method;
 import java.util.function.BiFunction;
@@ -45,7 +46,7 @@ public class MockBean<T> extends AbstractMocker<MockBean<T>> implements MockBean
 
     public T build() {
         build = true;
-        LiMock.mock(mockClass, methodValueMap::containsKey, this::getMethodValue, detach);
+        LiMock.mock(mockClass, MethodFilter.of(methodValueMap::containsKey), this::getMethodValue, detach);
         return instance;
     }
 }

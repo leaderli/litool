@@ -3,7 +3,7 @@ package io.leaderli.litool.test;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.type.LiTypeToken;
-import io.leaderli.litool.core.type.ModifierUtil;
+import io.leaderli.litool.core.type.MethodFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,10 +48,10 @@ class LiMockTest {
         LiMock.skipClassConstructors(Foo.class);
         Assertions.assertEquals(0, new Foo().a);
         Assertions.assertEquals(1, new Foo().m1());
-        LiMock.mock(Foo.class, m -> true, (method, args) -> 2, false);
+        LiMock.mock(Foo.class, MethodFilter.isMethod(), (method, args) -> 2, false);
         Assertions.assertEquals(0, new Foo().a);
         Assertions.assertEquals(2, new Foo().m1());
-        LiMock.mock(Foo.class, m -> true, (method, args) -> 3, true);
+        LiMock.mock(Foo.class, MethodFilter.isMethod(), (method, args) -> 3, true);
         Assertions.assertEquals(2, new Foo().a);
         Assertions.assertEquals(3, new Foo().m1());
         LiMock.skipClassConstructors(Foo.class, false);
@@ -78,11 +78,11 @@ class LiMockTest {
     @LiTest
     public void testMockStatic() {
 
-        LiMock.mockStatic(Error.class, m -> true, (method, args) -> 100);
+        LiMock.mockStatic(Error.class, MethodFilter.isMethod(), (method, args) -> 100);
         Assertions.assertEquals(100, Error.m3());
         Assertions.assertEquals(100, Error.m1());
         Assertions.assertEquals(100, Error.m4());
-        LiMock.mockStatic(Error.class, method -> method.getName().equals("m1"),
+        LiMock.mockStatic(Error.class, MethodFilter.name("m1"),
                 (method, args) -> {
                     if (args.length == 0) {
                         return 30;
@@ -98,7 +98,7 @@ class LiMockTest {
 
 
         Assertions.assertTrue(Either1.m1(1).isRight());
-        LiMock.mockStatic(Either1.class, m -> true, (m, args) -> {
+        LiMock.mockStatic(Either1.class, MethodFilter.isMethod(), (m, args) -> {
 
             if ((int) args[0] == 0) {
                 return Either.none();
@@ -112,11 +112,11 @@ class LiMockTest {
 
     @Test
     void testMockReset() {
-        LiMock.mockStatic(Error.class, m -> "m1".equals(m.getName()), (method, args) -> 100, false);
-        LiMock.mockStatic(Error.class, m -> "m4".equals(m.getName()), (method, args) -> 200, false);
+        LiMock.mockStatic(Error.class, MethodFilter.name("m1"), (method, args) -> 100, false);
+        LiMock.mockStatic(Error.class, MethodFilter.name("m4"), (method, args) -> 200, false);
         Assertions.assertEquals(100, Error.m1());
         Assertions.assertEquals(200, Error.m4());
-        LiMock.mockStatic(Error.class, m -> "m4".equals(m.getName()), (method, args) -> 200, true);
+        LiMock.mockStatic(Error.class, MethodFilter.name("m4"), (method, args) -> 200, true);
         Assertions.assertEquals(1, Error.m1());
         Assertions.assertEquals(200, Error.m4());
 
@@ -125,7 +125,7 @@ class LiMockTest {
     @LiTest
     void testGetInvoke() {
         MockMethodInvoker.invokers.clear();
-        LiMock.mockStatic(Error.class, m -> true, (method, args) -> 100);
+        LiMock.mockStatic(Error.class, MethodFilter.isMethod(), (method, args) -> 100);
         Assertions.assertEquals(4, MockMethodInvoker.invokers.size());
     }
 
@@ -286,7 +286,7 @@ class LiMockTest {
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 
-        LiMock.recordStatic(Error.class, ModifierUtil::isPublic, (m, obj, args, value) -> {
+        LiMock.recordStatic(Error.class, MethodFilter.isPublic(), (m, obj, args, value) -> {
             if (args.length == 1) {
                 if ((int) args[0] == 1) {
                     Assertions.assertEquals(11, value);
@@ -384,7 +384,7 @@ class LiMockTest {
     void testRecord() {
 
         LiBox<Object> box = LiBox.none();
-        LiMock.record(Bean.class, m -> "m1".equals(m.getName()), (m, _this, args, _return) -> box.value(_this));
+        LiMock.record(Bean.class, MethodFilter.name("m1"), (m, _this, args, _return) -> box.value(_this));
 
         Bean bean = new Bean();
         bean.m1();

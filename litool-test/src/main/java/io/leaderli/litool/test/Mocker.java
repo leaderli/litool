@@ -1,5 +1,7 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.type.MethodFilter;
+
 import java.lang.reflect.Method;
 import java.util.function.BiFunction;
 
@@ -34,7 +36,7 @@ public class Mocker extends AbstractMocker<Mocker> {
 
     public void build() {
         build = true;
-        LiMock.mock(mockClass, methodValueMap::containsKey, this::getMethodValue, detach);
+        LiMock.mock(mockClass, MethodFilter.of(methodValueMap::containsKey), this::getMethodValue, detach);
     }
 
 

@@ -1,5 +1,7 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.type.MethodFilter;
+
 import java.util.ArrayList;
 
 public class Recorder extends AbstractRecorder<Recorder> {
@@ -19,8 +21,12 @@ public class Recorder extends AbstractRecorder<Recorder> {
 
     public void build() {
         build = true;
-        LiMock.record(mockClass, m -> !methodAsserts.getOrDefault(m, new ArrayList<>()).isEmpty(),
-                (m, _this, args, _return) -> methodAsserts.get(m).forEach(methodAssert -> methodAssert.apply(m, _this, args, _return)));
+
+        LiMock.record(mockClass, MethodFilter.of(methodAsserts::containsKey),
+                (m, _this, args, _return) ->
+                        methodAsserts
+                                .getOrDefault(m, new ArrayList<>())
+                                .forEach(methodAssert -> methodAssert.apply(m, _this, args, _return)));
     }
 
 

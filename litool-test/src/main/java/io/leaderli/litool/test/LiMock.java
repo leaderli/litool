@@ -2,16 +2,12 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.function.Filter;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.text.StringUtils;
-import io.leaderli.litool.core.type.LiTypeToken;
-import io.leaderli.litool.core.type.MethodUtil;
-import io.leaderli.litool.core.type.ModifierUtil;
-import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.type.*;
 import javassist.*;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
@@ -29,7 +25,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
 
 public class LiMock {
     public static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
@@ -117,11 +112,10 @@ public class LiMock {
     }
 
 
-    private static Method[] findDeclaredMethods(Class<?> clazz, Function<Method, Boolean> methodFilter) {
+    private static Method[] findDeclaredMethods(Class<?> clazz, MethodFilter methodFilter) {
+        methodFilter.addHead(m -> !(m.isSynthetic() || ModifierUtil.isAbstract(m)));
         return Lira.of(clazz.getDeclaredMethods())
                 .filter(methodFilter)
-                .filter(m -> !m.isSynthetic())
-                .filter(m -> !ModifierUtil.isAbstract(m))
                 .toArray(Method.class);
     }
 
@@ -191,16 +185,16 @@ public class LiMock {
     }
 
     /**
-     * @param mockClass        代理类，仅代理属于该类的方法，不涉及其他方法
-     * @param mockMethodFilter 代理方法的过滤类，用于筛选需要代理的方法
-     * @param methodProxy      代理函数
-     * @param detach           是否先重置类
+     * @param mockClass    代理类，仅代理属于该类的方法，不涉及其他方法
+     * @param methodFilter 代理方法的过滤类，用于筛选需要代理的方法
+     * @param methodProxy  代理函数
+     * @param detach       是否先重置类
      * @see MockMethodInvoker#invoke(String, Class, String, Class[], Object[])
      * @see MethodProxy#apply(Method, Object[]) 根据返回值来判断是否需要真正拦截，如果返回的是 判断是否有右值，
      * 如果有则返回右值，否则不进行拦截。
      * 函数如果判断不需要拦截直接返回{@link Either#none()}即可。如果方法本身返回的是{@link  Either}需要额外对在函数中额外包一层{@link  Either}。
      */
-    public static void mock(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodProxy methodProxy, boolean detach) {
+    public static void mock(Class<?> mockClass, MethodFilter methodFilter, MethodProxy methodProxy, boolean detach) {
         try {
             backup(mockClass);
             if (detach) {
@@ -208,7 +202,7 @@ public class LiMock {
             }
             CtClass ct = getCtClass(mockClass);
 
-            for (Method method : findDeclaredMethods(mockClass, mockMethodFilter)) {
+            for (Method method : findDeclaredMethods(mockClass, methodFilter)) {
 
                 CtMethod ctMethod = getCtMethod(method, ct);
                 String uuid = method.getName() + " " + UUID.randomUUID();
@@ -234,28 +228,28 @@ public class LiMock {
     /**
      * 重置类并拦截方法
      *
-     * @see #mock(Class, Function, MethodProxy, boolean)
+     * @see #mock(Class, MethodFilter, MethodProxy, boolean)
      */
-    public static void mock(Class<?> mockClass, Filter<Method> mockMethodFilter, MethodProxy methodProxy) {
-        mock(mockClass, mockMethodFilter, methodProxy, true);
+    public static void mock(Class<?> mockClass, MethodFilter methodFilter, MethodProxy methodProxy) {
+        mock(mockClass, methodFilter, methodProxy, true);
     }
 
     /**
      * 重置类并拦截静态方法
      *
-     * @see #mockStatic(Class, Function, MethodProxy, boolean)
+     * @see #mockStatic(Class, MethodFilter, MethodProxy, boolean)
      */
-    public static void mockStatic(Class<?> mockClass, Filter<Method> mockMethodFilter, MethodProxy methodProxy) {
-        mock(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), methodProxy);
+    public static void mockStatic(Class<?> mockClass, MethodFilter methodFilter, MethodProxy methodProxy) {
+        mock(mockClass, methodFilter.addHead(ModifierUtil::isStatic), methodProxy);
     }
 
     /**
      * 拦截静态方法
      *
-     * @see #mock(Class, Function, MethodProxy, boolean)
+     * @see #mock(Class, MethodFilter, MethodProxy, boolean)
      */
-    public static void mockStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodProxy methodProxy, boolean detach) {
-        mock(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), methodProxy, detach);
+    public static void mockStatic(Class<?> mockClass, MethodFilter methodFilter, MethodProxy methodProxy, boolean detach) {
+        mock(mockClass, methodFilter.addHead(ModifierUtil::isStatic), methodProxy, detach);
     }
 
 
@@ -267,7 +261,7 @@ public class LiMock {
      * @param methodAssert     断言函数
      * @see MockMethodInvoker#record(String, Object, Object[], Object)
      */
-    public static void record(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodAssert methodAssert) {
+    public static void record(Class<?> mockClass, MethodFilter mockMethodFilter, MethodAssert methodAssert) {
 
         CtClass ct = getCtClass(mockClass);
 
@@ -292,10 +286,10 @@ public class LiMock {
     /**
      * 拦截静态方法
      *
-     * @see #record(Class, Function, MethodAssert)
+     * @see #record(Class, MethodFilter, MethodAssert)
      */
-    public static void recordStatic(Class<?> mockClass, Function<Method, Boolean> mockMethodFilter, MethodAssert methodAssert) {
-        record(mockClass, m -> ModifierUtil.isStatic(m) && mockMethodFilter.apply(m), methodAssert);
+    public static void recordStatic(Class<?> mockClass, MethodFilter methodFilter, MethodAssert methodAssert) {
+        record(mockClass, methodFilter.addHead(ModifierUtil::isStatic), methodAssert);
     }
 
     /**
