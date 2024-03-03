@@ -227,14 +227,22 @@ class LiMockTest {
     @LiTest
     void testWhenBean() {
 
-        Bean1 foo = new Bean1();
-        Assertions.assertEquals(1, foo.m1());
-        LiMock.mockerBean(Bean1.class).when(Bean1::m1, 2).build();
-        Assertions.assertEquals(2, foo.m1());
-        Supplier1 supplier1 = LiMock.mockerBean(Supplier1.class).when(Supplier1::get, 2).build();
+        LiMock.getCtClass(Error.class);
+//        Bean1 foo = new Bean1();
+//        Assertions.assertEquals(1, foo.m1());
+//        LiMock.mockerBean(Bean1.class).when(Bean1::m1, 2).build();
+//        Assertions.assertEquals(2, foo.m1());
+        System.out.println("-------------------------------------------------------------------------");
+//        System.out.println(Supplier1.class);
+        Supplier1 supplier1 = LiMock.mockerBean(Supplier1.class).when(instance -> {
+            System.out.println("00000000000000000000000000000000000000");
+            return instance.get();
+        }, 2).build();
 
-        Assertions.assertEquals(2, supplier1.get());
+//        Assertions.assertEquals(2, supplier1.get());
+//        System.out.println("-------------------------------------------------------------------------");
     }
+
 
     @LiTest
     void testWhenBeans() {

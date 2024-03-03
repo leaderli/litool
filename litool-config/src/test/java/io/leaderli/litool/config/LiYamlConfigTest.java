@@ -2,6 +2,7 @@ package io.leaderli.litool.config;
 
 import io.leaderli.litool.core.concurrent.ErrorHandledFuture;
 import io.leaderli.litool.core.env.OSInfo;
+import io.leaderli.litool.core.io.IOUtils;
 import io.leaderli.litool.core.io.StringWriter;
 import io.leaderli.litool.core.lang.Shell;
 import io.leaderli.litool.core.resource.ResourceUtil;
@@ -30,7 +31,7 @@ class LiYamlConfigTest {
 
     @Test
     void loadResourcesYmlFiles() {
-
+        System.setErr(IOUtils.emptyPrintStream());
         Assertions.assertEquals(7, LiYamlConfig.loadResourcesYmlFiles("b.yml", "a.yml").size());
         Assertions.assertEquals("a", LiYamlConfig.loadResourcesYmlFiles("b.yml", "a.yml").get("value"));
         Assertions.assertEquals("b", LiYamlConfig.loadResourcesYmlFiles("a.yml", "b.yml").get("value"));
