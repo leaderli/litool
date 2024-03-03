@@ -503,10 +503,10 @@ public class ReflectUtil {
     /**
      * @param clazz 类
      * @param name  方法名
-     * @return {@link #getMethod(Class, Function)}
+     * @return {@link #getMethod(Class, MethodFilter)}
      */
     public static Lino<Method> getMethod(Class<?> clazz, String name) {
-        return getMethod(clazz, m -> m.getName().equals(name));
+        return getMethod(clazz, MethodFilter.name(name));
     }
 
     /**
@@ -514,7 +514,7 @@ public class ReflectUtil {
      * @param filter 满足条件的方法
      * @return {@link #getMethods(Class)}
      */
-    public static Lino<Method> getMethod(Class<?> clazz, Function<Method, Boolean> filter) {
+    public static Lino<Method> getMethod(Class<?> clazz, MethodFilter filter) {
         while (clazz != null) {
             //相比较于属性，多添加一个，是添加接口的方法
             for (Method method : clazz.getMethods()) {

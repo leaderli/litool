@@ -6,6 +6,7 @@ import io.leaderli.litool.core.lang.FilterChain;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
@@ -22,6 +23,14 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
         return new MethodFilter().add(Objects::nonNull);
     }
 
+    public static MethodFilter declare(Class<?> declare) {
+        return new MethodFilter().add(m -> m.getDeclaringClass() == declare);
+    }
+
+    public static MethodFilter parameterType(Class<?>... parameterTypes) {
+        return new MethodFilter().add(m -> Arrays.equals(m.getParameterTypes(), parameterTypes));
+    }
+
     public static MethodFilter name(String name) {
         return new MethodFilter().add(m -> m.getName().equals(name));
     }
@@ -34,19 +43,20 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
         return new MethodFilter().add(filter);
     }
 
-    public MethodFilter annotated(Class<? extends Annotation> annotated) {
+    public static MethodFilter annotated(Class<? extends Annotation> annotated) {
         return new MethodFilter().add(m -> m.isAnnotationPresent(annotated));
     }
 
-    public MethodFilter returnType(Class<?> returnType) {
+    public static MethodFilter returnType(Class<?> returnType) {
         return new MethodFilter().add(m -> m.getReturnType() == returnType);
     }
 
-    public MethodFilter length(int length) {
+    public static MethodFilter length(int length) {
         return new MethodFilter().add(m -> m.getParameterTypes().length == length);
     }
 
-    public void modifiers(int modifiers) {
+    public static MethodFilter modifiers(int modifiers) {
+        return new MethodFilter().add(m -> (m.getModifiers() & modifiers) == modifiers);
     }
 
     @Override
@@ -65,7 +75,7 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
         return new Builder(this);
     }
 
-    public class Builder {
+    public static class Builder {
         public final MethodFilter methodFilter;
 
         public Builder(MethodFilter methodFilter) {
@@ -107,6 +117,15 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
             return this;
         }
 
+        public Builder declareBy(Class<?> declare) {
+            methodFilter.add(m -> m.getDeclaringClass() == declare);
+            return this;
+        }
+
+        public Builder parameterType(Class<?>[] parameterTypes) {
+            methodFilter.add(m -> Arrays.equals(m.getParameterTypes(), parameterTypes));
+            return this;
+        }
     }
 
 }
