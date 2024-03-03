@@ -58,7 +58,7 @@ class LeanTest {
 
         Lean lean = new Lean();
         Bean3 parser = lean.fromBean(map, Bean3.class);
-        System.out.println(gson.toJson(parser));
+        Assertions.assertEquals("{\"name\":\"1\",\"bean2\":{\"bean3\":{\"name\":\"3\"},\"name\":\"2\"}}", gson.toJson(parser));
 //        Assertions.assertEquals("3", parser.beans.get(0).name);
 
     }
