@@ -25,7 +25,6 @@ import java.util.jar.JarFile;
 /**
  * @author leaderli
  * @since 2022/7/19
- * <p>
  */
 public class ClassScanner {
 
