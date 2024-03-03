@@ -142,4 +142,16 @@ public class LiAssertUtil {
             throw new AssertException(supplier.get());
         }
     }
+
+    /**
+     * 断言assertFalse是否为false，如果为true就抛出一个AssertException异常，并带有错误信息
+     *
+     * @param assertFalse      判断条件
+     * @param runtimeException RuntimeException异常
+     */
+    public static void assertFalse(boolean assertFalse, RuntimeException runtimeException) {
+        if (assertFalse) {
+            throw runtimeException;
+        }
+    }
 }

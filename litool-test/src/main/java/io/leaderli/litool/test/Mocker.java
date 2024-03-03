@@ -37,4 +37,5 @@ public class Mocker extends AbstractMocker<Mocker> {
         LiMock.mock(mockClass, methodValueMap::containsKey, this::getMethodValue, detach);
     }
 
+
 }

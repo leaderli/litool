@@ -31,5 +31,11 @@ class LiAssertUtilTest {
             LiAssertUtil.assertFalse(true, "123");
         });
         Assertions.assertEquals(thrown.getMessage(), "123");
+        IllegalStateException illegalStateException = Assertions.assertThrows(IllegalStateException.class, () -> {
+            LiAssertUtil.assertNotRunWithMsg("123");
+        });
+        Assertions.assertEquals(illegalStateException.getMessage(), "123");
+
     }
+
 }

@@ -2,7 +2,6 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiBox;
-import io.leaderli.litool.core.type.BeanCreator;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.ModifierUtil;
 import org.junit.jupiter.api.Assertions;
@@ -130,7 +129,7 @@ class LiMockTest {
     }
 
     @LiTest
-    void testMockBean() {
+    void testMocker() {
 
         LiMock.mocker(Error.class).when(Error.m1(), 101).build();
         Assertions.assertEquals(101, Error.m1());
@@ -232,6 +231,19 @@ class LiMockTest {
         Assertions.assertEquals(1, foo.m1());
         LiMock.mockerBean(Bean1.class).when(Bean1::m1, 2).build();
         Assertions.assertEquals(2, foo.m1());
+        Supplier1 supplier1 = LiMock.mockerBean(Supplier1.class).when(Supplier1::get, 2).build();
+
+        Assertions.assertEquals(2, supplier1.get());
+    }
+
+    @LiTest
+    void testWhenBeans() {
+
+        Supplier<Integer> supplier = LiMock.mockerBeans(Supplier1.class, Supplier2.class).other(Supplier::get, (m, a) -> 100).build();
+        Assertions.assertEquals(100, supplier.get());
+        Assertions.assertEquals(100, new Supplier1().get());
+        Assertions.assertEquals(100, new Supplier2().get());
+
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -369,15 +381,6 @@ class LiMockTest {
 
     }
 
-    @Test
-    void testStr() {
-
-        Str1 str1 = BeanCreator.mockBean(Str1.class);
-        Assertions.assertEquals("a", Str1.a);
-        Assertions.assertEquals("", str1.b);
-
-    }
-
     @SuppressWarnings("ConstantValue")
     static class Error {
         static {
@@ -497,11 +500,6 @@ class LiMockTest {
         }
     }
 
-    static class Str1 {
-        public static String a = "a";
-        public String b;
-    }
-
     static class Either1 {
         public static Either<?, ?> m1(int i) {
             return Either.right(1);
@@ -534,6 +532,22 @@ class LiMockTest {
     static class Bean2 {
         String m1(int a) {
             return String.valueOf(a);
+        }
+    }
+
+    static class Supplier1 implements Supplier<Integer> {
+
+        @Override
+        public Integer get() {
+            return 1;
+        }
+    }
+
+    static class Supplier2 implements Supplier<Integer> {
+
+        @Override
+        public Integer get() {
+            return 2;
         }
     }
 }

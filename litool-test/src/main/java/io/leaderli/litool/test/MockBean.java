@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class MockBean<T> extends AbstractMocker<MockBean<T>> {
+public class MockBean<T> extends AbstractMocker<MockBean<T>> implements MockBeanInterface<MockBean<T>, T> {
 
     final T instance;
 
@@ -16,10 +16,9 @@ public class MockBean<T> extends AbstractMocker<MockBean<T>> {
         instance = BeanCreator.mockBean(mockClass);
     }
 
-
-    public <R> MockBean<T> consume(Consumer<T> call) {
-        call.accept(instance);
-        return record(null, (m, arg) -> null, 0b01);
+    @Override
+    public MockBean<T> consume(Consumer<T> call) {
+        return this;
     }
 
     public <R> MockBean<T> when(Function<T, R> call, R result) {
@@ -27,20 +26,22 @@ public class MockBean<T> extends AbstractMocker<MockBean<T>> {
         return record(result, null, 0b10);
     }
 
-    public <R> MockBean<T> other(Function<T, R> call, BiFunction<Method, Object[], R> otherValue) {
-        call.apply(instance);
-        return record(null, (m, arg) -> null, 0b01);
-    }
-
     public <R> MockBean<T> when(Function<T, R> call, R result, R other) {
         call.apply(instance);
         return record(result, (m, args) -> other, 0b11);
     }
 
+    public <R> MockBean<T> other(Function<T, R> call, BiFunction<Method, Object[], R> otherValue) {
+        call.apply(instance);
+        return record(null, otherValue, 0b01);
+    }
+
+
     public <R> MockBean<T> other(Function<T, R> call, R result, BiFunction<Method, Object[], R> otherValue) {
         call.apply(instance);
         return record(result, otherValue, 0b11);
     }
+
 
     public T build() {
         build = true;

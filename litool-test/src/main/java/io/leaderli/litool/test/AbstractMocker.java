@@ -5,7 +5,7 @@ import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 
 @SuppressWarnings({"rawtypes"})
-public class AbstractMocker<T> extends MethodValueRecorder<T> {
+public abstract class AbstractMocker<T> extends MethodValueRecorder<T> {
     protected final boolean detach;
     protected boolean build;
 

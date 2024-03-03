@@ -15,6 +15,15 @@ class BeanCreatorTest {
 
     Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 
+    @Test
+    public void testMockBean() {
+
+        Str1 str1 = BeanCreator.mockBean(Str1.class);
+        Assertions.assertEquals("a", Str1.a);
+        Assertions.assertEquals("", str1.b);
+
+    }
+
     @SuppressWarnings("rawtypes")
     @Test
     void test() {
@@ -187,5 +196,10 @@ class BeanCreatorTest {
 
     static class MockMap<K, V> extends HashMap<K, V> {
 
+    }
+
+    static class Str1 {
+        public static String a = "a";
+        public String b;
     }
 }

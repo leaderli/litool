@@ -342,10 +342,38 @@ public class LiMock {
     }
 
     /**
+     * @param mockClass 模拟类
+     * @param detach    是否重置之前变动
+     * @return 一个模拟的记录类
+     */
+    public static Mocker mocker(Class<?> mockClass, boolean detach) {
+        return new Mocker(mockClass, detach);
+    }
+
+
+    /**
      * 方法记录自动带上实例
      */
-    public static <T> MockBean<T> mockerBean(Class<T> mockClass) {
+    public static <T> MockBeanInterface<MockBean<T>, T> mockerBean(Class<T> mockClass) {
         return new MockBean<>(mockClass, true);
+    }
+
+    /**
+     * 方法记录自动带上实例
+     *
+     * @param mockClass class
+     * @param detach    是否重置之前变动
+     */
+    public static <T> MockBeanInterface<MockBean<T>, T> mockerBean(Class<T> mockClass, boolean detach) {
+        return new MockBean<>(mockClass, detach);
+    }
+
+    /**
+     * 方法记录自动带上实例
+     */
+    @SafeVarargs
+    public static <T> MockBeanInterface<MockBeans<T>, T> mockerBeans(Class<? extends T>... mockClass) {
+        return new MockBeans<>(mockClass);
     }
 
     /**
@@ -360,15 +388,6 @@ public class LiMock {
     public static <T> MockInterface<T> mockerInterface(LiTypeToken<T> mockClass) {
         LiAssertUtil.assertTrue(mockClass.getRawType().isInterface(), "only support interface");
         return new MockInterface<>((Class<T>) (mockClass.getRawType()));
-    }
-
-    /**
-     * @param mockClass 模拟类
-     * @param detach    是否重置之前变动
-     * @return 一个模拟的记录类
-     */
-    public static Mocker mocker(Class<?> mockClass, boolean detach) {
-        return new Mocker(mockClass, detach);
     }
 
 
