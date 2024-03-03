@@ -235,6 +235,7 @@ class LiMockTest {
         Assertions.assertEquals(2, foo.m1());
     }
 
+    @ExtendWith(SkipWhenJacocoExecutionCondition.class)
     @LiTest
     void testWhenBean3() {
 
