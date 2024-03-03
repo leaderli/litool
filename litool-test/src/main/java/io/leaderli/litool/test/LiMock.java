@@ -36,30 +36,28 @@ public class LiMock {
     public static final ByteBuddy byteBuddy = new ByteBuddy();
     public static Instrumentation instrumentation = ByteBuddyAgent.install();
     public static ClassPool classPool = ClassPool.getDefault();
-    private static boolean jacoco;
+    public final static boolean jacoco;
 
     static {
-        checkJacoco();
-        System.out.println("jacoco:" + jacoco);
+        jacoco = checkJacoco();
         classPool.importPackage("io.leaderli.litool.test.MockMethodInvoker");
         classPool.importPackage("io.leaderli.litool.core.meta.Either");
     }
 
-    private static void checkJacoco() {
+    private static boolean checkJacoco() {
         for (Class<?> loadedClass : instrumentation.getAllLoadedClasses()) {
             if (ClassFileTransformer.class.isAssignableFrom(loadedClass)) {
                 if (loadedClass.getName().startsWith("org.jacoco.agent.rt")) {
-                    jacoco = true;
-                    return;
+                    return true;
                 }
             }
         }
+        return false;
     }
 
-    public static CtClass getCtClass(Class<?> clazz, boolean retransformClasses) {
+    public static CtClass getCtClass(Class<?> clazz) {
         try {
-
-            if (jacoco && retransformClasses && instrumentation.isModifiableClass(clazz)) {
+            if (jacoco && instrumentation.isModifiableClass(clazz)) {
                 instrumentation.addTransformer(new TempClassFileTransformer(instrumentation), true);
                 instrumentation.retransformClasses(clazz);
             }
@@ -68,17 +66,12 @@ public class LiMock {
         } catch (Exception e) {
             throw new RuntimeException(clazz + " : " + e);
         }
-
-    }
-
-    public static CtClass getCtClass(Class<?> clazz) {
-        return getCtClass(clazz, true);
     }
 
 
     private static void backup(Class<?> clazz) throws IOException, CannotCompileException {
         if (!originClasses.containsKey(clazz)) {
-            originClasses.put(clazz, toBytecode(getCtClass(clazz, true)));
+            originClasses.put(clazz, toBytecode(getCtClass(clazz)));
         }
     }
 
@@ -91,8 +84,9 @@ public class LiMock {
     public static void detach(Class<?> clazz) throws UnmodifiableClassException, ClassNotFoundException {
 
 
-        getCtClass(clazz, false).detach();
-//        instrumentation.retransformClasses(clazz);
+        getCtClass(clazz).detach();
+        instrumentation.retransformClasses(clazz);
+
         if (originClasses.containsKey(clazz)) {
             instrumentation.redefineClasses(new ClassDefinition(clazz, originClasses.get(clazz)));
         }
@@ -109,9 +103,7 @@ public class LiMock {
         @Override
         public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
             try {
-                System.out.println("transform:" + className);
                 CtClass ctClass = classPool.makeClass(new ByteArrayInputStream(classfileBuffer));
-                System.out.println("after transform:" + ctClass);
             } catch (IOException ignore) {
             }
             instrumentation.removeTransformer(this);
@@ -216,10 +208,8 @@ public class LiMock {
             }
             CtClass ct = getCtClass(mockClass);
 
-            Method method1 = null;
             for (Method method : findDeclaredMethods(mockClass, mockMethodFilter)) {
 
-                method1 = method;
                 CtMethod ctMethod = getCtMethod(method, ct);
                 String uuid = method.getName() + " " + UUID.randomUUID();
                 MockMethodInvoker.invokers.put(uuid, LiTuple.of(methodProxy, method));
@@ -234,7 +224,6 @@ public class LiMock {
                 ctMethod.insertBefore(src);
             }
             instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

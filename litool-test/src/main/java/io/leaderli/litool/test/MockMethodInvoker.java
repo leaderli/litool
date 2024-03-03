@@ -17,7 +17,6 @@ public class MockMethodInvoker {
     public static Either<?, ?> invoke(String uuid, Class<?> clazz, String name, Class<?>[] argsType, Object[] args) {
 
         LiTuple<MethodProxy, Method> tuple = invokers.get(uuid);
-        System.out.println("tuple:" + tuple);
         if (tuple == null) {
             return Either.none();
         }

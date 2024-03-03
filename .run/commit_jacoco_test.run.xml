@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="commit_jacoco_test" type="JUnit" factoryName="JUnit" folderName="git"
+                   singleton="false">
+        <extension name="coverage" sample_coverage="false" track_test_folders="true" runner="jacoco"/>
+        <option name="ALTERNATIVE_JRE_PATH" value="1.8"/>
+        <option name="PACKAGE_NAME" value=""/>
+        <option name="MAIN_CLASS_NAME" value=""/>
+        <option name="METHOD_NAME" value=""/>
+        <option name="TEST_OBJECT" value="package"/>
+        <option name="VM_PARAMETERS"
+                value="-ea -javaagent:$MAVEN_REPOSITORY$/org/jacoco/org.jacoco.agent/0.8.8/org.jacoco.agent-0.8.8-runtime.jar=destfile=$PROJECT_DIR$/litool-test/target/coverage-reports/jacoco.exec "/>
+        <option name="TEST_SEARCH_SCOPE">
+            <value defaultName="wholeProject"/>
+        </option>
+        <method v="2">
+            <option name="Make" enabled="true"/>
+        </method>
+    </configuration>
+</component>

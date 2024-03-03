@@ -14,7 +14,6 @@ public class MockBean<T> extends AbstractMocker<MockBean<T>> implements MockBean
     MockBean(Class<T> mockClass, boolean detach) {
         super(mockClass, detach);
         instance = BeanCreator.mockBean(mockClass);
-        System.out.println(mockClass + " " + instance);
     }
 
     @Override

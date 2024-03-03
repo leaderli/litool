@@ -19,9 +19,7 @@ public abstract class AbstractMocker<T> extends MethodValueRecorder<T> {
             }
             currentMethod = method;
             currentArgs = ArrayEqual.of(args);
-            System.out.println(currentMethod + "  currentMethod  " + currentArgs);
             methodValueMap.put(currentMethod, new MethodValue(currentMethod));
-            System.out.println(methodValueMap);
             return PrimitiveEnum.get(method.getReturnType()).zero_value;
         }, false);
     }

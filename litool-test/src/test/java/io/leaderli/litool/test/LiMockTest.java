@@ -6,6 +6,7 @@ import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.ModifierUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opentest4j.AssertionFailedError;
 
 import java.lang.instrument.UnmodifiableClassException;
@@ -224,34 +225,34 @@ class LiMockTest {
         Assertions.assertEquals(2, Void2.a);
     }
 
+
     @LiTest
-    void testWhenBean() {
+    void testWhenBean2() {
 
-        LiMock.getCtClass(Error.class);
-//        Bean1 foo = new Bean1();
-//        Assertions.assertEquals(1, foo.m1());
-//        LiMock.mockerBean(Bean1.class).when(Bean1::m1, 2).build();
-//        Assertions.assertEquals(2, foo.m1());
-        System.out.println("-------------------------------------------------------------------------");
-//        System.out.println(Supplier1.class);
-        Supplier1 supplier1 = LiMock.mockerBean(Supplier1.class).when(instance -> {
-            System.out.println("00000000000000000000000000000000000000");
-            return instance.get();
-        }, 2).build();
-
-//        Assertions.assertEquals(2, supplier1.get());
-//        System.out.println("-------------------------------------------------------------------------");
+        Bean1 foo = new Bean1();
+        Assertions.assertEquals(1, foo.m1());
+        LiMock.mockerBean(Bean1.class).when(Bean1::m1, 2).build();
+        Assertions.assertEquals(2, foo.m1());
     }
 
-
     @LiTest
+    void testWhenBean3() {
+
+        Supplier<Integer> supplier = LiMock.mockerBean(Supplier1.class).other(Supplier::get, (m, a) -> 100).build();
+        Assertions.assertEquals(100, supplier.get());
+        Assertions.assertEquals(100, new Supplier1().get());
+
+    }
+
+    @Test
+    @ExtendWith(SkipWhenJacocoExecutionCondition.class)
     void testWhenBeans() {
 
         Supplier<Integer> supplier = LiMock.mockerBeans(Supplier1.class, Supplier2.class).other(Supplier::get, (m, a) -> 100).build();
         Assertions.assertEquals(100, supplier.get());
         Assertions.assertEquals(100, new Supplier1().get());
         Assertions.assertEquals(100, new Supplier2().get());
-
+//
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -549,6 +550,18 @@ class LiMockTest {
         public Integer get() {
             return 1;
         }
+
+        public void m1() {
+
+        }
+    }
+
+    abstract static class Supplier0 implements Supplier<Integer> {
+        public void m1() {
+
+        }
+
+
     }
 
     static class Supplier2 implements Supplier<Integer> {
