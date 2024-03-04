@@ -14,7 +14,7 @@ public class MockMethodInvoker {
     public static final Map<String, LiTuple<MethodProxy, Method>> invokers = new HashMap<>();
     public static final Map<String, LiTuple<MethodAssert, Method>> recorders = new HashMap<>();
 
-    public static Either<?, ?> invoke(String uuid, Class<?> clazz, String name, Class<?>[] argsType, Object[] args) {
+    public static Either<?, ?> invoke(String uuid, Class<?> clazz, String name, Class<?>[] argsType, Object[] args) throws Throwable {
 
         LiTuple<MethodProxy, Method> tuple = invokers.get(uuid);
         if (tuple == null) {
@@ -29,7 +29,7 @@ public class MockMethodInvoker {
     }
 
 
-    public static void record(String uuid, Object _this, Object[] args, Object _return) {
+    public static void record(String uuid, Object _this, Object[] args, Object _return) throws Throwable {
         LiTuple<MethodAssert, Method> tuple = recorders.get(uuid);
         if (tuple == null) {
             return;

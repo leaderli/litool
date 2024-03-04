@@ -46,6 +46,7 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
 
     }
 
+    @SuppressWarnings("unchecked")
     private static MyTestTemplateInvocationContext[] getMyTestTemplateInvocationContexts(Class<?> clazz) throws IntrospectionException {
         Object instance = ReflectUtil.newInstance(clazz).get();
         if (instance == null) {

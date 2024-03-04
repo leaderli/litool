@@ -395,10 +395,6 @@ class LiMockTest {
     }
 
 
-    private static void liraMap(int a) {
-
-    }
-
     @LiTest
     void testRecordInLira() {
 
@@ -412,6 +408,28 @@ class LiMockTest {
 
         Assertions.assertThrows(Throwable.class, LiMock::assertDoesNotThrow);
 
+    }
+
+    @Test
+    void testDelegate() {
+
+        Assertions.assertEquals(1, new Foo().m1());
+        LiMock.mock(Foo.class, Delegate.class);
+        Assertions.assertEquals(2, new Foo().m1());
+        LiMock.record(Foo.class, DelegateRecord.class);
+        Assertions.assertEquals(2, new Foo().m1());
+    }
+
+    static class Delegate {
+        public static int m1() {
+            return 2;
+        }
+    }
+
+    static class DelegateRecord {
+        public static void m1(Foo foo, int _return) {
+            Assertions.assertEquals(2, _return);
+        }
     }
 
     @SuppressWarnings("ConstantValue")

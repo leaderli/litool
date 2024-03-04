@@ -184,6 +184,7 @@ class ArrayUtilsTest {
         assertEquals("[1]", Arrays.toString(ArrayUtils.insert(null, 1, 1)));
         assertEquals("[1]", Arrays.toString(ArrayUtils.insert(new Integer[]{1}, 1)));
         assertEquals(0, ArrayUtils.insert(null, 1).length);
+        assertEquals(1, ArrayUtils.insert(new Integer[0], 0, 1).length);
         assertEquals("[1, 2, 3, 4]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, 4, 4)));
         assertEquals("[1, 2, 3, 4]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, 3, 4)));
         assertEquals("[1, 2, 4, 3]", Arrays.toString(ArrayUtils.insert(new Integer[]{1, 2, 3}, 2, 4)));

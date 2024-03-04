@@ -97,9 +97,8 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
             return this;
         }
 
-        public Builder of(Filter<Method> filter) {
-            methodFilter.add(filter);
-            return this;
+        public MethodFilter of(Filter<Method> filter) {
+            return methodFilter.add(filter);
         }
 
         public Builder annotated(Class<? extends Annotation> annotated) {
@@ -124,6 +123,11 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
 
         public Builder parameterType(Class<?>[] parameterTypes) {
             methodFilter.add(m -> Arrays.equals(m.getParameterTypes(), parameterTypes));
+            return this;
+        }
+
+        public Builder modifiers(int modifiers) {
+            methodFilter.add(m -> (m.getModifiers() & modifiers) == modifiers);
             return this;
         }
     }

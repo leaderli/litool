@@ -3,6 +3,7 @@ package io.leaderli.litool.core.type;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Modifier;
 import java.util.AbstractList;
 import java.util.List;
 
@@ -18,6 +19,13 @@ class ModifierUtilTest {
 
     private static void m2() {
 
+    }
+
+    @Test
+    void test() {
+        int modifiers = Modifier.STATIC | Modifier.PUBLIC;
+        Assertions.assertTrue(Modifier.isPublic(modifiers));
+        Assertions.assertTrue(Modifier.isStatic(modifiers));
     }
 
     @Test

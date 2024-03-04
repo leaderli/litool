@@ -5,6 +5,6 @@ import java.lang.reflect.Method;
 public interface MethodProxy {
 
 
-    Object apply(Method method, Object[] args);
+    Object apply(Method method, Object[] args) throws Throwable;
 
 }

@@ -19,12 +19,10 @@ import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class LiMock {
     public static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
@@ -235,6 +233,37 @@ public class LiMock {
     }
 
     /**
+     * 重置类并拦截方法
+     *
+     * @see #mock(Class, Class, boolean)
+     */
+    public static void mock(Class<?> mockClass, Class<?> delegate) {
+        mock(mockClass, delegate, true);
+    }
+
+    /**
+     * 通过代理类的方式去代理执行，代理类中需要全部为静态方法，且需要为 public。
+     * 代理方法的参数类型与原方法类型一致，名称一致，返回类型一致
+     */
+    public static void mock(Class<?> mockClass, Class<?> delegate, boolean detach) {
+        Map<Method, Method> delegateMap = new HashMap<>();
+        for (Method delegateMethod : Lira.of(delegate.getMethods())
+                .filter(ModifierUtil::isStatic)) {
+
+            for (Method method : findDeclaredMethods(mockClass, MethodFilter
+                    .name(delegateMethod.getName()).builder()
+                    .parameterType(delegateMethod.getParameterTypes())
+                    .returnType(delegateMethod.getReturnType())
+                    .methodFilter)) {
+                delegateMap.put(method, delegateMethod);
+            }
+
+        }
+        mock(mockClass, MethodFilter.of(delegateMap::containsKey), (method, args) -> delegateMap.get(method).invoke(args), detach);
+    }
+
+
+    /**
      * 重置类并拦截静态方法
      *
      * @see #mockStatic(Class, MethodFilter, MethodProxy, boolean)
@@ -282,6 +311,38 @@ public class LiMock {
 
     }
 
+
+    /**
+     * 通过代理类的方式去记录，代理类中需要全部为静态方法，且需要为 public。
+     * 代理方法与原方法名称一致，返回类型void，第一个参数、第二个参数为被代理的实例和被代理方法的返回值。其余参数和原方法类型保持一致
+     */
+    public static void record(Class<?> mockClass, Class<?> delegate) {
+        Map<Method, Method> delegateMap = new HashMap<>();
+        for (Method delegateMethod : Lira.of(delegate.getMethods())
+                .filter(m -> m.getReturnType() == void.class && ModifierUtil.isStatic(m))) {
+
+            MethodFilter methodFilter = MethodFilter
+                    .name(delegateMethod.getName())
+                    .builder()
+                    .of(m -> {
+                        // 代理方法第一个参数、第二个参数为 this 和 return
+                        Class<?>[] compare = ArrayUtils.insert(m.getParameterTypes(), 0, mockClass, m.getReturnType());
+                        return Arrays.equals(delegateMethod.getParameterTypes(), compare);
+                    });
+            for (Method method : findDeclaredMethods(mockClass, methodFilter)) {
+                delegateMap.put(method, delegateMethod);
+            }
+
+        }
+        record(mockClass, MethodFilter.of(delegateMap::containsKey), (method, _this, args, _return) -> {
+            Method delegateMethod = delegateMap.get(method);
+            try {
+                delegateMethod.invoke(null, ArrayUtils.insert(args, 0, _this, _return));
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e.getCause());
+            }
+        });
+    }
 
     /**
      * 拦截静态方法
