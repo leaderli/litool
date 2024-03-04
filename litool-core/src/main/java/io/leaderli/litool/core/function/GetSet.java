@@ -9,10 +9,13 @@ public interface GetSet<T> {
 
     void set(T t) throws Throwable;
 
+    Class<T> type();
+
     Object instance();
 
-    static GetSet<Object> propertyDescriptor(Object instance, PropertyDescriptor descriptor) {
-        return new GetSet<Object>() {
+    @SuppressWarnings("rawtypes")
+    static GetSet propertyDescriptor(Object instance, PropertyDescriptor descriptor) {
+        return new GetSet() {
             @Override
             public Object get() throws Throwable {
                 Method readMethod = descriptor.getReadMethod();
@@ -25,6 +28,11 @@ public interface GetSet<T> {
                 Method writeMethod = descriptor.getWriteMethod();
                 writeMethod.setAccessible(true);
                 writeMethod.invoke(instance, arg);
+            }
+
+            @Override
+            public Class type() {
+                return descriptor.getPropertyType();
             }
 
             @Override
