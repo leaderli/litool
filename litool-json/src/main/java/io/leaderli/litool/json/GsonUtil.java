@@ -24,11 +24,10 @@ import java.util.Map;
  */
 public class GsonUtil {
 
-    public static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapterFactory(new SpecailMapValueTypeAdapterFactory())
+    public static final Gson GSON = new GsonBuilder().registerTypeAdapterFactory(new SpecailMapValueTypeAdapterFactory())
 //            .setPrettyPrinting()
             .create();
-    private static final Type SPECIAL_MAP_TYPE = ParameterizedTypeImpl.make(null, Map.class, String.class, SpecialMapValue.class);
+    public static final Type SPECIAL_MAP_TYPE = ParameterizedTypeImpl.make(null, Map.class, String.class, SpecialMapValue.class);
 
     public static String toJson(Object obj) {
         return GSON.toJson(obj);
