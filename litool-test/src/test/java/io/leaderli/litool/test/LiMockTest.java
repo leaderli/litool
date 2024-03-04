@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.opentest4j.AssertionFailedError;
 
 import java.lang.instrument.UnmodifiableClassException;
+import java.lang.reflect.Method;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -301,7 +302,7 @@ class LiMockTest {
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 
-        LiMock.recordStatic(Error.class, MethodFilter.isPublic(), (m, obj, args, value) -> {
+        LiMock.recordStatic(Error.class, MethodFilter.isPublic(), (m, args, value) -> {
             if (args.length == 1) {
                 if ((int) args[0] == 1) {
                     Assertions.assertEquals(11, value);
@@ -399,11 +400,11 @@ class LiMockTest {
     @Test
     void testRecord() {
 
-        LiBox<Object> box = LiBox.none();
-        LiMock.record(Bean.class, MethodFilter.name("m1"), (m, _this, args, _return) -> box.value(_this));
-
+        LiBox<Method> box = LiBox.none();
+        LiMock.record(Bean.class, MethodFilter.name("m1"), (m, args, _return) -> box.value(m));
         Bean bean = new Bean();
         bean.m1();
+        Assertions.assertEquals("m1", box.value().getName());
 
     }
 

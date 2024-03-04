@@ -35,7 +35,7 @@ public class MockMethodInvoker {
             return;
         }
         try {
-            tuple._1.apply(tuple._2, _this, args, _return);
+            tuple._1.apply(tuple._2, args, _return);
         } catch (Throwable throwable) {
             Recorder.assertThrow.add(throwable);
             throw throwable;

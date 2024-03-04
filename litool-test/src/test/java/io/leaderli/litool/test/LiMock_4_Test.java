@@ -11,7 +11,7 @@ class LiMock_4_Test {
     @Test
     void testRecordStatic() {
         LiBox<Object> box = LiBox.none();
-        LiMock.recordStatic(Error4.class, MethodFilter.isMethod(), (m, obj, args, value) -> {
+        LiMock.recordStatic(Error4.class, MethodFilter.isMethod(), (m, args, value) -> {
             Assertions.assertEquals(1, value);
             box.value(1);
         });
@@ -21,15 +21,14 @@ class LiMock_4_Test {
         box.reset();
         LiMock.mockStatic(Error4.class, MethodFilter.isMethod(), (method, args) -> 100);
         Error4.m1();
-        LiMock.recordStatic(Error4.class, MethodFilter.isMethod(), (m, obj, args, value) -> {
+        LiMock.recordStatic(Error4.class, MethodFilter.isMethod(), (m, args, value) -> {
             Assertions.assertEquals(100, value);
             box.value(1);
         });
         Error4.m1();
         Assertions.assertTrue(box.present());
         box.reset();
-        LiMock.recordStatic(Error4.class, MethodFilter.isMethod(), (m, obj, args, value) -> {
-            Assertions.assertNull(obj);
+        LiMock.recordStatic(Error4.class, MethodFilter.isMethod(), (m, args, value) -> {
             box.value(1);
         });
         Error4.m1();

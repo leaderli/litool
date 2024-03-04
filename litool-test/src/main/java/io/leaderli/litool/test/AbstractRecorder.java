@@ -43,13 +43,13 @@ public class AbstractRecorder<T> {
     public T called() {
         actualMethodCall.remove(currentMethod);
         recordMethodCall.add(currentMethod);
-        add((method, _this, args, _return) -> actualMethodCall.add(currentMethod));
+        add((method, args, _return) -> actualMethodCall.add(currentMethod));
         return (T) this;
     }
 
 
     public T arg(int index, Object arg) {
-        add((method, _this, args, _return) -> {
+        add((method, args, _return) -> {
             Assertions.assertTrue(args.length > index);
             Assertions.assertEquals(arg, args[index]);
         });
@@ -57,7 +57,7 @@ public class AbstractRecorder<T> {
     }
 
     public <R> T argAssert(int index, Consumer<R> argAssert, Class<R> paraType) {
-        add((method, _this, args, _return) -> {
+        add((method, args, _return) -> {
             Assertions.assertTrue(args.length > index);
             Assertions.assertEquals(ClassUtil.primitiveToWrapper(method.getParameterTypes()[index]), ClassUtil.primitiveToWrapper(paraType));
             argAssert.accept((R) args[index]);
@@ -67,12 +67,12 @@ public class AbstractRecorder<T> {
 
 
     public T args(Object... compareArgs) {
-        add((method, _this, args, _return) -> Assertions.assertArrayEquals(compareArgs, args));
+        add((method, args, _return) -> Assertions.assertArrayEquals(compareArgs, args));
         return (T) this;
     }
 
     public T assertReturn(Object compareReturn) {
-        add((method, _this, args, _return) -> Assertions.assertEquals(compareReturn, _return));
+        add((method, args, _return) -> Assertions.assertEquals(compareReturn, _return));
         return (T) this;
     }
 

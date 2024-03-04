@@ -326,7 +326,7 @@ public class LiMock {
                     .builder()
                     .of(m -> {
                         // 代理方法第一个参数、第二个参数为 this 和 return
-                        Class<?>[] compare = ArrayUtils.insert(m.getParameterTypes(), 0, mockClass, m.getReturnType());
+                        Class<?>[] compare = ArrayUtils.insert(m.getParameterTypes(), 0, m.getReturnType());
                         return Arrays.equals(delegateMethod.getParameterTypes(), compare);
                     });
             for (Method method : findDeclaredMethods(mockClass, methodFilter)) {
@@ -334,10 +334,10 @@ public class LiMock {
             }
 
         }
-        record(mockClass, MethodFilter.of(delegateMap::containsKey), (method, _this, args, _return) -> {
+        record(mockClass, MethodFilter.of(delegateMap::containsKey), (method, args, _return) -> {
             Method delegateMethod = delegateMap.get(method);
             try {
-                delegateMethod.invoke(null, ArrayUtils.insert(args, 0, _this, _return));
+                delegateMethod.invoke(null, ArrayUtils.insert(args, 0, _return));
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e.getCause());
             }
