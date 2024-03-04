@@ -4,6 +4,7 @@ import io.leaderli.litool.core.io.IOUtils;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.Lira;
+import io.leaderli.litool.core.type.ClassScanner;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.MethodFilter;
 import org.junit.jupiter.api.Assertions;
@@ -436,6 +437,12 @@ class LiMockTest {
     void testGenerate() {
 
         System.out.println(LiMock.getCtClass(Bean2.class).getRefClasses());
+        ClassScanner.getSubTypesOf(Lira.class, Lira.class)
+                .filter(c -> !c.getName().startsWith("java."))
+                .forEach(clazz -> {
+                    LiMock.record(clazz, MethodFilter.isMethod(), MethodAssertInvocation.of(System.out::println));
+                });
+
 
         Bean2 bean2 = LiMock.mockerBean(Bean2.class).when(b -> b.m1(1), "2").build();
         LiMock.recordBean(Bean2.class).when(b -> b.m1(1)).called().build();
