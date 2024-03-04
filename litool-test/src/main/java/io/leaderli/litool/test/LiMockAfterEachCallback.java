@@ -6,7 +6,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class LiMockAfterEachCallback implements AfterEachCallback {
     @Override
     public void afterEach(ExtensionContext context) {
-        LiMock.reset();
         LiMock.assertMethodCalled();
+        LiMock.assertDoesNotThrow();
+        LiMock.reset();
     }
 }

@@ -15,6 +15,7 @@ public class AbstractRecorder<T> {
 
     public static final Set<Method> recordMethodCall = new HashSet<>();
     public static final Set<Method> actualMethodCall = new HashSet<>();
+    public static final List<Throwable> assertThrow = new ArrayList<>();
     protected final Class<?> mockClass;
     protected final Map<Method, List<MethodAssert>> methodAsserts = new HashMap<>();
     private Method currentMethod;

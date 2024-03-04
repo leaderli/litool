@@ -303,6 +303,12 @@ public class LiMock {
         }
     }
 
+    public static void assertDoesNotThrow() {
+        for (Throwable throwable : Recorder.assertThrow) {
+            throw new RuntimeException(throwable);
+        }
+    }
+
     /**
      * 情况方法调用记录
      *
@@ -313,6 +319,7 @@ public class LiMock {
     }
 
     public static void reset() {
+        Recorder.assertThrow.clear();
         originClasses.forEach((k, v) -> {
             try {
                 detach(k);

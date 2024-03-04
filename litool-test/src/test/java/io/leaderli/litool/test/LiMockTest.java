@@ -1,7 +1,9 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.io.IOUtils;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiBox;
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.MethodFilter;
 import org.junit.jupiter.api.Assertions;
@@ -391,6 +393,27 @@ class LiMockTest {
 
     }
 
+
+    private static void liraMap(int a) {
+
+    }
+
+    @LiTest
+    void testRecordInLira() {
+
+        System.setErr(IOUtils.emptyPrintStream());
+        Lira1 lira1 = new Lira1();
+        Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 3).mapIgnoreError(lira1::m1).get());
+        LiMock.recorder(Lira1.class).when(lira1.m1(1)).assertReturn(100).build();
+        Assertions.assertDoesNotThrow(() -> {
+            Lira.of(1, 2, 3).mapIgnoreError(lira1::m1).get();
+        });
+
+        Assertions.assertThrows(Throwable.class, LiMock::assertDoesNotThrow);
+        Recorder.assertThrow.clear();
+
+    }
+
     @SuppressWarnings("ConstantValue")
     static class Error {
         static {
@@ -570,6 +593,12 @@ class LiMockTest {
         @Override
         public Integer get() {
             return 2;
+        }
+    }
+
+    static class Lira1 {
+        int m1(int a) {
+            return a;
         }
     }
 }
