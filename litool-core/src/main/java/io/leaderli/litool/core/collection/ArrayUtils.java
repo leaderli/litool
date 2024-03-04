@@ -5,10 +5,7 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.type.ClassUtil;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -1190,7 +1187,7 @@ public class ArrayUtils {
      * @param <R>            目标数组类型泛型
      * @return 转换后的目标数组
      */
-    public static <T, R> R[] map(T[] origin, Class<? extends R> componentClass, Function<? super T, ? extends R> mapper) {
+    public static <T, R> R[] map(T[] origin, Class<R> componentClass, Function<? super T, ? extends R> mapper) {
         if (origin == null) {
             return ClassUtil.newWrapperArray(componentClass, 0);
         }
@@ -1200,5 +1197,15 @@ public class ArrayUtils {
             target[i] = mapper.apply(origin[i]);
         }
         return target;
+    }
+
+    public static <T, R> R[] flatMap(T[] origin, Class<? extends R> componentClass, Function<? super T, ? extends R[]> mapper) {
+        List<R> result = new ArrayList<>();
+        if (origin != null) {
+            for (T t : origin) {
+                result.addAll(Arrays.asList(mapper.apply(t)));
+            }
+        }
+        return result.toArray((R[]) ClassUtil.newWrapperArray(componentClass, 0));
     }
 }

@@ -423,15 +423,20 @@ class ArrayUtilsTest {
 
         Assertions.assertSame(2, ArrayUtils.toArray(new int[]{1, 2}).length);
     }
+
     @Test
     void testMap() {
 
         Integer[] map = ArrayUtils.map((Integer[]) null, Integer.class, integer -> integer);
         Assertions.assertSame(0, map.length);
         Assertions.assertArrayEquals(new String[]{"1"}, ArrayUtils.map(new Integer[]{1}, String.class, integer -> integer + ""));
-       //genereate test
-
-
     }
 
+    @Test
+    void testFlatMap() {
+
+        String[] map = ArrayUtils.flatMap((String[]) null, String.class, s -> s.split(""));
+        Assertions.assertSame(0, map.length);
+        Assertions.assertArrayEquals(new String[]{"1", "2", "3", "4"}, ArrayUtils.flatMap(new String[]{"1,2", "3,4"}, String.class, s -> s.split(",")));
+    }
 }
