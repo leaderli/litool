@@ -7,7 +7,6 @@ public class LiMockAfterEachCallback implements AfterEachCallback {
     @Override
     public void afterEach(ExtensionContext context) {
         LiMock.assertMethodCalled();
-        LiMock.assertDoesNotThrow();
         LiMock.reset();
     }
 }

@@ -319,7 +319,6 @@ public class LiMock {
     }
 
     public static void reset() {
-        Recorder.assertThrow.clear();
         originClasses.forEach((k, v) -> {
             try {
                 detach(k);

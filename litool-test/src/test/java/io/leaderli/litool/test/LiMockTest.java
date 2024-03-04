@@ -359,6 +359,7 @@ class LiMockTest {
                 .assertReturn(1)
                 .build();
         Assertions.assertThrows(AssertionFailedError.class, LiMock::assertMethodCalled);
+
         bean.m1();
         Assertions.assertDoesNotThrow(LiMock::assertMethodCalled);
         LiMock.recordBean(Bean1.class).when(Bean1::m1)
@@ -410,7 +411,6 @@ class LiMockTest {
         });
 
         Assertions.assertThrows(Throwable.class, LiMock::assertDoesNotThrow);
-        Recorder.assertThrow.clear();
 
     }
 
