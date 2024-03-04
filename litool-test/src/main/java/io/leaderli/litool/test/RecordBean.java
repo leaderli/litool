@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class RecordBean<T> extends AbstractRecorder<RecordBean<T>> {
+public class RecordBean<T> extends AbstractRecorder<RecordBean<T>> implements RecordBeanInterface<RecordBean<T>, T> {
 
     private final T instance;
 

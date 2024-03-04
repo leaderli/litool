@@ -249,9 +249,21 @@ class LiMockTest {
 
     @Test
     @ExtendWith(SkipWhenJacocoExecutionCondition.class)
-    void testWhenBeans() {
+    void testMockerBeans() {
 
         Supplier<Integer> supplier = LiMock.mockerBeans(Supplier1.class, Supplier2.class).other(Supplier::get, (m, a) -> 100).build();
+        Assertions.assertEquals(100, supplier.get());
+        Assertions.assertEquals(100, new Supplier1().get());
+        Assertions.assertEquals(100, new Supplier2().get());
+//
+    }
+
+    @Test
+    @ExtendWith(SkipWhenJacocoExecutionCondition.class)
+    void testRecordBeans() {
+
+        Supplier<Integer> supplier = LiMock.mockerBeans(Supplier1.class, Supplier2.class).other(Supplier::get, (m, a) -> 100).build();
+        LiMock.recordBeans(Supplier1.class, Supplier2.class).consume(Supplier::get).assertReturn(100).build();
         Assertions.assertEquals(100, supplier.get());
         Assertions.assertEquals(100, new Supplier1().get());
         Assertions.assertEquals(100, new Supplier2().get());
@@ -418,6 +430,19 @@ class LiMockTest {
         Assertions.assertEquals(2, new Foo().m1());
         LiMock.record(Foo.class, DelegateRecord.class);
         Assertions.assertEquals(2, new Foo().m1());
+    }
+
+    @Test
+    void testGenerate() {
+
+        System.out.println(LiMock.getCtClass(Bean2.class).getRefClasses());
+
+        Bean2 bean2 = LiMock.mockerBean(Bean2.class).when(b -> b.m1(1), "2").build();
+        LiMock.recordBean(Bean2.class).when(b -> b.m1(1)).called().build();
+
+        bean2.m1(1);
+
+
     }
 
     static class Delegate {

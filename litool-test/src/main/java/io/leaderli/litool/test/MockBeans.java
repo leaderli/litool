@@ -22,8 +22,8 @@ public class MockBeans<T> implements MockBeanInterface<MockBeans<T>, T> {
     }
 
     @Override
-    public MockBeans<T> consume(Consumer<T> call) {
-        mockBeans.forEach(mockBean -> mockBean.consume(call));
+    public MockBeans<T> consume(Consumer<T> consumer) {
+        mockBeans.forEach(mockBean -> mockBean.consume(consumer));
         return this;
     }
 

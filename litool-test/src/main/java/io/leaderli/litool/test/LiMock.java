@@ -394,10 +394,14 @@ public class LiMock {
         return new Recorder(mockClass);
     }
 
-    public static <T> RecordBean<T> recordBean(Class<T> mockClass) {
+    public static <T> RecordBeanInterface<RecordBean<T>, T> recordBean(Class<T> mockClass) {
         return new RecordBean<>(mockClass);
     }
 
+    @SafeVarargs
+    public static <T> RecordBeanInterface<RecordBeans<T>, T> recordBeans(Class<? extends T>... mockClasses) {
+        return new RecordBeans<>(mockClasses);
+    }
     public static Mocker mocker(Class<?> mockClass) {
         return new Mocker(mockClass, true);
     }
