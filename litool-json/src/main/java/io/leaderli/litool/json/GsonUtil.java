@@ -34,6 +34,14 @@ public class GsonUtil {
         return GSON.toJson(obj);
     }
 
+    public static <T> T fromJson(String json, Class<T> type) {
+        return GSON.fromJson(json, type);
+    }
+
+    public static <T> T fromJson(String json, Type type) {
+        return GSON.fromJson(json, type);
+    }
+
     /**
      * 返回一个特殊的map，会将json的值中基本类型转换为Strig类型，null会转换为空字符串
      */
