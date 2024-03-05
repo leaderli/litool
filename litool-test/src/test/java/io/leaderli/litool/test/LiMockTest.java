@@ -67,6 +67,30 @@ class LiMockTest {
         Assertions.assertEquals(1, new Foo().m1());
     }
 
+    @Test
+    void testArg0() {
+        LiMock.mocker(Error.class).call(Error.m1(1))
+                .arg0(1)
+                .then(100)
+                .arg0(2)
+                .then(200)
+                .other(300)
+                .build();
+        Assertions.assertEquals(100, Error.m1(1));
+        Assertions.assertEquals(200, Error.m1(2));
+        Assertions.assertEquals(300, Error.m1(3));
+
+        LiMock.mocker(Error.class).call(Error.m1(1))
+                .arg0(1)
+                .then(100)
+                .arg0(2)
+                .then(200)
+                .build();
+        Assertions.assertEquals(100, Error.m1(1));
+        Assertions.assertEquals(200, Error.m1(2));
+        Assertions.assertEquals(4, Error.m1(3));
+    }
+
     @LiTest
     void skipClassConstructors2() {
 //        Assertions.assertEquals(2, new Foo3(2).a);

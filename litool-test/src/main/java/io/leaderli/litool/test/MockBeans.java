@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @SuppressWarnings("unchecked")
-public class MockBeans<T, R> implements MockBeanInterface<T, R> {
+public class MockBeans<T, R> implements IMocker<T, R> {
 
     private final List<MockBean<T, R>> mockBeans = new ArrayList<>();
 
@@ -22,29 +22,35 @@ public class MockBeans<T, R> implements MockBeanInterface<T, R> {
         }
     }
 
-    public MockBeanInterface<T, R> consume(Consumer<T> call) {
+    public IMocker<T, R> consume(Consumer<T> call) {
         mockBeans.forEach(mockBean -> mockBean.consume(call));
         return this;
     }
 
     @Override
-    public <RR> MockBeanInterface<T, RR> function(Function<T, R> call) {
+    public <RR> IMocker<T, RR> function(Function<T, R> call) {
         mockBeans.forEach(mockBean -> mockBean.function(call));
-        return (MockBeanInterface<T, RR>) this;
+        return (IMocker<T, RR>) this;
     }
 
-    public MockBeanInterface<T, R> then(R value) {
+    public IMocker<T, R> then(R value) {
         mockBeans.forEach(mockBean -> mockBean.then(value));
         return this;
     }
 
-    public MockBeanInterface<T, R> other(R value) {
+    public IMocker<T, R> other(R value) {
         mockBeans.forEach(mockBean -> mockBean.other(value));
         return this;
     }
 
-    public MockBeanInterface<T, R> other(BiFunction<Method, Object[], R> function) {
+    public IMocker<T, R> other(BiFunction<Method, Object[], R> function) {
         mockBeans.forEach(mockBean -> mockBean.other(function));
+        return this;
+    }
+
+    @Override
+    public IMocker<T, R> argx(int x, Object arg) {
+        mockBeans.forEach(mockBean -> mockBean.argx(x, arg));
         return this;
     }
 

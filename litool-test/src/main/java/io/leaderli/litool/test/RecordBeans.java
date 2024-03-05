@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class RecordBeans<T> implements RecordBeanInterface<RecordBeans<T>, T> {
+public class RecordBeans<T> implements IRecorder<RecordBeans<T>, T> {
     private final List<RecordBean<T>> recordBeans = new ArrayList<>();
     private final List<Consumer<RecordBean<T>>> recordBeanAction = new ArrayList<>();
 

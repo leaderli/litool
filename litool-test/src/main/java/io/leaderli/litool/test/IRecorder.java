@@ -3,7 +3,7 @@ package io.leaderli.litool.test;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public interface RecordBeanInterface<B, T> {
+public interface IRecorder<B, T> {
 
     @SuppressWarnings("unchecked")
     default B call(T call) {

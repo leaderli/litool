@@ -430,16 +430,16 @@ public class LiMock {
         return new Recorder(mockClass);
     }
 
-    public static <T> RecordBeanInterface<RecordBean<T>, T> recordBean(Class<T> mockClass) {
+    public static <T> IRecorder<RecordBean<T>, T> recordBean(Class<T> mockClass) {
         return new RecordBean<>(mockClass);
     }
 
     @SafeVarargs
-    public static <T> RecordBeanInterface<RecordBeans<T>, T> recordBeans(Class<? extends T>... mockClasses) {
+    public static <T> IRecorder<RecordBeans<T>, T> recordBeans(Class<? extends T>... mockClasses) {
         return new RecordBeans<>(mockClasses);
     }
 
-    public static MockBeanInterface<Void, Object> mocker(Class<?> mockClass) {
+    public static IMocker<Void, Object> mocker(Class<?> mockClass) {
         return new Mocker(mockClass, true);
     }
 
@@ -474,7 +474,7 @@ public class LiMock {
      * 方法记录自动带上实例
      */
     @SafeVarargs
-    public static <T, R> MockBeanInterface<T, R> mockerBeans(Class<? extends T>... mockClass) {
+    public static <T, R> IMocker<T, R> mockerBeans(Class<? extends T>... mockClass) {
         return new MockBeans<>(mockClass);
     }
 

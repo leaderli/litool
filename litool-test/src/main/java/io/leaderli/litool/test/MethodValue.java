@@ -1,5 +1,6 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.function.Filter;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.type.PrimitiveEnum;
@@ -13,9 +14,9 @@ import java.util.function.BiFunction;
 public class MethodValue<T> {
     private final Method method;
     private final PrimitiveEnum primitive;
-    private final List<LiTuple<Object[], T>> argsFunction = new ArrayList<>();
+    private final List<LiTuple<Filter<Object[]>, T>> argsFilters = new ArrayList<>();
     private BiFunction<Method, Object[], T> otherFunction;
-    private Object[] currentArgs;
+    private Filter<Object[]> currentArgsFilter;
 
     MethodValue(Method method) {
         this.method = method;
@@ -23,17 +24,20 @@ public class MethodValue<T> {
     }
 
     public void args(Object[] currentArgs) {
-        this.currentArgs = currentArgs;
+        this.currentArgsFilter = arg -> Arrays.equals(arg, currentArgs);
     }
 
+    public void argsFilter(Filter<Object[]> argsFilter) {
+        this.currentArgsFilter = argsFilter;
+    }
 
     public void then(T result) {
-        argsFunction.add(LiTuple.of(currentArgs, result));
+        argsFilters.add(LiTuple.of(currentArgsFilter, result));
     }
 
 
-    public void args(Object[] args, T result) {
-        argsFunction.add(LiTuple.of(args, result));
+    public void args(Object[] compareArgs, T result) {
+        argsFilters.add(LiTuple.of(args -> Arrays.equals(args, compareArgs), result));
     }
 
     public void other(T value) {
@@ -45,8 +49,8 @@ public class MethodValue<T> {
     }
 
     public Object getMethodValue(Object[] args) {
-        for (LiTuple<Object[], T> tuple : argsFunction) {
-            if (Arrays.equals(tuple._1, args)) {
+        for (LiTuple<Filter<Object[]>, T> tuple : argsFilters) {
+            if (tuple._1.apply(args)) {
                 return primitive.read(tuple._2);
             }
         }

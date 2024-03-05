@@ -20,12 +20,12 @@ public class Mocker extends BaseMockerForBean<Void, Object> {
     }
 
     @Override
-    public MockBeanInterface consume(Consumer call) {
+    public IMocker consume(Consumer call) {
         throw new UnsupportedOperationException("mocker don't have instance");
     }
 
     @Override
-    public MockBeanInterface function(Function call) {
+    public IMocker function(Function call) {
         throw new UnsupportedOperationException("mocker don't have instance");
     }
 }
