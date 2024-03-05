@@ -9,9 +9,10 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class MockBeans<T> implements MockBeanInterface<MockBeans<T>, T> {
+@SuppressWarnings("unchecked")
+public class MockBeans<T, R> implements MockBeanInterface<T, R> {
 
-    private final List<MockBean<T>> mockBeans = new ArrayList<>();
+    private final List<MockBean<T, R>> mockBeans = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     @SafeVarargs
@@ -21,37 +22,36 @@ public class MockBeans<T> implements MockBeanInterface<MockBeans<T>, T> {
         }
     }
 
+    public MockBeanInterface<T, R> consume(Consumer<T> call) {
+        mockBeans.forEach(mockBean -> mockBean.consume(call));
+        return this;
+    }
+
     @Override
-    public MockBeans<T> consume(Consumer<T> consumer) {
-        mockBeans.forEach(mockBean -> mockBean.consume(consumer));
+    public <R2> MockBeanInterface<T, R2> function(Function<T, R> call) {
+        mockBeans.forEach(mockBean -> mockBean.function(call));
+        return (MockBeanInterface<T, R2>) this;
+    }
+
+    public MockBeanInterface<T, R> then(R value) {
+        mockBeans.forEach(mockBean -> mockBean.then(value));
         return this;
     }
 
-    public <R> MockBeans<T> when(Function<T, R> call, R result) {
-        mockBeans.forEach(mockBean -> mockBean.when(call, result));
+    public MockBeanInterface<T, R> other(R value) {
+        mockBeans.forEach(mockBean -> mockBean.other(value));
         return this;
     }
 
-    public <R> MockBeans<T> when(Function<T, R> call, R result, R other) {
-        mockBeans.forEach(mockBean -> mockBean.when(call, result, other));
-        return this;
-    }
-
-    public <R> MockBeans<T> other(Function<T, R> call, BiFunction<Method, Object[], R> otherValue) {
-        mockBeans.forEach(mockBean -> mockBean.other(call, otherValue));
-        return this;
-    }
-
-
-    public <R> MockBeans<T> other(Function<T, R> call, R result, BiFunction<Method, Object[], R> otherValue) {
-        mockBeans.forEach(mockBean -> mockBean.other(call, result, otherValue));
+    public MockBeanInterface<T, R> other(BiFunction<Method, Object[], R> function) {
+        mockBeans.forEach(mockBean -> mockBean.other(function));
         return this;
     }
 
 
     public T build() {
         T instance = null;
-        for (MockBean<T> mockBean : mockBeans) {
+        for (MockBean<T, R> mockBean : mockBeans) {
             instance = mockBean.build();
         }
         LiAssertUtil.assertFalse(instance == null, new IllegalArgumentException());

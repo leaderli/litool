@@ -21,43 +21,63 @@ public class RecordBeans<T> implements RecordBeanInterface<RecordBeans<T>, T> {
     }
 
     public RecordBeans<T> consume(Consumer<T> consumer) {
-        recordBeanAction.add(recordbean -> recordbean.consume(consumer));
+//        recordBeanAction.add(recordbean -> recordbean.consume(consumer));
+        for (RecordBean<T> recordBean : recordBeans) {
+            recordBean.consume(consumer);
+        }
+
         return this;
     }
 
     public RecordBeans<T> when(Function<T, Object> function) {
-        recordBeanAction.add(recordbean -> recordbean.when(function));
+//        recordBeanAction.add(recordbean -> recordbean.when(function));
+        for (RecordBean<T> recordBean : recordBeans) {
+            recordBean.when(function);
+        }
+
         return this;
     }
 
     @Override
     public RecordBeans<T> called() {
-        recordBeanAction.add(AbstractRecorder::called);
+//        recordBeanAction.add(AbstractRecorder::called);
+        for (RecordBean<T> recordBean : recordBeans) {
+            recordBean.called();
+        }
         return this;
     }
 
     @Override
     public RecordBeans<T> arg(int index, Object arg) {
-        recordBeanAction.add(recordbean -> recordbean.arg(index, arg));
+//        recordBeanAction.add(recordbean -> recordbean.arg(index, arg));
+        for (RecordBean<T> recordBean : recordBeans) {
+            recordBean.arg(index, arg);
+        }
         return this;
     }
 
     @Override
     public RecordBeans<T> args(Object... args) {
-        recordBeanAction.add(recordbean -> recordbean.args(args));
+//        recordBeanAction.add(recordbean -> recordbean.args(args));
+        for (RecordBean<T> recordBean : recordBeans) {
+            recordBean.args(args);
+        }
         return this;
     }
 
     @Override
     public RecordBeans<T> assertReturn(Object compareReturn) {
-        recordBeanAction.add(recordbean -> recordbean.assertReturn(compareReturn));
+        for (RecordBean<T> recordBean : recordBeans) {
+            recordBean.assertReturn(compareReturn);
+        }
+//        recordBeanAction.add(recordbean -> recordbean.assertReturn(compareReturn));
         return this;
     }
 
     public T build() {
         T instance = null;
         for (RecordBean<T> mockBean : recordBeans) {
-            recordBeanAction.forEach(action -> action.accept(mockBean));
+//            recordBeanAction.forEach(action -> action.accept(mockBean));
             instance = mockBean.build();
         }
         LiAssertUtil.assertFalse(instance == null, new IllegalArgumentException());

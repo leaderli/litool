@@ -137,17 +137,17 @@ class LiMockTest {
     @LiTest
     void testMocker() {
 
-        LiMock.mocker(Error.class).when(Error.m1(), 101).build();
+        LiMock.mocker(Error.class).supplier(Error::m1).then(101).build();
         Assertions.assertEquals(101, Error.m1());
         Assertions.assertEquals(4, Error.m4());
-        LiMock.mocker(Error.class).other(Error.m1(1), 11, (m, args) -> 12).build();
+        LiMock.mocker(Error.class).call(Error.m1(1)).then(11).other(12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
-        LiMock.mocker(Error.class).when(Error.m1(1), 11, 12).build();
+        LiMock.mocker(Error.class).call(Error.m1(1)).then(11).other(12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 
-        LiMock.mocker(Error.class).other(Error.m1(1), (m, args) -> {
+        LiMock.mocker(Error.class).call(Error.m1(1)).other((m, args) -> {
             if ((int) args[0] == 1) {
                 return 21;
             }
@@ -162,41 +162,41 @@ class LiMockTest {
 
     @LiTest
     void testWhen() {
-        LiMock.mocker(Error.class).when(Error.m1(1), 11, 12).build();
+        LiMock.mocker(Error.class).call(Error.m1(1)).then(11).other(12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
-        LiMock.mocker(Error.class).when(Error.m1(1), 11).build();
+        LiMock.mocker(Error.class).call(Error.m1(1)).then(11).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(3, Error.m1(2));
 
-        LiMock.mocker(Error.class).when(Error.m1(1), 10)
-                .when(Error.m1(), 10)
+        LiMock.mocker(Error.class).call(Error.m1(1)).then(10)
+                .call(Error.m1(1)).then(10)
                 .build();
         Assertions.assertEquals(10, Error.m1(1));
         Assertions.assertEquals(3, Error.m1(2));
         Assertions.assertEquals(10, Error.m1());
-        LiMock.mocker(Error.class).when(Error.m1(1), 20).build();
+        LiMock.mocker(Error.class).call(Error.m1(1)).then(20).build();
         Assertions.assertEquals(20, Error.m1(1));
         Assertions.assertEquals(1, Error.m1());
         Assertions.assertEquals(3, Error.m1(2));
         LiMock.reset();
-        LiMock.mocker(Error.class).when(Error.m1(1), 20).build();
+        LiMock.mocker(Error.class).call(Error.m1(1)).then(20).build();
         Assertions.assertEquals(20, Error.m1(1));
         Assertions.assertEquals(1, Error.m1());
         Assertions.assertEquals(3, Error.m1(2));
 
 
         Foo1 foo1 = () -> "";
-        LiMock.mocker(Foo1.class).when(foo1.get2(), "123").build();
+        LiMock.mocker(Foo1.class).call(foo1.get2()).then("123").build();
         Assertions.assertEquals("123", foo1.get2());
 
-        Assertions.assertThrows(IllegalStateException.class, () -> LiMock.mocker(Foo1.class).when(foo1.get(), "123").build());
+        Assertions.assertThrows(IllegalStateException.class, () -> LiMock.mocker(Foo1.class).call(foo1.get()).then("123").build());
 
     }
 
     @Test
     void testWhen2() {
-        LiMock.mocker(Error.class).when(Error.m1(1), 11, 12).build();
+        LiMock.mocker(Error.class).call(Error.m1(1)).then(11).other(12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 
@@ -208,14 +208,14 @@ class LiMockTest {
     @Test
     void testWhen3() throws UnmodifiableClassException, ClassNotFoundException {
         LiMock.mocker(Error.class)
-                .when(Error.m1(1), 11, 12)
-                .when(Error.m1(), 10)
+                .call(Error.m1(1)).then(11).other(12)
+                .call(Error.m1(), 10)
                 .build();
         Assertions.assertEquals(10, Error.m1());
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 
-        LiMock.mocker(Error.class, false).when(Error.m1(1), 111).build();
+        LiMock.mocker(Error.class, false).call(Error.m1(1), 111).build();
         Assertions.assertEquals(111, Error.m1(1));
         Assertions.assertEquals(10, Error.m1());
 
@@ -230,6 +230,35 @@ class LiMockTest {
         Assertions.assertEquals(2, Void2.a);
     }
 
+    @Test
+    void testWhen4() {
+
+        LiMock.mocker(Error.class).call(Error.m1()).then(null).build();
+        Assertions.assertDoesNotThrow(() -> Error.m1());
+        LiMock.reset();
+        LiMock.mocker(Error.class).call(Error.m1()).other((Integer) null).build();
+        Assertions.assertDoesNotThrow(() -> Error.m1());
+        LiMock.reset();
+        LiMock.mocker(Error.class).call(Error.m1(1)).then(100).call(Error.m1(2)).then(200).build();
+        Assertions.assertEquals(100, Error.m1(1));
+        Assertions.assertEquals(200, Error.m1(2));
+
+    }
+
+    @LiTest
+    void testWhenThenOther() {
+
+        LiMock.mocker(Error.class)
+                .call(Error.m1(1))
+                .then(11)
+                .other(12)
+                .call(Error.m1())
+                .then(11)
+                .build();
+        System.out.println(Error.m1(1));
+        System.out.println(Error.m1(2));
+        System.out.println(Error.m1());
+    }
 
     @LiTest
     void testWhenBean2() {
@@ -276,8 +305,13 @@ class LiMockTest {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     void testWhenInterface() {
-        Supplier<Integer> supplier = LiMock.mockerInterface(new LiTypeToken<Supplier<Integer>>() {
-        }).when(Supplier::get, 1).build();
+        MockInterface<Supplier<Integer>> supplierMockInterface = LiMock.mockerInterface(new LiTypeToken<Supplier<Integer>>() {
+        });
+        supplierMockInterface.function(Supplier::get);
+        Supplier<Integer> supplier = supplierMockInterface
+                .consume(Supplier::get)
+                .then(1)
+                .build();
 
         Assertions.assertEquals(1, supplier.get());
 
@@ -299,7 +333,7 @@ class LiMockTest {
     void testRecordStatic() {
 
         Assertions.assertEquals(2, Error.m1(1));
-        LiMock.mocker(Error.class).when(Error.m1(1), 11, 12).build();
+        LiMock.mocker(Error.class).call(Error.m1(1), 11, 12).build();
         Assertions.assertEquals(11, Error.m1(1));
         Assertions.assertEquals(12, Error.m1(2));
 

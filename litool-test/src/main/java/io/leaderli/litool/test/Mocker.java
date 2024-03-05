@@ -2,42 +2,30 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.type.MethodFilter;
 
-import java.lang.reflect.Method;
-import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-public class Mocker extends AbstractMocker<Mocker> {
+@SuppressWarnings({"rawtypes", "unchecked"})
+public class Mocker extends AbstractMocker<Void, Object> {
 
-    Mocker(Class<?> mockClass, boolean detach) {
+    Mocker(Class mockClass, boolean detach) {
         super(mockClass, detach);
     }
 
 
-    public <T> Mocker when(T call, T result) {
-        return record(result, null, 0b10);
-    }
-
-    public <T> Mocker run(Runnable call) {
-        call.run();
-        return record(null, (m, args) -> null, 0b01);
-
-    }
-
-    public <T> Mocker when(T call, T result, T other) {
-        return record(result, (m, args) -> other, 0b11);
-    }
-
-    public <T> Mocker other(T call, BiFunction<Method, Object[], T> otherValue) {
-        return record(null, otherValue, 0b01);
-    }
-
-    public <T> Mocker other(T call, T result, BiFunction<Method, Object[], T> otherValue) {
-        return record(result, otherValue, 0b11);
-    }
-
-    public void build() {
+    public Void build() {
         build = true;
         LiMock.mock(mockClass, MethodFilter.of(methodValueMap::containsKey), this::getMethodValue, detach);
+        return null;
     }
 
+    @Override
+    public MockBeanInterface consume(Consumer call) {
+        throw new UnsupportedOperationException("mocker don't have instance");
+    }
 
+    @Override
+    public MockBeanInterface function(Function call) {
+        throw new UnsupportedOperationException("mocker don't have instance");
+    }
 }

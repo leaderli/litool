@@ -439,7 +439,7 @@ public class LiMock {
         return new RecordBeans<>(mockClasses);
     }
 
-    public static Mocker mocker(Class<?> mockClass) {
+    public static MockBeanInterface<Void, Object> mocker(Class<?> mockClass) {
         return new Mocker(mockClass, true);
     }
 
@@ -456,7 +456,7 @@ public class LiMock {
     /**
      * 方法记录自动带上实例
      */
-    public static <T> MockBeanInterface<MockBean<T>, T> mockerBean(Class<T> mockClass) {
+    public static <T> MockBean<T, Void> mockerBean(Class<T> mockClass) {
         return new MockBean<>(mockClass, true);
     }
 
@@ -466,7 +466,7 @@ public class LiMock {
      * @param mockClass class
      * @param detach    是否重置之前变动
      */
-    public static <T> MockBeanInterface<MockBean<T>, T> mockerBean(Class<T> mockClass, boolean detach) {
+    public static <T> MockBean<T, Void> mockerBean(Class<T> mockClass, boolean detach) {
         return new MockBean<>(mockClass, detach);
     }
 
@@ -474,7 +474,7 @@ public class LiMock {
      * 方法记录自动带上实例
      */
     @SafeVarargs
-    public static <T> MockBeanInterface<MockBeans<T>, T> mockerBeans(Class<? extends T>... mockClass) {
+    public static <T, R> MockBeanInterface<T, R> mockerBeans(Class<? extends T>... mockClass) {
         return new MockBeans<>(mockClass);
     }
 

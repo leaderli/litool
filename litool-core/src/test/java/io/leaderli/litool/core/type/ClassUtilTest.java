@@ -31,7 +31,6 @@ class ClassUtilTest {
         System.out.println(List.class.getSuperclass());
 
     }
-
     @Test
     void getJarFile() {
 

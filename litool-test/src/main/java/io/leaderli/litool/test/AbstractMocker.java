@@ -1,16 +1,15 @@
 package io.leaderli.litool.test;
 
-import io.leaderli.litool.core.collection.ArrayEqual;
 import io.leaderli.litool.core.meta.Either;
+import io.leaderli.litool.core.type.BeanCreator;
 import io.leaderli.litool.core.type.MethodFilter;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 
-@SuppressWarnings({"rawtypes"})
-public abstract class AbstractMocker<T> extends MethodValueRecorder<T> {
+public abstract class AbstractMocker<T, R> extends BaseMocker<T, R> {
     protected final boolean detach;
     protected boolean build;
 
-    public AbstractMocker(Class<?> mockClass, boolean detach) {
+    public AbstractMocker(Class<T> mockClass, boolean detach) {
         super(mockClass);
         this.detach = detach;
         // 仅在build过程中生效，用于记录方法的调用
@@ -18,11 +17,11 @@ public abstract class AbstractMocker<T> extends MethodValueRecorder<T> {
             if (build) {
                 return Either.none();
             }
-            currentMethod = method;
-            currentArgs = ArrayEqual.of(args);
-            methodValueMap.put(currentMethod, new MethodValue(currentMethod));
+            currentMethodValue = methodValueMap.computeIfAbsent(method, MethodValue::new);
+            currentMethodValue.args(args);
             return PrimitiveEnum.get(method.getReturnType()).zero_value;
         }, false);
+        instance = BeanCreator.mockBean(mockClass);
     }
 
 
