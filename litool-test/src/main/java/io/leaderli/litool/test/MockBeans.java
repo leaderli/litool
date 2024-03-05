@@ -28,9 +28,9 @@ public class MockBeans<T, R> implements MockBeanInterface<T, R> {
     }
 
     @Override
-    public <R2> MockBeanInterface<T, R2> function(Function<T, R> call) {
+    public <RR> MockBeanInterface<T, RR> function(Function<T, R> call) {
         mockBeans.forEach(mockBean -> mockBean.function(call));
-        return (MockBeanInterface<T, R2>) this;
+        return (MockBeanInterface<T, RR>) this;
     }
 
     public MockBeanInterface<T, R> then(R value) {

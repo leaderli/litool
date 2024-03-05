@@ -2,7 +2,7 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.type.MethodFilter;
 
-public class MockBean<T, R> extends AbstractMocker<T, R> {
+public class MockBean<T, R> extends BaseMockerForBean<T, R> {
 
     MockBean(Class<T> mockClass, boolean detach) {
         super(mockClass, detach);

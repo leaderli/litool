@@ -5,11 +5,11 @@ import io.leaderli.litool.core.type.BeanCreator;
 import io.leaderli.litool.core.type.MethodFilter;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 
-public abstract class AbstractMocker<T, R> extends BaseMocker<T, R> {
+public abstract class BaseMockerForBean<T, R> extends BaseMocker<T, R> {
     protected final boolean detach;
     protected boolean build;
 
-    public AbstractMocker(Class<T> mockClass, boolean detach) {
+    public BaseMockerForBean(Class<T> mockClass, boolean detach) {
         super(mockClass);
         this.detach = detach;
         // 仅在build过程中生效，用于记录方法的调用

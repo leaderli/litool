@@ -29,10 +29,10 @@ public class RecordBeans<T> implements RecordBeanInterface<RecordBeans<T>, T> {
         return this;
     }
 
-    public RecordBeans<T> when(Function<T, Object> function) {
+    public RecordBeans<T> function(Function<T, Object> function) {
 //        recordBeanAction.add(recordbean -> recordbean.when(function));
         for (RecordBean<T> recordBean : recordBeans) {
-            recordBean.when(function);
+            recordBean.function(function);
         }
 
         return this;

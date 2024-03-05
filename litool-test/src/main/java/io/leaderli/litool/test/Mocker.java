@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class Mocker extends AbstractMocker<Void, Object> {
+public class Mocker extends BaseMockerForBean<Void, Object> {
 
     Mocker(Class mockClass, boolean detach) {
         super(mockClass, detach);

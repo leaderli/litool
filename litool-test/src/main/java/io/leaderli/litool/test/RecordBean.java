@@ -23,7 +23,7 @@ public class RecordBean<T> extends AbstractRecorder<RecordBean<T>> implements Re
         return this;
     }
 
-    public RecordBean<T> when(Function<T, Object> function) {
+    public RecordBean<T> function(Function<T, Object> function) {
         function.apply(instance);
         return this;
     }

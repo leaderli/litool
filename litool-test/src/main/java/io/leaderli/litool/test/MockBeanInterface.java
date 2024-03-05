@@ -8,8 +8,8 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("unchecked")
 public interface MockBeanInterface<T, R> {
-    default <R2> MockBeanInterface<T, R2> call(R2 call) {
-        return (MockBeanInterface<T, R2>) this;
+    default <RR> MockBeanInterface<T, RR> call(RR call) {
+        return (MockBeanInterface<T, RR>) this;
     }
 
     default MockBeanInterface<T, Void> run(Runnable call) {
@@ -20,12 +20,12 @@ public interface MockBeanInterface<T, R> {
 
     MockBeanInterface<T, R> consume(Consumer<T> call);
 
-    default <R2> MockBeanInterface<T, R2> supplier(Supplier<R> call) {
+    default <RR> MockBeanInterface<T, RR> supplier(Supplier<R> call) {
         call.get();
-        return (MockBeanInterface<T, R2>) this;
+        return (MockBeanInterface<T, RR>) this;
     }
 
-    <R2> MockBeanInterface<T, R2> function(Function<T, R> call);
+    <RR> MockBeanInterface<T, RR> function(Function<T, R> call);
 
     MockBeanInterface<T, R> then(R value);
 
@@ -35,39 +35,39 @@ public interface MockBeanInterface<T, R> {
 
     T build();
 
-    default <R2> MockBeanInterface<T, Void> call(R2 call, R2 result) {
+    default <RR> MockBeanInterface<T, Void> call(RR call, RR result) {
         then((R) result);
         return (MockBeanInterface<T, Void>) this;
     }
 
-    default <R2> MockBeanInterface<T, Void> call(R2 call, R2 result, R2 other) {
+    default <RR> MockBeanInterface<T, Void> call(RR call, RR result, RR other) {
         then((R) result);
         other((R) other);
         return (MockBeanInterface<T, Void>) this;
     }
 
-    default <R2> MockBeanInterface<T, Void> when(Function<T, R2> call, R2 result) {
+    default <RR> MockBeanInterface<T, Void> when(Function<T, RR> call, RR result) {
         function((Function<T, R>) call);
         then((R) result);
         return (MockBeanInterface<T, Void>) this;
     }
 
 
-    default <R2> MockBeanInterface<T, Void> when(Function<T, R2> call, R2 result, R2 other) {
+    default <RR> MockBeanInterface<T, Void> when(Function<T, RR> call, RR result, RR other) {
         function((Function<T, R>) call);
         then((R) result);
         other((R) other);
         return (MockBeanInterface<T, Void>) this;
     }
 
-    default <R2> MockBeanInterface<T, Void> other(Function<T, R2> call, BiFunction<Method, Object[], R2> otherValue) {
+    default <RR> MockBeanInterface<T, Void> other(Function<T, RR> call, BiFunction<Method, Object[], RR> otherValue) {
         function((Function<T, R>) call);
         other((BiFunction<Method, Object[], R>) otherValue);
         return (MockBeanInterface<T, Void>) this;
     }
 
 
-    default <R2> MockBeanInterface<T, Void> other(Function<T, R2> call, R2 result, BiFunction<Method, Object[], R2> otherValue) {
+    default <RR> MockBeanInterface<T, Void> other(Function<T, RR> call, RR result, BiFunction<Method, Object[], RR> otherValue) {
         function((Function<T, R>) call);
         then((R) result);
         other((BiFunction<Method, Object[], R>) otherValue);

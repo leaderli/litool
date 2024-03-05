@@ -87,6 +87,18 @@ public class LiAssertUtil {
     }
 
     /**
+     * 判断对象obj是否为null，如果为null就抛出一个自定义的异常，并带有错误信息
+     *
+     * @param obj       判断对象
+     * @param throwable 自定义异常
+     */
+    public static void assertNotNull(Object obj, Supplier<RuntimeException> throwable) {
+        if (obj == null) {
+            throw throwable.get();
+        }
+    }
+
+    /**
      * 判断对象obj是否为null，如果为null就抛出异常，并带有错误信息
      *
      * @param obj 判断对象

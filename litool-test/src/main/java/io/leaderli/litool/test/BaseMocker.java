@@ -1,5 +1,7 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
+
 import java.lang.reflect.Method;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -20,25 +22,28 @@ public abstract class BaseMocker<T, R> extends MethodValueRecorder implements Mo
     }
 
     @Override
-    public <R2> MockBeanInterface<T, R2> function(Function<T, R> call) {
+    public <RR> MockBeanInterface<T, RR> function(Function<T, R> call) {
         call.apply(instance);
-        return (MockBeanInterface<T, R2>) this;
+        return (MockBeanInterface<T, RR>) this;
     }
 
     @SuppressWarnings("unchecked")
     public MockBeanInterface<T, R> then(R value) {
+        LiAssertUtil.assertNotNull(currentMethodValue, IllegalStateException::new);
         currentMethodValue.then(value);
         return this;
     }
 
     @SuppressWarnings("unchecked")
     public MockBeanInterface<T, R> other(R value) {
+        LiAssertUtil.assertNotNull(currentMethodValue, IllegalStateException::new);
         currentMethodValue.other(value);
         return this;
     }
 
     @SuppressWarnings("unchecked")
     public MockBeanInterface<T, R> other(BiFunction<Method, Object[], R> function) {
+        LiAssertUtil.assertNotNull(currentMethodValue, IllegalStateException::new);
         currentMethodValue.other(function);
         return this;
     }

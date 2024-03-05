@@ -5,9 +5,14 @@ import java.util.function.Function;
 
 public interface RecordBeanInterface<B, T> {
 
+    @SuppressWarnings("unchecked")
+    default B call(T call) {
+        return (B) this;
+    }
+
     B consume(Consumer<T> call);
 
-    B when(Function<T, Object> call);
+    B function(Function<T, Object> call);
 
     B called();
 
