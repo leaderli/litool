@@ -14,6 +14,7 @@ public interface MockBeanInterface<T, R> {
 
     default MockBeanInterface<T, Void> run(Runnable call) {
         call.run();
+        other((R) null);
         return (MockBeanInterface<T, Void>) this;
     }
 
