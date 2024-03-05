@@ -1,10 +1,10 @@
 package io.leaderli.litool.test;
 
+import com.google.gson.Gson;
 import io.leaderli.litool.core.io.IOUtils;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.Lira;
-import io.leaderli.litool.core.type.ClassScanner;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.MethodFilter;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +14,7 @@ import org.opentest4j.AssertionFailedError;
 
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -435,21 +436,12 @@ class LiMockTest {
     }
 
     @Test
-    void testGenerate() {
+    void testRecordMethodCall() {
 
-        System.out.println(LiMock.getCtClass(Bean2.class).getRefClasses());
-        ClassScanner.getSubTypesOf(Lira.class, Lira.class)
-                .filter(c -> !c.getName().startsWith("java."))
-                .forEach(clazz -> {
-                    LiMock.record(clazz, MethodFilter.isMethod(), MethodAssertInvocation.of(System.out::println));
-                });
-
-
-        Bean2 bean2 = LiMock.mockerBean(Bean2.class).when(b -> b.m1(1), "2").build();
-        LiMock.recordBean(Bean2.class).when(b -> b.m1(1)).called().build();
-
-        bean2.m1(1);
-
+        StringBuilder out = new StringBuilder();
+        LiMock.recordMethodCall(out::append, Gson.class);
+        new Gson().fromJson("{\"a\":1}", Map.class);
+        Assertions.assertTrue(out.toString().contains("ObjectTypeAdapter.getFactory(DOUBLE)"));
 
     }
 

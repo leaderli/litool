@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class LiMock {
     public static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
@@ -353,6 +354,41 @@ public class LiMock {
         record(mockClass, methodFilter.addHead(ModifierUtil::isStatic), methodAssert);
     }
 
+    public static void recordMethodCall(Class<?>... mockClasses) {
+        recordMethodCall(System.out::println, mockClasses);
+    }
+
+    /**
+     * @param callLine    方法调用的字符表示
+     * @param mockClasses 记录类中所有的非抽象方法调用，不包含 java.和 io.leaderli.litool。类中依赖的其他类的方法调用也会被调用。
+     */
+    public static void recordMethodCall(Consumer<String> callLine, Class<?>... mockClasses) {
+        Set<Class<?>> ref = new HashSet<>();
+        for (Class<?> mockClass : mockClasses) {
+            if (ref.add(mockClass)) {
+                for (String refClass : getCtClass(mockClass).getRefClasses()) {
+                    if (PrimitiveEnum.get(refClass) == PrimitiveEnum.OBJECT) {
+
+                        try {
+                            ref.add(Class.forName(refClass));
+                        } catch (ClassNotFoundException ignored) {
+                        }
+                    }
+                }
+            }
+        }
+        ref.removeIf(c -> c.getName().startsWith("java") || c.getName().startsWith("io.leaderli.litool"));
+        for (Class<?> clazz : ref) {
+
+            LiMock.record(clazz,
+                    MethodFilter.isMethod().add(f -> !ModifierUtil.isAbstract(f)),
+                    (method, args, _return) -> {
+                        String line = StringUtils.getSimpleName(method.getDeclaringClass()) + "." + method.getName() + "(" + StringUtils.join0(",", args, StringUtils::getSimpleName) + ") -> " + StringUtils.getSimpleName(_return);
+                        callLine.accept(line);
+                    });
+        }
+    }
+
     /**
      * 断言方法被调用
      *
@@ -402,6 +438,7 @@ public class LiMock {
     public static <T> RecordBeanInterface<RecordBeans<T>, T> recordBeans(Class<? extends T>... mockClasses) {
         return new RecordBeans<>(mockClasses);
     }
+
     public static Mocker mocker(Class<?> mockClass) {
         return new Mocker(mockClass, true);
     }

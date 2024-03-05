@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.Normalizer;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
@@ -6766,6 +6767,26 @@ public class StringUtils implements StrPool {
 
     }
 
+    public static String join0(String delimiter, Object[] elements, String nullable) {
+        return join0(delimiter, elements, s -> s == null ? nullable : String.valueOf(s));
+    }
+
+    public static <T> String join0(String delimiter, T[] elements, Function<T, String> function) {
+        if (elements == null) {
+            return "";
+        }
+        if (delimiter == null) {
+            delimiter = LiConstant.JOIN_DELIMITER;
+        }
+
+        String[] arr = new String[elements.length];
+
+        for (int i = 0; i < elements.length; i++) {
+            arr[i] = function.apply(elements[i]);
+        }
+        return String.join(delimiter, arr);
+    }
+
     /**
      * <p>Splits the provided text into an array, separator specified.
      * This is an alternative to using StringTokenizer.</p>
@@ -8877,6 +8898,23 @@ public class StringUtils implements StrPool {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String getSimpleName(Object obj) {
+
+        String str = obj + "";
+        if (str.length() > 10) {
+            if (obj instanceof Class) {
+                return ((Class<?>) obj).getSimpleName();
+            }
+            Class<?> clazz = obj.getClass();
+            if (clazz.isArray()) {
+                return getSimpleName(clazz.getComponentType()) + "[]@" + obj.hashCode();
+            }
+            return substringAfterLast(clazz.getName(), ".") + "@" + obj.hashCode();
+
+        }
+        return str;
     }
 
 }

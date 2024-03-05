@@ -283,6 +283,30 @@ class StringUtilsTest {
 
     }
 
+    @Test
+    void testJoin0() {
+        Assertions.assertEquals("1,null", StringUtils.join0(",", new Object[]{1, null}, "null"));
+        Assertions.assertEquals("1,null", StringUtils.join0(",", new Object[]{1, null}, s -> s + ""));
+    }
+
+    @SuppressWarnings("ArrayHashCode")
+    @Test
+    void testGetSimpleName() {
+        Assertions.assertEquals("null", StringUtils.getSimpleName(null));
+        Assertions.assertEquals("true", StringUtils.getSimpleName(true));
+        Assertions.assertEquals("1", StringUtils.getSimpleName(1));
+        Assertions.assertEquals("int", StringUtils.getSimpleName(int.class));
+        Assertions.assertEquals("Integer", StringUtils.getSimpleName(Integer.class));
+        Object obj = new Object() {
+        };
+        Assertions.assertEquals("StringUtilsTest$1@" + obj.hashCode(), StringUtils.getSimpleName(obj));
+
+        Object[] objects = {new Object() {
+        }};
+        System.out.println(StringUtils.getSimpleName(objects));
+        Assertions.assertEquals("Object[]@" + objects.hashCode(), StringUtils.getSimpleName(objects));
+    }
+
     private void outmock() {
         try {
 
