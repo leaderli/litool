@@ -211,6 +211,8 @@ class LiraTest {
     @Test
     void testBeanPath() {
         Assertions.assertEquals(3, Lira.of(new Foo(), new Foo(), new Bar()).path("name", String.class).size());
+        Assertions.assertEquals(0, Lira.of(new Foo(), new Foo(new Bar()), new Bar()).path("bar.name", Bar.class).size());
+        Assertions.assertEquals(1, Lira.of(new Foo(), new Foo(new Bar()), new Bar()).path("bar", Bar.class).size());
         Assertions.assertEquals(1, Lira.of(new Foo(), new Foo(new Bar()), new Bar()).path("bar.name", String.class).size());
         Assertions.assertEquals(1, Lira.of(new Foo(), new Foo(new Bar()), new Bar()).path("bar.foo.name", String.class).size());
         Assertions.assertEquals(3, Lira.of(new Foo(), new Foo(new Bar()), new Bar()).path("bar.foo.name", String.class).nullableGet().size());
