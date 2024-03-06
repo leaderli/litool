@@ -235,6 +235,15 @@ public class BeanPath {
     }
 
     /**
+     * 预先编译表达式，方便重复使用
+     */
+    public static BeanPath of(String expression) {
+        BeanPath beanPath = new BeanPath();
+        beanPath.build(expression);
+        return beanPath;
+    }
+
+    /**
      * @param bean 要查找的对象
      * @param key  map的key或者对象的属性名
      * @return map的值或者对象的属性值

@@ -84,13 +84,31 @@ public abstract class Ra<T> implements Lira<T> {
             return box.lino();
         } else {
             // to avoid avoid generator duplicate request problem, convert to a limit iterator
-            Lira<T> of = Lira.of(get());
-            index = of.size() + index;
+            List<T> list = get();
+            index = list.size() + index;
             if (index < 0) {
                 return Lino.none();
             }
-            return of.get(index);
+            return Lino.of(list.get(index));
         }
+    }
+
+    public Lino<T> nullableGet(int index) {
+        if (index > -1) {
+            LiBox<T> box = LiBox.none();
+            // hen limit n element and skip n-1 element
+            limit(index + 1).skip(index).subscribe(new ConsumerSubscriber<>(box::value));
+            return box.lino();
+        } else {
+            // to avoid avoid generator duplicate request problem, convert to a limit iterator
+            List<T> list = nullableGet();
+            index = list.size() + index;
+            if (index < 0) {
+                return Lino.none();
+            }
+            return Lino.of(list.get(index));
+        }
+
     }
 
 

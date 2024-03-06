@@ -4,6 +4,7 @@ import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.NoneItr;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
+import io.leaderli.litool.core.lang.BeanPath;
 import io.leaderli.litool.core.lang.CompareDecorator;
 import io.leaderli.litool.core.lang.EqualComparator;
 import io.leaderli.litool.core.meta.ra.*;
@@ -308,6 +309,8 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      * @return 返回该元素对应的行号{@link Lino}，如果元素不存在，则返回{@link Lino#none()}
      */
     Lino<T> get(int index);
+
+    Lino<T> nullableGet(int index);
 
     /**
      * 终端操作，返回一个迭代器，该迭代器已经移除了所有值为{@code null}的元素
@@ -785,6 +788,18 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     default Stream<T> stream() {
         return get().stream();
     }
+
+    /**
+     * @param expression 根据beanpath来解析数据
+     * @param type       解析后的类型
+     * @param <R>        泛型
+     * @see BeanPath
+     */
+    default <R> Lira<R> path(String expression, Class<R> type) {
+        BeanPath beanPath = BeanPath.of(expression);
+        return unzip(beanPath::parse).cast(type);
+    }
+
 
     /**
      * 返回一个由本 Lira 中所有非空元素组成的列表

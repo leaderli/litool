@@ -201,8 +201,22 @@ class LiraTest {
         Assertions.assertEquals(3, Lira.of(1, 2, 3).get(-1).get());
         Assertions.assertNull(Lira.of(1, 2, 3).get(-100).get());
 
+        Assertions.assertEquals(1, Lira.of(null, 1).get(0).get());
+        Assertions.assertNull(Lira.of(null, 1).nullableGet(0).get());
+        Assertions.assertEquals(1, Lira.of(1, null).get(-1).get());
+        Assertions.assertNull(Lira.of(1, null).nullableGet(-1).get());
 
     }
+
+    @Test
+    void testBeanPath() {
+        Assertions.assertEquals(3, Lira.of(new Foo(), new Foo(), new Bar()).path("name", String.class).size());
+        Assertions.assertEquals(1, Lira.of(new Foo(), new Foo(new Bar()), new Bar()).path("bar.name", String.class).size());
+        Assertions.assertEquals(1, Lira.of(new Foo(), new Foo(new Bar()), new Bar()).path("bar.foo.name", String.class).size());
+        Assertions.assertEquals(3, Lira.of(new Foo(), new Foo(new Bar()), new Bar()).path("bar.foo.name", String.class).nullableGet().size());
+
+    }
+
 
     @Test
     void narrow() {
@@ -336,6 +350,8 @@ class LiraTest {
         Lira<Integer> of = Lira.of(1, 2, null);
         Assertions.assertEquals(2, of.get().size());
         Assertions.assertEquals(3, of.nullableGet().size());
+        of = Lira.of(null, 1, 2, null);
+        System.out.println(of.first());
     }
 
     @Test
@@ -605,4 +621,21 @@ class LiraTest {
         }
     }
 
+    static class Bar {
+        String name = "bar";
+        Foo foo = new Foo();
+    }
+
+    static class Foo {
+        Foo() {
+
+        }
+
+        Foo(Bar bar) {
+            this.bar = bar;
+        }
+
+        String name = "foo";
+        Bar bar;
+    }
 }
