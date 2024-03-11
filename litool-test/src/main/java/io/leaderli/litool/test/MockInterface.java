@@ -3,11 +3,15 @@ package io.leaderli.litool.test;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.function.BiFunction;
 
 @SuppressWarnings({"unchecked"})
 public class MockInterface<T> extends BaseMocker<T, Object> {
 
+
+    private BiFunction<Method, Object[], Object> otherInvocationHandler;
 
     MockInterface(Class<T> mockClass) {
         super(mockClass);
@@ -19,9 +23,14 @@ public class MockInterface<T> extends BaseMocker<T, Object> {
         instance = (T) Proxy.newProxyInstance(mockClass.getClassLoader(), new Class[]{mockClass}, invocationHandler);
     }
 
+    public MockInterface<T> otherMethod(BiFunction<Method, Object[], Object> otherInvocationHandler) {
+        this.otherInvocationHandler = otherInvocationHandler;
+        return this;
+    }
+
 
     public T build() {
-        return (T) Proxy.newProxyInstance(mockClass.getClassLoader(), new Class[]{mockClass}, (proxy, method, args) -> getMethodValueOfInterface(method, args));
+        return (T) Proxy.newProxyInstance(mockClass.getClassLoader(), new Class[]{mockClass}, (proxy, method, args) -> getMethodValueOfInterface(method, args, otherInvocationHandler));
     }
 
 

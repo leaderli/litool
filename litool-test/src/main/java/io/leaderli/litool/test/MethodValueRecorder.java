@@ -6,6 +6,7 @@ import io.leaderli.litool.core.type.PrimitiveEnum;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class MethodValueRecorder {
@@ -17,9 +18,16 @@ public abstract class MethodValueRecorder {
         this.mockClass = mockClass;
     }
 
-    protected Object getMethodValueOfInterface(Method m, Object[] args) {
+    protected Object getMethodValueOfInterface(Method m, Object[] args, BiFunction<Method, Object[], Object> otherInvocationHandler) {
 
-        Object apply = getMethodValue(m, args);
+
+        Object apply;
+        if (methodValueMap.containsKey(m)) {
+
+            apply = getMethodValue(m, args);
+        } else {
+            apply = otherInvocationHandler.apply(m, args);
+        }
         if (apply instanceof Either) {
             apply = ((Either<?, ?>) apply).get();
         }
