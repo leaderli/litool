@@ -32,12 +32,12 @@ public class MethodValue<T> {
     }
 
     public void then(T result) {
-        argsFilters.add(LiTuple.of(currentArgsFilter, result));
+        argsFilters.add(0, LiTuple.of(currentArgsFilter, result));
     }
 
 
     public void args(Object[] compareArgs, T result) {
-        argsFilters.add(LiTuple.of(args -> Arrays.equals(args, compareArgs), result));
+        argsFilters.add(0, LiTuple.of(args -> Arrays.equals(args, compareArgs), result));
     }
 
     public void other(T value) {

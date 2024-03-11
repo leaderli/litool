@@ -334,11 +334,16 @@ class LiMockTest {
         supplierMockInterface.function(Supplier::get);
         Supplier<Integer> supplier = supplierMockInterface
                 .consume(Supplier::get)
+                .then(0)
                 .then(1)
                 .build();
 
         Assertions.assertEquals(1, supplier.get());
-
+        supplierMockInterface
+                .consume(Supplier::get)
+                .then(2)
+                .build();
+        Assertions.assertEquals(2, supplier.get());
 
         Function function = LiMock.mockerInterface(Function.class).when(f -> f.apply(1), 1).build();
         Assertions.assertEquals(1, function.apply(1));
