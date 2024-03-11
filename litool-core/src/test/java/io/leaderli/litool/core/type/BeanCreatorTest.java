@@ -2,6 +2,7 @@ package io.leaderli.litool.core.type;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.leaderli.litool.core.lang.lean.LeanKey;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -83,6 +84,10 @@ class BeanCreatorTest {
                 .build().create();
         Assertions.assertEquals("1", foo2.a);
         Assertions.assertEquals("", foo2.b);
+
+        Annotated1 annotated1 = BeanCreator.create(Annotated1.class).populate(LeanKey.class, (bean, field, fieldType) -> "leanKey").build().create();
+        Assertions.assertEquals("leanKey", annotated1.b);
+
     }
 
     static abstract class Foo<T, R> {
@@ -200,6 +205,11 @@ class BeanCreatorTest {
 
     static class Str1 {
         public static String a = "a";
+        public String b;
+    }
+
+    static class Annotated1 {
+        @LeanKey("123")
         public String b;
     }
 }

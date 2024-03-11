@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.type;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -25,13 +26,13 @@ public class BeanCreator<T> {
     private final ConstructorConstructor constructorConstructor;
     private final Map<LiTypeToken<?>, Object> cache;
 
-    private final Map<String, List<FieldValueGetter<?>>> fieldValueGetterMap;
+    private final List<FieldValueGetter<?>> fieldValueGetterList;
 
-    private BeanCreator(LiTypeToken<T> typeToken, ConstructorConstructor constructorConstructor, Map<LiTypeToken<?>, Object> cache, Map<String, List<FieldValueGetter<?>>> fieldValueGetterMap) {
+    private BeanCreator(LiTypeToken<T> typeToken, ConstructorConstructor constructorConstructor, Map<LiTypeToken<?>, Object> cache, List<FieldValueGetter<?>> fieldValueGetterList) {
         this.typeToken = typeToken;
         this.constructorConstructor = constructorConstructor;
         this.cache = cache;
-        this.fieldValueGetterMap = fieldValueGetterMap;
+        this.fieldValueGetterList = fieldValueGetterList;
     }
 
 
@@ -113,12 +114,10 @@ public class BeanCreator<T> {
         Type targetType = TypeUtil.resolve(typeToken.getType(), genericType);
         Class<?> fieldType = TypeUtil.erase(targetType);
 
-        if (fieldValueGetterMap != null) {
-            for (FieldValueGetter valueGetter : fieldValueGetterMap.getOrDefault(field.getName(), new ArrayList<>())) {
-                Object value = valueGetter.getValue(instance, field, fieldType);
-                if (value != null && ClassUtil.isAssignableFromOrIsWrapper(fieldType, value.getClass())) {
-                    return value;
-                }
+        for (FieldValueGetter valueGetter : fieldValueGetterList) {
+            Object value = valueGetter.getValue(instance, field, fieldType);
+            if (value != null && ClassUtil.isAssignableFromOrIsWrapper(fieldType, value.getClass())) {
+                return value;
             }
         }
         Object zero_value = PrimitiveEnum.get(fieldType).zero_value;
@@ -129,7 +128,7 @@ public class BeanCreator<T> {
             return Array.newInstance(fieldType.getComponentType(), 0);
         } else {
             LiTypeToken<?> fieldTypeToken = LiTypeToken.of(fieldType);
-            return new BeanCreator<>(fieldTypeToken, constructorConstructor, cache, this.fieldValueGetterMap).create();
+            return new BeanCreator<>(fieldTypeToken, constructorConstructor, cache, this.fieldValueGetterList).create();
         }
     }
 
@@ -138,7 +137,7 @@ public class BeanCreator<T> {
         private final Map<LiTypeToken<?>, Object> cache = new HashMap<>();
         private final LinkedHashMap<Type, InstanceCreator<?>> head = new LinkedHashMap<>();
         private final LinkedHashMap<Type, InstanceCreator<?>> tail = new LinkedHashMap<>();
-        private final Map<String, List<FieldValueGetter<?>>> fieldValueGetterMap = new HashMap<>();
+        private final List<FieldValueGetter<?>> fieldValueGetterMap = new ArrayList<>();
 
 
         private MockBeanBuilder(LiTypeToken<T> typeToken) {
@@ -161,13 +160,33 @@ public class BeanCreator<T> {
             return this;
         }
 
-        public MockBeanBuilder<T> populate(String name, FieldValueGetter<?> fieldValueGetter) {
-            this.fieldValueGetterMap.computeIfAbsent(name, k -> new ArrayList<>()).add(fieldValueGetter);
+        public MockBeanBuilder<T> populate(Class<? extends Annotation> annotated, FieldValueGetter fieldValueGetter) {
+            this.fieldValueGetterMap.add((bean, field, fieldType) -> {
+                if (field.isAnnotationPresent(annotated)) {
+                    return fieldValueGetter.getValue(bean, field, fieldType);
+                }
+                return null;
+            });
+            return this;
+        }
+
+        public MockBeanBuilder<T> populate(String name, FieldValueGetter fieldValueGetter) {
+            this.fieldValueGetterMap.add((bean, field, fieldType) -> {
+                if (name.equals(field.getName())) {
+                    return fieldValueGetter.getValue(bean, field, fieldType);
+                }
+                return null;
+            });
             return this;
         }
 
         public MockBeanBuilder<T> populate(String name, Object value) {
-            populate(name, (bean, field, fieldType) -> value);
+            this.fieldValueGetterMap.add((bean, field, fieldType) -> {
+                if (name.equals(field.getName())) {
+                    return value;
+                }
+                return null;
+            });
             return this;
         }
 
