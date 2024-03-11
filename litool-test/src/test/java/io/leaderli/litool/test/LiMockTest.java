@@ -331,7 +331,6 @@ class LiMockTest {
     void testWhenInterface() {
         MockInterface<Supplier<Integer>> supplierMockInterface = LiMock.mockerInterface(new LiTypeToken<Supplier<Integer>>() {
         });
-        supplierMockInterface.function(Supplier::get);
         Supplier<Integer> supplier = supplierMockInterface
                 .consume(Supplier::get)
                 .then(0)
@@ -339,6 +338,14 @@ class LiMockTest {
                 .build();
 
         Assertions.assertEquals(1, supplier.get());
+
+
+        supplierMockInterface
+                .function(Supplier::get)
+                .then(2)
+                .build();
+        Assertions.assertEquals(2, supplier.get());
+
         supplierMockInterface
                 .consume(Supplier::get)
                 .then(2)

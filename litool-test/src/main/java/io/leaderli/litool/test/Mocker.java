@@ -24,8 +24,7 @@ public class Mocker extends BaseMockerForBean<Void, Object> {
         throw new UnsupportedOperationException("mocker don't have instance");
     }
 
-    @Override
-    public IMocker function(Function call) {
+    public <R> IMocker function(Function<Void, R> call) {
         throw new UnsupportedOperationException("mocker don't have instance");
     }
 }

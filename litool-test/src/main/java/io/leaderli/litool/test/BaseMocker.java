@@ -31,7 +31,7 @@ public abstract class BaseMocker<T, R> extends MethodValueRecorder implements IM
     }
 
     @Override
-    public <RR> IMocker<T, RR> function(Function<T, R> call) {
+    public <RR> IMocker<T, RR> function(Function<T, RR> call) {
         call.apply(instance);
         return (IMocker<T, RR>) this;
     }

@@ -28,7 +28,7 @@ public class MockBeans<T, R> implements IMocker<T, R> {
     }
 
     @Override
-    public <RR> IMocker<T, RR> function(Function<T, R> call) {
+    public <RR> IMocker<T, RR> function(Function<T, RR> call) {
         mockBeans.forEach(mockBean -> mockBean.function(call));
         return (IMocker<T, RR>) this;
     }

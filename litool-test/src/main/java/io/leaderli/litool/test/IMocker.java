@@ -25,7 +25,7 @@ public interface IMocker<T, R> {
         return (IMocker<T, RR>) this;
     }
 
-    <RR> IMocker<T, RR> function(Function<T, R> call);
+    <RR> IMocker<T, RR> function(Function<T, RR> call);
 
     IMocker<T, R> then(R value);
 
