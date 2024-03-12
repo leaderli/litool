@@ -486,10 +486,9 @@ public class LiMock {
         return new MockInterface<>(mockClass);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> MockInterface<T> mockerInterface(LiTypeToken<T> mockClass) {
-        LiAssertUtil.assertTrue(mockClass.getRawType().isInterface(), "only support interface");
-        return new MockInterface<>((Class<T>) (mockClass.getRawType()));
+    public static <T> MockInterface<T> mockerInterface(LiTypeToken<T> mockType) {
+        LiAssertUtil.assertTrue(mockType.getRawType().isInterface(), "only support interface");
+        return new MockInterface<>(mockType);
     }
 
 
