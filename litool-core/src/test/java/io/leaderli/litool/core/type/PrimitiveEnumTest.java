@@ -4,8 +4,10 @@ import io.leaderli.litool.core.internal.ParameterizedTypeImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * @author leaderli
@@ -60,11 +62,17 @@ class PrimitiveEnumTest {
 
 
     @Test
-    void get() {
+    void get() throws NoSuchMethodException {
 
         Assertions.assertSame(PrimitiveEnum.VOID, PrimitiveEnum.get(void.class));
         Assertions.assertSame(PrimitiveEnum.VOID, PrimitiveEnum.get(Void.class));
         Assertions.assertSame(PrimitiveEnum.OBJECT, PrimitiveEnum.get((Class<?>) null));
+        Assertions.assertSame(PrimitiveEnum.OBJECT, PrimitiveEnum.get(Supplier.class.getGenericSuperclass()));
+        LiTypeToken<Supplier<Integer>> type = new LiTypeToken<Supplier<Integer>>() {
+        };
+        Assertions.assertSame(PrimitiveEnum.OBJECT, PrimitiveEnum.get(type.getRawType()));
+        Type get = TypeUtil.resolve(type, Supplier.class.getMethod("get").getGenericReturnType());
+        Assertions.assertSame(PrimitiveEnum.INT, PrimitiveEnum.get(get));
 
     }
 

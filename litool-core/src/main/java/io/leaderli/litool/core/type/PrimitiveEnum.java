@@ -186,39 +186,43 @@ public enum PrimitiveEnum {
     /**
      * 获取指定类型的PrimitiveEnum实例
      *
-     * @param clazz 类型
+     * @param type 类型
      * @return PrimitiveEnum实例，如果不是基本数据类型或其包装类型，返回 {@link #OBJECT}
      */
-    public static PrimitiveEnum get(Class<?> clazz) {
+    public static PrimitiveEnum get(Type type) {
+        if (!(type instanceof Class)) {
+            return OBJECT;
 
-        clazz = ClassUtil.primitiveToWrapper(clazz);
+        }
 
-        if (clazz == Byte.class) {
+        type = ClassUtil.primitiveToWrapper((Class<?>) type);
+
+        if (type == Byte.class) {
             return BYTE;
         }
-        if (clazz == Boolean.class) {
+        if (type == Boolean.class) {
             return BOOLEAN;
         }
-        if (clazz == Character.class) {
+        if (type == Character.class) {
             return CHAR;
         }
-        if (clazz == Double.class) {
+        if (type == Double.class) {
             return DOUBLE;
         }
-        if (clazz == Float.class) {
+        if (type == Float.class) {
             return FLOAT;
         }
-        if (clazz == Long.class) {
+        if (type == Long.class) {
             return LONG;
         }
-        if (clazz == Integer.class) {
+        if (type == Integer.class) {
             return INT;
         }
 
-        if (clazz == Short.class) {
+        if (type == Short.class) {
             return SHORT;
         }
-        if (clazz == Void.class) {
+        if (type == Void.class) {
             return VOID;
         }
 

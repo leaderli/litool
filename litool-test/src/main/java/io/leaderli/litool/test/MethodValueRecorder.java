@@ -36,7 +36,7 @@ public abstract class MethodValueRecorder {
             apply = ((Either<?, ?>) apply).get();
         }
         if (apply == null) {
-            return PrimitiveEnum.get((Class<?>) TypeUtil.resolve(type, m.getGenericReturnType())).zero_value;
+            return PrimitiveEnum.get(TypeUtil.resolve(type, m.getGenericReturnType())).zero_value;
         }
         return apply;
     }
