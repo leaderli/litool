@@ -1,7 +1,7 @@
 package io.leaderli.litool.test;
 
-import java.lang.reflect.Method;
-import java.util.function.BiFunction;
+import io.leaderli.litool.core.type.MethodFilter;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -31,7 +31,7 @@ public interface IMocker<T, R> {
 
     IMocker<T, R> other(R value);
 
-    IMocker<T, R> other(BiFunction<Method, Object[], R> function);
+    IMocker<T, R> other(MethodProxy<R> function);
 
     default IMocker<T, R> arg0(Object arg) {
         return argx(0, arg);
@@ -51,7 +51,6 @@ public interface IMocker<T, R> {
 
     IMocker<T, R> argx(int x, Object arg);
 
-    T build();
 
     default <RR> IMocker<T, Void> call(RR call, RR result) {
         then((R) result);
@@ -78,20 +77,23 @@ public interface IMocker<T, R> {
         return (IMocker<T, Void>) this;
     }
 
-    default <RR> IMocker<T, Void> other(Function<T, RR> call, BiFunction<Method, Object[], RR> otherValue) {
+    default <RR> IMocker<T, Void> other(Function<T, RR> call, MethodProxy<RR> otherValue) {
         function((Function<T, R>) call);
-        other((BiFunction<Method, Object[], R>) otherValue);
+        other((MethodProxy<R>) otherValue);
         return (IMocker<T, Void>) this;
     }
 
 
-    default <RR> IMocker<T, Void> other(Function<T, RR> call, RR result, BiFunction<Method, Object[], RR> otherValue) {
+    default <RR> IMocker<T, Void> other(Function<T, RR> call, RR result, MethodProxy<RR> otherValue) {
         function((Function<T, R>) call);
         then((R) result);
-        other((BiFunction<Method, Object[], R>) otherValue);
+        other((MethodProxy<R>) otherValue);
         return (IMocker<T, Void>) this;
     }
 
+    IMocker<T, R> mock(MethodFilter methodFilter, MethodProxy<R> methodProxy);
+
+    T build();
 }
 
 

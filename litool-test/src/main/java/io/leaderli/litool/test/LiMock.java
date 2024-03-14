@@ -111,7 +111,7 @@ public class LiMock {
     }
 
 
-    private static Method[] findDeclaredMethods(Class<?> clazz, MethodFilter methodFilter) {
+    public static Method[] findDeclaredMethods(Class<?> clazz, MethodFilter methodFilter) {
         methodFilter.addHead(m -> !(m.isSynthetic() || ModifierUtil.isAbstract(m)));
         return Lira.of(clazz.getDeclaredMethods())
                 .filter(methodFilter)
@@ -193,7 +193,7 @@ public class LiMock {
      * 如果有则返回右值，否则不进行拦截。
      * 函数如果判断不需要拦截直接返回{@link Either#none()}即可。如果方法本身返回的是{@link  Either}需要额外对在函数中额外包一层{@link  Either}。
      */
-    public static void mock(Class<?> mockClass, MethodFilter methodFilter, MethodProxy methodProxy, boolean detach) {
+    public static void mock(Class<?> mockClass, MethodFilter methodFilter, MethodProxy<?> methodProxy, boolean detach) {
         try {
             backup(mockClass);
             if (detach) {
@@ -229,7 +229,7 @@ public class LiMock {
      *
      * @see #mock(Class, MethodFilter, MethodProxy, boolean)
      */
-    public static void mock(Class<?> mockClass, MethodFilter methodFilter, MethodProxy methodProxy) {
+    public static void mock(Class<?> mockClass, MethodFilter methodFilter, MethodProxy<?> methodProxy) {
         mock(mockClass, methodFilter, methodProxy, true);
     }
 
@@ -269,7 +269,7 @@ public class LiMock {
      *
      * @see #mockStatic(Class, MethodFilter, MethodProxy, boolean)
      */
-    public static void mockStatic(Class<?> mockClass, MethodFilter methodFilter, MethodProxy methodProxy) {
+    public static void mockStatic(Class<?> mockClass, MethodFilter methodFilter, MethodProxy<?> methodProxy) {
         mock(mockClass, methodFilter.addHead(ModifierUtil::isStatic), methodProxy);
     }
 
@@ -278,7 +278,7 @@ public class LiMock {
      *
      * @see #mock(Class, MethodFilter, MethodProxy, boolean)
      */
-    public static void mockStatic(Class<?> mockClass, MethodFilter methodFilter, MethodProxy methodProxy, boolean detach) {
+    public static void mockStatic(Class<?> mockClass, MethodFilter methodFilter, MethodProxy<?> methodProxy, boolean detach) {
         mock(mockClass, methodFilter.addHead(ModifierUtil::isStatic), methodProxy, detach);
     }
 

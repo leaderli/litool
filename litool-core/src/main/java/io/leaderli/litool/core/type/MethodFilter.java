@@ -3,6 +3,7 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.function.Chain;
 import io.leaderli.litool.core.function.Filter;
 import io.leaderli.litool.core.lang.FilterChain;
+import io.leaderli.litool.core.text.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -33,6 +34,10 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
 
     public static MethodFilter name(String name) {
         return new MethodFilter().add(m -> m.getName().equals(name));
+    }
+
+    public static MethodFilter names(String... names) {
+        return new MethodFilter().add(m -> StringUtils.equalsAny(m.getName(), names));
     }
 
     public static MethodFilter isPublic() {
@@ -120,6 +125,12 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
             methodFilter.add(m -> m.getDeclaringClass() == declare);
             return this;
         }
+
+        public Builder names(String... names) {
+            methodFilter.add(m -> StringUtils.equalsAny(m.getName(), names));
+            return this;
+        }
+
 
         public Builder parameterType(Class<?>[] parameterTypes) {
             methodFilter.add(m -> Arrays.equals(m.getParameterTypes(), parameterTypes));

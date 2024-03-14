@@ -9,13 +9,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
 
 public class MethodValue<T> {
     private final Method method;
     private final PrimitiveEnum primitive;
     private final List<LiTuple<Filter<Object[]>, T>> argsFilters = new ArrayList<>();
-    private BiFunction<Method, Object[], T> otherFunction;
+    private MethodProxy<T> otherFunction;
     private Filter<Object[]> currentArgsFilter;
 
     MethodValue(Method method) {
@@ -44,8 +43,8 @@ public class MethodValue<T> {
         this.otherFunction = (m, args) -> value;
     }
 
-    public void other(BiFunction<Method, Object[], T> otherValue) {
-        this.otherFunction = otherValue;
+    public void otherFunction(MethodProxy<T> otherFunction) {
+        this.otherFunction = otherFunction;
     }
 
     public Object getMethodValue(Object[] args) {
@@ -56,7 +55,11 @@ public class MethodValue<T> {
         }
 
         if (otherFunction != null) {
-            return primitive.read(otherFunction.apply(method, args));
+            try {
+                return primitive.read(otherFunction.apply(method, args));
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
         }
         return Either.none();
     }

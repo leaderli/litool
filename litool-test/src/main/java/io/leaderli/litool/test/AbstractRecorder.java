@@ -76,6 +76,13 @@ public class AbstractRecorder<T> {
         return (T) this;
     }
 
+    public T record(MethodFilter methodFilter, MethodAssert methodAssert) {
+        for (Method declaredMethod : LiMock.findDeclaredMethods(mockClass, methodFilter)) {
+            methodAsserts.computeIfAbsent(declaredMethod, k -> new ArrayList<>()).add(methodAssert);
+        }
+        return (T) this;
+    }
+
     protected void add(MethodAssert methodAssert) {
         if (currentMethod == null) {
             throw new IllegalStateException("method may not called , or it's abstract");

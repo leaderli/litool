@@ -2,9 +2,9 @@ package io.leaderli.litool.test;
 
 import java.lang.reflect.Method;
 
-public interface MethodProxy {
+public interface MethodProxy<T> {
 
 
-    Object apply(Method method, Object[] args) throws Throwable;
+    T apply(Method method, Object[] args) throws Throwable;
 
 }

@@ -184,6 +184,17 @@ class LiMockTest {
 
     }
 
+    @Test
+    void testMockBeanAll() {
+        LiMock.mocker(Error.class)
+                .mock(MethodFilter.isMethod(), (method, args) -> 1)
+                .build();
+        Assertions.assertEquals(1, Error.m1());
+        Assertions.assertEquals(1, Error.m1(Integer.MAX_VALUE));
+        Assertions.assertEquals(1, Error.m3());
+        Assertions.assertEquals(1, Error.m4());
+    }
+
     @LiTest
     void testWhen() {
         LiMock.mocker(Error.class).call(Error.m1(1)).then(11).other(12).build();
@@ -484,6 +495,18 @@ class LiMockTest {
         Bean bean = new Bean();
         bean.m1();
         Assertions.assertEquals("m1", box.value().getName());
+
+    }
+
+    @Test
+    void testRecordRecord() {
+        LiMock.recorder(Bean.class).record(MethodFilter.isMethod(), (method, args, _return) -> Recorder.recordMethodCall.add(method)).build();
+        Bean bean = new Bean();
+        bean.m1();
+        bean.m1(1);
+        bean.m3();
+        bean.m4();
+
 
     }
 

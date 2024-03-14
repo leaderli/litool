@@ -1,11 +1,10 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.type.MethodFilter;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -43,7 +42,7 @@ public class MockBeans<T, R> implements IMocker<T, R> {
         return this;
     }
 
-    public IMocker<T, R> other(BiFunction<Method, Object[], R> function) {
+    public IMocker<T, R> other(MethodProxy<R> function) {
         mockBeans.forEach(mockBean -> mockBean.other(function));
         return this;
     }
@@ -51,6 +50,12 @@ public class MockBeans<T, R> implements IMocker<T, R> {
     @Override
     public IMocker<T, R> argx(int x, Object arg) {
         mockBeans.forEach(mockBean -> mockBean.argx(x, arg));
+        return this;
+    }
+
+    @Override
+    public IMocker<T, R> mock(MethodFilter methodFilter, MethodProxy<R> methodProxy) {
+        mockBeans.forEach(mockBean -> mockBean.mock(methodFilter, methodProxy));
         return this;
     }
 

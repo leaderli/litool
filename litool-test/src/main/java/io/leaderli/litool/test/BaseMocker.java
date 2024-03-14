@@ -2,10 +2,10 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.function.Filter;
+import io.leaderli.litool.core.type.MethodFilter;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -51,9 +51,20 @@ public abstract class BaseMocker<T, R> extends MethodValueRecorder implements IM
     }
 
     @SuppressWarnings("unchecked")
-    public IMocker<T, R> other(BiFunction<Method, Object[], R> function) {
+    public IMocker<T, R> other(MethodProxy function) {
         LiAssertUtil.assertNotNull(currentMethodValue, IllegalStateException::new);
-        currentMethodValue.other(function);
+        currentMethodValue.otherFunction(function);
         return this;
     }
+
+    public IMocker<T, R> mock(MethodFilter methodFilter, MethodProxy otherFunction) {
+
+        for (Method declaredMethod : LiMock.findDeclaredMethods(mockClass, methodFilter)) {
+            methodValueMap.computeIfAbsent(declaredMethod, MethodValue::new).otherFunction(otherFunction);
+
+        }
+        return this;
+
+    }
+
 }
