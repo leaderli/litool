@@ -49,6 +49,8 @@ public abstract class MethodValueRecorder {
             }
             returnValue = ((Either<?, ?>) returnValue).getRight();
         }
+
+        // 尝试将泛型返回类型解析为实际类型
         Class<?> returnType = TypeUtil.erase(TypeUtil.resolve(clazz, genericReturnType));
         if (returnValue == null) {
             return Either.right(PrimitiveEnum.get(returnType).zero_value);
