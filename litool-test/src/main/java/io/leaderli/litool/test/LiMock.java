@@ -416,6 +416,7 @@ public class LiMock {
     }
 
     public static void reset() {
+        Recorder.recordMethodCall.clear();
         originClasses.forEach((k, v) -> {
             try {
                 detach(k);
