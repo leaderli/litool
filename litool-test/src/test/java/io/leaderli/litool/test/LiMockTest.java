@@ -154,9 +154,9 @@ class LiMockTest {
 
     @LiTest
     void testGetInvoke() {
-        MockMethodInvoker.invokers.clear();
+        MethodValueRecorder.invokers.clear();
         LiMock.mockStatic(Error.class, MethodFilter.isMethod(), (method, args) -> 100);
-        Assertions.assertEquals(4, MockMethodInvoker.invokers.size());
+        Assertions.assertEquals(4, MethodValueRecorder.invokers.size());
     }
 
     @LiTest
@@ -528,6 +528,31 @@ class LiMockTest {
 
         Assertions.assertThrows(Throwable.class, LiMock::assertDoesNotThrow);
 
+    }
+
+    @Test
+    void testReturnType() {
+        LiMock.mock(Error.class, MethodFilter.isMethod(), (m, args) -> null);
+        Assertions.assertEquals(0, Error.m1());
+        LiMock.mock(Error.class, MethodFilter.isMethod(), (m, args) -> "");
+        Assertions.assertEquals(1, Error.m1());
+        LiMock.mock(Error.class, MethodFilter.isMethod(), (m, args) -> Either.right(""));
+        Assertions.assertEquals(1, Error.m1());
+        Supplier<Integer> supplier = LiMock.mockerInterface(new LiTypeToken<Supplier<Integer>>() {
+                })
+                .mock(MethodFilter.isMethod(), (m, args) -> null)
+                .build();
+        Assertions.assertEquals(0, supplier.get());
+        supplier = LiMock.mockerInterface(new LiTypeToken<Supplier<Integer>>() {
+                })
+                .mock(MethodFilter.isMethod(), (m, args) -> "")
+                .build();
+        Assertions.assertEquals(0, supplier.get());
+        supplier = LiMock.mockerInterface(new LiTypeToken<Supplier<Integer>>() {
+                })
+                .mock(MethodFilter.isMethod(), (m, args) -> Either.right(""))
+                .build();
+        Assertions.assertEquals(0, supplier.get());
     }
 
     @Test
