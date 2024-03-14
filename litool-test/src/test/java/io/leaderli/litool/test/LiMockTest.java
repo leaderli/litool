@@ -14,6 +14,7 @@ import org.opentest4j.AssertionFailedError;
 
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -322,7 +323,6 @@ class LiMockTest {
         Assertions.assertEquals(100, supplier.get());
         Assertions.assertEquals(100, new Supplier1().get());
         Assertions.assertEquals(100, new Supplier2().get());
-//
     }
 
     @Test
@@ -334,7 +334,6 @@ class LiMockTest {
         Assertions.assertEquals(100, supplier.get());
         Assertions.assertEquals(100, new Supplier1().get());
         Assertions.assertEquals(100, new Supplier2().get());
-//
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -498,15 +497,20 @@ class LiMockTest {
 
     }
 
-    @Test
+    @LiTest
     void testRecordRecord() {
-        LiMock.recorder(Bean.class).record(MethodFilter.isMethod(), (method, args, _return) -> Recorder.recordMethodCall.add(method)).build();
+        Method[] declaredMethods = LiMock.findDeclaredMethods(Bean.class, MethodFilter.isMethod());
+        Recorder.recordMethodCall.addAll(Arrays.asList(declaredMethods));
+        Assertions.assertThrows(AssertionFailedError.class, LiMock::assertMethodCalled);
+        LiMock.recorder(Bean.class)
+                .record(MethodFilter.isMethod(), (method, args, _return) -> Recorder.actualMethodCall.add(method))
+                .build();
         Bean bean = new Bean();
         bean.m1();
         bean.m1(1);
         bean.m3();
         bean.m4();
-
+        Assertions.assertDoesNotThrow(LiMock::assertMethodCalled);
 
     }
 

@@ -9,6 +9,7 @@ class LiMock_5_Test {
     void testRecordCall() {
         LiMock.recorder(Error5.class).when(Error5.m1()).called().build();
         Assertions.assertThrows(Throwable.class, () -> new LiMockAfterEachCallback().afterEach(null));
+        new LiMockBeforeEachCallback().beforeEach(null);
         Assertions.assertDoesNotThrow(() -> new LiMockAfterEachCallback().afterEach(null));
     }
 

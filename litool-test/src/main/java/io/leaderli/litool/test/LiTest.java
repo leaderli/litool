@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@ExtendWith({LiMockAfterEachCallback.class, LiParameterResolver.class})
+@ExtendWith({LiMockBeforeEachCallback.class, LiMockAfterEachCallback.class, LiParameterResolver.class})
 @Test
 public @interface LiTest {
 }
