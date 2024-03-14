@@ -94,7 +94,7 @@ public interface IMocker<T, R> {
     IMocker<T, R> mock(MethodFilter methodFilter, MethodProxy<R> methodProxy);
 
     default <RR> IMocker<T, R> mock(Class<RR> returnType, MethodProxy<RR> methodProxy) {
-        mock(MethodFilter.returnType(returnType), (MethodProxy<R>) methodProxy);
+        ((IMocker<T, RR>) this).mock(MethodFilter.returnType(returnType), methodProxy);
         return this;
     }
 

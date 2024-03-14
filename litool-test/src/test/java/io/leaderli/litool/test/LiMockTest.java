@@ -140,6 +140,7 @@ class LiMockTest {
 
     }
 
+
     @Test
     void testMockReset() {
         LiMock.mockStatic(Error.class, MethodFilter.name("m1"), (method, args) -> 100, false);
@@ -553,6 +554,16 @@ class LiMockTest {
                 .mock(MethodFilter.isMethod(), (m, args) -> Either.right(""))
                 .build();
         Assertions.assertEquals(0, supplier.get());
+
+
+        LiMock.mocker(Error.class).mock(String.class, (m, args) -> "100").build();
+        Assertions.assertEquals(1, Error.m1());
+        LiMock.mocker(Error.class).mock(int.class, (m, args) -> 100).build();
+        Assertions.assertEquals(100, Error.m1());
+        Assertions.assertEquals(100, Error.m1(1));
+        Assertions.assertEquals(100, Error.m3());
+        Assertions.assertEquals(100, Error.m4());
+
     }
 
     @Test
