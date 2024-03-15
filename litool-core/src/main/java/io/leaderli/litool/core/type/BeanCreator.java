@@ -144,6 +144,14 @@ public class BeanCreator<T> {
             this.typeToken = typeToken;
         }
 
+        public <R> MockBeanBuilder<R> type(Class<R> clazz) {
+            MockBeanBuilder<R> mockBeanBuilder = new MockBeanBuilder<>(LiTypeToken.of(clazz));
+            mockBeanBuilder.cache.putAll(cache);
+            mockBeanBuilder.head.putAll(head);
+            mockBeanBuilder.tail.putAll(tail);
+            mockBeanBuilder.fieldValueGetterMap.addAll(fieldValueGetterMap);
+            return mockBeanBuilder;
+        }
 
         public <R> MockBeanBuilder<T> head(Class<R> clazz, InstanceCreator<R> instanceCreator) {
             this.head.put(clazz, instanceCreator);

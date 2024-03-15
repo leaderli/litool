@@ -60,13 +60,15 @@ class BeanCreatorTest {
 
         Assertions.assertEquals(MockMap.class, BeanCreator.create(Map.class).head(MockMap.class, t -> new MockMap<>()).build().create().getClass());
 
-        Assertions.assertNotNull(
-                BeanCreator.create(AbstractFoo.class).cache(AbstractFoo.class, new AbstractFoo() {
-                    @Override
-                    public void m1() {
+        BeanCreator.MockBeanBuilder<AbstractFoo> beanCreatorBuild = BeanCreator.create(AbstractFoo.class).cache(AbstractFoo.class, new AbstractFoo() {
+            @Override
+            public void m1() {
 
-                    }
-                }).build().create());
+            }
+        });
+        Assertions.assertNotNull(beanCreatorBuild.build().create());
+
+        Assertions.assertNotNull(beanCreatorBuild.type(Foo3.class).build().create().foo);
 
         Foo2 foo2 = BeanCreator.create(Foo2.class).populate("b", (b, f, t) -> {
             if (f.getName().equals("b")) {
@@ -192,6 +194,10 @@ class BeanCreatorTest {
 
     abstract static class AbstractFoo {
         public abstract void m1();
+    }
+
+    static class Foo3 {
+        AbstractFoo foo;
     }
 
     static class Foo2 {
