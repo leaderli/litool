@@ -190,6 +190,12 @@ class LiMockTest {
     void testMockBeanAll() {
         LiMock.mocker(Error.class)
                 .mock(MethodFilter.isMethod(), (method, args) -> 1)
+                .mock(MethodFilter.isMethod(), (method, args) -> 1)
+                .build();
+        MockBean<Error, Void> errorVoidMockBean = LiMock.mockerBean(Error.class);
+        errorVoidMockBean
+                .mock(MethodFilter.isMethod(), (method, args) -> 1)
+                .mock(MethodFilter.isMethod(), (method, args) -> 1)
                 .build();
         Assertions.assertEquals(1, Error.m1());
         Assertions.assertEquals(1, Error.m1(Integer.MAX_VALUE));
