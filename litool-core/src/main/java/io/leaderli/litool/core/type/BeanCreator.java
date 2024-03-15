@@ -168,7 +168,7 @@ public class BeanCreator<T> {
             return this;
         }
 
-        public MockBeanBuilder<T> populate(Class<? extends Annotation> annotated, FieldValueGetter fieldValueGetter) {
+        public MockBeanBuilder<T> annotated(Class<? extends Annotation> annotated, FieldValueGetter fieldValueGetter) {
             this.fieldValueGetterMap.add((bean, field, fieldType) -> {
                 if (field.isAnnotationPresent(annotated)) {
                     return fieldValueGetter.getValue(bean, field, fieldType);
@@ -198,6 +198,15 @@ public class BeanCreator<T> {
             return this;
         }
 
+        public <R> MockBeanBuilder<T> populate(Class<R> type, R value) {
+            this.fieldValueGetterMap.add((bean, field, fieldType) -> {
+                if (ClassUtil.isInstanceof(value, field.getType())) {
+                    return value;
+                }
+                return null;
+            });
+            return this;
+        }
 
         public BeanCreator<T> build() {
             ConstructorConstructor constructorConstructor = new ConstructorConstructor(head, tail);

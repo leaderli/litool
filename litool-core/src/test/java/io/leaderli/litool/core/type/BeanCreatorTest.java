@@ -87,8 +87,13 @@ class BeanCreatorTest {
         Assertions.assertEquals("1", foo2.a);
         Assertions.assertEquals("", foo2.b);
 
-        Annotated1 annotated1 = BeanCreator.create(Annotated1.class).populate(LeanKey.class, (bean, field, fieldType) -> "leanKey").build().create();
+        Annotated1 annotated1 = BeanCreator.create(Annotated1.class).annotated(LeanKey.class, (bean, field, fieldType) -> "leanKey").build().create();
         Assertions.assertEquals("leanKey", annotated1.b);
+        foo2 = BeanCreator.create(Foo2.class).populate(int.class, 1).build().create();
+        Assertions.assertEquals("", foo2.a);
+        Assertions.assertEquals("", foo2.b);
+        Assertions.assertEquals(1, foo2.c);
+
 
     }
 
@@ -203,6 +208,7 @@ class BeanCreatorTest {
     static class Foo2 {
         private String a;
         private String b;
+        private Integer c;
     }
 
     static class MockMap<K, V> extends HashMap<K, V> {
