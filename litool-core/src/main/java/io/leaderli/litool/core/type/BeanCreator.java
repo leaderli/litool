@@ -208,6 +208,11 @@ public class BeanCreator<T> {
             return this;
         }
 
+        public <R> MockBeanBuilder<T> populate(FieldValueGetter fieldValueGetter) {
+            this.fieldValueGetterMap.add(fieldValueGetter);
+            return this;
+        }
+
         public BeanCreator<T> build() {
             ConstructorConstructor constructorConstructor = new ConstructorConstructor(head, tail);
             for (PrimitiveEnum primitive : PrimitiveEnum.PRIMITIVES) {

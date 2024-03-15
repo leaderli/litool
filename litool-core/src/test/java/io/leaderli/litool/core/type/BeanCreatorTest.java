@@ -94,6 +94,15 @@ class BeanCreatorTest {
         Assertions.assertEquals("", foo2.b);
         Assertions.assertEquals(1, foo2.c);
 
+        foo2 = BeanCreator.create(Foo2.class).populate((bean, field, fieldType) -> {
+            if (fieldType == Integer.class) {
+                return 10;
+            }
+            return null;
+        }).build().create();
+        Assertions.assertEquals("", foo2.a);
+        Assertions.assertEquals("", foo2.b);
+        Assertions.assertEquals(10, foo2.c);
 
     }
 
