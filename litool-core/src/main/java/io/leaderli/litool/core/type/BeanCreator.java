@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * mock a bean, and will recursive set bean field with a default value.
@@ -27,11 +28,14 @@ public class BeanCreator<T> {
     private final Map<LiTypeToken<?>, Object> cache;
 
     private final List<FieldValueGetter<?>> fieldValueGetterList;
+    private final Map<LiTypeToken<?>, List<Consumer<?>>> afterCreate;
 
-    private BeanCreator(LiTypeToken<T> typeToken, ConstructorConstructor constructorConstructor, Map<LiTypeToken<?>, Object> cache, List<FieldValueGetter<?>> fieldValueGetterList) {
+    private BeanCreator(LiTypeToken<T> typeToken, ConstructorConstructor constructorConstructor, Map<LiTypeToken<?>, Object> cache, Map<LiTypeToken<?>, List<Consumer<?>>> afterCreate, List<FieldValueGetter<?>> fieldValueGetterList) {
         this.typeToken = typeToken;
         this.constructorConstructor = constructorConstructor;
         this.cache = cache;
+        this.afterCreate = afterCreate;
+        this.afterCreate.putIfAbsent(this.typeToken, new ArrayList<>());
         this.fieldValueGetterList = fieldValueGetterList;
     }
 
@@ -54,8 +58,14 @@ public class BeanCreator<T> {
     }
 
 
-    @SuppressWarnings("unchecked")
     public T create() {
+        T create = create0();
+        afterCreate.get(typeToken).forEach(c -> ((Consumer<T>) c).accept(create));
+        return create;
+    }
+
+    @SuppressWarnings("unchecked")
+    private T create0() {
 
         if (cache.containsKey(typeToken)) {
             return (T) cache.get(typeToken);
@@ -128,9 +138,10 @@ public class BeanCreator<T> {
             return Array.newInstance(fieldType.getComponentType(), 0);
         } else {
             LiTypeToken<?> fieldTypeToken = LiTypeToken.of(fieldType);
-            return new BeanCreator<>(fieldTypeToken, constructorConstructor, cache, this.fieldValueGetterList).create();
+            return new BeanCreator<>(fieldTypeToken, constructorConstructor, cache, afterCreate, this.fieldValueGetterList).create();
         }
     }
+
 
     public static class MockBeanBuilder<T> {
         private final LiTypeToken<T> typeToken;
@@ -138,6 +149,7 @@ public class BeanCreator<T> {
         private final LinkedHashMap<Type, InstanceCreator<?>> head = new LinkedHashMap<>();
         private final LinkedHashMap<Type, InstanceCreator<?>> tail = new LinkedHashMap<>();
         private final List<FieldValueGetter<?>> fieldValueGetterMap = new ArrayList<>();
+        private final Map<LiTypeToken<?>, List<Consumer<?>>> afterCreate = new HashMap<>();
 
 
         private MockBeanBuilder(LiTypeToken<T> typeToken) {
@@ -198,6 +210,11 @@ public class BeanCreator<T> {
             return this;
         }
 
+        public <R> MockBeanBuilder<T> afterCreate(Class<R> clazz, Consumer<R> consumer) {
+            afterCreate.computeIfAbsent(LiTypeToken.of(clazz), k -> new ArrayList<>()).add(consumer);
+            return this;
+        }
+
         public <R> MockBeanBuilder<T> populate(Class<R> type, R value) {
             this.fieldValueGetterMap.add((bean, field, fieldType) -> {
                 if (ClassUtil.isInstanceof(value, field.getType())) {
@@ -220,7 +237,7 @@ public class BeanCreator<T> {
                 cache.put(LiTypeToken.of(primitive.wrapper), primitive.zero_value);
             }
             cache.put(LiTypeToken.of(String.class), "");
-            return new BeanCreator<>(typeToken, constructorConstructor, cache, fieldValueGetterMap);
+            return new BeanCreator<>(typeToken, constructorConstructor, cache, afterCreate, fieldValueGetterMap);
         }
     }
 }

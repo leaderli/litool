@@ -25,6 +25,16 @@ class BeanCreatorTest {
 
     }
 
+    @Test
+    void testAfterCreate() {
+        Str1 str1 = BeanCreator.create(Str1.class)
+                .afterCreate(Str1.class, s -> s.b = "b")
+                .build()
+                .create();
+        Assertions.assertEquals("a", Str1.a);
+        Assertions.assertEquals("b", str1.b);
+    }
+
     @SuppressWarnings("rawtypes")
     @Test
     void test() {
