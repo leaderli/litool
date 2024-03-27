@@ -63,7 +63,9 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
             } else if (PrimitiveEnum.get(source) == PrimitiveEnum.OBJECT) {
                 for (Field field : ReflectUtil.getFields(source.getClass()).filter(f -> !ModifierUtil.isStatic(f))) {
                     Object v = ReflectUtil.getFieldValue(source, field).get();
-                    handle(lean, map, field.getName(), v);
+                    if (v != source) { // 避免递归，但不能解决循环引用
+                        handle(lean, map, field.getName(), v);
+                    }
                 }
             }
 
