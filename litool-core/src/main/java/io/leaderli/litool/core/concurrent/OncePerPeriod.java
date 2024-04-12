@@ -54,4 +54,26 @@ public class OncePerPeriod {
         return executeOnce(runnable, false);
     }
 
+    public boolean shouldExecute() {
+        return shouldExecute(false);
+    }
+
+    public boolean shouldExecute(boolean sync) {
+        long now = System.currentTimeMillis();
+        if (sync) {
+            synchronized (this) {
+                return now - lastExecutedAt > period;
+            }
+        } else {
+            return now - lastExecutedAt > period;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "OncePerPeriod{" +
+                "period=" + period +
+                ", lastExecutedAt=" + lastExecutedAt +
+                '}';
+    }
 }
