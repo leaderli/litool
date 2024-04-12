@@ -28,5 +28,9 @@ class OncePerPeriodTest {
         Assertions.assertTrue(oncePerPeriod.shouldExecute());
         oncePerPeriod.executeOnce(num::incrementAndGet);
         Assertions.assertEquals(2, num.get());
+        ThreadUtil.sleep(20);
+        Assertions.assertTrue(oncePerPeriod.shouldExecute());
+        oncePerPeriod.setToNow();
+        Assertions.assertFalse(oncePerPeriod.shouldExecute());
     }
 }

@@ -58,6 +58,10 @@ public class OncePerPeriod {
         return shouldExecute(false);
     }
 
+    public void setToNow() {
+        this.lastExecutedAt = System.currentTimeMillis();
+    }
+
     public boolean shouldExecute(boolean sync) {
         long now = System.currentTimeMillis();
         if (sync) {
