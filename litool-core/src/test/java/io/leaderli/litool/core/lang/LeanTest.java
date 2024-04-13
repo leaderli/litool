@@ -30,11 +30,19 @@ class LeanTest {
 
         Lean lean = new Lean();
 
+
         Map map = lean.fromBean(bean1, Map.class);
         Assertions.assertInstanceOf(Map.class, map.get("bean"));
         Assertions.assertInstanceOf(List.class, map.get("beans"));
         List list = (List) map.get("beans");
         Assertions.assertInstanceOf(HashMap.class, list.get(0));
+        // 测试简单的递归调用
+        bean1.bean = bean1;
+        map = lean.fromBean(bean1, Map.class);
+        Assertions.assertNull(map.get("bean"));
+        map.put("bean", map);
+        bean1 = lean.fromBean(map, Bean1.class);
+        System.out.println(gson.toJson(bean1));
 
         map.clear();
         map.put(1, 1);

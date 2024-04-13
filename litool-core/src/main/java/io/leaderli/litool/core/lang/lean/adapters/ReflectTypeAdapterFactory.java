@@ -88,6 +88,7 @@ public class ReflectTypeAdapterFactory implements TypeAdapterFactory {
                     .get(() -> lean.getTypeAdapter(targetType));
 
             BeanPath.simple(source, key)
+                    .filter(v -> v != source) // 避免递归，但不能解决循环引用
                     .map(fv -> typeAdapter.read(fv, lean))
                     .or(() -> typeAdapter.read(lean))
                     .ifPresent(v -> ReflectUtil.setFieldValue(target, field, v));
