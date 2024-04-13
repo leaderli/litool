@@ -320,6 +320,11 @@ class LiraTest {
     }
 
     @Test
+    void zilter() {
+        Assertions.assertTrue(Lira.of("123", null).zilter(l -> l.map(z -> z.length() > 3).get()).get().isEmpty());
+    }
+
+    @Test
     void reduce() {
 
         Assertions.assertEquals(6, Lira.of(1, 2, 3).reduce(Integer::sum).get());

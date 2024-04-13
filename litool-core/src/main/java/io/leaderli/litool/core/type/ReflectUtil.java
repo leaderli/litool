@@ -657,6 +657,11 @@ public class ReflectUtil {
         throw new LiraRuntimeException("can not proxy method " + originMethod);
     }
 
+    /**
+     * 0 表示方法参数无继承关系
+     * 1 表示方法参数位数相同，参数可用于被代理的方法
+     * 2 表示方法参数位数比被代理方法多一个，且最后一个参数为Method，参数可用于被代理的方法
+     */
     private static int parameterTypeCovariant(Method origin, Method runtimeMethod) {
 
         if (origin.getParameterCount() == runtimeMethod.getParameterCount()) {

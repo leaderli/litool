@@ -268,6 +268,16 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     Lino<T> filter(Function<? super T, ?> filter);
 
     /**
+     * 优化后的代码，Lino类的过滤方法，用于过滤集合中的元素
+     *
+     * @param filter 过滤函数，需要传入Function类型的参数，用于指定过滤条件
+     * @return 若过滤函数的返回值经过BooleanUtil.parse(Object)方法转换后为true，则返回当前Lino对象
+     * 否则返回 {@link #none()}
+     * @see BooleanUtil#parse(Object)
+     */
+    Lino<T> zilter(Function<Lino<T>, ?> filter);
+
+    /**
      * @return 返回值
      */
     @Override
@@ -591,6 +601,12 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
+        public Lino<T> zilter(Function<Lino<T>, ?> filter) {
+            Objects.requireNonNull(filter);
+            return BooleanUtil.parse(filter.apply(this)) ? this : Lino.none();
+        }
+
+        @Override
         public T get() {
             return value;
         }
@@ -807,6 +823,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public Lino<T> filter(Function<? super T, ?> filter) {
+            return this;
+        }
+
+        @Override
+        public Lino<T> zilter(Function<Lino<T>, ?> filter) {
             return this;
         }
 

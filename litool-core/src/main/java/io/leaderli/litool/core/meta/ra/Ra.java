@@ -55,9 +55,12 @@ public abstract class Ra<T> implements Lira<T> {
     @Override
     public Lira<T> filter(Function<? super T, ?> filter) {
         return new FilterRa<>(this, filter);
-
     }
 
+    @Override
+    public Lira<T> zilter(Function<Lino<T>, ?> filter) {
+        return new ZilterRa<>(this, filter);
+    }
     @Override
     public Lira<T> filter_null() {
         return filter(v -> true);

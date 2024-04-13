@@ -245,6 +245,17 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
     Lira<T> filter(Function<? super T, ?> filter);
 
     /**
+     * 过滤Lira中的元素，如果Function.apply(Object)的结果通过BooleanUtil.parse(Boolean)解析为true，则保留该元素
+     * <p>
+     * 默认情况下，null元素将被删除，除非过滤器是NullableFunction的实例
+     *
+     * @param filter 过滤函数
+     * @return 返回一个新的Lira
+     * @see BooleanUtil#parse(Object)
+     */
+    Lira<T> zilter(Function<Lino<T>, ?> filter);
+
+    /**
      * 删除null元素
      *
      * @return 返回一个新的Lira

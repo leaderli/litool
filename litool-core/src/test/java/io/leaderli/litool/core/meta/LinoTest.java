@@ -167,6 +167,17 @@ class LinoTest {
     }
 
     @Test
+    void zilter() {
+
+        Map<Object, Object> map = new HashMap<>();
+
+        map.put("a", new HashMap<>());
+        Assertions.assertNotNull(Lino.of(map).zilter(m -> m.map(z -> z.get("a"))).get());
+        Assertions.assertNull(Lino.of(map).zilter(m -> m.map(z -> z.get("b"))).get());
+
+    }
+
+    @Test
     void same() {
         Assertions.assertTrue(Lino.of("1").contain("1").present());
         Assertions.assertTrue(Lino.of("2").contain("1").absent());

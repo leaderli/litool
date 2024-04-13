@@ -526,11 +526,11 @@ class LiMockTest {
     void testRecordInLira() {
 
         System.setErr(IOUtils.emptyPrintStream());
-        Lira1 lira1 = new Lira1();
-        Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 3).mapIgnoreError(lira1::m1).get());
-        LiMock.recorder(Lira1.class).when(lira1.m1(1)).assertReturn(100).build();
+        Bean11 bean11 = new Bean11();
+        Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 3).mapIgnoreError(bean11::m1).get());
+        LiMock.recorder(Bean11.class).when(bean11.m1(1)).assertReturn(100).build();
         Assertions.assertDoesNotThrow(() -> {
-            Lira.of(1, 2, 3).mapIgnoreError(lira1::m1).get();
+            Lira.of(1, 2, 3).mapIgnoreError(bean11::m1).get();
         });
 
         Assertions.assertThrows(Throwable.class, LiMock::assertDoesNotThrow);
@@ -786,7 +786,7 @@ class LiMockTest {
         }
     }
 
-    static class Lira1 {
+    static class Bean11 {
         int m1(int a) {
             return a;
         }
