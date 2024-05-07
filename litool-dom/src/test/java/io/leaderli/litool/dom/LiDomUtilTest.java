@@ -89,6 +89,15 @@ class LiDomUtilTest {
 //        LiDomUtil.prettyPrint(dom);
     }
 
+
+    @Test
+    void testCdata() throws DocumentException {
+        DOMElement dom = LiDomUtil.getDOMRootByPath("/cdata.xml");
+
+        Assertions.assertEquals("<t1>1</t1>", dom.getTextTrim());
+
+    }
+
     private static class Visitor {
         void visit(DOMElement dom) {
 
