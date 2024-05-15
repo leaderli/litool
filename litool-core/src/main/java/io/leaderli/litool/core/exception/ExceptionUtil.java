@@ -3,6 +3,9 @@ package io.leaderli.litool.core.exception;
 import io.leaderli.litool.core.io.StringWriter;
 import io.leaderli.litool.core.text.StringUtils;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 /**
  * @author leaderli
  * @since 2022/8/7
@@ -76,4 +79,19 @@ public class ExceptionUtil {
 
     }
 
+    public static <T> T supplier(Supplier<? extends T> supplier, T def) {
+        try {
+            return supplier.get();
+        } catch (Throwable ignore) {
+        }
+        return def;
+    }
+
+    public static <T, R> R function(Function<? super T, ? extends R> supplier, T arg, Function<? super T, ? extends R> def) {
+        try {
+            return supplier.apply(arg);
+        } catch (Throwable ignore) {
+        }
+        return def.apply(arg);
+    }
 }
