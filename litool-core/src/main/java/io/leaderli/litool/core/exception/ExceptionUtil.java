@@ -79,6 +79,14 @@ public class ExceptionUtil {
 
     }
 
+    public static <T> T supplier(Supplier<? extends T> supplier, Supplier<? extends T> def) {
+        try {
+            return supplier.get();
+        } catch (Throwable ignore) {
+        }
+        return def.get();
+    }
+
     public static <T> T supplier(Supplier<? extends T> supplier, T def) {
         try {
             return supplier.get();
