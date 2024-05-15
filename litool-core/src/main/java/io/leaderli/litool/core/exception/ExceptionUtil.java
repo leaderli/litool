@@ -102,4 +102,12 @@ public class ExceptionUtil {
         }
         return def.apply(arg);
     }
+
+    public static <T, R> R function(Function<? super T, ? extends R> supplier, T arg, R def) {
+        try {
+            return supplier.apply(arg);
+        } catch (Throwable ignore) {
+        }
+        return def;
+    }
 }
