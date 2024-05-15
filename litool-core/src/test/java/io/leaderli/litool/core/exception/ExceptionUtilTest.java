@@ -90,6 +90,7 @@ class ExceptionUtilTest {
     @Test
     void supplier() {
         Assertions.assertEquals(1, ExceptionUtil.supplier(() -> 1 / (Integer.parseInt("1") - 1), 1));
+        Assertions.assertEquals(1, ExceptionUtil.supplier(() -> 1 / (Integer.parseInt("1") - 1), () -> 1));
         Assertions.assertEquals(1, (Integer) ExceptionUtil.function(i -> 1 / i, 1, i -> 1));
 
     }
