@@ -13,6 +13,7 @@ class LiMock_5_Test {
         Assertions.assertDoesNotThrow(() -> new LiMockAfterEachCallback().afterEach(null));
     }
 
+
     static class Error5 {
 
 

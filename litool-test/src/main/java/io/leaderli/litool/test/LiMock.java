@@ -292,11 +292,9 @@ public class LiMock {
      * @see MethodValueRecorder#record(String, Object, Object[], Object)
      */
     public static void record(Class<?> mockClass, MethodFilter mockMethodFilter, MethodAssert methodAssert) {
-
-        CtClass ct = getCtClass(mockClass);
-
-
         try {
+            backup(mockClass);
+            CtClass ct = getCtClass(mockClass);
             for (Method method : findDeclaredMethods(mockClass, mockMethodFilter)) {
 
                 CtMethod ctMethod = getCtMethod(method, ct);
@@ -380,7 +378,7 @@ public class LiMock {
         ref.removeIf(c -> c.getName().startsWith("java") || c.getName().startsWith("io.leaderli.litool"));
         for (Class<?> clazz : ref) {
 
-            LiMock.record(clazz,
+            record(clazz,
                     MethodFilter.isMethod().add(f -> !ModifierUtil.isAbstract(f)),
                     (method, args, _return) -> {
                         String line = StringUtils.getSimpleName(method.getDeclaringClass()) + "." + method.getName() + "(" + StringUtils.join0(",", args, StringUtils::getSimpleName) + ") -> " + StringUtils.getSimpleName(_return);
