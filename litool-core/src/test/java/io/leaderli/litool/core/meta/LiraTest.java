@@ -556,7 +556,6 @@ class LiraTest {
             }
         });
 
-
         Assertions.assertNotNull(Lira.of(null, 1).iterator().next());
         Assertions.assertNull(Lira.of(null, 1).nullableIterator().next());
 
