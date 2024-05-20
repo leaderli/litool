@@ -169,7 +169,7 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
         if (iterable == null || !iterable.iterator().hasNext()) {
             return none();
         }
-        return new IterableRa<>(iterable);
+        return of(IterableItr.of(iterable));
     }
 
     /**

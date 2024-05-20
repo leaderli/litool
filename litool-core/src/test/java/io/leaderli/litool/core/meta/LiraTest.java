@@ -37,8 +37,7 @@ class LiraTest {
         Assertions.assertSame(3, collection.size());
 
         List<Integer> list = CollectionUtils.toList(1, 2, 3, 4, 5);
-        Assertions.assertThrows(ConcurrentModificationException.class, () -> Lira.of(list).forEach(list::remove));
-
+        Assertions.assertDoesNotThrow(() -> Lira.of(list).forEach(list::remove));
     }
 
     @Test
@@ -551,8 +550,7 @@ class LiraTest {
         list.add(4);
         list.add(5);
 
-        Assertions.assertThrows(ConcurrentModificationException.class, () -> {
-
+        Assertions.assertDoesNotThrow(() -> {
             for (Integer integer : Lira.of(list)) {
                 list.removeIf(i -> true);
             }
