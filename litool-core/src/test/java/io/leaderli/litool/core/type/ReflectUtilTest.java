@@ -91,6 +91,7 @@ class ReflectUtilTest {
     @Test
     void getFields() {
 
+        assertEquals(0, ReflectUtil.getFields(Object.class).size());
         assertEquals(5, ReflectUtil.getFields(LittleBean.class).size());
     }
 

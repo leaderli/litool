@@ -18,5 +18,11 @@ class NumberUtilTest {
         assertEquals(0, result);
         result = NumberUtil.constrain(30, 0, 20);
         assertEquals(20, result);
+        result = NumberUtil.constrain(10, 5, 0, 20);
+        assertEquals(10, result);
+        result = NumberUtil.constrain(-10, 10, 0, 20);
+        assertEquals(10, result);
+        result = NumberUtil.constrain(30, 10, 0, 20);
+        assertEquals(10, result);
     }
 }

@@ -57,6 +57,8 @@ public class ReflectUtil {
 
     /**
      * 获取类及其父类的所有字段， JVM自动生成的字段{@link  Field#isSynthetic()}不会包含在返回结果中
+     * <p>
+     * 不包含 Object 的字段
      *
      * @param clazz 要获取字段的类
      * @return 类及其父类的所有字段
@@ -65,7 +67,7 @@ public class ReflectUtil {
      */
     public static Lira<Field> getFields(Class<?> clazz) {
 
-        if (clazz == null) {
+        if (clazz == null || clazz == Object.class) {
             return Lira.none();
         }
 
