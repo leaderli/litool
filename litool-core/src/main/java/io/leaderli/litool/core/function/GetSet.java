@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.function;
 
+import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 
 import java.beans.PropertyDescriptor;
@@ -50,7 +51,7 @@ public interface GetSet<T> {
 
             @Override
             public String toString() {
-                return instance + "." + type();
+                return ClassUtil.shortName(instance.getClass()) + " " + descriptor.getDisplayName();
             }
         };
 
