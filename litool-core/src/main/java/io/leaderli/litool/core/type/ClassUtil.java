@@ -606,5 +606,18 @@ public class ClassUtil {
         return false;
     }
 
+    /**
+     * 返回类名的缩写，例如 Object.class  j.u.Object
+     */
+    public static String shortName(Class<?> clazz) {
+        String packageName = clazz.getName();
+        String[] names = packageName.split("[.$]");
+        StringBuilder shortName = new StringBuilder();
+        for (int i = 0; i < names.length - 1; i++) {
+            shortName.append(names[i].charAt(0)).append(".");
+        }
+        shortName.append(names[names.length - 1]);
+        return shortName.toString();
+    }
 
 }

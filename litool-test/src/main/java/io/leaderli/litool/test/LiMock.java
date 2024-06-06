@@ -189,7 +189,7 @@ public class LiMock {
      * @param methodProxy  代理函数
      * @param detach       是否先重置类
      * @see MethodValueRecorder#invoke(String, Class, String, Class[], Object[])
-     * @see MethodProxy#apply(Method, Object[]) 根据返回值来判断是否需要真正拦截，如果返回的是 判断是否有右值，
+     * @see MethodProxy#apply(Method, Object[]) 根据返回值来判断是否需要真正拦截，如果返回的是 {@link  Either}判断是否有右值，
      * 如果有则返回右值，否则不进行拦截。
      * 函数如果判断不需要拦截直接返回{@link Either#none()}即可。如果方法本身返回的是{@link  Either}需要额外对在函数中额外包一层{@link  Either}。
      */

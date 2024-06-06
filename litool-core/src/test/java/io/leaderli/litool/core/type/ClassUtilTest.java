@@ -26,11 +26,13 @@ class ClassUtilTest {
 
 
     @Test
-    void test() {
+    void shortName() {
 
-        System.out.println(List.class.getSuperclass());
+        Assertions.assertEquals("j.l.Object", ClassUtil.shortName(Object.class));
+        Assertions.assertEquals("i.l.l.c.t.C.Param", ClassUtil.shortName(Param.class));
 
     }
+
     @Test
     void getJarFile() {
 

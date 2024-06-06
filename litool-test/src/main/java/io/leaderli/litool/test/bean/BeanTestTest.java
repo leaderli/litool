@@ -11,7 +11,7 @@ public class BeanTestTest {
         Assertions.assertDoesNotThrow(() -> getSet.set(getSet.get()));
     }
 
-    static class Bean {
+    private static class Bean {
         private String name = "1";
 
         public String getName() {
@@ -20,6 +20,19 @@ public class BeanTestTest {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        @SuppressWarnings("InnerClassMayBeStatic")
+        private class Inner {
+            private String name = "1";
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
         }
     }
 }

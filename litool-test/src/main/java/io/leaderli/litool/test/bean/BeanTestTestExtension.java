@@ -4,6 +4,7 @@ import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.function.GetSet;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassScanner;
+import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 import org.junit.jupiter.api.extension.*;
 
@@ -55,7 +56,7 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
         return ArrayUtils.map(
                 Introspector.getBeanInfo(clazz, Object.class).getPropertyDescriptors(),
                 MyTestTemplateInvocationContext.class,
-                p -> new MyTestTemplateInvocationContext(GetSet.propertyDescriptor(instance, p), clazz.getSimpleName())
+                p -> new MyTestTemplateInvocationContext(GetSet.propertyDescriptor(instance, p), ClassUtil.shortName(clazz))
         );
     }
 
