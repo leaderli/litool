@@ -2,7 +2,6 @@ package io.leaderli.litool.test.bean;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.function.GetSet;
-import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassScanner;
 import io.leaderli.litool.core.type.ReflectUtil;
 import org.junit.jupiter.api.extension.*;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.extension.*;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -38,25 +38,30 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
 
         Set<Class<?>> scan = new ClassScanner(scanPackage).scan();
 
-        return Lira.of(scan)
-                .filter(c -> c != Object.class)
-                .mapIgnoreError(BeanTestTestExtension::getMyTestTemplateInvocationContexts)
-                .<TestTemplateInvocationContext>flatMap()
-                .stream();
+
+        return
+                scan.parallelStream()
+                        .filter(c -> c != Object.class)
+                        .map(BeanTestTestExtension::getMyTestTemplateInvocationContexts)
+                        .flatMap(array -> array != null ? Arrays.stream(array) : null);
 
     }
 
     @SuppressWarnings("unchecked")
-    private static MyTestTemplateInvocationContext[] getMyTestTemplateInvocationContexts(Class<?> clazz) throws IntrospectionException {
+    private static MyTestTemplateInvocationContext[] getMyTestTemplateInvocationContexts(Class<?> clazz) {
         Object instance = ReflectUtil.newInstance(clazz).get();
         if (instance == null) {
             return null;
         }
-        return ArrayUtils.map(
-                Introspector.getBeanInfo(clazz, Object.class).getPropertyDescriptors(),
-                MyTestTemplateInvocationContext.class,
-                p -> new MyTestTemplateInvocationContext(GetSet.propertyDescriptor(instance, p))
-        );
+        try {
+            return ArrayUtils.map(
+                    Introspector.getBeanInfo(clazz, Object.class).getPropertyDescriptors(),
+                    MyTestTemplateInvocationContext.class,
+                    p -> new MyTestTemplateInvocationContext(GetSet.propertyDescriptor(instance, p))
+            );
+        } catch (IntrospectionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
