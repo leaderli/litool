@@ -29,7 +29,7 @@ class ClassUtilTest {
     void shortName() {
 
         Assertions.assertEquals("j.l.Object", ClassUtil.shortName(Object.class));
-        Assertions.assertEquals("i.l.l.c.t.C.Param", ClassUtil.shortName(Param.class));
+        Assertions.assertEquals("i.l.l.c.t.ClassUtilTest$Param", ClassUtil.shortName(Param.class));
 
     }
 

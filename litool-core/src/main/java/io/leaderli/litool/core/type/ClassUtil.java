@@ -611,7 +611,7 @@ public class ClassUtil {
      */
     public static String shortName(Class<?> clazz) {
         String packageName = clazz.getName();
-        String[] names = packageName.split("[.$]");
+        String[] names = packageName.split("[.]");
         StringBuilder shortName = new StringBuilder();
         for (int i = 0; i < names.length - 1; i++) {
             shortName.append(names[i].charAt(0)).append(".");

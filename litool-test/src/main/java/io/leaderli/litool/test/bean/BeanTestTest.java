@@ -11,8 +11,17 @@ public class BeanTestTest {
         Assertions.assertDoesNotThrow(() -> getSet.set(getSet.get()));
     }
 
+    @SuppressWarnings("FieldCanBeLocal")
     private static class Bean {
         private String name = "1";
+        /**
+         * 测试只有get
+         */
+        private int age;
+        /**
+         * 测试只有set
+         */
+        private Integer gender;
 
         public String getName() {
             return name;
@@ -20,6 +29,14 @@ public class BeanTestTest {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public int getAge() {
+            return this.age;
+        }
+
+        public void setGender(Integer gender) {
+            this.gender = gender;
         }
 
         @SuppressWarnings("InnerClassMayBeStatic")

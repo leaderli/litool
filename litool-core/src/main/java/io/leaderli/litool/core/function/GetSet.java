@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.function;
 
+import io.leaderli.litool.core.type.PrimitiveEnum;
+
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 
@@ -19,6 +21,9 @@ public interface GetSet<T> {
             @Override
             public Object get() throws Throwable {
                 Method readMethod = descriptor.getReadMethod();
+                if (readMethod == null) {
+                    return PrimitiveEnum.get(type()).zero_value;
+                }
                 readMethod.setAccessible(true);
                 return readMethod.invoke(instance);
             }
@@ -26,6 +31,9 @@ public interface GetSet<T> {
             @Override
             public void set(Object arg) throws Throwable {
                 Method writeMethod = descriptor.getWriteMethod();
+                if (writeMethod == null) {
+                    return;
+                }
                 writeMethod.setAccessible(true);
                 writeMethod.invoke(instance, arg);
             }
@@ -39,6 +47,12 @@ public interface GetSet<T> {
             public Object instance() {
                 return instance;
             }
+
+            @Override
+            public String toString() {
+                return instance + "." + type();
+            }
         };
+
     }
 }
