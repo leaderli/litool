@@ -4,7 +4,6 @@ import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.function.GetSet;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassScanner;
-import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 import org.junit.jupiter.api.extension.*;
 
@@ -56,7 +55,7 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
         return ArrayUtils.map(
                 Introspector.getBeanInfo(clazz, Object.class).getPropertyDescriptors(),
                 MyTestTemplateInvocationContext.class,
-                p -> new MyTestTemplateInvocationContext(GetSet.propertyDescriptor(instance, p), ClassUtil.shortName(clazz))
+                p -> new MyTestTemplateInvocationContext(GetSet.propertyDescriptor(instance, p))
         );
     }
 
@@ -64,17 +63,15 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
     private static class MyTestTemplateInvocationContext implements TestTemplateInvocationContext {
 
         private final GetSet<Object> getSet;
-        private final String name;
 
-        private MyTestTemplateInvocationContext(GetSet<Object> getSet, String name) {
+        private MyTestTemplateInvocationContext(GetSet<Object> getSet) {
             this.getSet = getSet;
-            this.name = name;
         }
 
 
         @Override
         public String getDisplayName(int invocationIndex) {
-            return name;
+            return getSet.toString();
         }
 
         @Override
