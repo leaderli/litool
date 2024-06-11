@@ -34,8 +34,9 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
      * @param <R> 右边值的类型
      * @return 一个{@link Left}对象，其值为null
      */
+    @SuppressWarnings("unchecked")
     static <L, R> Either<L, R> none() {
-        return new Left<>(null);
+        return (Either<L, R>) Left.NONE;
     }
 
     /**
@@ -239,6 +240,7 @@ public interface Either<L, R> extends LiValue, Supplier<R> {
     final class Left<L, R> implements Either<L, R> {
 
 
+        private static final Left<?, ?> NONE = new Left<>(null);
         private final L value;
 
 

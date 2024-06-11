@@ -1,7 +1,6 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.function.Filter;
-import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 
@@ -61,7 +60,8 @@ public class MethodValue<T> {
                 throw new RuntimeException(e);
             }
         }
-        return Either.none();
+        return LiMock.SKIP_MARK;
+//        return Either.none();
     }
 
 

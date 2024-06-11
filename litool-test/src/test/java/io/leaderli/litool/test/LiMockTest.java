@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import io.leaderli.litool.core.io.IOUtils;
 import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiBox;
+import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.LiTypeToken;
 import io.leaderli.litool.core.type.MethodFilter;
@@ -131,9 +132,9 @@ class LiMockTest {
         LiMock.mockStatic(Either1.class, MethodFilter.isMethod(), (m, args) -> {
 
             if ((int) args[0] == 0) {
-                return Either.none();
+                return LiMock.SKIP_MARK;
             }
-            return Either.right(Either.right(2));
+            return Either.right(2);
         });
         Assertions.assertEquals(1, Either1.m1(0).get());
         Assertions.assertEquals(2, Either1.m1(3).get());
@@ -310,6 +311,10 @@ class LiMockTest {
         Assertions.assertEquals(1, foo.m1());
         LiMock.mockerBean(Bean1.class).when(Bean1::m1, 2).build();
         Assertions.assertEquals(2, foo.m1());
+
+        LiMock.mockerBean(Bean1.class).function(Bean1::e1).other(LiTuple.of(null, 10)).build();
+        Assertions.assertEquals(10, foo.e1().get());
+
     }
 
     @ExtendWith(SkipWhenJacocoExecutionCondition.class)
@@ -748,6 +753,9 @@ class LiMockTest {
             return 1;
         }
 
+        LiTuple<Void, Integer> e1() {
+            return LiTuple.of(null, 1);
+        }
         void m2(int a) {
         }
     }

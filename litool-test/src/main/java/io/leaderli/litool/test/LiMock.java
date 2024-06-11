@@ -2,7 +2,6 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.meta.Either;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StrSubstitution;
@@ -26,6 +25,18 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class LiMock {
+
+    public static class Skip {
+        private Skip() {
+        }
+    }
+
+    /**
+     * 用于标记跳过mock
+     */
+    public static Skip SKIP_MARK = new Skip();
+
+
     public static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
     public static final ByteBuddy byteBuddy = new ByteBuddy();
     public static Instrumentation instrumentation = ByteBuddyAgent.install();
@@ -191,7 +202,7 @@ public class LiMock {
      * @see MethodValueRecorder#invoke(String, Class, String, Class[], Object[])
      * @see MethodProxy#apply(Method, Object[]) 根据返回值来判断是否需要真正拦截，如果返回的是 {@link  Either}判断是否有右值，
      * 如果有则返回右值，否则不进行拦截。
-     * 函数如果判断不需要拦截直接返回{@link Either#none()}即可。如果方法本身返回的是{@link  Either}需要额外对在函数中额外包一层{@link  Either}。
+     * 函数如果判断不需要拦截直接返回{@link #SKIP_MARK}即可。
      */
     public static void mock(Class<?> mockClass, MethodFilter methodFilter, MethodProxy<?> methodProxy, boolean detach) {
         try {

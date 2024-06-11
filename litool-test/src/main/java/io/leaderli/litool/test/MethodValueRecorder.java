@@ -43,13 +43,10 @@ public abstract class MethodValueRecorder {
      * @see PrimitiveEnum#zero_value
      */
     public static Either<Void, Object> adjustReturnValue(Object returnValue, Type clazz, Type genericReturnType) {
-        if (returnValue instanceof Either) {
-            if (((Either<?, ?>) returnValue).isLeft()) {
-                return Either.none();
-            }
-            returnValue = ((Either<?, ?>) returnValue).getRight();
-        }
 
+        if (returnValue == LiMock.SKIP_MARK) {
+            return Either.none();
+        }
         // 尝试将泛型返回类型解析为实际类型
         Class<?> returnType = TypeUtil.erase(TypeUtil.resolve(clazz, genericReturnType));
         if (returnValue == null) {
