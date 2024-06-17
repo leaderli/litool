@@ -1,13 +1,14 @@
 package io.leaderli.litool.core.cache;
 
 import io.leaderli.litool.core.collection.ArrayEqual;
+import io.leaderli.litool.core.exception.ExceptionUtil;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.type.LiTypeToken;
+import io.leaderli.litool.core.type.ReflectUtil;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -64,7 +65,7 @@ public class CacheProxy<T> {
                             if (liCache.ignoreError()) {
                                 LOGGER.accept(e);
                             } else {
-                                throw e;
+                                throw ExceptionUtil.unwrapThrowable(e);
                             }
                         }
                         if (value != null || liCache.allowNullValue()) {
@@ -79,12 +80,11 @@ public class CacheProxy<T> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public T instance() {
-        return (T) Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class[]{interfaceType}, (proxy, method, args) -> invoke(method, args));
+        return ReflectUtil.newProxyInstance(interfaceType.getClassLoader(), interfaceType, (proxy, method, args) -> invoke(method, args));
     }
 
-    public Object invoke(Method method, Object[] args) throws Throwable {
+    private Object invoke(Method method, Object[] args) throws Throwable {
         ThrowableFunction<ArrayEqual<?>, Object> function = invokes.get(method);
         if (function != null) {
             return function.apply(ArrayEqual.of(args));
