@@ -11,7 +11,28 @@ import java.lang.reflect.Method;
  * @since 2022/8/7
  */
 class ExceptionUtilTest {
+    @SuppressWarnings("CaughtExceptionImmediatelyRethrown")
+    @Test
+    void testUnwrapThrowable() throws NoSuchMethodException {
 
+
+        Method m0 = Bean1.class.getDeclaredMethod("m0");
+        m0.setAccessible(true);
+        Assertions.assertThrows(InvocationTargetException.class, () -> {
+            try {
+                m0.invoke(new Bean1());
+            } catch (Throwable t) {
+                throw t;
+            }
+        });
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            try {
+                m0.invoke(new Bean1());
+            } catch (Throwable t) {
+                throw ExceptionUtil.unwrapThrowable(t);
+            }
+        });
+    }
 
     @Test
     void getCause() throws NoSuchMethodException {
@@ -93,6 +114,14 @@ class ExceptionUtilTest {
         Assertions.assertEquals(1, ExceptionUtil.supplier(() -> 1 / (Integer.parseInt("1") - 1), () -> 1));
         Assertions.assertEquals(1, (Integer) ExceptionUtil.function(i -> 1 / i, 1, i -> 1));
         Assertions.assertEquals(1, ExceptionUtil.function(i -> 1 / i, 1, 1));
+
+    }
+
+    public static class Bean1 {
+
+        private int m0() {
+            throw new IllegalArgumentException();
+        }
 
     }
 

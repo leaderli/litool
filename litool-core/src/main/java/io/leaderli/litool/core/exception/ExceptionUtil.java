@@ -3,6 +3,8 @@ package io.leaderli.litool.core.exception;
 import io.leaderli.litool.core.io.StringWriter;
 import io.leaderli.litool.core.text.StringUtils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -12,6 +14,25 @@ import java.util.function.Supplier;
  */
 public class ExceptionUtil {
 
+
+    /**
+     * 返回多次反射调用前的原始报错
+     * <p>
+     *
+     * @see java.lang.reflect.Method#invoke(Object, Object...)
+     */
+    public static Throwable unwrapThrowable(Throwable wrapped) {
+        Throwable unwrapped = wrapped;
+        while (true) {
+            if (unwrapped instanceof InvocationTargetException) {
+                unwrapped = ((InvocationTargetException) unwrapped).getTargetException();
+            } else if (unwrapped instanceof UndeclaredThrowableException) {
+                unwrapped = ((UndeclaredThrowableException) unwrapped).getUndeclaredThrowable();
+            } else {
+                return unwrapped;
+            }
+        }
+    }
 
     /**
      * 获取异常的最底层原因

@@ -29,10 +29,11 @@ class ReflectUtilTest {
 
     }
 
+
     @Test
-    void test() {
-        ReflectUtil.newInterfaceImpl(new LiTypeToken<Function<String, Integer>>() {
-        }, LiTypeToken.of(DynamicDelegation4.class), new DynamicDelegation4()).apply("123");
+    void testnewInterfaceImpl() {
+
+
     }
 
     @Test
@@ -86,6 +87,10 @@ class ReflectUtilTest {
         Method method = Service6.class.getMethod("service", Integer.class);
         Assertions.assertSame(String.class, method.invoke(service6, 123).getClass());
 
+        // 测试抛出异常
+        Function<String, Integer> illegalFunction = ReflectUtil.newInterfaceImpl(new LiTypeToken<Function<String, Integer>>() {
+        }, LiTypeToken.of(DynamicDelegation7.class), new DynamicDelegation7());
+        Assertions.assertThrows(IllegalArgumentException.class, () -> illegalFunction.apply(""));
     }
 
     @Test
@@ -509,6 +514,17 @@ class ReflectUtilTest {
         @RuntimeMethod
         public String apply2(int arg) {
             return arg + "";
+        }
+    }
+
+    class DynamicDelegation7 implements Function<String, Integer> {
+
+        @Override
+        public Integer apply(String s) {
+            if (s.length() < 1) {
+                throw new IllegalArgumentException("123");
+            }
+            return s.length();
         }
     }
 

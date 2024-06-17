@@ -3,6 +3,7 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.exception.AssertException;
+import io.leaderli.litool.core.exception.ExceptionUtil;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.internal.ReflectionAccessor;
@@ -613,7 +614,14 @@ public class ReflectUtil {
         for (Method method : Object.class.getMethods()) {
             proxyMethodMap.put(method, args -> method.invoke(proxyObj, args));
         }
-        InvocationHandler invocationHandler = (proxy, method, args) -> proxyMethodMap.get(method).apply(args);
+        InvocationHandler invocationHandler = (proxy, method, args) -> {
+            // 还原原方法抛出的异常
+            try {
+                return proxyMethodMap.get(method).apply(args);
+            } catch (Throwable throwable) {
+                throw ExceptionUtil.unwrapThrowable(throwable);
+            }
+        };
         return (T) Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class[]{interfaceType}, invocationHandler);
 
     }
