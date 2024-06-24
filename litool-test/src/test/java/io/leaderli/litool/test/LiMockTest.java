@@ -48,6 +48,7 @@ class LiMockTest {
 
     }
 
+
     @LiTest
     void skipClassConstructors3() {
 
@@ -141,6 +142,13 @@ class LiMockTest {
 
     }
 
+    @Test
+    void testMockThrow() {
+        LiMock.mock(Bean1.class, MethodFilter.isMethod(), (method, args) -> {
+            throw new NullPointerException();
+        });
+        Assertions.assertThrows(NullPointerException.class, () -> new Bean1().m1());
+    }
 
     @Test
     void testMockReset() {
@@ -756,6 +764,7 @@ class LiMockTest {
         LiTuple<Void, Integer> e1() {
             return LiTuple.of(null, 1);
         }
+
         void m2(int a) {
         }
     }
