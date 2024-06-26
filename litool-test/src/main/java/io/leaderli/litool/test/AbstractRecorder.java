@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 public class AbstractRecorder<T> {
 
     public static final Set<Method> recordMethodCall = new HashSet<>();
+    public static final Set<Method> recordMethodNotCall = new HashSet<>();
     public static final Set<Method> actualMethodCall = new HashSet<>();
     public static final List<Throwable> assertThrow = new ArrayList<>();
     protected final Class<?> mockClass;
@@ -46,6 +47,17 @@ public class AbstractRecorder<T> {
         return (T) this;
     }
 
+    /**
+     * 该方法会清除之前的调用记录
+     *
+     * @see #actualMethodCall
+     */
+    public T notCalled() {
+        actualMethodCall.remove(currentMethod);
+        recordMethodNotCall.add(currentMethod);
+        add((method, args, _return) -> actualMethodCall.add(currentMethod));
+        return (T) this;
+    }
 
     public T arg(int index, Object arg) {
         add((method, args, _return) -> {

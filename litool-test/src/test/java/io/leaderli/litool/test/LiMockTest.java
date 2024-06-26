@@ -307,9 +307,10 @@ class LiMockTest {
                 .call(Error.m1())
                 .then(11)
                 .build();
-        System.out.println(Error.m1(1));
-        System.out.println(Error.m1(2));
-        System.out.println(Error.m1());
+
+        Assertions.assertEquals(11, Error.m1(1));
+        Assertions.assertEquals(12, Error.m1(2));
+        Assertions.assertEquals(11, Error.m1());
     }
 
     @LiTest
@@ -436,8 +437,19 @@ class LiMockTest {
                 .build();
 
         Assertions.assertThrows(AssertionFailedError.class, LiMock::assertMethodCalled);
+        // 测试抛出异常后，是否能正常清理调用记录
         Void1.m1(1);
         Assertions.assertDoesNotThrow(LiMock::assertMethodCalled);
+
+        // 测试未调用断言
+        LiMock.reset();
+        LiMock.recorder(Void1.class).run(() -> Void1.m1(1))
+                .notCalled()
+                .build();
+        Assertions.assertDoesNotThrow(LiMock::assertMethodNotCalled);
+        Void1.m1(1);
+        Assertions.assertThrows(AssertionFailedError.class, LiMock::assertMethodNotCalled);
+
         LiMock.reset();
         LiMock.recorder(Void1.class)
                 .run(() -> Void1.m1(1))
@@ -457,6 +469,11 @@ class LiMockTest {
                 .argAssert(0, v -> Assertions.assertEquals(1, v), Integer.class)
                 .build();
         Assertions.assertDoesNotThrow(() -> Void1.m1(1));
+    }
+
+    @Test
+    void testMockNotCall() {
+
     }
 
     @Test

@@ -403,10 +403,24 @@ public class LiMock {
      * 断言方法被调用
      *
      * @see Recorder#called()
+     * @see Recorder#recordMethodCall
      */
     public static void assertMethodCalled() {
+
         for (Method method : Recorder.recordMethodCall) {
             Assertions.assertTrue(Recorder.actualMethodCall.contains(method), "the method is not called: " + method.getName());
+        }
+    }
+
+    /**
+     * 断言方法未被调用
+     *
+     * @see Recorder#notCalled()
+     * @see Recorder#recordMethodNotCall
+     */
+    public static void assertMethodNotCalled() {
+        for (Method method : Recorder.recordMethodNotCall) {
+            Assertions.assertFalse(Recorder.actualMethodCall.contains(method), "the method is called: " + method.getName());
         }
     }
 
@@ -427,6 +441,7 @@ public class LiMock {
 
     public static void reset() {
         Recorder.recordMethodCall.clear();
+        Recorder.recordMethodNotCall.clear();
         originClasses.forEach((k, v) -> {
             try {
                 detach(k);

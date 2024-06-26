@@ -18,6 +18,8 @@ public interface IRecorder<B, T> {
 
     B called();
 
+    B notCalled();
+
     B arg(int index, Object arg);
 
     B args(Object... args);

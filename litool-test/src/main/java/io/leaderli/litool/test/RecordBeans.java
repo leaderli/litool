@@ -39,6 +39,12 @@ public class RecordBeans<T> implements IRecorder<RecordBeans<T>, T> {
     }
 
     @Override
+    public RecordBeans<T> notCalled() {
+        recordBeans.forEach(AbstractRecorder::notCalled);
+        return this;
+    }
+
+    @Override
     public RecordBeans<T> arg(int index, Object arg) {
         recordBeans.forEach(r -> r.arg(index, arg));
         return this;

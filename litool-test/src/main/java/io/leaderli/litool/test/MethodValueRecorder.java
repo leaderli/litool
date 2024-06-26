@@ -44,6 +44,7 @@ public abstract class MethodValueRecorder {
      */
     public static Either<Void, Object> adjustReturnValue(Object returnValue, Type clazz, Type genericReturnType) {
 
+        // 不mock
         if (returnValue == LiMock.SKIP_MARK) {
             return Either.none();
         }
