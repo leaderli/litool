@@ -214,6 +214,15 @@ public interface Lino<T> extends LiValue, Supplier<T> {
      */
     Lino<T> assertNotNone(Supplier<String> msgSupplier);
 
+    /**
+     * 该方法用于断言当前Lino实例中的元素为null，如果不为null则抛出异常
+     *
+     * @param msgFunction 异常信息
+     * @return this
+     * @throws IllegalStateException 不为null时抛出
+     */
+    Lino<T> assertNone(Function<T, String> msgFunction);
+
 
     /**
      * 该方法用于将当前Lino对象强制类型转换为指定的类型，如果当前对象类型不是指定类型的实例，则返回一个空的Lino对象。
@@ -570,6 +579,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             return this;
         }
 
+        @Override
+        public Lino<T> assertNone(Function<T, String> msgFunction) {
+            throw new IllegalStateException(msgFunction.apply(value));
+        }
+
 
         @Override
         public <R> Lino<R> cast(Class<? extends R> type) {
@@ -796,6 +810,11 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         @Override
         public Lino<T> assertNotNone(Supplier<String> supplier) {
             throw new IllegalStateException(supplier.get());
+        }
+
+        @Override
+        public Lino<T> assertNone(Function<T, String> msgFunction) {
+            return this;
         }
 
 

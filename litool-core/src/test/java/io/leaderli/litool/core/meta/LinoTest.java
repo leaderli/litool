@@ -332,6 +332,17 @@ class LinoTest {
     }
 
     @Test
+    void assertNone() {
+
+        Lino.<String>none().assertNone(m -> m);
+        IllegalStateException assertThrows = Assertions.assertThrows(IllegalStateException.class,
+                () -> Lino.of("haha").assertNone(m -> m));
+        Assertions.assertEquals("haha", assertThrows.getMessage());
+
+
+    }
+
+    @Test
     void tuple() {
 
 
