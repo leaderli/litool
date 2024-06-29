@@ -13,12 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class PrettyBitPermissionTest {
 
     @Test
-    void of() throws NoSuchFieldException {
+    void of() throws NoSuchFieldException, NoSuchMethodException {
 
         PrettyBitPermission of = PrettyBitPermission.of(Modifier.class);
-        int modifiers = PrettyBitPermission.class.getDeclaredField("statusClass").getModifiers();
+        int modifiers = Object.class.getMethod("getClass").getModifiers();
         of.setState(modifiers);
-        assertEquals("FINAL|PRIVATE", of.toString());
+        assertEquals("NATIVE|FINAL|PUBLIC", of.toString());
+        assertEquals("NATIVE|FINAL|PUBLIC", of.toString(modifiers));
     }
 
 

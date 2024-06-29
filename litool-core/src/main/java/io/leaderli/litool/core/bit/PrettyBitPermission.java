@@ -1,7 +1,5 @@
 package io.leaderli.litool.core.bit;
 
-import java.util.Objects;
-
 /**
  * 一个重新了 {@link #toString()} 方法的实现类，可以方便的查看具体权限的名称
  *
@@ -10,31 +8,17 @@ import java.util.Objects;
  */
 public class PrettyBitPermission extends BitPermission {
 
-    private final Class<?> statusClass;
-
-    private PrettyBitPermission(Class<?> statusClass) {
-        Objects.requireNonNull(statusClass);
-        this.statusClass = statusClass;
-    }
 
     private PrettyBitPermission(Class<?> statusClass, int stateFlags) {
         super(stateFlags);
-        Objects.requireNonNull(statusClass);
-        this.statusClass = statusClass;
+        bitStr = BitStr.of(statusClass);
     }
 
     public static PrettyBitPermission of(Class<?> stateClass) {
-        return new PrettyBitPermission(stateClass);
+        return new PrettyBitPermission(stateClass, 0);
     }
 
     public static PrettyBitPermission of(Class<?> stateClass, int stateFlags) {
         return new PrettyBitPermission(stateClass, stateFlags);
     }
-
-
-    @Override
-    public String toString() {
-        return BitStr.of(statusClass).beauty(stateFlags);
-    }
-
 }

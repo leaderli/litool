@@ -4,9 +4,11 @@ import io.leaderli.litool.core.exception.LiAssertUtil;
 
 /**
  * 使用非负二进制表示权限，并使用位运算操作权限。
+ *
+ * @see PrettyBitPermission
  */
 public abstract class BitPermission {
-    protected final BitStr bitStr = BitStr.of(this.getClass());
+    protected BitStr bitStr = BitStr.of(getClass());
 
     /**
      * 一个非负整数，用于保存权限标记，使用二进制位表示权限。1表示有权限，0表示无权限。
