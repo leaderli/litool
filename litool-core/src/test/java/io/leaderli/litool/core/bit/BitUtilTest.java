@@ -42,17 +42,13 @@ class BitUtilTest {
 
     @Test
     void beauty() {
-
-        int bitStatus = Modifier.classModifiers();
-        Assertions.assertEquals("0000 0000 0000 0000 0000 1100 0001 1111", BitUtil.beauty(bitStatus));
+        Assertions.assertEquals("0000 0000 0000 0000 0000 1100 0001 1111", BitUtil.beauty(Modifier.classModifiers()));
     }
 
     @Test
     void split() {
-//        Assertions.assertEquals(LiTuple.of(BitPositionEnum.B16.mask_msb, 0), BitUtil.split(BitPositionEnum.B16.mask_msb, 16));
         Assertions.assertEquals(LiTuple.of(2, 1), BitUtil.split(3, 1));
         Assertions.assertEquals(LiTuple.of(BitPositionEnum.B17.mask_msb, BitPositionEnum.B16.mask_msb), BitUtil.split(BitPositionEnum.B16.mask_msb + BitPositionEnum.B17.mask_msb));
         Assertions.assertEquals(LiTuple.of(Integer.MIN_VALUE, Integer.MAX_VALUE), BitUtil.split(-1, 31));
-
     }
 }

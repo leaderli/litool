@@ -259,6 +259,13 @@ public enum BitPositionEnum {
         return NONE;
     }
 
+    public static BitPositionEnum getByPosition(int position) {
+        if (position > 0 && position < 33) {
+            return values()[position];
+        }
+        return NONE;
+    }
+
     /**
      * 将枚举值对应的二进制位数转换成二进制字符串，并以每4位填充空格
      * <p>

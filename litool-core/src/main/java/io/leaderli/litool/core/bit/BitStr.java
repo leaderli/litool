@@ -63,7 +63,7 @@ public class BitStr {
 
 
     /**
-     * 根据状态值输出每个状态的属性名称。状态属性名称从右到左输出，并用竖线分隔。
+     * 根据状态值输出每个状态的属性名称。状态属性名称按照在二进制上的位置的顺序输出，并用竖线分隔。
      * <p>
      * 示例：
      * <pre>
@@ -79,7 +79,7 @@ public class BitStr {
                 .map(b -> mask_msb_name[b.mask_position])
                 .filter(Objects::nonNull)
                 .toArray(String[]::new);
-        // 将属性名称用竖线连接起来作为结果返回
+        // 将属性名称用竖线连接起来作为结果返回，并按照二进制数字的顺序返回
         ArrayUtils.reverse(names);
         return String.join("|", names);
     }
@@ -112,7 +112,7 @@ public class BitStr {
         for (int i = 0; i < mask_msb_name.length; i++) {
             String name = mask_msb_name[i];
             if (name != null) {
-                str.append(BitPositionEnum.values()[i]).append(" ").append(name).append(System.lineSeparator());
+                str.append(BitPositionEnum.getByPosition(i)).append(" ").append(name).append(System.lineSeparator());
             }
         }
         return str.toString();

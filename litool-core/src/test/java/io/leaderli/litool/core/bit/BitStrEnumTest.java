@@ -20,6 +20,7 @@ class BitPositionEnumTest {
 
     @Test
     void of() {
+        assertEquals(BitPositionEnum.NONE, BitPositionEnum.values()[0]);
         for (int i = 0; i < 32; i++) {
             assertEquals(BitPositionEnum.valueOf("B" + (i + 1)), BitPositionEnum.of(1 << i));
             assertEquals(BitPositionEnum.values()[i + 1], BitPositionEnum.of(1 << i));
