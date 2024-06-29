@@ -27,6 +27,11 @@ class BitPositionEnumTest {
             assertEquals(BitPositionEnum.NONE, BitPositionEnum.of((1 << i) + 5));
         }
 
+        for (int i = 1; i < 32; i++) {
+            Assertions.assertNotSame(BitPositionEnum.getByPosition(i), BitPositionEnum.NONE);
+        }
+        Assertions.assertSame(BitPositionEnum.getByPosition(0), BitPositionEnum.NONE);
+        Assertions.assertSame(BitPositionEnum.getByPosition(33), BitPositionEnum.NONE);
         Assertions.assertSame(32, Lira.of(BitPositionEnum.values()).map(b -> b.mask_msb).filter(BitUtil::onlyOneBit).size());
     }
 
