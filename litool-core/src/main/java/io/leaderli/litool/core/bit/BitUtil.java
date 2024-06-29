@@ -44,7 +44,7 @@ public class BitUtil {
      */
     public static LiTuple<Integer, Integer> split(int num, int position) {
         LiAssertUtil.assertTrue(position <= 31 && position > 0, new IllegalArgumentException(position + " position must bettwen 2 and 31"));
-        return LiTuple.of(num & (-1 >> position << position), num & ~(-1 >> position << position));
+        return LiTuple.of(num & (-1 << position), num & ~(-1 << position));
     }
 
     /**
