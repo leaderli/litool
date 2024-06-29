@@ -5,12 +5,11 @@ import io.leaderli.litool.core.text.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author leaderli
@@ -20,49 +19,25 @@ class BitPositionEnumTest {
 
 
     @Test
-    void newStatusBitPositionEnumMap() {
-        Map<Integer, BitPositionEnum> map = BitPositionEnum.newStatusBitPositionEnumMap();
-        assertEquals(32, map.size());
-        assertEquals(BitPositionEnum.B1, map.get(1));
-        assertEquals(BitPositionEnum.B2, map.get(2));
-        assertEquals(BitPositionEnum.B3, map.get(4));
+    void of() {
+        for (int i = 0; i < 32; i++) {
+            assertEquals(BitPositionEnum.valueOf("B" + (i + 1)), BitPositionEnum.of(1 << i));
+            assertEquals(BitPositionEnum.values()[i + 1], BitPositionEnum.of(1 << i));
+            assertEquals(BitPositionEnum.NONE, BitPositionEnum.of((1 << i) + 5));
+        }
 
-        Set<Integer> integers = BitPositionEnum.newStatusBitPositionEnumMap().keySet();
-        assert integers.size() == 32;
-
-        Assertions.assertSame(32, Lira.of(integers).filter(BitUtil::onlyOneBit).size());
+        Assertions.assertSame(32, Lira.of(BitPositionEnum.values()).map(b -> b.mask_msb).filter(BitUtil::onlyOneBit).size());
     }
 
     @Test
-    void of() {
-        Assertions.assertSame(BitPositionEnum.B1, BitPositionEnum.of(1).next());
-        Iterator<BitPositionEnum> of = BitPositionEnum.of(3);
-        Assertions.assertSame(BitPositionEnum.B2, of.next());
-        Assertions.assertSame(BitPositionEnum.B1, of.next());
-
-        Iterator<BitPositionEnum> iterator = BitPositionEnum.of(1);
-        assertTrue(iterator.hasNext());
-        assertEquals(BitPositionEnum.B1, iterator.next());
-        assertFalse(iterator.hasNext());
-
-        iterator = BitPositionEnum.of(3);
-        assertTrue(iterator.hasNext());
-        assertEquals(BitPositionEnum.B2, iterator.next());
-        assertTrue(iterator.hasNext());
-        assertEquals(BitPositionEnum.B1, iterator.next());
-        assertFalse(iterator.hasNext());
-
-        iterator = BitPositionEnum.of(15);
-        assertTrue(iterator.hasNext());
-        assertEquals(BitPositionEnum.B4, iterator.next());
-        assertTrue(iterator.hasNext());
-        assertEquals(BitPositionEnum.B3, iterator.next());
-        assertTrue(iterator.hasNext());
-        assertEquals(BitPositionEnum.B2, iterator.next());
-        assertTrue(iterator.hasNext());
-        assertEquals(BitPositionEnum.B1, iterator.next());
-        assertFalse(iterator.hasNext());
-
+    void ofs() {
+        Assertions.assertArrayEquals(new BitPositionEnum[]{}, BitPositionEnum.ofs(0));
+        Assertions.assertArrayEquals(new BitPositionEnum[]{BitPositionEnum.B1}, BitPositionEnum.ofs(1));
+        Assertions.assertArrayEquals(new BitPositionEnum[]{BitPositionEnum.B1}, BitPositionEnum.ofs(1));
+        Assertions.assertArrayEquals(new BitPositionEnum[]{BitPositionEnum.B1, BitPositionEnum.B2}, BitPositionEnum.ofs(3));
+        Assertions.assertArrayEquals(new BitPositionEnum[]{BitPositionEnum.B1, BitPositionEnum.B2, BitPositionEnum.B3, BitPositionEnum.B4}, BitPositionEnum.ofs(15));
+        Assertions.assertArrayEquals(new BitPositionEnum[]{BitPositionEnum.B1, BitPositionEnum.B2, BitPositionEnum.B4}, BitPositionEnum.ofs(11));
+        Assertions.assertArrayEquals(Arrays.copyOfRange(BitPositionEnum.values(), 1, 33), BitPositionEnum.ofs(-1));
 
         assert BitPositionEnum.valueOf("B1").mask_msb == 1;
         assert BitPositionEnum.valueOf("B32").mask_msb == Integer.MIN_VALUE;

@@ -1,12 +1,13 @@
 package io.leaderli.litool.core.bit;
 
-import io.leaderli.litool.core.text.StringUtils;
+import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.lang.reflect.Field;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * @author leaderli
@@ -23,10 +24,11 @@ import java.util.stream.Collectors;
  */
 public class BitStr {
 
-    private final Map<BitPositionEnum, String> bit_name = new EnumMap<>(BitPositionEnum.class);
+    /**
+     * 该数组的角标对应一个 {@link BitPositionEnum#mask_msb} 的所对应的名称，如果为null，则表示无名称
+     */
+    private final String[] mask_msb_name = new String[BitPositionEnum.values().length];
 
-    private BitStr() {
-    }
 
     /**
      * 根据包含状态常量的类，创建一个新的 BitStatus 实例。
@@ -36,32 +38,26 @@ public class BitStr {
      */
     public static BitStr of(Class<?> statusConstant) {
 
-        Map<Integer, BitPositionEnum> statusBitPositionEnumMap = BitPositionEnum.newStatusBitPositionEnumMap();
         BitStr bitStr = new BitStr();
+        for (Field field : statusConstant.getFields()) {
+            if (ObjectsUtil.sameAny(field.getType(), int.class, Integer.class)
+                    && ModifierUtil.isPublic(field)
+                    && ModifierUtil.isFinal(field)
+                    && ModifierUtil.isStatic(field))
+                try {
+                    ReflectUtil.setAccessible(field);
+                    int statues = (int) field.get(null);
+                    BitPositionEnum bitPositionEnum = BitPositionEnum.of(statues);
+                    if (bitPositionEnum != BitPositionEnum.NONE) {
+                        bitStr.mask_msb_name[bitPositionEnum.mask_position] = field.getName();
+                    }
+                } catch (IllegalAccessException ignore) {
 
-        Arrays.stream(statusConstant.getFields())
-                .filter(field -> ObjectsUtil.sameAny(field.getType(), int.class, Integer.class)
-                        && ModifierUtil.isPublic(field)
-                        && ModifierUtil.isFinal(field)
-                        && ModifierUtil.isStatic(field))
-                .forEach(
-                        field -> {
-                            try {
-                                ReflectUtil.setAccessible(field);
-                                int statues = (int) field.get(null);
-                                BitPositionEnum bitPositionEnum = statusBitPositionEnumMap.get(statues);
-                                if (bitPositionEnum != null) {
-                                    bitStr.bit_name.putIfAbsent(bitPositionEnum, field.getName());
-                                }
-                            } catch (IllegalAccessException ignore) {
+                }
 
-                            }
-                        }
-
-                );
+        }
 
         return bitStr;
-
 
     }
 
@@ -75,16 +71,17 @@ public class BitStr {
      * </pre>
      *
      * @param bitStatus 用二进制表示的状态值
-     * @return 与 {@link #bit_name} 中的键对应的值
+     * @return 与 {@link #mask_msb_name} 中的键对应的值
      */
     public String beauty(int bitStatus) {
-        // 将状态值的每个位解析为 BitPositionEnum 枚举，并放入列表中
-        List<BitPositionEnum> bitPositionEnums = new ArrayList<>();
-        BitPositionEnum.of(bitStatus).forEachRemaining(bitPositionEnums::add);
         // 获取每个位对应的属性名称，并过滤掉空值
-        Iterator<String> names = bitPositionEnums.stream().map(this.bit_name::get).filter(Objects::nonNull).iterator();
+        String[] names = Stream.of(BitPositionEnum.ofs(bitStatus))
+                .map(b -> mask_msb_name[b.mask_position])
+                .filter(Objects::nonNull)
+                .toArray(String[]::new);
         // 将属性名称用竖线连接起来作为结果返回
-        return StringUtils.join("|", names);
+        ArrayUtils.reverse(names);
+        return String.join("|", names);
     }
 
     /**
@@ -111,7 +108,13 @@ public class BitStr {
      */
     @Override
     public String toString() {
-
-        return bit_name.entrySet().stream().map(e -> e.getKey() + " " + e.getValue()).collect(Collectors.joining(System.lineSeparator()));
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < mask_msb_name.length; i++) {
+            String name = mask_msb_name[i];
+            if (name != null) {
+                str.append(BitPositionEnum.values()[i]).append(" ").append(name).append(System.lineSeparator());
+            }
+        }
+        return str.toString();
     }
 }

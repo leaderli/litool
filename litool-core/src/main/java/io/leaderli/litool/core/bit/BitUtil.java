@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.bit;
 
+import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.text.StringUtils;
 
 /**
@@ -22,6 +24,28 @@ public class BitUtil {
         return Integer.bitCount(num) == 1;
     }
 
+    /**
+     * @param num 一个二进制数值
+     * @return 将二进制数从16位分割为两个部分
+     */
+    public static LiTuple<Integer, Integer> split(int num) {
+        return split(num, 16);
+    }
+
+    /**
+     * @param num      一个二进制数值
+     * @param position 分割位置
+     * @return 将二进制数从指定位置位分割为两个部分
+     * eg:
+     * 0000 0000 0000 0000 0000 0000 0000 0011
+     * 按照位置1切割
+     * 0000 0000 0000 0000 0000 0000 0000 0010
+     * 0000 0000 0000 0000 0000 0000 0000 0001
+     */
+    public static LiTuple<Integer, Integer> split(int num, int position) {
+        LiAssertUtil.assertTrue(position <= 31 && position > 0, new IllegalArgumentException(position + " position must bettwen 2 and 31"));
+        return LiTuple.of(num & (-1 >> position << position), num & ~(-1 >> position << position));
+    }
 
     /**
      * @param num int数值

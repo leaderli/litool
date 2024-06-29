@@ -37,7 +37,7 @@ public abstract class BitPermission {
      * @throws IllegalArgumentException 如果指定整数为负数。
      */
     private void assertNonNegative(int value) {
-        LiAssertUtil.assertTrue(value > -1, IllegalArgumentException::new, String.valueOf(value));
+        LiAssertUtil.assertTrue(value > -1, new IllegalArgumentException(value + ""));
     }
 
     /**
@@ -115,13 +115,22 @@ public abstract class BitPermission {
     }
 
     /**
-     * 返回此BitState对象的字符串表示形式。
-     *
-     * @return 此BitState对象的字符串表示形式。
+     * @return 根据类的枚举值，返回其字符串表现形式
+     * @see BitStr#beauty(int)
      */
     @Override
     public String toString() {
         return bitStr.beauty(stateFlags);
+    }
+
+    /**
+     * @param state 二进制状态位
+     * @return 根据类的枚举值，返回其字符串表现形式
+     * @see BitStr#beauty(int)
+     */
+
+    public String toString(int state) {
+        return bitStr.beauty(state);
     }
 
     /**

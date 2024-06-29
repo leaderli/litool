@@ -28,7 +28,7 @@ class BitStrTest {
 
         Assertions.assertEquals("A", bit.beauty(0b001 | 0b100));
         Assertions.assertTrue(bit.toString().contains("0001"));
-
+        Assertions.assertEquals("D|C|B|A", bit.beauty(-1));
 
         Assertions.assertEquals("FINAL", BitStr.of(Modifier.class).beauty(Modifier.FINAL));
 
@@ -59,6 +59,7 @@ class BitStrTest {
         int A = 0b1;
         int B = 0b10;
         int C = 0b1000;
+        int D = BitPositionEnum.B32.mask_msb;
     }
 
 }
