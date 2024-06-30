@@ -53,4 +53,13 @@ class RandomUtilTest {
         }
         Assertions.assertTrue(run.present());
     }
+
+    @Test
+    void testRandom() {
+        Assertions.assertNotEquals(",", RandomUtil.randomString(1));
+        Assertions.assertEquals("aa", RandomUtil.randomString("a", 2));
+        Assertions.assertEquals("", RandomUtil.randomString("", 2));
+        Assertions.assertEquals("a", RandomUtil.randomString("a", -1));
+        Assertions.assertTrue(RandomUtil.randomNumerString(5).matches("\\d{5}"));
+    }
 }

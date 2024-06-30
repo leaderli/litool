@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.util;
 
+import io.leaderli.litool.core.collection.LiMapUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -68,6 +69,9 @@ class ConsoleUtilTest {
         ConsoleUtil.print(Arrays.asList(1, 2, 3).iterator());
         Assertions.assertEquals("1 2 3" + LINE_SEPARATOR, out.toString());
 
+        out.reset();
+        ConsoleUtil.printMap(LiMapUtil.newHashMap("a", "1"));
+        Assertions.assertEquals("a=1" + LINE_SEPARATOR, out.toString());
     }
 
     @Test
@@ -87,6 +91,9 @@ class ConsoleUtilTest {
         out.reset();
         ConsoleUtil.println(Arrays.asList(1, 2, 3).iterator());
         Assertions.assertEquals("1" + LINE_SEPARATOR + "2" + LINE_SEPARATOR + "3" + LINE_SEPARATOR, out.toString());
+        out.reset();
+        ConsoleUtil.printArray(new int[]{1, 2, 3});
+        Assertions.assertEquals("[1, 2, 3]" + LINE_SEPARATOR, out.toString());
     }
 
     @Test
@@ -94,6 +101,8 @@ class ConsoleUtilTest {
         out.reset();
         ConsoleUtil.line();
         Assertions.assertTrue(out.toString().contains("-"));
+        ConsoleUtil.line("a");
+        Assertions.assertTrue(out.toString().contains("- a -"));
 
     }
 

@@ -26,6 +26,8 @@ class HumanSizeUtilTest {
 
         test.forEach((in, expected) -> Assertions.assertEquals(expected, HumanSizeUtil.convertToHumanReadableSize(in)));
 
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HumanSizeUtil.convertToHumanReadableSize(-1));
+
     }
 
 

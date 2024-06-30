@@ -32,6 +32,7 @@ class StrSubstitutionTest {
     void format() {
 
         Assertions.assertEquals("--123}--", StrSubstitution.format("--{xxx}}--", 123));
+        Assertions.assertEquals("--123}--", StrSubstitution.format2("--{xxx}}--", "{", "}", 123));
         Assertions.assertEquals("123", StrSubstitution.$format("123"));
         Assertions.assertEquals("123$", StrSubstitution.$format("123$"));
         Assertions.assertEquals("123${", StrSubstitution.$format("123${"));
@@ -86,6 +87,7 @@ class StrSubstitutionTest {
         Map<String, Object> map = new HashMap<>();
         map.put("a", "li");
         map.put("now", DateUtil.parse("20220101", "yyyyMMdd"));
+        Assertions.assertEquals("li", StrSubstitution.map("{a}", map));
         Assertions.assertEquals("li{b}", StrSubstitution.parse("${a}{b}", "$", "}", (name, def) -> {
             if (name.startsWith("{")) {
                 return map.get(name.substring(1));

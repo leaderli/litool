@@ -17,6 +17,8 @@ class ArrayEqualTest {
         Assertions.assertNotEquals(ArrayEqual.of(new Object[]{1}), ArrayEqual.of(new Object[]{"1"}));
         Assertions.assertNotEquals(ArrayEqual.of(new Object[]{1}), ArrayEqual.of(new Object[]{1, 2}));
         Assertions.assertNotEquals(ArrayEqual.of(null), ArrayEqual.of(new Object[]{}));
+
+        Assertions.assertTrue(ArrayEqual.of(1, 2).apply(new Integer[]{1, 2}));
     }
 
 }

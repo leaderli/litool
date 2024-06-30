@@ -56,7 +56,23 @@ class BooleanUtilTest {
 
         Assertions.assertDoesNotThrow(() -> BooleanUtil.parse((LiValue) null));
 
-        System.out.println(BooleanUtil.parse(Optional.empty()));
+        a = Optional.empty();
+        Assertions.assertFalse(BooleanUtil.parse(a));
+        a = new Enumeration() {
+            @Override
+            public boolean hasMoreElements() {
+                return false;
+            }
+
+            @Override
+            public Object nextElement() {
+                return null;
+            }
+        };
+        Assertions.assertFalse(BooleanUtil.parse(a));
+
+        a = new int[0];
+        Assertions.assertFalse(BooleanUtil.parse(a));
     }
 
     @Test

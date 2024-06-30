@@ -123,7 +123,7 @@ public class ConsoleUtil {
     public static void printMap(Map<?, ?> map) {
 
         for (Map.Entry entry : map.entrySet()) {
-            System.out.println(entry.getKey() + "=" + entry.getValue());
+            CONSOLE.println(entry.getKey() + "=" + entry.getValue());
         }
     }
 

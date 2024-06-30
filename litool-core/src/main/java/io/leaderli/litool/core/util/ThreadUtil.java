@@ -44,8 +44,7 @@ public class ThreadUtil {
      * @param runnable 休眠结束后执行的操作
      */
     public static void sleep(long millis, Runnable runnable) {
-        sleep(TimeUnit.MILLISECONDS, millis);
-        runnable.run();
+        sleep(TimeUnit.MILLISECONDS, millis, runnable);
     }
 
 
@@ -90,9 +89,7 @@ public class ThreadUtil {
      * @return 休眠一定时间后的返回值
      */
     public static <T> T delay(long millis, Supplier<T> supplier) {
-
-        sleep(millis);
-        return supplier.get();
+        return delay(TimeUnit.MILLISECONDS, millis, supplier);
     }
 
     /**
@@ -148,7 +145,6 @@ public class ThreadUtil {
      * @throws RuntimeException 如果当前线程被中断，抛出RuntimeException。
      */
     public static void join(Thread thread) {
-
         try {
             thread.join();
         } catch (InterruptedException e) {

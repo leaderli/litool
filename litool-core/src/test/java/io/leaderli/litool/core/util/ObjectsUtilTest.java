@@ -24,7 +24,17 @@ class ObjectsUtilTest {
     @Test
     void requireNotNull() {
         Assertions.assertThrows(NullPointerException.class, () -> ObjectsUtil.requireNotNull(1, null));
+        Assertions.assertThrows(NullPointerException.class, () -> ObjectsUtil.requireNotNull("not null", 1, null));
 
+        Assertions.assertTrue(ObjectsUtil.anyNull(null, null));
+        Assertions.assertFalse(ObjectsUtil.anyNull(1, 2));
+    }
+
+    @Test
+    void testHashCode() {
+
+        Assertions.assertEquals(-1, ObjectsUtil.hashCodeOrZero(null));
+        Assertions.assertEquals(1, ObjectsUtil.hashCodeOrZero(1));
     }
 
     @Test

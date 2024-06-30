@@ -22,11 +22,6 @@ public class ArrayItr<T> implements IterableItr<T> {
         this.arr = arr;
     }
 
-    @SuppressWarnings("unchecked")
-    ArrayItr(List<T> list) {
-        this.arr = (T[]) list.toArray();
-    }
-
     @Override
     public Iterator<T> iterator() {
         return new io.leaderli.litool.core.collection.ArrayItr<>(arr);
@@ -60,7 +55,7 @@ public class ArrayItr<T> implements IterableItr<T> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof io.leaderli.litool.core.collection.ArrayItr) {
+        if (obj instanceof ArrayItr) {
             return Arrays.equals(arr, ((io.leaderli.litool.core.collection.ArrayItr<?>) obj).arr);
         }
         return false;

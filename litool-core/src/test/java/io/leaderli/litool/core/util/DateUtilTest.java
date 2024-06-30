@@ -3,6 +3,7 @@ package io.leaderli.litool.core.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,11 +40,19 @@ class DateUtilTest {
     }
 
     @Test
-    void parser() {
+    void parse() {
         Assertions.assertNotNull(DateUtil.parse("19910103", "yyyyMMdd"));
         Assertions.assertNotNull(DateUtil.parse("19910103 112235", "yyyyMMdd HHmmss"));
         Assertions.assertEquals("1991/01/03", DateUtil.parse("19910103", "yyyyMMdd", "yyyy/MM/dd"));
         Assertions.assertEquals("19910103", DateUtil.parse("19910103 112235", "yyyyMMdd HHmmss", "yyyyMMdd"));
+        Assertions.assertThrows(RuntimeException.class, () -> DateUtil.parse("1991/01/03 112235", "yyyyMMdd HHmmss", "yyyyMMdd"));
+        Assertions.assertThrows(RuntimeException.class, () -> DateUtil.parse("1991/01/03 112235", new SimpleDateFormat("yyyyMMdd")));
+        Assertions.assertThrows(RuntimeException.class, () -> DateUtil.parse("1991/01/03 112235", "yyyyMMdd"));
+        Assertions.assertTrue(DateUtil.between("yyyyMMdd", "1990101", "20990101"));
+        Assertions.assertTrue(DateUtil.between("yyyyMMdd", "20240101", "20240101", "20240103"));
+        Assertions.assertTrue(DateUtil.between("yyyyMMdd", "20240102", "20240101", "20240103"));
+        Assertions.assertFalse(DateUtil.between("yyyyMMdd", "20240103", "20240101", "20240103"));
+        Assertions.assertFalse(DateUtil.between("yyyyMMdd", "20231231", "20240101", "20240103"));
     }
 
 

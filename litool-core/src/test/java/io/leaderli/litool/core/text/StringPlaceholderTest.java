@@ -11,13 +11,7 @@ class StringPlaceholderTest {
 
             @Override
             public void variable(StringBuilder variable) {
-                if (variables.length == 1) {
-
-                    append(1);
-                } else {
-
-                    append(variable);
-                }
+                append(variables[0]);
 
             }
         };
@@ -25,6 +19,22 @@ class StringPlaceholderTest {
         return place.toString();
 
 
+    }
+
+    public String format2(String str, Object... variables) {
+        StringBuilderPlaceholderFunction place = new StringBuilderPlaceholderFunction() {
+
+
+            @Override
+            public void variable(StringBuilder variable) {
+
+
+                    append(variable);
+
+            }
+        };
+        new StringPlaceholder.Builder().escap('`').variable_prefix("##").variable_suffix("##").build().parse(str, place);
+        return place.toString();
     }
 
     @Test
@@ -36,6 +46,11 @@ class StringPlaceholderTest {
         Assertions.assertEquals("{1}", format("`{{1}}", 1));
         Assertions.assertEquals("{1}", format("`{{1}`}", 1));
         Assertions.assertEquals("1}", format("{`{1}}", 1));
+
+
+        Assertions.assertEquals("#`", format2("#``"));
+        Assertions.assertEquals("##", format2("#`#"));
+        Assertions.assertEquals("aa#b", format2("##aa#b##"));
     }
 
     @Test

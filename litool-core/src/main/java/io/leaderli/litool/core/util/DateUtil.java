@@ -80,7 +80,7 @@ public class DateUtil {
      * @param format 时间格式
      * @param before format格式的起始时间
      * @param after  format格式的结束时间
-     * @return 判断当时时间是否在时间范围内
+     * @return 判断当时时间是否在时间范围内，即大于等于起始时间，小于结束时间
      * @see #between(String, String, String, String)
      */
 
@@ -107,7 +107,7 @@ public class DateUtil {
         Date nowDate = parse(between, format);
         Date beforeDate = parse(before, format);
         Date afterDate = parse(after, format);
-        return beforeDate.before(nowDate) && afterDate.after(nowDate);
+        return beforeDate.compareTo(nowDate) <= 0 && afterDate.compareTo(nowDate) > 0;
     }
 
     /**
