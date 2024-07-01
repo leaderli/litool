@@ -187,11 +187,11 @@ public enum BitPositionEnum {
     /**
      * Most Significant Bit，即最高位的比特位。 一个 int 类型的值是表示它的二进制形式是首位为1，其他为0
      */
-    final int mask_msb;
+    public final int mask_msb;
     /**
      * 比特位的位置，为0表示非msb，同时也是其数组形式的角标
      */
-    final int mask_position;
+    public final int mask_position;
 
     BitPositionEnum() {
         if ("NONE".equals(this.name())) {
