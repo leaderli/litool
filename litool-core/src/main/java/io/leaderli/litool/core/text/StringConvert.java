@@ -19,21 +19,21 @@ public class StringConvert {
 
     static {
 
-        CONVERTS.put(boolean.class, Boolean::valueOf);
-        CONVERTS.put(byte.class, Byte::valueOf);
-        CONVERTS.put(double.class, Double::valueOf);
-        CONVERTS.put(float.class, Float::valueOf);
-        CONVERTS.put(int.class, Integer::valueOf);
-        CONVERTS.put(long.class, Long::valueOf);
-        CONVERTS.put(short.class, Short::valueOf);
+        CONVERTS.put(boolean.class, Boolean::parseBoolean);
+        CONVERTS.put(byte.class, Byte::parseByte);
+        CONVERTS.put(double.class, Double::parseDouble);
+        CONVERTS.put(float.class, Float::parseFloat);
+        CONVERTS.put(int.class, Integer::parseInt);
+        CONVERTS.put(long.class, Long::parseLong);
+        CONVERTS.put(short.class, Short::parseShort);
 
-        CONVERTS.put(Boolean.class, Boolean::valueOf);
-        CONVERTS.put(Byte.class, Byte::valueOf);
-        CONVERTS.put(Double.class, Double::valueOf);
-        CONVERTS.put(Float.class, Float::valueOf);
-        CONVERTS.put(Integer.class, Integer::valueOf);
-        CONVERTS.put(Long.class, Long::valueOf);
-        CONVERTS.put(Short.class, Short::valueOf);
+        CONVERTS.put(Boolean.class, Boolean::parseBoolean);
+        CONVERTS.put(Byte.class, Byte::parseByte);
+        CONVERTS.put(Double.class, Double::parseDouble);
+        CONVERTS.put(Float.class, Float::parseFloat);
+        CONVERTS.put(Integer.class, Integer::parseInt);
+        CONVERTS.put(Long.class, Long::parseLong);
+        CONVERTS.put(Short.class, Short::parseShort);
 
         CONVERTS.put(String.class, str -> str);
     }

@@ -71,4 +71,33 @@ public class NumberUtil {
         }
         return value;
     }
+
+
+    /**
+     * 将字符串转化为int，支持二进制、八进制、十进制、十六进制，根据字符串前缀区分，
+     * eg:
+     * 0b1010
+     * 07777
+     * 7777
+     * 0xffff
+     */
+
+    public static int parserInt(String number) {
+        if (number == null) {
+            throw new NumberFormatException("For input string:" + number);
+        }
+        if (number.length() == 1) {
+            return Integer.parseInt(number);
+        }
+        if (number.startsWith("0x") || number.startsWith("0X")) {
+            return Integer.parseInt(number.substring(2), 16);
+        }
+        if (number.startsWith("0b") || number.startsWith("0B")) {
+            return Integer.parseInt(number.substring(2), 2);
+        }
+        if (number.startsWith("0")) {
+            return Integer.parseInt(number.substring(1), 8);
+        }
+        return Integer.parseInt(number);
+    }
 }

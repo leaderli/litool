@@ -40,4 +40,12 @@ class NumberUtilTest {
         result2 = NumberUtil.constrain(15.0, 10, 0, 20);
         assertEquals(15, result2);
     }
+
+    @Test
+    void testParserInt() {
+        Assertions.assertEquals(0, NumberUtil.parserInt("0b0"));
+        Assertions.assertEquals(9, NumberUtil.parserInt("011"));
+        Assertions.assertEquals(17, NumberUtil.parserInt("0x11"));
+        Assertions.assertEquals(15, NumberUtil.parserInt("0xF"));
+    }
 }

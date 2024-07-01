@@ -229,8 +229,6 @@ class IterableItrTest {
         ofs = IterableItr.ofs();
         Assertions.assertSame(Object[].class, ofs.toArray().getClass());
 
-        //noinspection AssertBetweenInconvertibleTypes
-
         Integer[] ints = {1, 2, 3};
         Assertions.assertArrayEquals(ints, IterableItr.ofs(ints).toArray());
         Assertions.assertArrayEquals(ints, IterableItr.ofs(ints).toArray(Integer.class));
