@@ -40,6 +40,7 @@ class ArrayUtilsTest {
 
     }
 
+
     @Test
     void combineArrays() {
         // 测试组合两个非空 int 数组
@@ -396,6 +397,8 @@ class ArrayUtilsTest {
         assertArrayEquals(new Integer[]{}, ArrayUtils.toArray(Integer.class, (Iterator<Integer>) null));
         assertArrayEquals(new Integer[]{}, ArrayUtils.toArray(Integer.class, (Enumeration<Integer>) null));
 
+        Assertions.assertEquals(int[].class, ArrayUtils.toIntArray(1, 2, 3).getClass());
+
 
     }
 
@@ -430,7 +433,7 @@ class ArrayUtilsTest {
 
         Integer[] map = ArrayUtils.map((Integer[]) null, Integer.class, integer -> integer);
         Assertions.assertSame(0, map.length);
-        Assertions.assertArrayEquals(new String[]{"1"}, ArrayUtils.map(new Integer[]{1}, String.class, integer -> integer + ""));
+        Assertions.assertArrayEquals(new String[]{"1"}, ArrayUtils.map(new Integer[]{1}, String.class, String::valueOf));
     }
 
     @Test
