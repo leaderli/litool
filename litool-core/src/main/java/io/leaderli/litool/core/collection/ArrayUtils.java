@@ -1062,6 +1062,14 @@ public class ArrayUtils {
         return arr;
     }
 
+    public static int[] toIntArray(Integer... elements) {
+        int[] arr = (int[]) Array.newInstance(int.class, elements.length);
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = elements[i];
+        }
+        return arr;
+    }
+
 
     /**
      * 将 {@link  Iterable} 可提供的元素转换为类型为{@code T}的数组。
