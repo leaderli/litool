@@ -32,6 +32,22 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
         return new MethodFilter()._parameterType(parameterTypes);
     }
 
+    public static MethodFilter arg0(Class<?> parameterType) {
+        return new MethodFilter()._arg0(parameterType);
+    }
+
+    public static MethodFilter arg1(Class<?> parameterType) {
+        return new MethodFilter()._arg1(parameterType);
+    }
+
+    public static MethodFilter arg2(Class<?> parameterType) {
+        return new MethodFilter()._arg2(parameterType);
+    }
+
+    public static MethodFilter argx(int index, Class<?> parameterType) {
+        return new MethodFilter()._argx(index, parameterType);
+    }
+
     public static MethodFilter name(String name) {
         return new MethodFilter()._name(name);
     }
@@ -118,6 +134,23 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
 
     public MethodFilter _returnType(Class<?> returnType) {
         add(m -> m.getReturnType() == returnType);
+        return this;
+    }
+
+    public MethodFilter _arg0(Class<?> parameterType) {
+        return _argx(0, parameterType);
+    }
+
+    public MethodFilter _arg1(Class<?> parameterType) {
+        return _argx(1, parameterType);
+    }
+
+    public MethodFilter _arg2(Class<?> parameterType) {
+        return _argx(2, parameterType);
+    }
+
+    public MethodFilter _argx(int index, Class<?> parameterType) {
+        add(m -> m.getParameterTypes().length > index && m.getParameterTypes()[index] == parameterType);
         return this;
     }
 
