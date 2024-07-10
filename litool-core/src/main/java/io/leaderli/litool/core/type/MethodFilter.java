@@ -141,6 +141,10 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
             methodFilter.add(m -> (m.getModifiers() & modifiers) == modifiers);
             return this;
         }
+
+        public MethodFilter build() {
+            return methodFilter;
+        }
     }
 
 }
