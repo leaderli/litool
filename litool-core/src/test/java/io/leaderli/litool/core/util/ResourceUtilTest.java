@@ -114,6 +114,8 @@ class ResourceUtilTest {
             }
             Assertions.assertTrue(sb.toString().startsWith("cafebabe"));
         });
+
+        Assertions.assertNull(ResourceUtil.getResourceAsStream("aaa123"));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.resource;
 
+import com.sun.istack.internal.Nullable;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StringUtils;
@@ -151,6 +152,7 @@ public class ResourceUtil {
      * @param path 相对于 classpath 的文件路径
      * @return 返回对应文件的 URL
      */
+    @Nullable
     public static URL getResource(String path) {
 
         return getResource(path, null);
@@ -164,6 +166,7 @@ public class ResourceUtil {
      * @param clazz 指定的类
      * @return 返回对应文件的 URL
      */
+    @Nullable
     public static URL getResource(String path, Class<?> clazz) {
         path = StringUtils.stripToEmpty(path);
         if (clazz == null) {
@@ -180,6 +183,7 @@ public class ResourceUtil {
      * @return 资源的输入流
      * @see #getResourceAsStream(String, Class)
      */
+    @Nullable
     public static InputStream getResourceAsStream(String resourcePath) {
 
         return getResourceAsStream(resourcePath, null);
@@ -196,10 +200,15 @@ public class ResourceUtil {
      * @see #getResource(String, Class)
      * @see URL#openStream()
      */
+    @Nullable
     public static InputStream getResourceAsStream(String resourceRelativePath, Class<?> baseClass) {
 
         try {
-            return getResource(resourceRelativePath, baseClass).openStream();
+            URL resource = getResource(resourceRelativePath, baseClass);
+            if (resource == null) {
+                return null;
+            }
+            return resource.openStream();
         } catch (IOException e) {
             return null;
         }
