@@ -3,10 +3,7 @@ package io.leaderli.litool.core.collection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -156,5 +153,12 @@ class LiMapUtilTest {
         assertFalse(LiMapUtil.getTypeObject(map, "k1", Integer.class).present());
     }
 
-
+    @Test
+    void testFilter() {
+        Assertions.assertEquals(0, LiMapUtil.<String, String>filter(null, Objects::nonNull).size());
+        Assertions.assertThrows(NullPointerException.class, () -> LiMapUtil.<String, String>filter(null, null).size());
+        Assertions.assertThrows(NullPointerException.class, () -> LiMapUtil.filter(LiMapUtil.newHashMap("a", "1"), null).size());
+        Assertions.assertEquals(1, LiMapUtil.filter(LiMapUtil.newHashMap("a", "1"), Objects::nonNull).size());
+        Assertions.assertEquals(0, LiMapUtil.filter(LiMapUtil.newHashMap("a", "1"), "b"::equals).size());
+    }
 }

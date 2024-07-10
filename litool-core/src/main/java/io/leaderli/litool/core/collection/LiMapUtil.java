@@ -1,13 +1,11 @@
 package io.leaderli.litool.core.collection;
 
 
+import io.leaderli.litool.core.function.Filter;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.Lira;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Map工具类，提供了一些方便的方法，用于合并、覆盖、过滤Map等操作。
@@ -205,5 +203,23 @@ public class LiMapUtil {
         LinkedHashMap<K, V> map = new LinkedHashMap<>();
         map.put(k, v);
         return map;
+    }
+
+    /**
+     * @param map    原始map
+     * @param filter 过滤筛选规则
+     * @return 返回过滤后的map
+     */
+    public static <K, V> Map<K, V> filter(Map<K, V> map, Filter<K> filter) {
+        Objects.requireNonNull(filter);
+        Map<K, V> result = new HashMap<>();
+        if (map != null) {
+            map.forEach((k, v) -> {
+                if (filter.apply(k)) {
+                    result.put(k, v);
+                }
+            });
+        }
+        return result;
     }
 }
