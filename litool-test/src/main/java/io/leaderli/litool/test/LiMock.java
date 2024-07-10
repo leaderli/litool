@@ -264,10 +264,9 @@ public class LiMock {
                 .filter(ModifierUtil::isStatic)) {
 
             for (Method method : findDeclaredMethods(mockClass, MethodFilter
-                    .name(delegateMethod.getName()).builder()
-                    .parameterType(delegateMethod.getParameterTypes())
-                    .returnType(delegateMethod.getReturnType())
-                    .methodFilter)) {
+                    .name(delegateMethod.getName())
+                    ._parameterType(delegateMethod.getParameterTypes())
+                    ._returnType(delegateMethod.getReturnType()))) {
                 delegateMap.put(method, delegateMethod);
             }
 
@@ -334,8 +333,7 @@ public class LiMock {
 
             MethodFilter methodFilter = MethodFilter
                     .name(delegateMethod.getName())
-                    .builder()
-                    .of(m -> {
+                    ._of(m -> {
                         // 代理方法第一个参数、第二个参数为 this 和 return
                         Class<?>[] compare = ArrayUtils.insert(m.getParameterTypes(), 0, m.getReturnType());
                         return Arrays.equals(delegateMethod.getParameterTypes(), compare);

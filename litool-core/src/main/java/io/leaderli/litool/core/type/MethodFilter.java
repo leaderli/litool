@@ -21,27 +21,27 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
     }
 
     public static MethodFilter isMethod() {
-        return new MethodFilter().add(Objects::nonNull);
+        return new MethodFilter()._isMethod();
     }
 
     public static MethodFilter declare(Class<?> declare) {
-        return new MethodFilter().add(m -> m.getDeclaringClass() == declare);
+        return new MethodFilter()._declare(declare);
     }
 
     public static MethodFilter parameterType(Class<?>... parameterTypes) {
-        return new MethodFilter().add(m -> Arrays.equals(m.getParameterTypes(), parameterTypes));
+        return new MethodFilter()._parameterType(parameterTypes);
     }
 
     public static MethodFilter name(String name) {
-        return new MethodFilter().add(m -> m.getName().equals(name));
+        return new MethodFilter()._name(name);
     }
 
     public static MethodFilter names(String... names) {
-        return new MethodFilter().add(m -> StringUtils.equalsAny(m.getName(), names));
+        return new MethodFilter()._names(names);
     }
 
     public static MethodFilter isPublic() {
-        return new MethodFilter().add(ModifierUtil::isPublic);
+        return new MethodFilter()._isPublic();
     }
 
     public static MethodFilter of(Filter<Method> filter) {
@@ -49,19 +49,19 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
     }
 
     public static MethodFilter annotated(Class<? extends Annotation> annotated) {
-        return new MethodFilter().add(m -> m.isAnnotationPresent(annotated));
+        return new MethodFilter()._annotated(annotated);
     }
 
     public static MethodFilter returnType(Class<?> returnType) {
-        return new MethodFilter().add(m -> m.getReturnType() == returnType);
+        return new MethodFilter()._returnType(returnType);
     }
 
     public static MethodFilter length(int length) {
-        return new MethodFilter().add(m -> m.getParameterTypes().length == length);
+        return new MethodFilter()._length(length);
     }
 
     public static MethodFilter modifiers(int modifiers) {
-        return new MethodFilter().add(m -> (m.getModifiers() & modifiers) == modifiers);
+        return new MethodFilter()._modifiers(modifiers);
     }
 
     @Override
@@ -76,75 +76,58 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
         return this;
     }
 
-    public Builder builder() {
-        return new Builder(this);
+    public MethodFilter _isMethod() {
+        add(Objects::nonNull);
+        return this;
     }
 
-    public static class Builder {
-        public final MethodFilter methodFilter;
-
-        public Builder(MethodFilter methodFilter) {
-            this.methodFilter = methodFilter;
-        }
-
-        public Builder isMethod() {
-            methodFilter.add(Objects::nonNull);
-            return this;
-        }
-
-        public Builder name(String name) {
-            methodFilter.add(m -> m.getName().equals(name));
-            return this;
-        }
-
-        public Builder isPublic() {
-            methodFilter.add(ModifierUtil::isPublic);
-            return this;
-        }
-
-        public MethodFilter of(Filter<Method> filter) {
-            return methodFilter.add(filter);
-        }
-
-        public Builder annotated(Class<? extends Annotation> annotated) {
-            methodFilter.add(m -> m.isAnnotationPresent(annotated));
-            return this;
-        }
-
-        public Builder returnType(Class<?> returnType) {
-            methodFilter.add(m -> m.getReturnType() == returnType);
-            return this;
-        }
-
-        public Builder length(int length) {
-            methodFilter.add(m -> m.getParameterTypes().length == length);
-            return this;
-        }
-
-        public Builder declareBy(Class<?> declare) {
-            methodFilter.add(m -> m.getDeclaringClass() == declare);
-            return this;
-        }
-
-        public Builder names(String... names) {
-            methodFilter.add(m -> StringUtils.equalsAny(m.getName(), names));
-            return this;
-        }
-
-
-        public Builder parameterType(Class<?>[] parameterTypes) {
-            methodFilter.add(m -> Arrays.equals(m.getParameterTypes(), parameterTypes));
-            return this;
-        }
-
-        public Builder modifiers(int modifiers) {
-            methodFilter.add(m -> (m.getModifiers() & modifiers) == modifiers);
-            return this;
-        }
-
-        public MethodFilter build() {
-            return methodFilter;
-        }
+    public MethodFilter _declare(Class<?> declare) {
+        add(m -> m.getDeclaringClass() == declare);
+        return this;
     }
 
+    public MethodFilter _parameterType(Class<?>... parameterTypes) {
+        add(m -> Arrays.equals(m.getParameterTypes(), parameterTypes));
+        return this;
+    }
+
+    public MethodFilter _name(String name) {
+        add(m -> m.getName().equals(name));
+        return this;
+    }
+
+    public MethodFilter _names(String... names) {
+        add(m -> StringUtils.equalsAny(m.getName(), names));
+        return this;
+    }
+
+    public MethodFilter _isPublic() {
+        add(ModifierUtil::isPublic);
+        return this;
+    }
+
+    public MethodFilter _of(Filter<Method> filter) {
+        add(filter);
+        return this;
+    }
+
+    public MethodFilter _annotated(Class<? extends Annotation> annotated) {
+        add(m -> m.isAnnotationPresent(annotated));
+        return this;
+    }
+
+    public MethodFilter _returnType(Class<?> returnType) {
+        add(m -> m.getReturnType() == returnType);
+        return this;
+    }
+
+    public MethodFilter _length(int length) {
+        add(m -> m.getParameterTypes().length == length);
+        return this;
+    }
+
+    public MethodFilter _modifiers(int modifiers) {
+        add(m -> (m.getModifiers() & modifiers) == modifiers);
+        return this;
+    }
 }
