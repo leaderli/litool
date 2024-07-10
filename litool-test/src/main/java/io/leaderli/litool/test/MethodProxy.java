@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 public interface MethodProxy<T> {
 
-    MethodProxy<?> NONE = (m, args) -> null;
+    MethodProxy<?> NONE = of(null);
 
     static <T> MethodProxy<T> of(T value) {
         return (m, args) -> value;
