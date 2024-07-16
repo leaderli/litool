@@ -3,6 +3,7 @@ package io.leaderli.litool.core.lang;
 import com.google.gson.Gson;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.text.StringUtils;
+import io.leaderli.litool.core.util.RandomUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -305,6 +306,39 @@ class StringUtilsTest {
         }};
         System.out.println(StringUtils.getSimpleName(objects));
         Assertions.assertEquals("Object[]@" + objects.hashCode(), StringUtils.getSimpleName(objects));
+    }
+
+    @Test
+    void testSplitLessThanSize() {
+        Assertions.assertEquals("[]", Arrays.toString(StringUtils.splitLessThanSize(null, "?", ".", 5, 1)));
+        Assertions.assertEquals("[1?23?, 4]", Arrays.toString(StringUtils.splitLessThanSize("1?23?4", "?", ".", 5, 1)));
+        Assertions.assertEquals("[1234?]", Arrays.toString(StringUtils.splitLessThanSize("1234?", "?", ".", 5, 1)));
+        Assertions.assertEquals("[12345]", Arrays.toString(StringUtils.splitLessThanSize("12345", "?", ".", 5, 1)));
+        Assertions.assertEquals("[1234, .56]", Arrays.toString(StringUtils.splitLessThanSize("1234.56", "?", ".", 5, 1)));
+        Assertions.assertEquals("[1234?, 56]", Arrays.toString(StringUtils.splitLessThanSize("1234?56", ",?!", ".", 5, 1)));
+        Assertions.assertEquals("[12345, 6]", Arrays.toString(StringUtils.splitLessThanSize("123456", "?", ".", 5, 1)));
+        Assertions.assertEquals("[123, ..456]", Arrays.toString(StringUtils.splitLessThanSize("123..456", "?", ".", 5, 1)));
+        Assertions.assertEquals("[1?23456789, 123]", Arrays.toString(StringUtils.splitLessThanSize("1?23456789123", "?", ".", 10, 2)));
+        Assertions.assertEquals("[12?3456789, 123]", Arrays.toString(StringUtils.splitLessThanSize("12?3456789123", "?", ".", 10, 2)));
+        Assertions.assertEquals("[123?456789, 123]", Arrays.toString(StringUtils.splitLessThanSize("123?456789123", "?", ".", 10, 2)));
+        Assertions.assertEquals("[1234?, 56789123]", Arrays.toString(StringUtils.splitLessThanSize("1234?56789123", "?", ".", 10, 2)));
+        Assertions.assertEquals("[123456789, .123]", Arrays.toString(StringUtils.splitLessThanSize("123456789.123", "?", ".", 10, 2)));
+        Assertions.assertEquals("[12345678, ..123]", Arrays.toString(StringUtils.splitLessThanSize("12345678..123", "?", ".", 10, 2)));
+        Assertions.assertEquals("[1234567, ...123]", Arrays.toString(StringUtils.splitLessThanSize("1234567...123", "?", ".", 10, 2)));
+        Assertions.assertEquals("[123456., ...123]", Arrays.toString(StringUtils.splitLessThanSize("123456....123", "?", ".", 10, 2)));
+        Assertions.assertEquals("[123, ^.456]", Arrays.toString(StringUtils.splitLessThanSize("123^.456", "?!", ".^", 5, 1)));
+        String random = RandomUtil.randomString("123456?!.^", 10000);
+        String[] split = StringUtils.splitLessThanSize(random, "?!", ".^", 10, 2);
+        for (String seg : split) {
+            Assertions.assertTrue(seg.length() <= 10, seg);
+        }
+        Assertions.assertEquals(random, StringUtils.join0("", split));
+
+        Assertions.assertEquals("[一二三四五六七八九, .一二三]", Arrays.toString(StringUtils.splitLessThanSize("一二三四五六七八九.一二三", "?", ".", 10, 2)));
+        Assertions.assertEquals("[一二三四五六七八, ..一二三]", Arrays.toString(StringUtils.splitLessThanSize("一二三四五六七八..一二三", "?", ".", 10, 2)));
+        Assertions.assertEquals("[一二三四五六七, ...一二三]", Arrays.toString(StringUtils.splitLessThanSize("一二三四五六七...一二三", "?", ".", 10, 2)));
+        Assertions.assertEquals("[一二三四五六., ...一二三]", Arrays.toString(StringUtils.splitLessThanSize("一二三四五六....一二三", "?", ".", 10, 2)));
+
     }
 
     private void outmock() {
