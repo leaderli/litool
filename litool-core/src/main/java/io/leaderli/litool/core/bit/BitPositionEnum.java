@@ -1,6 +1,5 @@
 package io.leaderli.litool.core.bit;
 
-import com.sun.istack.internal.NotNull;
 import io.leaderli.litool.core.text.StringUtils;
 
 import java.util.Arrays;
@@ -228,7 +227,6 @@ public enum BitPositionEnum {
      * @param x 状态值，用 int 表示
      * @return 存在于状态中的枚举值，如果不存在则返回NONE
      */
-    @NotNull
     public static BitPositionEnum of(int x) {
         if (BitUtil.onlyOneBit(x)) {
             int n = 0;
