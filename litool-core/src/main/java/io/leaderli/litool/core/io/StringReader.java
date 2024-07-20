@@ -17,6 +17,8 @@ public class StringReader implements Supplier<String> {
 
     private final InputStream inputStream;
     private final Charset charset;
+    private final char[] buffer;
+
     private final StringBuilder sb = new StringBuilder();
 
     public StringReader(InputStream inputStream) {
@@ -24,6 +26,10 @@ public class StringReader implements Supplier<String> {
     }
 
     public StringReader(InputStream inputStream, Charset charset) {
+        this(inputStream, charset, 1024);
+    }
+
+    public StringReader(InputStream inputStream, Charset charset, int bufSize) {
         this.inputStream = inputStream;
         try {
             if (this.inputStream.available() <= 0) {
@@ -33,6 +39,7 @@ public class StringReader implements Supplier<String> {
             throw new IllegalStateException(e);
         }
         this.charset = charset;
+        buffer = new char[bufSize];
     }
 
     public String get() {
@@ -44,9 +51,9 @@ public class StringReader implements Supplier<String> {
 
         try (InputStreamReader reader = new InputStreamReader(this.inputStream, charset)) {
 
-            int read;
-            while ((read = reader.read()) != -1) {
-                sb.append((char) read);
+            int count;
+            while ((count = reader.read(buffer)) != -1) {
+                sb.append(new String(buffer, 0, count));
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);

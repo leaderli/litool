@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.io;
 
+import io.leaderli.litool.core.text.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +16,8 @@ class StringReaderTest {
     @Test
     void get() {
 
-        InputStream stream = new ByteArrayInputStream("hello".getBytes());
-        StringReader stringReader = new StringReader(stream);
+        InputStream input = new ByteArrayInputStream("hello".getBytes());
+        StringReader stringReader = new StringReader(input);
         Assertions.assertEquals("hello", stringReader.get());
         Assertions.assertEquals("hello", stringReader.get());
 
@@ -28,6 +29,11 @@ class StringReaderTest {
         }));
 
 
+        String h1030 = StringUtils.repeat("h", 1030);
+        input = new ByteArrayInputStream(h1030.getBytes());
+        stringReader = new StringReader(input);
+        Assertions.assertEquals(h1030, stringReader.get());
+        Assertions.assertEquals(h1030, stringReader.get());
     }
 
 }
