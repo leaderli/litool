@@ -1,9 +1,8 @@
 package io.leaderli.litool.core.io;
 
-import java.io.IOException;
+
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.util.function.Supplier;
 
@@ -17,9 +16,11 @@ public class StringReader implements Supplier<String> {
 
     private final InputStream inputStream;
     private final Charset charset;
-    private final char[] buffer;
+    private final byte[] buffer;
+    private final byte[] sb = new byte[0];
+    private final ByteArrayOutputStream byteArrayInputStream;
+    private RuntimeException readException;
 
-    private final StringBuilder sb = new StringBuilder();
 
     public StringReader(InputStream inputStream) {
         this(inputStream, Charset.defaultCharset());
@@ -31,32 +32,32 @@ public class StringReader implements Supplier<String> {
 
     public StringReader(InputStream inputStream, Charset charset, int bufSize) {
         this.inputStream = inputStream;
-        try {
-            if (this.inputStream.available() <= 0) {
-                throw new IllegalStateException("inputstream is unavaliable");
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
         this.charset = charset;
-        buffer = new char[bufSize];
+        buffer = new byte[bufSize];
+        byteArrayInputStream = new ByteArrayOutputStream(bufSize);
     }
 
     public String get() {
+        if (readException != null) {
+            throw readException;
+        }
         read();
-        return sb.toString();
+        return new String(byteArrayInputStream.toByteArray(), charset);
     }
 
     private void read() {
-
-        try (InputStreamReader reader = new InputStreamReader(this.inputStream, charset)) {
-
-            int count;
-            while ((count = reader.read(buffer)) != -1) {
-                sb.append(new String(buffer, 0, count));
+        int count;
+        try {
+            while (inputStream.available() > 0 && (count = inputStream.read(buffer)) != -1) {
+                byteArrayInputStream.write(buffer, 0, count);
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+
+        } catch (RuntimeException e) {
+            readException = e;
+            throw readException;
+        } catch (Exception e) {
+            readException = new RuntimeException(e);
+            throw readException;
         }
     }
 

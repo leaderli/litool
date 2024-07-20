@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 /**
  * @author leaderli
@@ -21,19 +22,32 @@ class StringReaderTest {
         Assertions.assertEquals("hello", stringReader.get());
         Assertions.assertEquals("hello", stringReader.get());
 
-        Assertions.assertThrows(IllegalStateException.class, () -> new StringReader(new InputStream() {
-            @Override
-            public int read() {
-                return 0;
-            }
-        }));
-
-
         String h1030 = StringUtils.repeat("h", 1030);
         input = new ByteArrayInputStream(h1030.getBytes());
-        stringReader = new StringReader(input);
+        stringReader = new StringReader(input, Charset.defaultCharset(), 500);
         Assertions.assertEquals(h1030, stringReader.get());
         Assertions.assertEquals(h1030, stringReader.get());
+
+        String z1000 = StringUtils.repeat("z1000", 1000);
+        input = new ByteArrayInputStream(z1000.getBytes());
+        stringReader = new StringReader(input, Charset.defaultCharset(), 500);
+        Assertions.assertEquals(z1000, stringReader.get());
+        Assertions.assertEquals(z1000, stringReader.get());
+
+        input = new ByteArrayInputStream(h1030.getBytes()) {
+            @Override
+            public synchronized int read(byte[] b, int off, int len) {
+                int read = super.read(b, off, len);
+                if (read < 500) {
+                    throw new IllegalStateException();
+                }
+                return read;
+            }
+        };
+        StringReader errorReader = new StringReader(input, Charset.defaultCharset(), 500);
+        Assertions.assertThrows(IllegalStateException.class, errorReader::get);
+        Assertions.assertThrows(IllegalStateException.class, errorReader::get);
+
     }
 
 }

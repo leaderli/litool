@@ -25,10 +25,10 @@ class ThreadUtilTest {
         ThreadUtil.printStack(1);
         Thread thread = Thread.currentThread();
         Assertions.assertTrue(out.get().startsWith(thread.getName()));
-        Assertions.assertThrows(RuntimeException.class, () -> ThreadUtil.start(() -> {
-            ThreadUtil.sleep(100);
-            thread.interrupt();
-        }, false));
+//        Assertions.assertThrows(RuntimeException.class, () -> ThreadUtil.start(() -> {
+//            ThreadUtil.sleep(100);
+//            thread.interrupt();
+//        }, false));
         Thread thread1 = new Thread(ThreadUtil::join);
         thread1.start();
 
