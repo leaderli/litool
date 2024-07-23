@@ -50,6 +50,13 @@ class PrimitiveEnumTest {
         Assertions.assertTrue(PrimitiveEnum.isNumber(1.0));
         Assertions.assertTrue(PrimitiveEnum.isNumber(1.f));
         Assertions.assertFalse(PrimitiveEnum.isNumber((Object) null));
+
+        Assertions.assertTrue(PrimitiveEnum.isNumber(int.class));
+        Assertions.assertTrue(PrimitiveEnum.isNumber(Integer.class));
+
+        Assertions.assertFalse(PrimitiveEnum.isNumber(char.class));
+
+        Assertions.assertThrows(IllegalStateException.class, () -> PrimitiveEnum.CHAR.read("abc"));
     }
 
     @Test
@@ -74,6 +81,15 @@ class PrimitiveEnumTest {
         Type get = TypeUtil.resolve(type, Supplier.class.getMethod("get").getGenericReturnType());
         Assertions.assertSame(PrimitiveEnum.INT, PrimitiveEnum.get(get));
 
+        for (PrimitiveEnum value : PrimitiveEnum.values()) {
+            Assertions.assertSame(value, PrimitiveEnum.get(value.wrapper));
+            value.read(1);
+            value.read(null);
+            if (PrimitiveEnum.isNumber(value)) {
+
+                Assertions.assertThrows(IllegalStateException.class, () -> value.read("abc"));
+            }
+        }
     }
 
 }

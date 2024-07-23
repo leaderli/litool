@@ -71,10 +71,17 @@ public class MetaAnnotation<A extends Annotation, F extends MetaFunction<? exten
                         .swap()         // swap to human readable
                 )
                 .assertTrue(a ->
-                        // if the annotated-annotation with meta, and meta's metaFunction first generic-type is
-                        // not same the annotated-annotation
-                        TypeUtil.resolve2Parameterized(a._1.getClass(), MetaFunction.class).getActualClassArgument()
-                                .filter(annotatedByMeta -> annotatedByMeta == a._2.annotationType())
+                        {
+                            // if the annotated-annotation with meta, and meta's metaFunction first generic-type is
+                            // not same the annotated-annotation
+                            return TypeUtil.resolve2Parameterized(a._1.getClass(), MetaFunction.class).getActualClassArgument()
+                                    .filter(annotatedByMeta -> annotatedByMeta == a._2.annotationType());
+
+                        }, a -> {
+
+                            String expect = TypeUtil.resolve2Parameterized(a._1.getClass(), MetaFunction.class).getActualClassArgument().get() + "";
+                            return "\r\nexpect:" + expect + "\r\nactual:" + a._2.annotationType();
+                        }
                 );
 
     }
