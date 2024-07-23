@@ -287,7 +287,7 @@ class StringUtilsTest {
     @Test
     void testJoin0() {
         Assertions.assertEquals("1,null", StringUtils.join0(",", new Object[]{1, null}, "null"));
-        Assertions.assertEquals("1,null", StringUtils.join0(",", new Object[]{1, null}, s -> s + ""));
+        Assertions.assertEquals("1,null", StringUtils.join0(",", new Object[]{1, null}, String::valueOf));
     }
 
     @SuppressWarnings("ArrayHashCode")
@@ -338,6 +338,8 @@ class StringUtilsTest {
         Assertions.assertEquals("[一二三四五六七八, ..一二三]", Arrays.toString(StringUtils.splitLessThanSize("一二三四五六七八..一二三", "?", ".", 10, 2)));
         Assertions.assertEquals("[一二三四五六七, ...一二三]", Arrays.toString(StringUtils.splitLessThanSize("一二三四五六七...一二三", "?", ".", 10, 2)));
         Assertions.assertEquals("[一二三四五六., ...一二三]", Arrays.toString(StringUtils.splitLessThanSize("一二三四五六....一二三", "?", ".", 10, 2)));
+
+        Assertions.assertEquals("[12?3?, 45?6?, 123]", Arrays.toString(StringUtils.splitLessThanSize("12?3?45?6?123", "?", ".", 5, 1)));
 
     }
 

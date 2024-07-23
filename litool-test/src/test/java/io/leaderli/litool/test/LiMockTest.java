@@ -201,7 +201,7 @@ class LiMockTest {
                 .mock(MethodFilter.isMethod(), (method, args) -> 1)
                 .mock(MethodFilter.isMethod(), (method, args) -> 1)
                 .build();
-        MockBean<Error, Void> errorVoidMockBean = LiMock.mockerBean(Error.class);
+        MockBean<Error, Object> errorVoidMockBean = LiMock.mockerBean(Error.class);
         errorVoidMockBean
                 .mock(MethodFilter.isMethod(), (method, args) -> 1)
                 .mock(MethodFilter.isMethod(), (method, args) -> 1)
@@ -320,6 +320,9 @@ class LiMockTest {
         Assertions.assertEquals(1, foo.m1());
         LiMock.mockerBean(Bean1.class).when(Bean1::m1, 2).build();
         Assertions.assertEquals(2, foo.m1());
+
+        LiMock.mockerBean(Bean1.class).function(Bean1::m1).then(3).build();
+        Assertions.assertEquals(3, foo.m1());
 
         LiMock.mockerBean(Bean1.class).function(Bean1::e1).other(LiTuple.of(null, 10)).build();
         Assertions.assertEquals(10, foo.e1().get());

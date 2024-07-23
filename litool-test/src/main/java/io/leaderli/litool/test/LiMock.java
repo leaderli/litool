@@ -480,7 +480,7 @@ public class LiMock {
     /**
      * 方法记录自动带上实例
      */
-    public static <T> MockBean<T, Void> mockerBean(Class<T> mockClass) {
+    public static <T, R> MockBean<T, R> mockerBean(Class<T> mockClass) {
         return new MockBean<>(mockClass, true);
     }
 
@@ -490,7 +490,7 @@ public class LiMock {
      * @param mockClass class
      * @param detach    是否重置之前变动
      */
-    public static <T> MockBean<T, Void> mockerBean(Class<T> mockClass, boolean detach) {
+    public static <T, R> MockBean<T, R> mockerBean(Class<T> mockClass, boolean detach) {
         return new MockBean<>(mockClass, detach);
     }
 
