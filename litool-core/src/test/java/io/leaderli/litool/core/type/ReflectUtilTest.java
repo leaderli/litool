@@ -3,7 +3,6 @@ package io.leaderli.litool.core.type;
 import io.leaderli.litool.core.lang.DisposableRunnableProxy;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.WhenThrowBehavior;
-import io.leaderli.litool.core.meta.ra.LiraRuntimeException;
 import io.leaderli.litool.core.util.ConsoleUtil;
 import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
@@ -70,7 +69,7 @@ class ReflectUtilTest {
         Service3 my3 = ReflectUtil.newInterfaceImpl(LiTypeToken.of(Service3.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3());
         Assertions.assertEquals(123, my3.service(123));
 
-        Assertions.assertThrows(LiraRuntimeException.class, () -> ReflectUtil.newInterfaceImpl(LiTypeToken.of(Function.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3()));
+        Assertions.assertThrows(IllegalStateException.class, () -> ReflectUtil.newInterfaceImpl(LiTypeToken.of(Function.class), LiTypeToken.of(DynamicDelegation3.class), new DynamicDelegation3()));
 
         Assertions.assertEquals(3, ReflectUtil.newInterfaceImpl(new LiTypeToken<Function<String, Integer>>() {
         }, LiTypeToken.of(DynamicDelegation4.class), new DynamicDelegation4()).apply("123"));

@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.meta.ra;
 
+import io.leaderli.litool.core.exception.AssertException;
+
 /**
  * @author leaderli
  * @since 2022/6/27
@@ -31,12 +33,12 @@ class NoneRa<T> extends RaWithPrevPublisher<T> {
 
         @Override
         public void next_null() {
-            throw new LiraRuntimeException("NoneSubscriber will never call onNull");
+            throw new LiraRuntimeException(new AssertException("NoneSubscriber will never call onNull"));
         }
 
         @Override
         public void next(T t) {
-            throw new LiraRuntimeException("NoneSubscriber will never call next");
+            throw new LiraRuntimeException(new AssertException("NoneSubscriber will never call next"));
         }
     }
 }

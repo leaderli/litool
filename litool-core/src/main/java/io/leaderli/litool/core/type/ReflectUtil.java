@@ -654,7 +654,7 @@ public class ReflectUtil {
                 }
             }
         }
-        throw new LiraRuntimeException("can not proxy method " + originMethod);
+        throw new LiraRuntimeException(new IllegalStateException("can not proxy method " + originMethod));
     }
 
     /**

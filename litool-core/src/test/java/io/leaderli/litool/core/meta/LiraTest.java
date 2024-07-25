@@ -3,6 +3,7 @@ package io.leaderli.litool.core.meta;
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.collection.IterableItr;
+import io.leaderli.litool.core.exception.AssertException;
 import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.io.StringWriter;
 import io.leaderli.litool.core.meta.ra.LiraRuntimeException;
@@ -25,6 +26,15 @@ import java.util.function.Function;
  */
 class LiraTest {
 
+
+    @Test
+    void testAssertNoError() {
+
+        Assertions.assertThrows(ArithmeticException.class, () -> Lira.of(1, 0, 3)
+                .mapIgnoreError(a -> 1 / a)
+                .assertNoError()
+                .get());
+    }
 
     @Test
     void forEach() {
@@ -55,13 +65,12 @@ class LiraTest {
     @Test
     void LiraRuntimeException() {
 
-        LiraRuntimeException liraRuntimeException = Assertions.assertThrows(LiraRuntimeException.class,
+        IllegalArgumentException illegalArgumentException = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> Lira.of(1, 2).debug(a -> {
                     throw new LiraRuntimeException(new IllegalArgumentException("123"));
                 }).get());
 
-        Assertions.assertEquals("java.lang.IllegalArgumentException: 123", liraRuntimeException.getMessage());
-        Assertions.assertInstanceOf(IllegalArgumentException.class, liraRuntimeException.getCause());
+        Assertions.assertEquals("123", illegalArgumentException.getMessage());
 
     }
 
@@ -72,8 +81,8 @@ class LiraTest {
         Assertions.assertThrows(IllegalStateException.class,
                 () -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertNoError().get());
         Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertTrue(i -> i > 0));
-        Assertions.assertThrows(LiraRuntimeException.class, () -> Lira.of(1, 2, 9, 0).assertTrue(i -> i > 0).get());
-        Assertions.assertThrows(LiraRuntimeException.class, () -> Lira.of(1, 2, 9, 0).map(a -> Lino.of(a).assertTrue(b -> false, new LiraRuntimeException()).get()).get());
+        Assertions.assertThrows(AssertException.class, () -> Lira.of(1, 2, 9, 0).assertTrue(i -> i > 0).get());
+        Assertions.assertThrows(AssertException.class, () -> Lira.of(1, 2, 9, 0).map(a -> Lino.of(a).assertTrue(b -> false, new LiraRuntimeException(new AssertException(""))).get()).get());
     }
 
     @Test

@@ -2,6 +2,8 @@ package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.collection.NoneItr;
+import io.leaderli.litool.core.exception.AssertException;
+import io.leaderli.litool.core.exception.MapperRuntimeException;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.lang.BeanPath;
@@ -547,13 +549,13 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
             @Override
             public void accept(T e) {
                 if (!BooleanUtil.parse(filter.apply(e))) {
-                    throw new LiraRuntimeException("assert fail of " + filter + " : " + errFunction.apply(e));
+                    throw new LiraRuntimeException(new AssertException("assert fail of " + filter + " : " + errFunction.apply(e)));
                 }
             }
 
             @Override
             public void onNull() {
-                throw new LiraRuntimeException("assert fail of " + filter);
+                throw new LiraRuntimeException(new AssertException("assert fail of " + filter));
             }
         });
     }
@@ -580,6 +582,12 @@ public interface Lira<T> extends LiValue, PublisherRa<T>, Iterable<T> {
      */
     default Lira<T> assertNoError() {
         return onError((t, c) -> {
+            if (t instanceof MapperRuntimeException) {
+                if (t.getCause() instanceof RuntimeException) {
+                    throw (RuntimeException) t.getCause();
+                }
+                throw (RuntimeException) t;
+            }
             throw new IllegalStateException(t);
         });
     }
