@@ -234,7 +234,7 @@ public class ReflectUtil {
             return Lino.none();
         }
         if (cls.isEnum()) {
-            return getMethod(cls, "values").mapIgnoreError(m -> m.invoke(null)).toLira(cls).first();
+            return invokeStaticMethodByName(cls, "values").toLira(cls).first();
         }
         Lino<T> instance = getConstructor(cls).unzip(ReflectUtil::newInstance);
 

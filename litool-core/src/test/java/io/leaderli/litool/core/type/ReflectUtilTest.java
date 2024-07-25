@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.type;
 
+import io.leaderli.litool.core.bean.EnumTest;
 import io.leaderli.litool.core.lang.DisposableRunnableProxy;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.WhenThrowBehavior;
@@ -217,6 +218,11 @@ class ReflectUtilTest {
         Class<? extends Supplier> cls = supplier.getClass();
 
         Assertions.assertNotNull(ReflectUtil.newInstance(cls).get().get());
+
+        // enum
+
+        Class<?> declaredClass = EnumTest.class.getDeclaredClasses()[0];
+        Assertions.assertEquals("A", ReflectUtil.newInstance(declaredClass).get().toString());
     }
 
     enum NoneEnum {
@@ -531,6 +537,5 @@ class ReflectUtilTest {
     public class Test1 {
 
     }
-
 
 }
