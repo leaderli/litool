@@ -52,5 +52,14 @@ public class BeanTestTest {
                 this.name = name;
             }
         }
+
+    }
+
+    private static class Ignore1 {
+
+    }
+
+    private enum Ignore2 {
+
     }
 }

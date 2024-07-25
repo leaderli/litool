@@ -37,7 +37,19 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
         String scanPackage = context.getRequiredTestClass().getPackage().getName();
 
         // 忽略枚举类
-        Set<Class<?>> scan = new ClassScanner(scanPackage, f -> !f.isEnum()).scan();
+        Set<Class<?>> scan = new ClassScanner(scanPackage, cls -> {
+            if (cls.isEnum()) {
+                return false;
+            }
+            // 无 get set 方法的直接跳过
+            try {
+                return Introspector.getBeanInfo(cls, Object.class).getPropertyDescriptors().length > 0;
+            } catch (IntrospectionException e) {
+                return false;
+            }
+
+
+        }).scan();
 
         return
                 scan.parallelStream()
