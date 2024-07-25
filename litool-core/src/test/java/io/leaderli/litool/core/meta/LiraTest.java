@@ -78,7 +78,7 @@ class LiraTest {
     void assertNoError() {
 
         Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertNoError());
-        Assertions.assertThrows(IllegalStateException.class,
+        Assertions.assertThrows(ArithmeticException.class,
                 () -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertNoError().get());
         Assertions.assertDoesNotThrow(() -> Lira.of(1, 2, 9, 0).filter(i -> 4 / i).assertTrue(i -> i > 0));
         Assertions.assertThrows(AssertException.class, () -> Lira.of(1, 2, 9, 0).assertTrue(i -> i > 0).get());

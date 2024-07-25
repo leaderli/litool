@@ -49,7 +49,7 @@ public class RuntimeExceptionTransfer {
         try {
             consumer.accept(t);
         } catch (Throwable throwable) {
-            throw new RuntimeExceptionTransferException(throwable);
+            throw ExceptionUtil.toRuntimeException(throwable);
         }
     }
 
@@ -73,7 +73,7 @@ public class RuntimeExceptionTransfer {
         try {
             runnable.run();
         } catch (Throwable throwable) {
-            throw new RuntimeExceptionTransferException(throwable);
+            throw ExceptionUtil.toRuntimeException(throwable);
         }
     }
 
@@ -90,7 +90,7 @@ public class RuntimeExceptionTransfer {
         try {
             return function.apply(t);
         } catch (Throwable throwable) {
-            throw new RuntimeExceptionTransferException(throwable);
+            throw ExceptionUtil.toRuntimeException(throwable);
         }
     }
 
@@ -115,7 +115,7 @@ public class RuntimeExceptionTransfer {
         try {
             return supplier.get();
         } catch (Throwable throwable) {
-            throw new RuntimeExceptionTransferException(throwable);
+            throw ExceptionUtil.toRuntimeException(throwable);
         }
     }
 }

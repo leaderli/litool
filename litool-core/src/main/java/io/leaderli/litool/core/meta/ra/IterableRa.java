@@ -1,6 +1,8 @@
 package io.leaderli.litool.core.meta.ra;
 
 
+import io.leaderli.litool.core.exception.ExceptionUtil;
+
 import java.util.Iterator;
 
 /**
@@ -62,10 +64,7 @@ public class IterableRa<T> extends Ra<T> {
                     SubscriberUtil.next(actualSubscriber, next);
                 } catch (Throwable throwable) {
                     if (throwable instanceof LiraRuntimeException) {
-                        if (throwable.getCause() instanceof RuntimeException) {
-                            throw (RuntimeException) throwable.getCause();
-                        }
-                        throw throwable;
+                        throw ExceptionUtil.unwrapRuntimeException((RuntimeException) throwable);
                     }
                     actualSubscriber.next_null();
                     actualSubscriber.onError(throwable, this);

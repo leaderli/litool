@@ -13,9 +13,9 @@ class RuntimeExceptionTransferTest {
     void run() {
 
 
-        Throwable thrown = Assertions.assertThrows(RuntimeException.class, () -> RuntimeExceptionTransfer.run(() -> {
-            throw new RuntimeException("hello");
-        })).getCause();
+        Throwable thrown = Assertions.assertThrows(IllegalStateException.class, () -> RuntimeExceptionTransfer.run(() -> {
+            throw new IllegalStateException("hello");
+        }));
         Assertions.assertEquals("hello", thrown.getLocalizedMessage());
 
     }
@@ -27,11 +27,11 @@ class RuntimeExceptionTransferTest {
 
         Assertions.assertEquals(1, value);
 
-        Throwable cause = Assertions.assertThrows(RuntimeException.class, () -> RuntimeExceptionTransfer.get(() -> {
+        Throwable cause = Assertions.assertThrows(ArithmeticException.class, () -> RuntimeExceptionTransfer.get(() -> {
             int a = 1;
             //noinspection divzero
             return a / 0;
-        })).getCause();
+        }));
 
         Assertions.assertEquals("/ by zero", cause.getMessage());
     }
@@ -44,8 +44,8 @@ class RuntimeExceptionTransferTest {
         }, 1);
 
 
-        Throwable cause = Assertions.assertThrows(RuntimeException.class, () -> RuntimeExceptionTransfer.accept(a -> a =
-                a / (a - 1), 1)).getCause();
+        Throwable cause = Assertions.assertThrows(ArithmeticException.class, () -> RuntimeExceptionTransfer.accept(a -> a =
+                a / (a - 1), 1));
 
         Assertions.assertEquals("/ by zero", cause.getMessage());
     }
@@ -57,8 +57,8 @@ class RuntimeExceptionTransferTest {
         Assertions.assertEquals(1, apply);
 
 
-        Throwable cause = Assertions.assertThrows(RuntimeException.class,
-                () -> RuntimeExceptionTransfer.apply(a -> a / (a - 1), 1)).getCause();
+        Throwable cause = Assertions.assertThrows(ArithmeticException.class,
+                () -> RuntimeExceptionTransfer.apply(a -> a / (a - 1), 1));
 
         Assertions.assertEquals("/ by zero", cause.getMessage());
     }

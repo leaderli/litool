@@ -33,6 +33,20 @@ public class ExceptionUtil {
         }
     }
 
+    public static RuntimeException unwrapRuntimeException(RuntimeException runtimeException) {
+        if (runtimeException.getCause() instanceof RuntimeException) {
+            return (RuntimeException) runtimeException.getCause();
+        }
+        return runtimeException;
+    }
+
+    public static RuntimeException toRuntimeException(Throwable throwable) {
+        if (throwable instanceof RuntimeException) {
+            return unwrapRuntimeException((RuntimeException) throwable);
+        }
+        return new RuntimeExceptionWrapper(throwable);
+    }
+
     /**
      * 获取异常的最底层原因
      *
