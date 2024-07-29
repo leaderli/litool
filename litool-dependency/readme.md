@@ -1,0 +1,19 @@
+```xml
+<dependencies>
+	<dependency>
+		<groupId>io.leaderli.litool</groupId>
+		<artifactId>litool-core</artifactId>
+	</dependency>
+</dependencies>
+<dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>io.leaderli.litool</groupId>
+			<artifactId>litool-dependency</artifactId>
+			<version>release</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+	</dependencies>
+</dependencyManagement>
+```

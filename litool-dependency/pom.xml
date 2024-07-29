@@ -16,6 +16,16 @@
         <dependencies>
             <dependency>
                 <groupId>io.leaderli.litool</groupId>
+                <artifactId>litool-action</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.leaderli.litool</groupId>
+                <artifactId>litool-ast</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.leaderli.litool</groupId>
                 <artifactId>litool-config</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
@@ -41,15 +51,9 @@
             </dependency>
             <dependency>
                 <groupId>io.leaderli.litool</groupId>
-                <artifactId>litool-ast</artifactId>
-                <version>${project.parent.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.leaderli.litool</groupId>
                 <artifactId>litool-test</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 </project>
