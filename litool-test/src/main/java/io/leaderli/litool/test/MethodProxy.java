@@ -1,5 +1,7 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.type.ReflectUtil;
+
 import java.lang.reflect.Method;
 
 public interface MethodProxy<T> {
@@ -8,6 +10,13 @@ public interface MethodProxy<T> {
 
     static <T> MethodProxy<T> of(T value) {
         return (m, args) -> value;
+    }
+
+    /**
+     * @return 根据返回类型生成一个默认值
+     */
+    static MethodProxy<?> of() {
+        return (m, args) -> ReflectUtil.newInstance(m.getReturnType()).assertNotNone().get();
     }
 
     T apply(Method method, Object[] args) throws Throwable;
