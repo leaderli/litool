@@ -18,4 +18,11 @@ public @interface BeanTest {
      * 跳过某些类，规则使用正则表达式，当正则可以替换掉类名的某一部分时跳过
      */
     String value() default "";
+
+    boolean allowInit() default false;
+
+    /**
+     * 指定扫描包，默认为测试类同包
+     */
+    String scan() default "";
 }

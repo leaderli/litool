@@ -14,9 +14,16 @@ class BeanMethodUtilTest {
 
     @Test
     void test() {
-        Method[] methods = BeanMethodUtil.scanSimpleMethod(Person.class);
+        Method[] methods = BeanMethodUtil.scanSimpleMethod(Person.class, false);
         Person person = new Person();
         Assertions.assertEquals(5, methods.length);
+        for (Method method : methods) {
+            Object[] args = ArrayUtils.map(method.getParameterTypes(), Object.class, c -> PrimitiveEnum.get(c).zero_value);
+            Assertions.assertDoesNotThrow(() -> ReflectUtil.invokeMethod(method, person, args).get());
+        }
+
+        methods = BeanMethodUtil.scanSimpleMethod(Person.class, true);
+        Assertions.assertEquals(6, methods.length);
         for (Method method : methods) {
             Object[] args = ArrayUtils.map(method.getParameterTypes(), Object.class, c -> PrimitiveEnum.get(c).zero_value);
             Assertions.assertDoesNotThrow(() -> ReflectUtil.invokeMethod(method, person, args).get());
@@ -33,6 +40,10 @@ class Base {
 
 class Person extends Base {
     private int age;
+
+    public Person() {
+        this.age = 1;
+    }
 
     public int getAge() {
         return age;
@@ -71,6 +82,9 @@ class Person extends Base {
         map.put("1", "1");
     }
 
+    public void init() {
+        this.age = new Person().age;
+    }
     public void error(int a) {
         if (a == 0) {
             throw new IllegalStateException();

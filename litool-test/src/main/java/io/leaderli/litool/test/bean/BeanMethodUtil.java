@@ -6,7 +6,9 @@ import io.leaderli.litool.core.type.MethodUtil;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -27,7 +29,7 @@ public class BeanMethodUtil {
     }
 
 
-    public static Method[] scanSimpleMethod(final Class<?> clazz) {
+    public static Method[] scanSimpleMethod(final Class<?> clazz, boolean allowInit) {
 
         Map<String, Method> methodMap = new HashMap<>();
         Set<Class<?>> methodDeclaredClasses = new HashSet<>();
@@ -49,7 +51,7 @@ public class BeanMethodUtil {
             visitMethod(methodDeclaredClass, methodMap, methodVisitors);
         }
         return Lira.of(methodVisitors.entrySet())
-                .filter(e -> isSimpleMethod(e.getValue()))
+                .filter(e -> isSimpleMethod(e.getValue(), allowInit))
                 .map(Map.Entry::getKey)
                 .toArray(Method.class);
 
@@ -64,11 +66,22 @@ public class BeanMethodUtil {
      * @see org.objectweb.asm.Opcodes#INVOKEVIRTUAL 185
      * @see org.objectweb.asm.Opcodes#INVOKEDYNAMIC 186
      */
-    private static boolean isSimpleMethod(MethodNode methodNode) {
+    private static boolean isSimpleMethod(MethodNode methodNode, boolean allowInit) {
         for (AbstractInsnNode ins : IterableItr.of(methodNode.instructions.iterator())) {
             if (ins.getOpcode() > -1) {
                 if (ins instanceof MethodInsnNode) {
+                    if (allowInit) {
+                        MethodInsnNode mi = (MethodInsnNode) ins;
+                        if (mi.name.equals("<init>")) {
+                            continue;
+                        }
+                    }
                     return false;
+
+                } else if (ins instanceof InsnNode) {
+                    if (ins.getOpcode() == Opcodes.ATHROW) {
+                        return false;
+                    }
                 }
             }
         }

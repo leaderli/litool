@@ -1,12 +1,10 @@
-package io.leaderli.litool.test;
+package io.leaderli.litool.test.bean;
 
-import io.leaderli.litool.test.bean.BeanMethod;
-import io.leaderli.litool.test.bean.BeanTest;
 import org.junit.jupiter.api.Assertions;
 
 public class BeanTestTest {
 
-    @BeanTest("test.(?!bean.)")
+    @BeanTest(value = "test.(?!bean.)", scan = "io.leaderli.litool.test")
     public void test(BeanMethod beanMethod) throws Throwable {
         Assertions.assertTrue(beanMethod.toString().startsWith("i.l.l.t.b"));
         Assertions.assertDoesNotThrow(beanMethod.supplier::get);
