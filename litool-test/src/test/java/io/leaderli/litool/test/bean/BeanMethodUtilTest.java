@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 class BeanMethodUtilTest {
 
@@ -24,7 +25,13 @@ class BeanMethodUtilTest {
 
 }
 
-class Person {
+class Base {
+    public void setMap(Map<String, String> map) {
+
+    }
+}
+
+class Person extends Base {
     private int age;
 
     public int getAge() {
@@ -54,5 +61,13 @@ class Person {
 
     public static Person newAge2(Person person) {
         return newAge(person);
+    }
+
+    public static void newAge3(Person person) {
+        person.setAge(1);
+    }
+
+    public void setMap(Map<String, String> map) {
+        map.put("1", "1");
     }
 }

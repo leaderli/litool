@@ -3,7 +3,6 @@ package io.leaderli.litool.test.bean;
 import io.leaderli.litool.core.collection.IterableItr;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.MethodUtil;
-import io.leaderli.litool.core.type.ReflectUtil;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -30,10 +29,20 @@ public class BeanMethodUtil {
 
     public static Method[] scanSimpleMethod(final Class<?> clazz) {
 
-
-        Map<String, Method> methodMap = ReflectUtil.getMethods(clazz).toMap(m -> methodID(m.getModifiers(), m.getName(), MethodUtil.getMethodDescriptor(m)), m -> m);
+        Map<String, Method> methodMap = new HashMap<>();
         Set<Class<?>> methodDeclaredClasses = new HashSet<>();
-        methodMap.forEach((k, v) -> methodDeclaredClasses.add(v.getDeclaringClass()));
+
+        // 如果有重载方法，则查找重载方法
+
+        Class<?> temp = clazz;
+        while (temp != null && temp != Object.class) {
+            methodDeclaredClasses.add(temp);
+            for (Method method : temp.getDeclaredMethods()) {
+                String id = methodID(method.getModifiers(), method.getName(), MethodUtil.getMethodDescriptor(method));
+                methodMap.putIfAbsent(id, method);
+            }
+            temp = temp.getSuperclass();
+        }
         Map<Method, MethodNode> methodVisitors = new HashMap<>();
 
         for (Class<?> methodDeclaredClass : methodDeclaredClasses) {
@@ -75,7 +84,7 @@ public class BeanMethodUtil {
                 public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
                     String id = methodID(access, name, desc);
                     Method method = methodMap.get(id);
-                    if (method != null) {
+                    if (method != null && method.getDeclaringClass() == methodDeclaredClass) {
                         MethodNode methodNode = new MethodNode(ASM6, access, name, desc, signature, exceptions);
                         methodVisitors.put(method, methodNode);
                         return methodNode;
