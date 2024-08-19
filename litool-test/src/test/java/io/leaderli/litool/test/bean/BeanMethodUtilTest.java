@@ -70,4 +70,10 @@ class Person extends Base {
     public void setMap(Map<String, String> map) {
         map.put("1", "1");
     }
+
+    public void error(int a) {
+        if (a == 0) {
+            throw new IllegalStateException();
+        }
+    }
 }
