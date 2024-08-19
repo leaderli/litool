@@ -12,6 +12,12 @@ public interface MethodProxy<T> {
         return (m, args) -> value;
     }
 
+    static <T> MethodProxy<T> error(Throwable throwable) {
+        return (m, args) -> {
+            throw throwable;
+        };
+    }
+
     /**
      * @return 根据返回类型生成一个默认值
      */

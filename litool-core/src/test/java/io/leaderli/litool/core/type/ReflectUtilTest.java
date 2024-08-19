@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SuppressWarnings("ALL")
 class ReflectUtilTest {
+    static int a = 1;
     static {
         WhenThrowBehavior.WHEN_THROW = null;
 
@@ -135,6 +136,8 @@ class ReflectUtilTest {
         assertEquals(1, ReflectUtil.getFieldValue(null, Static.class.getField("age")).get());
 
         assertEquals(1, (ReflectUtil.getFieldValue(littleBean, "gender").get()));
+
+        assertEquals(1, ReflectUtil.getStaticFieldValue(this.getClass(), "a").get());
 
     }
 

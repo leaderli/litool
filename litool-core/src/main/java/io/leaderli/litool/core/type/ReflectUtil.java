@@ -25,6 +25,24 @@ public class ReflectUtil {
     private static final ReflectionAccessor REFLECTION_ACCESSOR = ReflectionAccessor.getInstance();
 
     /**
+     * 根据对象和{@link Field}获取字段值
+     *
+     * @param object 对象实例,如果为null,表示获取静态字段
+     * @param field  字段
+     * @return 字段值的Lino包装, 如果找不到字段或字段值为空, 返回{@link Lino#none()}
+     */
+    public static Lino<?> getFieldValue(Object object, Field field) {
+
+
+        if (field == null) {
+            return Lino.none();
+        }
+
+        setAccessible(field);
+        return Lino.ofIgnoreError(() -> field.get(object));
+    }
+
+    /**
      * 可以获取对象中的指定字段的值
      *
      * @param obj  目标对象
@@ -41,6 +59,14 @@ public class ReflectUtil {
 
         Class<?> clazz = obj.getClass();
         return getField(clazz, name).unzip(f -> getFieldValue(obj, f));
+    }
+
+    public static Lino<?> getStaticFieldValue(Class<?> clazz, Field field) {
+        return getFieldValue(null, field);
+    }
+
+    public static Lino<?> getStaticFieldValue(Class<?> clazz, String name) {
+        return getField(clazz, name).unzip(f -> getStaticFieldValue(clazz, f));
     }
 
     /**
@@ -109,24 +135,6 @@ public class ReflectUtil {
 
     }
 
-
-    /**
-     * 根据对象和{@link Field}获取字段值
-     *
-     * @param object 对象实例,如果为null,表示获取静态字段
-     * @param field  字段
-     * @return 字段值的Lino包装, 如果找不到字段或字段值为空, 返回{@link Lino#none()}
-     */
-    public static Lino<?> getFieldValue(Object object, Field field) {
-
-
-        if (field == null) {
-            return Lino.none();
-        }
-
-        setAccessible(field);
-        return Lino.ofIgnoreError(() -> field.get(object));
-    }
 
     /**
      * 设置对象的可访问性
