@@ -4,6 +4,7 @@ import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.ClassScanner;
+import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.ReflectUtil;
 import org.junit.jupiter.api.extension.*;
@@ -54,9 +55,7 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
             }
             // 无法实例化的跳过
             Object instance = ReflectUtil.newInstance(cls).get();
-            if (instance == null) {
-                return false;
-            }
+
 
             // 无简单方法的直接跳过
             Method[] methods = BeanMethodUtil.scanSimpleMethod(cls, allowInit);
@@ -64,11 +63,13 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
                 return false;
             }
             for (Method method : methods) {
-                Object[] args = ArrayUtils.map(method.getParameterTypes(), Object.class, c -> PrimitiveEnum.get(c).zero_value);
-                Supplier<Object> testSupplier = () -> PrimitiveEnum.get(method.getReturnType()).read(RuntimeExceptionTransfer.get(() -> method.invoke(instance, args)));
-                BeanMethod beanMethod = new BeanMethod(instance, method, testSupplier);
-                MyTestTemplateInvocationContext templateInvocationContext = new MyTestTemplateInvocationContext(beanMethod);
-                invocationContexts.add(templateInvocationContext);
+                if (instance != null || ModifierUtil.isStatic(method)) {
+                    Object[] args = ArrayUtils.map(method.getParameterTypes(), Object.class, c -> PrimitiveEnum.get(c).zero_value);
+                    Supplier<Object> testSupplier = () -> PrimitiveEnum.get(method.getReturnType()).read(RuntimeExceptionTransfer.get(() -> method.invoke(instance, args)));
+                    BeanMethod beanMethod = new BeanMethod(instance, method, testSupplier);
+                    MyTestTemplateInvocationContext templateInvocationContext = new MyTestTemplateInvocationContext(beanMethod);
+                    invocationContexts.add(templateInvocationContext);
+                }
             }
             return true;
 

@@ -41,6 +41,7 @@ public class ExceptionUtil {
     }
 
     public static RuntimeException toRuntimeException(Throwable throwable) {
+        throwable = unwrapThrowable(throwable);
         if (throwable instanceof RuntimeException) {
             return unwrapRuntimeException((RuntimeException) throwable);
         }

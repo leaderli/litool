@@ -28,6 +28,8 @@ class BeanMethodUtilTest {
             Object[] args = ArrayUtils.map(method.getParameterTypes(), Object.class, c -> PrimitiveEnum.get(c).zero_value);
             Assertions.assertDoesNotThrow(() -> ReflectUtil.invokeMethod(method, person, args).get());
         }
+
+        Assertions.assertEquals(1, BeanMethodUtil.scanSimpleMethod(Util.class, false).length);
     }
 
 }
@@ -35,6 +37,16 @@ class BeanMethodUtilTest {
 class Base {
     public void setMap(Map<String, String> map) {
 
+    }
+}
+
+class Util {
+    private Util() {
+        throw new UnsupportedOperationException();
+    }
+
+    public static int init(int age) {
+        return age++;
     }
 }
 
@@ -85,6 +97,7 @@ class Person extends Base {
     public void init() {
         this.age = new Person().age;
     }
+
     public void error(int a) {
         if (a == 0) {
             throw new IllegalStateException();

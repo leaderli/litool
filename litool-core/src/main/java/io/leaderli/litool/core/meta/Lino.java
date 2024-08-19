@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.IterableItr;
+import io.leaderli.litool.core.exception.ExceptionUtil;
 import io.leaderli.litool.core.function.ThrowableConsumer;
 import io.leaderli.litool.core.function.ThrowableFunction;
 import io.leaderli.litool.core.function.ThrowableSupplier;
@@ -91,7 +92,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             }
             return new Some<>(value);
         } catch (Throwable e) {
-            WhenThrowBehavior.whenThrow(e);
+            WhenThrowBehavior.whenThrow(ExceptionUtil.unwrapThrowable(e));
             return none();
         }
     }

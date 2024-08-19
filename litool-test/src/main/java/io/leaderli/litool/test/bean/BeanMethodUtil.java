@@ -40,8 +40,10 @@ public class BeanMethodUtil {
         while (temp != null && temp != Object.class) {
             methodDeclaredClasses.add(temp);
             for (Method method : temp.getDeclaredMethods()) {
-                String id = methodID(method.getModifiers(), method.getName(), MethodUtil.getMethodDescriptor(method));
-                methodMap.putIfAbsent(id, method);
+                if (!method.isSynthetic()) {
+                    String id = methodID(method.getModifiers(), method.getName(), MethodUtil.getMethodDescriptor(method));
+                    methodMap.putIfAbsent(id, method);
+                }
             }
             temp = temp.getSuperclass();
         }

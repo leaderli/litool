@@ -19,6 +19,6 @@ public class BeanMethod {
 
     @Override
     public String toString() {
-        return ClassUtil.shortName(instance.getClass()) + "#" + method.getName();
+        return ClassUtil.shortName(method.getDeclaringClass()) + "#" + method.getName();
     }
 }
