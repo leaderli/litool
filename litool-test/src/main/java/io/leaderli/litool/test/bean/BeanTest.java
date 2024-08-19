@@ -19,6 +19,9 @@ public @interface BeanTest {
      */
     String value() default "";
 
+    /**
+     * 是否允许构造器函数指令调用
+     */
     boolean allowInit() default true;
 
     /**
