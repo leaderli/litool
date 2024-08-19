@@ -19,7 +19,7 @@ public @interface BeanTest {
      */
     String value() default "";
 
-    boolean allowInit() default false;
+    boolean allowInit() default true;
 
     /**
      * 指定扫描包，默认为测试类同包
