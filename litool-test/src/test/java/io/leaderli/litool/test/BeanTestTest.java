@@ -1,15 +1,15 @@
-package io.leaderli.litool.test.bean;
+package io.leaderli.litool.test;
 
-import io.leaderli.litool.core.function.GetSet;
+import io.leaderli.litool.test.bean.BeanMethod;
+import io.leaderli.litool.test.bean.BeanTest;
 import org.junit.jupiter.api.Assertions;
 
 public class BeanTestTest {
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @BeanTest
-    public void test(GetSet getSet) throws Throwable {
-        Assertions.assertTrue(getSet.toString().startsWith("i.l.l.t.b."));
-        Assertions.assertDoesNotThrow(() -> getSet.set(getSet.get()));
+    public void test(BeanMethod beanMethod) throws Throwable {
+        Assertions.assertTrue(beanMethod.toString().startsWith("i.l.l.t."));
+        Assertions.assertDoesNotThrow(beanMethod.supplier::get);
     }
 
     @SuppressWarnings("FieldCanBeLocal")

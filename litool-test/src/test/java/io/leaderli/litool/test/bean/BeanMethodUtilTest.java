@@ -1,6 +1,9 @@
 package io.leaderli.litool.test.bean;
 
-import io.leaderli.litool.core.util.ConsoleUtil;
+import io.leaderli.litool.core.collection.ArrayUtils;
+import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.core.type.ReflectUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -11,9 +14,11 @@ class BeanMethodUtilTest {
     @Test
     void test() {
         Method[] methods = BeanMethodUtil.scanSimpleMethod(Person.class);
-        ConsoleUtil.line();
+        Person person = new Person();
+        Assertions.assertEquals(5, methods.length);
         for (Method method : methods) {
-            System.out.println(method);
+            Object[] args = ArrayUtils.map(method.getParameterTypes(), Object.class, c -> PrimitiveEnum.get(c).zero_value);
+            Assertions.assertDoesNotThrow(() -> ReflectUtil.invokeMethod(method, person, args).get());
         }
     }
 
@@ -32,6 +37,11 @@ class Person {
 
     public void setAge2(int age) {
         setAge(age);
+    }
+
+    public Person setAge3(int age) {
+        this.age = age;
+        return this;
     }
 
     public static int newAge(int age) {
