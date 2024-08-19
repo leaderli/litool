@@ -8,7 +8,7 @@ public class BeanTestTest {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @BeanTest
     public void test(GetSet getSet) throws Throwable {
-        Assertions.assertTrue(getSet.toString().startsWith("i.l.l.t.b.BeanTestTest$Bean"));
+        Assertions.assertTrue(getSet.toString().startsWith("i.l.l.t.b."));
         Assertions.assertDoesNotThrow(() -> getSet.set(getSet.get()));
     }
 

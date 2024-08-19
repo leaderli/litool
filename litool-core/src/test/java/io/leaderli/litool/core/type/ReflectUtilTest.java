@@ -253,11 +253,13 @@ class ReflectUtilTest {
 
 
     @Test
-    void getMethod() {
+    void getMethod() throws NoSuchMethodException {
 
         assertTrue(ReflectUtil.getMethod(LittleBean.class, "m1").present());
         assertTrue(ReflectUtil.getMethod(LittleBean.class, "m3").present());
-//        assertTrue(ReflectUtil.getMethod(LittleBean.class, "m1").absent());
+        assertFalse(ReflectUtil.getMethods(LittleBean.class).contains(Object.class.getMethod("toString")));
+        assertTrue(ReflectUtil.getMethods(LittleBean.class).contains(LittleBean.class.getMethod("m1")));
+        assertTrue(ReflectUtil.getMethods(LittleBean.class).contains(LittleBean.class.getDeclaredMethod("m3")));
     }
 
     @Test

@@ -561,8 +561,8 @@ public class ReflectUtil {
             clazz = clazz.getSuperclass();
         }
         return Lira.of(declaredMethods)
-                .filter(f -> !f.isSynthetic())
-                .sorted((f1, f2) -> ModifierUtil.priority(f2) - ModifierUtil.priority(f1));
+                .filter(m -> !m.isSynthetic() && m.getDeclaringClass() != Object.class)
+                .sorted((m1, m2) -> ModifierUtil.priority(m2) - ModifierUtil.priority(m1));
     }
 
     /**

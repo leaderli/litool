@@ -74,5 +74,7 @@ public class ModifierUtil {
         return Modifier.isPrivate(member.getModifiers());
     }
 
-
+    public static String toString(Member member) {
+        return Modifier.toString(member.getModifiers());
+    }
 }

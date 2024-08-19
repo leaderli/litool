@@ -114,4 +114,10 @@ class MethodUtilTest {
 
         Assertions.assertEquals(456, MethodUtil.methodInvoke(MethodUtilTest.class, "apply", new Class[]{String.class}, new Object[]{"abc"}, (m, arg) -> 456));
     }
+
+    @Test
+    void testGetMethodDescriptor() throws NoSuchMethodException {
+        Method method = Object.class.getMethod("toString");
+        Assertions.assertEquals("()Ljava/lang/String;", MethodUtil.getMethodDescriptor(method));
+    }
 }
