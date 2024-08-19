@@ -35,7 +35,7 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext context) {
 
         BeanTest beanTest = context.getRequiredTestMethod().getAnnotation(BeanTest.class);
-        String skip = beanTest.value();
+        String skipRegex = beanTest.value();
         boolean allowInit = beanTest.allowInit();
         String scanPackage = beanTest.scan();
         if (StringUtils.isEmpty(scanPackage)) {
@@ -49,7 +49,7 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
                 return false;
             }
             // 跳过一些类
-            if (!cls.getName().equals(cls.getName().replaceAll(skip, ""))) {
+            if (!cls.getName().equals(cls.getName().replaceAll(skipRegex, ""))) {
                 return false;
             }
             // 无法实例化的跳过
