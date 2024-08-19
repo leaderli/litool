@@ -555,7 +555,7 @@ public class ReflectUtil {
     public static Lira<Method> getMethods(Class<?> clazz) {
         Set<Method> declaredMethods = new HashSet<>();
         while (clazz != null && clazz != Object.class) {
-            //接口中的方法无法使用 getDeclaredMethods 获取得到
+            //可以将接口中的默认方法包含在内
             declaredMethods.addAll(Arrays.asList(clazz.getMethods()));
             declaredMethods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
             clazz = clazz.getSuperclass();
