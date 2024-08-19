@@ -13,4 +13,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BeanTest {
+
+    /**
+     * 跳过某些类，规则使用正则表达式，当正则可以替换掉类名的某一部分时跳过
+     */
+    String value() default "";
 }

@@ -17,6 +17,7 @@ class LiMock_3_Test {
 
     static class Error3 {
         static {
+            //noinspection ConstantValue
             if (3 == 3) {
                 throw new IllegalStateException("3 == 3");
             }

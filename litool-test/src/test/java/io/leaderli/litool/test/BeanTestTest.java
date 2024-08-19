@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Assertions;
 
 public class BeanTestTest {
 
-    @BeanTest
+    @BeanTest("test.(?!bean.)")
     public void test(BeanMethod beanMethod) throws Throwable {
-        Assertions.assertTrue(beanMethod.toString().startsWith("i.l.l.t."));
+        Assertions.assertTrue(beanMethod.toString().startsWith("i.l.l.t.b"));
         Assertions.assertDoesNotThrow(beanMethod.supplier::get);
     }
 

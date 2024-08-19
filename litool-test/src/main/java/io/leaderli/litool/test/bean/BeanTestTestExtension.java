@@ -31,10 +31,15 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext context) {
 
         String scanPackage = context.getRequiredTestClass().getPackage().getName();
+        String skipRegex = context.getRequiredTestMethod().getAnnotation(BeanTest.class).value();
 
         // 忽略枚举类
         Set<Class<?>> scan = new ClassScanner(scanPackage, cls -> {
             if (cls.isEnum()) {
+                return false;
+            }
+            // 跳过一些类
+            if (!cls.getName().equals(cls.getName().replaceAll(skipRegex, ""))) {
                 return false;
             }
             // 无简单方法的直接跳过
