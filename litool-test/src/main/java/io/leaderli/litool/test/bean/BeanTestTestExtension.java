@@ -1,6 +1,7 @@
 package io.leaderli.litool.test.bean;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
+import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
 import io.leaderli.litool.core.type.ClassScanner;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.ReflectUtil;
@@ -67,7 +68,7 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
                         method,
                         () -> {
                             Object[] args = ArrayUtils.map(method.getParameterTypes(), Object.class, c -> PrimitiveEnum.get(c).zero_value);
-                            return PrimitiveEnum.get(method.getReturnType()).read(ReflectUtil.invokeMethod(method, instance, args).get());
+                            return PrimitiveEnum.get(method.getReturnType()).read(RuntimeExceptionTransfer.get(() -> method.invoke(instance, args)));
                         }
                 ));
         return ArrayUtils.map(BeanMethodUtil.scanSimpleMethod(clazz), MyTestTemplateInvocationContext.class, methodMyTestTemplateInvocationContextFunction);
