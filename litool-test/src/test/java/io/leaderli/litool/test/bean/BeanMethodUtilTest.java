@@ -16,14 +16,17 @@ class BeanMethodUtilTest {
     void test() {
         Method[] methods = BeanMethodUtil.scanSimpleMethod(Person.class, false);
         Person person = new Person();
-        Assertions.assertEquals(5, methods.length);
+        for (Method method : methods) {
+            System.out.println(method);
+        }
+        Assertions.assertEquals(9, methods.length);
         for (Method method : methods) {
             Object[] args = ArrayUtils.map(method.getParameterTypes(), Object.class, c -> PrimitiveEnum.get(c).zero_value);
             Assertions.assertDoesNotThrow(() -> ReflectUtil.invokeMethod(method, person, args).get());
         }
 
         methods = BeanMethodUtil.scanSimpleMethod(Person.class, true);
-        Assertions.assertEquals(6, methods.length);
+        Assertions.assertEquals(10, methods.length);
         for (Method method : methods) {
             Object[] args = ArrayUtils.map(method.getParameterTypes(), Object.class, c -> PrimitiveEnum.get(c).zero_value);
             Assertions.assertDoesNotThrow(() -> ReflectUtil.invokeMethod(method, person, args).get());
@@ -34,12 +37,16 @@ class BeanMethodUtilTest {
 
 }
 
-abstract class Base {
+abstract class Base<T> {
     public void setMap(Map<String, String> map) {
 
     }
 
     public abstract void setMap2(Map<String, String> map);
+
+    public abstract T setT(T t);
+
+    public abstract T setT2(T t);
 
 
 }
@@ -54,7 +61,7 @@ class Util {
     }
 }
 
-class Person extends Base {
+class Person extends Base<String> {
     private int age;
 
     public Person() {
@@ -100,6 +107,28 @@ class Person extends Base {
 
     public void setMap2(Map<String, String> map) {
         map.put("1", "1");
+    }
+
+    @Override
+    public String setT(String s) {
+        return s.length() + "";
+    }
+
+    @Override
+    public String setT2(String s) {
+        return "";
+    }
+
+    public String setStr(String s) {
+        return s + "." + s;
+    }
+
+    public int setInt(Integer integer) {
+        return integer + 1;
+    }
+
+    public Integer setInt(int integer) {
+        return integer + 1;
     }
     public void init() {
         this.age = new Person().age;

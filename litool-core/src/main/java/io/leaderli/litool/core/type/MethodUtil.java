@@ -146,6 +146,13 @@ public class MethodUtil {
         }
     }
 
+    public static String ownerNameDesc(Method method) {
+        return method.getDeclaringClass().getName().replace(".", "/") + "." + method.getName() + getMethodDescriptor(method);
+    }
+
+    public static String nameDesc(Method method) {
+        return method.getName() + getMethodDescriptor(method);
+    }
 
     /**
      * 获取方法的描述，与javap中的字节码一致,例如

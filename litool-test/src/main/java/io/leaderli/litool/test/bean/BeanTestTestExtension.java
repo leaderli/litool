@@ -38,10 +38,7 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
         BeanTest beanTest = context.getRequiredTestMethod().getAnnotation(BeanTest.class);
         String skipRegex = beanTest.value();
         boolean allowInit = beanTest.allowInit();
-        String scanPackage = beanTest.scan();
-        if (StringUtils.isEmpty(scanPackage)) {
-            scanPackage = context.getRequiredTestClass().getPackage().getName();
-        }
+        String scanPackage = StringUtils.isEmpty(beanTest.scan()) ? context.getRequiredTestClass().getPackage().getName() : beanTest.scan();
 
         List<TestTemplateInvocationContext> invocationContexts = new ArrayList<>();
         // 忽略枚举类
@@ -58,7 +55,7 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
 
 
             // 无简单方法的直接跳过
-            Method[] methods = BeanMethodUtil.scanSimpleMethod(cls, allowInit);
+            Method[] methods = BeanMethodUtil.scanSimpleMethod(cls, scanPackage, allowInit);
             if (methods.length == 0) {
                 return false;
             }

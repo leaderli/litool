@@ -103,11 +103,11 @@ public enum PrimitiveEnum {
     /**
      * The Primitive wrapper map.
      */
-    static final Map<Type, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>();
+    public static final Map<Type, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>();
     /**
      * The Wrapper primitive map.
      */
-    static final Map<Type, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>();
+    public static final Map<Type, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>();
 
     static {
 
