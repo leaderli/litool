@@ -34,10 +34,14 @@ class BeanMethodUtilTest {
 
 }
 
-class Base {
+abstract class Base {
     public void setMap(Map<String, String> map) {
 
     }
+
+    public abstract void setMap2(Map<String, String> map);
+
+
 }
 
 class Util {
@@ -94,6 +98,9 @@ class Person extends Base {
         map.put("1", "1");
     }
 
+    public void setMap2(Map<String, String> map) {
+        map.put("1", "1");
+    }
     public void init() {
         this.age = new Person().age;
     }

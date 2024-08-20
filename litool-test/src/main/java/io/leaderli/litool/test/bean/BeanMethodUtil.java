@@ -14,7 +14,6 @@ import org.objectweb.asm.tree.MethodNode;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,8 +23,8 @@ import static org.objectweb.asm.Opcodes.ASM6;
 
 public class BeanMethodUtil {
 
-    private static String methodID(int access, String name, String desc) {
-        return Modifier.toString(access) + " " + name + ":" + desc;
+    private static String methodID(String name, String desc) {
+        return name + ":" + desc;
     }
 
 
@@ -41,7 +40,7 @@ public class BeanMethodUtil {
             methodDeclaredClasses.add(temp);
             for (Method method : temp.getDeclaredMethods()) {
                 if (!method.isSynthetic()) {
-                    String id = methodID(method.getModifiers(), method.getName(), MethodUtil.getMethodDescriptor(method));
+                    String id = methodID(method.getName(), MethodUtil.getMethodDescriptor(method));
                     methodMap.putIfAbsent(id, method);
                 }
             }
@@ -97,7 +96,7 @@ public class BeanMethodUtil {
             ClassVisitor classVisitor = new ClassVisitor(ASM6) {
                 @Override
                 public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                    String id = methodID(access, name, desc);
+                    String id = methodID(name, desc);
                     Method method = methodMap.get(id);
                     if (method != null && method.getDeclaringClass() == methodDeclaredClass) {
                         MethodNode methodNode = new MethodNode(ASM6, access, name, desc, signature, exceptions);
