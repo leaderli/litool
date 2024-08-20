@@ -65,7 +65,10 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
             for (Method method : methods) {
                 if (instance != null || ModifierUtil.isStatic(method)) {
                     Object[] args = ArrayUtils.map(method.getParameterTypes(), Object.class, c -> PrimitiveEnum.get(c).zero_value);
-                    Supplier<Object> testSupplier = () -> PrimitiveEnum.get(method.getReturnType()).read(RuntimeExceptionTransfer.get(() -> method.invoke(instance, args)));
+                    Supplier<Object> testSupplier = () -> PrimitiveEnum.get(method.getReturnType()).read(RuntimeExceptionTransfer.get(() -> {
+                        method.setAccessible(true);
+                        return method.invoke(instance, args);
+                    }));
                     BeanMethod beanMethod = new BeanMethod(instance, method, testSupplier);
                     MyTestTemplateInvocationContext templateInvocationContext = new MyTestTemplateInvocationContext(beanMethod);
                     invocationContexts.add(templateInvocationContext);

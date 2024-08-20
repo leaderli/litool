@@ -38,6 +38,10 @@ public class BeanTestTest {
             this.gender = gender;
         }
 
+        private void privateMethod() {
+            this.age = 11;
+        }
+
         @SuppressWarnings("InnerClassMayBeStatic")
         private class Inner {
             private String name = "1";

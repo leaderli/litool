@@ -5,7 +5,7 @@ import io.leaderli.litool.core.type.ClassUtil;
 import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
-public class BeanMethod {
+public class BeanMethod implements Supplier<Object> {
 
     public final Object instance;
     public final Method method;
@@ -20,5 +20,10 @@ public class BeanMethod {
     @Override
     public String toString() {
         return ClassUtil.shortName(method.getDeclaringClass()) + "#" + method.getName();
+    }
+
+    @Override
+    public Object get() {
+        return supplier.get();
     }
 }
