@@ -62,6 +62,14 @@ class Util {
 }
 
 class Person extends Base<String> {
+
+    public Person(int age) {
+        this.age = age;
+        if (this.age == 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     private int age;
 
     public Person() {
@@ -101,6 +109,9 @@ class Person extends Base<String> {
         person.setAge(1);
     }
 
+    public static Person newAge4(int age) {
+        return new Person(age);
+    }
     public void setMap(Map<String, String> map) {
         map.put("1", "1");
     }
@@ -130,6 +141,7 @@ class Person extends Base<String> {
     public Integer setInt(int integer) {
         return integer + 1;
     }
+
     public void init() {
         this.age = new Person().age;
     }

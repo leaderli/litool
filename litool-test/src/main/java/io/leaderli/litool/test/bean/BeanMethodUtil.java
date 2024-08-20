@@ -99,7 +99,7 @@ public class BeanMethodUtil {
                 if (ins instanceof MethodInsnNode) {
                     MethodInsnNode mi = (MethodInsnNode) ins;
                     if (allowInit) {
-                        if (mi.name.equals("<init>")) {
+                        if (mi.name.equals("<init>") && mi.desc.equals("()V")) {
                             continue;
                         }
                     }
