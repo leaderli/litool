@@ -9,10 +9,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.*;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -115,6 +112,11 @@ public class BeanMethodUtil {
                     }
                     return false;
 
+                } else if (ins instanceof FieldInsnNode && ins.getOpcode() == Opcodes.GETFIELD) {
+                    // 连续两次属性调用，视为复杂指令
+                    if (ins.getNext() instanceof FieldInsnNode && ins.getNext().getOpcode() == Opcodes.GETFIELD) {
+                        return false;
+                    }
                 } else if (ins instanceof InsnNode) {
                     if (ins.getOpcode() == Opcodes.ATHROW) {
                         return false;

@@ -71,6 +71,7 @@ class Person extends Base<String> {
     }
 
     private int age;
+    private Person person;
 
     public Person() {
         this.age = 1;
@@ -146,6 +147,9 @@ class Person extends Base<String> {
         this.age = new Person().age;
     }
 
+    public void init2() {
+        this.age = person.age;
+    }
     public void error(int a) {
         if (a == 0) {
             throw new IllegalStateException();
