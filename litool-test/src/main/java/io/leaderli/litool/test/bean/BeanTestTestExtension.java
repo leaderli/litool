@@ -10,9 +10,9 @@ import io.leaderli.litool.core.type.ReflectUtil;
 import org.junit.jupiter.api.extension.*;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -41,49 +41,47 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
         boolean allowInit = beanTest.allowInit();
         String scanPackage = StringUtils.isEmpty(beanTest.scan()) ? context.getRequiredTestClass().getPackage().getName() : beanTest.scan();
 
-        List<TestTemplateInvocationContext> invocationContexts = new ArrayList<>();
         // 忽略枚举类
         Predicate<Class<?>> classPredicate = cls -> {
             if (cls.isEnum()) {
                 return false;
             }
             // 类名的一部分满足正则，则跳过
-            if (!cls.getName().equals(cls.getName().replaceAll(skipRegex, ""))) {
-                return false;
-            }
-            // 无法实例化的跳过
-            Object instance = ReflectUtil.newInstance(cls).get();
-
-
-            // 无简单方法的直接跳过
-            Method[] methods;
-            try {
-                methods = BeanMethodUtil.scanSimpleMethod(cls, scanPackage, allowInit);
-            } catch (Exception ignore) {
-                return false;
-            }
-            if (methods.length == 0) {
-                return false;
-            }
-            for (Method method : methods) {
-                if (instance != null || ModifierUtil.isStatic(method)) {
-                    Object[] args = ArrayUtils.map(method.getParameterTypes(), Object.class, c -> PrimitiveEnum.get(c).zero_value);
-                    Supplier<Object> testSupplier = () -> PrimitiveEnum.get(method.getReturnType()).read(RuntimeExceptionTransfer.get(() -> {
-                        method.setAccessible(true);
-                        return method.invoke(instance, args);
-                    }));
-                    BeanMethod beanMethod = new BeanMethod(instance, method, testSupplier);
-                    MyTestTemplateInvocationContext templateInvocationContext = new MyTestTemplateInvocationContext(beanMethod);
-                    invocationContexts.add(templateInvocationContext);
-                }
-            }
-            return true;
+            return cls.getName().equals(cls.getName().replaceAll(skipRegex, ""));
 
         };
-        new ClassScanner(scanPackage, classPredicate).scan();
-        return invocationContexts.stream();
+
+        return new ClassScanner(scanPackage, classPredicate)
+                .scan()
+                .parallelStream()
+                .flatMap(cls -> flatTestTemplateStream(cls, scanPackage, allowInit, ReflectUtil.newInstance(cls).get()));
 
 
+    }
+
+    private static Stream<MyTestTemplateInvocationContext> flatTestTemplateStream(Class<?> cls, String scanPackage, boolean allowInit, Object instance) {
+
+        Method[] methods;
+        try {
+            methods = BeanMethodUtil.scanSimpleMethod(cls, scanPackage, allowInit);
+        } catch (Exception ignore) {
+            return Stream.empty();
+        }
+        return Stream
+                .of(methods)
+                .map(method -> {
+                    if (instance != null || ModifierUtil.isStatic(method)) {
+                        Object[] args = ArrayUtils.map(method.getParameterTypes(), Object.class, c -> PrimitiveEnum.get(c).zero_value);
+                        Supplier<Object> testSupplier = () -> PrimitiveEnum.get(method.getReturnType()).read(RuntimeExceptionTransfer.get(() -> {
+                            method.setAccessible(true);
+                            return method.invoke(instance, args);
+                        }));
+                        BeanMethod beanMethod = new BeanMethod(instance, method, testSupplier);
+                        return new MyTestTemplateInvocationContext(beanMethod);
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull);
     }
 
     private static class MyTestTemplateInvocationContext implements TestTemplateInvocationContext {
