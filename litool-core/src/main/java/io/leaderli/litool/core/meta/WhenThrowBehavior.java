@@ -1,8 +1,7 @@
 package io.leaderli.litool.core.meta;
 
+import io.leaderli.litool.core.function.OnError;
 import io.leaderli.litool.core.function.ThrowableFunction;
-
-import java.util.function.Consumer;
 
 /**
  * litool工具类内部抛出异常时的默认行为
@@ -15,7 +14,7 @@ public class WhenThrowBehavior {
      * @see Lira#mapIgnoreError(ThrowableFunction)
      */
     @SuppressWarnings("all")
-    public static Consumer<Throwable> WHEN_THROW = Throwable::printStackTrace;
+    public static OnError WHEN_THROW = OnError.PRINT_STACK;
 
     /**
      * 使用默认异常消费者接受一个异常
@@ -24,7 +23,7 @@ public class WhenThrowBehavior {
      */
     public static void whenThrow(Throwable e) {
         if (WHEN_THROW != null) {
-            WHEN_THROW.accept(e);
+            WHEN_THROW.onError(e);
         }
     }
 
@@ -53,6 +52,6 @@ public class WhenThrowBehavior {
      * 重置默认错误消费者
      */
     public static void setPrintStackTrace() {
-        WHEN_THROW = Throwable::printStackTrace;
+        WHEN_THROW = OnError.PRINT_STACK;
     }
 }

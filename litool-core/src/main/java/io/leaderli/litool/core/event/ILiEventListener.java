@@ -81,8 +81,7 @@ public interface ILiEventListener<E extends LiEventObject<S>, S> extends Compone
      */
     @Override
     default void onError(Throwable throwable) {
-
-        throwable.printStackTrace();
+        OnError.PRINT_STACK.onError(throwable);
     }
 
     /**

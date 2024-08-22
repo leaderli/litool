@@ -47,7 +47,7 @@ public class BeanMethodUtil {
         while (temp != null && temp != Object.class && temp.getPackage().getName().startsWith(packageName)) {
             methodDeclaredClasses.add(temp);
             for (Method method : temp.getDeclaredMethods()) {
-                if (method.isSynthetic() && !method.isBridge()) {
+                if (method.isSynthetic() && !method.isBridge()) {// 保留桥接方法，用于继续判断桥接方法对应方法是否为简单放过
                     continue;
                 }
                 foundMethods.putIfAbsent(MethodUtil.nameDesc(method), method);
@@ -79,6 +79,8 @@ public class BeanMethodUtil {
      * @see org.objectweb.asm.Opcodes#INVOKESTATIC 184
      * @see org.objectweb.asm.Opcodes#INVOKEVIRTUAL 185
      * @see org.objectweb.asm.Opcodes#INVOKEDYNAMIC 186
+     *
+     * @see  #SIMPLE_OWNER_SET
      */
     private static boolean isSimpleMethod(String ownerNameDesc, Map<String, LiTuple<Method, MethodNode>> ownerNameDesc_MethodAndNode, boolean allowInit, Map<String, LiTuple<Boolean, Method>> simpleMethods) {
 
