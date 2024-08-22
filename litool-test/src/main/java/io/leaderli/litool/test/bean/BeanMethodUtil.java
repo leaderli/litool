@@ -34,11 +34,11 @@ public class BeanMethodUtil {
     }
 
 
-    public static Method[] scanSimpleMethod(final Class<?> clazz, boolean allowInit) {
+    public static Method[] scanSimpleMethod(final Class<?> clazz, boolean allowInit) throws IOException {
         return scanSimpleMethod(clazz, "", allowInit);
     }
 
-    public static Method[] scanSimpleMethod(final Class<?> clazz, String packageName, boolean allowInit) {
+    public static Method[] scanSimpleMethod(final Class<?> clazz, String packageName, boolean allowInit) throws IOException {
 
         Map<String, Method> foundMethods = new HashMap<>();
         Set<Class<?>> methodDeclaredClasses = new HashSet<>();
@@ -130,8 +130,7 @@ public class BeanMethodUtil {
     }
 
 
-    private static void visitMethod(Class<?> methodDeclaredClass, Map<String, Method> methodMap, Map<String, LiTuple<Method, MethodNode>> methodVisitors) {
-        try {
+    private static void visitMethod(Class<?> methodDeclaredClass, Map<String, Method> methodMap, Map<String, LiTuple<Method, MethodNode>> methodVisitors) throws IOException {
             ClassReader classReader = new ClassReader(methodDeclaredClass.getName());
             ClassVisitor classVisitor = new ClassVisitor(ASM9) {
                 @Override
@@ -149,8 +148,5 @@ public class BeanMethodUtil {
             };
             classReader.accept(classVisitor, ClassReader.SKIP_DEBUG);
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

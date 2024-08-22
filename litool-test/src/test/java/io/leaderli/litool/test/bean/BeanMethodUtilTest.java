@@ -6,6 +6,7 @@ import io.leaderli.litool.core.type.ReflectUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ class BeanMethodUtilTest {
 
 
     @Test
-    void test() {
+    void test() throws IOException {
         Method[] methods = BeanMethodUtil.scanSimpleMethod(Person.class, false);
         Person person = new Person();
         for (Method method : methods) {

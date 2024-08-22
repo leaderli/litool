@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -42,11 +43,11 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
 
         List<TestTemplateInvocationContext> invocationContexts = new ArrayList<>();
         // 忽略枚举类
-        new ClassScanner(scanPackage, cls -> {
+        Predicate<Class<?>> classPredicate = cls -> {
             if (cls.isEnum()) {
                 return false;
             }
-            // 跳过一些类
+            // 类名的一部分满足正则，则跳过
             if (!cls.getName().equals(cls.getName().replaceAll(skipRegex, ""))) {
                 return false;
             }
@@ -55,7 +56,12 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
 
 
             // 无简单方法的直接跳过
-            Method[] methods = BeanMethodUtil.scanSimpleMethod(cls, scanPackage, allowInit);
+            Method[] methods;
+            try {
+                methods = BeanMethodUtil.scanSimpleMethod(cls, scanPackage, allowInit);
+            } catch (Exception ignore) {
+                return false;
+            }
             if (methods.length == 0) {
                 return false;
             }
@@ -73,8 +79,8 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
             }
             return true;
 
-        }).scan();
-
+        };
+        new ClassScanner(scanPackage, classPredicate).scan();
         return invocationContexts.stream();
 
 
