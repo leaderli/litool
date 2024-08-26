@@ -31,8 +31,8 @@ class BitStrTest {
         Assertions.assertEquals("D|C|B|A", bit.beauty(-1));
 
         Assertions.assertEquals("FINAL", BitStr.of(Modifier.class).beauty(Modifier.FINAL));
-
-
+        bit = BitStr.of("A", "B", "C", "D");
+        Assertions.assertEquals("D|C|B|A", bit.beauty(-1));
     }
 
     @Test

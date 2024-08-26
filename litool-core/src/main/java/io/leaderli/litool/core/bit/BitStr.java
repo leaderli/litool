@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.bit;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
+import io.leaderli.litool.core.exception.LiAssertUtil;
 import io.leaderli.litool.core.type.ModifierUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 import io.leaderli.litool.core.util.ObjectsUtil;
@@ -61,6 +62,12 @@ public class BitStr {
 
     }
 
+    public static BitStr of(String... statusConstant) {
+        BitStr bitStr = new BitStr();
+        LiAssertUtil.assertTrue(statusConstant.length < BitPositionEnum.values().length);
+        System.arraycopy(statusConstant, 0, bitStr.mask_msb_name, 1, statusConstant.length);
+        return bitStr;
+    }
 
     /**
      * 根据状态值输出每个状态的属性名称。状态属性名称按照在二进制上的位置的顺序输出，并用竖线分隔。

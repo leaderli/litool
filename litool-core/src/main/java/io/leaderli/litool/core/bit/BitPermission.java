@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.bit;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
+import io.leaderli.litool.core.text.StringUtils;
 
 /**
  * 使用非负二进制表示权限，并使用位运算操作权限。
@@ -14,12 +15,23 @@ public abstract class BitPermission {
      * 一个非负整数，用于保存权限标记，使用二进制位表示权限。1表示有权限，0表示无权限。
      */
     protected int stateFlags;
+    /**
+     * 表明权限最多占用的位数
+     */
+    public final int size;
 
     protected BitPermission() {
+        this.size = 32;
     }
 
     protected BitPermission(int stateFlags) {
+        this();
         this.stateFlags = stateFlags;
+    }
+
+    protected BitPermission(int stateFlags, int size) {
+        this.stateFlags = stateFlags;
+        this.size = size;
     }
 
     /**
@@ -123,6 +135,15 @@ public abstract class BitPermission {
     @Override
     public String toString() {
         return bitStr.beauty(stateFlags);
+    }
+
+    /**
+     * 返回有效位二进制表示形式
+     *
+     * @see #size
+     */
+    public String toBinaryString() {
+        return StringUtils.substring("00000000000000000000000000000000" + Integer.toBinaryString(stateFlags), -size);
     }
 
     /**

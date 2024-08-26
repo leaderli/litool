@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.bit;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Modifier;
@@ -13,13 +14,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class PrettyBitPermissionTest {
 
     @Test
-    void of() throws NoSuchFieldException, NoSuchMethodException {
+    void of() throws NoSuchMethodException {
 
         PrettyBitPermission of = PrettyBitPermission.of(Modifier.class);
         int modifiers = Object.class.getMethod("getClass").getModifiers();
         of.setState(modifiers);
         assertEquals("NATIVE|FINAL|PUBLIC", of.toString());
         assertEquals("NATIVE|FINAL|PUBLIC", of.toString(modifiers));
+        Assertions.assertEquals("00000000000000000000000100010001", of.toBinaryString());
+        of = PrettyBitPermission.of(Modifier.class, 0, 4);
+        Assertions.assertEquals("0000", of.toBinaryString());
+        of.enable(1 << 2);
+        Assertions.assertEquals("0100", of.toBinaryString());
+        of.enable(1);
+        Assertions.assertEquals("0101", of.toBinaryString());
     }
 
 
