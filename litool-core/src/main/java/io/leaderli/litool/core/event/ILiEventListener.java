@@ -2,6 +2,7 @@ package io.leaderli.litool.core.event;
 
 
 import io.leaderli.litool.core.function.OnError;
+import io.leaderli.litool.core.meta.WhenThrowBehavior;
 import io.leaderli.litool.core.type.ComponentType;
 import io.leaderli.litool.core.type.TypeUtil;
 
@@ -81,7 +82,7 @@ public interface ILiEventListener<E extends LiEventObject<S>, S> extends Compone
      */
     @Override
     default void onError(Throwable throwable) {
-        OnError.PRINT_STACK.onError(throwable);
+        WhenThrowBehavior.PRINT_STACK.onError(throwable);
     }
 
     /**

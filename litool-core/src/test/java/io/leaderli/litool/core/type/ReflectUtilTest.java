@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ALL")
 class ReflectUtilTest {
     static int a = 1;
-    static {
-        WhenThrowBehavior.WHEN_THROW = null;
 
+    static {
+        WhenThrowBehavior.setIgnore();
     }
 
 

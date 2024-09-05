@@ -449,13 +449,13 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     /**
      * 该方法将执行一个函数式接口，如果执行过程中出现异常，则返回一个{@link Lino#none()}的Lino对象。
      * <p>
-     * 在执行过程中，如果出现异常，默认使用 {@link WhenThrowBehavior#WHEN_THROW} 作为异常处理。
+     * 在执行过程中，如果出现异常，默认使用 {@link WhenThrowBehavior#PRINT_STACK} 作为异常处理。
      *
      * @param mapper 函数式接口，用于执行映射操作
      * @param <R>    映射操作后的类型参数
      * @return 返回一个新的Lino对象，类型为R
      * @see #mapIgnoreError(ThrowableFunction, Consumer)
-     * @see WhenThrowBehavior#WHEN_THROW
+     * @see WhenThrowBehavior#PRINT_STACK
      */
     <R> Lino<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper);
 
@@ -725,7 +725,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
 
         @Override
         public <R> Lino<R> mapIgnoreError(ThrowableFunction<? super T, ? extends R> mapper) {
-            return mapIgnoreError(mapper, WhenThrowBehavior.WHEN_THROW);
+            return mapIgnoreError(mapper, WhenThrowBehavior.PRINT_STACK);
         }
 
 

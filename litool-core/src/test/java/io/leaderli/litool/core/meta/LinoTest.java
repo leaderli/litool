@@ -2,11 +2,13 @@ package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.collection.CollectionUtils;
 import io.leaderli.litool.core.collection.LiMapUtil;
+import io.leaderli.litool.core.io.StringWriter;
 import io.leaderli.litool.core.meta.ra.DebugConsumer;
 import io.leaderli.litool.core.type.LiTypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -281,6 +283,12 @@ class LinoTest {
         Lino.of(0).mapIgnoreError(i -> 5 / i, t -> box.value(2));
         Assertions.assertSame(2, box.value());
         Assertions.assertThrows(ArithmeticException.class, () -> Lino.of(0).map(i -> 5 / i));
+
+        StringWriter out = new StringWriter();
+        System.setErr(new PrintStream(out));
+        WhenThrowBehavior.setPrintStackTrace();
+        Assertions.assertSame(Lino.of(0).mapIgnoreError(i -> 5 / i), Lino.none());
+        Assertions.assertTrue(out.get().startsWith("java.lang.ArithmeticException: / by zero"));
     }
 
     @Test

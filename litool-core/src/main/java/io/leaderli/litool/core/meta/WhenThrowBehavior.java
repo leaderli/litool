@@ -1,20 +1,15 @@
 package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.function.OnError;
-import io.leaderli.litool.core.function.ThrowableFunction;
 
 /**
  * litool工具类内部抛出异常时的默认行为
  */
 public class WhenThrowBehavior {
-    /**
-     * 当发生异常时的默认消费者，适用于以下方法：
-     *
-     * @see Lino#mapIgnoreError(ThrowableFunction)
-     * @see Lira#mapIgnoreError(ThrowableFunction)
-     */
-    @SuppressWarnings("all")
-    public static OnError WHEN_THROW = OnError.PRINT_STACK;
+
+
+    public static final ThreadLocal<OnError> ERROR_THREAD_LOCAL = ThreadLocal.withInitial(() -> Throwable::printStackTrace);
+    public static final OnError PRINT_STACK = t -> ERROR_THREAD_LOCAL.get().onError(t);
 
     /**
      * 使用默认异常消费者接受一个异常
@@ -22,9 +17,7 @@ public class WhenThrowBehavior {
      * @param e 异常
      */
     public static void whenThrow(Throwable e) {
-        if (WHEN_THROW != null) {
-            WHEN_THROW.onError(e);
-        }
+        PRINT_STACK.onError(e);
     }
 
     /**
@@ -45,13 +38,14 @@ public class WhenThrowBehavior {
      * 清除默认错误消费者
      */
     public static void setIgnore() {
-        WHEN_THROW = null;
+        ERROR_THREAD_LOCAL.set(t -> {
+        });
     }
 
     /**
      * 重置默认错误消费者
      */
     public static void setPrintStackTrace() {
-        WHEN_THROW = OnError.PRINT_STACK;
+        ERROR_THREAD_LOCAL.set(Throwable::printStackTrace);
     }
 }

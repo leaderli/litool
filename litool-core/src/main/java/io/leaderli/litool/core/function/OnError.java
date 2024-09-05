@@ -12,8 +12,6 @@ import java.util.function.Consumer;
 @FunctionalInterface
 public interface OnError extends Consumer<Throwable> {
 
-    OnError PRINT_STACK = Throwable::printStackTrace;
-
     /**
      * 当异常时执行该方法
      *

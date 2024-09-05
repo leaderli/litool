@@ -321,7 +321,7 @@ public abstract class Ra<T> implements Lira<T> {
 
     @Override
     public void forEachIgnoreError(ThrowableConsumer<? super T> action) {
-        forEachIgnoreError(action, WhenThrowBehavior.WHEN_THROW);
+        forEachIgnoreError(action, WhenThrowBehavior.PRINT_STACK);
     }
 
     @Override

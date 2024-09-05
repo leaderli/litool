@@ -14,7 +14,7 @@ class EntryElementTest {
 
     @Test
     void type_error() {
-        WhenThrowBehavior.WHEN_THROW = null;
+        WhenThrowBehavior.setIgnore();
         SaxEventInterceptor<RequestElement> dfs = new SaxEventInterceptor<>(RequestElement.class);
 
         RequestElement requestElement = dfs.parse("entry.xml");

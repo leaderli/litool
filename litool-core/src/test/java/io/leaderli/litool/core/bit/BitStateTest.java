@@ -81,6 +81,10 @@ class BitStateTest {
         bit.setState(1);
         Assertions.assertTrue(bit.any());
 
+        Assertions.assertThrows(IllegalArgumentException.class, () -> bit.setState(1 << 31));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> bit.enable(1 << 31));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> bit.disable(1 << 31));
+        Assertions.assertTrue(bit.any());
     }
 
 

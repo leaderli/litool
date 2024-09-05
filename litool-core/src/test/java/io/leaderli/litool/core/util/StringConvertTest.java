@@ -24,7 +24,7 @@ class StringConvertTest {
     @Test
     void parserInt() {
 
-        WhenThrowBehavior.WHEN_THROW = null;
+        WhenThrowBehavior.setIgnore();
         Assertions.assertSame(0, StringConvert.parser(null, 0));
         Assertions.assertSame(1, StringConvert.parser("1", 0));
         Assertions.assertSame(true, StringConvert.parser("true", false));
