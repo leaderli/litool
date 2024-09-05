@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.type;
 
 import io.leaderli.litool.core.bean.EnumTest;
+import io.leaderli.litool.core.io.StringWriter;
 import io.leaderli.litool.core.lang.DisposableRunnableProxy;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.WhenThrowBehavior;
@@ -9,6 +10,7 @@ import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -182,7 +184,7 @@ class ReflectUtilTest {
     }
 
     @Test
-    void newInstance() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
+    void newInstance() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InterruptedException {
 
         assertTrue(ReflectUtil.newInstance(Integer.class).present());
         assertTrue(ReflectUtil.newInstance(PrimitiveEnum.class).present());
@@ -200,6 +202,21 @@ class ReflectUtilTest {
 
         assertTrue(ReflectUtil.newInstance(TestBean.class, (String) null).present());
         assertTrue(ReflectUtil.newInstance(TestBean2.class, (String) null).present());
+
+        Thread thread = new Thread(() -> {
+            StringWriter out = new StringWriter();
+            System.setErr(new PrintStream(out));
+            ReflectUtil.newInstance(Integer.class, (Integer) null);
+            Assertions.assertTrue(out.get().startsWith("java.lang.NumberFormatException: null"));
+            out = new StringWriter();
+            System.setErr(new PrintStream(out));
+            WhenThrowBehavior.temporaryIgnore(() -> {
+                ReflectUtil.newInstance(Integer.class, (Integer) null);
+            });
+            Assertions.assertTrue(out.get().length() == 0);
+        });
+        thread.start();
+        thread.join();
 
 
         // inner class
