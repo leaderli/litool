@@ -2,6 +2,8 @@ package io.leaderli.litool.core.meta;
 
 import io.leaderli.litool.core.function.OnError;
 
+import java.util.function.Supplier;
+
 /**
  * litool工具类内部抛出异常时的默认行为
  */
@@ -32,6 +34,21 @@ public class WhenThrowBehavior {
         setIgnore();
         runnable.run();
         setPrintStackTrace();
+    }
+
+    /**
+     * 此方法仅供JUnit测试使用，用于清除默认异常消费者，执行代码，
+     * 然后重新设置默认消费者
+     *
+     * @param supplier 执行的操作
+     * @see #setIgnore()
+     * @see #setPrintStackTrace()
+     */
+    public static <T> T temporarySupplier(Supplier<T> supplier) {
+        setIgnore();
+        T t = supplier.get();
+        setPrintStackTrace();
+        return t;
     }
 
     /**

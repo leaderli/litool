@@ -2,6 +2,7 @@ package io.leaderli.litool.test.bean;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.exception.RuntimeExceptionTransfer;
+import io.leaderli.litool.core.meta.WhenThrowBehavior;
 import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.type.ClassScanner;
 import io.leaderli.litool.core.type.ModifierUtil;
@@ -54,13 +55,12 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
         return new ClassScanner(scanPackage, classPredicate)
                 .scan()
                 .parallelStream()
-                .flatMap(cls -> flatTestTemplateStream(cls, scanPackage, allowInit, ReflectUtil.newInstance(cls).get()));
-
-
+                .flatMap(cls -> flatTestTemplateStream(cls, scanPackage, allowInit));
     }
 
-    private static Stream<MyTestTemplateInvocationContext> flatTestTemplateStream(Class<?> cls, String scanPackage, boolean allowInit, Object instance) {
-
+    private static Stream<MyTestTemplateInvocationContext> flatTestTemplateStream(Class<?> cls, String scanPackage, boolean allowInit) {
+        // 忽略无法构造的实例的报错信息
+        Object instance = WhenThrowBehavior.temporarySupplier(() -> ReflectUtil.newInstance(cls).get());
         Method[] methods;
         try {
             methods = BeanMethodUtil.scanSimpleMethod(cls, scanPackage, allowInit);
