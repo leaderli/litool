@@ -61,7 +61,13 @@ public class BeanTestTest {
 
     }
 
-    private enum Ignore2 {
+    private enum TestEnum {
+        A, B;
+
+        int age() {
+            return 1;
+        }
+
 
     }
 }

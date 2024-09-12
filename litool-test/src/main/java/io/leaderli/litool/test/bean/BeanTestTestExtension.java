@@ -44,9 +44,9 @@ public class BeanTestTestExtension implements TestTemplateInvocationContextProvi
 
         // 忽略枚举类
         Predicate<Class<?>> classPredicate = cls -> {
-            if (cls.isEnum()) {
-                return false;
-            }
+//            if (cls.isEnum()) {
+//                return false;
+//            }
             // 类名的一部分满足正则，则跳过
             return cls.getName().equals(cls.getName().replaceAll(skipRegex, ""));
 
