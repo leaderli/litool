@@ -22,6 +22,7 @@ import io.leaderli.litool.core.io.StringReader;
 import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.type.PrimitiveEnum;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -8188,14 +8189,24 @@ public class StringUtils implements StrPool {
 
     public static String getSimpleName(Object obj) {
 
+        if (obj instanceof String) {
+            return (String) obj;
+        }
         String str = obj + "";
+        if (PrimitiveEnum.get(obj) != PrimitiveEnum.OBJECT) {
+            return str;
+        }
         if (str.length() > 10) {
             if (obj instanceof Class) {
                 return ((Class<?>) obj).getSimpleName();
             }
             Class<?> clazz = obj.getClass();
             if (clazz.isArray()) {
-                return getSimpleName(clazz.getComponentType()) + "[]@" + obj.hashCode();
+                Class<?> componentType = clazz.getComponentType();
+                if (PrimitiveEnum.get(componentType) != PrimitiveEnum.OBJECT) {
+                    return ArrayUtils.toString(obj);
+                }
+                return getSimpleName(componentType) + "[]@" + obj.hashCode();
             }
             return substringAfterLast(clazz.getName(), ".") + "@" + obj.hashCode();
 

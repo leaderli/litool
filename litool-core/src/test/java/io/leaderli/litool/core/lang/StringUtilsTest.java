@@ -296,6 +296,8 @@ class StringUtilsTest {
         Assertions.assertEquals("null", StringUtils.getSimpleName(null));
         Assertions.assertEquals("true", StringUtils.getSimpleName(true));
         Assertions.assertEquals("1", StringUtils.getSimpleName(1));
+        Assertions.assertEquals("1", StringUtils.getSimpleName("1"));
+        Assertions.assertEquals("[1, 2]", StringUtils.getSimpleName(new int[]{1, 2}));
         Assertions.assertEquals("int", StringUtils.getSimpleName(int.class));
         Assertions.assertEquals("Integer", StringUtils.getSimpleName(Integer.class));
         Object obj = new Object() {
@@ -304,7 +306,6 @@ class StringUtilsTest {
 
         Object[] objects = {new Object() {
         }};
-        System.out.println(StringUtils.getSimpleName(objects));
         Assertions.assertEquals("Object[]@" + objects.hashCode(), StringUtils.getSimpleName(objects));
     }
 
