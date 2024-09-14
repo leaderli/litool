@@ -25,6 +25,20 @@ public interface MethodProxy<T> {
         return (m, args) -> ReflectUtil.newInstance(m.getReturnType()).assertNotNone().get();
     }
 
+    /**
+     * 增加多线程支持，避免相互影响
+     */
+    static MethodProxy<?> threadLocal(MethodProxy<?> methodProxy) {
+
+        Thread currentThread = Thread.currentThread();
+        return (m, args) -> {
+            if (Thread.currentThread() == currentThread) {
+                return methodProxy.apply(m, args);
+            }
+            return LiMock.SKIP_MARK;
+        };
+    }
+
     T apply(Method method, Object[] args) throws Throwable;
 
 }
