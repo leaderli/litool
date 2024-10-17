@@ -5,6 +5,9 @@ import io.leaderli.litool.core.meta.LiTuple;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * @author leaderli
  * @since 2022/8/28
@@ -18,6 +21,8 @@ class LiEventBusTest {
     void getPublisher() {
 
 
+        ExecutorService executorService = Executors.newCachedThreadPool();
+//        executorService.execute();
         LiEventBus eventBus = new LiEventBus();
 
         eventBus.registerListener(new TestLiEventListener());
@@ -28,6 +33,7 @@ class LiEventBusTest {
             eventBus.push(new TestStringLiEventObject(null));
         });
         eventBus.registerListener(new TestLiEventListener3());
+
         Assertions.assertThrows(RuntimeException.class, () -> {
             eventBus.push(new TestStringLiEventObject("456"));
             Assertions.fail();
@@ -72,6 +78,12 @@ class LiEventBusTest {
         Assertions.assertEquals(2, listener.count);
     }
 
+    @Test
+    void test3() {
+        LiEventBus liEventBus = new LiEventBus();
+//        liEventBus.push();
+
+    }
 
     @Test
     void unRegisterListener() {
