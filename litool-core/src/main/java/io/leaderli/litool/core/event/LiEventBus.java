@@ -52,6 +52,19 @@ public class LiEventBus implements LiEventBusBehavior {
         push(event, DEFAULT);
     }
 
+    /**
+     * 推送事件。
+     *
+     * @param event 推送的事件
+     * @param sl    提供源数据和监听器的执行过程函数，默认函数 {@link  #DEFAULT}
+     * @param <S>   推送的事件的数据类型
+     * @param <E>   推送的事件的类型
+     * @see ILiEventListener
+     * @see ILiEventListener#before(Object)
+     * @see ILiEventListener#listen(Object)
+     * @see ILiEventListener#onError(Throwable)
+     * @see ILiEventListener#after(LiEventBusBehavior)
+     */
     public <E extends LiEventObject<S>, S> void push(E event, BiConsumer<SourceProvider<S>, ILiEventListener<E, S>> sl) {
 
         if (event == null) {
