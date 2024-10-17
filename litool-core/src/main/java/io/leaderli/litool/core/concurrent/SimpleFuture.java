@@ -128,13 +128,18 @@ public class SimpleFuture<T> implements Future<T> {
 
 
     public void submit(ExecutorService executorService, Callable<T> supplier) {
-        executorService.submit(() -> {
-            try {
-                setResult(supplier.call());
-            } catch (Exception e) {
-                setException(e);
-            }
-        });
+        try {
+
+            executorService.submit(() -> {
+                try {
+                    setResult(supplier.call());
+                } catch (Exception e) {
+                    setException(e);
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            submit(supplier);
+        }
     }
 
 }

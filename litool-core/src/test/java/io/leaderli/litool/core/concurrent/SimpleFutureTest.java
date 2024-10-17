@@ -4,6 +4,8 @@ import io.leaderli.litool.core.util.ThreadUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -14,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 class SimpleFutureTest {
 
     @Test
-    void test() throws InterruptedException {
+    void test() throws InterruptedException, TimeoutException {
         SimpleFuture<Integer> simpleFuture = new SimpleFuture<>();
         simpleFuture.submit(() -> ThreadUtil.delay(30, () -> 1));
         Assertions.assertThrows(TimeoutException.class, () -> simpleFuture.get(10, TimeUnit.MILLISECONDS));
@@ -36,6 +38,11 @@ class SimpleFutureTest {
         Assertions.assertEquals(IllegalStateException.class, simpleFuture3.getException().getClass());
         Assertions.assertNull(simpleFuture3.get());
         Assertions.assertEquals(RuntimeException.class, simpleFuture3.getException().getClass());
+
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        SimpleFuture<Integer> simpleFuture4 = new SimpleFuture<>();
+        simpleFuture4.submit(executorService, () -> 1);
+        Assertions.assertEquals(1, simpleFuture4.get());
 
 
     }
