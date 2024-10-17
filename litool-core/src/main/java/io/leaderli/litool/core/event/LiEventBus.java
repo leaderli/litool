@@ -1,5 +1,7 @@
 package io.leaderli.litool.core.event;
 
+import java.util.function.BiConsumer;
+
 /**
  * 分发事件给监听器，并提供监听器注册和注销的方法。
  * <p>
@@ -19,7 +21,6 @@ public class LiEventBus implements LiEventBusBehavior {
      * @param <E>      事件类型
      * @param <S>      消息类型
      * @param listener 要注册的监听器
-     *
      */
     public <E extends LiEventObject<S>, S> void registerListener(ILiEventListener<E, S> listener) {
         liEventMap.put(listener.componentType(), listener);
@@ -48,29 +49,39 @@ public class LiEventBus implements LiEventBusBehavior {
      * @see ILiEventListener#after(LiEventBusBehavior)
      */
     public <E extends LiEventObject<S>, S> void push(E event) {
+
+        push(event, new BiConsumer<SourceProvider<S>, ILiEventListener<E, S>>() {
+
+            @Override
+            public void accept(SourceProvider<S> sourceProvider, ILiEventListener<E, S> listener) {
+
+                S source = sourceProvider.source;
+                if (source == null) {
+                    listener.onNull();
+                    return;
+                }
+                try {
+                    if (listener.before(source)) {
+                        listener.listen(source);
+                        listener.after(sourceProvider.liEventBusBehavior);
+                    }
+                } catch (Throwable throwable) {
+                    listener.onError(throwable);
+                }
+            }
+        });
+
+    }
+
+    public <E extends LiEventObject<S>, S> void push(E event, BiConsumer<SourceProvider<S>, ILiEventListener<E, S>> biConsumer) {
+
         if (event == null) {
             return;
         }
         Class<E> eventType = (Class<E>) event.getClass();
-        liEventMap.compute(eventType, listener -> {
-
-            S source = event.getSource();
-            if (source == null) {
-                listener.onNull();
-                return;
-            }
-            if (listener.before(source)) {
-
-                try {
-
-                    listener.listen(source);
-                } catch (Throwable throwable) {
-                    listener.onError(throwable);
-                    return;
-                }
-                listener.after(this);
-            }
-
+        SourceProvider<S> sourceProvider = new SourceProvider<>(event.getSource(), this);
+        liEventMap.compute(eventType, lc -> {
+            biConsumer.accept(sourceProvider, lc);
         });
     }
 

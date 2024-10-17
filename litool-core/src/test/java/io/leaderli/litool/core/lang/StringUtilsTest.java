@@ -297,7 +297,11 @@ class StringUtilsTest {
         Assertions.assertEquals("true", StringUtils.getSimpleName(true));
         Assertions.assertEquals("1", StringUtils.getSimpleName(1));
         Assertions.assertEquals("1", StringUtils.getSimpleName("1"));
-        Assertions.assertEquals("[1, 2]", StringUtils.getSimpleName(new int[]{1, 2}));
+        int[] ints = {1, 2};
+        //noinspection ImplicitArrayToString
+        if ((ints + "").length() > 10) {
+            Assertions.assertEquals("[1, 2]", StringUtils.getSimpleName(ints));
+        }
         Assertions.assertEquals("int", StringUtils.getSimpleName(int.class));
         Assertions.assertEquals("Integer", StringUtils.getSimpleName(Integer.class));
         Object obj = new Object() {

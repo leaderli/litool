@@ -2,6 +2,7 @@ package io.leaderli.litool.core.event;
 
 import io.leaderli.litool.core.meta.LiBox;
 import io.leaderli.litool.core.meta.LiTuple;
+import io.leaderli.litool.core.util.ThreadUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -81,8 +82,18 @@ class LiEventBusTest {
     @Test
     void test3() {
         LiEventBus liEventBus = new LiEventBus();
-//        liEventBus.push();
-
+        ThreadListener listener = new ThreadListener();
+        liEventBus.registerListener(listener);
+        liEventBus.push(new TestStringLiEventObject("123"));
+        Assertions.assertSame(Thread.currentThread(), listener.thread);
+        Assertions.assertEquals("123", listener.source);
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        liEventBus.push(new TestStringLiEventObject("456"), (sourceProvider, l) -> {
+            executorService.submit(() -> l.listen(sourceProvider.source));
+        });
+        ThreadUtil.sleep(100);
+        Assertions.assertNotSame(Thread.currentThread(), listener.thread);
+        Assertions.assertEquals("456", listener.source);
     }
 
     @Test
@@ -174,6 +185,17 @@ class LiEventBusTest {
         }
     }
 
+    static class ThreadListener implements ILiEventListener<TestStringLiEventObject, String> {
+
+        Thread thread;
+        String source;
+
+        @Override
+        public void listen(String source) {
+            this.thread = Thread.currentThread();
+            this.source = source;
+        }
+    }
 
     static class TempListener implements ILiEventListener<TestStringLiEventObject, String> {
 
