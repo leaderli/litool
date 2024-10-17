@@ -49,40 +49,41 @@ public class LiEventBus implements LiEventBusBehavior {
      * @see ILiEventListener#after(LiEventBusBehavior)
      */
     public <E extends LiEventObject<S>, S> void push(E event) {
-
-        push(event, new BiConsumer<SourceProvider<S>, ILiEventListener<E, S>>() {
-
-            @Override
-            public void accept(SourceProvider<S> sourceProvider, ILiEventListener<E, S> listener) {
-
-                S source = sourceProvider.source;
-                if (source == null) {
-                    listener.onNull();
-                    return;
-                }
-                try {
-                    if (listener.before(source)) {
-                        listener.listen(source);
-                        listener.after(sourceProvider.liEventBusBehavior);
-                    }
-                } catch (Throwable throwable) {
-                    listener.onError(throwable);
-                }
-            }
-        });
-
+        push(event, DEFAULT);
     }
 
-    public <E extends LiEventObject<S>, S> void push(E event, BiConsumer<SourceProvider<S>, ILiEventListener<E, S>> biConsumer) {
+    public <E extends LiEventObject<S>, S> void push(E event, BiConsumer<SourceProvider<S>, ILiEventListener<E, S>> sl) {
 
         if (event == null) {
             return;
         }
         Class<E> eventType = (Class<E>) event.getClass();
         SourceProvider<S> sourceProvider = new SourceProvider<>(event.getSource(), this);
-        liEventMap.compute(eventType, lc -> {
-            biConsumer.accept(sourceProvider, lc);
-        });
+        liEventMap.compute(eventType, listener -> sl.accept(sourceProvider, listener));
+    }
+
+
+    @SuppressWarnings("rawtypes")
+    private static final DefaultBiConsumer DEFAULT = new DefaultBiConsumer();
+
+    private static class DefaultBiConsumer<E extends LiEventObject<S>, S> implements BiConsumer<SourceProvider<S>, ILiEventListener<E, S>> {
+
+        @Override
+        public void accept(SourceProvider<S> sourceProvider, ILiEventListener<E, S> listener) {
+            S source = sourceProvider.source;
+            if (source == null) {
+                listener.onNull();
+                return;
+            }
+            try {
+                if (listener.before(source)) {
+                    listener.listen(source);
+                    listener.after(sourceProvider.liEventBusBehavior);
+                }
+            } catch (Throwable throwable) {
+                listener.onError(throwable);
+            }
+        }
     }
 
 
