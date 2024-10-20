@@ -35,10 +35,8 @@ class LiEventBusTest {
         });
         eventBus.registerListener(new TestLiEventListener3());
 
-        Assertions.assertThrows(RuntimeException.class, () -> {
+        Assertions.assertDoesNotThrow(() -> {
             eventBus.push(new TestStringLiEventObject("456"));
-            Assertions.fail();
-            eventBus.push(new TestStringLiEventObject(null));
         });
     }
 

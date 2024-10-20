@@ -84,17 +84,23 @@ public class LiEventBus implements LiEventBusBehavior {
         @Override
         public void accept(SourceProvider<S> sourceProvider, ILiEventListener<E, S> listener) {
             S source = sourceProvider.source;
-            if (source == null) {
-                listener.onNull();
-                return;
-            }
             try {
+                if (source == null) {
+                    listener.onNull();
+                    return;
+                }
                 if (listener.before(source)) {
                     listener.listen(source);
                     listener.after(sourceProvider.liEventBusBehavior);
                 }
             } catch (Throwable throwable) {
-                listener.onError(throwable);
+
+                try {
+
+                    listener.onError(throwable);
+                } catch (Throwable ignore) {
+                    //
+                }
             }
         }
     }
