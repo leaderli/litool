@@ -24,6 +24,7 @@ public class LiEventBus implements LiEventBusBehavior {
      */
     public <E extends LiEventObject<S>, S> void registerListener(ILiEventListener<E, S> listener) {
         liEventMap.put(listener.componentType(), listener);
+        listener.onRegister();
     }
 
     /**
@@ -34,6 +35,7 @@ public class LiEventBus implements LiEventBusBehavior {
     @Override
     public <E extends LiEventObject<S>, S> void unRegisterListener(ILiEventListener<E, S> listener) {
         liEventMap.remove(listener);
+        listener.onUnRegister();
     }
 
     /**

@@ -24,6 +24,23 @@ import io.leaderli.litool.core.type.TypeUtil;
 public interface ILiEventListener<E extends LiEventObject<S>, S> extends ComponentType<E>, OnError {
 
     /**
+     * 当注册监听器时触发
+     * {@link LiEventBus#registerListener(ILiEventListener)}
+     */
+    default void onRegister() {
+
+    }
+
+    /**
+     * 当卸载监听器时触发
+     * {@link LiEventBus#unRegisterListener(ILiEventListener)}
+     */
+    default void onUnRegister() {
+
+    }
+
+
+    /**
      * 监听事件。当 {@link LiEventBus#push(LiEventObject)} 推送事件时，可以监听该事件的监听器会接收到该事件。
      *
      * @param source 监听的事件的数据

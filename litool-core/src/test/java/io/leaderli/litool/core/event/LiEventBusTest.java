@@ -38,6 +38,28 @@ class LiEventBusTest {
         Assertions.assertDoesNotThrow(() -> {
             eventBus.push(new TestStringLiEventObject("456"));
         });
+        LiBox<Integer> count = LiBox.of(0);
+        ILiEventListener<TestStringLiEventObject, String> listener = new ILiEventListener<TestStringLiEventObject, String>() {
+            @Override
+            public void onRegister() {
+                count.value(1);
+            }
+
+            @Override
+            public void onUnRegister() {
+                count.value(2);
+            }
+
+            @Override
+            public void listen(String source) {
+
+            }
+        };
+        eventBus.registerListener(listener);
+        Assertions.assertEquals(1, count.value());
+        eventBus.unRegisterListener(listener);
+        Assertions.assertEquals(2, count.value());
+
     }
 
     @Test
