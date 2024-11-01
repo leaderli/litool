@@ -456,6 +456,7 @@ class LiraTest {
     @Test
     void toArray() {
 
+        Assertions.assertArrayEquals(new Number[0], Lira.of().cast(Integer.class).toArray(Number.class));
 
         Number[] nums = Lira.of(1, 2, 3, 4.0).cast(Integer.class).toArray(Number.class);
         Number[] nums2 = Lira.of(1, 2, 3).toArray(Number.class);

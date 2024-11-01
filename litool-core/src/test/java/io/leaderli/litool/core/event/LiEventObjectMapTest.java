@@ -71,7 +71,7 @@ class LiEventObjectMapTest {
         liEventMap.remove(listener2);
         Assertions.assertEquals(1, eventListenerMap.get(TempStringEventObject.class).size());
         liEventMap.remove(listener1);
-        Assertions.assertNull(eventListenerMap.get(TempStringEventObject.class));
+        Assertions.assertTrue(eventListenerMap.get(TempStringEventObject.class).isEmpty());
 
 
     }

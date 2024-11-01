@@ -3,7 +3,10 @@ package io.leaderli.litool.core.event;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ComponentType;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -48,9 +51,8 @@ class LiEventMap {
         }
 
         // 由于监听器可能在consumer中自行移除，因此不能直接对List执行forEach操作。
-        List<ILiEventListener> listeners = Lira.of(this.eventListenerMap.get(eventType))
-                .cast(ILiEventListener.class).get();
-
+        ILiEventListener[] listeners = Lira.of(this.eventListenerMap.get(eventType))
+                .toArray(ILiEventListener.class);
         for (ILiEventListener<E, S> listener : listeners) {
             consumer.accept(listener);
         }
@@ -63,7 +65,6 @@ class LiEventMap {
      * @param listener 要移除的监听器
      * @param <S>      事件的数据类型
      * @param <E>      事件类型与监听器的泛型类型
-     *
      */
     public <E extends LiEventObject<S>, S> void remove(ILiEventListener<E, S> listener) {
 
@@ -76,9 +77,10 @@ class LiEventMap {
         }
         listeners.removeIf(item -> item == listener);
 
-        if (listeners.isEmpty()) {
-            this.eventListenerMap.remove(eventType);
-        }
+        // 大概率会继续创建，不选择删除
+//        if (listeners.isEmpty()) {
+//            this.eventListenerMap.remove(eventType);
+//        }
     }
 
 
