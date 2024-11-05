@@ -22,6 +22,7 @@ import io.leaderli.litool.core.io.StringReader;
 import io.leaderli.litool.core.lang.lean.Lean;
 import io.leaderli.litool.core.meta.LiConstant;
 import io.leaderli.litool.core.meta.Lino;
+import io.leaderli.litool.core.resource.ResourceUtil;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 
 import java.io.*;
@@ -8026,6 +8027,15 @@ public class StringUtils implements StrPool {
      */
     public static String read(String file) throws IOException {
         return new StringReader(Files.newInputStream(new File(file).toPath())).get();
+    }
+
+    /**
+     * @param file the read file under classpath
+     * @return a string
+     * @see ResourceUtil#getResourceAsStream(String)
+     */
+    public static String readResourceAsStream(String file) {
+        return new StringReader(ResourceUtil.getResourceAsStream(file)).get();
     }
 
     /**
