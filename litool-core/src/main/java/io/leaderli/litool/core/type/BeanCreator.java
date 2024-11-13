@@ -64,6 +64,10 @@ public class BeanCreator<T> {
         return create;
     }
 
+    public void populate(Object bean) {
+        populate(bean, LiTypeToken.of(bean.getClass()));
+    }
+
     @SuppressWarnings("unchecked")
     private T create0() {
 
