@@ -24,6 +24,8 @@ public interface IRecorder<B, T> {
 
     B args(Object... args);
 
+    B assertThrow(Class<? extends Throwable> exceptionClass);
+
     B assertReturn(Object compareReturn);
 
     B record(MethodFilter methodFilter, MethodAssert methodAssert);
