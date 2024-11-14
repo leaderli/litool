@@ -311,7 +311,11 @@ public class LiMock {
                 CtMethod ctMethod = getCtMethod(method, ct);
                 String uuid = method.getName() + " " + UUID.randomUUID();
                 MethodValueRecorder.recorders.put(uuid, LiTuple.of(methodAssert, method));
-                ctMethod.insertAfter(StrSubstitution.format2("MethodValueRecorder.record( #uuid#,#this#,$args,($w)$_);", "#", "#", StringUtils.wrap(uuid, '"'), ModifierUtil.isStatic(method) ? "null" : "$0"));
+                String recordCode = StrSubstitution.format2("MethodValueRecorder.record( #uuid#,#this#,$args,($w)$_);", "#", "#", StringUtils.wrap(uuid, '"'), ModifierUtil.isStatic(method) ? "null" : "$0");
+                ctMethod.insertAfter(recordCode);
+                CtClass etype = getCtClass(Throwable.class);
+                String catchCode = StrSubstitution.format2("MethodValueRecorder.record( #uuid#,#this#,$args,$e); throw $e;", "#", "#", StringUtils.wrap(uuid, '"'), ModifierUtil.isStatic(method) ? "null" : "$0");
+                ctMethod.addCatch(catchCode, etype);
 
             }
             instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));

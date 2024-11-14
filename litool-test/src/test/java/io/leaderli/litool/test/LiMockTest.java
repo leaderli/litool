@@ -616,6 +616,28 @@ class LiMockTest {
     }
 
     @Test
+    void testRecordException() throws Exception {
+
+        LiBox<Object> box = LiBox.none();
+        LiMock.record(RecordError.class, MethodFilter.isMethod(), (method, args, _return) -> box.value(_return));
+        RecordError recordError = new RecordError();
+        recordError.get(2);
+        Assertions.assertEquals(2, box.value());
+        try {
+
+            recordError.get(1);
+        } catch (Throwable throwable) {
+            Assertions.assertSame(throwable, box.value());
+        }
+        try {
+
+            recordError.get2(1);
+        } catch (RuntimeException runtimeException) {
+            Assertions.assertSame(runtimeException, box.value());
+        }
+    }
+
+    @Test
     void testRecordMethodCall() {
 
         StringBuilder out = new StringBuilder();
@@ -662,6 +684,22 @@ class LiMockTest {
         }
 
 
+    }
+
+    static class RecordError {
+        public Object get(int arg) throws Exception {
+            if (arg == 1) {
+                throw new Exception();
+            }
+            return arg;
+        }
+
+        public Object get2(int arg) {
+            if (arg == 1) {
+                throw new RuntimeException();
+            }
+            return arg;
+        }
     }
 
     static class Bean {
