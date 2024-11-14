@@ -454,6 +454,19 @@ public class LiMock {
         });
     }
 
+    public static void reset(Class<?> clazz) {
+
+        try {
+            detach(clazz);
+            byte[] bytes = originClasses.get(clazz);
+            if (bytes != null) {
+                instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
+            }
+        } catch (ClassNotFoundException | UnmodifiableClassException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static Recorder recorder(Class<?> mockClass) {
         return new Recorder(mockClass);
     }

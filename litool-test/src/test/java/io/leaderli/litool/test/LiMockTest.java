@@ -635,6 +635,18 @@ class LiMockTest {
         } catch (RuntimeException runtimeException) {
             Assertions.assertSame(runtimeException, box.value());
         }
+
+
+        LiMock.recorder(RecordError.class).run(() -> recordError.get2(3))
+                .assertThrow(IllegalStateException.class)
+                .build();
+        Assertions.assertThrows(AssertionFailedError.class, () -> recordError.get2(1));
+        LiMock.reset(RecordError.class);
+        LiMock.recorder(RecordError.class).run(() -> recordError.get2(3))
+                .assertThrow(RuntimeException.class)
+                .build();
+        Assertions.assertThrows(RuntimeException.class, () -> recordError.get2(1));
+
     }
 
     @Test
