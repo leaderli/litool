@@ -56,8 +56,9 @@ public class RecordBeans<T> implements IRecorder<RecordBeans<T>, T> {
         return this;
     }
 
-    public RecordBeans<T> assertThrow(Class<? extends Throwable> exceptionClass) {
-        recordBeans.forEach(r -> r.assertThrow(exceptionClass));
+    @Override
+    public RecordBeans<T> assertThrowException(Class<? extends Throwable> exceptionClass) {
+        recordBeans.forEach(r -> r.assertThrowException(exceptionClass));
         return this;
     }
 

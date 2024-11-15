@@ -82,7 +82,7 @@ public class AbstractRecorder<T> {
         return (T) this;
     }
 
-    public T assertThrow(Class<? extends Throwable> exceptionClass) {
+    public T assertThrowException(Class<? extends Throwable> exceptionClass) {
         add((method, args, _return) -> Assertions.assertSame(_return.getClass(), exceptionClass));
         return (T) this;
     }

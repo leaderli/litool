@@ -638,12 +638,12 @@ class LiMockTest {
 
 
         LiMock.recorder(RecordError.class).run(() -> recordError.get2(3))
-                .assertThrow(IllegalStateException.class)
+                .assertThrowException(IllegalStateException.class)
                 .build();
         Assertions.assertThrows(AssertionFailedError.class, () -> recordError.get2(1));
         LiMock.reset(RecordError.class);
         LiMock.recorder(RecordError.class).run(() -> recordError.get2(3))
-                .assertThrow(RuntimeException.class)
+                .assertThrowException(RuntimeException.class)
                 .build();
         Assertions.assertThrows(RuntimeException.class, () -> recordError.get2(1));
 
