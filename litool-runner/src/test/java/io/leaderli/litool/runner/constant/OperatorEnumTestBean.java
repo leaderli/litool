@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
  * @author leaderli
  * @since 2022/8/13 9:53 AM
  */
-class OperatorEnumTest {
+class OperatorEnumTestBean {
 
     @Test
     void test() {

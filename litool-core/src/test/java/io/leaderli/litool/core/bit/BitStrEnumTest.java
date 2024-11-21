@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author leaderli
  * @since 2022/7/21
  */
-class BitPositionEnumTest {
+class BitPositionEnumTestBean {
 
 
     @Test

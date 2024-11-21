@@ -277,8 +277,15 @@ class LinoTest {
 
     @Test
     void throwable_map() {
+        WhenThrowBehavior.setIgnore();
+        Assertions.assertFalse(Lino.none().hasError());
+        Assertions.assertFalse(Lino.of(1).hasError());
+        //noinspection divzero,NumericOverflow
+        Assertions.assertTrue(Lino.ofIgnoreError(() -> 1 / 0).hasError());
         LiBox<Integer> box = LiBox.none();
-        Assertions.assertSame(Lino.of(0).mapIgnoreError(i -> 5 / i, null), Lino.none());
+        Lino<Integer> lino = Lino.of(0).mapIgnoreError(i -> 5 / i, null);
+        Assertions.assertTrue(lino.hasError());
+        Assertions.assertInstanceOf(ArithmeticException.class, lino.getError());
         Assertions.assertNull(box.value());
         Lino.of(0).mapIgnoreError(i -> 5 / i, t -> box.value(2));
         Assertions.assertSame(2, box.value());
@@ -287,9 +294,11 @@ class LinoTest {
         StringWriter out = new StringWriter();
         System.setErr(new PrintStream(out));
         WhenThrowBehavior.setPrintStackTrace();
-        Assertions.assertSame(Lino.of(0).mapIgnoreError(i -> 5 / i), Lino.none());
+        lino = Lino.of(0).mapIgnoreError(i -> 5 / i);
+        Assertions.assertInstanceOf(ArithmeticException.class, lino.getError());
         Assertions.assertTrue(out.get().startsWith("java.lang.ArithmeticException: / by zero"));
     }
+
 
     @Test
     void toLira() {

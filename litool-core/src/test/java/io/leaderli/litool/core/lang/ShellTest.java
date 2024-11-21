@@ -1,5 +1,6 @@
 package io.leaderli.litool.core.lang;
 
+import io.leaderli.litool.core.env.OSInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,9 @@ class ShellTest {
 
     @Test
     void bash() throws ExecutionException, InterruptedException, TimeoutException {
-
+        if (OSInfo.isWindows()) {
+            return;
+        }
         Future<String> command = new Shell().bash("123");
         Assertions.assertTrue(command.get().contains("not found"));
         Assertions.assertTrue(command.get().contains("not found"));

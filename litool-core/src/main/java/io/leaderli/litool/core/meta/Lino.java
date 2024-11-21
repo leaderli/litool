@@ -93,7 +93,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
             return new Some<>(value);
         } catch (Throwable e) {
             WhenThrowBehavior.whenThrow(ExceptionUtil.unwrapThrowable(e));
-            return none();
+            return new Error<>(e);
         }
     }
 
@@ -151,6 +151,19 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         return (Lino<T>) value;
 
     }
+
+
+    /**
+     * @return 判断是否有异常
+     * @see Error
+     */
+    boolean hasError();
+
+    /**
+     * @return 返回是否有异常
+     * @see Error
+     */
+    Throwable getError();
 
     /**
      * 这是一个泛型接口Lino，该方法为其默认方法，作用是将传入的参数filter应用于泛型T，如果满足断言条件，则返回当前对象，否则抛出IllegalStateException异常。
@@ -550,6 +563,16 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         }
 
         @Override
+        public boolean hasError() {
+            return false;
+        }
+
+        @Override
+        public Throwable getError() {
+            return null;
+        }
+
+        @Override
         public Lino<T> assertTrue(Function<? super T, ?> filter, String msg) {
             if (filter(filter).absent()) {
                 throw new IllegalStateException(msg);
@@ -737,10 +760,10 @@ public interface Lino<T> extends LiValue, Supplier<T> {
                 return of(mapper.apply(this.value));
             } catch (Throwable throwable) {
                 if (whenThrow != null) {
-                    whenThrow.accept(throwable);
+                    whenThrow.accept(ExceptionUtil.unwrapThrowable(throwable));
                 }
+                return new Error<>(throwable);
             }
-            return none();
         }
 
         @Override
@@ -766,7 +789,7 @@ public interface Lino<T> extends LiValue, Supplier<T> {
     /**
      * @param <T> 值的类型
      */
-    final class None<T> implements Lino<T> {
+    class None<T> implements Lino<T> {
         private static final None<?> INSTANCE = new None<>();
 
         private None() {
@@ -786,6 +809,16 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         @Override
         public String toString() {
             return name() + "()";
+        }
+
+        @Override
+        public boolean hasError() {
+            return false;
+        }
+
+        @Override
+        public Throwable getError() {
+            return null;
         }
 
         @Override
@@ -970,6 +1003,30 @@ public interface Lino<T> extends LiValue, Supplier<T> {
         @Override
         public <R> Lira<R> toLira(LiTypeToken<? extends R> type) {
             return Lira.none();
+        }
+    }
+
+    final class Error<T> extends None<T> {
+
+        public final Throwable throwable;
+
+        public Error(Throwable throwable) {
+            this.throwable = throwable;
+        }
+
+        @Override
+        public String name() {
+            return "Error";
+        }
+
+        @Override
+        public boolean hasError() {
+            return true;
+        }
+
+        @Override
+        public Throwable getError() {
+            return throwable;
         }
     }
 }

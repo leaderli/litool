@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  * @author leaderli
  * @since 2022/8/17 7:11 PM
  */
-class PrimitiveEnumTest {
+class PrimitiveEnumTestBean {
     @Test
     void checkNotPrimitive() {
 

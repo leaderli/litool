@@ -1,6 +1,6 @@
 package io.leaderli.litool.core.type;
 
-import io.leaderli.litool.core.bean.EnumTest;
+import io.leaderli.litool.core.bean.EnumTestBean;
 import io.leaderli.litool.core.io.StringWriter;
 import io.leaderli.litool.core.lang.DisposableRunnableProxy;
 import io.leaderli.litool.core.meta.Lino;
@@ -241,7 +241,7 @@ class ReflectUtilTest {
 
         // enum
 
-        Class<?> declaredClass = EnumTest.class.getDeclaredClasses()[0];
+        Class<?> declaredClass = EnumTestBean.class.getDeclaredClasses()[0];
         Assertions.assertEquals("A", ReflectUtil.newInstance(declaredClass).get().toString());
     }
 
