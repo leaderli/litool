@@ -1,6 +1,7 @@
 package io.leaderli.litool.core.io;
 
 import io.leaderli.litool.core.util.RandomUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -25,6 +26,8 @@ class TailerTest {
                 }
             }
         });
+
+        Assertions.assertTrue(tailer.toString().contains("Tailer"));
 //        ThreadUtil.start(tailer, false);
 
     }

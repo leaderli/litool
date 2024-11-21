@@ -21,7 +21,7 @@ class LeanTest {
     Gson gson = new Gson();
 
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "CollectionAddedToSelf"})
     @Test
     void test13() {
 
@@ -213,6 +213,9 @@ class LeanTest {
         Lean lean = new Lean();
         Bean13 bean131 = new Bean13();
         lean.copyBean(bean13, bean131, Bean13.class);
+
+        Assertions.assertEquals(bean13.size, bean131.size);
+        Assertions.assertEquals(bean13.name, bean131.name);
 
 
     }

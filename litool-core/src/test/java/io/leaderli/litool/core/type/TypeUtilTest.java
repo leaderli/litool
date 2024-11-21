@@ -82,7 +82,9 @@ class TypeUtilTest {
 
     @Test
     void test3() {
-        TypeUtil.expandTypeVariables(Z4.class, new HashMap<>());
+        Map<TypeVariable<?>, Type> vars = new HashMap<>();
+        TypeUtil.expandTypeVariables(Z4.class, vars);
+        Assertions.assertEquals("{T=TypeUtilTest$Z3<TypeUtilTest$Z4<TypeUtilTest$Z3>>}", vars.toString());
 
     }
 

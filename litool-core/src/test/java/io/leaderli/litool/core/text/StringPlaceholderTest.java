@@ -29,7 +29,7 @@ class StringPlaceholderTest {
             public void variable(StringBuilder variable) {
 
 
-                    append(variable);
+                append(variable);
 
             }
         };
@@ -51,11 +51,5 @@ class StringPlaceholderTest {
         Assertions.assertEquals("#`", format2("#``"));
         Assertions.assertEquals("##", format2("#`#"));
         Assertions.assertEquals("aa#b", format2("##aa#b##"));
-    }
-
-    @Test
-    void test2() {
-
-
     }
 }

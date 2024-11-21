@@ -3,6 +3,7 @@ package io.leaderli.litool.core.type;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Function;
 
@@ -48,7 +49,7 @@ class MethodUtilTest {
 
     @SuppressWarnings("Convert2Lambda")
     @Test
-    void test() throws NoSuchMethodException {
+    void test() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
 
         Method method = this.getClass().getMethod("apply", String.class);
         Function<String, Integer> function = new Function<String, Integer>() {
@@ -57,10 +58,11 @@ class MethodUtilTest {
                 return null;
             }
         };
-        System.out.println(MethodUtil.getSameSignatureMethod(
-                new LiTypeToken<Function<String, Integer>>() {
-                }
-                , method));
+        Function<String, Integer> lookup = Integer::valueOf;
+        Method sameSignatureMethod = MethodUtil.getSameSignatureMethod(new LiTypeToken<Function<String, Integer>>() {
+        }, method);
+        Assertions.assertEquals(123, sameSignatureMethod.invoke(lookup, "123"));
+
     }
 
     public Integer apply(String msg) {

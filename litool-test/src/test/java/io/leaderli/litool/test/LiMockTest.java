@@ -474,10 +474,6 @@ class LiMockTest {
         Assertions.assertDoesNotThrow(() -> Void1.m1(1));
     }
 
-    @Test
-    void testMockNotCall() {
-
-    }
 
     @Test
     void testReset() {

@@ -40,6 +40,7 @@ class SourceCodeUtilTest {
     @Test
     void getImportClassByName() {
         CompilationUnit cu = SourceCodeUtil.getClassSource(TestBean.class, FileUtil.getWorkDir() + "/src/test/java/");
+        Assertions.assertTrue(cu.toString().startsWith("package"));
     }
 
     @Test
@@ -66,10 +67,10 @@ class SourceCodeUtilTest {
                 .first()
                 .get();
         for (VariableDeclarator variableDeclarator : classOrInterfaceDeclaration.findAll(VariableDeclarator.class)) {
-            System.out.println(variableDeclarator.getTypeAsString());
+            Assertions.assertTrue(variableDeclarator.getTypeAsString().contains("<"));
             Type type = variableDeclarator.getType();
-            System.out.println(((ClassOrInterfaceType) type).getNameWithScope());
-            System.out.println(type);
+            Assertions.assertFalse(((ClassOrInterfaceType) type).getNameWithScope().contains("<"));
+            Assertions.assertTrue(type.toString().contains("<"));
 
         }
 
@@ -82,9 +83,8 @@ class SourceCodeUtilTest {
         String packageName = CompilationUnit.class.getPackage().getName();
 
         ClassScanner classScanner = new ClassScanner(packageName);
-        for (Class<?> aClass : classScanner.scan()) {
-            System.out.println(aClass);
-
+        for (Class<?> clazz : classScanner.scan()) {
+            Assertions.assertTrue(clazz.getPackage().getName().startsWith("com.github"));
         }
     }
 }

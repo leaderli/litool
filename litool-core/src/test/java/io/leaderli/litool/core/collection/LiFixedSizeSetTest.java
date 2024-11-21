@@ -3,6 +3,8 @@ package io.leaderli.litool.core.collection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -85,11 +87,17 @@ class LiFixedSizeSetTest {
     void forEach() {
 
         LiFixedSizeSet<Integer> fix = new LiFixedSizeSet<>(10);
-
+        AtomicInteger count = new AtomicInteger();
         for (Integer f : fix) {
-
-            System.out.println(f);
+            count.incrementAndGet();
         }
+        Assertions.assertEquals(0, count.get());
+        fix.add(1);
+        fix.add(2);
+        for (Integer f : fix) {
+            count.incrementAndGet();
+        }
+        Assertions.assertEquals(2, count.get());
     }
 
 }

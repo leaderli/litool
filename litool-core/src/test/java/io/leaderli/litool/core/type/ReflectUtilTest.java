@@ -5,7 +5,6 @@ import io.leaderli.litool.core.io.StringWriter;
 import io.leaderli.litool.core.lang.DisposableRunnableProxy;
 import io.leaderli.litool.core.meta.Lino;
 import io.leaderli.litool.core.meta.WhenThrowBehavior;
-import io.leaderli.litool.core.util.ConsoleUtil;
 import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -32,12 +31,6 @@ class ReflectUtilTest {
         WhenThrowBehavior.setIgnore();
     }
 
-
-    @Test
-    void testnewInterfaceImpl() {
-
-
-    }
 
     @Test
     void newInterfaceImpl() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -180,7 +173,7 @@ class ReflectUtilTest {
     @Test
     void test111() {
 
-        ConsoleUtil.printArray(ReflectUtil.newInstance(Integer[].class).get());
+        Assertions.assertArrayEquals(new Integer[0], ReflectUtil.newInstance(Integer[].class).get());
     }
 
     @Test

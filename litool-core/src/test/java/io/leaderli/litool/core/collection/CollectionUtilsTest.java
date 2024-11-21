@@ -126,8 +126,8 @@ class CollectionUtilsTest {
     @Test
     void test() {
 
-        CollectionUtils.cartesian(ArrayUtils.of(2, 1, 3), ArrayUtils.of("-", "*"), ArrayUtils.of("a", "b"));
-
+        Object[][] cartesian = CollectionUtils.cartesian(ArrayUtils.of(2, 1, 3), ArrayUtils.of("-", "*"), ArrayUtils.of("a", "b"));
+        Assertions.assertEquals(12, cartesian.length);
     }
 
     @Test
