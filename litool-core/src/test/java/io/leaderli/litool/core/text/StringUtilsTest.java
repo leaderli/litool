@@ -1,8 +1,7 @@
-package io.leaderli.litool.core.lang;
+package io.leaderli.litool.core.text;
 
 import com.google.gson.Gson;
 import io.leaderli.litool.core.meta.Lino;
-import io.leaderli.litool.core.text.StringUtils;
 import io.leaderli.litool.core.util.RandomUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
