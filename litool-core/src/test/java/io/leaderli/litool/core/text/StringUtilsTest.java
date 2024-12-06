@@ -116,7 +116,7 @@ class StringUtilsTest {
         Assertions.assertEquals("", StringUtils.localMessageAtLineOfClass(null, null));
 
 
-        Assertions.assertEquals("io.leaderli.litool.core.lang.StringUtilsTest$ZeroStackTraceElementException", StringUtils.localMessageStartWith(new ZeroStackTraceElementException(), ""));
+        Assertions.assertEquals("io.leaderli.litool.core.text.StringUtilsTest$ZeroStackTraceElementException", StringUtils.localMessageStartWith(new ZeroStackTraceElementException(), ""));
     }
 
     static class ZeroStackTraceElementException extends RuntimeException {
