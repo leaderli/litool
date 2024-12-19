@@ -6,8 +6,10 @@ import io.leaderli.litool.core.lang.lean.TypeAdapterFactory;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.LiTypeToken;
+import io.leaderli.litool.core.type.PrimitiveEnum;
 import io.leaderli.litool.core.type.TypeUtil;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 
@@ -25,9 +27,44 @@ public class ArrayTypeAdapterFactory implements TypeAdapterFactory {
             return null;
         }
         type = ((GenericArrayType) type).getGenericComponentType();
+        Class<?> rawType = TypeUtil.erase(type);
+        if (rawType.isPrimitive()) {
+            return new PrimitiveArrayAdapter(rawType);
+        }
+        return new ArrayAdapter(rawType, lean.getTypeAdapter(type));
 
-        return new ArrayAdapter(TypeUtil.erase(type), lean.getTypeAdapter(type));
+    }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    // 原始类型，没有泛型
+    public static final class PrimitiveArrayAdapter implements TypeAdapter {
+        private final Class componentType;
+        private final PrimitiveTypeAdapterFactory.PrimitiveTypeAdapter elementTypeAdapter;
+
+        public PrimitiveArrayAdapter(Class componentType) {
+            this.componentType = componentType;
+            this.elementTypeAdapter = new PrimitiveTypeAdapterFactory.PrimitiveTypeAdapter(PrimitiveEnum.get(componentType));
+        }
+
+        @Override
+        public Object read(Object source, Lean lean) {
+
+            Object[] arr = Lira.iterableItr(source)
+                    .map(e -> elementTypeAdapter.read(e, lean))
+                    .nullable(() -> elementTypeAdapter.read(lean))
+                    .toNullableArray(componentType);
+            Object copy = Array.newInstance(componentType, arr.length);
+            for (int i = 0; i < arr.length; i++) {
+                Array.set(copy, i, arr[i]);
+            }
+            return copy;
+        }
+
+
+        @Override
+        public Object read(Lean lean) {
+            return Array.newInstance(componentType, 0);
+        }
     }
 
     public static final class ArrayAdapter<E> implements TypeAdapter<E[]> {

@@ -172,11 +172,12 @@ class LeanTest {
 
     @Test
     void copyBean() {
-        String json = "{\"name\": [\"123\"],\"ages\": [10,18]}";
+        String json = "{\"name\": [\"123\"],\"ages\": [10,18],\"height\": [110,120]}";
 
         Lean lean = new Lean();
         Bean12<Integer> bean = lean.fromBean(gson.fromJson(json, Map.class), new LiTypeToken<Bean12<Integer>>() {
         });
+        Assertions.assertEquals(110, bean.height[0]);
         Assertions.assertEquals(10, bean.ages[0]);
         Assertions.assertThrows(ClassCastException.class, () -> {
                     Bean12<Integer> bean12 = lean.fromBean(gson.fromJson(json, Map.class), new LiTypeToken<Bean12<Integer>>() {
@@ -322,6 +323,7 @@ class LeanTest {
     private static class Bean12<T> {
         private String[] name;
         private T[] ages;
+        private int[] height;
     }
 
     private static class Bean11<T> {

@@ -12,6 +12,8 @@ import io.leaderli.litool.core.type.PrimitiveEnum;
  */
 public class PrimitiveTypeAdapterFactory implements TypeAdapterFactory {
 
+    @SuppressWarnings("unchecked")
+    // 原始类型，没有泛型
     @Override
     public <T> TypeAdapter<T> create(Lean lean, LiTypeToken<T> typeToken) {
         Class<? super T> rawType = typeToken.getRawType();
@@ -19,10 +21,11 @@ public class PrimitiveTypeAdapterFactory implements TypeAdapterFactory {
         if (primitiveEnum == PrimitiveEnum.OBJECT) {
             return null;
         }
-        return new PrimitiveTypeAdapter<>(primitiveEnum);
+        return new PrimitiveTypeAdapter(primitiveEnum);
     }
 
-    static class PrimitiveTypeAdapter<T> implements TypeAdapter<T> {
+    @SuppressWarnings("rawtypes")
+    static class PrimitiveTypeAdapter implements TypeAdapter {
         private final PrimitiveEnum primitiveEnum;
 
         PrimitiveTypeAdapter(PrimitiveEnum primitiveEnum) {
@@ -30,17 +33,14 @@ public class PrimitiveTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         @Override
-        public T read(Object source, Lean lean) {
+        public Object read(Object source, Lean lean) {
             return primitiveEnum.read(source);
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public T read(Lean lean) {
-            return (T) primitiveEnum.zero_value;
-
+        public Object read(Lean lean) {
+            return primitiveEnum.zero_value;
         }
-
 
     }
 
