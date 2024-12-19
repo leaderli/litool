@@ -1,14 +1,8 @@
 package io.leaderli.litool.test;
 
-import io.leaderli.litool.core.lang.lean.Lean;
-import io.leaderli.litool.core.type.ClassUtil;
 import io.leaderli.litool.core.type.ReflectUtil;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 public interface MethodProxy<T> {
 
@@ -29,34 +23,6 @@ public interface MethodProxy<T> {
      */
     static MethodProxy<?> of() {
         return (m, args) -> ReflectUtil.newInstance(m.getReturnType()).assertNotNone().get();
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    static MethodProxy<?> quick(Object... items) {
-        return (m, args) -> {
-            Class<?> returnType = m.getReturnType();
-            if (ClassUtil.isAssignableFromOrIsWrapper(Collection.class, returnType) || returnType.isArray()) {
-                return Lean.INSTANCE.fromBean(items, returnType);
-//                Object o = BeanCreator.create(returnType).build().create();
-//                Collection list = (Collection) ((?) o).assertNotNone().get();
-//                list.addAll(Arrays.asList(items));
-//                return list;
-            } else if (ClassUtil.isAssignableFromOrIsWrapper(Map.class, returnType)) {
-                Map map = (Map) Lean.INSTANCE.fromBean(null, returnType);
-                for (int i = 0; i < items.length - 1; i = i + 2) {
-                    map.put(items[i], items[i + 1]);
-                }
-                return map;
-            }
-            Object bean = Lean.INSTANCE.fromBean(new Object(), returnType);
-            if (bean != null) {
-                List<Field> fields = ReflectUtil.getFields(returnType).get();
-                for (int i = 0; i < items.length; i++) {
-                    ReflectUtil.setFieldValue(bean, fields.get(i), items[i]);
-                }
-            }
-            return bean;
-        };
     }
 
     /**
