@@ -22,7 +22,7 @@ public class IgnoreSaxBean extends SaxBean implements SaxEventHandler {
     }
 
     @Override
-    public void body(BodyEvent bodyEvent) {
+    public void setBody(BodyEvent bodyEvent) {
         // ignore
 
     }

@@ -34,13 +34,13 @@ public class LiMock {
     /**
      * 用于标记跳过mock
      */
-    public static Skip SKIP_MARK = new Skip();
+    public static final Skip SKIP_MARK = new Skip();
 
 
     public static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
     public static final ByteBuddy byteBuddy = new ByteBuddy();
-    public static Instrumentation instrumentation = ByteBuddyAgent.install();
-    public static ClassPool classPool = ClassPool.getDefault();
+    public static final Instrumentation instrumentation = ByteBuddyAgent.install();
+    public static final ClassPool classPool = ClassPool.getDefault();
     public final static boolean jacoco;
 
     static {

@@ -24,7 +24,7 @@ public class EntryElement extends SaxBean {
     }
 
     @Override
-    public void body(BodyEvent bodyEvent) {
+    public void setBody(BodyEvent bodyEvent) {
 
 
         String description = bodyEvent.description();

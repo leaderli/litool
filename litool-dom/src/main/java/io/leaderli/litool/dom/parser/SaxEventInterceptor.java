@@ -91,7 +91,7 @@ public class SaxEventInterceptor<T extends SaxBean> {
                 SaxBeanAdapter peek = saxBeanStack.peek();
 
                 assert peek != null;
-                peek.body((BodyEvent) saxEvent);
+                peek.setBody((BodyEvent) saxEvent);
 
             } else if (saxEvent instanceof EndEvent) {
 

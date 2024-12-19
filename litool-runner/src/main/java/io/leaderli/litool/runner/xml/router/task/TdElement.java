@@ -27,7 +27,7 @@ public class TdElement extends SaxBean {
     }
 
     @Override
-    public void body(BodyEvent bodyEvent) {
+    public void setBody(BodyEvent bodyEvent) {
         String description = bodyEvent.description();
         LiAssertUtil.assertTrue(description.matches(TD_VALUE_RULE), String.format("the td value %s is not match %s",
                 description, TD_VALUE_RULE));

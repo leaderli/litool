@@ -44,7 +44,7 @@ public class AssignElement extends BaseElement<AssignElement, AssignElementExecu
     }
 
     @Override
-    public void body(BodyEvent bodyEvent) {
+    public void setBody(BodyEvent bodyEvent) {
         this.value = ExpressionUtil.getExpression(bodyEvent.description());
     }
 }

@@ -20,7 +20,7 @@ public class ParamElement extends SaxBean {
     }
 
     @Override
-    public void body(BodyEvent bodyEvent) {
+    public void setBody(BodyEvent bodyEvent) {
         String expr = bodyEvent.description();
 
         this.expression = new Expression(expr);

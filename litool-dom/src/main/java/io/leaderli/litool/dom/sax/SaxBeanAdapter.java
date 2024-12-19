@@ -74,8 +74,8 @@ public class SaxBeanAdapter implements Runnable, SaxEventHandler {
     }
 
     @Override
-    public void body(BodyEvent bodyEvent) {
-        parseErrorInvocationHandler(bodyEvent, origin::body);
+    public void setBody(BodyEvent bodyEvent) {
+        parseErrorInvocationHandler(bodyEvent, origin::setBody);
     }
 
     @Override

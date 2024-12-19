@@ -35,7 +35,7 @@ public abstract class BaseEventElement<B extends BaseEventElement<B, EXE, E>, EX
     }
 
     @Override
-    public void body(BodyEvent bodyEvent) {
+    public void setBody(BodyEvent bodyEvent) {
         String message = bodyEvent.description();
         this.longExpression = new LongExpression(message);
     }

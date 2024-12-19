@@ -16,7 +16,7 @@ public class NoBean extends SaxBean {
     }
 
     @Override
-    public void body(BodyEvent bodyEvent) {
+    public void setBody(BodyEvent bodyEvent) {
         this.body = bodyEvent.description();
     }
 

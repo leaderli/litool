@@ -122,7 +122,7 @@ public interface SaxEventHandler {
         return ReflectUtil.newInstance(parameterType, value);
     }
 
-    default void body(BodyEvent bodyEvent) {
+    default void setBody(BodyEvent bodyEvent) {
 
     }
 
