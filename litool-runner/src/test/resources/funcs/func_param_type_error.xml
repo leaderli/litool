@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<funcs>
-    <func name="test" label="" instruct="math">
-        <param type="str">大于</param>
-        <param type="int">1</param>
-        <param type="int">false</param>
-    </func>
-</funcs>

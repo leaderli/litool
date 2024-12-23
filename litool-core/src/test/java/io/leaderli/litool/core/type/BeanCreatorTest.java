@@ -17,7 +17,7 @@ class BeanCreatorTest {
     Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 
     @Test
-    public void testMockBean() {
+    void testMockBean() {
 
         Str1 str1 = BeanCreator.mockBean(Str1.class);
         Assertions.assertEquals("a", Str1.a);
@@ -74,6 +74,7 @@ class BeanCreatorTest {
             @Override
             public void m1() {
 
+                // 用于断言测试
             }
         });
         Assertions.assertNotNull(beanCreatorBuild.build().create());
@@ -116,7 +117,16 @@ class BeanCreatorTest {
 
     }
 
-    static abstract class Foo<T, R> {
+    @Test
+    void testCache() {
+
+        FooBar foo = new FooBar();
+        BeanCreator<FooBar> build = BeanCreator.create(Void.class).cache(FooBar.class, foo).type(FooBar.class).build();
+        FooBar fooBar = build.create();
+        Assertions.assertSame(foo, fooBar);
+    }
+
+    abstract static class Foo<T, R> {
 
         private T t;
         private R r;

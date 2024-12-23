@@ -38,7 +38,6 @@ class LiTypeTokenTest {
 
     }
 
-    @SuppressWarnings("AssertBetweenInconvertibleTypes")
     @Test
     void testEquals() {
 
@@ -48,9 +47,13 @@ class LiTypeTokenTest {
         }.hashCode());
 
         Assertions.assertEquals(LiTypeToken.of(Bean.class), LiTypeToken.of(Bean.class));
-        Assertions.assertEquals(new LiTypeToken<Bean>() {
-        }, new LiTypeToken<Bean>() {
+        LiTypeToken<Bean> expected = new LiTypeToken<Bean>() {
+        };
+        Assertions.assertEquals(expected, new LiTypeToken<Bean>() {
         });
+        Assertions.assertEquals(new LiTypeToken<Bean>() {
+        }, LiTypeToken.of(Bean.class));
+        Assertions.assertEquals(LiTypeToken.of(Bean.class), LiTypeToken.of(Bean.class));
 
     }
 

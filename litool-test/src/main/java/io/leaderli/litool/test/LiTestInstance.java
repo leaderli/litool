@@ -9,10 +9,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ExtendWith({LiTestInstanceFactory.class, LiMockBeforeEachCallback.class, LiMockAfterEachCallback.class})
+@ExtendWith({LiTestInstanceFactory.class})
 @Test
-public @interface LiTest {
+public @interface LiTestInstance {
 }
 

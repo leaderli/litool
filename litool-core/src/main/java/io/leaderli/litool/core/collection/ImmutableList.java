@@ -5,6 +5,7 @@ import io.leaderli.litool.core.type.ClassUtil;
 import java.util.*;
 import java.util.stream.Stream;
 
+
 /**
  * 不可变的列表
  *
@@ -14,7 +15,6 @@ import java.util.stream.Stream;
  */
 public class ImmutableList<T> implements Iterable<T>, ToList<T, ArrayList<T>>, ToArray<T> {
 
-    private static final ImmutableList<?> NONE_INSTANCE = new NoneImmutableList<>();
     private final int size;
     private final T[] elements;
 
@@ -47,7 +47,7 @@ public class ImmutableList<T> implements Iterable<T>, ToList<T, ArrayList<T>>, T
 
     @SuppressWarnings("unchecked")
     public static <T> ImmutableList<T> none() {
-        return (ImmutableList<T>) NONE_INSTANCE;
+        return (ImmutableList<T>) NoneImmutableList.NONE_INSTANCE;
     }
 
     /**
@@ -210,6 +210,7 @@ public class ImmutableList<T> implements Iterable<T>, ToList<T, ArrayList<T>>, T
 
 
     private static class NoneImmutableList<T> extends ImmutableList<T> {
+        private static final ImmutableList<?> NONE_INSTANCE = new NoneImmutableList<>();
 
         private NoneImmutableList() {
             super(new Object[0]);
@@ -256,11 +257,14 @@ public class ImmutableList<T> implements Iterable<T>, ToList<T, ArrayList<T>>, T
         }
 
         @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
+
+        @Override
         public boolean equals(Object o) {
             return o == this;
         }
-
-
     }
 
 }

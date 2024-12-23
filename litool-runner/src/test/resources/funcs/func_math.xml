@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<funcs>
-    <func name="add1" label="math" instruct="math">
-        <param type="op">gt</param>
-        <param type="int">1</param>
-        <param type="int">1</param>
-    </func>
-</funcs>

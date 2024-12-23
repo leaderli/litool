@@ -7,7 +7,7 @@ package io.leaderli.litool.core.internal;
  */
 public final class JavaVersion {
 
-    private static final int majorJavaVersion = determineMajorJavaVersion();
+    private static final int MAJOR_JAVA_VERSION = determineMajorJavaVersion();
 
     private JavaVersion() {
     }
@@ -90,7 +90,7 @@ public final class JavaVersion {
      * @return 主要 Java 版本号
      */
     public static int getMajorJavaVersion() {
-        return majorJavaVersion;
+        return MAJOR_JAVA_VERSION;
     }
 
     /**
@@ -99,6 +99,6 @@ public final class JavaVersion {
      * @return 如果是，则返回 true；否则，返回 false。
      */
     public static boolean isJava9OrLater() {
-        return majorJavaVersion >= 9;
+        return MAJOR_JAVA_VERSION >= 9;
     }
 }

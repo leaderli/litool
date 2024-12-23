@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<request>
-    <entry id="1" label="渠道">CHANNEL</entry>
-    <entry id="1" label="渠道">CHANNEL</entry>
-    <entry id="1" label="渠道" type="int" def="1">ID</entry>
-</request>
