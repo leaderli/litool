@@ -25,6 +25,8 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class LiMock {
+    private LiMock() {
+    }
 
     public static class Skip {
         private Skip() {
@@ -37,14 +39,14 @@ public class LiMock {
     public static final Skip SKIP_MARK = new Skip();
 
 
-    public static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
+    protected static final Map<Class<?>, byte[]> originClasses = new HashMap<>();
     public static final ByteBuddy byteBuddy = new ByteBuddy();
     public static final Instrumentation instrumentation = ByteBuddyAgent.install();
     public static final ClassPool classPool = ClassPool.getDefault();
-    public final static boolean jacoco;
+    public static final boolean RUN_IN_JACOCO;
 
     static {
-        jacoco = checkJacoco();
+        RUN_IN_JACOCO = checkJacoco();
         classPool.importPackage("io.leaderli.litool.test.MethodValueRecorder");
         classPool.importPackage("io.leaderli.litool.core.meta.Either");
     }
@@ -54,25 +56,24 @@ public class LiMock {
      */
     private static boolean checkJacoco() {
         for (Class<?> loadedClass : instrumentation.getAllLoadedClasses()) {
-            if (ClassFileTransformer.class.isAssignableFrom(loadedClass)) {
-                if (loadedClass.getName().startsWith("org.jacoco.agent.rt")) {
+            if (ClassFileTransformer.class.isAssignableFrom(loadedClass) && loadedClass.getName().startsWith("org.jacoco.agent.rt")) {
                     return true;
                 }
-            }
+
         }
         return false;
     }
 
     public static CtClass getCtClass(Class<?> clazz) {
         try {
-            if (jacoco && instrumentation.isModifiableClass(clazz)) {
+            if (RUN_IN_JACOCO && instrumentation.isModifiableClass(clazz)) {
                 instrumentation.addTransformer(new TempClassFileTransformer(instrumentation), true);
                 instrumentation.retransformClasses(clazz);
             }
 
             return classPool.getCtClass(clazz.getName());
         } catch (Exception e) {
-            throw new RuntimeException(clazz + " : " + e);
+            throw new MockException(clazz + " : " + e);
         }
     }
 
@@ -111,11 +112,12 @@ public class LiMock {
         @Override
         public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
             try {
-                CtClass ctClass = classPool.makeClass(new ByteArrayInputStream(classfileBuffer));
+                classPool.makeClass(new ByteArrayInputStream(classfileBuffer));
             } catch (IOException ignore) {
+                // ignore
             }
             instrumentation.removeTransformer(this);
-            return null;
+            return new byte[0];
         }
     }
 
@@ -149,7 +151,7 @@ public class LiMock {
             Class.forName(mockClass.getName(), true, mockClass.getClassLoader());
             detach(mockClass);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MockException(e);
         }
     }
 
@@ -193,7 +195,7 @@ public class LiMock {
             }
             instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MockException(e);
         }
     }
 
@@ -230,7 +232,7 @@ public class LiMock {
             }
             instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MockException(e);
         }
 
     }
@@ -313,14 +315,14 @@ public class LiMock {
                 MethodValueRecorder.recorders.put(uuid, LiTuple.of(methodAssert, method));
                 String recordCode = StrSubstitution.format2("MethodValueRecorder.record( #uuid#,#this#,$args,($w)$_);", "#", "#", StringUtils.wrap(uuid, '"'), ModifierUtil.isStatic(method) ? "null" : "$0");
                 ctMethod.insertAfter(recordCode);
-                CtClass etype = getCtClass(Throwable.class);
+                CtClass ctClass = getCtClass(Throwable.class);
                 String catchCode = StrSubstitution.format2("MethodValueRecorder.record( #uuid#,#this#,$args,$e); throw $e;", "#", "#", StringUtils.wrap(uuid, '"'), ModifierUtil.isStatic(method) ? "null" : "$0");
-                ctMethod.addCatch(catchCode, etype);
+                ctMethod.addCatch(catchCode, ctClass);
 
             }
             instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MockException(e);
         }
 
     }
@@ -352,7 +354,7 @@ public class LiMock {
             try {
                 delegateMethod.invoke(null, ArrayUtils.insert(args, 0, _return));
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e.getCause());
+                throw new MockException(e.getCause());
             }
         });
     }
@@ -366,6 +368,7 @@ public class LiMock {
         record(mockClass, methodFilter.addHead(ModifierUtil::isStatic), methodAssert);
     }
 
+    @SuppressWarnings("java:S106")
     public static void recordMethodCall(Class<?>... mockClasses) {
         recordMethodCall(System.out::println, mockClasses);
     }
@@ -384,6 +387,7 @@ public class LiMock {
                         try {
                             ref.add(Class.forName(refClass));
                         } catch (ClassNotFoundException ignored) {
+                            // ignore
                         }
                     }
                 }
@@ -409,8 +413,8 @@ public class LiMock {
      */
     public static void assertMethodCalled() {
 
-        for (Method method : Recorder.recordMethodCall) {
-            Assertions.assertTrue(Recorder.actualMethodCall.contains(method), "the method is not called: " + method.getName());
+        for (Method method : AbstractRecorder.recordMethodCall) {
+            Assertions.assertTrue(AbstractRecorder.actualMethodCall.contains(method), "the method is not called: " + method.getName());
         }
     }
 
@@ -421,14 +425,15 @@ public class LiMock {
      * @see Recorder#recordMethodNotCall
      */
     public static void assertMethodNotCalled() {
-        for (Method method : Recorder.recordMethodNotCall) {
-            Assertions.assertFalse(Recorder.actualMethodCall.contains(method), "the method is called: " + method.getName());
+        for (Method method : AbstractRecorder.recordMethodNotCall) {
+            Assertions.assertFalse(AbstractRecorder.actualMethodCall.contains(method), "the method is called: " + method.getName());
         }
     }
 
+    @SuppressWarnings("java:S1751")
     public static void assertDoesNotThrow() {
-        for (Throwable throwable : Recorder.assertThrow) {
-            throw new RuntimeException(throwable);
+        for (Throwable throwable : AbstractRecorder.assertThrow) {
+            throw new MockException(throwable);
         }
     }
 
@@ -438,18 +443,18 @@ public class LiMock {
      * @see Recorder#called()
      */
     public static void clearMethodCalled() {
-        Recorder.actualMethodCall.clear();
+        AbstractRecorder.actualMethodCall.clear();
     }
 
     public static void reset() {
-        Recorder.recordMethodCall.clear();
-        Recorder.recordMethodNotCall.clear();
+        AbstractRecorder.recordMethodCall.clear();
+        AbstractRecorder.recordMethodNotCall.clear();
         originClasses.forEach((k, v) -> {
             try {
                 detach(k);
                 instrumentation.redefineClasses(new ClassDefinition(k, v));
             } catch (ClassNotFoundException | UnmodifiableClassException e) {
-                throw new RuntimeException(e);
+                throw new MockException(e);
             }
         });
     }
@@ -463,7 +468,7 @@ public class LiMock {
                 instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
             }
         } catch (ClassNotFoundException | UnmodifiableClassException e) {
-            throw new RuntimeException(e);
+            throw new MockException(e);
         }
     }
 

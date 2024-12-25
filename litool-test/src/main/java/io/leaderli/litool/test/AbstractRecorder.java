@@ -12,10 +12,10 @@ import java.util.function.Consumer;
 @SuppressWarnings("unchecked")
 public class AbstractRecorder<T> {
 
-    public static final Set<Method> recordMethodCall = new HashSet<>();
-    public static final Set<Method> recordMethodNotCall = new HashSet<>();
-    public static final Set<Method> actualMethodCall = new HashSet<>();
-    public static final List<Throwable> assertThrow = new ArrayList<>();
+    protected static final Set<Method> recordMethodCall = new HashSet<>();
+    protected static final Set<Method> recordMethodNotCall = new HashSet<>();
+    protected static final Set<Method> actualMethodCall = new HashSet<>();
+    protected static final List<Throwable> assertThrow = new ArrayList<>();
     protected final Class<?> mockClass;
     protected final Map<Method, List<MethodAssert>> methodAsserts = new HashMap<>();
     private Method currentMethod;
