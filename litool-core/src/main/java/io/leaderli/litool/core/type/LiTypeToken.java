@@ -48,7 +48,7 @@ public class LiTypeToken<T> implements ParameterizedType {
     static Type getSuperclassTypeParameter(Class<?> subclass) {
         Type superclass = subclass.getGenericSuperclass();
         if (superclass instanceof Class) {
-            throw new RuntimeException("Missing type parameter.");
+            throw new IllegalArgumentException("Missing type parameter.");
         }
         ParameterizedType parameterized = (ParameterizedType) superclass;
         return TypeUtil.canonicalize(parameterized.getActualTypeArguments()[0]);
@@ -74,6 +74,7 @@ public class LiTypeToken<T> implements ParameterizedType {
      * @return 如果类型可以分配给泛型数组类型，则返回true；否则返回false。
      */
     private static boolean isAssignableFrom(Type from, GenericArrayType to) {
+
         Type toGenericComponentType = to.getGenericComponentType();
         if (toGenericComponentType instanceof ParameterizedType) {
             Type t = from;

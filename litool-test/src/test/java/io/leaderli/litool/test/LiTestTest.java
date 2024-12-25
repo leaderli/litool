@@ -1,6 +1,6 @@
 package io.leaderli.litool.test;
 
-import io.leaderli.litool.core.type.BeanCreator;
+import io.leaderli.litool.test.bean.BeanCreator;
 import org.junit.jupiter.api.Assertions;
 
 @LiTestInstance

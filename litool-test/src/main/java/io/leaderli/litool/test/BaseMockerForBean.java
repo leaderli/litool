@@ -1,8 +1,8 @@
 package io.leaderli.litool.test;
 
-import io.leaderli.litool.core.type.BeanCreator;
 import io.leaderli.litool.core.type.MethodFilter;
 import io.leaderli.litool.core.type.PrimitiveEnum;
+import io.leaderli.litool.test.bean.BeanCreator;
 
 public abstract class BaseMockerForBean<T, R> extends BaseMocker<T, R> {
     protected final boolean detach;

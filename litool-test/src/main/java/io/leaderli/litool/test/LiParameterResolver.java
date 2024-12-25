@@ -1,6 +1,6 @@
 package io.leaderli.litool.test;
 
-import io.leaderli.litool.core.type.BeanCreator;
+import io.leaderli.litool.test.bean.BeanCreator;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;

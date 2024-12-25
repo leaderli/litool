@@ -1,8 +1,8 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.type.BeanCreator;
 import io.leaderli.litool.core.type.MethodFilter;
+import io.leaderli.litool.test.bean.BeanCreator;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;

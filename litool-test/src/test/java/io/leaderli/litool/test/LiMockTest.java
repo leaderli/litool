@@ -29,6 +29,15 @@ class LiMockTest {
 
 
     @LiTest
+    void testSimple() {
+        Assertions.assertEquals(1, new Bean11().m1(1));
+        LiMock.simple(Bean11.class, 10);
+        Assertions.assertEquals(10, new Bean11().m1(1));
+        Supplier supplier = LiMock.simpleInterface(Supplier.class, 10);
+        Assertions.assertEquals(10, supplier.get());
+
+    }
+    @LiTest
     void skipClassConstructors() {
 
         Assertions.assertEquals(2, new Foo().a);

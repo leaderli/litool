@@ -20,11 +20,11 @@ public abstract class MethodValueRecorder {
     protected final Class<?> mockClass;
     protected final Map<Method, MethodValue> methodValueMap = new HashMap<>();
 
-    public MethodValueRecorder(Class<?> mockClass) {
+    protected MethodValueRecorder(Class<?> mockClass) {
         this.mockClass = mockClass;
     }
 
-    public static Either<?, ?> invoke(String uuid, Class<?> clazz, String name, Class<?>[] argsType, Object[] args) throws Throwable {
+    public static Either invoke(String uuid, Class<?> clazz, String name, Class<?>[] argsType, Object[] args) throws Throwable {
 
         LiTuple<MethodProxy<?>, Method> tuple = invokers.get(uuid);
         if (tuple == null) {
@@ -93,7 +93,7 @@ public abstract class MethodValueRecorder {
         try {
             tuple._1.apply(tuple._2, args, _return);
         } catch (Throwable throwable) {
-            Recorder.assertThrow.add(throwable);
+            AbstractRecorder.assertThrow.add(throwable);
             throw throwable;
         }
     }

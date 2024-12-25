@@ -61,10 +61,8 @@ public abstract class BaseMocker<T, R> extends MethodValueRecorder implements IM
 
         for (Method declaredMethod : LiMock.findDeclaredMethods(mockClass, methodFilter)) {
             methodValueMap.computeIfAbsent(declaredMethod, MethodValue::new).otherFunction(otherFunction);
-
         }
         return this;
-
     }
 
 }

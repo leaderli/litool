@@ -1,7 +1,7 @@
 package io.leaderli.litool.test;
 
-import io.leaderli.litool.core.type.BeanCreator;
 import io.leaderli.litool.core.type.ReflectUtil;
+import io.leaderli.litool.test.bean.BeanCreator;
 import org.junit.jupiter.api.extension.*;
 
 import java.lang.reflect.Field;

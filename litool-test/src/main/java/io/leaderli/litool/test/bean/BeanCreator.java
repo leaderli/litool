@@ -1,4 +1,6 @@
-package io.leaderli.litool.core.type;
+package io.leaderli.litool.test.bean;
+
+import io.leaderli.litool.core.type.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;

@@ -57,8 +57,8 @@ public class LiMock {
     private static boolean checkJacoco() {
         for (Class<?> loadedClass : instrumentation.getAllLoadedClasses()) {
             if (ClassFileTransformer.class.isAssignableFrom(loadedClass) && loadedClass.getName().startsWith("org.jacoco.agent.rt")) {
-                    return true;
-                }
+                return true;
+            }
 
         }
         return false;
@@ -483,6 +483,44 @@ public class LiMock {
     @SafeVarargs
     public static <T> IRecorder<RecordBeans<T>, T> recordBeans(Class<? extends T>... mockClasses) {
         return new RecordBeans<>(mockClasses);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> T simpleInterface(Class<T> mockClass, Object... returns) {
+        MockInterface<T> mockInterface = new MockInterface<>(mockClass);
+        for (Method method : mockClass.getMethods()) {
+            if (mockInterface.methodValueMap.containsKey(method)) {
+                continue;
+            }
+            for (Object returnValue : returns) {
+                if (ClassUtil.isAssignableFromOrIsWrapper(method.getReturnType(), returnValue.getClass())) {
+                    MethodValue methodValue = new MethodValue(method);
+                    methodValue.other(returnValue);
+                    mockInterface.methodValueMap.put(method, methodValue);
+                    break;
+                }
+            }
+        }
+        return mockInterface.build();
+    }
+
+    public static void simple(Class<?> mockClass, Object... returns) {
+        if (mockClass.isInterface()) {
+            throw new IllegalArgumentException("not support interface " + mockClass);
+        }
+        Map<Method, Object> returnMap = new HashMap<>();
+        for (Method declaredMethod : findDeclaredMethods(mockClass, MethodFilter.isMethod())) {
+            if (returnMap.containsKey(declaredMethod)) {
+                continue;
+            }
+            for (Object returnValue : returns) {
+                if (ClassUtil.isAssignableFromOrIsWrapper(declaredMethod.getReturnType(), returnValue.getClass())) {
+                    returnMap.put(declaredMethod, returnValue);
+                    break;
+                }
+            }
+        }
+        mock(mockClass, MethodFilter.of(returnMap::containsKey), (m, args) -> returnMap.get(m));
     }
 
     public static IMocker<Void, Object> mocker(Class<?> mockClass) {

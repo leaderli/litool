@@ -1,4 +1,4 @@
-package io.leaderli.litool.core.type;
+package io.leaderli.litool.test.bean;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
