@@ -10,4 +10,12 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface ObjectConstructor<T> extends Supplier<T> {
+
+    /**
+     * @return new 之后是否需要填充属性
+     * @see BeanCreator#create()
+     */
+    default boolean populate() {
+        return false;
+    }
 }

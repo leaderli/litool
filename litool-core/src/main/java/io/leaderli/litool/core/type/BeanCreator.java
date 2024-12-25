@@ -75,19 +75,24 @@ public class BeanCreator<T> {
             return (T) cache.get(typeToken);
         }
         ObjectConstructor<T> constructor = constructorConstructor.get(typeToken);
+        T instance = null;
         if (constructor != null) {
-            return constructor.get();
+            instance = constructor.get();
+
+            if (instance != null && !constructor.populate()) {
+                return instance;
+            }
         }
 
         Class<? super T> rawType = typeToken.getRawType();
-        if (rawType.isArray()) {
-            return (T) Array.newInstance(rawType.getComponentType(), 0);
-        }
+        if (instance == null) {
 
-
-        T instance = null;
-        if (!ModifierUtil.isAbstract(rawType)) {
-            instance = (T) ReflectUtil.newInstance(rawType).get();
+            if (rawType.isArray()) {
+                return (T) Array.newInstance(rawType.getComponentType(), 0);
+            }
+            if (!ModifierUtil.isAbstract(rawType)) {
+                instance = (T) ReflectUtil.newInstance(rawType).get();
+            }
         }
         if (instance == null) {
             // try to use a cache value that inherit from rawType
@@ -229,7 +234,7 @@ public class BeanCreator<T> {
             return this;
         }
 
-        public <R> MockBeanBuilder<T> populate(FieldValueGetter fieldValueGetter) {
+        public MockBeanBuilder<T> populate(FieldValueGetter fieldValueGetter) {
             this.fieldValueGetterMap.add(fieldValueGetter);
             return this;
         }
