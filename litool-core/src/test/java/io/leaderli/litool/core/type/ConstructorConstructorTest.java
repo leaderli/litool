@@ -19,6 +19,7 @@ class ConstructorConstructorTest {
         LinkedHashMap<Type, InstanceCreator<?>> head;
 
         constructorConstructor = new ConstructorConstructor();
+        Assertions.assertSame(Object.class, constructorConstructor.get(LiTypeToken.of(Object.class)).get().getClass());
         Assertions.assertSame(HashMap.class, constructorConstructor.get(LiTypeToken.of(Map.class)).get().getClass());
 
         head = LiMapUtil.newLinkedHashMap(LinkedHashMap.class, (InstanceCreator<LinkedHashMap<?, ?>>) type -> new LinkedHashMap<>());

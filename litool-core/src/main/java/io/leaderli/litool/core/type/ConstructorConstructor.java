@@ -15,6 +15,7 @@ import java.util.*;
  * @author leaderli
  * @since 2022/9/25
  */
+@SuppressWarnings("java:S1319")
 public final class ConstructorConstructor {
 
     private final LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
@@ -89,6 +90,7 @@ public final class ConstructorConstructor {
      */
     private static LinkedHashMap<Type, InstanceCreator<?>> generateDefaultInstanceCreators() {
         LinkedHashMap<Type, InstanceCreator<?>> instanceCreators = new LinkedHashMap<>();
+        instanceCreators.put(Object.class, type -> new Object());
         instanceCreators.put(ArrayList.class, (InstanceCreator<List<Object>>) type -> new ArrayList<>());
         instanceCreators.put(LinkedList.class, (InstanceCreator<List<Object>>) type -> new LinkedList<>());
         instanceCreators.put(HashSet.class, (InstanceCreator<HashSet<Object>>) type -> new HashSet<>());
