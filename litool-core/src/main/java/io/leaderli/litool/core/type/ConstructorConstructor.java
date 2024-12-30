@@ -116,6 +116,7 @@ public final class ConstructorConstructor {
             return () -> typeCreator.createInstance(type);
         }
 
+        // 如果缓存中的构造器的类是raw的子类，则返回
         Lino<ObjectConstructor<T>> rawConstructor = Lira.of(instanceCreators.keySet())
                 .cast(Class.class)
                 .filter(rawType::isAssignableFrom)
