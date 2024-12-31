@@ -48,7 +48,7 @@ public class MethodValue<T> {
 
     public Object getMethodValue(Object[] args) {
         for (LiTuple<Filter<Object[]>, T> tuple : argsFilters) {
-            if (tuple._1.apply(args)) {
+            if (Boolean.TRUE.equals(tuple._1.apply(args))) {
                 return primitive.read(tuple._2);
             }
         }
@@ -57,7 +57,7 @@ public class MethodValue<T> {
             try {
                 return primitive.read(otherFunction.apply(method, args));
             } catch (Throwable e) {
-                throw new RuntimeException(e);
+                throw new MockException(e);
             }
         }
         return LiMock.SKIP_MARK;

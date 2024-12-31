@@ -1,6 +1,8 @@
 package io.leaderli.litool.test;
 
+import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.LiTypeToken;
+import io.leaderli.litool.core.type.MethodFilter;
 import io.leaderli.litool.core.type.PrimitiveEnum;
 
 import java.lang.reflect.InvocationHandler;
@@ -9,7 +11,7 @@ import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.function.BiFunction;
 
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class MockInterface<T> extends BaseMocker<T, Object> {
 
 
@@ -37,6 +39,14 @@ public class MockInterface<T> extends BaseMocker<T, Object> {
         return this;
     }
 
+    @Override
+    public BaseMocker<T, Object> mock(MethodFilter methodFilter, MethodProxy otherFunction) {
+
+        for (Method declaredMethod : Lira.of(mockClass.getDeclaredMethods()).filter(methodFilter)) {
+            methodValueMap.computeIfAbsent(declaredMethod, MethodValue::new).otherFunction(otherFunction);
+        }
+        return this;
+    }
 
     public T build() {
         return (T) Proxy.newProxyInstance(mockClass.getClassLoader(), new Class[]{mockClass}, (proxy, method, args) -> getMethodValueOfInterface(type, method, args, otherInvocationHandler));

@@ -14,7 +14,7 @@ public abstract class BaseMocker<T, R> extends MethodValueRecorder implements IM
     protected T instance;
     protected MethodValue currentMethodValue;
 
-    public BaseMocker(Class<T> mockClass) {
+    protected BaseMocker(Class<T> mockClass) {
         super(mockClass);
     }
 
@@ -31,9 +31,9 @@ public abstract class BaseMocker<T, R> extends MethodValueRecorder implements IM
     }
 
     @Override
-    public <RR> IMocker<T, RR> function(Function<T, RR> call) {
+    public <R2> IMocker<T, R2> function(Function<T, R2> call) {
         call.apply(instance);
-        return (IMocker<T, RR>) this;
+        return (IMocker<T, R2>) this;
     }
 
     @SuppressWarnings("unchecked")

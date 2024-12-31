@@ -409,6 +409,8 @@ class LiMockTest {
         function = LiMock.mockerInterface(Function.class).otherMethod((m, args) -> 1).build();
         Assertions.assertEquals(1, function.apply(2));
 
+        function = LiMock.mockerInterface(Function.class).mock(MethodFilter.name("apply"), MethodProxy.of(10)).build();
+        Assertions.assertEquals(10, function.apply(2));
     }
 
     @LiTest

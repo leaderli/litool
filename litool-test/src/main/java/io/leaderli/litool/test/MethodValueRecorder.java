@@ -73,7 +73,8 @@ public abstract class MethodValueRecorder {
         }
         returnValue = adjustReturnValue(returnValue, type, m.getGenericReturnType()).get();
         // 模拟接口没有兜底返回值，必须修正基础类型返回为null的情况
-        return PrimitiveEnum.get(m.getReturnType()).read(returnValue);
+        Type returnType = TypeUtil.resolve(type, m.getGenericReturnType());
+        return PrimitiveEnum.get(returnType).read(returnValue);
     }
 
     protected Object getMethodValue(Method m, Object[] args) {
