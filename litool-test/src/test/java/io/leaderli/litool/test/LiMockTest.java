@@ -37,6 +37,15 @@ class LiMockTest {
         Assertions.assertEquals(10, supplier.get());
 
     }
+
+    @Test
+    void testSkip() {
+        Assertions.assertEquals(1, new Bean11().m1(1));
+        LiMock.skip(Bean11.class);
+        Assertions.assertEquals(0, new Bean11().m1(1));
+        Supplier supplier = LiMock.skipInterface(Supplier.class);
+        Assertions.assertNull(supplier.get());
+    }
     @LiTest
     void skipClassConstructors() {
 

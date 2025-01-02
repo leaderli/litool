@@ -12,9 +12,13 @@ public class LiTestTest implements MockBeanBuilderConfig {
     @Mock
     Bean2 bean2;
 
+    BeanCreator.MockBeanBuilder<Void> beanBuilder;
+
     @Override
-    public void init(BeanCreator.MockBeanBuilder<Void> mockBeanBuilder) {
-        mockBeanBuilder.cache(LiTestTest.Bean2.class, new LiTestTest.Bean2());
+    public void init(BeanCreator.MockBeanBuilder<Void> beanBuilder) {
+        beanBuilder.cache(LiTestTest.Bean2.class, new LiTestTest.Bean2());
+        Assertions.assertTrue(this.beanBuilder == null || this.beanBuilder != beanBuilder);
+        this.beanBuilder = beanBuilder;
     }
 
 
@@ -25,12 +29,13 @@ public class LiTestTest implements MockBeanBuilderConfig {
         Assertions.assertNotNull(this.bean);
         Assertions.assertSame(bean, bean.bean);
         Assertions.assertSame(this.bean, this.bean.bean);
-        System.out.println(bean2);
-        System.out.println(this.bean2);
-
-        Assertions.assertSame(bean2, this.bean2);
+        Assertions.assertNotSame(bean2, this.bean2);
     }
 
+    @LiTest
+    void testParameter2() {
+        Assertions.assertNotNull(this.beanBuilder);
+    }
 
     static class Bean {
 

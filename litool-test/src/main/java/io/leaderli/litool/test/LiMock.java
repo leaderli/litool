@@ -504,6 +504,7 @@ public class LiMock {
         return mockInterface.build();
     }
 
+
     public static void simple(Class<?> mockClass, Object... returns) {
         if (mockClass.isInterface()) {
             throw new IllegalArgumentException("not support interface " + mockClass);
@@ -521,6 +522,17 @@ public class LiMock {
             }
         }
         mock(mockClass, MethodFilter.of(returnMap::containsKey), (m, args) -> returnMap.get(m));
+    }
+
+    public static <T> T skipInterface(Class<T> mockClass) {
+        return new MockInterface<>(mockClass).build();
+    }
+
+    public static void skip(Class<?> mockClass) {
+        if (mockClass.isInterface()) {
+            throw new IllegalArgumentException("not support interface " + mockClass);
+        }
+        mock(mockClass, MethodFilter.isMethod(), MethodProxy.NONE);
     }
 
     public static IMocker<Void, Object> mocker(Class<?> mockClass) {
