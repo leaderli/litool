@@ -21,6 +21,8 @@ import java.util.function.Function;
  * @since 2022/7/12
  */
 public class ReflectUtil {
+    private ReflectUtil() {
+    }
 
     private static final ReflectionAccessor REFLECTION_ACCESSOR = ReflectionAccessor.getInstance();
 
@@ -59,6 +61,10 @@ public class ReflectUtil {
 
         Class<?> clazz = obj.getClass();
         return getField(clazz, name).unzip(f -> getFieldValue(obj, f));
+    }
+
+    public static boolean setStaticFieldValue(Class<?> clazz, String name, Object value) {
+        return getField(clazz, name).map(f -> setFieldValue(null, f, value)).get(false);
     }
 
     public static Lino<?> getStaticFieldValue(Class<?> clazz, Field field) {
@@ -120,12 +126,12 @@ public class ReflectUtil {
         // 相对于获取全部属性在过滤，速度更快
         while (clazz != null && clazz != Object.class) {
             for (Field field : clazz.getFields()) {
-                if (filter.apply(field)) {
+                if (Boolean.TRUE.equals(filter.apply(field))) {
                     return Lino.of(field);
                 }
             }
             for (Field field : clazz.getDeclaredFields()) {
-                if (filter.apply(field)) {
+                if (Boolean.TRUE.equals(filter.apply(field))) {
                     return Lino.of(field);
                 }
             }
@@ -173,6 +179,7 @@ public class ReflectUtil {
      * @param value 属性值
      * @return 是否设置成功
      */
+    @SuppressWarnings("java:S3011")
     public static boolean setFieldValue(Object obj, Field field, Object value) {
 
         if (field == null) {
@@ -528,13 +535,13 @@ public class ReflectUtil {
         while (clazz != null) {
             //相比较于属性，多添加一个，是添加接口的方法
             for (Method method : clazz.getMethods()) {
-                if (filter.apply(method)) {
+                if (Boolean.TRUE.equals(filter.apply(method))) {
                     return Lino.of(method);
                 }
             }
 
             for (Method method : clazz.getDeclaredMethods()) {
-                if (filter.apply(method)) {
+                if (Boolean.TRUE.equals(filter.apply(method))) {
                     return Lino.of(method);
                 }
             }

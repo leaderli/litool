@@ -134,6 +134,10 @@ class ReflectUtilTest {
 
         assertEquals(1, ReflectUtil.getStaticFieldValue(this.getClass(), "a").get());
 
+        Assertions.assertTrue(ReflectUtil.setStaticFieldValue(this.getClass(), "a", 2));
+        Assertions.assertFalse(ReflectUtil.setStaticFieldValue(this.getClass(), "a", "3"));
+        assertEquals(2, ReflectUtil.getStaticFieldValue(this.getClass(), "a").get());
+
     }
 
 
@@ -177,7 +181,7 @@ class ReflectUtilTest {
     }
 
     @Test
-    void newInstance() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InterruptedException {
+    void newInstance() throws InterruptedException {
 
         assertTrue(ReflectUtil.newInstance(Integer.class).present());
         assertTrue(ReflectUtil.newInstance(PrimitiveEnum.class).present());
@@ -206,7 +210,7 @@ class ReflectUtilTest {
             WhenThrowBehavior.temporaryIgnore(() -> {
                 ReflectUtil.newInstance(Integer.class, (Integer) null);
             });
-            Assertions.assertTrue(out.get().length() == 0);
+            Assertions.assertEquals(0, out.get().length());
         });
         thread.start();
         thread.join();
@@ -405,11 +409,11 @@ class ReflectUtilTest {
         private int gender = 1;
 
         public void m1() {
-
+            // for junit
         }
 
         private void m2() {
-
+            // for junit
         }
 
         @Override
@@ -426,7 +430,7 @@ class ReflectUtilTest {
         public int age = 8;
 
         private void m3() {
-
+            // for junit
         }
 
         @Override
@@ -442,18 +446,18 @@ class ReflectUtilTest {
 
 
         private ConstructorBean(String name) {
-
+            // for junit
         }
 
         private ConstructorBean() {
-
+            // for junit
         }
     }
 
     private static class StringConsumer implements Consumer<String> {
         @Override
         public void accept(String o) {
-
+            // for junit
         }
     }
 
@@ -541,7 +545,7 @@ class ReflectUtilTest {
 
         @Override
         public Integer apply(String s) {
-            if (s.length() < 1) {
+            if (s.isEmpty()) {
                 throw new IllegalArgumentException("123");
             }
             return s.length();
