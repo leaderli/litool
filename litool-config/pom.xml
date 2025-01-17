@@ -7,7 +7,7 @@
 
     <parent>
         <groupId>io.leaderli.litool</groupId>
-        <artifactId>litool-parent</artifactId>
+        <artifactId>litool</artifactId>
         <version>2.3.5</version>
     </parent>
 
