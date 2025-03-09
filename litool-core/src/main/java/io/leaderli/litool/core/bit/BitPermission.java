@@ -6,6 +6,7 @@ import io.leaderli.litool.core.text.StringUtils;
 /**
  * 使用非负二进制表示权限，并使用位运算操作权限。
  *
+ * @author leaderli
  * @see PrettyBitPermission
  */
 public abstract class BitPermission {

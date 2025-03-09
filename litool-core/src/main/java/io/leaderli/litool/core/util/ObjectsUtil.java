@@ -8,6 +8,9 @@ import java.util.Objects;
  */
 public class ObjectsUtil {
 
+    private ObjectsUtil() {
+    }
+
     public static boolean anyNull(Object... objects) {
 
         for (Object object : objects) {
@@ -36,7 +39,7 @@ public class ObjectsUtil {
     /**
      * 检查对象是否为null
      *
-     * @param msg     {@link  NullPointerException(String)}
+     * @param msg     the msg when objects have null object
      * @param objects 需要检查的对象
      * @throws NullPointerException 如果其中任意一个对象为null，则抛出空指针异常
      */

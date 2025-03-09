@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>litool</artifactId>
-        <groupId>io.leaderli.litool</groupId>
+        <groupId>io.github.leaderli.litool</groupId>
         <version>2.3.5</version>
     </parent>
 
@@ -14,13 +14,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.leaderli.litool</groupId>
+            <groupId>io.github.leaderli.litool</groupId>
             <artifactId>litool-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>io.leaderli.litool</groupId>
+            <groupId>io.github.leaderli.litool</groupId>
             <artifactId>litool-config</artifactId>
             <version>${project.parent.version}</version>
         </dependency>

@@ -4,15 +4,36 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.leaderli.litool</groupId>
+    <groupId>io.github.leaderli.litool</groupId>
     <artifactId>litool</artifactId>
     <version>2.3.5</version>
     <name>litool</name>
-
+    <description>simple tool</description>
+    <url>https://github.com/leaderli/litool</url>
     <packaging>pom</packaging>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
+    <scm>
+        <connection>https://github.com/leaderli/litool.git</connection>
+        <url>https://github.com/leaderli/litool</url>
+    </scm>
+    <developers>
+        <developer>
+            <name>leaderli</name>
+            <email>429243408@qq.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
     <modules>
-        <module>litool-all</module>
         <module>litool-core</module>
         <module>litool-dom</module>
         <module>litool-config</module>
@@ -83,6 +104,49 @@
 
     <build>
         <plugins>
+            <!-- javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- 忽略所有错误，不中断构建 -->
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
+            <!-- 签名文件：maven-gpg-plugin插件会调用上文中安装的GnuPG软件，对文件进行签名 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 需要 settings.xml 使用用户令牌凭据进行配置 -->
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.5.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
