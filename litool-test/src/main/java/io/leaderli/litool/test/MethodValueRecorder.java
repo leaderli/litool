@@ -24,13 +24,13 @@ public abstract class MethodValueRecorder {
         this.mockClass = mockClass;
     }
 
-    public static Either invoke(String uuid, Class<?> clazz, String name, Class<?>[] argsType, Object[] args) throws Throwable {
+    public static Either invoke(String uuid, Class<?> clazz, String name, Class<?>[] argsType, Object bean, Object[] args) throws Throwable {
 
         LiTuple<MethodProxy<?>, Method> tuple = invokers.get(uuid);
         if (tuple == null) {
             return Either.none();
         }
-        Object returnValue = tuple._1.apply(tuple._2, args);
+        Object returnValue = tuple._1.apply(bean, tuple._2, args);
         return adjustReturnValue(returnValue, clazz, tuple._2.getGenericReturnType());
 
     }

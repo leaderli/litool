@@ -41,4 +41,7 @@ public interface MethodProxy<T> {
 
     T apply(Method method, Object[] args) throws Throwable;
 
+    default <B> T apply(B bean, Method method, Object[] args) throws Throwable {
+        return apply(method, args);
+    }
 }

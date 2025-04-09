@@ -676,6 +676,31 @@ class LiMockTest {
 
     }
 
+    @Test
+    void testMockByInstance() {
+        LiMock.mock(Foo.class, MethodFilter.isMethod(), new MethodProxy<Integer>() {
+            @Override
+            public Integer apply(Method method, Object[] args) throws Throwable {
+                return 0;
+            }
+
+            @Override
+            public Integer apply(Object foo, Method method, Object[] args) throws Throwable {
+
+                Foo f = (Foo) foo;
+                if (f.a > 0) {
+                    return f.a;
+                }
+                return 0;
+            }
+        });
+
+        Foo foo = new Foo();
+        Assertions.assertEquals(2, foo.m1());
+        foo.a = -1;
+        Assertions.assertEquals(0, foo.m1());
+    }
+
     static class Delegate {
         public static int m1() {
             return 2;
