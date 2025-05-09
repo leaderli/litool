@@ -218,7 +218,8 @@ public class LiMock {
             for (Method method : findDeclaredMethods(mockClass, methodFilter)) {
 
                 CtMethod ctMethod = getCtMethod(method, ct);
-                String uuid = method.getName() + " " + UUID.randomUUID();
+//                String uuid = method.getName() + " " + UUID.randomUUID();
+                String uuid = mockClass.getName() + " " + method.getName() + " " + Arrays.toString(method.getParameterTypes());
                 MethodValueRecorder.invokers.put(uuid, LiTuple.of(methodProxy, method));
                 String src = "";
                 if (ModifierUtil.isStatic(method) || ModifierUtil.isStatic(method)) {
@@ -240,7 +241,7 @@ public class LiMock {
                 ctMethod.insertBefore(src);
             }
             instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new MockException(e);
         }
 
@@ -458,14 +459,7 @@ public class LiMock {
     public static void reset() {
         AbstractRecorder.recordMethodCall.clear();
         AbstractRecorder.recordMethodNotCall.clear();
-        originClasses.forEach((k, v) -> {
-            try {
-                detach(k);
-                instrumentation.redefineClasses(new ClassDefinition(k, v));
-            } catch (ClassNotFoundException | UnmodifiableClassException e) {
-                throw new MockException(e);
-            }
-        });
+        originClasses.keySet().forEach(LiMock::reset);
     }
 
     public static void reset(Class<?> clazz) {

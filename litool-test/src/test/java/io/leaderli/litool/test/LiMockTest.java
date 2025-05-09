@@ -46,6 +46,7 @@ class LiMockTest {
         Supplier supplier = LiMock.skipInterface(Supplier.class);
         Assertions.assertNull(supplier.get());
     }
+
     @LiTest
     void skipClassConstructors() {
 
@@ -186,6 +187,34 @@ class LiMockTest {
         MethodValueRecorder.invokers.clear();
         LiMock.mockStatic(Error.class, MethodFilter.isMethod(), (method, args) -> 100);
         Assertions.assertEquals(4, MethodValueRecorder.invokers.size());
+    }
+
+    @Test
+    void test111() throws ClassNotFoundException {
+
+        class MyClassLoader extends ClassLoader {
+        }
+
+        String name = Error.class.getName();
+//        System.out.println(name);
+        System.out.println(new MyClassLoader().loadClass("io.leaderli.litool.test.LiMockTest$Error").getClassLoader());
+    }
+
+    //    @LiTest
+    void testClearInvoker() {
+        System.out.println(this.getClass().getClassLoader());
+        for (int i = 0; i < 10000; i++) {
+            long now = System.currentTimeMillis();
+            LiMock.mockStatic(Error.class, MethodFilter.isMethod(), (method, args) -> 100);
+            new Error().m1();
+
+            System.out.println(i + ":" + MethodValueRecorder.invokers.size() + "\t" + (System.currentTimeMillis() - now));
+            MethodValueRecorder.invokers.clear();
+            MethodValueRecorder.recorders.clear();
+            LiMock.reset();
+
+        }
+
     }
 
     @LiTest
@@ -499,9 +528,11 @@ class LiMockTest {
     @Test
     void testReset() {
         Bean1 bean1 = new Bean1();
+        Assertions.assertEquals(1, bean1.m1());
         LiMock.mockerBean(Bean1.class).when(Bean1::m1, 2).build();
         Assertions.assertEquals(2, bean1.m1());
         LiMock.reset();
+        Assertions.assertEquals(1, bean1.m1());
         LiMock.recordBean(Bean1.class).function(Bean1::m1).build();
 
         Assertions.assertEquals(1, bean1.m1());
