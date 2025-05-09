@@ -18,13 +18,13 @@ public class MethodValueFactory {
     /**
      * 每个class对应一套挡板map，每个挡板根据每个方法设定一个挡板list，按照顺序依次拦截
      */
-    private static final Map<String, MockClass> mockClasses = new HashMap<>();
+    private static final Map<String, ClassMock> mockClasses = new HashMap<>();
     private static final Map<String, LiTuple<MethodProxy<?>, Method>> invokers = new HashMap<>();
     public static final Map<String, LiTuple<MethodAssert, Method>> recorders = new HashMap<>();
 
 
-    public static MockClass getClassMockers(Class<?> clazz) {
-        return mockClasses.computeIfAbsent(clazz.getName(), k -> new MockClass(clazz));
+    public static ClassMock getClassMockers(Class<?> clazz) {
+        return mockClasses.computeIfAbsent(clazz.getName(), k -> new ClassMock(clazz));
     }
 
 //    public static List<LiTuple<Method, MethodProxy<?>>> getMethodMockers(Class<?> clazz, String method) {

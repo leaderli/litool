@@ -78,13 +78,13 @@ public class LiMock {
     }
 
 
-    private static void backup(Class<?> clazz) throws IOException, CannotCompileException {
+    public static void backup(Class<?> clazz) throws IOException, CannotCompileException {
         if (!originClasses.containsKey(clazz)) {
             originClasses.put(clazz, toBytecode(getCtClass(clazz)));
         }
     }
 
-    private static byte[] toBytecode(CtClass ct) throws IOException, CannotCompileException {
+    public static byte[] toBytecode(CtClass ct) throws IOException, CannotCompileException {
         byte[] bytecode = ct.toBytecode();
         ct.defrost();
         return bytecode;
@@ -121,7 +121,7 @@ public class LiMock {
         }
     }
 
-    private static CtMethod getCtMethod(Method method, CtClass ct) throws NotFoundException {
+    public static CtMethod getCtMethod(Method method, CtClass ct) throws NotFoundException {
         CtClass[] params = ArrayUtils.map(method.getParameterTypes(), CtClass.class, LiMock::getCtClass);
         return ct.getDeclaredMethod(method.getName(), params);
     }
@@ -208,52 +208,14 @@ public class LiMock {
      * @see MethodProxy#apply(Method, Object[]) 根据返回值来判断是否需要真正拦截，不需要拦截直接返回{@link #SKIP_MARK}即可，其他表示拦截
      */
     public static void mock(Class<?> mockClass, MethodFilter methodFilter, MethodProxy<?> methodProxy, boolean detach) {
-        try {
-            boolean already = originClasses.containsKey(mockClass);
-            backup(mockClass);
-            if (detach) {
-                MethodValueFactory.getClassMockers(mockClass).clear();
+        ClassMock classMock = MethodValueFactory.getClassMockers(mockClass);
+        if (detach) {
 //                detach(mockClass);
-            }
-            CtClass ct = getCtClass(mockClass);
-
-
-            for (Method method : mockClass.getDeclaredMethods()) {
-
-                if ((method.isSynthetic() || ModifierUtil.isAbstract(method))) {
-                    continue;
-                }
-                CtMethod ctMethod = getCtMethod(method, ct);
-////                String uuid = method.getName() + " " + UUID.randomUUID();
-//                String uuid = method + "";
-                MethodValueFactory.putMethodProxy(mockClass, method, methodProxy, methodFilter);
-                if (already) {
-                    continue;
-                }
-                String bean = ModifierUtil.isStatic(method) ? "null" : "$0";
-                String src = "Either either = MethodValueFactory.invoke($class,\"" + method + "\"," + bean + ",$args);\r\n"
-                        + "if(either.isRight()) return ($r)either.getRight();";
-                //                if (ModifierUtil.isStatic(method)) {
-//                    src = "Either either = MethodValueFactory.invoke($class,#method#,null,$args);\r\n"
-//                            + "if(either.isRight()) return ($r)either.getRight();";
-//                } else {
-//                    src = "Either either = MethodValueFactory.invoke($class,#method#,$0,$args);\r\n"
-//                            + "if(either.isRight()) return ($r)either.getRight();";
-//                }
-                if (ctMethod.isEmpty()) { // 接口或者抽象方法
-                    continue;
-                }
-
-                ctMethod.insertBefore(src);
-            }
-            if (already) {
-                return;
-            }
-            instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));
-        } catch (Throwable e) {
-            throw new MockException(e);
         }
 
+        for (Method method : mockClass.getDeclaredMethods()) {
+            MethodValueFactory.putMethodProxy(mockClass, method, methodProxy, methodFilter);
+        }
     }
 
 
@@ -301,7 +263,8 @@ public class LiMock {
      *
      * @see #mockStatic(Class, MethodFilter, MethodProxy, boolean)
      */
-    public static void mockStatic(Class<?> mockClass, MethodFilter methodFilter, MethodProxy<?> methodProxy) {
+    public static void mockStatic(Class<?> mockClass, MethodFilter
+            methodFilter, MethodProxy<?> methodProxy) {
         mock(mockClass, methodFilter.addHead(ModifierUtil::isStatic), methodProxy);
     }
 
@@ -310,7 +273,8 @@ public class LiMock {
      *
      * @see #mock(Class, MethodFilter, MethodProxy, boolean)
      */
-    public static void mockStatic(Class<?> mockClass, MethodFilter methodFilter, MethodProxy<?> methodProxy, boolean detach) {
+    public static void mockStatic(Class<?> mockClass, MethodFilter
+            methodFilter, MethodProxy<?> methodProxy, boolean detach) {
         mock(mockClass, methodFilter.addHead(ModifierUtil::isStatic), methodProxy, detach);
     }
 
@@ -475,7 +439,7 @@ public class LiMock {
 
         try {
             detach(clazz);
-            MethodValueFactory.getClassMockers(clazz).clear();
+//            MethodValueFactory.getClassMockers(clazz).clear();
 //            byte[] bytes = originClasses.get(clazz);
 //            if (bytes != null) {
 //                instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
