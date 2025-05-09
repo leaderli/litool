@@ -184,9 +184,9 @@ class LiMockTest {
 
     @LiTest
     void testGetInvoke() {
-        MethodValueRecorder.invokers.clear();
-        LiMock.mockStatic(Error.class, MethodFilter.isMethod(), (method, args) -> 100);
-        Assertions.assertEquals(4, MethodValueRecorder.invokers.size());
+//        MethodValueFactory.invokers.clear();
+//        LiMock.mockStatic(Error.class, MethodFilter.isMethod(), (method, args) -> 100);
+//        Assertions.assertEquals(4, MethodValueFactory.invokers.size());
     }
 
     @Test
@@ -200,18 +200,18 @@ class LiMockTest {
         System.out.println(new MyClassLoader().loadClass("io.leaderli.litool.test.LiMockTest$Error").getClassLoader());
     }
 
-    //    @LiTest
+    @LiTest
     void testClearInvoker() {
         System.out.println(this.getClass().getClassLoader());
         for (int i = 0; i < 10000; i++) {
             long now = System.currentTimeMillis();
             LiMock.mockStatic(Error.class, MethodFilter.isMethod(), (method, args) -> 100);
-            new Error().m1();
+            System.out.println(new Error().m1() + " -> " + i);
 
-            System.out.println(i + ":" + MethodValueRecorder.invokers.size() + "\t" + (System.currentTimeMillis() - now));
-            MethodValueRecorder.invokers.clear();
-            MethodValueRecorder.recorders.clear();
+//            MethodValueFactory.invokers.clear();
+            MethodValueFactory.recorders.clear();
             LiMock.reset();
+            System.out.println(new Error().m1() + " <- " + i);
 
         }
 

@@ -47,7 +47,7 @@ public class LiMock {
 
     static {
         RUN_IN_JACOCO = checkJacoco();
-        classPool.importPackage("io.leaderli.litool.test.MethodValueRecorder");
+        classPool.importPackage("io.leaderli.litool.test.MethodValueFactory");
         classPool.importPackage("io.leaderli.litool.core.meta.Either");
     }
 
@@ -93,12 +93,12 @@ public class LiMock {
     public static void detach(Class<?> clazz) throws UnmodifiableClassException, ClassNotFoundException {
 
 
-        getCtClass(clazz).detach();
-        instrumentation.retransformClasses(clazz);
-
-        if (originClasses.containsKey(clazz)) {
-            instrumentation.redefineClasses(new ClassDefinition(clazz, originClasses.get(clazz)));
-        }
+//        getCtClass(clazz).detach();
+//        instrumentation.retransformClasses(clazz);
+//
+//        if (originClasses.containsKey(clazz)) {
+//            instrumentation.redefineClasses(new ClassDefinition(clazz, originClasses.get(clazz)));
+//        }
 
     }
 
@@ -204,41 +204,50 @@ public class LiMock {
      * @param methodFilter 代理方法的过滤类，用于筛选需要代理的方法
      * @param methodProxy  代理函数
      * @param detach       是否先重置类
-     * @see MethodValueRecorder#invoke(String, Class, String, Class[], Object, Object[])
+     * @see MethodValueFactory#invoke(Class, String, Object, Object[])
      * @see MethodProxy#apply(Method, Object[]) 根据返回值来判断是否需要真正拦截，不需要拦截直接返回{@link #SKIP_MARK}即可，其他表示拦截
      */
     public static void mock(Class<?> mockClass, MethodFilter methodFilter, MethodProxy<?> methodProxy, boolean detach) {
         try {
+            boolean already = originClasses.containsKey(mockClass);
             backup(mockClass);
             if (detach) {
-                detach(mockClass);
+                MethodValueFactory.getClassMockers(mockClass).clear();
+//                detach(mockClass);
             }
             CtClass ct = getCtClass(mockClass);
 
-            for (Method method : findDeclaredMethods(mockClass, methodFilter)) {
 
-                CtMethod ctMethod = getCtMethod(method, ct);
-//                String uuid = method.getName() + " " + UUID.randomUUID();
-                String uuid = mockClass.getName() + " " + method.getName() + " " + Arrays.toString(method.getParameterTypes());
-                MethodValueRecorder.invokers.put(uuid, LiTuple.of(methodProxy, method));
-                String src = "";
-                if (ModifierUtil.isStatic(method) || ModifierUtil.isStatic(method)) {
-                    src = StrSubstitution.format2("Either either = MethodValueRecorder.invoke(#uuid#,$class,#name#,$sig,null,$args);\r\n"
-                                    + "if(either.isRight()) return ($r)either.getRight();",
-                            "#", "#",
-                            StringUtils.wrap(uuid, '"'), StringUtils.wrap(method.getName(), '"'));
-                } else {
+            for (Method method : mockClass.getDeclaredMethods()) {
 
-                    src = StrSubstitution.format2("Either either = MethodValueRecorder.invoke(#uuid#,$class,#name#,$sig,$0,$args);\r\n"
-                                    + "if(either.isRight()) return ($r)either.getRight();",
-                            "#", "#",
-                            StringUtils.wrap(uuid, '"'), StringUtils.wrap(method.getName(), '"')
-                    );
+                if ((method.isSynthetic() || ModifierUtil.isAbstract(method))) {
+                    continue;
                 }
+                CtMethod ctMethod = getCtMethod(method, ct);
+////                String uuid = method.getName() + " " + UUID.randomUUID();
+//                String uuid = method + "";
+                MethodValueFactory.putMethodProxy(mockClass, method, methodProxy, methodFilter);
+                if (already) {
+                    continue;
+                }
+                String bean = ModifierUtil.isStatic(method) ? "null" : "$0";
+                String src = "Either either = MethodValueFactory.invoke($class,\"" + method + "\"," + bean + ",$args);\r\n"
+                        + "if(either.isRight()) return ($r)either.getRight();";
+                //                if (ModifierUtil.isStatic(method)) {
+//                    src = "Either either = MethodValueFactory.invoke($class,#method#,null,$args);\r\n"
+//                            + "if(either.isRight()) return ($r)either.getRight();";
+//                } else {
+//                    src = "Either either = MethodValueFactory.invoke($class,#method#,$0,$args);\r\n"
+//                            + "if(either.isRight()) return ($r)either.getRight();";
+//                }
                 if (ctMethod.isEmpty()) { // 接口或者抽象方法
                     continue;
                 }
+
                 ctMethod.insertBefore(src);
+            }
+            if (already) {
+                return;
             }
             instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));
         } catch (Throwable e) {
@@ -312,7 +321,7 @@ public class LiMock {
      * @param mockClass        记录类
      * @param mockMethodFilter 方法过滤器
      * @param methodAssert     断言函数
-     * @see MethodValueRecorder#record(String, Object, Object[], Object)
+     * @see MethodValueFactory#record(String, Object, Object[], Object)
      */
     public static void record(Class<?> mockClass, MethodFilter mockMethodFilter, MethodAssert methodAssert) {
         try {
@@ -322,7 +331,7 @@ public class LiMock {
 
                 CtMethod ctMethod = getCtMethod(method, ct);
                 String uuid = method.getName() + " " + UUID.randomUUID();
-                MethodValueRecorder.recorders.put(uuid, LiTuple.of(methodAssert, method));
+                MethodValueFactory.recorders.put(uuid, LiTuple.of(methodAssert, method));
                 String recordCode = StrSubstitution.format2("MethodValueRecorder.record( #uuid#,#this#,$args,($w)$_);", "#", "#", StringUtils.wrap(uuid, '"'), ModifierUtil.isStatic(method) ? "null" : "$0");
                 ctMethod.insertAfter(recordCode);
                 CtClass ctClass = getCtClass(Throwable.class);
@@ -466,10 +475,11 @@ public class LiMock {
 
         try {
             detach(clazz);
-            byte[] bytes = originClasses.get(clazz);
-            if (bytes != null) {
-                instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
-            }
+            MethodValueFactory.getClassMockers(clazz).clear();
+//            byte[] bytes = originClasses.get(clazz);
+//            if (bytes != null) {
+//                instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
+//            }
         } catch (ClassNotFoundException | UnmodifiableClassException e) {
             throw new MockException(e);
         }
