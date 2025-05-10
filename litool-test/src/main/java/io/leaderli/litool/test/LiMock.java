@@ -128,7 +128,7 @@ public class LiMock {
         MethodUtil.onlyCallByCLINIT();
 
         try {
-//            backup(mockClass);
+            backup(mockClass);
             CtClass ct = getCtClass(mockClass);
 
             CtConstructor classInitializer = ct.makeClassInitializer();
@@ -142,24 +142,14 @@ public class LiMock {
     }
 
     public static void skipClassConstructors(Class<?> mockClass) {
-        skipClassConstructors(mockClass, true);
-    }
 
-    /**
-     * 一定会重置类
-     *
-     * @param mockClass mock的类
-     */
-    public static void skipClassConstructors(Class<?> mockClass, boolean detach) {
+
         MethodUtil.onlyCallByCLINIT();
         if (mockClass.isInterface() || mockClass.isArray() || mockClass.isEnum() || mockClass == Object.class) {
             return;
         }
         try {
             backup(mockClass);
-            if (detach) {
-                MethodValueFactory.detach(mockClass);
-            }
             CtClass ct = getCtClass(mockClass);
             for (CtConstructor constructor : ct.getDeclaredConstructors()) {
                 if (constructor.callsSuper()) {
@@ -267,9 +257,9 @@ public class LiMock {
     /**
      * 根据筛选器来代理满足条件的方法,断言方法的调用参数、返回值满足条件
      *
-     * @param mockClass        记录类
+     * @param mockClass    记录类
      * @param methodFilter 方法过滤器
-     * @param methodAssert     断言函数
+     * @param methodAssert 断言函数
      */
     public static void record(Class<?> mockClass, MethodFilter methodFilter, MethodAssert methodAssert) {
 

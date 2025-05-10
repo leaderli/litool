@@ -114,11 +114,16 @@ class LiMockTest {
         Assertions.assertEquals(4, Error.m1(3));
     }
 
+    static {
+        LiMock.skipClassConstructors(Foo3.class);
+    }
     @LiTest
     void skipClassConstructors2() {
 //        Assertions.assertEquals(2, new Foo3(2).a);
 //        LiMock.skipClassConstructors(Foo3.class);
-//        Assertions.assertEquals(0, new Foo3(2).a);
+        Assertions.assertEquals(0, new Foo3(2).a);
+        LiMock.mock(Foo3.class, MethodFilter.isMethod(), MethodProxy.of(2));
+        Assertions.assertEquals(2, new Foo3(2).m1());
 //        LiMock.skipClassConstructors(Foo5.class);
 //        Assertions.assertEquals(0, new Foo5(5, "5").a);
 //
@@ -827,6 +832,10 @@ class LiMockTest {
 
         public Foo3(int a) {
             super(a);
+        }
+
+        public int m1() {
+            return 1;
         }
     }
 
