@@ -151,6 +151,7 @@ public class LiMock {
      * @param mockClass mock的类
      */
     public static void skipClassConstructors(Class<?> mockClass, boolean detach) {
+        MethodUtil.onlyCallByCLINIT();
         if (mockClass.isInterface() || mockClass.isArray() || mockClass.isEnum() || mockClass == Object.class) {
             return;
         }
