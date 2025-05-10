@@ -69,7 +69,7 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
     }
 
     public static MethodFilter returnType(Class<?> returnType) {
-        return new MethodFilter()._returnType(returnType);
+        return new MethodFilter().originReturnType(returnType);
     }
 
     public static MethodFilter length(int length) {
@@ -132,7 +132,7 @@ public class MethodFilter implements Filter<Method>, Chain<Filter<Method>> {
         return this;
     }
 
-    public MethodFilter _returnType(Class<?> returnType) {
+    public MethodFilter originReturnType(Class<?> returnType) {
         add(m -> m.getReturnType() == returnType);
         return this;
     }

@@ -43,7 +43,7 @@ public class AbstractRecorder<T> {
     public T called() {
         actualMethodCall.remove(currentMethod);
         recordMethodCall.add(currentMethod);
-        add((method, args, _return) -> actualMethodCall.add(currentMethod));
+        add((method, args, originReturn) -> actualMethodCall.add(currentMethod));
         return (T) this;
     }
 
@@ -55,12 +55,12 @@ public class AbstractRecorder<T> {
     public T notCalled() {
         actualMethodCall.remove(currentMethod);
         recordMethodNotCall.add(currentMethod);
-        add((method, args, _return) -> actualMethodCall.add(currentMethod));
+        add((method, args, originReturn) -> actualMethodCall.add(currentMethod));
         return (T) this;
     }
 
     public T arg(int index, Object arg) {
-        add((method, args, _return) -> {
+        add((method, args, originReturn) -> {
             Assertions.assertTrue(args.length > index);
             Assertions.assertEquals(arg, args[index]);
         });
@@ -68,7 +68,7 @@ public class AbstractRecorder<T> {
     }
 
     public <R> T argAssert(int index, Consumer<R> argAssert, Class<R> paraType) {
-        add((method, args, _return) -> {
+        add((method, args, originReturn) -> {
             Assertions.assertTrue(args.length > index);
             Assertions.assertEquals(ClassUtil.primitiveToWrapper(method.getParameterTypes()[index]), ClassUtil.primitiveToWrapper(paraType));
             argAssert.accept((R) args[index]);
@@ -78,17 +78,17 @@ public class AbstractRecorder<T> {
 
 
     public T args(Object... compareArgs) {
-        add((method, args, _return) -> Assertions.assertArrayEquals(compareArgs, args));
+        add((method, args, originReturn) -> Assertions.assertArrayEquals(compareArgs, args));
         return (T) this;
     }
 
     public T assertThrowException(Class<? extends Throwable> exceptionClass) {
-        add((method, args, _return) -> Assertions.assertSame(_return.getClass(), exceptionClass));
+        add((method, args, originReturn) -> Assertions.assertSame(originReturn.getClass(), exceptionClass));
         return (T) this;
     }
 
     public T assertReturn(Object compareReturn) {
-        add((method, args, _return) -> Assertions.assertEquals(compareReturn, _return));
+        add((method, args, originReturn) -> Assertions.assertEquals(compareReturn, originReturn));
         return (T) this;
     }
 

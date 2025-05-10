@@ -11,7 +11,7 @@ class LiMock_6_Test {
 
     @LiTest
     void testRecordCall() {
-        LiMock.record(Error6.class, MethodFilter.name("m1"), (method, args, _return) -> Assertions.assertEquals(1, args[0]));
+        LiMock.record(Error6.class, MethodFilter.name("m1"), (method, args, originReturn) -> Assertions.assertEquals(1, args[0]));
         Error6.m1(1);
     }
 

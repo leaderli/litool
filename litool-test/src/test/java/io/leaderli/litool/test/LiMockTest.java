@@ -206,15 +206,9 @@ class LiMockTest {
         for (int i = 0; i < 10000; i++) {
             long now = System.currentTimeMillis();
             LiMock.mockStatic(Error.class, MethodFilter.isMethod(), (method, args) -> 100);
-            System.out.println(new Error().m1() + " -> " + i);
-
-//            MethodValueFactory.invokers.clear();
             MethodValueFactory.recorders.clear();
             LiMock.reset();
-            System.out.println(new Error().m1() + " <- " + i);
-
         }
-
     }
 
     @LiTest
@@ -325,7 +319,7 @@ class LiMockTest {
 
         Void2.m1(2);
         Assertions.assertEquals(1, Void2.a);
-        LiMock.detach(Void2.class);
+        MethodValueFactory.detach(Void2.class);
         Void2.m1(2);
         Assertions.assertEquals(2, Void2.a);
     }
@@ -553,6 +547,8 @@ class LiMockTest {
 
         bean.m1();
         Assertions.assertDoesNotThrow(LiMock::assertMethodCalled);
+        LiMock.reset(Bean1.class);
+        System.out.println(bean.m1());
         LiMock.recordBean(Bean1.class).function(Bean1::m1)
                 .called()
                 .assertReturn(2)
@@ -578,7 +574,7 @@ class LiMockTest {
     void testRecord() {
 
         LiBox<Method> box = LiBox.none();
-        LiMock.record(Bean.class, MethodFilter.name("m1"), (m, args, _return) -> box.value(m));
+        LiMock.record(Bean.class, MethodFilter.name("m1"), (m, args, originReturn) -> box.value(m));
         Bean bean = new Bean();
         bean.m1();
         Assertions.assertEquals("m1", box.value().getName());
@@ -591,7 +587,7 @@ class LiMockTest {
         Recorder.recordMethodCall.addAll(Arrays.asList(declaredMethods));
         Assertions.assertThrows(AssertionFailedError.class, LiMock::assertMethodCalled);
         LiMock.recorder(Bean.class)
-                .record(MethodFilter.isMethod(), (method, args, _return) -> Recorder.actualMethodCall.add(method))
+                .record(MethodFilter.isMethod(), (method, args, originReturn) -> Recorder.actualMethodCall.add(method))
                 .build();
         Bean bean = new Bean();
         bean.m1();
@@ -667,7 +663,7 @@ class LiMockTest {
     void testRecordException() throws Exception {
 
         LiBox<Object> box = LiBox.none();
-        LiMock.record(RecordError.class, MethodFilter.isMethod(), (method, args, _return) -> box.value(_return));
+        LiMock.record(RecordError.class, MethodFilter.isMethod(), (method, args, originReturn) -> box.value(originReturn));
         RecordError recordError = new RecordError();
         recordError.get(2);
         Assertions.assertEquals(2, box.value());
@@ -739,8 +735,8 @@ class LiMockTest {
     }
 
     static class DelegateRecord {
-        public static void m1(Foo foo, int _return) {
-            Assertions.assertEquals(2, _return);
+        public static void m1(Foo foo, int originReturn) {
+            Assertions.assertEquals(2, originReturn);
         }
     }
 

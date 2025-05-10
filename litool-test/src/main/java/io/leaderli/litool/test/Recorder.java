@@ -23,10 +23,10 @@ public class Recorder extends AbstractRecorder<Recorder> {
         build = true;
 
         LiMock.record(mockClass, MethodFilter.of(methodAsserts::containsKey),
-                (m, args, _return) ->
+                (m, args, originReturn) ->
                         methodAsserts
                                 .getOrDefault(m, new ArrayList<>())
-                                .forEach(methodAssert -> methodAssert.apply(m, args, _return)));
+                                .forEach(methodAssert -> methodAssert.apply(m, args, originReturn)));
     }
 
 

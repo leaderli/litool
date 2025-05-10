@@ -2,7 +2,6 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.collection.ArrayUtils;
 import io.leaderli.litool.core.exception.LiAssertUtil;
-import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.text.StrSubstitution;
 import io.leaderli.litool.core.text.StringUtils;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
-import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
@@ -90,18 +88,6 @@ public class LiMock {
         return bytecode;
     }
 
-    public static void detach(Class<?> clazz) throws UnmodifiableClassException, ClassNotFoundException {
-
-
-//        getCtClass(clazz).detach();
-//        instrumentation.retransformClasses(clazz);
-//
-//        if (originClasses.containsKey(clazz)) {
-//            instrumentation.redefineClasses(new ClassDefinition(clazz, originClasses.get(clazz)));
-//        }
-
-    }
-
     static class TempClassFileTransformer implements ClassFileTransformer {
         final Instrumentation instrumentation;
 
@@ -142,14 +128,14 @@ public class LiMock {
         MethodUtil.onlyCallByCLINIT();
 
         try {
-            backup(mockClass);
+//            backup(mockClass);
             CtClass ct = getCtClass(mockClass);
 
             CtConstructor classInitializer = ct.makeClassInitializer();
             classInitializer.setBody("{}");
             instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));
             Class.forName(mockClass.getName(), true, mockClass.getClassLoader());
-            detach(mockClass);
+            MethodValueFactory.detach(mockClass);
         } catch (Exception e) {
             throw new MockException(e);
         }
@@ -171,7 +157,7 @@ public class LiMock {
         try {
             backup(mockClass);
             if (detach) {
-                detach(mockClass);
+                MethodValueFactory.detach(mockClass);
             }
             CtClass ct = getCtClass(mockClass);
             for (CtConstructor constructor : ct.getDeclaredConstructors()) {
@@ -208,14 +194,12 @@ public class LiMock {
      * @see MethodProxy#apply(Method, Object[]) 根据返回值来判断是否需要真正拦截，不需要拦截直接返回{@link #SKIP_MARK}即可，其他表示拦截
      */
     public static void mock(Class<?> mockClass, MethodFilter methodFilter, MethodProxy<?> methodProxy, boolean detach) {
-        ClassMock classMock = MethodValueFactory.getClassMockers(mockClass);
+        MethodValueFactory.ClassMock classMock = MethodValueFactory.computeIfAbsent(mockClass);
         if (detach) {
-//                detach(mockClass);
+            classMock.detach();
         }
 
-        for (Method method : mockClass.getDeclaredMethods()) {
-            MethodValueFactory.putMethodProxy(mockClass, method, methodProxy, methodFilter);
-        }
+        classMock.putMethodProxy(methodFilter, methodProxy);
     }
 
 
@@ -249,7 +233,7 @@ public class LiMock {
             for (Method method : findDeclaredMethods(mockClass, MethodFilter
                     .name(delegateMethod.getName())
                     ._parameterType(delegateMethod.getParameterTypes())
-                    ._returnType(delegateMethod.getReturnType()))) {
+                    .originReturnType(delegateMethod.getReturnType()))) {
                 delegateMap.put(method, delegateMethod);
             }
 
@@ -283,31 +267,13 @@ public class LiMock {
      * 根据筛选器来代理满足条件的方法,断言方法的调用参数、返回值满足条件
      *
      * @param mockClass        记录类
-     * @param mockMethodFilter 方法过滤器
+     * @param methodFilter 方法过滤器
      * @param methodAssert     断言函数
-     * @see MethodValueFactory#record(String, Object, Object[], Object)
      */
-    public static void record(Class<?> mockClass, MethodFilter mockMethodFilter, MethodAssert methodAssert) {
-        try {
-            backup(mockClass);
-            CtClass ct = getCtClass(mockClass);
-            for (Method method : findDeclaredMethods(mockClass, mockMethodFilter)) {
+    public static void record(Class<?> mockClass, MethodFilter methodFilter, MethodAssert methodAssert) {
 
-                CtMethod ctMethod = getCtMethod(method, ct);
-                String uuid = method.getName() + " " + UUID.randomUUID();
-                MethodValueFactory.recorders.put(uuid, LiTuple.of(methodAssert, method));
-                String recordCode = StrSubstitution.format2("MethodValueRecorder.record( #uuid#,#this#,$args,($w)$_);", "#", "#", StringUtils.wrap(uuid, '"'), ModifierUtil.isStatic(method) ? "null" : "$0");
-                ctMethod.insertAfter(recordCode);
-                CtClass ctClass = getCtClass(Throwable.class);
-                String catchCode = StrSubstitution.format2("MethodValueRecorder.record( #uuid#,#this#,$args,$e); throw $e;", "#", "#", StringUtils.wrap(uuid, '"'), ModifierUtil.isStatic(method) ? "null" : "$0");
-                ctMethod.addCatch(catchCode, ctClass);
-
-            }
-            instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));
-        } catch (Exception e) {
-            throw new MockException(e);
-        }
-
+        MethodValueFactory.ClassMock classMock = MethodValueFactory.computeIfAbsent(mockClass);
+        classMock.putMethodAssert(methodFilter, methodAssert);
     }
 
 
@@ -316,6 +282,7 @@ public class LiMock {
      * 代理方法与原方法名称一致，返回类型void，第一个参数、第二个参数为被代理的实例和被代理方法的返回值。其余参数和原方法类型保持一致
      */
     public static void record(Class<?> mockClass, Class<?> delegate) {
+
         Map<Method, Method> delegateMap = new HashMap<>();
         for (Method delegateMethod : Lira.of(delegate.getMethods())
                 .filter(m -> m.getReturnType() == void.class && ModifierUtil.isStatic(m))) {
@@ -332,10 +299,10 @@ public class LiMock {
             }
 
         }
-        record(mockClass, MethodFilter.of(delegateMap::containsKey), (method, args, _return) -> {
+        record(mockClass, MethodFilter.of(delegateMap::containsKey), (method, args, originReturn) -> {
             Method delegateMethod = delegateMap.get(method);
             try {
-                delegateMethod.invoke(null, ArrayUtils.insert(args, 0, _return));
+                delegateMethod.invoke(null, ArrayUtils.insert(args, 0, originReturn));
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new MockException(e.getCause());
             }
@@ -381,8 +348,8 @@ public class LiMock {
 
             record(clazz,
                     MethodFilter.isMethod().add(f -> !ModifierUtil.isAbstract(f)),
-                    (method, args, _return) -> {
-                        String line = StringUtils.getSimpleName(method.getDeclaringClass()) + "." + method.getName() + "(" + StringUtils.join0(",", args, StringUtils::getSimpleName) + ") -> " + StringUtils.getSimpleName(_return);
+                    (method, args, originReturn) -> {
+                        String line = StringUtils.getSimpleName(method.getDeclaringClass()) + "." + method.getName() + "(" + StringUtils.join0(",", args, StringUtils::getSimpleName) + ") -> " + StringUtils.getSimpleName(originReturn);
                         callLine.accept(line);
                     });
         }
@@ -436,17 +403,7 @@ public class LiMock {
     }
 
     public static void reset(Class<?> clazz) {
-
-        try {
-            detach(clazz);
-//            MethodValueFactory.getClassMockers(clazz).clear();
-//            byte[] bytes = originClasses.get(clazz);
-//            if (bytes != null) {
-//                instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
-//            }
-        } catch (ClassNotFoundException | UnmodifiableClassException e) {
-            throw new MockException(e);
-        }
+        MethodValueFactory.detach(clazz);
     }
 
     public static Recorder recorder(Class<?> mockClass) {
