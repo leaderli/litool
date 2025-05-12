@@ -224,7 +224,7 @@ public class LiMock {
             for (Method method : findDeclaredMethods(mockClass, MethodFilter
                     .name(delegateMethod.getName())
                     ._parameterType(delegateMethod.getParameterTypes())
-                    .originReturnType(delegateMethod.getReturnType()))) {
+                    ._return(delegateMethod.getReturnType()))) {
                 delegateMap.put(method, delegateMethod);
             }
 
