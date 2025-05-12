@@ -211,7 +211,6 @@ class LiMockTest {
         for (int i = 0; i < 10000; i++) {
             long now = System.currentTimeMillis();
             LiMock.mockStatic(Error.class, MethodFilter.isMethod(), (method, args) -> 100);
-            MethodValueFactory.recorders.clear();
             LiMock.reset();
         }
     }

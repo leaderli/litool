@@ -1,7 +1,6 @@
 package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.meta.Either;
-import io.leaderli.litool.core.meta.LiTuple;
 import io.leaderli.litool.core.meta.Lira;
 import io.leaderli.litool.core.type.*;
 import javassist.CtClass;
@@ -16,33 +15,18 @@ import static io.leaderli.litool.test.LiMock.*;
 
 public class MethodValueFactory {
 
-    /**
-     * 每个class对应一套挡板map，每个挡板根据每个方法设定一个挡板list，按照顺序依次拦截
-     */
     private static final Map<Class<?>, ClassMock> mockClasses = new HashMap<>();
-    private static final Map<String, LiTuple<MethodProxy<?>, Method>> invokers = new HashMap<>();
-    public static final Map<String, LiTuple<MethodAssert, Method>> recorders = new HashMap<>();
-
 
     public static ClassMock computeIfAbsent(Class<?> clazz) {
         return mockClasses.computeIfAbsent(clazz, k -> new ClassMock(clazz));
     }
 
-//    public static List<LiTuple<Method, MethodProxy<?>>> getMethodMockers(Class<?> clazz, String method) {
-//        return getClassMockers(clazz).computeIfAbsent(method, k -> new ArrayList<>());
-//    }
-
-//    public static void putMethodProxy(Class<?> clazz, Method method, MethodProxy<?> methodProxy, MethodFilter methodFilter) {
-//        if (Boolean.TRUE.equals(methodFilter.apply(method))) {
-//            getClassMockers(clazz);
-//            getMethodMockers(clazz, method + "").add(0, LiTuple.of(method, methodProxy));
-//        }
-//    }
-
+    /**
+     * 用于方法调用的挡板, Either.none()表示不进行拦截
+     */
     public static Either<?, ?> invoke(Class<?> mockClass, String methodSig, Object bean, Object[] args) throws Throwable {
         ClassMock classMock = mockClasses.get(mockClass);
         if (classMock != null) {
-
             return classMock.invoke(methodSig, bean, args);
         }
         return Either.none();
@@ -82,7 +66,6 @@ public class MethodValueFactory {
         return Either.none();
     }
 
-
     public static void detach(Class<?> clazz) {
         ClassMock classMock = mockClasses.get(clazz);
         if (classMock != null) {
@@ -98,11 +81,17 @@ public class MethodValueFactory {
          */
         private final Map<String, Method> methodSignatures;
         /**
-         * 表示类所有方法的挡板
+         * 类所有方法的挡板
          */
         private final Map<String, List<MethodProxy<?>>> methodProxyList;
+        /**
+         * 类所有方法的断言
+         */
         private final Map<String, List<MethodAssert>> methodAssertList;
 
+        /**
+         * 类仅重写字节码一次，将类方法涉及到的挡板和断言全部提前加载缓存
+         */
         private ClassMock(Class<?> mockClass) {
             this.mockClass = mockClass;
             Lira<Method> methods = Lira.of(mockClass.getDeclaredMethods()).filter(method -> !(method.isSynthetic() || ModifierUtil.isAbstract(method)));
@@ -191,10 +180,7 @@ public class MethodValueFactory {
                         throw throwable;
                     }
                 });
-
             }
         }
-
     }
-
 }
