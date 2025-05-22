@@ -124,13 +124,12 @@ public class LiMock {
     /**
      * 当类已经加载后，对静态代码块的修改无法在生效，因此仅允许在静态代码块中去调用
      */
-    public static void skipClassInitializer(Class<?> mockClass) {
+    public static synchronized void skipClassInitializer(Class<?> mockClass) {
         MethodUtil.onlyCallByCLINIT();
 
         try {
             backup(mockClass);
             CtClass ct = getCtClass(mockClass);
-
             CtConstructor classInitializer = ct.makeClassInitializer();
             classInitializer.setBody("{}");
             instrumentation.redefineClasses(new ClassDefinition(mockClass, toBytecode(ct)));
@@ -141,7 +140,7 @@ public class LiMock {
         }
     }
 
-    public static void skipClassConstructors(Class<?> mockClass) {
+    public static synchronized void skipClassConstructors(Class<?> mockClass) {
 
 
         MethodUtil.onlyCallByCLINIT();
