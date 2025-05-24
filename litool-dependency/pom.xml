@@ -6,11 +6,11 @@
     <parent>
         <groupId>io.github.leaderli.litool</groupId>
         <artifactId>litool</artifactId>
-        <version>2.3.6</version>
+        <version>2.3.7</version>
     </parent>
 
     <artifactId>litool-dependency</artifactId>
-    <version>release</version>
+    <version>2.3.7</version>
     <packaging>pom</packaging>
     <dependencyManagement>
         <dependencies>
@@ -42,11 +42,6 @@
             <dependency>
                 <groupId>io.github.leaderli.litool</groupId>
                 <artifactId>litool-json</artifactId>
-                <version>${project.parent.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.leaderli.litool</groupId>
-                <artifactId>litool-runner</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>
