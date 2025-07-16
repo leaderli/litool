@@ -96,7 +96,7 @@
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>org.jacoco.agent</artifactId>
-            <version>0.8.7</version>
+            <version>0.5.3.201107060350</version>
             <classifier>runtime</classifier>
             <scope>test</scope>
         </dependency>
