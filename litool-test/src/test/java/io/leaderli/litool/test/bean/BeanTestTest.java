@@ -61,6 +61,16 @@ public class BeanTestTest {
 
     }
 
+    private static class Recursor {
+
+        private void test(int age) {
+
+            if (age > 10) {
+                test(--age);
+            }
+        }
+    }
+
     private enum TestEnum {
         A, B;
 

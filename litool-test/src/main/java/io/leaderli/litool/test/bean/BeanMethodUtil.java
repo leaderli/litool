@@ -61,7 +61,7 @@ public class BeanMethodUtil {
         Map<String, LiTuple<Boolean, Method>> simpleMethods = new HashMap<>();
         ownerNameDescMethodAndNodeMap.forEach((ownerNameDesc, methodAndNode) -> {
             Method method = methodAndNode._1;
-            boolean simple = isSimpleMethod(ownerNameDesc, ownerNameDescMethodAndNodeMap, allowInit, simpleMethods);
+            boolean simple = isSimpleMethod(ownerNameDesc, ownerNameDescMethodAndNodeMap, allowInit, simpleMethods, 0);
             simpleMethods.put(ownerNameDesc, LiTuple.of(simple, method));
         });
         return Lira.of(simpleMethods.values())
@@ -82,8 +82,8 @@ public class BeanMethodUtil {
      *
      * @see  #SIMPLE_OWNER_SET
      */
-    private static boolean isSimpleMethod(String ownerNameDesc, Map<String, LiTuple<Method, MethodNode>> ownerNameDesc_MethodAndNode, boolean allowInit, Map<String, LiTuple<Boolean, Method>> simpleMethods) {
-
+    private static boolean isSimpleMethod(String ownerNameDesc, Map<String, LiTuple<Method, MethodNode>> ownerNameDesc_MethodAndNode, boolean allowInit, Map<String, LiTuple<Boolean, Method>> simpleMethods, int recursive) {
+        recursive++;
         LiTuple<Method, MethodNode> methodMethodNodeLiTuple = ownerNameDesc_MethodAndNode.get(ownerNameDesc);
         // 仅分析查找类涉及的方法
         if (methodMethodNodeLiTuple == null) {
@@ -107,9 +107,12 @@ public class BeanMethodUtil {
                         continue;
                     }
                     String invokeMethod = mi.owner + "." + mi.name + mi.desc;
-
+                    if (recursive > 10) {
+                        //存在递归调用
+                        return false;
+                    }
                     // 进一步分析调用的指令
-                    if (!isSimpleMethod(invokeMethod, ownerNameDesc_MethodAndNode, allowInit, simpleMethods)) {
+                    if (!isSimpleMethod(invokeMethod, ownerNameDesc_MethodAndNode, allowInit, simpleMethods, recursive)) {
                         return false;
                     }
                     return false;
