@@ -36,6 +36,15 @@ class LiMockTest {
         Supplier supplier = LiMock.simpleInterface(Supplier.class, 10);
         Assertions.assertEquals(10, supplier.get());
 
+        LiMock.simple(Bean12.class, 3);
+        Assertions.assertEquals(3, new Bean12().m1());
+        Assertions.assertEquals("m2", new Bean12().m2());
+        LiMock.simple(Bean12.class, false, new Object[]{"2"});
+        Assertions.assertEquals(3, new Bean12().m1());
+        Assertions.assertEquals("2", new Bean12().m2());
+        LiMock.simple(Bean12.class, 3);
+        Assertions.assertEquals(3, new Bean12().m1());
+        Assertions.assertEquals("m2", new Bean12().m2());
     }
 
     @Test
@@ -117,6 +126,7 @@ class LiMockTest {
     static {
         LiMock.skipClassConstructors(Foo3.class);
     }
+
     @LiTest
     void skipClassConstructors2() {
 //        Assertions.assertEquals(2, new Foo3(2).a);
@@ -953,6 +963,17 @@ class LiMockTest {
     static class Bean11 {
         int m1(int a) {
             return a;
+        }
+    }
+
+    static class Bean12 {
+
+        int m1() {
+            return 1;
+        }
+
+        String m2() {
+            return "m2";
         }
     }
 }

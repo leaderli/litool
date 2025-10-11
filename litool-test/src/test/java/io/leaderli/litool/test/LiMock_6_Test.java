@@ -2,6 +2,7 @@ package io.leaderli.litool.test;
 
 import io.leaderli.litool.core.type.MethodFilter;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * 测试recorder的回收
@@ -21,9 +22,37 @@ class LiMock_6_Test {
     }
 
 
+    static {
+        LiMock.skipClassConstructors(So.class);
+    }
+
+    @Test
+    void test() {
+        LiMock.skip(So.class);
+        System.out.println(new So().m1());
+
+    }
+
     static class Error6 {
 
         public static int m1(int i) {
+            return 1;
+        }
+    }
+
+    static class Fa<T> {
+
+        public T m1() {
+            System.out.println("Fa");
+            return null;
+        }
+    }
+
+    static class So extends Fa<Integer> {
+        @Override
+        public Integer m1() {
+            super.m1();
+            System.out.println("son");
             return 1;
         }
     }

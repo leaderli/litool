@@ -205,6 +205,23 @@ public class LiMock {
     /**
      * 重置类并拦截方法
      *
+     * @see #mock(Class, MethodFilter, MethodProxy, boolean)
+     */
+    public static void mock(Class<?> mockClass, String name, Object value) {
+        mock(mockClass, MethodFilter.name(name), MethodProxy.of(value), true);
+    }
+
+    /**
+     * 重置类并拦截方法
+     *
+     * @see #mock(Class, MethodFilter, MethodProxy, boolean)
+     */
+    public static void mock(Class<?> mockClass, String name, Object value, boolean detach) {
+        mock(mockClass, MethodFilter.name(name), MethodProxy.of(value), detach);
+    }
+    /**
+     * 重置类并拦截方法
+     *
      * @see #mock(Class, Class, boolean)
      */
     public static void mock(Class<?> mockClass, Class<?> delegate) {
@@ -428,8 +445,11 @@ public class LiMock {
         return mockInterface.build();
     }
 
-
     public static void simple(Class<?> mockClass, Object... returns) {
+        simple(mockClass, true, returns);
+    }
+
+    public static void simple(Class<?> mockClass, boolean detach, Object[] returns) {
         if (mockClass.isInterface()) {
             throw new IllegalArgumentException("not support interface " + mockClass);
         }
@@ -445,7 +465,7 @@ public class LiMock {
                 }
             }
         }
-        mock(mockClass, MethodFilter.of(returnMap::containsKey), (m, args) -> returnMap.get(m));
+        mock(mockClass, MethodFilter.of(returnMap::containsKey), (m, args) -> returnMap.get(m), detach);
     }
 
     public static <T> T skipInterface(Class<T> mockClass) {
