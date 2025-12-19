@@ -103,7 +103,7 @@ public class LiMock {
                 // ignore
             }
             instrumentation.removeTransformer(this);
-            return new byte[0];
+            return null;
         }
     }
 
@@ -459,7 +459,11 @@ public class LiMock {
                 continue;
             }
             for (Object returnValue : returns) {
-                if (ClassUtil.isAssignableFromOrIsWrapper(declaredMethod.getReturnType(), returnValue.getClass())) {
+                Class<?> returnClass = returnValue.getClass();
+                if (returnValue == LiMock.SKIP_MARK) {
+                    returnClass = void.class;
+                }
+                if (ClassUtil.isAssignableFromOrIsWrapper(declaredMethod.getReturnType(), returnClass)) {
                     returnMap.put(declaredMethod, returnValue);
                     break;
                 }

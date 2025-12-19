@@ -28,12 +28,21 @@ class LiMock_6_Test {
 
     @Test
     void test() {
-        LiMock.skip(So.class);
-        System.out.println(new So().m1());
+        System.out.println(new So().m1().age);
+        LiMock.mock(So.class, MethodFilter.name("m1"), MethodProxy.of(new Error6(10)));
+        System.out.println(new So().m1().age);
 
     }
 
     static class Error6 {
+        public int age;
+
+        public Error6() {
+        }
+
+        public Error6(int age) {
+            this.age = age;
+        }
 
         public static int m1(int i) {
             return 1;
@@ -48,12 +57,12 @@ class LiMock_6_Test {
         }
     }
 
-    static class So extends Fa<Integer> {
+    static class So extends Fa<Error6> {
         @Override
-        public Integer m1() {
+        public Error6 m1() {
             super.m1();
             System.out.println("son");
-            return 1;
+            return new Error6();
         }
     }
 }

@@ -98,6 +98,10 @@ public interface IMocker<T, R> {
         return this;
     }
 
+    default <RR> IMocker<T, R> mock(String name, Object value) {
+        ((IMocker<T, RR>) this).mock(MethodFilter.name(name), (MethodProxy<RR>) MethodProxy.of(value));
+        return this;
+    }
     T build();
 }
 
