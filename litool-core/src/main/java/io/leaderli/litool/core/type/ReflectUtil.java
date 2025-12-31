@@ -497,7 +497,7 @@ public class ReflectUtil {
         if (obj == null || name == null) {
             return Lino.none();
         }
-        return ReflectUtil.getMethod(obj.getClass(), name).unzip(method -> invokeMethod(method, obj, args));
+        return ReflectUtil.getMethod(obj.getClass(), MethodFilter.name(name)._length(args.length)).unzip(method -> invokeMethod(method, obj, args));
     }
 
 
